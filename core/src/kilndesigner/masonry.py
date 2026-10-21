@@ -122,7 +122,7 @@ def _run(length: float, unit: float, stagger: bool, height: float, full_h: float
 def _orient(part: Part) -> tuple[bool, float, float, float]:
     """(horizontal?, run length, span across courses, thickness) for a part's box (mm)."""
     dx, dy, dz = (b - a for a, b in zip(part.lo, part.hi, strict=True))
-    face = part.name.split("/")[0]
+    face = part.wall
     if face in ("floor", "roof"):
         return True, dx, dy, dz
     if face in ("left", "right"):
@@ -144,6 +144,60 @@ def plan_layer(part: Part) -> LayerPlan | None:
         pieces = _run(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
         plan.courses.append(Course(i + 1, offset, tuple(pieces)))
     return plan
+
+
+BRICK_VOLUME = BRICK[0] * BRICK[1] * BRICK[2]
+ARCH_SOURCE = "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+# Arch bricks taper across the 2½ in face along their 4½ in depth (for 4½ in rings); wedges taper
+# along their 9 in length (for 9 in rings). Thin end, in inches (electric-and-thermal.md §5).
+ARCHES = {"No. 1 arch": 2.125, "No. 2 arch": 1.75, "No. 3 arch": 1.0}
+WEDGES = {"No. 1-X wedge": 2.25, "No. 1 wedge": 1.875, "No. 2 wedge": 1.5}
+
+
+@dataclass(frozen=True)
+class ArchRing:
+    """One arch layer turned from straights and one tapered shape."""
+
+    shape: str
+    shaped: int
+    straights: int
+    rings: int  # rings along the kiln, one brick deep each
+
+    def describe(self) -> str:
+        return (
+            f"{self.rings} rings, each of {self.shaped // self.rings} {self.shape} bricks and "
+            f"{self.straights // self.rings} straights"
+        )
+
+
+def arch_ring(part: Part) -> ArchRing | None:
+    """The standard arch-brick count: enough tapered bricks to turn the ring's curve.
+
+    Around a ring of radial depth L, the outer arc is longer than the inner by 2θ·L; each tapered
+    brick makes up (2½ in − its thin end) of that. The rest of the inner arc is straights.
+    """
+    if part.arch is None:
+        return None
+    a = part.arch
+    depth = a.thickness
+    if abs(depth - BRICK[1]) < TOL:
+        tapers, along = ARCHES, BRICK[0]  # bricks 4½ in deep, 9 in along the kiln
+    elif abs(depth - BRICK[0]) < TOL:
+        tapers, along = WEDGES, BRICK[1]  # bricks 9 in deep, 4½ in along the kiln
+    else:
+        return None
+    gain = 2 * a.half_angle * depth  # outer arc minus inner arc, mm
+    inner_arc = 2 * a.half_angle * a.radius
+    for shape, thin_in in tapers.items():
+        thin = thin_in * IN
+        n_shaped = gain / (BRICK[2] - thin)
+        n_straight = (inner_arc - n_shaped * thin) / BRICK[2]
+        if n_straight >= -0.5:  # the gentlest taper that can turn the curve
+            rings = math.ceil(part.length_y / along - TOL / along)
+            per_ring_shaped = math.ceil(n_shaped)
+            per_ring_straight = max(0, math.ceil(n_straight))
+            return ArchRing(shape, per_ring_shaped * rings, per_ring_straight * rings, rings)
+    return None
 
 
 @dataclass(frozen=True)
@@ -229,14 +283,34 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     findings: list[Finding] = []
     layers: list[LayerPlan] = []
     whole: Counter[str] = Counter()
+    shapes: Counter[tuple[str, str]] = Counter()
     cuts: dict[str, list[Cut]] = {}
     sheet_area: defaultdict[str, float] = defaultdict(float)
     sheet_area_thickness: defaultdict[str, float] = defaultdict(float)
     sheet_thickness: dict[str, set[float]] = {}
     cast_volume: defaultdict[str, float] = defaultdict(float)
 
+    arch_lines: list[str] = []
     for part in lining_parts(kiln):
         m = material(part.material)
+        if m.kind in BRICK_KINDS and part.arch is not None:
+            if part.cap:
+                count = math.ceil(part.volume / BRICK_VOLUME)
+                whole[m.id] += count
+                arch_lines.append(
+                    f"{part.name}: about {count} bricks by volume, cut to the arch's curve"
+                )
+                continue
+            ring = arch_ring(part)
+            if ring is None:
+                count = math.ceil(part.volume / BRICK_VOLUME)
+                whole[m.id] += count
+                arch_lines.append(f"{part.name}: about {count} bricks by volume")
+            else:
+                shapes[(m.id, ring.shape)] += ring.shaped
+                whole[m.id] += ring.straights
+                arch_lines.append(f"{part.name}: {ring.describe()}")
+            continue
         if m.kind in BRICK_KINDS:
             plan = plan_layer(part)
             if plan is None:
@@ -260,10 +334,10 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                         Cut(piece.length, piece.height, piece.full_length, piece.full_height)
                     )
         elif m.kind in SHEET_KINDS:
-            dims = sorted(b - a for a, b in zip(part.lo, part.hi, strict=True))
-            sheet_area[m.id] += dims[1] * dims[2]
-            sheet_area_thickness[m.id] += dims[1] * dims[2] * dims[0]
-            sheet_thickness.setdefault(m.id, set()).add(round(dims[0], 2))
+            sheet_area[m.id] += part.area
+            sheet_area_thickness[m.id] += part.volume
+            if not part.cap:
+                sheet_thickness.setdefault(m.id, set()).add(round(part.thickness, 2))
         elif m.kind in CAST_KINDS:
             cast_volume[m.id] += part.volume
 
@@ -291,6 +365,52 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         counts = Counter(c.describe(us) for c in cuts.get(mid, []))
         cut_list.extend(
             CutLine(material=mid, cut=desc, count=n) for desc, n in sorted(counts.items())
+        )
+    for (mid, shape), count in sorted(shapes.items()):
+        m = material(mid)
+        buy = math.ceil(count * (1 + WASTE))
+        quantities.append(
+            Quantity(
+                material=mid,
+                name=f"{m.name}, {shape}",
+                kind=m.kind,
+                amount=buy,
+                unit="bricks",
+                detail=f"{count} in the arch plus {WASTE:.0%} for breakage",
+                priced_amount=buy,
+            )
+        )
+    if arch_lines:
+        findings.append(
+            Finding(
+                level="info",
+                message="Arch bricks: " + "; ".join(arch_lines) + ".",
+                reference=ARCH_SOURCE,
+            )
+        )
+    if any(p.arch is not None and not p.cap for p in lining_parts(kiln)):
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    "The arch's skewbacks, the fill over the wall tops beside the arch, and the "
+                    "steel that takes the arch's thrust are not drawn or counted yet. A 60° "
+                    "skewback is the usual choice."
+                ),
+                reference="combustion-and-masonry.md §6.5 [S61, S62]",
+            )
+        )
+    if cast_volume:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Castable: cure 16–24 h above 60 °F kept damp, never let it freeze, and dry it "
+                    "out slowly before the first firing (for Mizzou: 75 °F/h with a ½ h hold per "
+                    "inch at 250, 500 and 1000 °F). Follow the maker's sheet for your castable."
+                ),
+                reference="combustion-and-masonry.md §6.2 [S54, S56]",
+            )
         )
     for mid, area_mm2 in sorted(sheet_area.items()):
         m = material(mid)

@@ -75,9 +75,13 @@ def top_temperature(kiln: Kiln) -> tuple[Quantity, Step]:
     )
 
 
-def heat_loss(kiln: Kiln, *, ambient: Quantity | None = None) -> HeatLoss:
-    """Heat loss with the inside held at the top temperature and still air outside."""
+def heat_loss(
+    kiln: Kiln, *, ambient: Quantity | None = None, inside: Quantity | None = None
+) -> HeatLoss:
+    """Heat loss with the inside held at the top temperature (or ``inside``), in still air."""
     top, top_step = top_temperature(kiln)
+    if inside is not None:
+        top, top_step = inside, Step(name="Inside temperature", value=show(inside))
     air = ambient if ambient is not None else kiln.site.ambient
     t_in, t_air = si(top, "K"), si(air, "K")
     emissivity = EMISSIVITY[kiln.shell.finish]

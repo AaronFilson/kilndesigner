@@ -12,7 +12,8 @@ chamber:
 roof:
   type: flat
 loading:
-  type: front_door
+  type: door
+  face: front
 lining:
   walls:
     - material: ifb-jm26

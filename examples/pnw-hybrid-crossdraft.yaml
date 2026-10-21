@@ -1,0 +1,64 @@
+# The author's kiln, first estimate (docs/planning/02-plan.md, "The first two users").
+# A cone 10 cross-draft with a cast arch: elements for the slow early stages, then propane.
+# 28 in wide inside with 8 in walls keeps the outside to 44 in, the site's limit.
+schema: 1
+name: PNW hybrid cross-draft, cone 10, bricked door
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28 in
+  depth: 60 in # along the draft, from the burners to the flue
+  height: 44 in # to the arch's springline; the arch adds its rise
+roof:
+  type: sprung_arch
+  rise: 3.75 in # a 60° arch: 0.134 × the span
+loading:
+  type: door
+  face: right
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A # 48 A continuous
+    alloy: kanthal-apm
+    walls: [left]
+    off_above: 1650 degF
+  gas:
+    burners:
+      type: venturi
+      wall: front
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  electricity_price: 0.12 USD/kWh
+  propane_price: 3.50 USD/gallon
+  materials_budget: 5000 USD

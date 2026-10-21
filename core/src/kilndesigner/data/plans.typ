@@ -75,6 +75,43 @@
   )
 ]
 
+#if d.gas != none [
+  = Burners, propane and chimney
+  #table(
+    columns: (auto, 1fr),
+    [Item], [Value],
+    ..d.gas.rows.map(row => (row.at(0), row.at(1))).flatten()
+  )
+  == Propane supply at #d.gas.supply_temperature
+  #table(
+    columns: (1fr, auto, auto),
+    [Supply], [Capacity], [Meets the design input?],
+    ..d.gas.supply.map(s => (s.case, s.capacity, if s.meets_demand [yes] else [*no*])).flatten()
+  )
+  == Other burner choices
+  #table(
+    columns: (1fr, auto, auto, auto, auto),
+    [Burner], [Count], [Pressure], [Each], [Cost],
+    ..d.gas.options.map(o => (o.model, str(o.count), o.pressure, o.each, "$" + str(calc.round(o.total_cost, digits: 2)))).flatten()
+  )
+]
+
+#if d.hybrid != none [
+  = Elements and burners together
+  #table(
+    columns: (auto, 1fr),
+    [Item], [Value],
+    ..d.hybrid.rows.map(row => (row.at(0), row.at(1))).flatten()
+  )
+  #for c in d.hybrid.at("charts", default: ()) [
+    #image(c, width: 100%)
+  ]
+  The first chart is what each kWh that stays in the kiln costs: an element keeps all of its
+  energy in the kiln, but a burner loses what goes up the chimney, which grows with the kiln's
+  temperature. The second is the element power left over after the kiln's steady heat loss: what
+  is left to heat the ware and walls.
+]
+
 #if d.course_plans.len() > 0 [
   = Brick course plans
   Each drawing shows one layer as seen from inside the kiln, course by course from the bottom

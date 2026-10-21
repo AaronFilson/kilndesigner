@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Literal
 from xml.sax.saxutils import escape
 
-from kilndesigner.geometry import COLOURS, Part, lining_parts
+from kilndesigner.geometry import COLOURS, Part, arch_outline, lining_parts
 from kilndesigner.masonry import IN, LayerPlan
 from kilndesigner.model import Kiln
 from kilndesigner.units import si
@@ -21,12 +21,15 @@ type Axis = Literal[0, 1, 2]
 
 @dataclass(frozen=True)
 class Rect:
+    """A filled region: a rectangle, or the polygon ``points`` when given (an arch ring)."""
+
     x: float
     y: float
     w: float
     h: float
     fill: tuple[float, float, float]
     layer: str  # a part name or a label
+    points: tuple[tuple[float, float], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -66,9 +69,29 @@ def length_text(mm: float, us: bool) -> str:
     return f"{mm:.0f} mm"
 
 
+def _arch_cut(p: Part, axis: Axis) -> Rect | None:
+    """An arch ring or cap cut across (y = 0: its outline) or along (x = 0: a band)."""
+    assert p.arch is not None
+    fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+    a = p.arch
+    if axis == 1:
+        points = tuple(arch_outline(p))
+        xs, zs = [x for x, _ in points], [z for _, z in points]
+        return Rect(min(xs), min(zs), max(xs) - min(xs), max(zs) - min(zs), fill, p.name, points)
+    if axis == 0:
+        bottom = p.lo[2] if p.cap else a.centre_z + a.radius
+        top = a.centre_z + a.radius + a.thickness
+        return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
+    return None
+
+
 def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rect]:
     rects: list[Rect] = []
     for p in parts:
+        if p.arch is not None:
+            if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6 and (rect := _arch_cut(p, axis)):
+                rects.append(rect)
+            continue
         if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6:
             rects.append(
                 Rect(
@@ -147,9 +170,14 @@ def view_svg(view: View, font: float | None = None) -> str:
         f'<g stroke="#222" stroke-width="{stroke:.2f}">',
     ]
     for r in view.rects:
+        title = f"<title>{escape(r.layer)}</title>"
+        if r.points:
+            pts = " ".join(f"{x:.2f},{-y:.2f}" for x, y in r.points)
+            out.append(f'<polygon points="{pts}" fill="{_hex(r.fill)}">{title}</polygon>')
+            continue
         out.append(
             f'<rect x="{r.x:.2f}" y="{-(r.y + r.h):.2f}" width="{r.w:.2f}" height="{r.h:.2f}" '
-            f'fill="{_hex(r.fill)}"><title>{escape(r.layer)}</title></rect>'
+            f'fill="{_hex(r.fill)}">{title}</rect>'
         )
     for c in view.circles:
         out.append(
@@ -243,7 +271,9 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
             layer = r.layer.replace("/", "_")
             if layer not in doc.layers:
                 doc.layers.add(layer)
-            pts = [(r.x, r.y), (r.x + r.w, r.y), (r.x + r.w, r.y + r.h), (r.x, r.y + r.h)]
+            pts = list(r.points) or [
+                (r.x, r.y), (r.x + r.w, r.y), (r.x + r.w, r.y + r.h), (r.x, r.y + r.h)
+            ]  # fmt: skip
             msp.add_lwpolyline(
                 [(x + dx, y) for x, y in pts], close=True, dxfattribs={"layer": layer}
             )

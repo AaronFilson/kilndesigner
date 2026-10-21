@@ -11,6 +11,7 @@ import yaml
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.electric import ElectricDesign
+from kilndesigner.gas import GasDesign
 from kilndesigner.masonry import Masonry
 from kilndesigner.model import Kiln
 from kilndesigner.units import parse_quantity, si
@@ -74,7 +75,12 @@ def _purchase_word(unit: str, count: int) -> str:
     return f"{count} {word}{'' if count == 1 else 's'}"
 
 
-def bill_of_materials(kiln: Kiln, masonry: Masonry, electric: ElectricDesign | None) -> Bom:
+def bill_of_materials(
+    kiln: Kiln,
+    masonry: Masonry,
+    electric: ElectricDesign | None,
+    gas: GasDesign | None = None,
+) -> Bom:
     prices = price_list()
     lines: list[BomLine] = []
     findings: list[Finding] = []
@@ -142,12 +148,45 @@ def bill_of_materials(kiln: Kiln, masonry: Masonry, electric: ElectricDesign | N
                 )
             )
 
+    if gas is not None and gas.burners is not None:
+        b = gas.burners
+        lines.append(
+            BomLine(
+                item=f"{b.model} burner",
+                needed=f"{b.count} burners at {b.pressure}, {b.each} each",
+                buy=f"{b.count} burners",
+                unit_price=f"${b.total_cost / b.count:,.2f}",
+                cost=b.total_cost,
+                priced_as=f"{b.model}, Ward Burner Systems",
+                source="combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
+            )
+        )
+        total += b.total_cost
+    if kiln.loading.type == "car":
+        cost = kiln.loading.car_hardware_cost
+        lines.append(
+            BomLine(
+                item="Kiln car: wheels, rails, frame and sand seal",
+                needed="as designed by the builder",
+                buy="1 car",
+                unit_price=None if cost is None else f"${si(cost, 'USD'):,.2f}",
+                cost=None if cost is None else si(cost, "USD"),
+                priced_as=None if cost is None else "the design's own estimate",
+                source=None if cost is None else "the design file",
+            )
+        )
+        if cost is None:
+            unpriced.append("the kiln car's hardware (set loading.car_hardware_cost)")
+        else:
+            total += si(cost, "USD")
+
     findings.append(
         Finding(
             level="info",
             message=(
                 f"Prices were checked on {prices.checked} and will change. Steel, hardware, "
-                "electrical parts (relays, controller, wiring) and shipping are not included."
+                "electrical parts (relays, controller, wiring), gas fittings and shipping are not "
+                "included."
             ),
         )
     )

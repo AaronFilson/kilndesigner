@@ -58,6 +58,13 @@ items:
     price: 83.05 USD
     seller: High Temp Refractory Store (eBay)
     source: "combustion-and-masonry.md §9 [S73]"
+  - material: kast-o-lite-30-li-plus
+    description: Kast-O-Lite 30 LI Plus, 55 lb bag
+    unit: lb
+    per: 55
+    price: 115.21 USD
+    seller: Refractory West
+    source: "combustion-and-masonry.md §9 [S51]"
   - material: kast-o-lite-26-li-plus
     description: Kast-O-Lite 30 LI Plus, 55 lb bag (the 26 grade's price was not found)
     unit: lb

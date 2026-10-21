@@ -301,13 +301,23 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                 note="Power above the loss is what heats the ware and walls near the top.",
             )
         )
-        if ratio <= 1.0:
+        if ratio <= 1.0 and kiln.heat.gas is None:
             findings.append(
                 Finding(
                     level="error",
                     message=(
                         "The installed power is no more than the heat loss at top temperature: "
                         "the kiln can never reach it. Add power or insulation."
+                    ),
+                )
+            )
+        elif ratio <= 1.0:
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        "The elements alone can't hold the top temperature; in this hybrid the "
+                        "burners take over before then."
                     ),
                 )
             )

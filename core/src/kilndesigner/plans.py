@@ -16,7 +16,9 @@ from typing import Any, cast
 import typst
 
 from kilndesigner.bom import Bom, bill_of_materials
+from kilndesigner.charts import Marker, Series, line_chart
 from kilndesigner.drawings import course_plan_svg, section_views, view_svg, write_dxf
+from kilndesigner.hybrid import CostPoint, HybridAnalysis
 from kilndesigner.masonry import MasonryPlan, plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.report import Report
@@ -29,6 +31,38 @@ LAYING_WORDS = {
     "flat": "bricks laid flat",
     "soldier": "bricks standing on end",
 }
+
+
+def hybrid_charts(h: HybridAnalysis, us: bool) -> dict[str, str]:
+    def t(p: CostPoint) -> float:
+        return p.temperature_f if us else p.temperature_c
+
+    unit = "°F" if us else "°C"
+    switch = h.switch_over_c * 9 / 5 + 32 if us else h.switch_over_c
+    marker = [Marker(switch, f"switch-over, {h.switch_over}")]
+    cost = [
+        Series("Electricity", [(t(p), p.electric_per_kwh) for p in h.points]),
+        Series("Propane, oxidising (3% O₂)", [(t(p), p.propane_per_kwh) for p in h.points]),
+    ]
+    reducing = [(t(p), p.propane_reducing_per_kwh) for p in h.points if p.propane_reducing_per_kwh]
+    if reducing:
+        cost.append(Series("Propane, reducing (λ 0.9)", reducing, dashed=True))  # type: ignore[arg-type]
+    surplus = [Series("Element power left over", [(t(p), p.element_surplus_kw) for p in h.points])]
+    return {
+        "cost.svg": line_chart(
+            cost,
+            x_label=f"Kiln temperature ({unit})",
+            y_label="$ per kWh kept in the kiln",
+            markers=marker,
+            y_format="${:.2f}",
+        ),
+        "surplus.svg": line_chart(
+            surplus,
+            x_label=f"Kiln temperature ({unit})",
+            y_label="kW for heating ware and walls",
+            markers=marker,
+        ),
+    }
 
 
 @dataclass(frozen=True)
@@ -82,6 +116,46 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
     working = [{"title": "Heat loss", "steps": _steps(report.heat_loss.working)}]
     if report.electric is not None:
         working.append({"title": "Elements and circuit", "steps": _steps(report.electric.working)})
+    gas: dict[str, Any] | None = None
+    if report.gas is not None:
+        g = report.gas
+        working.append({"title": "Burners, propane and chimney", "steps": _steps(g.working)})
+        rows = [
+            ["Construction (Ward's classes)", g.construction],
+            ["Chamber volume, Ward's way", g.ward_volume],
+            ["Burner input, Ward's range", g.demand_range],
+            ["Design burner input", g.design_input],
+            ["Propane at full fire", g.propane_at_full_fire],
+        ]
+        if g.burners is not None:
+            b = g.burners
+            rows.append(["Burners", f"{b.count} × {b.model} at {b.pressure} ({b.each} each)"])
+        rows += [["Exit flue area", g.flue_area]]
+        if g.chimney_height is not None:
+            rows.append(["Chimney height", g.chimney_height])
+        rows += [["Draft", line] for line in g.draft]
+        if g.tank_suggestion is not None:
+            rows.append(["A tank that would keep up", g.tank_suggestion])
+        gas = {
+            "rows": rows,
+            "supply_temperature": g.supply_temperature,
+            "supply": [s.model_dump(mode="json") for s in g.supply],
+            "options": [o.model_dump(mode="json") for o in g.burner_options],
+        }
+        summary.append(["Burner input", g.design_input])
+    hybrid: dict[str, Any] | None = None
+    if report.hybrid is not None:
+        h = report.hybrid
+        working.append({"title": "Elements and burners together", "steps": _steps(h.working)})
+        hybrid = {
+            "rows": [
+                ["Element power", h.element_power],
+                ["Electric ceiling (upper bound)", h.electric_ceiling],
+                ["Switch to the burners at", f"{h.switch_over}: {h.switch_over_reason}"],
+                ["Same cost per useful kWh at", h.cost_crossover or "never in this firing"],
+            ],
+        }
+        summary.append(["Switch from elements to burners", h.switch_over])
     return {
         "name": kiln.name,
         "engine_version": report.engine_version,
@@ -90,6 +164,8 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
         "findings": [f.model_dump(mode="json") for f in findings],
         "faces": [f.model_dump(mode="json") for f in report.heat_loss.faces],
         "elements": elements,
+        "gas": gas,
+        "hybrid": hybrid,
         "cut_list": [c.model_dump(mode="json") for c in masonry.result.cut_list],
         "bom": {
             "lines": [
@@ -141,6 +217,10 @@ def build_plans(
                     "file": name,
                 }
             )
+        if report.hybrid is not None:
+            for name, svg in hybrid_charts(report.hybrid, us).items():
+                (root / name).write_text(svg, encoding="utf-8")
+                data["hybrid"]["charts"] = [*data["hybrid"].get("charts", []), name]
         (root / "data.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         template = resources.files("kilndesigner.data").joinpath("plans.typ").read_text("utf-8")
         (root / "plans.typ").write_text(template, encoding="utf-8")

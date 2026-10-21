@@ -23,7 +23,7 @@ def test_report_matches_golden(path: Path, update_golden: bool) -> None:
     text = json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     if update_golden or not golden.exists():
         GOLDEN.mkdir(exist_ok=True)
-        golden.write_text(text, encoding="utf-8")
+        golden.write_text(text, encoding="utf-8", newline="\n")
     assert report == _approx(json.loads(golden.read_text(encoding="utf-8")))
 
 

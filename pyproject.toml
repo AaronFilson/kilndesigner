@@ -40,6 +40,10 @@ select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "N", "PT", "C4", "PIE", "
 isort.known-first-party = ["kilndesigner", "kilndesigner_cli"]
 ignore = ["RUF001", "RUF002", "RUF003"]  # °, ×, ² and – are intended in docstrings and messages
 
+[tool.ruff.lint.per-file-ignores]
+# SVG markup reads better on one line than split across f-strings
+"core/src/kilndesigner/charts.py" = ["E501"]
+
 [tool.pyright]
 include = ["core/src", "cli/src", "core/tests", "cli/tests"]
 pythonVersion = "3.14"

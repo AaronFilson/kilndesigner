@@ -83,8 +83,21 @@ class SprungArch(Spec):
 type Roof = Annotated[FlatRoof | SprungArch, Field(discriminator="type")]
 
 
+type WallFace = Literal["left", "right", "back", "front"]
+
+
 class Loading(Spec):
-    type: Literal["front_door", "car"] = "front_door"
+    """How ware goes in: through a door in one wall, or on a car that rolls out through it.
+
+    On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car.
+    """
+
+    type: Literal["door", "car"] = "door"
+    face: WallFace = Field(default="front", description="The wall with the door, or the car's end")
+    car_hardware_cost: Money | None = Field(
+        default=None,
+        description="Wheels, rails, frame and seal for a car; no sourced prices exist for these",
+    )
 
 
 class Firing(Spec):
@@ -121,16 +134,69 @@ class Electric(Spec):
     power: Power | None = Field(
         default=None, description="The power to install; the circuit's continuous limit if unset"
     )
+    off_above: Temperature | None = Field(
+        default=None,
+        description="In a hybrid kiln, the temperature where the elements hand over to gas",
+    )
+
+
+class Burners(Spec):
+    type: Literal["venturi", "power"] = Field(
+        default="venturi", description="Venturi (natural draft, no power) or power (blower)"
+    )
+    count: int | None = Field(default=None, ge=1, description="Chosen for you when left out")
+    model: str | None = Field(default=None, description="For example 'GACO MR100'")
+    wall: WallFace = Field(default="front", description="The wall the burners fire through")
+
+
+class Cylinders(Spec):
+    type: Literal["cylinders"] = "cylinders"
+    count: int = Field(ge=1)
+    size: Literal["100 lb"] = "100 lb"
+
+
+class Tank(Spec):
+    type: Literal["tank"] = "tank"
+    gallons: Literal[120, 150, 250, 325, 500, 1000]
+
+
+type PropaneSupply = Annotated[Cylinders | Tank, Field(discriminator="type")]
+
+
+class Gas(Spec):
+    fuel: Literal["propane"] = "propane"
+    burners: Burners = Field(default_factory=Burners)
+    supply: PropaneSupply
+    reduction: bool = Field(default=True, description="Whether the kiln is fired in reduction")
+    firing_speed: Literal["fast", "slow"] = Field(
+        default="fast",
+        description=(
+            "Burners sized for a fast firing (about 6–7 hours, the high end of Ward's range) or "
+            "a slow one (about 14–18 hours, the low end)"
+        ),
+    )
 
 
 class Heat(Spec):
     electric: Electric | None = None
+    gas: Gas | None = None
 
     @model_validator(mode="after")
     def _some_heat(self) -> Heat:
-        if self.electric is None:
-            raise ValueError("give the kiln a heat source")
+        if self.electric is None and self.gas is None:
+            raise ValueError("give the kiln a heat source: electric, gas, or both")
         return self
+
+
+class Draft(Spec):
+    """How the flame travels through the kiln to the chimney."""
+
+    type: Literal["cross", "down", "up"]
+    flue_wall: WallFace = Field(default="back", description="Where the gases leave (cross-draft)")
+    run_to_chimney: Length = Field(
+        default_factory=lambda: Q_(9, "in"),
+        description="From the outside of the flue wall to the chimney's base",
+    )
 
 
 class Shell(Spec):
@@ -164,8 +230,9 @@ class Kiln(Spec):
     lining: Lining
     shell: Shell = Field(default_factory=Shell)
     heat: Heat
+    draft: Draft | None = None
     site: Site = Field(default_factory=Site)
 
     @property
-    def door_face(self) -> Face | None:
-        return "front" if self.loading.type == "front_door" else None
+    def door_face(self) -> Face:
+        return self.loading.face

@@ -107,6 +107,19 @@
   source: "electric-and-thermal.md §4.5, HWI Kast-O-Lite 26 LI Plus data 1/09 [S44]"
   status: excerpt
 
+- id: kast-o-lite-30-li-plus
+  name: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable
+  kind: insulating_castable
+  # 98 lb/ft³ dried at 220 °F; 92 lb/ft³ of material places one cubic foot.
+  density: 98 lb/ft**3
+  max_service: 3000 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 5.6], [800, 4.2], [1200, 4.1], [1600, 4.5], [2000, 4.9]]
+  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+  status: excerpt
+
 - id: mizzou-castable-plus
   name: HarbisonWalker Mizzou Castable Plus dense castable
   kind: dense_castable

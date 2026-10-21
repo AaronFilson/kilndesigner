@@ -3,7 +3,7 @@
     "findings": [
       {
         "level": "info",
-        "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring) and shipping are not included.",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
         "reference": null
       }
     ],
@@ -242,10 +242,11 @@
     },
     {
       "level": "info",
-      "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring) and shipping are not included.",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
       "reference": null
     }
   ],
+  "gas": null,
   "heat_loss": {
     "ambient": "70 °F",
     "faces": [
@@ -503,6 +504,7 @@
       }
     ]
   },
+  "hybrid": null,
   "masonry": {
     "cut_list": [
       {

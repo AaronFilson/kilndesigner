@@ -1,10 +1,10 @@
+import math
 from pathlib import Path
 
 import pytest
 
 from kilndesigner import load_design, parse_design
 from kilndesigner.geometry import (
-    GeometryNotSupportedError,
     build_model,
     element_runs,
     export_model,
@@ -49,11 +49,37 @@ def test_element_runs_follow_the_element_walls(kiln) -> None:  # type: ignore[no
     assert runs[0].path[0][2] == pytest.approx(24 * IN / 6)
 
 
-def test_arched_roofs_are_not_modelled_yet() -> None:
+def _arched():  # type: ignore[no-untyped-def]
     text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
-    arched = parse_design(text.replace("type: flat", "type: sprung_arch\n  rise: 3 in"))
-    with pytest.raises(GeometryNotSupportedError):
-        lining_parts(arched)
+    return parse_design(text.replace("type: flat", "type: sprung_arch\n  rise: 3 in"))
+
+
+def test_arched_roof_parts() -> None:
+    parts = lining_parts(_arched())
+    roof = [p for p in parts if p.name.startswith("roof/")]
+    caps = [p for p in parts if p.cap]
+    assert len(roof) == 2
+    assert len(caps) == 4  # two layers at each end
+    inner = roof[0]
+    assert inner.arch is not None
+    # The arch's hot face meets the walls' inside faces at the springline.
+    a = inner.arch
+    half_span = a.radius * math.sin(a.half_angle)
+    assert half_span == pytest.approx(22.5 * IN / 2)
+    assert a.centre_z + a.radius * math.cos(a.half_angle) == pytest.approx(24 * IN)
+    assert a.centre_z + a.radius == pytest.approx(27 * IN)  # 3 in rise
+
+
+@pytest.mark.geometry
+def test_arch_solids_match_their_parts() -> None:
+    kiln = _arched()
+    parts = lining_parts(kiln)
+    model = build_model(kiln)
+    for part, solid in zip(parts, model.children, strict=True):
+        assert solid.volume == pytest.approx(part.volume, rel=2e-3), part.name
+        box = solid.bounding_box()
+        assert pytest.approx(part.lo[1], abs=0.5) == box.min.Y, part.name
+        assert pytest.approx(part.hi[1], abs=0.5) == box.max.Y, part.name
 
 
 @pytest.mark.geometry
