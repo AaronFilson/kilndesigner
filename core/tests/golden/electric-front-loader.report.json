@@ -1,4 +1,53 @@
 {
+  "bom": {
+    "findings": [
+      {
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring) and shipping are not included.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "280 bricks",
+        "cost": 2007.6,
+        "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "needed": "280 bricks (168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage)",
+        "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$7.17"
+      },
+      {
+        "buy": "37 bricks",
+        "cost": 230.88,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "needed": "37 bricks (21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "1 roll",
+        "cost": 150.0,
+        "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "needed": "32.4 ft² (1 in thick; area plus 10% for trimming)",
+        "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S73]",
+        "unit_price": "$150.00"
+      },
+      {
+        "buy": "4 lb",
+        "cost": 222.6,
+        "item": "Kanthal A-1 wire",
+        "needed": "9 elements of 13 AWG, 28.32 ft each (3.19 lb)",
+        "priced_as": "Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found), TEMCo Industrial",
+        "source": "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)",
+        "unit_price": "$55.65/lb"
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 2611.08
+  },
   "chamber_volume": "7.03 ft³",
   "electric": {
     "alloy": "Kanthal A-1",
@@ -167,6 +216,11 @@
       "reference": null
     },
     {
+      "level": "warning",
+      "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
+      "reference": null
+    },
+    {
       "level": "info",
       "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
@@ -180,6 +234,16 @@
       "level": "info",
       "message": "The wire (1.83 mm) is thinner than the 3 mm Kanthal recommends for long life in grooves. Kiln makers commonly use 12–15 gauge; expect to replace elements more often.",
       "reference": "electric-and-thermal.md §1.6 [S9, S13]"
+    },
+    {
+      "level": "info",
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring) and shipping are not included.",
+      "reference": null
     }
   ],
   "heat_loss": {
@@ -326,7 +390,7 @@
     ],
     "top_temperature": "2345 °F",
     "total": "5.723 kW",
-    "total_watts": 5723.3354718354285,
+    "total_watts": 5723.335471835284,
     "working": [
       {
         "formula": null,
@@ -436,6 +500,121 @@
         "note": null,
         "reference": null,
         "value": "5.723 kW (1.95e+04 Btu/h)"
+      }
+    ]
+  },
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 12,
+        "cut": "cut to 2 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 48,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 4.5 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 4,
+        "cut": "cut to 4.5 in long, ripped to 1.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 6.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 10,
+        "cut": "ripped to 1.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 2 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 2 in long, ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 4,
+        "cut": "cut to 6.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 3,
+        "cut": "ripped to 2 in",
+        "material": "ifb-k23"
+      }
+    ],
+    "findings": [
+      {
+        "level": "info",
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      },
+      {
+        "level": "warning",
+        "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
+        "reference": null
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 280.0,
+        "detail": "168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-jm26",
+        "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "priced_amount": 280.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 37.0,
+        "detail": "21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "priced_amount": 37.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 32.4,
+        "detail": "1 in thick; area plus 10% for trimming",
+        "kind": "fibre_blanket",
+        "material": "kaowool-blanket-8pcf",
+        "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "priced_amount": 32.40607638888886,
+        "unit": "ft²"
       }
     ]
   },

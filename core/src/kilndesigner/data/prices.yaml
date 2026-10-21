@@ -1,0 +1,76 @@
+# Prices for the bill of materials (US, checked 2026-10-21).
+# Source: docs/research/combustion-and-masonry.md §9. Each price is for one catalogue item.
+# "comparable: true" marks a price for a similar product, used when the exact one wasn't found.
+# Prices change; the plans print the date checked, and a design can override any of them.
+checked: "2026-10-21"
+items:
+  - material: ifb-k23
+    description: K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price)
+    unit: bricks
+    per: 1
+    price: 6.24 USD
+    seller: High Temp Refractory Store (eBay, Portland)
+    source: "combustion-and-masonry.md §9 [S71]"
+  - material: ifb-jm23
+    description: G-23 insulating firebrick, 9 × 4½ × 2½ in
+    unit: bricks
+    per: 1
+    price: 5.60 USD
+    seller: Sheffield Pottery
+    source: "combustion-and-masonry.md §9 [S70]"
+    comparable: true
+  - material: ifb-jm26
+    description: G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked)
+    unit: bricks
+    per: 1
+    price: 7.17 USD
+    seller: Sheffield Pottery
+    source: "combustion-and-masonry.md §9 [S70]"
+    comparable: true
+  - material: hard-firebrick-kx99
+    description: Super-duty hard firebrick, 9 × 4½ × 2½ in
+    unit: bricks
+    per: 1
+    price: 5.45 USD
+    seller: Sheffield Pottery
+    source: "combustion-and-masonry.md §9 [S70]"
+    comparable: true
+  - material: kaowool-blanket-8pcf
+    description: Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in)
+    unit: ft²·in
+    per: 50
+    price: 150.00 USD
+    seller: High Temp Refractory Store (eBay)
+    source: "combustion-and-masonry.md §9 [S73]"
+    comparable: true
+  - material: kaowool-blanket-6pcf
+    description: Ceramic fibre blanket, 6 pcf, 2300 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in)
+    unit: ft²·in
+    per: 50
+    price: 70.00 USD
+    seller: High Temp Refractory Store (eBay)
+    source: "combustion-and-masonry.md §9 [S73]"
+    comparable: true
+  - material: mizzou-castable-plus
+    description: Mizzou Castable Plus, 55 lb bag
+    unit: lb
+    per: 55
+    price: 83.05 USD
+    seller: High Temp Refractory Store (eBay)
+    source: "combustion-and-masonry.md §9 [S73]"
+  - material: kast-o-lite-26-li-plus
+    description: Kast-O-Lite 30 LI Plus, 55 lb bag (the 26 grade's price was not found)
+    unit: lb
+    per: 55
+    price: 115.21 USD
+    seller: Refractory West
+    source: "combustion-and-masonry.md §9 [S51]"
+    comparable: true
+  - material: kanthal-a1
+    description: Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found)
+    unit: lb
+    per: 1
+    price: 55.65 USD
+    seller: TEMCo Industrial
+    source: "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)"
+    comparable: true

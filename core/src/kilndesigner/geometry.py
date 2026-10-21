@@ -5,8 +5,8 @@ width, y from the front (negative) to the back, z up. Each layer of each face is
 solid, so the viewer can pick a part and show its working:
 
 - the floor runs under the whole kiln;
-- the left and right walls stand on the floor and run the full outside depth, closing the corners;
-- the back and front (door) walls fit between the left and right walls;
+- the walls stand on the floor and wrap the chamber layer by layer, like an onion: in each ring,
+  the left and right walls run through and the back and front (door) fit between them;
 - the roof sits on top of everything.
 
 build123d is imported lazily: it loads OpenCascade, which takes seconds, and the calculations
@@ -70,7 +70,9 @@ def lining_parts(kiln: Kiln) -> list[Part]:
     if not isinstance(kiln.roof, FlatRoof):
         raise GeometryNotSupportedError("3D models of arched roofs come with the masonry module")
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
-    t = {f: sum(x for _, x in _thicknesses(kiln, f)) for f in ("left", "right", "back", "front")}
+    walls = ("left", "right", "back", "front")
+    layers = {f: _thicknesses(kiln, f) for f in walls}
+    t = {f: sum(x for _, x in layers[f]) for f in walls}
     x0, x1 = -w / 2 - t["left"], w / 2 + t["right"]
     y0, y1 = -d / 2 - t["front"], d / 2 + t["back"]
     parts: list[Part] = []
@@ -80,26 +82,44 @@ def lining_parts(kiln: Kiln) -> list[Part]:
         kind = material(mat).kind
         parts.append(Part(name, mat, kind, (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2])))
 
+    def reach(face: str, i: int) -> float:
+        """How far the face's layers 1..i reach out from the chamber (mm)."""
+        return sum(x for _, x in layers[face][:i])
+
     cum = 0.0
     for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
         add("floor", i, mat, (x0, y0, -cum - th), (x1, y1, -cum))
         cum += th
-    cum = 0.0
-    for i, (mat, th) in enumerate(_thicknesses(kiln, "left")):
-        add("left", i, mat, (-w / 2 - cum - th, y0, 0), (-w / 2 - cum, y1, h))
-        cum += th
-    cum = 0.0
-    for i, (mat, th) in enumerate(_thicknesses(kiln, "right")):
-        add("right", i, mat, (w / 2 + cum, y0, 0), (w / 2 + cum + th, y1, h))
-        cum += th
-    cum = 0.0
-    for i, (mat, th) in enumerate(_thicknesses(kiln, "back")):
-        add("back", i, mat, (-w / 2, d / 2 + cum, 0), (w / 2, d / 2 + cum + th, h))
-        cum += th
-    cum = 0.0
-    for i, (mat, th) in enumerate(_thicknesses(kiln, "front")):
-        add("front", i, mat, (-w / 2, -d / 2 - cum - th, 0), (w / 2, -d / 2 - cum, h))
-        cum += th
+    # The walls wrap the chamber like an onion: each ring of layer i sits around ring i - 1.
+    # The side walls' layer i runs the depth of ring i; the back and door fit between the side
+    # walls' layer i - 1. So brick meets brick at the corners, and blanket meets blanket.
+    for i in range(max(len(v) for v in layers.values())):
+        left_in, left_out = reach("left", i), reach("left", i + 1)
+        right_in, right_out = reach("right", i), reach("right", i + 1)
+        front_in, front_out = reach("front", i), reach("front", i + 1)
+        back_in, back_out = reach("back", i), reach("back", i + 1)
+        ring_y = (-d / 2 - front_out, d / 2 + back_out)
+        ring_x = (-w / 2 - left_in, w / 2 + right_in)
+        if i < len(layers["left"]):
+            mat = layers["left"][i][0]
+            add("left", i, mat, (-w / 2 - left_out, ring_y[0], 0), (-w / 2 - left_in, ring_y[1], h))
+        if i < len(layers["right"]):
+            mat = layers["right"][i][0]
+            add(
+                "right", i, mat, (w / 2 + right_in, ring_y[0], 0), (w / 2 + right_out, ring_y[1], h)
+            )
+        if i < len(layers["back"]):
+            mat = layers["back"][i][0]
+            add("back", i, mat, (ring_x[0], d / 2 + back_in, 0), (ring_x[1], d / 2 + back_out, h))
+        if i < len(layers["front"]):
+            mat = layers["front"][i][0]
+            add(
+                "front",
+                i,
+                mat,
+                (ring_x[0], -d / 2 - front_out, 0),
+                (ring_x[1], -d / 2 - front_in, h),
+            )
     cum = 0.0
     for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
         add("roof", i, mat, (x0, y0, h + cum), (x1, y1, h + cum + th))

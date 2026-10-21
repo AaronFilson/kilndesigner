@@ -74,6 +74,8 @@ def summary(report: Report) -> str:
                 f"{el.length_each} each, {el.wiring}"
             )
             lines.append(f"  Surface load:     {el.surface_load}; coil pitch {el.pitch}")
+    if report.bom is not None:
+        lines.append(f"  Materials:        ${report.bom.total:,.0f} (priced items)")
     lines.extend(f"  [{f.level}] {f.message}" for f in report.findings)
     return "\n".join(lines)
 
@@ -81,22 +83,34 @@ def summary(report: Report) -> str:
 @app.command()
 def build(
     design: DesignPath,
-    out: Annotated[Path, typer.Option(help="Folder for the report and the 3D model")] = Path("out"),
+    out: Annotated[Path, typer.Option(help="Folder for everything written")] = Path("out"),
     model: Annotated[bool, typer.Option(help="Build the 3D model (STEP and glTF)")] = True,
+    plans: Annotated[bool, typer.Option(help="Draw the plans (PDF and DXF)")] = True,
 ) -> None:
-    """Calculate a design and write the report and the 3D model."""
+    """Calculate a design; write the report, the 3D model and the plans."""
+    from kilndesigner.geometry import GeometryNotSupportedError
+
     kiln = _load(design)
     report = _report(kiln, design)
     out.mkdir(parents=True, exist_ok=True)
     (out / "report.json").write_text(report.model_dump_json(indent=2), encoding="utf-8")
     written = [out / "report.json"]
     if model:
-        from kilndesigner.geometry import GeometryNotSupportedError, write_model
+        from kilndesigner.geometry import write_model
 
         try:
             written.extend(write_model(kiln, report, out).values())
         except GeometryNotSupportedError as e:
             typer.echo(f"No 3D model: {e}", err=True)
+    if plans:
+        from kilndesigner.plans import build_plans
+
+        try:
+            result = build_plans(kiln, report, dxf_path=out / "sections.dxf")
+            (out / "plans.pdf").write_bytes(result.pdf)
+            written += [out / "plans.pdf", out / "sections.dxf"]
+        except GeometryNotSupportedError as e:
+            typer.echo(f"No plans: {e}", err=True)
     typer.echo(summary(report))
     typer.echo("Wrote " + ", ".join(str(p) for p in written))
     if report.errors:

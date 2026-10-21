@@ -1,0 +1,169 @@
+"""The bill of materials: what to buy, in the units it's sold in, and roughly what it costs."""
+
+from __future__ import annotations
+
+import math
+from functools import cache
+from importlib import resources
+from typing import Any
+
+import yaml
+from pydantic import BaseModel, ConfigDict
+
+from kilndesigner.electric import ElectricDesign
+from kilndesigner.masonry import Masonry
+from kilndesigner.model import Kiln
+from kilndesigner.units import parse_quantity, si
+from kilndesigner.working import Finding
+
+
+class PriceItem(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    material: str
+    description: str
+    unit: str
+    per: float  # how many units one purchase covers
+    price: str
+    seller: str
+    source: str
+    comparable: bool = False
+
+
+class PriceList(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    checked: str
+    items: list[PriceItem]
+
+    def for_material(self, material_id: str) -> PriceItem | None:
+        return next((i for i in self.items if i.material == material_id), None)
+
+
+@cache
+def price_list() -> PriceList:
+    text = resources.files("kilndesigner.data").joinpath("prices.yaml").read_text(encoding="utf-8")
+    data: Any = yaml.safe_load(text)
+    return PriceList.model_validate(data)
+
+
+class BomLine(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    item: str
+    needed: str
+    buy: str
+    unit_price: str | None
+    cost: float | None
+    priced_as: str | None
+    source: str | None
+
+
+class Bom(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    lines: list[BomLine]
+    total: float
+    prices_checked: str
+    findings: list[Finding]
+
+
+def _purchase_word(unit: str, count: int) -> str:
+    words = {"bricks": "brick", "ft²·in": "roll", "lb": "bag"}
+    word = words.get(unit, "unit")
+    return f"{count} {word}{'' if count == 1 else 's'}"
+
+
+def bill_of_materials(kiln: Kiln, masonry: Masonry, electric: ElectricDesign | None) -> Bom:
+    prices = price_list()
+    lines: list[BomLine] = []
+    findings: list[Finding] = []
+    total = 0.0
+    unpriced: list[str] = []
+
+    for q in masonry.quantities:
+        item = prices.for_material(q.material)
+        needed = f"{q.amount:g} {q.unit} ({q.detail})"
+        if item is None:
+            lines.append(
+                BomLine(
+                    item=q.name, needed=needed, buy="—", unit_price=None, cost=None,
+                    priced_as=None, source=None,
+                )
+            )  # fmt: skip
+            unpriced.append(q.name)
+            continue
+        units = math.ceil(q.priced_amount / item.per - 1e-9)
+        unit_price = si(parse_quantity(item.price), "USD")
+        cost = units * unit_price
+        total += cost
+        lines.append(
+            BomLine(
+                item=q.name,
+                needed=needed,
+                buy=_purchase_word(item.unit, units)
+                if item.unit != "bricks"
+                else f"{units} bricks",
+                unit_price=f"${unit_price:,.2f}",
+                cost=cost,
+                priced_as=f"{item.description}, {item.seller}"
+                + (" (a comparable product)" if item.comparable else ""),
+                source=item.source,
+            )
+        )
+
+    if electric is not None and electric.elements is not None:
+        el = electric.elements
+        mass_lb = si(parse_quantity(el.wire_mass_total), "lb")
+        alloy_id = kiln.heat.electric.alloy if kiln.heat.electric else ""
+        item = prices.for_material(alloy_id)
+        buy_lb = math.ceil(mass_lb * 1.1 * 2) / 2  # 10% extra, to the next half pound
+        needed = f"{el.count} elements of {el.gauge}, {el.length_each} each ({el.wire_mass_total})"
+        if item is None:
+            lines.append(
+                BomLine(
+                    item=f"{electric.alloy} wire", needed=needed, buy=f"{buy_lb:g} lb",
+                    unit_price=None, cost=None, priced_as=None, source=None,
+                )
+            )  # fmt: skip
+            unpriced.append(f"{electric.alloy} wire")
+        else:
+            unit_price = si(parse_quantity(item.price), "USD")
+            total += buy_lb * unit_price
+            lines.append(
+                BomLine(
+                    item=f"{electric.alloy} wire",
+                    needed=needed,
+                    buy=f"{buy_lb:g} lb",
+                    unit_price=f"${unit_price:,.2f}/lb",
+                    cost=buy_lb * unit_price,
+                    priced_as=f"{item.description}, {item.seller}",
+                    source=item.source,
+                )
+            )
+
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                f"Prices were checked on {prices.checked} and will change. Steel, hardware, "
+                "electrical parts (relays, controller, wiring) and shipping are not included."
+            ),
+        )
+    )
+    if unpriced:
+        findings.append(
+            Finding(level="info", message="No price found for: " + ", ".join(unpriced) + ".")
+        )
+    budget = kiln.site.materials_budget
+    if budget is not None and total > si(budget, "USD"):
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The priced materials come to ${total:,.0f}, over the "
+                    f"${si(budget, 'USD'):,.0f} budget, before steel, hardware and shipping."
+                ),
+            )
+        )
+    return Bom(lines=lines, total=total, prices_checked=prices.checked, findings=findings)
