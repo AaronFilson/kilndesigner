@@ -91,6 +91,9 @@ class Firing(Spec):
     """The hottest the kiln must reach: a cone, a temperature, or both (the temperature wins)."""
 
     cone: str | None = Field(default=None, description="An Orton cone, for example '10' or '06'")
+    final_rate: Literal[60, 150] = Field(
+        default=60, description="Heating rate at the end of the firing, °C per hour, for the cone"
+    )
     top_temperature: Temperature | None = None
 
     @model_validator(mode="after")
@@ -130,6 +133,12 @@ class Heat(Spec):
         return self
 
 
+class Shell(Spec):
+    """The kiln's outside skin. Its finish sets how much heat it radiates."""
+
+    finish: Literal["painted", "oxidised_steel", "rolled_steel_sheet"] = "oxidised_steel"
+
+
 class Site(Spec):
     ambient: Temperature = Field(
         default_factory=lambda: Q_(70, "degF"), description="The air around the kiln"
@@ -153,6 +162,7 @@ class Kiln(Spec):
     roof: Roof = Field(default_factory=FlatRoof)
     loading: Loading = Field(default_factory=Loading)
     lining: Lining
+    shell: Shell = Field(default_factory=Shell)
     heat: Heat
     site: Site = Field(default_factory=Site)
 

@@ -22,6 +22,15 @@ def test_check_rejects_an_invalid_design(tmp_path: Path) -> None:
     assert result.exit_code == 2
 
 
+def test_build_writes_the_report_without_a_model(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "electric-front-loader.yaml")
+    result = runner.invoke(app, ["build", design, "--out", str(tmp_path), "--no-model"])
+    assert result.exit_code == 0, result.output
+    assert "Heat loss at top" in result.output
+    report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
+    assert report["electric"]["elements"]["count"] >= 3
+
+
 def test_schema_is_json() -> None:
     result = runner.invoke(app, ["schema"])
     assert result.exit_code == 0

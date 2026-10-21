@@ -15,20 +15,22 @@ loading:
   type: front_door
 lining:
   walls:
-    - material: ifb-k26
+    - material: ifb-jm26
       thickness: 4.5 in
-    - material: ceramic-fiber-board
+    - material: kaowool-blanket-8pcf
       thickness: 1 in
   floor:
-    - material: ifb-k26
+    - material: ifb-jm26
       thickness: 4.5 in
     - material: ifb-k23
       thickness: 2.5 in
   roof:
-    - material: ifb-k26
+    - material: ifb-jm26
       thickness: 4.5 in
-    - material: ceramic-fiber-board
+    - material: kaowool-blanket-8pcf
       thickness: 1 in
+shell:
+  finish: oxidised_steel
 heat:
   electric:
     supply:

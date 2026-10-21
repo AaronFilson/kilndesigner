@@ -2,8 +2,12 @@
 
 ## Commands
 
-uv is installed for the user but is not on PATH in every shell. Call it by its full path:
-`"$APPDATA/Python/Python311/Scripts/uv.exe"` (Git Bash). Below, `uv` means that.
+uv is installed for the user but is not on PATH. Call it by its full path,
+`C:/Users/bellows/AppData/Roaming/Python/Python311/Scripts/uv.exe`; below, `uv` means that.
+
+- One command per shell call: no `&&` chains, no shell variables such as `$U`, no `cd`.
+- Read, search and edit files with the built-in tools, not the shell.
+- Don't read or write outside this repo.
 
 | Task | Command |
 |---|---|
