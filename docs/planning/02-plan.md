@@ -218,6 +218,16 @@ references used. The plans print the working, so a builder can check it.
 | **M9** | **Real firings** | Import firing logs from the author's controller, compare them with the simulation, and fit wall properties to them | Parameter estimation (SciPy), data ingestion, model-versus-measurement reports |
 | Later | **Glass** | Templates, top-element layouts, annealing schedules | |
 
+### Status (2026-10-21, overnight)
+
+- **M0, M1, M2 and M3 are built**, on the stacked branches `m0` → `m1` → `m2` → `m3`, with 127
+  tests passing (published worked examples, Hypothesis invariants, golden reports).
+- The first results for the author's kiln are in [docs/kilns](../kilns/pnw-hybrid-crossdraft.md).
+- Validation lives in pytest (`core/tests`) rather than marimo notebooks so far; ADR 0009's
+  notebooks are still to do, as readable companions to those tests.
+- Not done in M3: skewbacks and the steel frame, a sourced car-hardware price, and the fuel and
+  electricity used per firing (which needs M6).
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
 the client's plans before the app exists.

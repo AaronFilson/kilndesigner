@@ -15,8 +15,27 @@ working and its source, so you can check it.
 ```
 uv sync
 uv run kilndesigner check examples/electric-front-loader.yaml
-uv run kilndesigner build examples/electric-front-loader.yaml --out out/
+uv run kilndesigner build examples/electric-front-loader.yaml --out out/front-loader
+uv run kilndesigner compare examples/pnw-hybrid-crossdraft.yaml examples/pnw-hybrid-crossdraft-budget.yaml
 ```
+
+`build` writes `report.json` (every result with its working and sources), `plans.pdf` (drawings,
+brick course plans, cut list, bill of materials, burner and propane checks, the working),
+`sections.dxf`, and the 3D model as `kiln.step` and `kiln.glb`.
+
+## What it does today
+
+- **Heat loss** through layered walls with temperature-dependent conductivity, in the manner of
+  ASTM C680, checked against published furnace-wall examples.
+- **Electric elements** by Kanthal's method: wire, length, coil, surface load, circuits, the NEC
+  continuous-load rule.
+- **Gas burners and propane**: Ward's sizing, burner choice by pressure, cylinder and tank
+  vaporization at your coldest firing day, chimney height and draft.
+- **Hybrid kilns**: what a useful kWh costs from the elements and from propane at each
+  temperature (combustion by Cantera), and when to switch over.
+- **Masonry**: brick-by-brick course plans with staggered joints, arches, castables, a cut list
+  and a priced bill of materials.
+- **3D model and plans** from one set of parts, so they can't disagree.
 
 ## How it's built
 

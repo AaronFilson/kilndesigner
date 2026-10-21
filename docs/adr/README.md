@@ -16,3 +16,4 @@ Each one is written once; a later change gets a new record that replaces the old
 | [0009](0009-physics-checked-against-published-references.md) | The physics is checked against published references, in CI | proposed | 2026-10-21 |
 | [0010](0010-react-and-react-three-fiber.md) | The web app is React with React Three Fiber | proposed | 2026-10-21 |
 | [0011](0011-hosted-on-one-ec2-instance.md) | The hosted app is the self-hosted compose file on one EC2 instance | proposed | 2026-10-21 |
+| [0012](0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb | proposed | 2026-10-21 |
