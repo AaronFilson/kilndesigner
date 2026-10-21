@@ -1,0 +1,63 @@
+[project]
+name = "kilndesigner-workspace"
+version = "0"
+description = "The Kilndesigner workspace: the engine, the CLI, and later the API and worker."
+requires-python = ">=3.14"
+dependencies = ["kilndesigner", "kilndesigner-cli"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["core", "cli"]
+
+[tool.uv.sources]
+kilndesigner = { workspace = true }
+kilndesigner-cli = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9",
+    "hypothesis>=6.140",
+    "ruff>=0.14",
+    "pyright>=1.1.400",
+    "import-linter>=2.5",
+    # A second, independent implementation of the convection correlations, for the tests only
+    "ht>=1.2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["core/tests", "cli/tests"]
+addopts = "-ra --strict-markers --import-mode=importlib"
+markers = ["geometry: builds OpenCascade geometry (slower)"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "N", "PT", "C4", "PIE", "RET"]
+isort.known-first-party = ["kilndesigner", "kilndesigner_cli"]
+ignore = ["RUF001", "RUF002", "RUF003"]  # °, ×, ² and – are intended in docstrings and messages
+
+[tool.pyright]
+include = ["core/src", "cli/src", "core/tests", "cli/tests"]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+# Pint and build123d are only partly typed; their unknowns would drown the real errors.
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportMissingTypeStubs = false
+
+[tool.importlinter]
+root_packages = ["kilndesigner", "kilndesigner_cli"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "The engine never imports a surface (ADR 0002)"
+type = "forbidden"
+source_modules = ["kilndesigner"]
+forbidden_modules = ["kilndesigner_cli", "fastapi", "sqlalchemy", "typer"]
