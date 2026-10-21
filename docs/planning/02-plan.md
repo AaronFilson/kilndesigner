@@ -1,0 +1,251 @@
+# Plan: Product, Architecture, Resume Story
+
+_Drafted 2026-10-21. The [market survey](01-market-survey.md) informs the positioning; the
+decisions here are recorded as ADRs in [`docs/adr`](../adr/README.md) with the status
+**proposed** until the first milestone ships against them._
+
+## Product positioning
+
+**"Describe the kiln you want; get a kiln you can build."**
+
+A potter or a studio enters a spec: what it fires (stoneware, porcelain, glass, raku, wood
+ash), the top temperature or cone, the size of the stacking space, the fuel and the budget. Kilndesigner
+returns:
+
+- a parametric 3D model of the kiln, with walls, arch, door, flue and burner or element ports;
+- the engineering behind it: heat loss, shell temperature, the energy to fire, heat-up time
+  on the chosen elements or burners, and the draft;
+- the plans: dimensioned drawings, a brick-by-brick course plan, a cut list and a bill of
+  materials, as a PDF and DXF.
+
+Ceramic kilns come first, starting with electric. Gas, wood and glass follow, and they share
+one engine.
+
+### What the survey changes
+
+The [survey](01-market-survey.md) found no kiln design software for potters. Builders work from
+Olsen's *The Kiln Book*, Kanthal's PDFs, Ward Burner's BTU table, forums and their own
+spreadsheets. Refractory makers' heat-flow tools are good but steady-state, tied to their own
+products and aimed at industry. So:
+
+- **A "parametric kiln book."** The well-known rules (Olsen's proportions, Ward's BTU ranges,
+  Kanthal's surface loads) are encoded as cited defaults the user can resize, with a diff of what
+  changed. Every default names its source in the working.
+- **Industry-standard methods.** Shell heat loss follows ASTM C680, the method behind Morgan Heat
+  Flow, Alkegen, HWI and NAIMA 3E Plus, so results can be compared with theirs.
+- **Heat stored in the walls is the headline.** For a kiln fired once a week, the questions are
+  "how long to cone 10" and "how much gas or how many kWh per firing." The steady-state tools
+  can't answer them. The transient model moves up to sit right after the hosted app.
+- **An open, vendor-neutral materials library**, with every value cited and overridable.
+- **Brick-level output** (course plans, arch and skewback bricks, cut lists): no tool does it.
+- **Firing logs from controllers, later.** Import from jbruce12000/kiln-controller (open source)
+  first, then exports from Genesis and KilnLink, to fit the model to real firings.
+- **Likely users who pay:** schools, community studios and small makers building gas and wood
+  kilns. Hobby electric builders will mostly use the free local tool.
+- **Prior art:** RepKiln (OpenSCAD bricks plus a Python 1D transient model) is the closest
+  project. It has no license, so it's a reference only, not code to reuse. CalebBell/ht (MIT) is
+  a candidate dependency for convection and radiation correlations.
+
+### Decisions
+- **2026-10-21 · Hosting:** one EC2 instance running the self-hosted compose file, as Glazecalc
+  does. Hosted and self-hosted are the same thing. See
+  [ADR 0011](../adr/0011-hosted-on-one-ec2-instance.md).
+- **2026-10-21 · Business model:** everything is free and MIT-licensed, including the hosted
+  app. No billing in the plan.
+- **2026-10-21 · First kiln:** an electric front-loader box: a rectangular brick chamber with a
+  door and elements in grooves. Its element circuit is reused for the hybrid kiln in M3.
+- **2026-10-21 · Gas and the hybrid move up to M3**, right after plans, because both first users
+  need gas (see "The first two users").
+- **2026-10-21 · Audience:** US first, metric supported. The defaults are inches, °F, cones, BTU
+  and AWG, with US brick sizes and suppliers. Metric is one setting away and works everywhere.
+
+## The first two users
+
+The plan is shaped around two real kilns. Each is a design that must actually get built, and
+each is a validation case for the engine.
+
+### 1. The author's kiln (Pacific Northwest)
+
+- **Type:** cross-draft, cone 10, about 30 to 40 cu ft of stacking space.
+- **First estimate (2026-10-21):** a chamber about 4 ft tall, 5 to 6 ft long and 28 in. wide
+  inside, with 8 in. walls. **The site limits the outside width** (about 44 in. plus the frame at
+  8 in. walls), so the inside width follows from the wall build-up the tool picks. The tool
+  decides the final sizes.
+- **Inputs for costs:** electricity at about $0.12/kWh, propane at about $3.50/gal, firing down to
+  about 20°F outside, and **under $5,000 for materials**, which makes a plain door the likely
+  choice unless a car fits the budget.
+- **Roof:** a cast dome arch of castable refractory, not brick.
+- **Loading:** a car or a plain door. **This is open and depends on the budget**, so the tool has
+  to price both and compare them.
+- **Hybrid firing:** 240 V at 48 A (about 11.5 kW) of elements for the slow, sensitive early
+  stages under a digital controller, then propane for the rest. The Pacific Northwest has some of
+  the cheapest electricity anywhere, so the elements also cut fuel cost.
+- **Propane:** four 100 lb cylinders in parallel.
+
+What it asks of the engine:
+- **The switch-over point.** At what temperature should the elements hand over to gas? That
+  depends on the cost per kWh against the cost per gallon, and on how much the 11.5 kW can still
+  add as heat loss rises. The answer is a chart: cost and time per firing against switch-over
+  temperature.
+- **The propane supply check.** Cylinders can only vaporise propane so fast, and the rate drops
+  as the cylinders get colder and emptier. Four 100 lb cylinders must keep up with the burners'
+  peak demand on a cold day, or the kiln stalls near the top. The tool checks this against the
+  manufacturer's vaporisation data and says how many cylinders, or what tank, the burners need.
+- **Elements in a gas kiln.** Reduction attacks the protective oxide on the wire. The design
+  states the element alloy (for example Kanthal APM against A1), how the elements are protected
+  or switched off during reduction, and how often they'll need replacing.
+- **Castable dome.** Dome geometry, castable volume and weight, anchors, formwork, and the dry-out
+  and first-firing schedule. Masonry has to cover castables as well as brick.
+- **Car or door.** Both designs, with their bills of materials and costs side by side.
+
+### 2. A client: off-grid, gas and/or wood
+
+- **Type:** gas, wood, or both. **No mains power at the site.**
+- What it asks of the engine:
+  - **Natural-draft (venturi) burners**, not blowers, unless solar power is planned;
+  - **the chimney does all the work**, so the draft calculation must be solid;
+  - **wood firebox design** and the switch between wood and propane;
+  - **a fuel-logistics estimate:** cords of wood and gallons of propane per firing;
+  - **manual control:** cones, pyrometer and damper settings, with no electronic controller to rely on.
+- The deliverable is **plans a client can build from**, so the plans must stand up on their own,
+  with the working printed.
+
+## Three ways to run it, one codebase
+
+| Mode | For | How it runs | Storage | Jobs | Sign-in |
+|---|---|---|---|---|---|
+| **CLI and library** | Tinkerers, CI, tests, notebooks | `uvx kilndesigner build kiln.yaml --out plans/` | Design files (YAML) on disk | In process | None |
+| **Self-hosted** | A studio, a maker space, anyone offline | `docker compose up`: the same images as hosted | Postgres, DuckDB files, a local folder for exports | Valkey + arq worker | One local user, or OIDC if configured |
+| **Hosted** | Everyone else | The same compose file on one EC2 instance | Postgres on the instance (backed up to S3), Parquet and exports on S3 | Valkey + arq workers | Google and GitHub (OIDC with PKCE) |
+
+The CLI is what makes the project easy to test: every result the app shows can be produced from a
+YAML file on the command line and compared with a golden file. The hosted app proves the
+production side: accounts, multiple tenants, background jobs, observability and deploys. See
+[ADR 0003](../adr/0003-one-codebase-three-ways-to-run.md).
+
+## Architecture
+
+```
+kilndesigner/                 uv workspace
+  core/                       kilndesigner (PyPI): the engine; no web, no database
+    model/                    Pydantic: Kiln, WallAssembly, Layer, Material, Arch, Door,
+                              ElementCircuit, Burner, Flue, Firebox, FiringSchedule
+    units/                    Pint registry; cone tables; °C/°F/K
+    geometry/                 build123d: chamber, walls, arches, ports → STEP/STL/glTF/DXF
+    thermal/                  steady-state layered walls; 1D transient finite volume; later scikit-fem
+    electric/                 element design: wire, length, coil, surface load, circuits
+    combustion/               burner sizing, air/fuel, flue and chimney draft (later Cantera)
+    masonry/                  brick coursing, arch bricks, cut list, counts
+    plans/                    Typst templates → PDF; DXF sheets
+    materials/                the materials library, from manufacturers' data sheets
+  cli/                        Typer: build, check, simulate, export
+  api/                        FastAPI; OpenAPI contract; SQLAlchemy 2 + Alembic
+  worker/                     arq tasks: simulate, build geometry, render plans
+  mcp/                        FastMCP server over the engine
+  web/                        React 19 + Vite + TanStack + React Three Fiber
+  packages/api-client/        generated TypeScript client
+  notebooks/                  marimo: validation against published references
+  infra/                      AWS CDK (Python)
+  docs/                       planning, ADRs, runbooks
+```
+
+### Key decisions (ADRs)
+
+| ADR | Decision |
+|---|---|
+| [0001](../adr/0001-record-architecture-decisions.md) | Record architecture decisions |
+| [0002](../adr/0002-a-pure-engine-package.md) | The engine is a pure Python package; every surface sits on top of it |
+| [0003](../adr/0003-one-codebase-three-ways-to-run.md) | One codebase, three ways to run: CLI, self-hosted, hosted |
+| [0004](../adr/0004-units-with-pint.md) | Quantities carry units (Pint); the engine works in SI |
+| [0005](../adr/0005-geometry-in-python-served-as-gltf.md) | Geometry is built only in Python (build123d) and served as glTF |
+| [0006](../adr/0006-designs-as-versioned-documents-in-postgres.md) | Designs are versioned JSON documents in Postgres |
+| [0007](../adr/0007-simulation-results-in-parquet-and-duckdb.md) | Simulation results are Parquet files, queried with DuckDB |
+| [0008](../adr/0008-background-jobs-with-arq.md) | Slow work runs as jobs on Valkey and arq, or in process for the CLI |
+| [0009](../adr/0009-physics-checked-against-published-references.md) | The physics is checked against published references, in CI |
+| [0010](../adr/0010-react-and-react-three-fiber.md) | The web app is React with React Three Fiber |
+| [0011](../adr/0011-hosted-on-one-ec2-instance.md) | The hosted app is the self-hosted compose file on one EC2 instance |
+
+## The engineering, by kiln type
+
+Each module returns its result *and* the working: inputs, formulas, intermediate values and the
+references used. The plans print the working, so a builder can check it.
+
+- **Walls and heat loss (all kilns).** Layered walls (hard brick, insulating firebrick, fibre
+  board, blanket, the shell) as thermal resistances in series, with temperature-dependent
+  conductivity from data sheets. The shell loses heat by natural convection and radiation, so the
+  shell temperature is solved iteratively. The output is heat loss at temperature, shell
+  temperature (a touch-safety check) and a cost-of-materials trade-off by layer thickness.
+- **Firing (all kilns).** A 1D transient finite-volume model per wall: the energy stored in the
+  walls and the ware plus what is lost, along a firing schedule. This shows why insulating firebrick
+  heats faster than dense brick, and how long a schedule takes on the available power.
+- **Electric.** From the energy needed, the supply (voltage, phase, breaker) and the alloy
+  (Kanthal A1, APM and similar, from data sheets): the wire gauge, length and resistance at temperature,
+  the coil diameter and pitch, the surface load against the maker's limits, the circuits and
+  the switching. The groove layout is drawn into the walls.
+- **Gas.** The burner rating (BTU/hr or kW) from the firing energy, the number of burners and where
+  they go, then the flue port, damper and chimney from the rules of thumb in the standard texts,
+  checked by a draft calculation. Down-draft, up-draft and cross-draft layouts. Power and
+  natural-draft burners. **The fuel supply:** propane vaporisation from cylinders or a tank, at the
+  coldest expected temperature, against peak demand.
+- **Hybrid.** Elements for the early stages and gas for the rest: the switch-over temperature
+  that minimises cost or time, the element alloy and how it survives reduction, and the
+  controller hand-off.
+- **Cost (all kilns).** Materials from the bill of materials, at user-editable prices, and the
+  running cost per firing from local electricity, propane and wood prices. Two designs can be
+  compared side by side (for example a car against a door).
+- **Wood.** Firebox and grate area, the throat, the chamber and the chimney in proportion; ash pit and
+  stoke-hole layout. Anagama, train and Bourry box as templates.
+- **Glass.** Fusing, slumping and annealing: top-element layouts, even temperature across the
+  shelf, and annealing schedules by glass thickness and COE.
+- **Masonry and castables (all kilns).** Brick coursing with staggered joints, sprung and catenary
+  arches (rise, skewbacks, arch and wedge bricks), cast domes (castable volume and weight,
+  anchors, formwork, dry-out schedule), doors and cars, a cut list and counts with a waste
+  allowance.
+
+## Milestones
+
+| # | Milestone | Done when | Resume-worthy engineering |
+|---|---|---|---|
+| **M0** | **Foundations** | uv workspace, ruff, pyright strict, pytest, CI, ADRs, the design-file schema | A typed Python monorepo with strict CI from the first commit |
+| **M1** | **Electric kiln engine** | `kilndesigner build` turns a YAML spec into an electric front-loader box kiln: geometry (STEP, glTF), steady-state heat loss, element design, and a JSON report | Parametric B-rep CAD, unit-safe numerical code, property-based tests (Hypothesis), golden files |
+| **M2** | **Plans** | A dimensioned PDF and a DXF, the brick course plan, a cut list and a bill of materials | Typst document generation, 2D projection from 3D, deterministic output |
+| **M3** | **Gas and hybrid: the author's kiln** | A cross-draft with a cast dome, as a car kiln and as a door kiln, with costs side by side; burner sizing; the propane supply check; the electric-to-gas switch-over chart; plans to build from | Combustion and fuel-supply models, optimisation (SciPy), cost modelling, comparing designs |
+| **M4** | **Self-hosted app** | `docker compose up`: the API, the worker, Postgres, Valkey and the web app with a 3D viewer; designs saved and versioned | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber |
+| **M5** | **Hosted app** | Accounts, design sharing by link, deploys with approval to AWS, tracing and metrics | Multi-tenant Postgres (row-level security), OIDC with PKCE, CDK in Python, keyless deploys with rollback, OpenTelemetry |
+| **M6** | **Firing simulation** | Transient heat-up along a schedule, results in Parquet, charts and a wall heatmap in the viewer | Finite-volume numerics, DuckDB analytics, GPU shaders for the heatmap |
+| **M7** | **Wood and off-grid: the client's kiln** | A firebox, natural-draft burners, the chimney and draft, fuel per firing, and plans for a site with no mains power | Natural-draft modelling, multi-fuel designs, plans that stand alone |
+| **M8** | **AI assistants** | An MCP server: "design a cone 10 gas kiln for 12 cubic feet, under $3,000" | MCP in Python, with tools that return the working |
+| **M9** | **Real firings** | Import firing logs from the author's controller, compare them with the simulation, and fit wall properties to them | Parameter estimation (SciPy), data ingestion, model-versus-measurement reports |
+| Later | **Glass** | Templates, top-element layouts, annealing schedules | |
+
+M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
+full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
+the client's plans before the app exists.
+
+## Quality bar
+
+- **Physics:** every module has a validation notebook comparing it with a published example
+  ([ADR 0009](../adr/0009-physics-checked-against-published-references.md)). Validation runs in CI
+  with stated tolerances. The first references: Kanthal's worked element examples, Ward's BTU per
+  cubic foot ranges, an ASTM C680 example, and the analytical solution for a heated slab.
+- **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
+  + lost; a longer element at the same voltage never draws more power; brick counts cover the
+  wall volume.
+- **Golden files:** the reports, glTF digests and plan PDFs from a fixed set of design files. A
+  change shows up as a reviewable diff.
+- **API and web:** contract tests from the OpenAPI document, Playwright end to end, axe and
+  Lighthouse gates, as in Glazecalc.
+- **Safety:** the app gives guidance and is not a substitute for an electrician, a gas fitter or
+  local codes. Electrical and gas outputs carry that note, and designs outside the checked range
+  are refused with a reason rather than drawn.
+
+## Open questions
+
+1. **The materials library.** Which manufacturers' data sheets can be used, and how they are
+   cited (Glazecalc ADR 0009 is the model).
+2. **Cone tables.** Orton publishes temperatures by heating rate; check the terms before
+   shipping the table, or store user-entered values only.
+3. **The client's kiln:** gas, wood or both; its size and cone; the timeline; and whether any
+   solar power is planned (for a blower or a controller).
+4. **Liability for client work.** Plans given to a paying client need a clear statement of what
+   is checked and what is the builder's responsibility, and possibly a review by a gas fitter.
