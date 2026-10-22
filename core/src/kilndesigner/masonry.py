@@ -31,7 +31,7 @@ from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
 from kilndesigner.model import Kiln
 from kilndesigner.units import Q_, parse_quantity, si
-from kilndesigner.working import Finding
+from kilndesigner.working import Finding, length_text
 
 IN = 25.4  # mm
 BRICK = (9 * IN, 4.5 * IN, 2.5 * IN)  # length, width, thickness (mm)
@@ -98,15 +98,6 @@ class LayerPlan:
         return title
 
 
-FACE_NAMES = {
-    "left": "Left wall",
-    "right": "Right wall",
-    "back": "Back wall",
-    "front": "Front wall",
-    "door": "Door",
-    "floor": "Floor",
-    "roof": "Roof",
-}
 LAYING_NAMES: dict[Laying, str] = {
     "stretcher": "bricks laid flat along the wall",
     "on_edge": "bricks on edge",
@@ -118,25 +109,7 @@ LAYING_NAMES: dict[Laying, str] = {
 
 def layer_name(part: Part) -> str:
     """Where a lining layer is, in words: 'Left wall, layer 2 from the inside'."""
-    where, rest = part.name.split("/", 1)
-    if rest.startswith("skewback"):
-        return f"{FACE_NAMES.get(where, where)}, the skewback and fill on top"
-    number = rest.split("-", 1)[0]
-    return f"{FACE_NAMES.get(where, where)}, layer {number} from the inside"
-
-
-FRACTIONS = {1: "⅛", 2: "¼", 3: "⅜", 4: "½", 5: "⅝", 6: "¾", 7: "⅞"}
-
-
-def length_text(mm: float, us: bool) -> str:
-    """A thickness as a builder writes it: '13½ in', '6¾ in', or '343 mm'."""
-    if not us:
-        return f"{mm:.0f} mm"
-    eighths = round(mm / IN * 8)
-    if abs(eighths / 8 - mm / IN) > 0.01:
-        return f"{mm / IN:.3g} in"
-    whole, part = divmod(eighths, 8)
-    return f"{whole or ''}{FRACTIONS[part]} in" if part else f"{whole} in"
+    return part.title
 
 
 def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
@@ -477,8 +450,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
                 arch_lines.append(
-                    f"{layer_name(part)}, above the springline: about {count} bricks by volume, "
-                    "cut to the arch's curve"
+                    f"{layer_name(part)}: about {count} bricks by volume, cut to the arch's curve"
                 )
                 continue
             ring = arch_ring(part)

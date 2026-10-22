@@ -60,7 +60,10 @@ function Built({ build }: { build: Build }) {
       <div role="tabpanel" aria-label={tabs.find(([id]) => id === tab)?.[1]}>
         {tab === "model" &&
           (build.files.includes("kiln.glb") ? (
-            <KilnViewer url={fileUrl(build.key, "kiln.glb")} />
+            <KilnViewer
+              url={fileUrl(build.key, "kiln.glb")}
+              partsUrl={fileUrl(build.key, "parts.json")}
+            />
           ) : (
             <p className="muted">This build has no 3D model.</p>
           ))}

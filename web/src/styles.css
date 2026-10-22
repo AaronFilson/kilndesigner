@@ -195,10 +195,46 @@ select {
 }
 
 .viewer {
-  height: 420px;
+  position: relative;
+  height: 520px;
   border-radius: 8px;
   background: var(--viewer);
   overflow: hidden;
+}
+
+.viewer-tools {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.viewer-tools button {
+  padding: 0.25rem 0.6rem;
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+.viewer-tools button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.viewer-info {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font-size: 0.85em;
 }
 
 .viewer-message {

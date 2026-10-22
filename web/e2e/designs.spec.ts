@@ -159,6 +159,34 @@ test("saving an edit adds a version, and an earlier version can be loaded back",
   await expect(status).toHaveText("Version 2 · unsaved changes");
 });
 
+test("the model is seen from each side, cut in half, and its parts named", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const id = await saved(request, cleanup, design("E2E viewer"), { built: true });
+  await page.goto(`/designs/${id}`);
+  const viewer = page.getByLabel("3D model of the kiln");
+  await expect(viewer.locator("canvas")).toBeVisible();
+  const button = (name: string) => viewer.getByRole("button", { name, exact: true });
+  for (const view of ["Side", "Top", "3D", "Front"]) {
+    await button(view).click();
+    await expect(button(view)).toHaveAttribute("aria-pressed", "true");
+  }
+  await button("Cut in half").click();
+  await expect(button("Cut in half")).toHaveAttribute("aria-pressed", "true");
+
+  // From the front, the middle of the picture is a wall, door or roof layer, named in words.
+  const box = await viewer.boundingBox();
+  if (!box) throw new Error("no viewer");
+  const status = viewer.getByRole("status");
+  await expect(async () => {
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(status).toContainText(/(layer \d from the inside|Element \d)/, { timeout: 1000 });
+  }).toPass();
+  await expect(status).not.toContainText("/"); // the title, not the part's id
+});
+
 test("a model that can't be loaded leaves the rest of the page working", async ({
   page,
   request,

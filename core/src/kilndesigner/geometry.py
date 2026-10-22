@@ -15,6 +15,7 @@ don't need it.
 
 from __future__ import annotations
 
+import json
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -24,6 +25,7 @@ from typing import TYPE_CHECKING, Any
 from kilndesigner.model import Face, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import si
+from kilndesigner.working import length_text
 
 if TYPE_CHECKING:
     from build123d import Compound
@@ -43,6 +45,15 @@ COLOURS: dict[str, tuple[float, float, float]] = {
 }
 # Materials an arch can spring from: brick and castable, not fibre
 SOLID_KINDS = {"insulating_firebrick", "dense_firebrick", "insulating_castable", "dense_castable"}
+FACE_NAMES = {
+    "left": "Left wall",
+    "right": "Right wall",
+    "back": "Back wall",
+    "front": "Front wall",
+    "door": "Door",
+    "floor": "Floor",
+    "roof": "Roof",
+}
 
 
 @dataclass(frozen=True)
@@ -85,6 +96,17 @@ class Part:
     @property
     def wall(self) -> str:
         return self.face if self.face is not None else self.name.split("/")[0]
+
+    @property
+    def title(self) -> str:
+        """Where the part is, in words: 'Left wall, layer 2 from the inside'."""
+        where, rest = self.name.split("/", 1)
+        face = FACE_NAMES.get(where, where)
+        if rest.startswith("skewback"):
+            return f"{face}, the skewback and fill on top"
+        number = rest.split("-", 1)[0]
+        above = ", above the springline" if self.cap else ""
+        return f"{face}, layer {number} from the inside{above}"
 
     @property
     def length_y(self) -> float:
@@ -367,13 +389,38 @@ def build_model(kiln: Kiln, elements: list[ElementRun] | None = None) -> Compoun
     return model
 
 
+def part_index(kiln: Kiln, report: Report) -> dict[str, dict[str, str]]:
+    """What each named part of the model is, for the viewer: a title and a line of detail."""
+    from kilndesigner.library import material
+
+    us = kiln.units == "us"
+    index: dict[str, dict[str, str]] = {}
+    for p in lining_parts(kiln):
+        detail = material(p.material).name
+        if p.profile is None and not p.cap:
+            detail += f", {length_text(p.thickness, us)} thick"
+        index[p.name] = {"title": p.title, "detail": detail}
+    electric = report.electric
+    if electric is not None and electric.elements is not None:
+        el = electric.elements
+        for i in range(el.count):
+            index[f"element/{i + 1}"] = {
+                "title": f"Element {i + 1} of {el.count}",
+                "detail": f"{el.gauge} {electric.alloy}, {el.length_each} of wire, {el.power_each}",
+            }
+    return index
+
+
 def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
-    """Build the kiln with its elements (if any) and export it."""
+    """Build the kiln with its elements (if any), export it, and write what each part is."""
     runs: list[ElementRun] = []
     if report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
         runs = element_runs(kiln, el.count, el.coil_outside_diameter_mm)
-    return export_model(build_model(kiln, runs), out_dir)
+    written = export_model(build_model(kiln, runs), out_dir)
+    parts = out_dir / "parts.json"
+    parts.write_text(json.dumps(part_index(kiln, report), ensure_ascii=False, indent=2), "utf-8")
+    return {**written, "parts": parts}
 
 
 def export_model(model: Compound, out_dir: Path, stem: str = "kiln") -> dict[str, Path]:
