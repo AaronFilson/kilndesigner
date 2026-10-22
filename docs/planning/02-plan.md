@@ -58,6 +58,11 @@ products and aimed at industry. So:
   need gas (see "The first two users").
 - **2026-10-21 · Audience:** US first, metric supported. The defaults are inches, °F, cones, BTU
   and AWG, with US brick sizes and suppliers. Metric is one setting away and works everywhere.
+- **2026-10-21 · M4 scope:** designs are edited three ways: forms generated from the design
+  file's JSON Schema, a YAML tab, and hand-built forms per kiln type, starting with the electric
+  front-loader. Self-hosted has one local user with no sign-in; OIDC waits for M5. The first slice
+  is save → build (as an arq job) → view the 3D model and the report. The JavaScript workspace
+  uses npm workspaces.
 
 ## The first two users
 

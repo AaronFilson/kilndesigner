@@ -1,0 +1,89 @@
+# Self-hosted Kilndesigner: `docker compose up`, then open http://localhost:8080.
+#
+# For development, start only the services and run the API, worker and web app on the host:
+#   docker compose up -d postgres valkey
+#
+# Every port is published on this machine only (127.0.0.1). There is no sign-in yet (that
+# arrives with the hosted app, M5), so think before opening the web app to the network: change
+# its port to "8080:8080".
+
+name: kilndesigner
+
+# The API, the worker and the migrations share one image, run with different commands. Only the
+# API builds it, so it is built once. The images are built here, never pulled, and `up` rebuilds
+# them from the code checked out (from the build cache when nothing has changed).
+x-server: &server
+  image: kilndesigner-server
+  pull_policy: never
+  environment:
+    KILNDESIGNER_DATABASE_URL: postgresql+asyncpg://kilndesigner:kilndesigner@postgres:5432/kilndesigner
+    KILNDESIGNER_REDIS_URL: redis://valkey:6379/0
+  volumes: [data:/data]
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      POSTGRES_USER: kilndesigner
+      POSTGRES_PASSWORD: kilndesigner
+      POSTGRES_DB: kilndesigner
+    ports: ["127.0.0.1:5432:5432"]
+    volumes: [postgres:/var/lib/postgresql]
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kilndesigner"]
+      interval: 2s
+      retries: 30
+    restart: unless-stopped
+
+  valkey:
+    image: valkey/valkey:9-alpine
+    ports: ["127.0.0.1:6379:6379"]
+    healthcheck:
+      test: ["CMD", "valkey-cli", "ping"]
+      interval: 2s
+      retries: 30
+    restart: unless-stopped
+
+  migrate:
+    <<: *server
+    command: ["kilndesigner-migrate"]
+    depends_on:
+      postgres: { condition: service_healthy }
+    restart: "no"
+
+  api:
+    <<: *server
+    build: .
+    pull_policy: build
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      valkey: { condition: service_healthy }
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')
+      interval: 2s
+      retries: 60
+
+  worker:
+    <<: *server
+    command: ["arq", "kilndesigner_worker.main.WorkerSettings"]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+      valkey: { condition: service_healthy }
+
+  web:
+    image: kilndesigner-web
+    build: { context: ., dockerfile: web/Dockerfile }
+    pull_policy: build
+    ports: ["127.0.0.1:8080:8080"]
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+
+volumes:
+  postgres:
+  data:

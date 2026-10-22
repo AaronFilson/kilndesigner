@@ -1,0 +1,17 @@
+# The images copy only what they name (see Dockerfile and web/Dockerfile); this keeps the build
+# context small and keeps host builds out of it.
+.git
+.github
+.idea
+.venv
+.hypothesis
+.import_linter_cache
+.pytest_cache
+.ruff_cache
+**/__pycache__
+**/node_modules
+**/dist
+*/tests
+data
+out
+docs

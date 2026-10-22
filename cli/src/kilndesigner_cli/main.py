@@ -11,6 +11,7 @@ import typer
 from pydantic import ValidationError
 
 from kilndesigner import Kiln, load_design
+from kilndesigner.build import build_design
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
 from kilndesigner.units import UnitError
@@ -134,30 +135,15 @@ def build(
     plans: Annotated[bool, typer.Option(help="Draw the plans (PDF and DXF)")] = True,
 ) -> None:
     """Calculate a design; write the report, the 3D model and the plans."""
-    from kilndesigner.geometry import GeometryNotSupportedError
-
     kiln = _load(design)
-    report = _report(kiln, design)
-    out.mkdir(parents=True, exist_ok=True)
-    (out / "report.json").write_text(report.model_dump_json(indent=2), encoding="utf-8")
-    written = [out / "report.json"]
-    if model:
-        from kilndesigner.geometry import write_model
-
-        try:
-            written.extend(write_model(kiln, report, out).values())
-        except GeometryNotSupportedError as e:
-            typer.echo(f"No 3D model: {e}", err=True)
-    if plans:
-        from kilndesigner.plans import build_plans
-
-        try:
-            result = build_plans(kiln, report, dxf_path=out / "sections.dxf")
-            (out / "plans.pdf").write_bytes(result.pdf)
-            written += [out / "plans.pdf", out / "sections.dxf"]
-        except GeometryNotSupportedError as e:
-            typer.echo(f"No plans: {e}", err=True)
-    typer.echo(summary(report))
-    typer.echo("Wrote " + ", ".join(str(p) for p in written))
-    if report.errors:
+    try:
+        result = build_design(kiln, out, model=model, plans=plans)
+    except UnknownEntryError as e:
+        typer.echo(f"{design}: {e}", err=True)
+        raise typer.Exit(code=2) from e
+    for note in result.notes:
+        typer.echo(note, err=True)
+    typer.echo(summary(result.report))
+    typer.echo("Wrote " + ", ".join(str(p) for p in result.written))
+    if result.report.errors:
         raise typer.Exit(code=1)

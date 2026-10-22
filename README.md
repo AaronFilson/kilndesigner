@@ -23,6 +23,29 @@ uv run kilndesigner compare examples/pnw-hybrid-crossdraft.yaml examples/pnw-hyb
 brick course plans, cut list, bill of materials, burner and propane checks, the working),
 `sections.dxf`, and the 3D model as `kiln.step` and `kiln.glb`.
 
+## Run the app
+
+```
+docker compose up
+```
+
+Then open http://localhost:8080. The first start builds the images, which takes a few minutes.
+Designs are kept in Postgres and built files in the `data` volume, so both survive a restart.
+The app is reachable from this machine only, because there is no sign-in yet.
+
+To work on the app, run Postgres and Valkey in Docker and the rest on your machine:
+
+```
+docker compose up -d postgres valkey
+uv run kilndesigner-migrate
+uv run kilndesigner-api
+uv run arq kilndesigner_worker.main.WorkerSettings
+npm install
+npm run dev
+```
+
+Then open http://localhost:5173.
+
 ## What it does today
 
 - **Heat loss** through layered walls with temperature-dependent conductivity, in the manner of
@@ -41,8 +64,11 @@ brick course plans, cut list, bill of materials, burner and propane checks, the 
 
 - `core/`: the engine, a pure Python package (Pydantic, Pint, NumPy, SciPy, build123d, Typst).
 - `cli/`: the `kilndesigner` command.
-- Later: a FastAPI service, workers, and a React Three Fiber web app, self-hosted with Docker
-  Compose or hosted.
+- `api/`: the FastAPI service: designs, their versions and builds, in Postgres.
+- `worker/`: the arq worker, which builds designs with the same code as the CLI.
+- `web/`: the React app with a React Three Fiber viewer, and `packages/api-client`, its client
+  generated from the API's OpenAPI document.
+- `compose.yaml` runs them all; the hosted app (later) is the same compose file on one server.
 
 ## Safety
 

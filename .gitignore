@@ -225,3 +225,5 @@ __marimo__/
 *.glb
 *.step
 !core/tests/golden/**
+/data/
+node_modules/
