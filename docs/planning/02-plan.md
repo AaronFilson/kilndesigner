@@ -63,6 +63,11 @@ products and aimed at industry. So:
   front-loader. Self-hosted has one local user with no sign-in; OIDC waits for M5. The first slice
   is save → build (as an arq job) → view the 3D model and the report. The JavaScript workspace
   uses npm workspaces.
+- **2026-10-22 · The bar for M4 is a kiln you can design in the app.** After using the first
+  slice, the author's verdict: not a useful product. The model was lining blocks (an arch that
+  stops short of the walls' outside, no door, ports or flue), drawings were only downloads, the
+  viewer only spun, and designing meant editing YAML. M4 is done when it passes the four points
+  under its milestone below, worked in that order; the hosted app (M5) waits for it.
 
 ## The first two users
 
@@ -215,7 +220,7 @@ references used. The plans print the working, so a builder can check it.
 | **M1** | **Electric kiln engine** | `kilndesigner build` turns a YAML spec into an electric front-loader box kiln: geometry (STEP, glTF), steady-state heat loss, element design, and a JSON report | Parametric B-rep CAD, unit-safe numerical code, property-based tests (Hypothesis), golden files |
 | **M2** | **Plans** | A dimensioned PDF and a DXF, the brick course plan, a cut list and a bill of materials | Typst document generation, 2D projection from 3D, deterministic output |
 | **M3** | **Gas and hybrid: the author's kiln** | A cross-draft with a cast dome, as a car kiln and as a door kiln, with costs side by side; burner sizing; the propane supply check; the electric-to-gas switch-over chart; plans to build from | Combustion and fuel-supply models, optimisation (SciPy), cost modelling, comparing designs |
-| **M4** | **Self-hosted app** | `docker compose up`: the API, the worker, Postgres, Valkey and the web app with a 3D viewer; designs saved and versioned | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber |
+| **M4** | **A kiln you can design in the app** | `docker compose up`, then: (1) the model is a kiln you could build: the arch on skewbacks over the full walls, the steel frame, a door or a car, burner and flue ports, the chimney and spy holes, coloured by material; (2) dimensioned drawings, course plans, the bill of materials and the cut list shown in the page (files still downloadable); (3) a viewer with front, side, top and section views, a cutaway and named parts; (4) a design started from a kiln type and edited with choices, not YAML (YAML stays as a tab). Each point has browser tests | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber, Playwright |
 | **M5** | **Hosted app** | Accounts, design sharing by link, deploys with approval to AWS, tracing and metrics | Multi-tenant Postgres (row-level security), OIDC with PKCE, CDK in Python, keyless deploys with rollback, OpenTelemetry |
 | **M6** | **Firing simulation** | Transient heat-up along a schedule, results in Parquet, charts and a wall heatmap in the viewer | Finite-volume numerics, DuckDB analytics, GPU shaders for the heatmap |
 | **M7** | **Wood and off-grid: the client's kiln** | A firebox, natural-draft burners, the chimney and draft, fuel per firing, and plans for a site with no mains power | Natural-draft modelling, multi-fuel designs, plans that stand alone |
