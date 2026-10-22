@@ -119,6 +119,8 @@ LAYING_NAMES: dict[Laying, str] = {
 def layer_name(part: Part) -> str:
     """Where a lining layer is, in words: 'Left wall, layer 2 from the inside'."""
     where, rest = part.name.split("/", 1)
+    if rest.startswith("skewback"):
+        return f"{FACE_NAMES.get(where, where)}, the skewback and fill on top"
     number = rest.split("-", 1)[0]
     return f"{FACE_NAMES.get(where, where)}, layer {number} from the inside"
 
@@ -460,6 +462,16 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     for part in lining_parts(kiln):
         m = material(part.material)
+        if part.profile is not None:  # a skewback and the fill beside the arch
+            if m.kind in BRICK_KINDS:
+                count = math.ceil(part.volume / BRICK_VOLUME)
+                whole[m.id] += count
+                arch_lines.append(
+                    f"{layer_name(part)}: about {count} bricks by volume, cut to the arch's angle"
+                )
+            elif m.kind in CAST_KINDS:
+                cast_volume[m.id] += part.volume
+            continue
         if m.kind in BRICK_KINDS and part.arch is not None:
             if part.cap:
                 count = math.ceil(part.volume / BRICK_VOLUME)
@@ -556,9 +568,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             Finding(
                 level="warning",
                 message=(
-                    "The arch's skewbacks, the fill over the wall tops beside the arch, and the "
-                    "steel that takes the arch's thrust are not drawn or counted yet. A 60° "
-                    "skewback is the usual choice."
+                    "The skewbacks and the fill beside the arch are drawn along the arch's radius "
+                    "at the springline and counted by volume. The steel that takes the arch's "
+                    "thrust is not designed or counted yet. A 60° skewback is the usual choice."
                 ),
                 reference="combustion-and-masonry.md §6.5 [S61, S62]",
             )

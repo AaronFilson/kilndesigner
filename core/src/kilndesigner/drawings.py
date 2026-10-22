@@ -88,6 +88,12 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
 def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rect]:
     rects: list[Rect] = []
     for p in parts:
+        if p.profile is not None and axis == 1:
+            if p.lo[1] - 1e-6 <= at <= p.hi[1] + 1e-6:
+                fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+                x0, z0, x1, z1 = p.lo[0], p.lo[2], p.hi[0], p.hi[2]
+                rects.append(Rect(x0, z0, x1 - x0, z1 - z0, fill, p.name, p.profile))
+            continue
         if p.arch is not None:
             if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6 and (rect := _arch_cut(p, axis)):
                 rects.append(rect)

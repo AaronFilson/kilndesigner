@@ -16,6 +16,7 @@ don't need it.
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
@@ -40,6 +41,8 @@ COLOURS: dict[str, tuple[float, float, float]] = {
     "backup_insulation": (0.85, 0.85, 0.90),
     "element": (0.55, 0.55, 0.58),
 }
+# Materials an arch can spring from: brick and castable, not fibre
+SOLID_KINDS = {"insulating_firebrick", "dense_firebrick", "insulating_castable", "dense_castable"}
 
 
 @dataclass(frozen=True)
@@ -65,17 +68,19 @@ class ArchShape:
 @dataclass(frozen=True)
 class Part:
     """One layer of one face. A box unless ``arch`` is set; then an arch ring, or (with
-    ``cap``) the segment of an end wall that fills the arch above the springline."""
+    ``cap``) the segment of an end wall that fills the arch above the springline. With
+    ``profile``, an outline in the x–z plane run along y: the skewback and fill on a wall top."""
 
     name: str
     material: str
     kind: str
-    # an axis-aligned box, or the bounding box of an arch ring or cap: min and max corners, mm
+    # an axis-aligned box, or the bounding box of an arch ring, cap or profile: corners, mm
     lo: tuple[float, float, float]
     hi: tuple[float, float, float]
     arch: ArchShape | None = None
     cap: bool = False
     face: Face | None = None  # the face it belongs to; the name says "door" for the door
+    profile: tuple[tuple[float, float], ...] | None = None
 
     @property
     def wall(self) -> str:
@@ -87,6 +92,10 @@ class Part:
 
     @property
     def volume(self) -> float:
+        if self.profile is not None:
+            pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
+            area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
+            return area / 2 * self.length_y  # the shoelace formula, times the length
         if self.arch is None:
             return (self.hi[0] - self.lo[0]) * (self.hi[1] - self.lo[1]) * (self.hi[2] - self.lo[2])
         if self.cap:
@@ -97,6 +106,8 @@ class Part:
     @property
     def thickness(self) -> float:
         """Through the layer, the way heat flows (mm)."""
+        if self.profile is not None:
+            return self.hi[0] - self.lo[0]
         if self.arch is not None:
             return self.length_y if self.cap else self.arch.thickness
         dx, dy, dz = (b - a for a, b in zip(self.lo, self.hi, strict=True))
@@ -209,10 +220,59 @@ def lining_parts(kiln: Kiln) -> list[Part]:
                 )
             )
             cum += th
+        parts += _skewbacks(kiln, arch, centre_z, cum, (y0, y1), layers)
         return parts
     for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
         add("roof", i, mat, (x0, y0, h + cum), (x1, y1, h + cum + th))
         cum += th
+    return parts
+
+
+def _skewbacks(
+    kiln: Kiln,
+    arch: Arch,
+    centre_z: float,
+    roof_thickness: float,
+    ys: tuple[float, float],
+    layers: Mapping[str, list[tuple[str, float]]],
+) -> list[Part]:
+    """The skewback and fill on each side wall: what the arch springs from, out to the wall's
+    outer face. Its inner face lies along the arch's radius at the springline, so it takes the
+    arch's thrust square on (combustion-and-masonry.md §6.5). It's built of the wall's main
+    (thickest) brick or castable and runs the kiln's full length."""
+    from kilndesigner.library import material
+
+    w, h = si(kiln.chamber.width, "mm"), si(kiln.chamber.height, "mm")
+    r_out = arch.radius + roof_thickness
+    a = arch.half_angle
+    parts: list[Part] = []
+    sides: tuple[tuple[Face, int], ...] = (("left", -1), ("right", 1))
+    for side, sign in sides:
+        wall = layers[side]
+        solid = [layer for layer in wall if material(layer[0]).kind in SOLID_KINDS]
+        if not solid:
+            continue  # nothing to spring an arch from
+        outer = w / 2 + sum(t for _, t in wall)
+        top = (r_out * math.sin(a), centre_z + r_out * math.cos(a))  # the arch's outer corner
+        if top[0] <= outer:
+            outline = [(w / 2, h), top, (outer, top[1]), (outer, h)]
+        else:  # the arch reaches past the wall: the fill ends where the radius leaves it
+            r = outer / math.sin(a)
+            outline = [(w / 2, h), (outer, centre_z + r * math.cos(a)), (outer, h)]
+        profile = tuple((sign * x, z) for x, z in outline)
+        mat = max(solid, key=lambda layer: layer[1])[0]
+        xs, zs = [x for x, _ in profile], [z for _, z in profile]
+        parts.append(
+            Part(
+                f"{side}/skewback-{mat}",
+                mat,
+                material(mat).kind,
+                (min(xs), ys[0], min(zs)),
+                (max(xs), ys[1], max(zs)),
+                face=side,
+                profile=profile,
+            )
+        )
     return parts
 
 
@@ -267,7 +327,8 @@ def _arch_solid(part: Part) -> Any:
     from build123d import Plane, Polygon, Pos, extrude
 
     # Extrude the outline from the x–z plane, then move it so it starts at the part's y.
-    solid: Any = extrude(Plane.XZ * Polygon(*arch_outline(part), align=None), amount=part.length_y)
+    outline = part.profile if part.profile is not None else arch_outline(part)
+    solid: Any = extrude(Plane.XZ * Polygon(*outline, align=None), amount=part.length_y)
     return Pos(0, part.lo[1] - solid.bounding_box().min.Y, 0) * solid
 
 
@@ -288,7 +349,8 @@ def build_model(kiln: Kiln, elements: list[ElementRun] | None = None) -> Compoun
     for part in lining_parts(kiln):
         sx, sy, sz = (b - a for a, b in zip(part.lo, part.hi, strict=True))
         cx, cy, cz = ((a + b) / 2 for a, b in zip(part.lo, part.hi, strict=True))
-        solid: Any = Pos(cx, cy, cz) * Box(sx, sy, sz) if part.arch is None else _arch_solid(part)
+        boxed = part.arch is None and part.profile is None
+        solid: Any = Pos(cx, cy, cz) * Box(sx, sy, sz) if boxed else _arch_solid(part)
         solid.label = part.name
         solid.color = Color(*COLOURS.get(part.kind, (0.8, 0.8, 0.8)))
         children.append(solid)

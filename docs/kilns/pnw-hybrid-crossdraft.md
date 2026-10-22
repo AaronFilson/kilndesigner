@@ -23,7 +23,7 @@ plans (PDF, DXF, 3D model). Every number below has its working and source in the
 | Hottest outside face | 279 °F (the arch) | 279 °F | 279 °F |
 | Burner input | 723,000 BTU/hr (6–7 h firing) | same | 452,000 BTU/hr (14–18 h) |
 | Propane supply keeps up at 20 °F | **no**, even with full cylinders | **no** | yes |
-| Priced materials | **$9,125** | $9,125 + the car's hardware | **$7,041** |
+| Priced materials | **$9,476** | $9,476 + the car's hardware | **$7,392** |
 | Errors / warnings | 1 / 5 | 1 / 5 | 0 / 5 |
 
 1. **Four 100 lb cylinders can't fire this kiln at 20 °F.** A fast firing needs 723,000 BTU/hr;
@@ -53,7 +53,8 @@ plans (PDF, DXF, 3D model). Every number below has its working and source in the
 
 ## Not done yet
 
-- The arch's skewbacks, the steel frame and the arch's thrust are not designed or priced.
+- The skewbacks and fill are drawn and counted (about 22 bricks a side, by volume), but the
+  steel frame and the arch's thrust are not designed or priced.
 - Fuel and electricity per firing need the firing simulation (milestone M6).
 - The car's hardware has no sourced prices; set `loading.car_hardware_cost` to compare it.
 - Kanthal APM wire has no sourced price.

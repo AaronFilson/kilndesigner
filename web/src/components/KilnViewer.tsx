@@ -3,6 +3,7 @@ import { Bounds, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useQuery } from "@tanstack/react-query";
 import { Component, type ReactNode } from "react";
+import { Mesh, MeshStandardMaterial } from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 /**
@@ -12,7 +13,21 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 function useModel(url: string) {
   return useQuery({
     queryKey: ["models", url],
-    queryFn: async () => (await new GLTFLoader().loadAsync(url)).scene,
+    queryFn: async () => {
+      const { scene } = await new GLTFLoader().loadAsync(url);
+      // glTF's default metallicFactor is 1, so the CAD export arrives as metal, which renders
+      // black wherever it has nothing to reflect. Brick, fibre and castable are matte.
+      scene.traverse((object) => {
+        if (!(object instanceof Mesh)) return;
+        for (const material of [object.material].flat()) {
+          if (material instanceof MeshStandardMaterial) {
+            material.metalness = 0;
+            material.roughness = 0.9;
+          }
+        }
+      });
+      return scene;
+    },
     staleTime: Infinity, // a build never changes
     retry: 1,
   });

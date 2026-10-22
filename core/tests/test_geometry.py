@@ -70,6 +70,17 @@ def test_arched_roof_parts() -> None:
     assert a.centre_z + a.radius == pytest.approx(27 * IN)  # 3 in rise
 
 
+def test_the_arch_springs_from_skewbacks_across_the_whole_wall() -> None:
+    skewbacks = {p.wall: p for p in lining_parts(_arched()) if p.profile is not None}
+    assert set(skewbacks) == {"left", "right"}
+    right, left = skewbacks["right"], skewbacks["left"]
+    assert right.profile is not None
+    assert right.profile[0] == pytest.approx((22.5 * IN / 2, 24 * IN))  # at the springline
+    assert right.hi[0] == pytest.approx((22.5 / 2 + 5.5) * IN)  # out to the wall's outer face
+    assert right.material == "ifb-jm26"  # the wall's brick, not its blanket
+    assert left.lo[0] == pytest.approx(-right.hi[0])
+
+
 @pytest.mark.geometry
 def test_arch_solids_match_their_parts() -> None:
     kiln = _arched()
