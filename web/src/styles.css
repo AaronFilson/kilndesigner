@@ -201,6 +201,11 @@ select {
   overflow: hidden;
 }
 
+.viewer-message {
+  margin: 0;
+  padding: 1rem;
+}
+
 .downloads {
   display: flex;
   flex-wrap: wrap;

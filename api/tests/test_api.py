@@ -1,7 +1,12 @@
+import shutil
+from pathlib import Path
+
 import httpx
 import pytest
 
+from kilndesigner_api import db
 from kilndesigner_api.jobs import InlineRunner
+from kilndesigner_api.tasks import refresh_build_keys
 
 pytestmark = [pytest.mark.anyio, pytest.mark.db]
 
@@ -88,6 +93,45 @@ async def test_a_build_writes_the_report_and_is_reused(
     again = (await client.post(f"/api/builds/{key}")).json()
     assert again["status"] == "done"
     assert again["finished_at"] == build["finished_at"]
+
+
+@pytest.mark.geometry
+async def test_a_build_whose_files_have_gone_can_be_built_again(
+    client: httpx.AsyncClient, runner: InlineRunner, example: str, tmp_path: Path
+) -> None:
+    # The dev loop and `docker compose up` share the database but not the data folder.
+    design = (await client.post("/api/designs", json={"source": example})).json()
+    key = design["latest"]["build_key"]
+    await client.post(f"/api/builds/{key}")
+    await runner.wait()
+    shutil.rmtree(tmp_path / "builds" / key)
+
+    gone = (await client.get(f"/api/builds/{key}")).json()
+    assert gone["status"] == "failed"
+    assert "no longer in the data folder" in gone["error"]
+    assert (await client.get(f"/api/builds/{key}/report")).status_code == 404
+    assert (await client.get(f"/api/builds/{key}/files/kiln.glb")).status_code == 404
+
+    assert (await client.post(f"/api/builds/{key}")).json()["status"] == "queued"
+    await runner.wait()
+    assert (await client.get(f"/api/builds/{key}")).json()["status"] == "done"
+    assert (await client.get(f"/api/builds/{key}/files/kiln.glb")).content[:4] == b"glTF"
+
+
+async def test_after_an_engine_change_saved_designs_are_built_afresh(
+    client: httpx.AsyncClient, database_url: str, example: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    design = (await client.post("/api/designs", json={"source": example})).json()
+    old = design["latest"]["build_key"]
+
+    monkeypatch.setattr("kilndesigner.build.engine_fingerprint", lambda: "changed code")
+    engine = db.make_engine(database_url)
+    assert await refresh_build_keys(db.make_sessions(engine)) == 1
+    await engine.dispose()
+
+    new = (await client.get(f"/api/designs/{design['id']}")).json()["latest"]["build_key"]
+    assert new != old
+    assert (await client.get(f"/api/builds/{new}")).status_code == 404  # not built yet
 
 
 async def test_only_built_files_can_be_fetched(client: httpx.AsyncClient, example: str) -> None:

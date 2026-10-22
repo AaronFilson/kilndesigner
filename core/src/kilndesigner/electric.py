@@ -13,6 +13,7 @@ most 80% of the breaker's rating (the breaker is 125% of the load) (§3, L&L [S2
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -150,10 +151,10 @@ def _candidates(
                 continue
             p_e, v_e = power / rows, voltage / series
             d_min = wire_diameter(p_e, v_e, max_load, rho_t)
-            for gauge in reversed(GAUGES):  # thinnest wire that keeps the load in limits
+            for gauge in reversed(GAUGES):  # from the thinnest
                 d = si(awg_diameter(gauge), "m")
                 if d < d_min:
-                    continue
+                    continue  # over the surface-load limit
                 length = wire_length(p_e, v_e, d, rho_t)
                 outside = sum(COIL_RATIO) / 2 * d
                 turns = length / (math.pi * (outside - d))
@@ -161,10 +162,72 @@ def _candidates(
                     rows, series, gauge, d, length, surface_load(p_e, d, length),
                     outside, turns, groove / turns,
                 )  # fmt: skip
-                if PITCH_RATIO[0] <= candidate.pitch_ratio <= PITCH_RATIO[1]:
+                if candidate.pitch_ratio < PITCH_RATIO[0]:
+                    break  # the coil is too long for the groove, and thicker wire is longer still
+                if candidate.pitch_ratio <= PITCH_RATIO[1]:
                     found.append(candidate)
-                break
     return found
+
+
+def choose(candidates: list[Candidate]) -> Candidate:
+    """The fewest elements, since each is a groove to cut and a pair of terminals to wire; then
+    the thickest wire that fits them, since thicker wire lasts longer (Kanthal [S9]); then the
+    lowest surface load, which also lasts longer (Krueger [S15]); then the pitch nearest the
+    middle of its range."""
+    middle = sum(PITCH_RATIO) / 2
+    return min(
+        candidates,
+        key=lambda c: (c.rows, -c.diameter, c.load, abs(c.pitch_ratio - middle)),
+    )
+
+
+def _thin_wire(
+    best: Candidate, everything: list[Candidate], electric: Electric, door: str
+) -> Finding:
+    """Why the wire is under Kanthal's 3 mm, and what would allow thicker wire."""
+    wire = f"{best.gauge} AWG wire ({show(Q_(best.diameter, 'm'), 'mm', 3)})"
+    if electric.elements is None:
+        chose = (
+            f"The tool chose {best.rows} elements of {wire}: the fewest elements that work, each "
+            "with the thickest wire whose coil fits its groove."
+        )
+    else:
+        chose = (
+            f"For the {best.rows} elements the design asks for, the tool chose {wire}, the "
+            "thickest whose coil fits each groove."
+        )
+    thick = [c for c in everything if c.diameter >= si(KANTHAL_MIN_WIRE, "m")]
+    if thick:
+        alt = choose(thick)
+        then = (
+            f"{alt.rows} elements would take {alt.gauge} AWG "
+            f"({show(Q_(alt.diameter, 'm'), 'mm', 3)}); set elements: {alt.rows} in the "
+            "design's electric heat to use them."
+        )
+    else:
+        free = [w for w in ("left", "right", "back", "front") if w not in electric.walls]
+        room = any(w != door for w in free)
+        then = (
+            f"No number of elements in {_walls(electric.walls)} fits wire that thick, because "
+            "its coils would be longer than the grooves. "
+            + ("Elements in more walls would make room; otherwise, expect " if room else "Expect ")
+            + "to replace these elements sooner."
+        )
+    return Finding(
+        level="info",
+        message=(
+            f"{chose} Kanthal recommends wire of 3 mm or more for the longest life in grooves. "
+            f"{then}"
+        ),
+        reference="electric-and-thermal.md §1.6 [S9, S13]",
+    )
+
+
+def _walls(walls: Sequence[str]) -> str:
+    """'the left wall', 'the left and back walls', 'the left, right and back walls'."""
+    if len(walls) == 1:
+        return f"the {walls[0]} wall"
+    return f"the {', '.join(walls[:-1])} and {walls[-1]} walls"
 
 
 def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> ElectricDesign:
@@ -261,22 +324,24 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             )
         )
     else:
-        best = min(candidates, key=lambda c: (abs(c.pitch_ratio - 3), c.rows, -c.series))
+        best = choose(candidates)
         elements = _element_result(best, wire, voltage, power, groove, us)
         p_e, v_e = power / best.rows, voltage / best.series
         working.extend(_element_steps(best, p_e, v_e, rho_t, max_load, us))
         if best.diameter < si(KANTHAL_MIN_WIRE, "m"):
-            findings.append(
-                Finding(
-                    level="info",
-                    message=(
-                        f"The wire ({show(Q_(best.diameter, 'm'), 'mm', 3)}) is thinner than the "
-                        "3 mm Kanthal recommends for long life in grooves. Kiln makers commonly "
-                        "use 12–15 gauge; expect to replace elements more often."
-                    ),
-                    reference="electric-and-thermal.md §1.6 [S9, S13]",
+            everything = candidates
+            if electric.elements is not None:
+                everything = _candidates(
+                    power=power,
+                    voltage=voltage,
+                    phases=supply.phase,
+                    groove=groove,
+                    max_rows=max_rows,
+                    rho_t=rho_t,
+                    max_load=max_load,
+                    fixed_count=None,
                 )
-            )
+            findings.append(_thin_wire(best, everything, electric, kiln.door_face))
 
     line_current = power / (root3 * voltage)
     volume = _chamber_volume(kiln)
@@ -442,7 +507,12 @@ def _element_steps(
         Step(
             name="Wire chosen",
             value=f"{c.gauge} AWG, {show(Q_(c.diameter, 'm'), 'mm', 3)}",
-            note="The thinnest standard gauge at or above the smallest diameter (ASTM B258).",
+            note=(
+                "The fewest elements that work, then the thickest standard gauge (ASTM B258) for "
+                "them: at or above the smallest diameter, with a coil that fits the groove at a "
+                "pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal)."
+            ),
+            reference="electric-and-thermal.md §1.6 [S9, S13]",
         ),
         Step(
             name="Wire length per element",

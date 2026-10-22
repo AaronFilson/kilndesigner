@@ -12,6 +12,8 @@
 **/node_modules
 **/dist
 */tests
+web/e2e
 data
 out
 docs
+scratch

@@ -1,14 +1,24 @@
+import itertools
 from pathlib import Path
 
 import pytest
-from hypothesis import given, settings
+from hypothesis import assume, given, settings
 from hypothesis import strategies as st
 
-from kilndesigner import load_design, parse_design
+from kilndesigner import Kiln, load_design, parse_design
 from kilndesigner.bom import bill_of_materials, price_list
 from kilndesigner.geometry import Part
 from kilndesigner.library import materials
-from kilndesigner.masonry import IN, KERF, Cut, bricks_for_cuts, plan_layer, plan_masonry
+from kilndesigner.masonry import (
+    IN,
+    KERF,
+    Cut,
+    brick_sizes,
+    bricks_for_cuts,
+    plan_layer,
+    plan_layers,
+    plan_masonry,
+)
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 
@@ -48,6 +58,87 @@ def test_thickness_chooses_the_laying() -> None:
     assert plan_layer(wall(18, 9, thick_in=2.5)).laying == "on_edge"  # type: ignore[union-attr]
     assert plan_layer(wall(18, 9, thick_in=9)).laying == "header"  # type: ignore[union-attr]
     assert plan_layer(wall(18, 9, thick_in=3.7)) is None
+
+
+@pytest.mark.parametrize(
+    ("inches", "walls"),
+    [
+        (2.5, [2.5]),
+        (9, [9]),
+        (13.5, [9, 4.5]),
+        (7, [4.5, 2.5]),
+        (5, [2.5, 2.5]),
+        (18, [9, 9]),
+        (6.75, None),
+        (3.7, None),
+    ],
+)
+def test_a_layer_is_the_fewest_walls_of_brick_that_add_up(
+    inches: float, walls: list[float] | None
+) -> None:
+    found = brick_sizes(inches * IN)
+    assert ([round(s / IN, 3) for s in found] if found else None) == walls
+
+
+def test_a_metric_thickness_within_a_millimetre_is_a_brick_size() -> None:
+    assert brick_sizes(114) == [4.5 * IN]  # 4½ in is 114.3 mm
+
+
+def test_a_thick_layer_is_headers_beside_stretchers() -> None:
+    plans = plan_layers(wall(36, 10, thick_in=13.5))
+    assert plans is not None
+    assert [(p.laying, round(p.part.thickness / IN, 3)) for p in plans] == [
+        ("header", 9),
+        ("stretcher", 4.5),
+    ]
+    assert [p.within for p in plans] == [(1, 2), (2, 2)]
+    # The left wall's inside face is its high x: the headers are on the inside
+    assert plans[0].part.hi[0] == pytest.approx(13.5 * IN)
+    assert plans[1].part.lo[0] == pytest.approx(0)
+
+
+@settings(max_examples=30, deadline=None)
+@given(nine=st.integers(0, 2), four=st.integers(0, 2), two=st.integers(0, 2))
+def test_walls_of_brick_fill_the_layer_without_gaps(nine: int, four: int, two: int) -> None:
+    assume(nine + four + two)
+    thick = 9 * nine + 4.5 * four + 2.5 * two
+    plans = plan_layers(wall(27, 10, thick_in=thick))
+    assert plans is not None
+    assert sum(p.part.thickness for p in plans) == pytest.approx(thick * IN)
+    for inner, outer in itertools.pairwise(p.part for p in plans):
+        assert outer.hi[0] == pytest.approx(inner.lo[0])
+
+
+def front_loader_with_walls(thickness: str) -> Kiln:
+    text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
+    first = "    - material: ifb-jm26\n      thickness: 4.5 in"
+    assert first in text
+    return parse_design(
+        text.replace(first, f"    - material: ifb-jm26\n      thickness: {thickness}", 1)
+    )
+
+
+def test_a_thick_wall_is_counted_and_explained() -> None:
+    masonry = plan_masonry(front_loader_with_walls("13.5 in"))
+    messages = [f.message for f in masonry.result.findings]
+    assert not any("missing from the brick count" in m for m in messages)
+    side = next(m for m in messages if m.startswith("Layers thicker than one brick"))
+    assert "Left wall, layer 1 from the inside (13½ in): 9 in of bricks laid through" in side
+    assert "then 4½ in of bricks laid flat along the wall" in side
+    brick_volume = 9 * 4.5 * 2.5 * IN**3
+    lining = sum(p.part.volume for p in masonry.layers if p.part.material == "ifb-jm26")
+    bought = next(q.amount for q in masonry.result.quantities if q.material == "ifb-jm26")
+    assert bought * brick_volume >= lining
+
+
+def test_a_layer_whole_bricks_cant_make_says_where_why_and_what_to_do() -> None:
+    findings = plan_masonry(front_loader_with_walls("6.75 in")).result.findings
+    message = next(f.message for f in findings if f.message.startswith("Left wall"))
+    assert message.startswith(
+        "Left wall, layer 1 from the inside is 6¾ in of Morgan Thermal Ceramics JM 26"
+    )
+    assert "missing from the brick count, the bill of materials and the price" in message
+    assert message.endswith("Make it 5 in or 7 in thick.")
 
 
 @settings(max_examples=50, deadline=None)

@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
+from functools import cache
 from pathlib import Path
 
 from kilndesigner.model import Kiln
@@ -20,10 +21,26 @@ def design_document(kiln: Kiln) -> dict[str, object]:
     return kiln.model_dump(mode="json", by_alias=True, exclude_none=True)
 
 
+@cache
+def engine_fingerprint() -> str:
+    """A hash of the engine's code and data. The version number only changes at a release, so
+    this is what makes a build from changed code a new build rather than a stale one."""
+    root = Path(__file__).parent
+    digest = hashlib.sha256()
+    for path in sorted(p for p in root.rglob("*") if p.suffix in {".py", ".yaml", ".typ"}):
+        digest.update(path.relative_to(root).as_posix().encode())
+        digest.update(path.read_bytes().replace(b"\r\n", b"\n"))
+    return digest.hexdigest()
+
+
 def build_key(kiln: Kiln) -> str:
-    """A hash of the design and the engine version: equal keys build identical files."""
+    """A hash of the design and the engine: equal keys build identical files."""
     canonical = json.dumps(
-        {"engine": ENGINE_VERSION, "design": design_document(kiln)},
+        {
+            "engine": ENGINE_VERSION,
+            "fingerprint": engine_fingerprint(),
+            "design": design_document(kiln),
+        },
         sort_keys=True,
         separators=(",", ":"),
         ensure_ascii=False,

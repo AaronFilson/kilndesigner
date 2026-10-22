@@ -209,7 +209,7 @@ def build_plans(
             cut = sum(1 for p in pieces if not p.is_whole)
             data["course_plans"].append(
                 {
-                    "title": layer.part.name,
+                    "title": layer.title(),
                     "description": (
                         f"{len(layer.courses)} courses of {LAYING_WORDS[layer.laying]}: "
                         f"{len(pieces) - cut} whole bricks and {cut} cut pieces."

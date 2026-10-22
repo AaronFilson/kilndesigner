@@ -11,16 +11,33 @@ import tempfile
 from pathlib import Path
 
 import anyio.to_thread
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from kilndesigner import Kiln
-from kilndesigner.build import build_design
+from kilndesigner.build import build_design, build_key
 from kilndesigner_api.db import Build, BuildStatus, DesignVersion, now
 
 
 def build_dir(data_dir: Path, key: str) -> Path:
     return data_dir / "builds" / key
+
+
+async def refresh_build_keys(sessions: async_sessionmaker[AsyncSession]) -> int:
+    """Re-key every saved version for the engine running now, so that after an engine change a
+    design is built afresh rather than shown with its old results. Returns how many changed."""
+    changed = 0
+    async with sessions() as session:
+        for version in await session.scalars(select(DesignVersion)):
+            try:
+                key = build_key(Kiln.model_validate(version.document))
+            except ValidationError:
+                continue  # saved under an older schema; it keeps the key it had
+            if key != version.build_key:
+                version.build_key, changed = key, changed + 1
+        await session.commit()
+    return changed
 
 
 def _build_files(document: dict[str, object], target: Path) -> tuple[list[str], list[str]]:

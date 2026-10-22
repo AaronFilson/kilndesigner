@@ -43,10 +43,11 @@ plans (PDF, DXF, 3D model). Every number below has its working and source in the
    Swapping the K-23 backup and 1 in blanket for 3½ in of 6 pcf blanket saves about $2,100 with
    almost no change in heat loss (14.35 kW against 14.26 kW), but it's still over $5,000. The
    remaining levers are a smaller chamber, used or seconds brick, or a cheaper hot-face brick.
-5. **Elements:** 15 elements of 16 AWG APM in five strings of three, 23½ ft each, at 17 W/in²
-   with the coil pitch at 3 × the wire. That's thinner wire than kiln makers use (12–15 AWG)
-   because all 11.5 kW goes into one wall; putting elements in the back wall too would allow
-   heavier wire and longer life. The flue is in the back wall, so that's a design decision.
+5. **Elements:** 8 elements of 10 AWG (2.59 mm) APM in the left wall, in two strings of four,
+   28⅜ ft each, at 13.2 W/in². That's the fewest elements that work, each with the thickest wire
+   whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in
+   grooves; 12 elements would take 8 AWG (3.26 mm), at the cost of four more grooves and about
+   2½ times the wire (14 lb against 6).
 6. **Chimney:** about 14 ft above the chamber floor (3 × 47¾ in + ⅓ × 77 in), an exit flue of
    about 113 in², and 0.15–0.19 in. w.c. of draft at 20 °F.
 
@@ -62,5 +63,5 @@ plans (PDF, DXF, 3D model). Every number below has its working and source in the
 1. Is a 500 gal tank possible on the site? If not, how many cylinders, or is firing only above
    about 40 °F acceptable?
 2. Which way on the budget: a smaller chamber, cheaper brick, or a higher budget?
-3. Elements in the left wall only, or the back wall as well (moving the flue)?
+3. Elements: 8 of 10 AWG, or 12 of 8 AWG for longer element life?
 4. Fast (6–7 h) or slow (14–18 h) firings? This sets the burners and the propane supply.

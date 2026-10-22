@@ -55,10 +55,10 @@
         "unit_price": "$115.21"
       },
       {
-        "buy": "2.5 lb",
+        "buy": "6.5 lb",
         "cost": null,
         "item": "Kanthal APM wire",
-        "needed": "15 elements of 16 AWG, 23.54 ft each (2.21 lb)",
+        "needed": "8 elements of 10 AWG, 28.38 ft each (5.7 lb)",
         "priced_as": null,
         "source": null,
         "unit_price": null
@@ -81,25 +81,25 @@
     "alloy": "Kanthal APM",
     "continuous_current_limit": "48 A",
     "elements": {
-      "close_wound_length_each": "19.98 in",
-      "coil_outside_diameter": "0.28 in",
-      "coil_outside_diameter_mm": 7.1005,
-      "cold_resistance_each": "7.948 Ω",
-      "count": 15,
-      "current_each": "9.6 A",
-      "gauge": "16 AWG",
+      "close_wound_length_each": "24.09 in",
+      "coil_outside_diameter": "0.56 in",
+      "coil_outside_diameter_mm": 14.234,
+      "cold_resistance_each": "2.384 Ω",
+      "count": 8,
+      "current_each": "24 A",
+      "gauge": "10 AWG",
       "groove_length_each": "60 in",
-      "groove_rows": 15,
-      "hot_resistance_each": "8.333 Ω",
-      "length_each": "23.54 ft",
-      "pitch": "0.153 in (3.00 × wire diameter)",
-      "power_each": "768 W",
+      "groove_rows": 8,
+      "hot_resistance_each": "2.5 Ω",
+      "length_each": "28.38 ft",
+      "pitch": "0.254 in (2.49 × wire diameter)",
+      "power_each": "1440 W",
       "stretched_length_each": "60 in",
-      "surface_load": "17 W/in²",
-      "turns_each": "393.1",
-      "wire_diameter": "0.0508 in",
-      "wire_mass_total": "2.21 lb",
-      "wiring": "5 string(s) of 3 in series"
+      "surface_load": "13.2 W/in²",
+      "turns_each": "236.4",
+      "wire_diameter": "0.102 in",
+      "wire_mass_total": "5.7 lb",
+      "wiring": "2 string(s) of 4 in series"
     },
     "findings": [
       {
@@ -109,7 +109,7 @@
       },
       {
         "level": "info",
-        "message": "The wire (1.29 mm) is thinner than the 3 mm Kanthal recommends for long life in grooves. Kiln makers commonly use 12–15 gauge; expect to replace elements more often.",
+        "message": "The tool chose 8 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. 12 elements would take 8 AWG (3.26 mm); set elements: 12 in the design's electric heat to use them.",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]"
       },
       {
@@ -165,13 +165,13 @@
       {
         "formula": null,
         "inputs": {
-          "elements": "15",
-          "in series per string": "3"
+          "elements": "8",
+          "in series per string": "4"
         },
         "name": "Power and voltage per element",
         "note": null,
         "reference": null,
-        "value": "768 W at 80 V"
+        "value": "1440 W at 60 V"
       },
       {
         "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
@@ -181,15 +181,15 @@
         "name": "Smallest wire for the surface-load limit",
         "note": null,
         "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "1.28 mm"
+        "value": "2.36 mm"
       },
       {
         "formula": null,
         "inputs": {},
         "name": "Wire chosen",
-        "note": "The thinnest standard gauge at or above the smallest diameter (ASTM B258).",
-        "reference": null,
-        "value": "16 AWG, 1.29 mm"
+        "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]",
+        "value": "10 AWG, 2.59 mm"
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
@@ -197,7 +197,7 @@
         "name": "Wire length per element",
         "note": null,
         "reference": null,
-        "value": "23.54 ft"
+        "value": "28.38 ft"
       },
       {
         "formula": "p = P / (π·d·L)",
@@ -205,7 +205,7 @@
         "name": "Surface load",
         "note": null,
         "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "17 W/in²"
+        "value": "13.2 W/in²"
       },
       {
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
@@ -216,7 +216,7 @@
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
-        "value": "393 turns, 0.28 in outside, pitch 3.00 d"
+        "value": "236 turns, 0.56 in outside, pitch 2.49 d"
       },
       {
         "formula": null,
@@ -280,7 +280,7 @@
     },
     {
       "level": "info",
-      "message": "The wire (1.29 mm) is thinner than the 3 mm Kanthal recommends for long life in grooves. Kiln makers commonly use 12–15 gauge; expect to replace elements more often.",
+      "message": "The tool chose 8 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. 12 elements would take 8 AWG (3.26 mm); set elements: 12 in the design's electric heat to use them.",
       "reference": "electric-and-thermal.md §1.6 [S9, S13]"
     },
     {
@@ -315,7 +315,7 @@
     },
     {
       "level": "info",
-      "message": "Arch bricks: back/1-ifb-jm26-arch: about 4 bricks by volume, cut to the arch's curve; back/2-ifb-k23-arch: about 2 bricks by volume, cut to the arch's curve; front/1-ifb-jm26-arch: about 4 bricks by volume, cut to the arch's curve; front/2-ifb-k23-arch: about 2 bricks by volume, cut to the arch's curve.",
+      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve.",
       "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
     },
     {
@@ -1272,7 +1272,7 @@
     "findings": [
       {
         "level": "info",
-        "message": "Arch bricks: back/1-ifb-jm26-arch: about 4 bricks by volume, cut to the arch's curve; back/2-ifb-k23-arch: about 2 bricks by volume, cut to the arch's curve; front/1-ifb-jm26-arch: about 4 bricks by volume, cut to the arch's curve; front/2-ifb-k23-arch: about 2 bricks by volume, cut to the arch's curve.",
+        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve.",
         "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
       },
       {

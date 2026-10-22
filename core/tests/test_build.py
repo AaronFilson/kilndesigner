@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import pytest
+
 from kilndesigner import load_design, parse_design
 from kilndesigner.build import build_design, build_key, design_document
 
@@ -18,6 +20,13 @@ def test_the_build_key_changes_with_the_design() -> None:
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     renamed = kiln.model_copy(update={"name": kiln.name + " (copy)"})
     assert build_key(renamed) != build_key(kiln)
+
+
+def test_the_build_key_changes_with_the_engine(monkeypatch: pytest.MonkeyPatch) -> None:
+    kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
+    before = build_key(kiln)
+    monkeypatch.setattr("kilndesigner.build.engine_fingerprint", lambda: "changed code")
+    assert build_key(kiln) != before
 
 
 def test_the_document_round_trips() -> None:

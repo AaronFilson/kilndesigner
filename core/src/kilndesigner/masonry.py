@@ -1,11 +1,15 @@
 """Masonry: how each lining layer is built, brick by brick, and what it takes.
 
-Brick layers use the standard 9 × 4½ × 2½ in straight (electric-and-thermal.md §5, [S54]). How a
-brick is laid depends on the layer's thickness:
+Brick layers use the standard 9 × 4½ × 2½ in straight (electric-and-thermal.md §5, [S54]). A
+brick is 2½, 4½ or 9 in through, depending on how it's laid:
 
 - 2½ in: on edge (walls) or flat (floors and roofs);
 - 4½ in: as stretchers, 9 in along the wall, 2½ in courses (walls) or on edge (floors and roofs);
 - 9 in: as headers, 9 in through the wall, 4½ in along it.
+
+A thicker layer is built of several walls of brick side by side, the fewest that add up to its
+thickness: 13½ in is 9 in of headers and 4½ in of stretchers, 7 in is 4½ + 2½. A thickness no
+mix of 2½, 4½ and 9 in makes can't be laid from whole bricks, and is reported.
 
 Joints are staggered by starting every other course with a half brick. Pieces that don't fit a
 whole brick are cut, and offcuts are reused where they're long enough (first-fit decreasing).
@@ -18,7 +22,7 @@ from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
@@ -35,6 +39,8 @@ BRICK_SOURCE = "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
 KERF = IN / 8  # an assumption: a saw cut takes about ⅛ in
 WASTE = 0.10  # an assumption: extra bought for breakage and mistakes, not from a source
 TOL = 0.01  # mm
+# A layer within 1 mm of a brick size is that size, so a metric design can say 114 mm for 4½ in.
+THICKNESS_TOL = 1.0  # mm
 
 type Laying = Literal["stretcher", "on_edge", "header", "flat", "soldier"]
 BRICK_KINDS = {"insulating_firebrick", "dense_firebrick"}
@@ -77,31 +83,139 @@ class LayerPlan:
     run_length: float  # mm along each course
     span: float  # mm across all courses (wall height, or floor depth)
     courses: list[Course] = field(default_factory=list[Course])
+    within: tuple[int, int] = (1, 1)  # this wall of brick, of how many side by side in the layer
 
     @property
     def pieces(self) -> list[Piece]:
         return [p for c in self.courses for p in c.pieces]
 
+    def title(self) -> str:
+        """'Left wall, layer 2 from the inside: K-23 …, the inner of 2 walls of brick'."""
+        title = f"{layer_name(self.part)}: {material(self.part.material).name}"
+        k, n = self.within
+        if n > 1:
+            title += f", wall of brick {k} of {n} from the inside"
+        return title
 
-def _laying(thickness: float, horizontal: bool) -> tuple[Laying, float, float] | None:
-    """How bricks are laid for a layer: (laying, unit along the run, course height)."""
+
+FACE_NAMES = {
+    "left": "Left wall",
+    "right": "Right wall",
+    "back": "Back wall",
+    "front": "Front wall",
+    "door": "Door",
+    "floor": "Floor",
+    "roof": "Roof",
+}
+LAYING_NAMES: dict[Laying, str] = {
+    "stretcher": "bricks laid flat along the wall",
+    "on_edge": "bricks on edge",
+    "header": "bricks laid through the wall",
+    "flat": "bricks laid flat",
+    "soldier": "bricks standing on end",
+}
+
+
+def layer_name(part: Part) -> str:
+    """Where a lining layer is, in words: 'Left wall, layer 2 from the inside'."""
+    where, rest = part.name.split("/", 1)
+    number = rest.split("-", 1)[0]
+    return f"{FACE_NAMES.get(where, where)}, layer {number} from the inside"
+
+
+FRACTIONS = {1: "⅛", 2: "¼", 3: "⅜", 4: "½", 5: "⅝", 6: "¾", 7: "⅞"}
+
+
+def length_text(mm: float, us: bool) -> str:
+    """A thickness as a builder writes it: '13½ in', '6¾ in', or '343 mm'."""
+    if not us:
+        return f"{mm:.0f} mm"
+    eighths = round(mm / IN * 8)
+    if abs(eighths / 8 - mm / IN) > 0.01:
+        return f"{mm / IN:.3g} in"
+    whole, part = divmod(eighths, 8)
+    return f"{whole or ''}{FRACTIONS[part]} in" if part else f"{whole} in"
+
+
+def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
+    """For each brick size through a layer: (laying, unit along the run, course height)."""
     length, width, thick = BRICK
     if horizontal:
-        options: dict[float, tuple[Laying, float, float]] = {
+        return {
             thick: ("flat", length, width),
             width: ("on_edge", length, thick),
             length: ("soldier", width, thick),
         }
-    else:
-        options = {
-            thick: ("on_edge", length, width),
-            width: ("stretcher", length, thick),
-            length: ("header", width, thick),
-        }
-    for size, laying in options.items():
-        if abs(thickness - size) < TOL:
+    return {
+        thick: ("on_edge", length, width),
+        width: ("stretcher", length, thick),
+        length: ("header", width, thick),
+    }
+
+
+def _laying(thickness: float, horizontal: bool) -> tuple[Laying, float, float] | None:
+    """How bricks are laid for one wall of brick: (laying, unit along the run, course height)."""
+    for size, laying in _layings(horizontal).items():
+        if abs(thickness - size) < THICKNESS_TOL:
             return laying
     return None
+
+
+def brick_sizes(thickness: float) -> list[float] | None:
+    """The walls of brick, side by side, that make up a layer's thickness (mm), largest first:
+    the fewest that add up. None if no mix of 2½, 4½ and 9 in does."""
+    big, mid, small = sorted(BRICK, reverse=True)  # 9, 4½, 2½ in
+    mixes = [
+        (a, b, c)
+        for a in range(int(thickness // big) + 2)
+        for b in range(int(thickness // mid) + 2)
+        for c in range(int(thickness // small) + 2)
+        if a + b + c and abs(a * big + b * mid + c * small - thickness) < THICKNESS_TOL
+    ]
+    if not mixes:
+        return None
+    a, b, c = min(mixes, key=lambda n: (sum(n), -n[0], -n[1]))  # fewest, then the biggest bricks
+    return [big] * a + [mid] * b + [small] * c
+
+
+def buildable_near(thickness: float) -> tuple[float | None, float]:
+    """The nearest thicknesses (mm) whole bricks can make, below and above ``thickness``."""
+    sizes = sorted(BRICK, reverse=True)
+    top = thickness + sizes[0]
+    sums = {
+        a * sizes[0] + b * sizes[1] + c * sizes[2]
+        for a in range(int(top // sizes[0]) + 1)
+        for b in range(int(top // sizes[1]) + 1)
+        for c in range(int(top // sizes[2]) + 1)
+    } - {0.0}
+    below = [s for s in sums if s < thickness]
+    return (max(below) if below else None), min(s for s in sums if s > thickness)
+
+
+def _split(part: Part, sizes: list[float]) -> list[Part]:
+    """The part as walls of brick side by side, from the hot face out, scaled to fill it."""
+    axis, hot_at_hi = {
+        "floor": (2, True),
+        "roof": (2, False),
+        "left": (0, True),
+        "right": (0, False),
+        "back": (1, False),
+        "front": (1, True),
+    }[part.wall]
+    scale = part.thickness / sum(sizes)
+    pieces: list[Part] = []
+    edge = part.hi[axis] if hot_at_hi else part.lo[axis]
+    for size in sizes:
+        step = size * scale
+        lo, hi = list(part.lo), list(part.hi)
+        if hot_at_hi:
+            lo[axis], hi[axis] = edge - step, edge
+            edge -= step
+        else:
+            lo[axis], hi[axis] = edge, edge + step
+            edge += step
+        pieces.append(replace(part, lo=(lo[0], lo[1], lo[2]), hi=(hi[0], hi[1], hi[2])))
+    return pieces
 
 
 def _run(length: float, unit: float, stagger: bool, height: float, full_h: float) -> list[Piece]:
@@ -131,6 +245,7 @@ def _orient(part: Part) -> tuple[bool, float, float, float]:
 
 
 def plan_layer(part: Part) -> LayerPlan | None:
+    """The courses of one wall of brick: a part one brick thick, else None."""
     horizontal, run, span, thickness = _orient(part)
     laying = _laying(thickness, horizontal)
     if laying is None:
@@ -144,6 +259,57 @@ def plan_layer(part: Part) -> LayerPlan | None:
         pieces = _run(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
         plan.courses.append(Course(i + 1, offset, tuple(pieces)))
     return plan
+
+
+def plan_layers(part: Part) -> list[LayerPlan] | None:
+    """A brick layer as walls of brick side by side, from the inside out; None if whole bricks
+    can't make its thickness."""
+    sizes = brick_sizes(part.thickness)
+    if sizes is None:
+        return None
+    plans: list[LayerPlan] = []
+    for k, piece in enumerate(_split(part, sizes)):
+        plan = plan_layer(piece)
+        if plan is None:  # every piece is one brick thick, so this can't happen
+            raise AssertionError(f"{part.name}: no laying for {piece.thickness:.1f} mm")
+        plan.within = (k + 1, len(sizes))
+        plans.append(plan)
+    return plans
+
+
+def _not_buildable(part: Part, us: bool) -> Finding:
+    thick = length_text(part.thickness, us)
+    below, above = buildable_near(part.thickness)
+    choices = " or ".join(length_text(t, us) for t in (below, above) if t is not None)
+    return Finding(
+        level="warning",
+        message=(
+            f"{layer_name(part)} is {thick} of {material(part.material).name}. Whole "
+            "9 × 4½ × 2½ in bricks make layers 2½, 4½ or 9 in thick, or any sum of those (7 in is "
+            f"4½ + 2½, 13½ in is 9 + 4½), but not {thick}. So this layer has no course plan, and "
+            "its bricks are missing from the brick count, the bill of materials and the price. "
+            f"Make it {choices} thick."
+        ),
+        reference=BRICK_SOURCE,
+    )
+
+
+def _side_by_side(built: list[tuple[Part, list[LayerPlan]]], us: bool) -> Finding:
+    layers = [
+        f"{layer_name(part)} ({length_text(part.thickness, us)}): "
+        + ", then ".join(
+            f"{length_text(p.part.thickness, us)} of {LAYING_NAMES[p.laying]}" for p in plans
+        )
+        for part, plans in built
+    ]
+    return Finding(
+        level="info",
+        message=(
+            "Layers thicker than one brick are built as walls of brick side by side, from the "
+            "inside out. " + "; ".join(layers) + "."
+        ),
+        reference=BRICK_SOURCE,
+    )
 
 
 BRICK_VOLUME = BRICK[0] * BRICK[1] * BRICK[2]
@@ -291,6 +457,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     cast_volume: defaultdict[str, float] = defaultdict(float)
 
     arch_lines: list[str] = []
+    side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     for part in lining_parts(kiln):
         m = material(part.material)
         if m.kind in BRICK_KINDS and part.arch is not None:
@@ -298,35 +465,29 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
                 arch_lines.append(
-                    f"{part.name}: about {count} bricks by volume, cut to the arch's curve"
+                    f"{layer_name(part)}, above the springline: about {count} bricks by volume, "
+                    "cut to the arch's curve"
                 )
                 continue
             ring = arch_ring(part)
             if ring is None:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
-                arch_lines.append(f"{part.name}: about {count} bricks by volume")
+                arch_lines.append(f"{layer_name(part)}: about {count} bricks by volume")
             else:
                 shapes[(m.id, ring.shape)] += ring.shaped
                 whole[m.id] += ring.straights
-                arch_lines.append(f"{part.name}: {ring.describe()}")
+                arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
             continue
         if m.kind in BRICK_KINDS:
-            plan = plan_layer(part)
-            if plan is None:
-                findings.append(
-                    Finding(
-                        level="warning",
-                        message=(
-                            f"{part.name}: brick layers must be 2½, 4½ or 9 in thick to be laid "
-                            "from standard straights; this layer isn't counted."
-                        ),
-                        reference=BRICK_SOURCE,
-                    )
-                )
+            plans = plan_layers(part)
+            if plans is None:
+                findings.append(_not_buildable(part, us))
                 continue
-            layers.append(plan)
-            for piece in plan.pieces:
+            if len(plans) > 1:
+                side_by_side.append((part, plans))
+            layers.extend(plans)
+            for piece in (p for plan in plans for p in plan.pieces):
                 if piece.is_whole:
                     whole[m.id] += 1
                 else:
@@ -380,6 +541,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 priced_amount=buy,
             )
         )
+    if side_by_side:
+        findings.append(_side_by_side(side_by_side, us))
     if arch_lines:
         findings.append(
             Finding(

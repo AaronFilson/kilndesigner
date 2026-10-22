@@ -36,42 +36,42 @@
         "unit_price": "$150.00"
       },
       {
-        "buy": "4 lb",
-        "cost": 222.6,
+        "buy": "6.5 lb",
+        "cost": 361.72499999999997,
         "item": "Kanthal A-1 wire",
-        "needed": "9 elements of 13 AWG, 28.32 ft each (3.19 lb)",
+        "needed": "6 elements of 10 AWG, 37.84 ft each (5.7 lb)",
         "priced_as": "Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found), TEMCo Industrial",
         "source": "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)",
         "unit_price": "$55.65/lb"
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 2611.08
+    "total": 2750.205
   },
   "chamber_volume": "7.03 ft³",
   "electric": {
     "alloy": "Kanthal A-1",
     "continuous_current_limit": "48 A",
     "elements": {
-      "close_wound_length_each": "24.04 in",
-      "coil_outside_diameter": "0.396 in",
-      "coil_outside_diameter_mm": 10.054,
-      "cold_resistance_each": "4.769 Ω",
-      "count": 9,
-      "current_each": "16 A",
-      "gauge": "13 AWG",
+      "close_wound_length_each": "32.12 in",
+      "coil_outside_diameter": "0.56 in",
+      "coil_outside_diameter_mm": 14.234,
+      "cold_resistance_each": "3.179 Ω",
+      "count": 6,
+      "current_each": "24 A",
+      "gauge": "10 AWG",
       "groove_length_each": "67.5 in",
-      "groove_rows": 9,
-      "hot_resistance_each": "5 Ω",
-      "length_each": "28.32 ft",
-      "pitch": "0.202 in (2.81 × wire diameter)",
-      "power_each": "1280 W",
+      "groove_rows": 6,
+      "hot_resistance_each": "3.333 Ω",
+      "length_each": "37.84 ft",
+      "pitch": "0.214 in (2.10 × wire diameter)",
+      "power_each": "1920 W",
       "stretched_length_each": "67.5 in",
-      "surface_load": "16.7 W/in²",
-      "turns_each": "334",
-      "wire_diameter": "0.072 in",
-      "wire_mass_total": "3.19 lb",
-      "wiring": "3 string(s) of 3 in series"
+      "surface_load": "13.2 W/in²",
+      "turns_each": "315.2",
+      "wire_diameter": "0.102 in",
+      "wire_mass_total": "5.7 lb",
+      "wiring": "2 string(s) of 3 in series"
     },
     "findings": [
       {
@@ -81,7 +81,7 @@
       },
       {
         "level": "info",
-        "message": "The wire (1.83 mm) is thinner than the 3 mm Kanthal recommends for long life in grooves. Kiln makers commonly use 12–15 gauge; expect to replace elements more often.",
+        "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]"
       },
       {
@@ -132,13 +132,13 @@
       {
         "formula": null,
         "inputs": {
-          "elements": "9",
+          "elements": "6",
           "in series per string": "3"
         },
         "name": "Power and voltage per element",
         "note": null,
         "reference": null,
-        "value": "1280 W at 80 V"
+        "value": "1920 W at 80 V"
       },
       {
         "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
@@ -148,15 +148,15 @@
         "name": "Smallest wire for the surface-load limit",
         "note": null,
         "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "1.8 mm"
+        "value": "2.36 mm"
       },
       {
         "formula": null,
         "inputs": {},
         "name": "Wire chosen",
-        "note": "The thinnest standard gauge at or above the smallest diameter (ASTM B258).",
-        "reference": null,
-        "value": "13 AWG, 1.83 mm"
+        "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]",
+        "value": "10 AWG, 2.59 mm"
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
@@ -164,7 +164,7 @@
         "name": "Wire length per element",
         "note": null,
         "reference": null,
-        "value": "28.32 ft"
+        "value": "37.84 ft"
       },
       {
         "formula": "p = P / (π·d·L)",
@@ -172,7 +172,7 @@
         "name": "Surface load",
         "note": null,
         "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "16.7 W/in²"
+        "value": "13.2 W/in²"
       },
       {
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
@@ -183,7 +183,7 @@
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
-        "value": "334 turns, 0.396 in outside, pitch 2.81 d"
+        "value": "315 turns, 0.56 in outside, pitch 2.10 d"
       },
       {
         "formula": null,
@@ -232,7 +232,7 @@
     },
     {
       "level": "info",
-      "message": "The wire (1.83 mm) is thinner than the 3 mm Kanthal recommends for long life in grooves. Kiln makers commonly use 12–15 gauge; expect to replace elements more often.",
+      "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
       "reference": "electric-and-thermal.md §1.6 [S9, S13]"
     },
     {

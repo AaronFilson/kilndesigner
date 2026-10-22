@@ -16,6 +16,7 @@ from kilndesigner_api import db, schemas
 from kilndesigner_api.jobs import ArqRunner, InlineRunner, JobRunner
 from kilndesigner_api.routes import InvalidDesignError, router
 from kilndesigner_api.settings import Settings, get_settings
+from kilndesigner_api.tasks import refresh_build_keys
 
 
 async def _invalid_design(_: Request, e: Exception) -> JSONResponse:
@@ -32,6 +33,7 @@ def create_app(settings: Settings | None = None, runner: JobRunner | None = None
         engine = db.make_engine(settings.database_url)
         sessions = db.make_sessions(engine)
         app.state.settings, app.state.sessions = settings, sessions
+        await refresh_build_keys(sessions)
         if runner is not None:
             app.state.runner = runner
         elif settings.jobs == "inline":

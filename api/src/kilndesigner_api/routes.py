@@ -91,6 +91,23 @@ def _out(design: db.Design) -> schemas.Design:
     )
 
 
+FILES_MISSING = (
+    "its files are no longer in the data folder (it was cleared, or another setup shares this "
+    "database)"
+)
+
+
+async def _get_build(s: AsyncSession, settings: Settings, key: str) -> db.Build | None:
+    """A build, marked failed if it finished but its files have gone, so it can be built again."""
+    build = await s.get(db.Build, key)
+    if build is not None and build.status == db.BuildStatus.done:
+        folder = build_dir(settings.data_dir, key)
+        if not all((folder / name).is_file() for name in build.files):
+            build.status, build.error = db.BuildStatus.failed, FILES_MISSING
+            await s.commit()
+    return build
+
+
 def _new_version(design: db.Design, number: int, kiln: Kiln, source: str) -> db.DesignVersion:
     return db.DesignVersion(
         design=design,
@@ -168,14 +185,14 @@ async def get_version(design_id: uuid.UUID, number: int, s: Session) -> schemas.
 
 
 @router.post("/builds/{key}", status_code=status.HTTP_202_ACCEPTED)
-async def start_build(key: str, s: Session, runner: Runner) -> schemas.Build:
+async def start_build(key: str, s: Session, runner: Runner, settings: AppSettings) -> schemas.Build:
     """Build a design version by its build key. A build already made is returned as it is."""
     known = await s.scalar(
         select(func.count()).select_from(db.DesignVersion).where(db.DesignVersion.build_key == key)
     )
     if not known:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no design version has this build key")
-    build = await s.get(db.Build, key)
+    build = await _get_build(s, settings, key)
     if build is None:
         build = db.Build(key=key, status=db.BuildStatus.queued, files=[], notes=[])
         s.add(build)
@@ -191,8 +208,8 @@ async def start_build(key: str, s: Session, runner: Runner) -> schemas.Build:
 
 
 @router.get("/builds/{key}")
-async def get_build(key: str, s: Session) -> schemas.Build:
-    build = await s.get(db.Build, key)
+async def get_build(key: str, s: Session, settings: AppSettings) -> schemas.Build:
+    build = await _get_build(s, settings, key)
     if build is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "not built")
     return schemas.Build.model_validate(build)
@@ -201,8 +218,8 @@ async def get_build(key: str, s: Session) -> schemas.Build:
 @router.get("/builds/{key}/report")
 async def build_report(key: str, s: Session, settings: AppSettings) -> Report:
     """The build's report, with its working and findings."""
-    build = await s.get(db.Build, key)
-    if build is None or "report.json" not in build.files:
+    build = await _get_build(s, settings, key)
+    if build is None or build.status != db.BuildStatus.done or "report.json" not in build.files:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no report")
     path = build_dir(settings.data_dir, key) / "report.json"
     return Report.model_validate_json(path.read_bytes())
@@ -210,7 +227,7 @@ async def build_report(key: str, s: Session, settings: AppSettings) -> Report:
 
 @router.get("/builds/{key}/files/{name}", response_class=FileResponse)
 async def build_file(key: str, name: str, s: Session, settings: AppSettings) -> FileResponse:
-    build = await s.get(db.Build, key)
-    if build is None or name not in build.files:
+    build = await _get_build(s, settings, key)
+    if build is None or build.status != db.BuildStatus.done or name not in build.files:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no such file")
     return FileResponse(build_dir(settings.data_dir, key) / name, filename=name)

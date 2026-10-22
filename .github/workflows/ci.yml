@@ -46,14 +46,34 @@ jobs:
       - name: Tests
         run: uv run pytest
 
+  web:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Types (the app, the client and the browser tests)
+        run: npm run check
+      - name: Unit tests
+        run: npm test
+
   compose:
-    # The self-hosted app as a user runs it, with a design saved, built and fetched end to end
+    # The self-hosted app as a user runs it: a design saved, built and fetched through the API,
+    # then the same in a real browser (the runner's Google Chrome)
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: true
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
       - name: Start the self-hosted app
         run: docker compose up --detach --wait
       - name: Install
@@ -62,6 +82,16 @@ jobs:
         run: uv run pytest -m compose
         env:
           KILNDESIGNER_COMPOSE_URL: http://localhost:8080
+      - name: Install the browser tests
+        run: npm ci
+      - name: Browser tests
+        run: npm run e2e
+      - name: Browser test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: web/playwright-report
       - name: Logs
         if: failure()
         run: docker compose logs
