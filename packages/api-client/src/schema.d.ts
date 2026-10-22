@@ -162,7 +162,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Build File */
+        /**
+         * Build File
+         * @description A file the build wrote, by its path in the build: ``plans.pdf``, ``drawings/view-1.svg``.
+         *     Only the paths the build recorded can be fetched.
+         */
         get: operations["build_file_api_builds__key__files__name__get"];
         put?: never;
         post?: never;

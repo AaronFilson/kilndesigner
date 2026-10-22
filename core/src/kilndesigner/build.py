@@ -11,9 +11,13 @@ import json
 from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from kilndesigner.model import Kiln
 from kilndesigner.report import ENGINE_VERSION, Report, design_report
+
+if TYPE_CHECKING:
+    from kilndesigner.plans import Drawing
 
 
 def design_document(kiln: Kiln) -> dict[str, object]:
@@ -78,6 +82,25 @@ def build_design(kiln: Kiln, out: Path, *, model: bool = True, plans: bool = Tru
             drawn = build_plans(kiln, result.report, dxf_path=out / "sections.dxf")
             (out / "plans.pdf").write_bytes(drawn.pdf)
             result.written += [out / "plans.pdf", out / "sections.dxf"]
+            result.written += _write_drawings(drawn.drawings, out / DRAWINGS)
         except GeometryNotSupportedError as e:
             result.notes.append(f"No plans: {e}")
     return result
+
+
+DRAWINGS = "drawings"
+"""The folder in a build for the plans' drawings as SVG, with ``index.json`` listing them."""
+
+
+def _write_drawings(drawings: tuple[Drawing, ...], folder: Path) -> list[Path]:
+    folder.mkdir(exist_ok=True)
+    written: list[Path] = []
+    for d in drawings:
+        (folder / d.file).write_text(d.svg, encoding="utf-8")
+        written.append(folder / d.file)
+    index = [
+        {"file": d.file, "kind": d.kind, "title": d.title, "description": d.description}
+        for d in drawings
+    ]
+    (folder / "index.json").write_text(json.dumps(index, ensure_ascii=False, indent=2), "utf-8")
+    return [folder / "index.json", *written]

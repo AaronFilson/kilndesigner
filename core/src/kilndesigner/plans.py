@@ -66,10 +66,22 @@ def hybrid_charts(h: HybridAnalysis, us: bool) -> dict[str, str]:
 
 
 @dataclass(frozen=True)
+class Drawing:
+    """A drawing in the plans, kept for the app too: a section, a course plan or a chart."""
+
+    file: str
+    kind: str  # "section", "course plan" or "chart"
+    title: str
+    description: str
+    svg: str
+
+
+@dataclass(frozen=True)
 class Plans:
     pdf: bytes
     masonry: MasonryPlan
     bom: Bom
+    drawings: tuple[Drawing, ...] = ()
     pages_png: tuple[bytes, ...] = ()
 
 
@@ -194,33 +206,42 @@ def build_plans(
         rows = report.electric.elements.groove_rows
         coil = report.electric.elements.coil_outside_diameter_mm
     views = section_views(kiln, rows, coil)
+    drawings: list[Drawing] = []
     with tempfile.TemporaryDirectory(prefix="kilndesigner-") as tmp:
         root = Path(tmp)
         data["views"] = []
         for i, view in enumerate(views):
             name = f"view-{i + 1}.svg"
-            (root / name).write_text(view_svg(view), encoding="utf-8")
+            svg = view_svg(view)
+            (root / name).write_text(svg, encoding="utf-8")
             data["views"].append({"title": view.title, "file": name})
+            drawings.append(Drawing(name, "section", view.title, "", svg))
         data["course_plans"] = []
         for i, layer in enumerate(masonry.layers):
             name = f"course-{i + 1}.svg"
-            (root / name).write_text(course_plan_svg(layer, us), encoding="utf-8")
+            svg = course_plan_svg(layer, us)
+            (root / name).write_text(svg, encoding="utf-8")
             pieces = layer.pieces
             cut = sum(1 for p in pieces if not p.is_whole)
-            data["course_plans"].append(
-                {
-                    "title": layer.title(),
-                    "description": (
-                        f"{len(layer.courses)} courses of {LAYING_WORDS[layer.laying]}: "
-                        f"{len(pieces) - cut} whole bricks and {cut} cut pieces."
-                    ),
-                    "file": name,
-                }
-            )
+            plan = {
+                "title": layer.title(),
+                "description": (
+                    f"{len(layer.courses)} courses of {LAYING_WORDS[layer.laying]}: "
+                    f"{len(pieces) - cut} whole bricks and {cut} cut pieces."
+                ),
+                "file": name,
+            }
+            data["course_plans"].append(plan)
+            drawings.append(Drawing(name, "course plan", plan["title"], plan["description"], svg))
         if report.hybrid is not None:
+            titles = {
+                "cost.svg": "What a kWh kept in the kiln costs, from the elements and from propane",
+                "surplus.svg": "Element power left for heating the ware and walls",
+            }
             for name, svg in hybrid_charts(report.hybrid, us).items():
                 (root / name).write_text(svg, encoding="utf-8")
                 data["hybrid"]["charts"] = [*data["hybrid"].get("charts", []), name]
+                drawings.append(Drawing(name, "chart", titles.get(name, name), "", svg))
         (root / "data.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         template = resources.files("kilndesigner.data").joinpath("plans.typ").read_text("utf-8")
         (root / "plans.typ").write_text(template, encoding="utf-8")
@@ -233,4 +254,6 @@ def build_plans(
             pages = list(cast("list[bytes]", png)) if isinstance(png, list) else [png]
     if dxf_path is not None:
         write_dxf(views, str(dxf_path), us)
-    return Plans(pdf=pdf, masonry=masonry, bom=bom, pages_png=tuple(pages))
+    return Plans(
+        pdf=pdf, masonry=masonry, bom=bom, drawings=tuple(drawings), pages_png=tuple(pages)
+    )

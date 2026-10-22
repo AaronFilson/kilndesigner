@@ -98,6 +98,18 @@ test("a design opened from a file is saved, built on the worker and shown", asyn
   await page.waitForLoadState("networkidle");
   await expect(viewer.getByRole("alert")).toHaveCount(0);
 
+  await page.getByRole("tab", { name: "Drawings" }).click();
+  const section = page.getByRole("img", { name: /^Section A–A/ });
+  await expect(section).toBeVisible();
+  expect(await section.evaluate((img: HTMLImageElement) => img.naturalWidth)).toBeGreaterThan(0);
+  await expect(page.getByRole("heading", { name: "Course plans" })).toBeVisible();
+
+  await page.getByRole("tab", { name: "Materials" }).click();
+  const bom = page.getByRole("table", { name: "Bill of materials" });
+  await expect(bom).toContainText("Total of the priced items");
+  await expect(page.getByRole("table", { name: "Cut list" })).toBeVisible();
+
+  await page.getByRole("tab", { name: /^Report/ }).click();
   await expect(page.getByRole("heading", { name: "Heat loss" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Elements" })).toBeVisible();
   await expect(page.getByText("Electrical work must follow your local code")).toBeVisible();
@@ -162,6 +174,7 @@ test("a model that can't be loaded leaves the rest of the page working", async (
 
   await expect(page.getByText("The 3D model could not be shown")).toBeVisible();
   await expect(page.getByRole("heading", { name: "E2E model fails" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Heat loss" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Plans (PDF)" })).toBeVisible();
+  await page.getByRole("tab", { name: /^Report/ }).click();
+  await expect(page.getByRole("heading", { name: "Heat loss" })).toBeVisible();
 });

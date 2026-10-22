@@ -11,7 +11,7 @@ import typer
 from pydantic import ValidationError
 
 from kilndesigner import Kiln, load_design
-from kilndesigner.build import build_design
+from kilndesigner.build import DRAWINGS, build_design
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
 from kilndesigner.units import UnitError
@@ -144,6 +144,12 @@ def build(
     for note in result.notes:
         typer.echo(note, err=True)
     typer.echo(summary(result.report))
-    typer.echo("Wrote " + ", ".join(str(p) for p in result.written))
+    top = [p for p in result.written if p.parent == out]
+    drawings = sum(1 for p in result.written if p.parent != out and p.suffix == ".svg")
+    typer.echo(
+        "Wrote "
+        + ", ".join(str(p) for p in top)
+        + (f", and {drawings} drawings in {out / DRAWINGS}" if drawings else "")
+    )
     if result.report.errors:
         raise typer.Exit(code=1)

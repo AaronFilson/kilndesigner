@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import AsyncIterator
+from pathlib import PurePath
 from typing import Annotated, Any
 
 import yaml
@@ -225,9 +226,11 @@ async def build_report(key: str, s: Session, settings: AppSettings) -> Report:
     return Report.model_validate_json(path.read_bytes())
 
 
-@router.get("/builds/{key}/files/{name}", response_class=FileResponse)
+@router.get("/builds/{key}/files/{name:path}", response_class=FileResponse)
 async def build_file(key: str, name: str, s: Session, settings: AppSettings) -> FileResponse:
+    """A file the build wrote, by its path in the build: ``plans.pdf``, ``drawings/view-1.svg``.
+    Only the paths the build recorded can be fetched."""
     build = await _get_build(s, settings, key)
     if build is None or build.status != db.BuildStatus.done or name not in build.files:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no such file")
-    return FileResponse(build_dir(settings.data_dir, key) / name, filename=name)
+    return FileResponse(build_dir(settings.data_dir, key) / name, filename=PurePath(name).name)

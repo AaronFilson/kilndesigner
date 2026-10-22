@@ -2,6 +2,8 @@ import type { Report } from "@kilndesigner/api-client";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
+import { reportTabLabel } from "./BuildPanel";
+import { Materials } from "./Materials";
 import { Problems, where } from "./Problems";
 import { ReportView } from "./ReportView";
 
@@ -46,6 +48,66 @@ const report: Report = {
   bom: null,
   findings: [{ level: "warning", message: "Surface load is high" }],
 };
+
+describe("reportTabLabel", () => {
+  it("counts the errors and warnings", () => {
+    expect(reportTabLabel(undefined)).toBe("Report");
+    expect(reportTabLabel(report)).toBe("Report (1 warning)");
+    const worse = {
+      ...report,
+      findings: [...report.findings, ...report.findings, { level: "error", message: "No" }],
+    } as Report;
+    expect(reportTabLabel(worse)).toBe("Report (1 error, 2 warnings)");
+  });
+});
+
+describe("Materials", () => {
+  it("lists what to buy with the total, and the cut list", () => {
+    const withBom = {
+      ...report,
+      bom: {
+        lines: [
+          {
+            item: "JM 26 brick",
+            needed: "100 bricks",
+            buy: "110 bricks",
+            unit_price: "$7.17",
+            cost: 788.7,
+            priced_as: null,
+            source: null,
+          },
+        ],
+        total: 788.7,
+        prices_checked: "2026-10-21",
+        findings: [],
+      },
+      masonry: {
+        quantities: [
+          {
+            material: "ifb-jm26",
+            name: "JM 26 brick",
+            kind: "insulating_firebrick",
+            amount: 110,
+            unit: "bricks",
+            detail: "",
+            priced_amount: 110,
+          },
+        ],
+        cut_list: [{ material: "ifb-jm26", cut: "cut to 4.5 in long", count: 12 }],
+        findings: [],
+      },
+    } as Report;
+    render(<Materials report={withBom} />);
+    expect(screen.getByRole("table", { name: "Bill of materials" }).textContent).toContain("$789");
+    const cuts = screen.getByRole("table", { name: "Cut list" });
+    expect(cuts.textContent).toContain("JM 26 brickcut to 4.5 in long12");
+  });
+
+  it("says so when there is no bill of materials", () => {
+    render(<Materials report={report} />);
+    expect(screen.getByText("This design has no bill of materials.")).toBeTruthy();
+  });
+});
 
 describe("ReportView", () => {
   it("shows the headline numbers, the findings and the working", () => {

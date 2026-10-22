@@ -52,7 +52,7 @@ def _build_files(document: dict[str, object], target: Path) -> tuple[list[str], 
     except BaseException:
         shutil.rmtree(scratch, ignore_errors=True)
         raise
-    return [p.name for p in result.written], result.notes
+    return [p.relative_to(scratch).as_posix() for p in result.written], result.notes
 
 
 async def run_build(sessions: async_sessionmaker[AsyncSession], data_dir: Path, key: str) -> None:

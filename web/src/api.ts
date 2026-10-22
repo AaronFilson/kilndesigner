@@ -23,8 +23,9 @@ function fail(response: Response, error: unknown): never {
   throw new ApiError(response.status, typeof detail === "string" ? detail : response.statusText);
 }
 
+/** A file a build wrote, by its path in the build: `plans.pdf`, `drawings/view-1.svg`. */
 export const fileUrl = (key: string, name: string) =>
-  `/api/builds/${key}/files/${encodeURIComponent(name)}`;
+  `/api/builds/${key}/files/${name.split("/").map(encodeURIComponent).join("/")}`;
 
 export function useDesigns() {
   return useQuery({
