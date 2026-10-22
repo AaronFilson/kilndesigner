@@ -1,0 +1,45 @@
+# A cone 10 electric front-loader on a 240 V, 60 A circuit (48 A continuous).
+# About 7 cubic feet inside: a size many studios build or buy.
+schema: 1
+name: Electric front-loader, cone 10
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 22.5 in
+  depth: 22.5 in
+  height: 24 in
+roof:
+  type: flat
+loading:
+  type: door
+  face: front
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+shell:
+  finish: oxidised_steel
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A
+    alloy: kanthal-a1
+    walls: [left, right, back]
+site:
+  ambient: 70 degF
+  electricity_price: 0.12 USD/kWh

@@ -1,0 +1,624 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "280 bricks",
+        "cost": 2007.6,
+        "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "needed": "280 bricks (168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage)",
+        "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$7.17"
+      },
+      {
+        "buy": "37 bricks",
+        "cost": 230.88,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "needed": "37 bricks (21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "1 roll",
+        "cost": 150.0,
+        "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "needed": "32.4 ft² (1 in thick; area plus 10% for trimming)",
+        "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S73]",
+        "unit_price": "$150.00"
+      },
+      {
+        "buy": "6.5 lb",
+        "cost": 361.72499999999997,
+        "item": "Kanthal A-1 wire",
+        "needed": "6 elements of 10 AWG, 37.84 ft each (5.7 lb)",
+        "priced_as": "Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found), TEMCo Industrial",
+        "source": "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)",
+        "unit_price": "$55.65/lb"
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 2750.205
+  },
+  "chamber_volume": "7.03 ft³",
+  "electric": {
+    "alloy": "Kanthal A-1",
+    "continuous_current_limit": "48 A",
+    "elements": {
+      "close_wound_length_each": "32.12 in",
+      "coil_outside_diameter": "0.56 in",
+      "coil_outside_diameter_mm": 14.234,
+      "cold_resistance_each": "3.179 Ω",
+      "count": 6,
+      "current_each": "24 A",
+      "gauge": "10 AWG",
+      "groove_length_each": "67.5 in",
+      "groove_rows": 6,
+      "hot_resistance_each": "3.333 Ω",
+      "length_each": "37.84 ft",
+      "pitch": "0.214 in (2.10 × wire diameter)",
+      "power_each": "1920 W",
+      "stretched_length_each": "67.5 in",
+      "surface_load": "13.2 W/in²",
+      "turns_each": "315.2",
+      "wire_diameter": "0.102 in",
+      "wire_mass_total": "5.7 lb",
+      "wiring": "2 string(s) of 3 in series"
+    },
+    "findings": [
+      {
+        "level": "warning",
+        "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
+        "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
+      },
+      {
+        "level": "info",
+        "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]"
+      },
+      {
+        "level": "warning",
+        "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
+        "reference": null
+      }
+    ],
+    "installed_power": "11.52 kW",
+    "installed_watts": 11520.0,
+    "line_current": "48 A",
+    "power_per_volume": "1638 W/ft³",
+    "supply": "240 V, 1-phase, 60 A breaker",
+    "working": [
+      {
+        "formula": "0.8 × breaker rating (the breaker is 125% of a continuous load)",
+        "inputs": {
+          "breaker": "60 A"
+        },
+        "name": "Continuous current limit",
+        "note": null,
+        "reference": "NEC 210.20(A) continuous loads at 125%, as applied by L&L; electric-and-thermal.md §3 [S25]",
+        "value": "48 A"
+      },
+      {
+        "formula": "P = V·I",
+        "inputs": {
+          "current": "48 A",
+          "voltage": "240 V"
+        },
+        "name": "Power the circuit can supply",
+        "note": null,
+        "reference": null,
+        "value": "11.52 kW"
+      },
+      {
+        "formula": "ρ_T = ρ20 · Ct",
+        "inputs": {
+          "Ct": "1.05",
+          "wire temperature": "2525 °F",
+          "ρ20": "1.45 mm²⋅Ω/m"
+        },
+        "name": "Wire resistivity when hot",
+        "note": "The wire is assumed to run 100 °C above the kiln; Ct changes little there.",
+        "reference": "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal A-1 data sheet [S1], atmospheres [S9]",
+        "value": "1.52e-06 mm²⋅Ω/m"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "elements": "6",
+          "in series per string": "3"
+        },
+        "name": "Power and voltage per element",
+        "note": null,
+        "reference": null,
+        "value": "1920 W at 80 V"
+      },
+      {
+        "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
+        "inputs": {
+          "p (limit)": "17.5 W/in²"
+        },
+        "name": "Smallest wire for the surface-load limit",
+        "note": null,
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
+        "value": "2.36 mm"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Wire chosen",
+        "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]",
+        "value": "10 AWG, 2.59 mm"
+      },
+      {
+        "formula": "L = U²/P · (πd²/4) / ρ_T",
+        "inputs": {},
+        "name": "Wire length per element",
+        "note": null,
+        "reference": null,
+        "value": "37.84 ft"
+      },
+      {
+        "formula": "p = P / (π·d·L)",
+        "inputs": {},
+        "name": "Surface load",
+        "note": null,
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
+        "value": "13.2 W/in²"
+      },
+      {
+        "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
+        "inputs": {
+          "D/d": "5.5",
+          "pitch range": "2–4 d"
+        },
+        "name": "Coil",
+        "note": null,
+        "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
+        "value": "315 turns, 0.56 in outside, pitch 2.10 d"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Installed power per unit of chamber volume",
+        "note": "For comparison, 7 cu ft cone 10 kilns from L&L and Skutt have about 1650–1720 W/ft³ (electric-and-thermal.md §7 [S73, S74]).",
+        "reference": null,
+        "value": "1638 W/ft³"
+      },
+      {
+        "formula": "P_installed / Q_loss",
+        "inputs": {},
+        "name": "Installed power over steady loss at top temperature",
+        "note": "Power above the loss is what heats the ware and walls near the top.",
+        "reference": null,
+        "value": "2.01"
+      }
+    ]
+  },
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "level": "warning",
+      "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
+      "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
+    },
+    {
+      "level": "warning",
+      "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
+      "reference": null
+    },
+    {
+      "level": "warning",
+      "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+      "reference": "electric-and-thermal.md §1.6 [S9, S13]"
+    },
+    {
+      "level": "info",
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    }
+  ],
+  "gas": null,
+  "heat_loss": {
+    "ambient": "70 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "983.1 W",
+        "inside_area": "3.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1029 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "244.8 °F",
+            "hot_side": "1029 °F",
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "8.142 ft²",
+        "surface_temperature": "244.8 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "983.1 W",
+        "inside_area": "3.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1029 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "244.8 °F",
+            "hot_side": "1029 °F",
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "8.142 ft²",
+        "surface_temperature": "244.8 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "983.1 W",
+        "inside_area": "3.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1029 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "244.8 °F",
+            "hot_side": "1029 °F",
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "8.142 ft²",
+        "surface_temperature": "244.8 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "983.1 W",
+        "inside_area": "3.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1029 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "244.8 °F",
+            "hot_side": "1029 °F",
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "8.142 ft²",
+        "surface_temperature": "244.8 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "856.9 W",
+        "inside_area": "3.516 ft²",
+        "layers": [
+          {
+            "cold_side": "1151 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "243.1 °F",
+            "hot_side": "1151 °F",
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          }
+        ],
+        "outside_area": "9.252 ft²",
+        "surface_temperature": "243.1 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "933.9 W",
+        "inside_area": "3.516 ft²",
+        "layers": [
+          {
+            "cold_side": "1023 °F",
+            "hot_side": "2345 °F",
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "230.2 °F",
+            "hot_side": "1023 °F",
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "7.793 ft²",
+        "surface_temperature": "230.2 °F"
+      }
+    ],
+    "findings": [
+      {
+        "level": "info",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "reference": null
+      },
+      {
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2345 °F",
+    "total": "5.723 kW",
+    "total_watts": 5723.335471835284,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "10",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone chart (2016), self-supporting cones; electric-and-thermal.md §8 [S75]",
+        "value": "1285 °C (2345 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "70 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "oxidised_steel"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.79"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "8.142 ft²",
+          "outside surface": "244.8 °F",
+          "surface coefficient h": "13.38 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "983.1 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "8.142 ft²",
+          "outside surface": "244.8 °F",
+          "surface coefficient h": "13.38 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "983.1 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "8.142 ft²",
+          "outside surface": "244.8 °F",
+          "surface coefficient h": "13.38 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "983.1 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "8.142 ft²",
+          "outside surface": "244.8 °F",
+          "surface coefficient h": "13.38 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "983.1 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "9.252 ft²",
+          "outside surface": "243.1 °F",
+          "surface coefficient h": "10.37 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "856.9 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "7.793 ft²",
+          "outside surface": "230.2 °F",
+          "surface coefficient h": "14.5 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "933.9 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": null,
+        "reference": null,
+        "value": "5.723 kW (1.95e+04 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 12,
+        "cut": "cut to 2 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 48,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 4.5 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 4,
+        "cut": "cut to 4.5 in long, ripped to 1.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 6.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 10,
+        "cut": "ripped to 1.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 2 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 2 in long, ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 4,
+        "cut": "cut to 6.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 3,
+        "cut": "ripped to 2 in",
+        "material": "ifb-k23"
+      }
+    ],
+    "findings": [
+      {
+        "level": "info",
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      },
+      {
+        "level": "warning",
+        "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
+        "reference": null
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 280.0,
+        "detail": "168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-jm26",
+        "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "priced_amount": 280.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 37.0,
+        "detail": "21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "priced_amount": 37.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 32.4,
+        "detail": "1 in thick; area plus 10% for trimming",
+        "kind": "fibre_blanket",
+        "material": "kaowool-blanket-8pcf",
+        "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "priced_amount": 32.40607638888886,
+        "unit": "ft²"
+      }
+    ]
+  },
+  "name": "Electric front-loader, cone 10"
+}

@@ -218,3 +218,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Kilndesigner
+.idea/
+/out/
+*.glb
+*.step
+!core/tests/golden/**
+/data/
+node_modules/
+test-results/
+playwright-report/
+/scratch/

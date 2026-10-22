@@ -1,0 +1,65 @@
+# The same kiln as pnw-hybrid-crossdraft.yaml, loaded on a car through the right-hand wall
+# instead of a bricked door. Compare them with:
+#   kilndesigner compare examples/pnw-hybrid-crossdraft.yaml examples/pnw-hybrid-crossdraft-car.yaml
+# No sourced prices exist for car hardware; put your own estimate in car_hardware_cost.
+schema: 1
+name: PNW hybrid cross-draft, cone 10, car
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28 in
+  depth: 60 in
+  height: 44 in
+roof:
+  type: sprung_arch
+  rise: 3.75 in
+loading:
+  type: car
+  face: right
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A
+    alloy: kanthal-apm
+    walls: [left]
+    off_above: 1650 degF
+  gas:
+    burners:
+      type: venturi
+      wall: front
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  electricity_price: 0.12 USD/kWh
+  propane_price: 3.50 USD/gallon
+  materials_budget: 5000 USD
