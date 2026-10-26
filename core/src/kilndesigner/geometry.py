@@ -30,6 +30,7 @@ from kilndesigner.working import length_text
 if TYPE_CHECKING:
     from build123d import Compound
 
+    from kilndesigner.hardware import Hardware, Opening, Piece
     from kilndesigner.report import Report
 
 # Display colours by material kind (RGB, 0–1)
@@ -42,6 +43,20 @@ COLOURS: dict[str, tuple[float, float, float]] = {
     "dense_castable": (0.62, 0.60, 0.58),
     "backup_insulation": (0.85, 0.85, 0.90),
     "element": (0.55, 0.55, 0.58),
+    "steel": (0.30, 0.32, 0.36),
+    "burner": (0.72, 0.55, 0.28),
+}
+KIND_NAMES = {
+    "insulating_firebrick": "Insulating firebrick",
+    "dense_firebrick": "Hard firebrick",
+    "fibre_blanket": "Ceramic fibre blanket",
+    "fibre_board": "Ceramic fibre board",
+    "insulating_castable": "Insulating castable",
+    "dense_castable": "Dense castable",
+    "backup_insulation": "Backup insulation",
+    "element": "Elements",
+    "steel": "Steel",
+    "burner": "Burners",
 }
 # Materials an arch can spring from: brick and castable, not fibre
 SOLID_KINDS = {"insulating_firebrick", "dense_firebrick", "insulating_castable", "dense_castable"}
@@ -157,7 +172,7 @@ def _thicknesses(kiln: Kiln, face: Face) -> list[tuple[str, float]]:
 
 def lining_parts(kiln: Kiln) -> list[Part]:
     """The lining as boxes and arch rings: pure arithmetic, testable without OpenCascade."""
-    from kilndesigner.library import material
+    from kilndesigner.castable import resolve_material
 
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
     walls = ("left", "right", "back", "front")
@@ -169,7 +184,7 @@ def lining_parts(kiln: Kiln) -> list[Part]:
 
     def add(face: Face, i: int, mat: str, lo: tuple[float, ...], hi: tuple[float, ...]) -> None:
         name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}"
-        kind = material(mat).kind
+        kind = resolve_material(kiln, mat).kind
         parts.append(Part(name, mat, kind, (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2]), face=face))
 
     def reach(face: str, i: int) -> float:
@@ -224,7 +239,7 @@ def lining_parts(kiln: Kiln) -> list[Part]:
                 name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}-arch"
                 parts.append(
                     Part(
-                        name, mat, material(mat).kind,
+                        name, mat, resolve_material(kiln, mat).kind,
                         (-w / 2, ys[0], h), (w / 2, ys[1], h + arch.rise),
                         arch=shape, cap=True, face=face,
                     )
@@ -238,7 +253,13 @@ def lining_parts(kiln: Kiln) -> list[Part]:
             hi = (half_width, y1, centre_z + r_in + th)
             parts.append(
                 Part(
-                    f"roof/{i + 1}-{mat}", mat, material(mat).kind, lo, hi, arch=shape, face="roof"
+                    f"roof/{i + 1}-{mat}",
+                    mat,
+                    resolve_material(kiln, mat).kind,
+                    lo,
+                    hi,
+                    arch=shape,
+                    face="roof",
                 )
             )
             cum += th
@@ -262,7 +283,7 @@ def _skewbacks(
     outer face. Its inner face lies along the arch's radius at the springline, so it takes the
     arch's thrust square on (combustion-and-masonry.md §6.5). It's built of the wall's main
     (thickest) brick or castable and runs the kiln's full length."""
-    from kilndesigner.library import material
+    from kilndesigner.castable import resolve_material
 
     w, h = si(kiln.chamber.width, "mm"), si(kiln.chamber.height, "mm")
     r_out = arch.radius + roof_thickness
@@ -271,7 +292,7 @@ def _skewbacks(
     sides: tuple[tuple[Face, int], ...] = (("left", -1), ("right", 1))
     for side, sign in sides:
         wall = layers[side]
-        solid = [layer for layer in wall if material(layer[0]).kind in SOLID_KINDS]
+        solid = [layer for layer in wall if resolve_material(kiln, layer[0]).kind in SOLID_KINDS]
         if not solid:
             continue  # nothing to spring an arch from
         outer = w / 2 + sum(t for _, t in wall)
@@ -288,7 +309,7 @@ def _skewbacks(
             Part(
                 f"{side}/skewback-{mat}",
                 mat,
-                material(mat).kind,
+                resolve_material(kiln, mat).kind,
                 (min(xs), ys[0], min(zs)),
                 (max(xs), ys[1], max(zs)),
                 face=side,
@@ -354,25 +375,64 @@ def _arch_solid(part: Part) -> Any:
     return Pos(0, part.lo[1] - solid.bounding_box().min.Y, 0) * solid
 
 
-def build_model(kiln: Kiln, elements: list[ElementRun] | None = None) -> Compound:
-    from build123d import (
-        Box,
-        Circle,
-        Color,
-        Compound,
-        Plane,
-        Polyline,
-        Pos,
-        Transition,
-        sweep,
-    )
+def _box(lo: tuple[float, ...], hi: tuple[float, ...]) -> Any:
+    from build123d import Box, Pos
 
+    sx, sy, sz = (b - a for a, b in zip(lo, hi, strict=True))
+    cx, cy, cz = ((a + b) / 2 for a, b in zip(lo, hi, strict=True))
+    return Pos(cx, cy, cz) * Box(sx, sy, sz)
+
+
+def _cylinder(axis: int, centre: tuple[float, float, float], radius: float, length: float) -> Any:
+    from build123d import Cylinder, Pos, Rot
+
+    turn = {0: Rot(0, 90, 0), 1: Rot(90, 0, 0), 2: Rot(0, 0, 0)}[axis]
+    return Pos(*centre) * turn * Cylinder(radius, length)
+
+
+def _opening_solid(o: Opening) -> Any:
+    lo, hi = o.box
+    if o.round_axis is None:
+        return _box(lo, hi)
+    centre = ((lo[0] + hi[0]) / 2, (lo[1] + hi[1]) / 2, (lo[2] + hi[2]) / 2)
+    across = [hi[i] - lo[i] for i in range(3) if i != o.round_axis]
+    return _cylinder(o.round_axis, centre, min(across) / 2, hi[o.round_axis] - lo[o.round_axis])
+
+
+def _piece_solid(p: Piece) -> Any:
+    from build123d import Compound
+
+    solids = [_box(lo, hi) for lo, hi in p.boxes]
+    solids += [_cylinder(c.axis, c.centre, c.radius, c.length) for c in p.cylinders]
+    return solids[0] if len(solids) == 1 else Compound(children=solids)
+
+
+def _overlaps(solid: Any, lo: tuple[float, ...], hi: tuple[float, ...]) -> bool:
+    bb = solid.bounding_box()
+    return (
+        hi[0] > bb.min.X and lo[0] < bb.max.X and hi[1] > bb.min.Y and lo[1] < bb.max.Y
+        and hi[2] > bb.min.Z and lo[2] < bb.max.Z
+    )  # fmt: skip
+
+
+def _cut(solid: Any, holes: list[tuple[Opening, Any]]) -> Any:
+    for opening, hole in holes:
+        if _overlaps(solid, *opening.box):
+            solid = solid - hole
+    return solid
+
+
+def build_model(
+    kiln: Kiln, elements: list[ElementRun] | None = None, hardware: Hardware | None = None
+) -> Compound:
+    from build123d import Circle, Color, Compound, Plane, Polyline, Transition, sweep
+
+    holes = [(o, _opening_solid(o)) for o in (hardware.openings if hardware else [])]
     children: list[Any] = []
     for part in lining_parts(kiln):
-        sx, sy, sz = (b - a for a, b in zip(part.lo, part.hi, strict=True))
-        cx, cy, cz = ((a + b) / 2 for a, b in zip(part.lo, part.hi, strict=True))
         boxed = part.arch is None and part.profile is None
-        solid: Any = Pos(cx, cy, cz) * Box(sx, sy, sz) if boxed else _arch_solid(part)
+        solid: Any = _box(part.lo, part.hi) if boxed else _arch_solid(part)
+        solid = _cut(solid, holes)
         solid.label = part.name
         solid.color = Color(*COLOURS.get(part.kind, (0.8, 0.8, 0.8)))
         children.append(solid)
@@ -384,42 +444,70 @@ def build_model(kiln: Kiln, elements: list[ElementRun] | None = None) -> Compoun
         coil.label = run.name
         coil.color = Color(*COLOURS["element"])
         children.append(coil)
+    for piece in hardware.pieces if hardware else []:
+        solid = _piece_solid(piece)
+        if piece.kind != "burner" and not piece.name.startswith("frame/"):
+            solid = _cut(solid, holes)
+        solid.label = piece.name
+        solid.color = Color(*COLOURS.get(piece.kind, (0.8, 0.8, 0.8)))
+        children.append(solid)
     model = Compound(children=children)
     model.label = kiln.name
     return model
 
 
-def part_index(kiln: Kiln, report: Report) -> dict[str, dict[str, str]]:
-    """What each named part of the model is, for the viewer: a title and a line of detail."""
-    from kilndesigner.library import material
+def _colour(kind: str) -> str:
+    r, g, b = COLOURS.get(kind, (0.8, 0.8, 0.8))
+    return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
+
+
+def part_index(
+    kiln: Kiln, report: Report, hardware: Hardware | None = None
+) -> dict[str, dict[str, str]]:
+    """What each named part of the model is, for the viewer: a title, a line of detail, and what
+    it's made of (``kind``, with its ``colour`` in the model, for the legend)."""
+    from kilndesigner.castable import resolve_material
 
     us = kiln.units == "us"
     index: dict[str, dict[str, str]] = {}
+
+    def entry(title: str, detail: str, kind: str) -> dict[str, str]:
+        return {"title": title, "detail": detail, "kind": KIND_NAMES.get(kind, kind),
+                "colour": _colour(kind)}  # fmt: skip
+
     for p in lining_parts(kiln):
-        detail = material(p.material).name
+        detail = resolve_material(kiln, p.material).name
         if p.profile is None and not p.cap:
             detail += f", {length_text(p.thickness, us)} thick"
-        index[p.name] = {"title": p.title, "detail": detail}
+        index[p.name] = entry(p.title, detail, p.kind)
     electric = report.electric
     if electric is not None and electric.elements is not None:
         el = electric.elements
         for i in range(el.count):
-            index[f"element/{i + 1}"] = {
-                "title": f"Element {i + 1} of {el.count}",
-                "detail": f"{el.gauge} {electric.alloy}, {el.length_each} of wire, {el.power_each}",
-            }
+            index[f"element/{i + 1}"] = entry(
+                f"Element {i + 1} of {el.count}",
+                f"{el.gauge} {electric.alloy}, {el.length_each} of wire, {el.power_each}",
+                "element",
+            )
+    for piece in hardware.pieces if hardware else []:
+        index[piece.name] = entry(piece.title, piece.detail, piece.kind)
     return index
 
 
 def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
-    """Build the kiln with its elements (if any), export it, and write what each part is."""
+    """Build the kiln with its elements, frame, door, ports and chimney, export it, and write
+    what each part is."""
+    from kilndesigner.hardware import build_hardware
+
     runs: list[ElementRun] = []
     if report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
         runs = element_runs(kiln, el.count, el.coil_outside_diameter_mm)
-    written = export_model(build_model(kiln, runs), out_dir)
+    hardware = build_hardware(kiln, report.frame, report.gas)
+    written = export_model(build_model(kiln, runs, hardware), out_dir)
     parts = out_dir / "parts.json"
-    parts.write_text(json.dumps(part_index(kiln, report), ensure_ascii=False, indent=2), "utf-8")
+    index = part_index(kiln, report, hardware)
+    parts.write_text(json.dumps(index, ensure_ascii=False, indent=2), "utf-8")
     return {**written, "parts": parts}
 
 

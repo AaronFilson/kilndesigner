@@ -14,6 +14,9 @@ export type Problem = Schemas["Problem"];
 export type Report = Schemas["Report"];
 export type Finding = Schemas["Finding"];
 export type Step = Schemas["Step"];
+export type Template = Schemas["Template"];
+export type Library = Schemas["Library"];
+export type CheckedDesign = Schemas["CheckedDesign"];
 
 export function createClient(baseUrl = "") {
   return createFetchClient<paths>({ baseUrl });

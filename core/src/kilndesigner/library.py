@@ -43,13 +43,15 @@ class Material(_Entry):
         "backup_insulation",
     ]
     density: str
-    max_service: str
+    max_service: str | None  # None: no source gives one
     conductivity: ConductivityData
     source: str
     status: Literal["verified", "excerpt", "derived"]
 
     @property
-    def max_service_temperature(self) -> Quantity:
+    def max_service_temperature(self) -> Quantity | None:
+        if self.max_service is None:
+            return None
         return parse_quantity(self.max_service, "[temperature]")
 
     @property

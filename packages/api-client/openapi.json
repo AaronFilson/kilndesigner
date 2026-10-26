@@ -68,6 +68,107 @@
         }
       }
     },
+    "/api/templates": {
+      "get": {
+        "summary": "List Templates",
+        "description": "The kinds of kiln a design can start from, each a complete design.",
+        "operationId": "list_templates_api_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Template"
+                  },
+                  "type": "array",
+                  "title": "Response List Templates Api Templates Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/library": {
+      "get": {
+        "summary": "Library",
+        "description": "What the forms offer: the materials library, alloys, cones and burners.",
+        "operationId": "library_api_library_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Library"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs/check": {
+      "post": {
+        "summary": "Check Design",
+        "description": "Check a design without saving it, and return it as both a document and YAML: the form and\nthe YAML tab trade the design through here.",
+        "operationId": "check_design_api_designs_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckedDesign"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/designs": {
       "get": {
         "summary": "List Designs",
@@ -469,6 +570,44 @@
   },
   "components": {
     "schemas": {
+      "BatchLine": {
+        "properties": {
+          "ingredient": {
+            "type": "string",
+            "title": "Ingredient"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "mass": {
+            "type": "string",
+            "title": "Mass"
+          },
+          "share": {
+            "type": "string",
+            "title": "Share"
+          },
+          "volume": {
+            "type": "string",
+            "title": "Volume"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingredient",
+          "name",
+          "mass",
+          "share",
+          "volume",
+          "source"
+        ],
+        "title": "BatchLine"
+      },
       "Bom": {
         "properties": {
           "lines": {
@@ -689,6 +828,108 @@
           "total_cost"
         ],
         "title": "BurnerOption"
+      },
+      "CastableReport": {
+        "properties": {
+          "mix": {
+            "$ref": "#/components/schemas/MixAnalysis"
+          },
+          "placed": {
+            "type": "string",
+            "title": "Placed"
+          },
+          "batches": {
+            "type": "integer",
+            "title": "Batches"
+          },
+          "totals": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientTotal"
+            },
+            "type": "array",
+            "title": "Totals"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/LayerUse"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "first_firing": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "First Firing"
+          },
+          "schedule": {
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            },
+            "type": "array",
+            "title": "Schedule"
+          },
+          "schedule_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Hours"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mix",
+          "placed",
+          "batches",
+          "totals",
+          "layers",
+          "first_firing",
+          "schedule",
+          "schedule_hours",
+          "steps",
+          "findings"
+        ],
+        "title": "CastableReport"
+      },
+      "CheckedDesign": {
+        "properties": {
+          "document": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Document"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "document",
+          "source"
+        ],
+        "title": "CheckedDesign",
+        "description": "A valid design, both ways: the JSON document the forms edit and the YAML the tab shows."
       },
       "CostPoint": {
         "properties": {
@@ -1121,6 +1362,94 @@
         "title": "Finding",
         "description": "Something the builder must know: a limit exceeded, an assumption, a safety note."
       },
+      "FrameDesign": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "angle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Angle"
+          },
+          "angle_leg_in": {
+            "type": "number",
+            "title": "Angle Leg In"
+          },
+          "angle_t_in": {
+            "type": "number",
+            "title": "Angle T In"
+          },
+          "rod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rod"
+          },
+          "rod_d_in": {
+            "type": "number",
+            "title": "Rod D In"
+          },
+          "thrust": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thrust"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "type": "array",
+            "title": "Members"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "angle",
+          "angle_leg_in",
+          "angle_t_in",
+          "rod",
+          "rod_d_in",
+          "thrust",
+          "members",
+          "working",
+          "findings"
+        ],
+        "title": "FrameDesign"
+      },
       "GasDesign": {
         "properties": {
           "construction": {
@@ -1370,6 +1699,46 @@
         ],
         "title": "HybridAnalysis"
       },
+      "IngredientTotal": {
+        "properties": {
+          "ingredient": {
+            "type": "string",
+            "title": "Ingredient"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "amount_lb": {
+            "type": "number",
+            "title": "Amount Lb"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingredient",
+          "name",
+          "amount",
+          "amount_lb",
+          "cost"
+        ],
+        "title": "IngredientTotal"
+      },
       "InvalidDesign": {
         "properties": {
           "detail": {
@@ -1403,6 +1772,14 @@
           "cold_side": {
             "type": "string",
             "title": "Cold Side"
+          },
+          "hot_side_k": {
+            "type": "number",
+            "title": "Hot Side K"
+          },
+          "cold_side_k": {
+            "type": "number",
+            "title": "Cold Side K"
           }
         },
         "type": "object",
@@ -1410,9 +1787,193 @@
           "material",
           "thickness",
           "hot_side",
-          "cold_side"
+          "cold_side",
+          "hot_side_k",
+          "cold_side_k"
         ],
         "title": "LayerResult"
+      },
+      "LayerUse": {
+        "properties": {
+          "face": {
+            "type": "string",
+            "title": "Face"
+          },
+          "thickness": {
+            "type": "string",
+            "title": "Thickness"
+          },
+          "hot_side": {
+            "type": "string",
+            "title": "Hot Side"
+          },
+          "cold_side": {
+            "type": "string",
+            "title": "Cold Side"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "face",
+          "thickness",
+          "hot_side",
+          "cold_side",
+          "notes"
+        ],
+        "title": "LayerUse"
+      },
+      "Library": {
+        "properties": {
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryMaterial"
+            },
+            "type": "array",
+            "title": "Materials"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryIngredient"
+            },
+            "type": "array",
+            "title": "Ingredients"
+          },
+          "alloys": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntry"
+            },
+            "type": "array",
+            "title": "Alloys"
+          },
+          "cones": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cones"
+          },
+          "cone_rates": {
+            "additionalProperties": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Cone Rates"
+          },
+          "burners": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntry"
+            },
+            "type": "array",
+            "title": "Burners"
+          }
+        },
+        "type": "object",
+        "required": [
+          "materials",
+          "ingredients",
+          "alloys",
+          "cones",
+          "cone_rates",
+          "burners"
+        ],
+        "title": "Library",
+        "description": "What a design can choose from: materials, element alloys, cones, burners and what a\ncastable can be mixed from."
+      },
+      "LibraryEntry": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "LibraryEntry"
+      },
+      "LibraryIngredient": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "needs_density": {
+            "type": "boolean",
+            "title": "Needs Density"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "needs_density"
+        ],
+        "title": "LibraryIngredient"
+      },
+      "LibraryMaterial": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "max_service": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Service"
+          },
+          "density": {
+            "type": "string",
+            "title": "Density"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "max_service",
+          "density"
+        ],
+        "title": "LibraryMaterial"
       },
       "Masonry": {
         "properties": {
@@ -1445,6 +2006,206 @@
           "findings"
         ],
         "title": "Masonry"
+      },
+      "Member": {
+        "properties": {
+          "part": {
+            "type": "string",
+            "title": "Part"
+          },
+          "steel": {
+            "type": "string",
+            "title": "Steel"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "length_in": {
+            "type": "number",
+            "title": "Length In"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "part",
+          "steel",
+          "count",
+          "length_in"
+        ],
+        "title": "Member",
+        "description": "A run of steel the frame needs: what it is, how many and how long."
+      },
+      "MixAnalysis": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "batch": {
+            "items": {
+              "$ref": "#/components/schemas/BatchLine"
+            },
+            "type": "array",
+            "title": "Batch"
+          },
+          "dry_mass": {
+            "type": "string",
+            "title": "Dry Mass"
+          },
+          "water": {
+            "type": "string",
+            "title": "Water"
+          },
+          "water_share": {
+            "type": "string",
+            "title": "Water Share"
+          },
+          "foam": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foam"
+          },
+          "cast_volume": {
+            "type": "string",
+            "title": "Cast Volume"
+          },
+          "wet_density": {
+            "type": "string",
+            "title": "Wet Density"
+          },
+          "quart_weighs": {
+            "type": "string",
+            "title": "Quart Weighs"
+          },
+          "dried_density": {
+            "type": "string",
+            "title": "Dried Density"
+          },
+          "fired_density": {
+            "type": "string",
+            "title": "Fired Density"
+          },
+          "porosity": {
+            "type": "string",
+            "title": "Porosity"
+          },
+          "conductivity": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Conductivity"
+          },
+          "service_limit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Limit"
+          },
+          "sets": {
+            "type": "string",
+            "title": "Sets"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          },
+          "cast_volume_m3": {
+            "type": "number",
+            "title": "Cast Volume M3"
+          },
+          "dry_mass_kg": {
+            "type": "number",
+            "title": "Dry Mass Kg"
+          },
+          "water_kg": {
+            "type": "number",
+            "title": "Water Kg"
+          },
+          "fired_density_kg_m3": {
+            "type": "number",
+            "title": "Fired Density Kg M3"
+          },
+          "organic_kg": {
+            "type": "number",
+            "title": "Organic Kg"
+          },
+          "organic_heat_j": {
+            "type": "number",
+            "title": "Organic Heat J"
+          },
+          "cement_kg": {
+            "type": "number",
+            "title": "Cement Kg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "batch",
+          "dry_mass",
+          "water",
+          "water_share",
+          "foam",
+          "cast_volume",
+          "wet_density",
+          "quart_weighs",
+          "dried_density",
+          "fired_density",
+          "porosity",
+          "conductivity",
+          "service_limit",
+          "sets",
+          "working",
+          "findings",
+          "cast_volume_m3",
+          "dry_mass_kg",
+          "water_kg",
+          "fired_density_kg_m3",
+          "organic_kg",
+          "organic_heat_j",
+          "cement_kg"
+        ],
+        "title": "MixAnalysis",
+        "description": "A mix worked out: per batch, as cast, dried and fired."
       },
       "Problem": {
         "properties": {
@@ -1565,6 +2326,16 @@
               }
             ]
           },
+          "frame": {
+            "$ref": "#/components/schemas/FrameDesign"
+          },
+          "castables": {
+            "items": {
+              "$ref": "#/components/schemas/CastableReport"
+            },
+            "type": "array",
+            "title": "Castables"
+          },
           "masonry": {
             "anyOf": [
               {
@@ -1602,11 +2373,48 @@
           "electric",
           "gas",
           "hybrid",
+          "frame",
+          "castables",
           "masonry",
           "bom",
           "findings"
         ],
         "title": "Report"
+      },
+      "Segment": {
+        "properties": {
+          "to": {
+            "type": "string",
+            "title": "To"
+          },
+          "rate": {
+            "type": "string",
+            "title": "Rate"
+          },
+          "hold": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hold"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          }
+        },
+        "type": "object",
+        "required": [
+          "to",
+          "rate",
+          "hold",
+          "why"
+        ],
+        "title": "Segment"
       },
       "Step": {
         "properties": {
@@ -1698,6 +2506,41 @@
           "source"
         ],
         "title": "SupplyCase"
+      },
+      "Template": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "document": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Document"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "document",
+          "source"
+        ],
+        "title": "Template",
+        "description": "A kind of kiln to start a design from."
       },
       "Version": {
         "properties": {

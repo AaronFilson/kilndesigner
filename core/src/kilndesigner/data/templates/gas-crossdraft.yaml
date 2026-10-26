@@ -1,0 +1,53 @@
+# A cone 10 propane cross-draft with a sprung arch: venturi burners in the front wall, the flue
+# and chimney at the back, and a door bricked up in the right wall for each firing.
+schema: 1
+name: Gas cross-draft, cone 10
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28 in
+  depth: 48 in # along the draft, from the burners to the flue
+  height: 40 in # to the arch's springline; the arch adds its rise
+roof:
+  type: sprung_arch
+  rise: 3.75 in # a 60° arch: 0.134 × the span
+loading:
+  type: door
+  face: right
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  gas:
+    burners:
+      type: venturi
+      wall: front
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  propane_price: 3.50 USD/gallon

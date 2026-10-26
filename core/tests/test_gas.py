@@ -53,6 +53,20 @@ def test_venturi_pressure_follows_the_ratings() -> None:
     assert p is not None
     assert math.sqrt(p) == pytest.approx((math.sqrt(5) + math.sqrt(10)) / 2, rel=1e-3)
     assert venturi_pressure(400_000, spec["psi"], spec["btu_hr"]) is None
+    # the in. w.c. and 2 psi entries may be another orifice, so nothing below 5 psi is given
+    assert venturi_pressure(10_000, spec["psi"], spec["btu_hr"]) == pytest.approx(5.0)
+
+
+def test_draft_is_figured_at_the_sites_air_not_the_coldest_day(pnw) -> None:  # type: ignore[no-untyped-def]
+    """Warm air gives the least draft (structure-and-draft.md §4)."""
+    warm = parse_design(
+        (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")
+    ).model_copy(deep=True)
+    base = design_gas(pnw).draft
+    hotter = warm.model_copy(
+        update={"site": warm.site.model_copy(update={"ambient": Q_(100, "degF")})}
+    )
+    assert design_gas(hotter).draft[0] < base[0]
 
 
 def test_four_cylinders_at_20f_match_the_research_check(pnw) -> None:  # type: ignore[no-untyped-def]

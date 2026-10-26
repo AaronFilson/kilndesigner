@@ -44,6 +44,19 @@ const report: Report = {
   electric: null,
   gas: null,
   hybrid: null,
+  frame: {
+    kind: "welded case",
+    angle: null,
+    angle_leg_in: 0,
+    angle_t_in: 0.125,
+    rod: null,
+    rod_d_in: 0,
+    thrust: null,
+    members: [],
+    working: [],
+    findings: [],
+  },
+  castables: [],
   masonry: null,
   bom: null,
   findings: [{ level: "warning", message: "Surface load is high" }],
@@ -116,5 +129,17 @@ describe("ReportView", () => {
     expect(screen.getByText(/Surface load is high/)).toBeTruthy();
     expect(screen.getByText("Working (1 step)")).toBeTruthy();
     expect(screen.queryByText("Elements")).toBeNull();
+  });
+
+  it("puts notes in their own section, not among the warnings", () => {
+    const noted = {
+      ...report,
+      findings: [...report.findings, { level: "info", message: "k is carried on past the sheet" }],
+    } as Report;
+    const { container } = render(<ReportView report={noted} />);
+    expect(screen.getByText("Notes")).toBeTruthy();
+    expect(container.querySelector(".notes")?.textContent).toContain("k is carried on");
+    expect(container.querySelector(".report > .findings")?.textContent).not.toContain("carried");
+    expect(reportTabLabel(noted)).toBe("Report (1 warning)");
   });
 });

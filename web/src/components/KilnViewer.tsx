@@ -12,6 +12,18 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 export interface PartInfo {
   title: string;
   detail: string;
+  /** What it's made of ("Insulating firebrick", "Steel") and its colour in the model. */
+  kind?: string;
+  colour?: string;
+}
+
+/** Each material in the model once, with its colour, in the order the parts list them. */
+export function legend(parts: Record<string, PartInfo>): [string, string][] {
+  const seen = new Map<string, string>();
+  for (const part of Object.values(parts)) {
+    if (part.kind && part.colour && !seen.has(part.kind)) seen.set(part.kind, part.colour);
+  }
+  return [...seen];
 }
 
 type View = "3d" | "front" | "side" | "top";
@@ -201,6 +213,16 @@ export function KilnViewer({ url, partsUrl }: { url: string; partsUrl: string })
           Cut in half
         </button>
       </div>
+      {parts.data && legend(parts.data).length > 0 && (
+        <ul className="viewer-legend" aria-label="Materials in the model">
+          {legend(parts.data).map(([kind, colour]) => (
+            <li key={kind}>
+              <span className="swatch" style={{ background: colour }} aria-hidden="true" />
+              {kind}
+            </li>
+          ))}
+        </ul>
+      )}
       <p className="viewer-info" role="status">
         {selected ? (
           <>

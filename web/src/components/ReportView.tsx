@@ -36,11 +36,13 @@ function Working({ steps }: { steps: Step[] }) {
   );
 }
 
+/** Errors and warnings: things the design should change. Notes are shown by `Notes`. */
 export function Findings({ findings }: { findings: Finding[] }) {
-  if (findings.length === 0) return null;
+  const problems = findings.filter((f) => f.level !== "info");
+  if (problems.length === 0) return null;
   return (
     <ul className="findings">
-      {findings.map((f, i) => (
+      {problems.map((f, i) => (
         <li key={i} className={f.level}>
           <span className="level">{f.level}</span> {f.message}
           {f.reference && <cite>{f.reference}</cite>}
@@ -50,8 +52,27 @@ export function Findings({ findings }: { findings: Finding[] }) {
   );
 }
 
+/** What the results rest on and how far to trust them: nothing in the design to change. */
+export function Notes({ findings }: { findings: Finding[] }) {
+  const notes = findings.filter((f) => f.level === "info");
+  if (notes.length === 0) return null;
+  return (
+    <section className="notes">
+      <h3>Notes</h3>
+      <ul className="findings">
+        {notes.map((f, i) => (
+          <li key={i} className="info">
+            {f.message}
+            {f.reference && <cite>{f.reference}</cite>}
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 export function ReportView({ report }: { report: Report }) {
-  const { heat_loss: loss, electric, gas, hybrid, bom } = report;
+  const { heat_loss: loss, electric, gas, hybrid, bom, frame } = report;
   const el = electric?.elements;
   return (
     <div className="report">
@@ -110,12 +131,24 @@ export function ReportView({ report }: { report: Report }) {
           <Working steps={hybrid.working} />
         </section>
       )}
+      <section>
+        <h3>{frame.kind === "welded case" ? "Case" : "Steel frame"}</h3>
+        <Rows
+          rows={[
+            ["Angle", frame.angle],
+            ["Tie rods", frame.rod],
+            ["Arch thrust", frame.thrust],
+          ]}
+        />
+        <Working steps={frame.working} />
+      </section>
       {bom && (
         <section>
           <h3>Materials</h3>
           <Rows rows={[["Priced items", `$${Math.round(bom.total).toLocaleString("en-US")}`]]} />
         </section>
       )}
+      <Notes findings={report.findings} />
     </div>
   );
 }

@@ -41,6 +41,67 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/templates": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Templates
+         * @description The kinds of kiln a design can start from, each a complete design.
+         */
+        get: operations["list_templates_api_templates_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/library": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Library
+         * @description What the forms offer: the materials library, alloys, cones and burners.
+         */
+        get: operations["library_api_library_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/designs/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Check Design
+         * @description Check a design without saving it, and return it as both a document and YAML: the form and
+         *     the YAML tab trade the design through here.
+         */
+        post: operations["check_design_api_designs_check_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/designs": {
         parameters: {
             query?: never;
@@ -180,6 +241,21 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** BatchLine */
+        BatchLine: {
+            /** Ingredient */
+            ingredient: string;
+            /** Name */
+            name: string;
+            /** Mass */
+            mass: string;
+            /** Share */
+            share: string;
+            /** Volume */
+            volume: string;
+            /** Source */
+            source: string;
+        };
         /** Bom */
         Bom: {
             /** Lines */
@@ -249,6 +325,40 @@ export interface components {
             each: string;
             /** Total Cost */
             total_cost: number;
+        };
+        /** CastableReport */
+        CastableReport: {
+            mix: components["schemas"]["MixAnalysis"];
+            /** Placed */
+            placed: string;
+            /** Batches */
+            batches: number;
+            /** Totals */
+            totals: components["schemas"]["IngredientTotal"][];
+            /** Layers */
+            layers: components["schemas"]["LayerUse"][];
+            /** First Firing */
+            first_firing: components["schemas"]["Step"][];
+            /** Schedule */
+            schedule: components["schemas"]["Segment"][];
+            /** Schedule Hours */
+            schedule_hours: number | null;
+            /** Steps */
+            steps: string[];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+        };
+        /**
+         * CheckedDesign
+         * @description A valid design, both ways: the JSON document the forms edit and the YAML the tab shows.
+         */
+        CheckedDesign: {
+            /** Document */
+            document: {
+                [key: string]: unknown;
+            };
+            /** Source */
+            source: string;
         };
         /** CostPoint */
         CostPoint: {
@@ -423,6 +533,29 @@ export interface components {
             /** Reference */
             reference?: string | null;
         };
+        /** FrameDesign */
+        FrameDesign: {
+            /** Kind */
+            kind: string;
+            /** Angle */
+            angle: string | null;
+            /** Angle Leg In */
+            angle_leg_in: number;
+            /** Angle T In */
+            angle_t_in: number;
+            /** Rod */
+            rod: string | null;
+            /** Rod D In */
+            rod_d_in: number;
+            /** Thrust */
+            thrust: string | null;
+            /** Members */
+            members: components["schemas"]["Member"][];
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+        };
         /** GasDesign */
         GasDesign: {
             /** Construction */
@@ -497,6 +630,19 @@ export interface components {
             /** Findings */
             findings: components["schemas"]["Finding"][];
         };
+        /** IngredientTotal */
+        IngredientTotal: {
+            /** Ingredient */
+            ingredient: string;
+            /** Name */
+            name: string;
+            /** Amount */
+            amount: string;
+            /** Amount Lb */
+            amount_lb: number;
+            /** Cost */
+            cost: number | null;
+        };
         /** InvalidDesign */
         InvalidDesign: {
             /** Detail */
@@ -512,6 +658,75 @@ export interface components {
             hot_side: string;
             /** Cold Side */
             cold_side: string;
+            /** Hot Side K */
+            hot_side_k: number;
+            /** Cold Side K */
+            cold_side_k: number;
+        };
+        /** LayerUse */
+        LayerUse: {
+            /** Face */
+            face: string;
+            /** Thickness */
+            thickness: string;
+            /** Hot Side */
+            hot_side: string;
+            /** Cold Side */
+            cold_side: string;
+            /** Notes */
+            notes: string[];
+        };
+        /**
+         * Library
+         * @description What a design can choose from: materials, element alloys, cones, burners and what a
+         *     castable can be mixed from.
+         */
+        Library: {
+            /** Materials */
+            materials: components["schemas"]["LibraryMaterial"][];
+            /** Ingredients */
+            ingredients: components["schemas"]["LibraryIngredient"][];
+            /** Alloys */
+            alloys: components["schemas"]["LibraryEntry"][];
+            /** Cones */
+            cones: string[];
+            /** Cone Rates */
+            cone_rates: {
+                [key: string]: number[];
+            };
+            /** Burners */
+            burners: components["schemas"]["LibraryEntry"][];
+        };
+        /** LibraryEntry */
+        LibraryEntry: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+        };
+        /** LibraryIngredient */
+        LibraryIngredient: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Role */
+            role: string;
+            /** Needs Density */
+            needs_density: boolean;
+        };
+        /** LibraryMaterial */
+        LibraryMaterial: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Kind */
+            kind: string;
+            /** Max Service */
+            max_service: string | null;
+            /** Density */
+            density: string;
         };
         /** Masonry */
         Masonry: {
@@ -521,6 +736,78 @@ export interface components {
             cut_list: components["schemas"]["CutLine"][];
             /** Findings */
             findings: components["schemas"]["Finding"][];
+        };
+        /**
+         * Member
+         * @description A run of steel the frame needs: what it is, how many and how long.
+         */
+        Member: {
+            /** Part */
+            part: string;
+            /** Steel */
+            steel: string;
+            /** Count */
+            count: number;
+            /** Length In */
+            length_in: number;
+            /** Source */
+            source?: string | null;
+        };
+        /**
+         * MixAnalysis
+         * @description A mix worked out: per batch, as cast, dried and fired.
+         */
+        MixAnalysis: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Batch */
+            batch: components["schemas"]["BatchLine"][];
+            /** Dry Mass */
+            dry_mass: string;
+            /** Water */
+            water: string;
+            /** Water Share */
+            water_share: string;
+            /** Foam */
+            foam: string | null;
+            /** Cast Volume */
+            cast_volume: string;
+            /** Wet Density */
+            wet_density: string;
+            /** Quart Weighs */
+            quart_weighs: string;
+            /** Dried Density */
+            dried_density: string;
+            /** Fired Density */
+            fired_density: string;
+            /** Porosity */
+            porosity: string;
+            /** Conductivity */
+            conductivity: string[];
+            /** Service Limit */
+            service_limit: string | null;
+            /** Sets */
+            sets: string;
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+            /** Cast Volume M3 */
+            cast_volume_m3: number;
+            /** Dry Mass Kg */
+            dry_mass_kg: number;
+            /** Water Kg */
+            water_kg: number;
+            /** Fired Density Kg M3 */
+            fired_density_kg_m3: number;
+            /** Organic Kg */
+            organic_kg: number;
+            /** Organic Heat J */
+            organic_heat_j: number;
+            /** Cement Kg */
+            cement_kg: number;
         };
         /**
          * Problem
@@ -561,10 +848,24 @@ export interface components {
             electric: components["schemas"]["ElectricDesign"] | null;
             gas: components["schemas"]["GasDesign"] | null;
             hybrid: components["schemas"]["HybridAnalysis"] | null;
+            frame: components["schemas"]["FrameDesign"];
+            /** Castables */
+            castables: components["schemas"]["CastableReport"][];
             masonry: components["schemas"]["Masonry"] | null;
             bom: components["schemas"]["Bom"] | null;
             /** Findings */
             findings: components["schemas"]["Finding"][];
+        };
+        /** Segment */
+        Segment: {
+            /** To */
+            to: string;
+            /** Rate */
+            rate: string;
+            /** Hold */
+            hold: string | null;
+            /** Why */
+            why: string;
         };
         /** Step */
         Step: {
@@ -593,6 +894,24 @@ export interface components {
             capacity_btu_hr: number;
             /** Meets Demand */
             meets_demand: boolean;
+            /** Source */
+            source: string;
+        };
+        /**
+         * Template
+         * @description A kind of kiln to start a design from.
+         */
+        Template: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string;
+            /** Document */
+            document: {
+                [key: string]: unknown;
+            };
             /** Source */
             source: string;
         };
@@ -686,6 +1005,97 @@ export interface operations {
                     "application/json": {
                         [key: string]: unknown;
                     };
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    list_templates_api_templates_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Template"][];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    library_api_library_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Library"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    check_design_api_designs_check_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DesignInput"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CheckedDesign"];
                 };
             };
             /** @description The design is not valid */

@@ -27,6 +27,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.castable import resolve_material
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
 from kilndesigner.model import Kiln
@@ -434,7 +435,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     arch_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     for part in lining_parts(kiln):
-        m = material(part.material)
+        m = resolve_material(kiln, part.material)
         if part.profile is not None:  # a skewback and the fill beside the arch
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
@@ -538,16 +539,16 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     if any(p.arch is not None and not p.cap for p in lining_parts(kiln)):
         findings.append(
             Finding(
-                level="warning",
+                level="info",
                 message=(
                     "The skewbacks and the fill beside the arch are drawn along the arch's radius "
-                    "at the springline and counted by volume. The steel that takes the arch's "
-                    "thrust is not designed or counted yet. A 60° skewback is the usual choice."
+                    "at the springline and counted by volume. A 60° skewback is the usual "
+                    "choice. The steel that takes the arch's thrust is in the frame."
                 ),
                 reference="combustion-and-masonry.md §6.5 [S61, S62]",
             )
         )
-    if cast_volume:
+    if any(kiln.castable(mid) is None for mid in cast_volume):
         findings.append(
             Finding(
                 level="info",
@@ -577,6 +578,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
     for mid, volume_mm3 in sorted(cast_volume.items()):
+        if kiln.castable(mid) is not None:
+            continue  # your own mix: counted by batches and ingredients (castable.py)
         m = material(mid)
         volume = Q_(volume_mm3, "mm**3")
         mass = volume * parse_quantity(m.density)

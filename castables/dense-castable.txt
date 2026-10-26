@@ -1,0 +1,818 @@
+Load the performance characteristics for MIZZOU. I want to use that for my kiln hot face, but it is expensive. I would like to make an intermediate castable that matches the dimensional properties of MIZZOU, provides a bit more insulation, but has good fired strength to support the thinner than normal commercial castable.
+September 20, 2026
+MIZZOU Castable is an industrial-grade, dense 60-63% high-alumina refractory designed for extreme service up to 3000°F (1650°C). Its key performance advantage in a kiln hot face is its permanent volume expansion rather than shrinkage at high temperatures, combined with a high cast density of 136–140 lbs/ft³ and superior spalling resistance.
+I have noted your goal to formulate an engineered intermediate backup layer that matches MIZZOU's dimensional properties while dropping weight, boosting insulation, and preserving structural strength to carry a thin hot face.
+To bridge the gap between expensive commercial materials and a DIY intermediate castable, you can formulate a custom aggregate blend using a dense alumina/kaolin base combined with structured insulating aggregates.
+
+The Formulation Strategy
+
+To match MIZZOU's low shrinkage/slight expansion and retain high fired strength while lowering density, your intermediate mix needs to focus on three distinct components:
+
+Component	Material Options	Role in the Mix
+Refractory Matrix (Fines)	Calcined Kaolin (Grogs), Calcined Alumina, & Calcium Aluminate Cement (Secar 71 or 80)	Controls the dimensional stability. Calcined materials do not shrink during firing. High-purity calcium aluminate cement provides rapid hydraulic strength and high-temperature bonding.
+Insulating Aggregate	Bubble Alumina or Kyanite/Mullite-based insulating grog	Bubble alumina is the ideal choice. It adds hollow spheres that dramatically lower thermal conductivity (providing the insulation you need) while maintaining high structural compressive strength.
+Dimensional Control	Raw Kyanite (35 to 48 mesh)	Kyanite irreversibly expands when heated (converting to mullite around 2300°F–2400°F). Adding a precise percentage of raw kyanite counteracts the natural drying and sintering shrinkage of your cement matrix, perfectly mimicking MIZZOU's dimensional stability.
+
+
+Suggested Experimental Recipe (By Weight)
+
+Because you need high fired strength to support a thin hot face, avoid using low-strength aggregates like perlite or vermiculite, which collapse under pressure and crumble at high temperatures. Instead, use this high-strength insulating profile:
+• 40% Bubble Alumina (Medium to fine grading) – For high strength, lightweight structure, and insulation.
+• 30% Calcined Kaolin Grog or Mullite Fines – For chemical compatibility and thermal shock resistance.
+• 15% Calcium Aluminate Cement (e.g., Secar 71) – For high-temperature hydraulic bond strength.
+• 10% Raw Kyanite (48 Mesh) – To engineer zero-shrinkage/slight expansion at high temperatures.
+• 5% Plastic Kaolin (EPK) – To provide workability and green strength before firing.
+
+Mixing and Installation Trade-Offs
+
+When executing an intermediate layer beneath a thin commercial hot face, consider these vital application trade-offs:
+1. Drying and Curing Management: Like MIZZOU, custom calcium aluminate castables are highly sensitive to water additions. Keep water strictly to the minimum required for a damp-earth, moldable consistency. Clean, cool water and a damp 24-hour cure under plastic are essential.
+2. The "Butter" Layer Interface: When placing a thin commercial hot face over your custom intermediate layer, ensure you do not allow the backup layer to leach moisture from the hot face. Spraying the interface with water or using a thin slurry prevents dry-out and ensures a strong mechanical bond.
+To refine this intermediate mix formula for your specific kiln build, could you share:
+• What peak temperature will your kiln reach, and what fuel source (gas, electric, wood) are you using?
+• How thin do you plan to cast the commercial MIZZOU hot face layer?
+• What refractory raw materials or aggregates do you already have access to or can easily source locally?
+• 
+Forno Bravo Forum
+Perlite/Mizzou castable - Forno Bravo Forum: The Wood-Fired Oven Community
+If your castable contained fine fibres they are designed to burn away at low temp and leave minature pipes through which steam can...
+• 
+www.bladesmithsforum.com
+Mizzou castable for forge - Bladesmith's Forum
+Personally I have always had better luck with using forms with castable refractory. Don't have to be too complicated. I've used ca...
+• 
+Facebook·Pizza Brick Oven
+What's the performance difference between cast and brick inner domes in wood-fired ...
+It can hold heat longer and provide a gradual, consistent release of heat, which is ideal for cooking bread, pizza, and other item...
+Show all
+
+You said: At CAC the MIZZOU is $92.50 for #55 bags. Can I beat that price? I was going to do floors and walls at 1-1.5" for the real MIZZOU; I was told 2-3" was the minimum in most cases.
+
+At CAC the MIZZOU is $92.50 for #55 bags. Can I beat that price? I was going to do floors and walls at 1-1.5" for the real MIZZOU; I was told 2-3" was the minimum in most cases.
+September 20, 2026
+At $92.50 per 55-lb bag from Clay Art Center (CAC), you are looking at retail ceramics pricing. While you can find the raw bags cheaper from online knife-making/blacksmith suppliers—where it sells closer to $70.00 at High Temp Tools—shipping a heavy 55-lb package usually completely wipes out that savings unless you happen to live close enough to pick it up locally.
+If you are looking to save money, building your own intermediate backup layer and adjusting your casting thickness yields a more practical strategy.
+
+Can You Beat the Price by DIYing It?
+
+Yes, but only if you have a cheap local source for your aggregates.
+The cost of a custom recipe is heavily dictated by the price of high-purity Calcium Aluminate Cement (like Secar 71 or 80), which typically runs about $2.00 to $3.00+ per pound when bought in small quantities.
+• If you have to ship specialty materials like bubble alumina or raw kyanite to your doorstep, your raw materials cost will easily match or exceed the $1.68/lb you are paying CAC for a perfectly engineered industrial product.
+• Where you actually save money is in the volume displacement. By using a dense, expensive commercial hot face (MIZZOU) at only 1" thick and backing it with an insulated intermediate layer made from cheaper, lighter local materials (like crushed firebrick grog or calcined kaolin), you dramatically reduce the total number of expensive MIZZOU bags you need to purchase.
+
+The Truth About the 2–3" Minimum Thickness
+
+The advice you received that 2 to 3 inches is the minimum for casting commercial refractories like MIZZOU is absolutely correct for a freestanding monolithic wall.
+• The Grain Size Problem: Industrial castables contain large aggregate chunks (grogs) engineered to prevent cracking. If you try to cast a material with 1/4" grog particles into a narrow 1" cavity, the large chunks wedge against the formwork. This leaves voids, air pockets, and structural weak spots (called honeycombing).
+• Structural Stability: A standalone 1" wall of castable refractory will crack and fall inward under its own thermal stress when the kiln fires.
+
+How to Successfully Cast MIZZOU at 1–1.5"
+
+You can bypass the 2–3" rule and safely cast a thin 1" MIZZOU hot face only if you use a coordinated construction technique:
+
+Method	How It Works	Why It's Required for 1" Thickness
+Sifting the Grog	Pass the dry MIZZOU through a standard window screen or 1/8" mesh before mixing it with water.	Removes the largest aggregate chunks, allowing the fine matrix to fit into a thin 1" space without honeycombing.
+Monolithic Bonding	Pour your custom intermediate backup layer first, then cast the thin MIZZOU layer directly against it while it is still damp (or vice-versa).	The two layers fuse structurally. The intermediate layer acts as the backbone, carrying the physical load so the thin hot face doesn't collapse.
+Stainless Steel Anchors	Embed small, "V" or "Y" shaped stainless steel refractory anchors (304 or 310 grade) into the walls.	Mechanically ties the thin MIZZOU hot face through the intermediate layer back to the kiln's outer steel shell.
+
+If you are pouring a flat kiln floor that is completely flat and resting directly on solid insulation, you can get away with a 1.5" sifted MIZZOU pour without anchors because gravity holds it down. For vertical walls, anchoring or multi-layer bonding is non-negotiable if you go thinner than 2".
+To calculate exactly how many bags you can save, what are the internal dimensions of your kiln (height, width, depth), and do you plan to use a steel frame/shell to contain the walls?
+• 
+Fabulous adventures in coding
+Mizzou castable refractory instructions - Fabulous adventures in coding
+Mizzou castable refractory instructions. Posted on August 21, 2012 by ericlippert. I've built my furnace; mistakes were made along...
+• 
+clayartcenter.net
+HARBISON WALKER - MIZZOU CASTABLE REFRACTORY (55#)
+HARBISON WALKER – MIZZOU CASTABLE REFRACTORY (55#) ... MIZZOU CASTABLE is a high alumina material for use to 3000°F. It has excell...
+• 
+U.S. Environmental Protection Agency (.gov)
+Engineering and Economic Analysis of Waste to Energy Systems - epa nepis
+If available agricultural wastes could also be converted into usable energy, the percentage contribution would be closer to 6%. Du...
+Show all
+
+You said: Can I just do the second 1.5" lift with filler , like sand , added?
+
+Can I just do the second 1.5" lift with filler , like sand , added?
+September 20, 2026
+No, you should not add regular silica sand to stretch your MIZZOU castable. Doing so will cause your intermediate backup layer to crack, crumble, and structurally fail under kiln temperatures.
+While adding construction sand seems like a cheap way to increase volume, it introduces three destructive problems into a high-temperature refractory matrix:
+
+Why Silica Sand Fails in a Kiln
+
+• The Quartz Inversion (Structural Failure): Regular sand is crystalline silica. When heated to 1,063°F (573°C), silica undergoes a sudden, violent atomic rearrangement known as the quartz inversion. The sand grains instantly expand by about 1% to 2% and then contract upon cooling. This continuous movement will completely shatter the surrounding hydraulic cement bond, turning your solid backup layer back into loose, powdery sand after just a few firings.
+• Chemical Fluxing (Melting): MIZZOU is engineered as a high-alumina refractory (60%+ alumina) to withstand extreme heat. Introducing free silica (sand) into a mix that contains alumina and calcium aluminate cement creates a eutectic reaction. At kiln temperatures, these three elements react to form low-melting-point glasses. Essentially, the sand acts as a flux, causing the internal structure of the refractory to melt and sag from the inside out.
+• Thermal Conductivity (Zero Insulation): Sand is an incredibly efficient conductor of heat. Adding it to MIZZOU will make the backup layer denser and much hotter, completely defeating your goal of creating an energy-efficient, insulating layer to protect your kiln's outer shell.
+
+Safe Materials to "Stretch" MIZZOU
+
+If you want to create a cheap, high-volume second lift using MIZZOU as your cement binder, you must use pre-fired, stable refractory aggregates (grogs) instead of raw sand.
+
+Aggregate Alternative	How to Source It	Effect on the Mix
+Crushed Insulating Firebrick (IFB)	Buy broken or cheap K-23 or K-26 firebricks and smash them into 1/8" to 1/4" chunks.	Best Choice. Safely dilutes the MIZZOU, dramatically lowers density, increases insulation, and maintains structural integrity.
+Crushed Dense Firebrick Grog	Smash up old, discarded heavy hard firebricks.	Provides excellent fired strength and zero shrinkage, but adds weight and provides no extra insulation.
+Horticultural Perlite	Available cheaply at any garden center.	Creates a highly insulating, ultra-lightweight mix. Warning: Limit this to a maximum 1:3 ratio with MIZZOU, as too much perlite drastically crushes the structural strength and lowers the maximum temperature limit of that layer to around 1,800°F (980°C).
+
+If you choose to dilute MIZZOU with an aggregate like crushed IFB, blend the dry materials thoroughly at a 1:1 or 1:2 ratio (by volume) before adding your water. This allows the fine cements and binders inside the MIZZOU bag to fully coat your new aggregate and create a reliable structural bond.
+To ensure an alternative aggregate won't degrade the kiln structure, let me know:
+• What is the target firing temperature of your kiln?
+• Are you firing with gas/propane or electricity?
+• Do you have access to any old or broken firebricks you could crush down?
+
+You said: I will fire to 2400F at max. Gas is normal but want to do salt and wood sometimes. I don't have many old spare bricks. See what CAC grog would work and save money.
+
+I will fire to 2400F at max. Gas is normal but want to do salt and wood sometimes. I don't have many old spare bricks. See what CAC grog would work and save money.
+September 20, 2026
+Firing to 2400°F (Cone 10) with salt and wood introduces aggressive variables. Sodium from the salt and calcium/potassium from wood ash act as powerful fluxes. If they touch an intermediate or backup layer that is low in alumina or high in free silica, they will rapidly eat through the material, creating a runny, glassy slag that destroys your structural backup.
+Because you don't have a pile of old spare firebricks to crush, your strategy of buying commercial grog from Clay Art Center (CAC) to stretch a 1.5" lift is highly practical—but only if you buy the correct type.
+
+The Winning Choice: Molochite Grog
+
+To match MIZZOU's chemical stability and handle the corrosive wood/salt environment without breaking the bank, ask CAC for Molochite Grog (typically stocked in various sizes like 30 mesh or 50x80 mesh).
+• What it is: Molochite is a highly calcined, low-iron kaolin flake consisting of roughly 55% pure Mullite and 45% amorphous silica glass. Because it is pre-fired to extreme temperatures, it has zero drying or firing shrinkage.
+• Why it works for your kiln: Mullite is exceptionally resistant to thermal shock and chemical attack from salt vapor and wood ash. It chemically fits into the same high-alumina family as your MIZZOU hot face.
+• How it saves money: Pure industrial grogs like Molochite are sold as raw bulk minerals, making them substantially cheaper per pound than pre-blended proprietary castables like MIZZOU.
+
+How to Create Your Second Lift 
+
+Instead of compounding a raw recipe from scratch (which requires buying expensive specialty cement), you can use your MIZZOU bag as the structural cement binder and dilute it with the CAC Molochite grog.
+Mix the materials dry by volume before adding water:
+[1 Part MIZZOU Castable]  +  [1 Part CAC Molochite Grog]
+• The Result: The extra MIZZOU supplies more than enough high-purity calcium aluminate cement matrix to lock everything together. The 1:1 Molochite addition stretches your expensive MIZZOU bag to double its original volume, safely drops your cost per cubic foot, and maintains a 2400°F+ chemistry capable of surviving if any salt or ash vapors leak past your thin 1" hot face.
+• Insulation Trade-Off: Because Molochite is a dense refractory grog, this intermediate layer will provide structural strength rather than high insulation. To get your extra insulation, you must rely on a third, outermost layer (such as cheap ceramic fiber blanket or mineral wool block) placed behind this 3" total castable core.
+
+Avoid Standard "Stoneware" Grogs
+
+CAC also sells generic "Stoneware Grog" or "CE70 Grog". Do not use these for your castable backup. These are intended to be wedged into throwing clays to add "tooth." They are not fully calcined to the same ultra-high temperature threshold as Molochite, and their high free-silica content risks a eutectic failure when exposed to accidental salt/ash penetration or the calcium aluminate cement in the MIZZOU.
+If you would like to estimate your total material costs, let me know the length and width of your kiln walls and floors so we can compute exactly how many bags of MIZZOU and Molochite you will need to buy.
+• 
+clayartcenter.net
+HARBISON WALKER - MIZZOU CASTABLE REFRACTORY (55#) - Clay Art Center
+MIZZOU CASTABLE is a high alumina material for use to 3000°F. It has excellent resistance to numerous different slags, resists vit...
+• 
+clayartcenter.net
+MINI CATALOG - Clay Art Center
+A fine tooth throwing body with kyanite grog. Will resist firing stress and gain in strength as the mullite develops. The clay wil...
+• 
+clayartcenter.net
+CAC HIGH FIRE CLAY - STONEWARE GROG (25# BAG) | Pottery & Ceramic Supplies
+Shipments of multiple boxes may not all be delivered at the same time. ... We use a large amount of 35F grog to make this super to...
+Show all
+
+You said: Can I get perlite added too?
+
+Can I get perlite added too?
+September 20, 2026
+No, do not add standard horticultural perlite to this mix if you are firing to 2400°F with wood and salt.
+While perlite is lightweight and excellent for insulation, it will cause your intermediate layer to melt into glass and collapse at your target temperature.
+
+Why Perlite Fails at 2400°F (Especially with Salt/Wood)
+
+• Low Melting Point: Perlite is a volcanic glass that contains high amounts of sodium and potassium oxides (fluxes). It completely loses its structural integrity around 2000°F (1093°C) and completely melts into a fluid liquid by 2300°F (1260°C). At your max target of 2400°F, the perlite will melt inside the wall, leaving empty cavities and causing the intermediate layer to bloat, sag, and fail.
+• The Wood/Salt Catalyst: Wood ash and salt vapors will aggressively seek out the high-silica composition of perlite. If vapors manage to breach your thin 1" MIZZOU hot face, they will fast-track a devastating chemical reaction that eats the intermediate layer from the inside out.
+
+The Right Way to Add Insulation: A 3-Layer System
+
+To achieve the insulation you want without risking structural failure, transition from a 2-layer castable wall to a 3-layer system. This allows each material to do what it does best:
+[INSIDE KILN] 
+  |  1.0" - 1.5" : Pure MIZZOU (Hot face: handles 2400°F, Wood, and Salt)
+  |  1.5"        : 1:1 MIZZOU + Molochite Grog (Intermediate backbone)
+  |  1.0" - 2.0" : Ceramic Fiber Blanket or Mineral Wool (Outermost insulation)
+[OUTSIDE SHELL]
+By placing a cheap layer of ceramic fiber blanket (rated for 2300°F or 2600°F) or mineral wool boards behind your 1:1 MIZZOU/Molochite lift, you keep the insulation away from the corrosive atmosphere and the intense heat of the hot face. The intermediate MIZZOU/Molochite layer serves as a tough structural firewall, slowing down the heat and protecting the delicate fibers while safely supporting the thin hot face.
+
+If You Absolutely Must Have an Insulating Aggregate
+
+If a 3-layer system won't fit your layout and you must mix an insulating aggregate into the castable, you cannot use perlite. Instead, you need Bubble Alumina or Kyanite-based insulating grog. These materials are chemically pure alumina-silicates that can easily withstand 2400°F and resist fluxing, though they are harder to source cheaply than standard grog.
+To map out the material quantities and verify costs, let me know:
+• What are the internal dimensions of your kiln chamber?
+• Do you have an outer steel frame or brick shell holding everything together?
+
+You said: does CAC have those?
+
+does CAC have those?
+September 20, 2026
+No, Clay Art Center does not stock bubble alumina. Bubble alumina is a highly specialized industrial refractory product that is rarely carried by standard retail pottery supply shops.
+However, they do carry the exact raw Kyanite and Mullite grogs you need to successfully execute the zero-shrinkage backup layer.
+
+What CAC Stocks Right Now
+
+If you call or visit the Clay Art Center shop in Tacoma, you can pick up these two core structural minerals:
+1. Kyanite (35 Mesh): They regularly stock RM246 Kyanite Grog. This is the critical mineral that expands at high temperatures to counteract cement shrinkage.
+2. Mullite Grog (CE70): They stock RM406 CE70 Grog, which is a pre-fired, low-expansion calcined mullite aggregate. It provides high structural strength and chemical resistance against your wood/salt atmosphere. They also carry Molochite Grog, which behaves very similarly.
+
+How to Adjust Your Plan Using Only CAC Stock
+
+Since you cannot buy bubble alumina at CAC, you have two logical paths forward to ensure your kiln walls have adequate insulation without using melting materials like perlite:
+• Option A: The 3-Layer Blanket System (Recommended). Mix your MIZZOU 1:1 with CAC's CE70 Mullite Grog or Molochite to build a dense, exceptionally tough intermediate backbone lift. To get the insulation you want, buy a roll of their Cerablanket Ceramic Fiber Insulation and wrap it around the outside of your castable core. The fiber blanket is highly insulating and completely safe from wood/salt erosion because the castable blocks the vapor.
+• Option B: The Kyanite Shrinkage Control Mix. If you are casting a standalone, thick wall and want absolute assurance it won't shrink or pull away from your formwork, use your MIZZOU and add 5% to 10% of CAC's 35-mesh Kyanite by weight. This gives you an incredibly strong, stable mass, though it won't add any extra insulating values on its own.
+If you would like to compute exactly how many bags of MIZZOU and Grog to pick up from CAC, let me know:
+• The dimensions of your kiln (height, width, depth).
+• The thickness you settled on for the floor and walls.
+Try without personalization
+• 
+clayartcenter.net
+GROGS - KYANITE 35 MESH | Pottery & Ceramic Supplies | Clay Art Center
+2636 PIONEER WAY EAST TACOMA, WA 98404. Store Hours: Tuesday - Saturday 9:00 AM - 5:00 PM. Closed on Major Holidays. 1-800-952-803...
+• 
+clayartcenter.net
+GROGS - CE70 48 MESH | Pottery & Ceramic Supplies - Clay Art Center
+Grog is a hard-fired clay crushed to various mesh sizes. It may be added to clays for tactile and visual texture. It can aid in op...
+• 
+clayartcenter.net
+MINI CATALOG - Clay Art Center
+CLAY ART CENTER. 2636 Pioneer Way East Tacoma WA 98404 1-800-952-8030 Fax 1-253-922-5349. CLAY ART CENTER 2636 Pioneer Way East Ta...
+Show all
+
+You said: all the Molochite at CAC is more $ than the MIZZOU. Where else is it less than
+
+all the Molochite at CAC is more $ than the MIZZOU. Where else is it less than
+September 20, 2026
+At Clay Art Center (CAC), Molochite runs between $155.00 and $157.00 for a 55-lb bag (nearly $2.85 per pound), which completely defeats the purpose of using it as a cheap filler to stretch your MIZZOU!
+The steep markup at retail pottery storefronts stems from importing premium calcined Grolleg porcelain from the UK, catering primarily to artists who require an ultra-white grog to prevent porcelain bodies from warping. Since the inside of your kiln walls does not need to look like pristine white porcelain, you can bypass this markup entirely.
+
+Where Molochite is Cheaper
+
+If you are dead-set on using genuine Molochite, you have to look toward distributors that cater to industrial casting, bulk manufacturing, or large-scale operations rather than boutique pottery shops:
+Sheffield Pottery
+Company
+They sell a 55-lb bag of Molochite 30 Mesh for around $42.00. This cuts your per-bag cost to less than half of CAC's price. However, unless you buy a large enough quantity to justify freight shipping, individual package shipping rates to Tacoma may erode the savings.
+Rocky Mountain Clay
+Pottery Supply Store
+They offer Molochite 30 Mesh 55-lb bags for roughly $3.55 per pound or bulk quotes.
+
+Cheaper Material Alternatives Available Locally
+
+Instead of chasing a cheaper source of Molochite and paying massive shipping fees, you can pivot to other calcined mullite aggregates that share identical high-alumina chemical properties but cost substantially less:
+
+Alternative Material	Where to Look / Ask	Approximate Cost Strategy	Why It Works
+Industrial Calcined Kaolin / Mullite Grog	Industrial Refractory Suppliers like High-Temp Inc. in Portland or [C H Murphy		Clark-Ullman](https://www.chmcu.com/refractory/ "C H Murphy Refractory")
+Hard Firebrick Grog (Coarse)	Ask CAC for a generic coarse firebrick grog or CE70 Mullite Grog	Request their bulk pricing on generic CE70 Grog rather than Molochite.	At 70% alumina/mullite composition, it is actually more rugged against wood and salt than Molochite.
+Damp-Sand Sized Silicon Carbide (SiC)	Local abrasive blasting supply warehouses in Tacoma/Seattle.	Varies by grit, but raw blasting media or industrial abrasives can sometimes be sourced cheaply in bulk.	SiC is highly stable up to 2400°F+, possesses massive thermal shock resistance, and is completely immune to the quartz inversion that destroys regular silica sand.
+
+If you plan to source your materials locally to avoid shipping costs, let me know how many square feet of floor and wall area you need to pour. I can calculate the exact volume you need so you can call industrial suppliers with a precise poundage requirement.
+Try without personalization
+• 
+clayartcenter.net
+GROGS - MOLOCHITE 200 MESH (55# BAG) | Pottery & Ceramic Supplies | Clay Art Center
+CAC Merch · Services · Custom Clay & Glaze Mixing · Gift Certificates · Kiln Repair · Wheel & Equipment Repair · Home / Raw Materi...
+• 
+clayartcenter.net
+GROGS - MOLOCHITE 30 MESH (55# BAG) | Pottery & Ceramic Supplies | Clay Art Center
+* BONE ASH. $5.00 – $127.00 Price range: $5.00 through $127.00 Add to Cart. * SGP BALL CLAY. $5.00 – $29.00 Price range: $5.00 thr...
+• 
+clayartcenter.net
+Grogs | Clay Art Center
+GROGS – MOLOCHITE 50×80 MESH (55# BAG). $7.00 – $157.00 Price range: $7.00 through $157.00. Select options This product has multip...
+Show all
+
+You said: in the test kiln I will make first, I only have space for 6" walls on the long side. So, I will skip salt on this version, and do 2-3" of k26 type castable. With greenstripe, ce70 grog, and sand, can I make a tough insulation castable?
+
+in the test kiln I will make first, I only have space for 6" walls on the long side. So, I will skip salt on this version, and do 2-3" of k26 type castable. With greenstripe, ce70 grog, and sand, can I make a tough insulation castable?
+September 21, 2026
+No, you cannot use regular sand to create a tough insulating castable at 2400°F. Even though you are skipping the salt on this test build, the quartz inversion will still cause regular sand to expand violently at 1063°F, destroying the structural integrity of your castable and crumbling your wall over time.
+Additionally, neither Greenstripe, CE70 grog, nor sand are insulating materials; they are highly dense refractories that will conduct heat rapidly rather than trapping it like a true K26 insulating layer.
+I have noted your constraints for this test kiln first project, including the 6-inch wall space on the long side, the decision to skip salt on this version, your target of 2 to 3 inches of K26 type castable, and your intention to use Greenstripe, CE70 grog, and sand for your castable.
+
+Re-engineering Your Recipe for 2400°F Success
+
+To turn your Greenstripe (fireclay) and CE70 grog into a tough, structurally sound castable that actually insulates and survives 2400°F, you must make two critical adjustments to your recipe:
+1. Swap the sand for a Hydraulic Refractory Cement: Fireclay (Greenstripe) and grog have zero hydraulic bonding power. They will not set up hard like concrete. You need a high-temperature cement like Calcium Aluminate Cement (such as Secar 71) or a commercial castable binder to create a "tough" structural matrix.
+2. Introduce a High-Temperature Insulating Aggregate: Since you cannot use perlite at 2400°F, you need to replace the sand with a lightweight, porous aggregate like crushed K26 insulating firebrick (IFB) grog or bubble alumina to achieve true K26 insulation.
+
+Recommended Recipe (By Volume)
+
+Instead of mixing raw minerals from scratch (which requires buying expensive specialty cements in bulk), your most reliable and cost-effective approach using your existing plan is a modified MIZZOU blend:
+• 1 Part MIZZOU Castable (Provides the ultra-tough hydraulic cement binder and fine matrix)
+• 1 Part CAC CE70 Grog (Adds massive thermal shock resistance and density control)
+• 1 Part Crushed K26 Insulating Firebrick Grog (Provides the lightweight pores needed for true K26 insulation)
+• 5% Greenstripe Fireclay (by weight) (Can be added to improve the wet mix's workability/plasticity, but keep it minimal so it doesn't cause shrinkage cracks).
+
+Wall Layout for a 6" Space
+
+With a strict 6" wall limit on your long side, a multi-layer castable strategy will give you the strength of a hard face with the thermal efficiency of a K26 brick:
+[KILN INTERIOR]
+  |  1.5" : Pure MIZZOU (Tough hot face to handle wood ash and direct flame)
+  |  2.5" : 1:1:1 MIZZOU + CE70 + Crushed K26 Grog (Your custom insulating backup)
+  |  2.0" : Ceramic Fiber Blanket (Outermost layer against your steel frame)
+[OUTSIDE SHELL] (Total: 6.0 inches)
+This layout keeps your total wall thickness at exactly 6 inches. The pure MIZZOU hot face takes the brunt of the wood firing, the custom insulating backup mimics a K26 brick's thermal profile, and the final 2" of ceramic fiber ensures the outside of your kiln stays safe.
+To help lock down the exact material quantities for this test build, let me know:
+• What are the length, width, and height dimensions of your test kiln?
+• Do you already have a source for K26 insulating firebricks that you can crush down into grog?
+
+You said: I would rather do the foam method with Greenstripe and grog plus cornstarch
+
+I would rather do the foam method with Greenstripe and grog plus cornstarch
+September 21, 2026
+Using the foam and starch consolidation method is highly effective. You can blend Greenstripe fireclay, CE70 grog, and cornstarch successfully. This creates custom, lightweight K26-type insulating refractories.
+
+How the Materials Work
+
+• Greenstripe Fireclay: Provides the baseline ceramic bond.
+• CE70 Grog: Prevents massive drying and firing shrinkage.
+• Cornstarch: Gels during drying for handling strength. It burns out to create micro-pores.
+• Surfactant Foam: Introduces large air bubbles for true insulation.
+
+Crucial Process Trade-offs
+
+• No Hydraulic Bond: This mix does not set like concrete. It requires firing to harden.
+• High Shrinkage Risk: Raw fireclay slips shrink significantly when drying.
+• Mold Casting Required: Cast individual bricks in removable molds. Do not pour this monolithically.
+• Heavy First-Firing Smoke: The cornstarch creates heavy smoke during burnout.
+
+Sequential Production Steps
+
+1. Mix Slurry: Blend clay, grog, cornstarch, and water.
+2. Make Foam: Whip dish soap into a stiff foam.
+3. Fold Together: Blend the foam gently into the slurry.
+4. Pour Molds: Fill your oiled brick forms carefully.
+5. Dry Fully: Dry the blocks slowly in warm air.
+6. Pre-fire Blocks: Fire them to 2000°F before assembly.
+To refine your specific batch ratios, let me know:
+• Do you have an electric kiln to pre-fire these bricks?
+• What type of foam generator or mixer are you using?
+
+You said: look at my earlier threads for foam and dextrin ideas
+
+look at my earlier threads for foam and dextrin ideas
+September 21, 2026
+The foam and dextrin method provides an excellent approach for this project. Utilizing dextrin alongside cornstarch changes the mechanics of the green-state matrix, fixing the specific limitations of a pure fireclay and raw cornstarch slip.
+
+Why Dextrin Upgrades the Foam Mix
+
+Adding dextrin solves a major issue with regular cornstarch and clay foam slips: early cell wall collapse.
+• Solubility and Stickiness: Unlike raw cornstarch (which requires heat to gelatinize), dextrin is cold-water soluble and acts as an immediate tacky glue. It stabilizes the delicate wet foam bubbles against the heavy weight of the CE70 grog.
+• The Greenstripe Cracking Problem: Greenstripe has very high plasticity, behaving more like ball clay. When cast in thick sections, its drying shrinkage is incredibly high, causing severe cracking. Dextrin adds a "dextrin-consolidation" binding effect that securely wraps the CE70 grog particles, reducing the amount of raw water and clay plastic binder needed.
+
+The Recommended Form-to-Firing Blueprint
+
+To use these materials to make a tough K26-grade brick without a hydraulic cement, apply this balanced process:
+
+1. The Dry Base Formulation (By Weight)
+
+• 60% CE70 Mullite Grog (48 mesh) – Provides the non-shrinking skeleton.
+• 30% Greenstripe Fireclay – Synthesizes the fired ceramic bond.
+• 7% Cornstarch – Stiffens into a rigid gel when dried to hold the shape during burnout.
+• 3% Dextrin – Dissolves cold to immediately coat the aggregate and anchor the foam bubbles.
+
+2. Preparing the Slip and Foam
+
+1. Dry Blend: Thoroughly combine your Greenstripe, CE70, cornstarch, and dextrin.
+2. The Slip: Add water slowly until it creates a thick, pancake-batter slip. Do not overwater; a runny slip will cause the grog to sink to the bottom of the mold.
+3. The Foam: In a separate container, use a hand mixer or foam generator to whip a concentrated solution of dish soap (like Dawn) or a protein-based surfactant into a stiff shaving-cream consistency.
+4. The Fold: Gently fold the dry-blended slip into the foam until the mix is completely uniform.
+
+3. Curing and Firing Constraints
+
+Because this mix lacks a hydraulic cement (like MIZZOU), it cannot be cast straight into the kiln frame. It must be cast into separate block molds:
+• Drying: Pour into porous wooden or plaster molds lined with newspaper. Allow them to dry completely over several days in a warm space. The dextrin and starch will cure into a rigid, rock-hard block.
+• The First Firing (The Green Fire): You must pre-fire these handmade blocks in an independent kiln (like an electric pottery kiln) up to at least 2000°F (1093°C) before assembling your test kiln.
+• The Burnout Warning: Between 300°F and 800°F, the cornstarch and dextrin will burn out entirely. This process generates heavy, thick black smoke and a strong odor. Excellent ventilation or an outdoor kiln setup is non-negotiable for this initial firing.
+Once fired to 2000°F, the Greenstripe clay fuses to the CE70 grog, leaving behind a highly porous, lightweight insulation brick tailored to survive a 2400°F environment.
+To finalize the recipe, let me know:
+• Do you plan to mix your surfactant foam using a mechanical mixer/air line injector or a simple household hand mixer?
+• What are the exact dimensions of the individual brick molds you are constructing?
+• 
+ScienceDirect.com
+Rigid polyurethane foams based on dextrin and glycerol
+Introduction However, the currently reported processes for preparing PU foam from starch are complicated, the byproducts are harmf...
+• 
+ScienceDirect.com
+Wood fiber reinforced oxidized starch
+Abstract In this study, a novel foaming method combining chemical modifications, mechanical stirring and solvent exchange was prop...
+• 
+New Mexico Clay
+Greenstripe Clay - New Mexico Clay
+SKU FCGREST Regular Price:$0.69 $0.69 Per Pound Buy 50 for $0.41 each and save 39.6% Buy 500 for $0.35 each and save 49% Buy 1,000...
+Show all
+
+You said: I will use 100% dextrin via heat conversion of cornstarch. This needs to be a castable.
+
+I will use 100% dextrin via heat conversion of cornstarch. This needs to be a castable.
+September 21, 2026
+Using 100% home-converted dextrin as your primary binder completely changes the mechanics of your mix. If you are omitting raw cornstarch entirely and relying solely on dextrin to solidify this into a castable, you are leveraging starch consolidation casting.
+I have noted that you make your own 100% dextrin via heat conversion of cornstarch and that this formula needs to function as a castable inside your formwork.
+Because dextrin is highly water-soluble, it behaves radically differently from hydraulic cements (like MIZZOU) or raw starches when forced into a casting role.
+
+Adjusting Your Form-to-Firing Blueprint
+
+To force a clay, grog, foam, and 100% dextrin mix to act like a castable that sets up in your mold without collapsing, you must utilize a thermal-gelling or drying-consolidation method:
+
+1. The Updated Dry Base Formulation (By Weight)
+
+• 60% CE70 Mullite Grog — The non-shrinking structural skeleton.
+• 30% Greenstripe Fireclay — The high-temperature ceramic binder.
+• 10% Pure Home-Converted Dextrin — Your primary green-state consolidation binder.
+
+2. The Casting Mechanics (The "Drying Fix")
+
+Hydraulic castables set through a chemical reaction with water. A dextrin castable sets strictly through evaporation.
+• The Trap: Because your 6" wall space is trapped between an outer kiln shell and an inner mold board, water cannot escape easily. If the mix stays wet for too long, your surfactant foam bubbles will eventually pop, causing the entire wall to sag and lose its insulation value.
+• The Solution: You must use highly absorbent mold faces. Line your wooden formwork with heavy corrugated cardboard or multiple layers of newspaper. This acts as a wick, pulling water out of the foam matrix rapidly so the dextrin can dry, concentrate, and lock the wall into a rigid structure before the foam breaks down.
+
+3. Preparing and Folding the Castable
+
+1. Warm-Water Dissolution: Dissolve your 10% dextrin completely into your calculated batch water first. Dextrin dissolves beautifully in water and creates a sticky, high-viscosity liquid binder.
+2. Slurry Creation: Mix this sticky dextrin water into your dry Greenstripe and CE70 grog to create a dense, smooth slurry.
+3. Foam Incorporation: Whip your surfactant into a stiff, dry foam (like shaving cream). Gently fold the heavy dextrin/clay slurry into the foam. The sticky nature of your 100% dextrin will coat the bubble walls, dramatically improving their lifespan while the castable dries.
+
+4. The Critical Firing Constraint
+
+Because this castable relies entirely on dextrin for its structural integrity before firing, it will remain water-soluble until it is fired.
+• Once the forms are pulled and the wall dries rock-hard, you must fire the kiln immediately to sinter the clay.
+• If the green kiln is left sitting in a damp workshop or garage for weeks, the dextrin can absorb atmospheric moisture, soften, and cause the walls to structurally fail before the first fire.
+To ensure the wall dries fast enough to prevent foam collapse, let me know:
+• Will you be able to cast this in a warm, low-humidity environment, or do you have a way to apply gentle heat (like a space heater or heat lamps) to the outside of the forms?
+• What material is your outer kiln frame made of (e.g., sheet steel, angle iron, or backer board)?
+
+You said: I will start with 2" walls of this k26. It will get 6" k16 cast as backup
+
+I will start with 2" walls of this k26. It will get 6" k16 cast as backup
+September 21, 2026
+Swapping the layers—casting the thin 2" foam-dextrin K26 hot face first, then backing it with 6" of K16 insulation—is an excellent design pivot. However, because your homemade K26 foam hot face lacks hydraulic cement and stays water-soluble until it is fired, pouring a heavy, wet 6" hydraulic K16 castable directly behind it will instantly ruin the foam walls.
+I have updated your layout constraints to 2-inch walls of this K26 foam-dextrin castable acting as the hot face, backed by a 6-inch K16 type castable insulation layer.
+To execute this specific 2" to 6" split safely, you must alter the order of operations and protect the delicate dextrin bond from the water in the K16.
+
+The Problem: Water Migration
+
+Commercial K16 insulating castables require a high volume of water to mix and take 24 hours to chemically cure. If you pour 6 inches of wet K16 directly against your dried, unfired 2" dextrin hot face:
+1. The water from the K16 will soak straight into your 2" hot face.
+2. The dextrin glue will immediately dissolve and melt.
+3. The foam bubbles will collapse, causing your hot face to turn into a slumped puddle of mud before the K16 even sets.
+
+The Construction Solutions
+
+You can choose between two methods to safely combine these two materials:
+
+Method	Execution Steps	Trade-Offs
+Method A: The Moisture Barrier (Easiest)	1. Cast and dry your 2" foam-dextrin hot face completely.
+2. Coat the back of the dried 2" wall with a thick plastic vapor barrier (like heavy-duty plastic wrap or trash bags) or paint it with a thin layer of melted wax/shellac.
+3. Pour your 6" K16 insulation directly against that barrier.	Pros: Protects the dextrin from water. The plastic or wax will cleanly burn away during the first firing.
+Cons: Forces all K16 water outward toward the exterior frame; requires a breathable outer mold board.
+Method B: Split-Firing Blocks (Safest)	1. Cast the 2" foam-dextrin mix into modular tile shapes or panels using separate wooden molds.
+2. Air-dry them, then pre-fire these tiles in an independent electric kiln to 2000°F.
+3. Line your kiln frame with the fired tiles, and pour your wet K16 directly behind them.	Pros: Zero risk of wall collapse. Firing turns the clay into permanent ceramic, making it completely immune to water damage.
+Cons: Extra labor making separate brick/tile forms; requires a separate kiln for the pre-fire.
+
+
+The Sintering Temperature Reminder
+
+Keep in mind that while your custom K26 foam-dextrin mix (made of Greenstripe Fireclay and CE70 Grog) is rated to survive your peak 2400°F target, it will not actually develop its maximum "toughness" until it is fired past 2000°F.
+If you choose Method A (firing the whole kiln monolithic at once), your first firing must be incredibly slow through the 300°F–800°F starch burnout phase to prevent steam pockets from exploding the walls.
+To coordinate the drying layout, let me know:
+• Which approach fits your workspace better: lining the wet K16 with a plastic barrier (Method A), or pre-firing modular panels (Method B)?
+• What material are you using for the outer kiln formwork or shell to contain the 6" K16 pour?
+
+You said: I will fire the 2" inside layer first
+
+I will fire the 2" inside layer first
+September 21, 2026
+Firing the 2" inner foam-dextrin layer completely to ceramic before casting the backup layer completely solves the water migration problem. By heating the Greenstripe fireclay and CE70 grog past 2000°F, the dextrin burns away entirely, and the clay particles sinter to form a permanent, water-insoluble ceramic structure.
+Once fired, this 2" hot face acts as a hard, porous rock layer that can handle the wet moisture of the 6" K16 backup pour without collapsing.
+
+Key Factors for Firing the Inner Layer First
+
+• Temporary Support Structure Required: During the initial drying and firing, your 2" foam-dextrin wall has no structural backing and is extremely fragile. You will need temporary exterior formwork (like scrap wood) to hold the shape while it air-dries. When you remove the forms to fire it, the unfired wall must stand completely on its own without leaning or tipping.
+• The Burnout Cycle: Because your 2" wall contains roughly 10% pure dextrin by weight, the initial ramp up from 300°F to 900°F (150°C to 480°C) must be incredibly slow (around 50°F to 100°F per hour). This allows the carbon gas from the burning dextrin to escape through the foam pores without cracking the fragile green clay matrix.
+• The "Sponge" Effect on the Second Pour: Once your 2" hot face is fired, it will be highly porous—essentially acting like a giant ceramic sponge. When you later pour the wet 6" K16 insulation against it, the fired hot face will instantly suck all the water out of the K16 mix, which can cause the K16 cement to dry out prematurely and fail to set properly.
+
+Managing the K16 Pour Against Fired Clay
+
+To prevent your newly fired 2" hot face from ruining the 6" K16 cement cure, apply one of these steps right before casting the backup layer:
+1. Saturate the Hot Face: Generously spray the back of your fired 2" wall with clean water until it stops absorbing moisture. This ensures it won't leach water away from the fresh K16.
+2. Use a Burnable Barrier: Mist a ultra-thin layer of vegetable oil, or apply a single layer of wet newspaper over the back of the fired wall. This keeps the water in the K16 while it cures over 24 hours, and then safely burns away the first time you fire the completed kiln.
+To ensure your temporary forms hold up, let me know:
+• Are you casting this 2" inner layer as one continuous monolithic box/cylinder, or are you casting it as individual flat panels that you will assemble later?
+• What heat source are you using to complete this initial 2000°F first fire?
+
+You said: I will waterproof the fired layer, I don't want to have boil more water. The back up castable is more dextrin and foam diy castable. The floor, arch, and end walls can be very thick. What thickness on those walls is enough to be under 100f when the inside is 2400f?
+
+I will waterproof the fired layer, I don't want to have boil more water. The back up castable is more dextrin and foam diy castable. The floor, arch, and end walls can be very thick. What thickness on those walls is enough to be under 100f when the inside is 2400f?
+September 21, 2026
+To achieve an outer skin temperature under 100°F with a 2400°F internal temperature, you would need an impractically thick 41 inches of K16 backup insulation behind your 2" hot face.
+The reason for this extreme thickness is a law of thermodynamics called diminishing returns. As the outer shell of your kiln cools down close to room temperature (around 70°F), the surrounding air stops pulling heat away effectively. Because the air can no longer shed the energy, the heat pools up inside the insulation, requiring an massive wall thickness to hold it back.
+
+The Realistic Target: 140°F to 160°F
+
+In standard kiln engineering, a skin temperature under 100°F is rarely targeted because it requires too much space and material. Instead, builders aim for a touch-safe skin temperature between 140°F and 160°F.
+The required K16 backup thicknesses change drastically depending on the target skin temperature:
+
+Target Outer Skin Temp	Required K16 Backup Thickness	Total Wall Thickness (Inc. 2" Hot Face)
+100°F (Barely warm)	41.2 inches	43.2 inches
+125°F (Warm)	21.5 inches	23.5 inches
+150°F (Standard/Safe touch)	14.5 inches	16.5 inches
+175°F (Hot, but normal)	10.8 inches	12.8 inches
+
+
+Arch, Floor, and End Wall Design Strategy
+
+Since you noted that your floor, arch, and end walls can be very thick, you can realistically hit a highly efficient 150°F skin profile by casting a 14.5-inch K16 backup layer behind your 2" waterproofed K26 hot face.
+• For the Floor: Gravity works in your favor here. You can easily pour a 14.5" thick layer of your DIY foam-dextrin K16 mix straight onto the base frame.
+• For the Arch: Be careful with a 14.5" thickness on a castable arch. A 16.5-inch total thickness creates massive dead-weight. If the foam-dextrin mix lacks high fired structural strength, a heavy arch risks cracking and sagging inward under its own weight at 2400°F.
+• The Smart Arch Cheat: To avoid a heavy, 14.5" thick castable arch, cast the arch at 4 to 6 inches thick (2" K26 + 4" K16), and then simply lay cheap ceramic fiber blanket over the outside of the arch until the skin cool-down goal is met. Fiber blanket weighs almost nothing and provides twice the insulation value per inch compared to castable K16.
+
+Your Waterproofing Strategy
+
+Waterproofing the fired 2" K26 layer is a smart move. It stops the raw clay from turning back into mud when you pour the wet K16 backup. Just make sure whatever waterproofing agent you use (like a thin plastic film, lacquer, or wax) can melt or burn away cleanly at low temperatures without creating trapped gas pockets that could pop your hot face off the wall.
+To ensure the arch can safely support its own weight, let me know:
+• What is the total width of the span your arch needs to cross?
+• Are you building a catenary arch or a segmental (curved) arch?
+Show Code
+
+You said: For the first test kiln I will go with 9" of backup. Inside chamber is 28" wide, 48" high, 60" long. Arch is domed, 3" rise in center. What is my volume and cost for the two castables?
+
+For the first test kiln I will go with 9" of backup. Inside chamber is 28" wide, 48" high, 60" long. Arch is domed, 3" rise in center. What is my volume and cost for the two castables?
+September 21, 2026
+To build a test kiln with an internal chamber measuring 28" wide x 48" high x 60" long featuring a 3" center dome rise, you will need to plan for two distinct volume metrics.
+Because castable volumes grow significantly as they wrap outward around a structure, the 9" backup layer requires over five times the material volume of your 2" hot face.
+
+1. Material Volume Requirements
+
+• 2" Inner Hot Face Layer (Pure MIZZOU): 13.9 cubic feet
+A standard 55-lb bag of MIZZOU yields roughly 0.4 cubic feet of cast material. To cast a uniform 2" shell covering the floor, walls, arch, and both end-walls, you will need 35 bags of MIZZOU (approx. 1,925 lbs of dry material).
+• 9" Outer Backup Layer (DIY Foam/Dextrin): 72.3 cubic feet
+Because you are whipping this mix with surfactant foam to match the lightweight profile of K16 insulation, its target cast density will drop to roughly 38 lbs/ft³. This means you will need 2,750 lbs of total dry raw materials divided by your weight ratios:
+	• CE70 Grog (60%): 1,650 lbs (~33 bags at 50 lbs each)
+	• Greenstripe Fireclay (30%): 825 lbs (~17 bags at 50 lbs each)
+	• Cornstarch for Dextrin (10%): 275 lbs (Bulk wholesale)
+
+2. Estimated Total Cost Breakdown
+
+Prices are calculated using the Clay Art Center (CAC) retail pricing for the commercial refractory and standard local retail/bulk estimates for the DIY raw minerals:
+
+Material Layer	Required Components	Price / Unit	Total Layer Cost
+2" Hot Face	35 Bags of MIZZOU Castable	$92.50 / 55-lb bag	$3,237.50
+9" Backup	33 Bags of CE70 Mullite Grog	~$32.00 / 50-lb bag	$1,056.00
+	17 Bags of Greenstripe Fireclay	~$22.00 / 50-lb bag	$374.00
+	275 lbs of Wholesale Cornstarch	~$0.90 / lb (Bulk)	$247.50
+Total Estimate	All Combined Materials		$4,915.00
+
+
+3. Execution Warning for a 9" Foam Cast
+
+While the DIY K16 backup method saves you thousands of dollars compared to buying 72 cubic feet of commercial insulating castable, casting a 9-inch thick layer of foam-dextrin slurry monolithically presents a severe drying risk.
+Because foam-dextrin does not set chemically via hydraulic action, a 9-inch thick wet mass trapped behind your waterproofed hot face will take weeks to dry to the core. If the middle remains wet when you begin your first fire, the trapped water will instantly turn to steam, causing the 9" wall to blister or structurally tear itself apart.
+To bypass this risk, consider casting the 9" backup layer in three separate 3-inch "lifts" or layers, allowing each 3" pour to dry out thoroughly under heat lamps before casting the next 3" layer against it.
+To ensure your formwork can handle this setup, let me know:
+• Will you be building removable wooden outer forms for the backup layer, or casting directly into a permanent outer steel shell?
+• Do you want to calculate how much cheaper it would be to replace the outer 6 inches of that backup with a 2600°F ceramic fiber blanket instead of casting the full 9 inches?
+
+You said: I am replacing the MIZZOU on the test kiln with the K26 set out above. Give costs for that and batching information
+
+I am replacing the MIZZOU on the test kiln with the K26 set out above. Give costs for that and batching information
+September 21, 2026
+Swapping the expensive commercial MIZZOU hot face entirely out of your equation and replacing it with your DIY foam-dextrin K26-grade formulation (60% CE70 Grog, 30% Greenstripe Fireclay, and 10% home-converted dextrin) drastically drops your test kiln's build cost.
+Because you are whipping this inner 2" layer with surfactant foam to match the lightweight profile of K26 insulating firebricks, its dry material weight plummets compared to dense MIZZOU concrete.
+For your 28" W x 48" H x 60" L chamber (with its 3" dome arch rise), your final cost for both layers drops by roughly $2,500.
+
+1. Updated Cost Estimate
+
+Prices for the raw minerals are pulled directly from the Clay Art Center (CAC) catalog in Tacoma:
+• CE70 48-Mesh Grog (50-lb bag): $51.00
+• Greenstripe Fireclay (50-lb bag): $16.00
+• Bulk Cornstarch for Dextrin: ~$0.90 / lb (sourced wholesale/grocery)
+
+Material Layer	Required Components	Quantity Needed	Total Layer Cost
+2" Hot Face (DIY K26)	CE70 48-Mesh Grog 
+ Greenstripe Fireclay 
+ Cornstarch (for Dextrin)	315 lbs (~7 bags) 
+ 160 lbs (~4 bags) 
+ 55 lbs	$357.00 
+ $64.00 
+ $49.50
+9" Backup (DIY K16)	CE70 48-Mesh Grog 
+ Greenstripe Fireclay 
+ Cornstarch (for Dextrin)	1,650 lbs (~33 bags) 
+ 825 lbs (~17 bags) 
+ 275 lbs	$1,683.00 
+ $272.00 
+ $247.50
+Total Estimate	Full 11" Wall System	~3,280 lbs Dry Mass	$2,673.00 (Down from $4,915)
+
+
+2. Step-by-Step Batching Information
+
+Because you are using 100% heat-converted dextrin as your green-binder rather than a hydraulic cement, you must batch your components systematically to prevent the mix from separating or collapsing.
+
+Batch Ratios (By Dry Weight)
+
+• CE70 Mullite Grog: 60% CE70 Mullite Grog (Provides the non-shrinking refractory skeleton)
+• Greenstripe Fireclay: 30% Greenstripe Fireclay (Sinters into the permanent high-temp ceramic matrix)
+• : 10% Pure Dextrin Powder (Your home-converted starch glue)
+
+Mixing & Casting Protocol
+
+1. Dextrin Liquid Phase: Dissolve your total calculated batch weight of dextrin directly into your water first. Stir until it forms a uniform, tacky, high-viscosity liquid glue.
+2. Slurry Incorporation: Mix your dry Greenstripe and CE70 grog into this sticky dextrin-water. Mix aggressively until it behaves like a dense pancake batter. If it is too watery, the grog will sink to the bottom of your mold; keep it thick.
+3. Foam Generation: In a secondary container, generate a dry, rigid surfactant foam (using a pure soap like Dawn or a protein-based foaming agent whipped to a stiff shaving-cream profile).
+4. The Final Fold: Gently fold your heavy dextrin/clay slurry into the foam. The dissolved dextrin will coat the bubble walls, locking them open against the physical weight of the grog.
+5. Casting & Drying: Pour the mix into your oiled forms. Line the back of the forms with newspaper or corrugated cardboard to pull moisture out and fast-track the drying window.
+Since you are firing this 2" K26 layer completely to ceramic before pouring the 9" backup, you can paint or spray a light layer of vegetable oil or low-temp wood lacquer over the back of the newly fired hot face to serve as your waterproofing barrier.
+Would you like to review the exact time/temperature ramp parameters for that critical first burnout firing to ensure the 10% dextrin gas escapes without cracking the 2" walls?
+• 
+clayartcenter.net
+GROGS - CE70 48 MESH | Pottery & Ceramic Supplies - Clay Art Center
+Home / Raw Materials / Grogs & Sand / Grogs / GROGS – CE70 48 MESH.. GROGS - CE70 48 MESH. GROGS – CE70 48 MESH. $5.00 – $51.00 Pr...
+• 
+clayartcenter.net
+GREENSTRIPE FIRECLAY | Pottery & Ceramic Supplies - Clay Art Center
+Blade Tools · Chattering Tools · Foam Trimming Bats · Giffin Grip System & Accessories · Knives · Loop and Ribbon Tools · Wire Too...
+
+You said: sure, what schedule do you recommend? I will have a digital controller
+
+sure, what schedule do you recommend? I will have a digital controller
+September 21, 2026
+Because your custom 2" K26 hot face relies entirely on 100% home-converted dextrin for its green strength, your initial firing schedule is a critical burnout and sintering run, not a standard pottery firing.
+Between 300°F and 900°F, the dextrin will undergo pyrolytic decomposition, transforming from a solid glue into a heavy carbon gas. Because your wall is a thick, 2-inch monolithic mass, you must drive this gas out at a slow, controlled pace. If you ramp too fast, the gas pressure will pocket inside the clay matrix and pop the face right off your walls.
+Once past the burnout phase, you must push the kiln to 2100°F to fully sinter the Greenstripe fireclay to the CE70 grog, rendering it permanently waterproof and structurally sound.
+
+The Recommended Digital Controller Schedule
+
+Program your controller with the following multi-segment ramp parameters. Ensure your kiln vent or damper is wide open during the first four segments to exhaust the heavy dextrin smoke.
+
+Segment	Target Temperature	Ramp Rate (°F / Hour)	Hold Time	Objective / What is Happening
+1	220°F (104°C)	50°F / hr	4 Hours	Water Smoking: Completely drives out any residual chemical moisture trapped deep within the 2" foam cells.
+2	500°F (260°C)	75°F / hr	None	Dextrin Softening: The starch starts to break down and char. The structure is at its most fragile here.
+3	900°F (482°C)	50°F / hr	2 Hours	The Burnout Zone: Critical slow rate. Heavy black smoke and acrid odors will exhaust as the dextrin converts entirely to gas.
+4	1150°F (621°C)	150°F / hr	None	Quartz Inversion: Moves safely past the structural rearrangement zone of any trace silica in the fireclay.
+5	2100°F (1148°C)	300°F / hr	1 Hour	Sintering: The Greenstripe clay begins its vitrification matrix, fusing permanently to the CE70 grog.
+6	Room Temp	Natural Cool	None	Cooling: Keep the kiln completely closed until it drops below 150°F to prevent thermal shocking.
+
+
+Crucial Execution Checks Before Pushing Start
+
+1. Absolute Air Dry: Do not rely on Segment 1 to dry a wet wall. The 2" castable should air-dry under fans for at least 7 to 10 days until the forms are pulled and the block feels completely dry and room-temperature to the touch.
+2. Outdoor Ventilation: The volume of smoke generated by burning out 55 lbs of pure dextrin inside a chamber this size will be immense. Do not fire this initial run inside a closed garage or basement workshop.
+3. Post-Fire Inspection: Once the kiln cools down and you open it, expect the wall to have shrunk slightly (the CE70 grog will minimize this, but fireclay naturally contracts when sintered). Check for any hairline drying cracks. You can patch these easily using a thin slurry of your K26 mix before applying your waterproof coating and pouring the 9" backup.
+To ensure your digital controller handles this safely, let me know:
+• What type of digital controller are you using (e.g., a Bartlett, Orton, or a DIY PID system)?
+• Do you have an active exhaust fan system or a hood set up over this test kiln location?
+
+You said: estimate the shrink on this k26 diy castable
+
+estimate the shrink on this k26 diy castable
+September 21, 2026
+The total linear shrinkage for your custom K26 DIY castable will follow a predictable range based on its composition:
+• Total Linear Shrinkage Estimate: 2.5% to 3.5%
+Because your formulation relies heavily on a high volume of non-shrinking aggregates, it behaves completely differently than a standard plastic pottery clay body (which typically shrinks 10% to 15%).
+
+The Shrinkage Mechanics Breakdown
+
+• CE70 Mullite Grog: The CE70 Grog Buffer (60% of Mix): Since CE70 Mullite Grog is pre-fired to extreme temperatures before it is crushed, it has 0% drying shrinkage and 0% firing shrinkage at your 2100°F target. It acts as a massive dimensional anchor. The clay simply shrinks around the grog grains, packing tightly instead of pulling the whole wall inward.
+• Greenstripe Fireclay: The Greenstripe Fireclay Component (30% of Mix): Raw Greenstripe Fireclay has a typical drying shrinkage of 4% to 5% and a firing shrinkage of roughly 4% at maturity, totaling ~9% linear shrinkage on its own. Because it is diluted to only 30% of your total dry batch weight, its contribution to the overall wall movement is mathematically slashed down to around 2.7%.
+• The Foam Matrix and Dextrin Element (10% of Mix): The surfactant foam introduces giant micro-pores that create structural relief. When the dextrin burns away and the clay starts to contract, the open cell walls allow the clay to sinter locally without pulling heavily across the macro-dimensions of the entire 2-inch slab.
+
+What This Means For Your Build Dimensions
+
+Because a ~3% shrinkage rate is low but still present, casting a tight, monolithic box means the wall will pull slightly away from your outer formwork during the firing process.
+For your 60-inch long wall, a 3% shrinkage rate means the wall will get roughly 1.8 inches shorter over its full span after it is fired to 2100°F. When you cast your 9" backup layer behind it, that newly created gap will simply be filled in by the wet backup pour, locking your hot face permanently into place.
+To ensure the shrinkage does not bind against your formwork, let me know:
+• Are your internal molds and forms tapered or completely square?
+• Do you plan to score expansion joints into the 2" layer before firing?
+• 
+Ceramic Arts Daily Community
+Working-Strength And Grog. - Clay and Glaze Chemistry
+Recommended Posts * neilestrick Posted January 8, 2015 neilestrick Moderators 13.5k Posted January 8, 2015 In my experience, grog ...
+• 
+Ceramic Arts Daily Community
+calculating shrinkage - Studio Operations and Making Work - Ceramic Arts Daily Community
+So for a piece that's 10 inches long wet: 10 x .88 = 8.8 inches after firing. For 15% shrinkage, you'd be working with 85% (.85), ...
+• 
+Digitalfire.com
+Grog
+Notes The heavy refractories industry commonly uses a 50% 4-16 mesh, 10% 20-36 mesh, 40% 40-60 mesh mix of grog and a deflocculate...
+Show all
+
+You said: Is there a way to reduce shrink while keeping other properties?
+
+Is there a way to reduce shrink while keeping other properties?
+September 21, 2026
+Yes, you can drop your firing shrinkage down to virtually 0% by swapping out a small portion of your aggregate for raw Kyanite.
+Adding kyanite is the industry-standard method for engineering zero-shrinkage (or even slight permanent expansion) in premium high-alumina castables like MIZZOU.
+
+The Chemistry: The Mullite Expansion
+
+Almost all ceramic materials shrink as they fire because the clay particles melt slightly and pack closer together (sintering).
+Kyanite (Al₂O₃ ⋅ SiO₂) is unique. When heated to around 2100°F–2400°F, it irreversibly decomposes into Mullite and amorphous silica. This chemical phase change forces the kyanite crystals to expand permanently by 3% to 5% in volume.
+By adding a precise percentage of raw kyanite to your mix, its physical expansion perfectly counteracts the natural contraction of your Greenstripe fireclay. Because the kyanite replaces dense grog rather than your foam bubbles, your insulation value, maximum temperature rating, and fired strength remain completely unaffected.
+
+The Adjusted K26 "Zero-Shrink" Formulation (By Weight)
+
+Clay Art Center regularly stocks RM246 Kyanite Grog (35 Mesh). You will adjust your dry base to include 8% Kyanite by shaving a bit off your CE70 grog:
+• 52% CE70 Mullite Grog (Down from 60%)
+• 8% Raw Kyanite (35 mesh) (New expansion anchor)
+• 30% Greenstripe Fireclay (Unchanged ceramic bond)
+• 10% Pure Dextrin Powder (Unchanged green binder)
+
+Physical Sizing Strategy
+
+When buying the kyanite, ensure you stick with a coarse mesh size like 35 mesh or 48 mesh. Coarser kyanite grains behave like an interlocking "felt" matrix inside your cell walls, giving the foam higher structural stability while it fires. Avoid ultra-fine 100 or 325 mesh kyanite, as the high surface area will absorb too much of your sticky dextrin water and make your slip too thick to fold into the surfactant foam properly.
+If you want to apply this to the 9" backup layer too, let me know:
+• Will you be firing the entire kiln to 2100°F+ at once, or will you have the ability to pre-fire the backup sections separately?
+• 
+Kyanite Mining Corporation
+Application Field: Shrinkage Control for Refractories and Ceramics — Kyanite Mining Corporation
+Kyanite is a member of the sillimanite group of minerals, which has a medium-high alumina content. When heated, kyanite expands, w...
+• 
+magnesiacarbonbricklmm.com
+7 Ways to Improve the Quality of Ladle Refractory Castables
+Table of Contents * Adding expansion agents and sintering agents: Achieving “volume adaptation” Shrinkage of castables at high tem...
+• 
+Digitalfire.com
+Kyanite - Digitalfire.com
+Kyanite is a refractory material, normally used in granular form (or granular/powder mix). The grains have relatively low thermal ...
+Show all
+
+You said: what amount of water per batch is needed with this? A low slump pour is desirable
+
+what amount of water per batch is needed with this? A low slump pour is desirable
+September 23, 2026
+To achieve a high-performance low-slump pour with this specific foam-dextrin slurry, your target water addition is:
+• 22% to 26% water by weight of the dry base mix.
+While a standard hydraulic concrete or commercial castable relies on a ultra-low 5% to 8% water ratio, your starch consolidation casting (SCC) method behaves completely differently. Dissolved dextrin is a highly viscous, sticky polymer. If you drop below 22% water, the clay and CE70 grog will turn into an unworkable, dough-like mass that cannot trap or fold in the surfactant foam bubbles evenly.
+Conversely, going above 26% creates a runny slip. A high-slump, watery mix reduces the viscosity of the bubble walls, leading to rapid bubble drainage, aggregate settling, and a collapsed, dense wall.
+
+Batch Calculations (Per 100 lbs of Dry Mix)
+
+To maintain precise control over your low-slump goals, always batch by weight.
+| Material Component | Batch Weight Ratio | Weight Per 100 lb Dry Batch |
+| :--- | :--- :| :--- |
+| CE70 Mullite Grog (48 Mesh) | 52% | 52.0 lbs |
+| Raw Kyanite (35 Mesh) | 8% | 8.0 lbs |
+| Greenstripe Fireclay | 30% | 30.0 lbs |
+| Home-Converted Dextrin Powder | 10% | 10.0 lbs |
+| Clean Mixing Water | ~24% (Target) | 24.0 lbs (Approx. 2.9 Gallons) |
+
+Achieving the Ideal "Low-Slump" Consistency
+
+Because a slump cone test can prematurely pop the foam bubbles, judge the pour using a visual shear test during the mix:
+1. The Dextrin Syrup Phase: Dissolve the 10 lbs of dextrin into the 24 lbs of water first. It should feel like a thick, highly tacky syrup.
+2. The Slurry State: Once the clay, grog, and kyanite are fully mixed into the dextrin water, it should have the consistency of a heavy mortar or a thick peanut butter. It will require mechanical force (a paddle mixer) to move smoothly.
+3. The Foam Fold: Fold in your whipped surfactant foam. The air bubbles will actually act like microscopic ball bearings, slightly improving the flow of the mix without adding any more liquid water.
+4. The Target Pour Look: When poured into your 2" wall forms, the material should hold its shape and require gentle tapping or vibrating against the outside of the formwork to settle and fill the corners. If it flows completely flat on its own like pancake batter, it is too wet; immediately add a handful of dry-blended clay and grog to rescue the batch.
+To calibrate the water exactly to your specific blending style, let me know:
+• Will you be mixing this by hand with a hoe/wheelbarrow or using a drill-mounted mud mixer paddle?
+• What type of surfactant or foaming agent (e.g., standard dish soap, air-entraining concrete additive, or protein foam) are you whipping up?
+• 
+Facebook
+What is the proper water to cement ratio for castable refractories?
+Add the clean water for daily use in the proportion of 5 to 8%, first add two-thirds of the weighed water, stir for three minutes,
+• 
+refractorycastablecement.com
+How Much Water Should be Added During the Construction of Refractory Castables?
+In general, the water content … the water content of the low cement series is 6-8%, at 5.5-6.5%. Adding too much water will prolon...
+• 
+ResearchGate
+(PDF) Let's make a castable! Part I - ResearchGate
+The use of larger aggregates is one of the variations commonly used to make impressively low water additions. If we take the above...
+Show all
+
+You said: dawn and a paddle mixer. Do a 50lb batch for me please
+
+dawn and a paddle mixer. Do a 50lb batch for me please
+September 23, 2026
+Using a drill-mounted paddle mixer is perfect for this—the mechanical shear is exactly what you need to smoothly blend the thick dextrin syrup into the Greenstripe fireclay and CE70 grog without leaving lumps.
+When using Dawn dish soap as your surfactant, keep the foam incredibly stiff. Whip it until it looks like dry shaving cream that holds sharp peaks when you pull the whisk out.
+Here is the exact recipe and step-by-step procedure scaled down to a 50-lb dry batch, matching your low-slump, zero-shrinkage target.
+
+50-lb Dry Batch Recipe (By Weight)
+
+
+Material Component	Weight for 50-lb Batch	Local Sourcing Notes
+CE70 Mullite Grog (48 Mesh)	26.0 lbs	From Clay Art Center
+Greenstripe Fireclay	15.0 lbs	From Clay Art Center
+Raw Kyanite (35 Mesh)	4.0 lbs	From Clay Art Center
+Home-Converted Dextrin Powder	5.0 lbs	Your 100% heat-converted cornstarch
+Target Mixing Water	12.0 lbs (~1.4 Gallons)	Clean, lukewarm water
+
+
+Step-by-Step Batching & Mixing Protocol
+
+
+1. Dry Blend the Refractories
+
+In a clean 5-gallon or 7-gallon bucket, thoroughly blend your 26 lbs of CE70 grog, 15 lbs of Greenstripe clay, and 4 lbs of raw Kyanite. Use a hand scoop or mask up and run the paddle mixer on low to ensure the expansion-controlling kyanite is evenly distributed through the grog.
+
+2. Create the Dextrin Glue
+
+In your primary mixing bucket, pour 12 lbs of lukewarm water. Slowly add your 5 lbs of home-converted dextrin powder while running the paddle mixer. Dextrin dissolves beautifully in warm water. Mix until it forms a highly tacky, uniform syrup with zero dry lumps.
+
+3. Build the Thick Slurry
+
+With the paddle mixer running at medium speed, gradually dump your dry-blended refractory mix into the dextrin syrup.
+• The Consistency: It will quickly become very heavy and look like thick, sticky peanut butter or stiff masonry mortar.
+• The Low-Slump Check: If the paddle mixer strains but moves the mud smoothly, you are right in the sweet spot. If it is completely unmanageable for your drill, add up to an extra 1 lb of water max, but do it incrementally.
+
+4. Whip and Fold the Dawn Foam
+
+1. In a separate container, combine roughly 1.5 to 2 cups of water with 2 to 3 tablespoons of Dawn dish soap.
+2. Use a clean kitchen hand-whisk or a separate clean mixing attachment to whip it into a dense, completely dry foam. You want micro-bubbles, not big soapy suds.
+3. Dump the stiff foam directly onto your thick clay slurry. Do not use the power paddle mixer for this step. Use a wide rubber trowel, a hand scoop, or your hands to gently fold the foam into the mud. Stop folding the second the mix looks uniform and light—over-mixing will pop the bubbles and cause the castable to lose its insulation value.
+
+5. The Low-Slump Pour
+
+Pour the aerated mix directly into your oiled, cardboard-lined 2" forms. Because it is a low-slump mix, it will not flow like water. Use a trowel to pack it into the corners and firmly tap the outside of your wooden forms with a rubber mallet. The vibrations will settle the mix perfectly around your mold without collapsing the Dawn bubbles.
+To help plan the rest of the build, let me know:
+• How many total 50-lb batches do you need to mix to finish casting the entire 2" inner liner? (If you aren't sure, I can calculate it using your chamber dimensions).
+• Do you have a heavy-duty 1/2-inch spade handle drill to handle the torque of this thick dextrin syrup, or are you using a standard 3/8-inch hand drill?

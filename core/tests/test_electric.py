@@ -113,3 +113,12 @@ def test_the_chosen_diameter_meets_the_load_exactly(
     longer = wire_length(power, voltage, d * 1.1, rho_t)
     assert longer > length
     assert surface_load(power, d * 1.1, longer) < load
+
+
+def test_current_at_high_supply_voltage_and_cold_wire_is_shown() -> None:
+    """At +5 % (ANSI C84.1 Range A) the 48 A kiln draws 50.4 A hot (electrical-supply.md §1)."""
+    root = Path(__file__).parents[2] / "examples"
+    design = design_elements(load_design(root / "electric-front-loader.yaml"))
+    note = next(f for f in design.findings if "Range A" in f.message)
+    assert note.level == "info"
+    assert "50.4 A" in note.message

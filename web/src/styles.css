@@ -97,6 +97,7 @@ button,
   cursor: pointer;
 }
 
+button.secondary,
 .button.secondary {
   background: transparent;
   color: var(--accent);
@@ -240,6 +241,31 @@ select {
 .viewer-message {
   margin: 0;
   padding: 1rem;
+}
+
+.viewer-legend {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  list-style: none;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font-size: 0.8em;
+}
+
+.viewer-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.viewer-legend .swatch {
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
 }
 
 .downloads {
@@ -416,4 +442,220 @@ select {
 .findings .level {
   font-weight: 600;
   text-transform: capitalize;
+}
+
+/* The design as choices */
+.tabs.compact {
+  margin-bottom: 0;
+  margin-right: auto;
+}
+
+.design-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0.75rem 1rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.form-section legend {
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+.field {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.9em;
+}
+
+.field > span:first-child,
+.field > label {
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.quantity {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.quantity input {
+  flex: 1;
+}
+
+.quantity select {
+  width: auto;
+}
+
+.quantity .unit {
+  align-self: center;
+  color: var(--muted);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9em;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.form-section > .check,
+.form-section > div:not(.field),
+.layers {
+  grid-column: 1 / -1;
+}
+
+.layers ol {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.layers li {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.layer-tools {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.layer-tools button,
+.layers > button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85em;
+}
+
+.kiln-types {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: none;
+}
+
+.kiln-types legend {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card span {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.section-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.castable {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.castable .ingredients {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.castable .ingredients li {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.castable-report {
+  margin-bottom: 1.5rem;
+}
+
+.castable-report h4 {
+  margin: 1rem 0 0.4rem;
+}
+
+table.plain {
+  width: 100%;
+  margin: 0.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+table.plain caption {
+  text-align: left;
+  font-weight: 600;
+}
+
+table.plain th,
+table.plain td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+table.plain .number {
+  text-align: right;
+}
+
+.steps li,
+.layer-notes li {
+  margin-bottom: 0.35rem;
 }

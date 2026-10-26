@@ -73,3 +73,52 @@ class Build(BaseModel):
     error: str | None
     created_at: datetime
     finished_at: datetime | None
+
+
+class CheckedDesign(BaseModel):
+    """A valid design, both ways: the JSON document the forms edit and the YAML the tab shows."""
+
+    document: dict[str, Any]
+    source: str
+
+
+class Template(BaseModel):
+    """A kind of kiln to start a design from."""
+
+    id: str
+    title: str
+    description: str
+    document: dict[str, Any]
+    source: str
+
+
+class LibraryMaterial(BaseModel):
+    id: str
+    name: str
+    kind: str
+    max_service: str | None
+    density: str
+
+
+class LibraryEntry(BaseModel):
+    id: str
+    name: str
+
+
+class LibraryIngredient(BaseModel):
+    id: str
+    name: str
+    role: str
+    needs_density: bool  # no sourced density: the mix must give one
+
+
+class Library(BaseModel):
+    """What a design can choose from: materials, element alloys, cones, burners and what a
+    castable can be mixed from."""
+
+    materials: list[LibraryMaterial]
+    ingredients: list[LibraryIngredient]
+    alloys: list[LibraryEntry]
+    cones: list[str]
+    cone_rates: dict[str, list[int]]
+    burners: list[LibraryEntry]

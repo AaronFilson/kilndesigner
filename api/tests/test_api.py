@@ -145,3 +145,37 @@ async def test_deleting_a_design(client: httpx.AsyncClient, example: str) -> Non
     design = (await client.post("/api/designs", json={"source": example})).json()
     assert (await client.delete(f"/api/designs/{design['id']}")).status_code == 204
     assert (await client.get(f"/api/designs/{design['id']}")).status_code == 404
+
+
+async def test_the_kinds_of_kiln_to_start_from(client: httpx.AsyncClient) -> None:
+    templates = (await client.get("/api/templates")).json()
+    assert [t["id"] for t in templates] == [
+        "electric-front-loader",
+        "gas-crossdraft",
+        "hybrid-crossdraft",
+    ]
+    for t in templates:
+        saved = await client.post("/api/designs", json={"document": t["document"]})
+        assert saved.status_code == 201, saved.text
+
+
+async def test_the_library_offers_what_a_design_can_choose(client: httpx.AsyncClient) -> None:
+    library = (await client.get("/api/library")).json()
+    assert "ifb-k23" in {m["id"] for m in library["materials"]}
+    assert "kanthal-a1" in {a["id"] for a in library["alloys"]}
+    assert "10" in library["cones"]
+    assert "GACO MR750" in {b["id"] for b in library["burners"]}
+
+
+async def test_checking_a_design_turns_it_either_way(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    from_yaml = (await client.post("/api/designs/check", json={"source": example})).json()
+    assert from_yaml["source"] == example
+    document = {**from_yaml["document"], "chamber": {**from_yaml["document"]["chamber"],
+                                                     "width": "30 in"}}  # fmt: skip
+    from_json = (await client.post("/api/designs/check", json={"document": document})).json()
+    assert "width: 30 in" in from_json["source"]
+    bad = await client.post("/api/designs/check", json={"document": {"name": "x"}})
+    assert bad.status_code == 422
+    assert (await client.get("/api/designs")).json() == []  # nothing was saved

@@ -75,6 +75,17 @@ def radiation_coefficient(emissivity: float, t_surface: float, t_ambient: float)
     return emissivity * STEFAN_BOLTZMANN * (t_surface**2 + t_ambient**2) * (t_surface + t_ambient)
 
 
+# Where each correlation has been checked: Churchill–Chu 0.1–1e12; hot face up 1e4–1e11
+# (0.54 Ra^¼ to 1e7, then 0.15 Ra^⅓); hot face down 1e5–1e10, the narrowest of its sources
+# (thermal-properties.md §5).
+RA_RANGE: dict[Orientation, tuple[float, float]] = {
+    "vertical": (0.1, 1e12),
+    "facing_up": (1e4, 1e11),
+    "facing_down": (1e5, 1e10),
+}
+RA_SOURCE = "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+
+
 @dataclass(frozen=True)
 class StillAirSurface:
     """An outside face of the kiln in still air.
@@ -90,3 +101,9 @@ class StillAirSurface:
         return convection_coefficient(
             self.orientation, self.length, t_surface, t_ambient
         ) + radiation_coefficient(self.emissivity, t_surface, t_ambient)
+
+    def rayleigh_in_range(self, t_surface: float, t_ambient: float) -> tuple[float, bool]:
+        """The face's Rayleigh number, and whether its correlation covers it."""
+        ra, _ = rayleigh(t_surface, t_ambient, self.length)
+        lo, hi = RA_RANGE[self.orientation]
+        return ra, lo <= ra <= hi

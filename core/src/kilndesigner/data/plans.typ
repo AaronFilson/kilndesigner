@@ -96,6 +96,42 @@
   )
 ]
 
+= #d.frame.title
+#if d.frame.thrust != none [Design thrust of the arch: #d.frame.thrust.]
+#table(
+  columns: (1fr, auto, auto, auto),
+  [Part], [Steel], [Count], [Length each],
+  ..d.frame.rows.flatten()
+)
+
+#if d.castables.len() > 0 [
+  = Castables you mix
+  #for c in d.castables [
+    == #c.name
+    #table(
+      columns: (1fr, auto, auto),
+      [One batch], [Weight], [Share],
+      ..c.batch.flatten()
+    )
+    #table(
+      columns: (auto, 1fr),
+      [Item], [Value],
+      ..c.rows.flatten()
+    )
+    #for s in c.steps [+ #s
+    ]
+    #if c.schedule.len() > 0 [
+      #table(
+        columns: (auto, auto, auto, 1fr),
+        [First firing to], [Rate], [Hold], [Why],
+        ..c.schedule.flatten()
+      )
+    ]
+    #for l in c.layers [- #l
+    ]
+  ]
+]
+
 #if d.hybrid != none [
   = Elements and burners together
   #table(

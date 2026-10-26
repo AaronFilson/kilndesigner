@@ -77,6 +77,7 @@ _DIMENSION_NAMES = {
     "[currency] / [volume]": "price per unit of volume",
     "[currency] / [mass]": "price per unit of mass",
     "[currency]": "amount of money",
+    "[mass] / [length] ** 3": "density",
 }
 
 
@@ -126,3 +127,6 @@ Pressure = Annotated[pint.Quantity, QuantityField("[pressure]", "11 inch_H2O")]
 EnergyPrice = Annotated[pint.Quantity, QuantityField("[currency] / [energy]", "0.12 USD/kWh")]
 VolumePrice = Annotated[pint.Quantity, QuantityField("[currency] / [volume]", "3.50 USD/gallon")]
 Money = Annotated[pint.Quantity, QuantityField("[currency]", "5000 USD")]
+Mass = Annotated[pint.Quantity, QuantityField("[mass]", "50 lb")]
+Density = Annotated[pint.Quantity, QuantityField("[mass] / [length] ** 3", "2.6 g/cm**3")]
+MassPrice = Annotated[pint.Quantity, QuantityField("[currency] / [mass]", "1.02 USD/lb")]

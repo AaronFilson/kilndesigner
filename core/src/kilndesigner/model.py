@@ -12,11 +12,15 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from kilndesigner import cones
 from kilndesigner.units import (
     Q_,
     Current,
+    Density,
     EnergyPrice,
     Length,
+    Mass,
+    MassPrice,
     Money,
     Power,
     Temperature,
@@ -94,6 +98,13 @@ class Loading(Spec):
 
     type: Literal["door", "car"] = "door"
     face: WallFace = Field(default="front", description="The wall with the door, or the car's end")
+    door: Literal["bricked", "hinged"] | None = Field(
+        default=None,
+        description=(
+            "A door bricked up for each firing, or one hung on hinges. Left out: hinged on an "
+            "electric kiln, bricked on a gas one"
+        ),
+    )
     car_hardware_cost: Money | None = Field(
         default=None,
         description="Wheels, rails, frame and seal for a car; no sourced prices exist for these",
@@ -104,8 +115,12 @@ class Firing(Spec):
     """The hottest the kiln must reach: a cone, a temperature, or both (the temperature wins)."""
 
     cone: str | None = Field(default=None, description="An Orton cone, for example '10' or '06'")
-    final_rate: Literal[60, 150] = Field(
-        default=60, description="Heating rate at the end of the firing, °C per hour, for the cone"
+    final_rate: Literal[60, 100, 150, 600] = Field(
+        default=60,
+        description=(
+            "Heating rate at the end of the firing, °C per hour, for the cone. Cones 15 to 42 are "
+            "tabulated at one rate each: 150, or 100 for cone 38 and 600 for cones 39 to 42"
+        ),
     )
     top_temperature: Temperature | None = None
 
@@ -113,6 +128,8 @@ class Firing(Spec):
     def _one_target(self) -> Firing:
         if self.cone is None and self.top_temperature is None:
             raise ValueError("give the firing a cone or a top_temperature")
+        if self.cone is not None and self.top_temperature is None:
+            cones.cone_temperature(self.cone, self.final_rate)  # refuses an untabulated pair
         return self
 
 
@@ -217,6 +234,49 @@ class Site(Spec):
     materials_budget: Money | None = None
 
 
+class MixPart(Spec):
+    """One ingredient of a castable, by its mass in one batch."""
+
+    ingredient: str = Field(description="An ingredient id from the library, for example 'kyanite'")
+    mass: Mass = Field(description="How much goes into one batch")
+    density: Density | None = Field(
+        default=None,
+        description=(
+            "The ingredient's true (particle) density, for an ingredient whose density the "
+            "library doesn't have"
+        ),
+    )
+    price: MassPrice | None = Field(
+        default=None, description="What it costs, for the materials list"
+    )
+
+
+class Measured(Spec):
+    """What test pieces of the mix measured, after firing. These replace the estimates."""
+
+    fired_density: Density | None = None
+    linear_shrinkage: float | None = Field(
+        default=None, ge=-5, le=20, description="Linear shrinkage after firing, % (negative grows)"
+    )
+    fired_to: Temperature | None = Field(default=None, description="The test pieces' firing")
+
+
+class CastableMix(Spec):
+    """A castable mixed by the builder: its recipe for one batch. A lining layer uses it by id."""
+
+    id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*$", description="How lining layers name it")
+    name: str = Field(min_length=1)
+    ingredients: list[MixPart] = Field(min_length=1)
+    water: Mass = Field(description="Water added to one batch")
+    foam: float | None = Field(
+        default=None,
+        ge=0,
+        le=85,
+        description="Air folded in as foam, % of the cast volume",
+    )
+    measured: Measured | None = None
+
+
 class Kiln(Spec):
     """A kiln design: everything the user decides, and nothing that is calculated."""
 
@@ -232,7 +292,29 @@ class Kiln(Spec):
     heat: Heat
     draft: Draft | None = None
     site: Site = Field(default_factory=Site)
+    castables: list[CastableMix] | None = Field(
+        default=None, min_length=1, description="Castables you mix yourself"
+    )
+
+    @model_validator(mode="after")
+    def _mixes_named_once(self) -> Kiln:
+        ids = [m.id for m in self.castables or []]
+        if len(ids) != len(set(ids)):
+            raise ValueError("each castable needs its own id")
+        return self
+
+    def castable(self, mix_id: str) -> CastableMix | None:
+        return next((m for m in self.castables or [] if m.id == mix_id), None)
 
     @property
     def door_face(self) -> Face:
         return self.loading.face
+
+    @property
+    def door_kind(self) -> Literal["bricked", "hinged"] | None:
+        """How the door is built, or None for a car kiln."""
+        if self.loading.type == "car":
+            return None
+        if self.loading.door is not None:
+            return self.loading.door
+        return "hinged" if self.heat.gas is None else "bricked"

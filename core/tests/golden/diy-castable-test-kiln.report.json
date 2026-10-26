@@ -1,0 +1,1795 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      },
+      {
+        "level": "info",
+        "message": "No price found for: Greenstripe fireclay, Raw kyanite (Virginia Kyanite), Dextrin, Newspaper pulp, steel.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "1 roll",
+        "cost": 150.0,
+        "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "needed": "21.8 ft² (2 in thick; area plus 10% for trimming)",
+        "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S73]",
+        "unit_price": "$150.00"
+      },
+      {
+        "buy": "1 burners",
+        "cost": 395.0,
+        "item": "Ransome B5 burner",
+        "needed": "1 burners at 9.8 psi, 456,944 BTU/hr each",
+        "priced_as": "Ransome B5, Ward Burner Systems",
+        "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
+        "unit_price": "$395.00"
+      },
+      {
+        "buy": "469 lb",
+        "cost": 468.00000000000006,
+        "item": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
+        "needed": "468 lb for 18 batches",
+        "priced_as": "your price, in the design",
+        "source": "the design file",
+        "unit_price": "$1.00/lb"
+      },
+      {
+        "buy": "271 lb",
+        "cost": null,
+        "item": "Greenstripe fireclay, for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
+        "needed": "270 lb for 18 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "72 lb",
+        "cost": null,
+        "item": "Raw kyanite (Virginia Kyanite), for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
+        "needed": "72 lb for 18 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "90 lb",
+        "cost": null,
+        "item": "Dextrin, for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
+        "needed": "90 lb for 18 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "1066 lb",
+        "cost": 1065.0000000000002,
+        "item": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "needed": "1,065 lb for 71 batches",
+        "priced_as": "your price, in the design",
+        "source": "the design file",
+        "unit_price": "$1.00/lb"
+      },
+      {
+        "buy": "1775 lb",
+        "cost": null,
+        "item": "Greenstripe fireclay, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "needed": "1,775 lb for 71 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "356 lb",
+        "cost": null,
+        "item": "Raw kyanite (Virginia Kyanite), for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "needed": "355 lb for 71 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "356 lb",
+        "cost": null,
+        "item": "Dextrin, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "needed": "355 lb for 71 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "18 lb",
+        "cost": null,
+        "item": "Newspaper pulp, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "needed": "17.8 lb for 71 batches",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "598 bricks",
+        "cost": 3259.1,
+        "item": "Chimney and flue duct: hard firebrick",
+        "needed": "598 straights (with 5 % for cuts)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      },
+      {
+        "buy": "40 ft",
+        "cost": null,
+        "item": "L3×3×3/16",
+        "needed": "35.8 ft (corner posts, buttresses behind the skewbacks)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "64 ft",
+        "cost": null,
+        "item": "¼ × 2 in flat bar",
+        "needed": "57.3 ft (top cross-members, front and back, bottom cross-members, all four sides)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "11 ft",
+        "cost": null,
+        "item": "1/2-13 threaded rod",
+        "needed": "10.0 ft (tie rods)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 5337.1
+  },
+  "castables": [
+    {
+      "batches": 18,
+      "findings": [
+        {
+          "level": "info",
+          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+          "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+        },
+        {
+          "level": "warning",
+          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+          "reference": "castables.md §4.1"
+        },
+        {
+          "level": "info",
+          "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
+          "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+        },
+        {
+          "level": "info",
+          "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
+          "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+        },
+        {
+          "level": "info",
+          "message": "Dextrin: its density comes from a search excerpt; check it.",
+          "reference": "castables.md §1, Thermo/VWR specification [S14]"
+        },
+        {
+          "level": "info",
+          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
+          "reference": "castables.md §7"
+        },
+        {
+          "level": "info",
+          "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
+          "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
+        },
+        {
+          "level": "warning",
+          "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
+          "reference": "castables-minerals.md §5"
+        }
+      ],
+      "first_firing": [
+        {
+          "formula": "water per batch × batches placed; × latent heat 2256 kJ/kg",
+          "inputs": {
+            "steam at 100 °C": "4,993 ft³"
+          },
+          "name": "Water to drive off",
+          "note": null,
+          "reference": "castables.md §8.1 [S15]",
+          "value": "186 lb; 53 kWh to boil it"
+        },
+        {
+          "formula": null,
+          "inputs": {},
+          "name": "Steam pressure if water is trapped",
+          "note": "Why the holds must be long enough to dry the layer through before it gets hot.",
+          "reference": "castables.md §8.1 [S15]",
+          "value": "15.5 bar (225 psia) at 392 °F; 39.8 bar (577 psia) at 482 °F"
+        },
+        {
+          "formula": "(C₆H₁₀O₅)ₙ + 6n O₂ → 6n CO₂ + 5n H₂O; heat of combustion 4.15–4.16 kcal/g",
+          "inputs": {
+            "CO₂ made": "126 lb",
+            "air, at 68 °F": "5,287 ft³",
+            "oxygen": "92 lb",
+            "water made": "43.2 lb"
+          },
+          "name": "Organics to burn out",
+          "note": "The (C₆H₁₀O₅)ₙ formula is standard chemistry; castables.md §7 still wants a cited page.",
+          "reference": "castables.md §7 [S51]; air 20.95 % oxygen (combustion-and-masonry.md §1.1)",
+          "value": "77.7 lb, releasing 170 kWh (581,232 Btu)"
+        },
+        {
+          "formula": "heat ÷ (time to climb from 464 to 1022 °F at 75 °F/h)",
+          "inputs": {
+            "air needed": "11.8 ft³/min",
+            "the kiln's own heat": "134 kW (0.2×)"
+          },
+          "name": "Burnout heat, spread over the window",
+          "note": "The holds stretch the window, which lowers the rate; a wall lagging the kiln does too.",
+          "reference": "castables.md §7 [S54] (excerpt)",
+          "value": "22.9 kW for about 7.4 h"
+        },
+        {
+          "formula": "⅓ × kyanite's share of the cast volume × (3.61 ÷ 3.03 − 1)",
+          "inputs": {},
+          "name": "Kyanite's growth, at most",
+          "note": "Only where it gets above 2192 °F, if every grain converts and no pore takes the growth up. KMC measures 17–19 % in volume for the grain.",
+          "reference": "castables.md §1, §2.3 [S1] [S2]",
+          "value": "0.10 % in length"
+        }
+      ],
+      "layers": [
+        {
+          "cold_side": "1985 °F",
+          "face": "left",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest ⅞ in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        },
+        {
+          "cold_side": "1985 °F",
+          "face": "right",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest ⅞ in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        },
+        {
+          "cold_side": "1947 °F",
+          "face": "back",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest 0.785 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        },
+        {
+          "cold_side": "1947 °F",
+          "face": "front",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest 0.785 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        },
+        {
+          "cold_side": "1958 °F",
+          "face": "floor",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest 0.808 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        },
+        {
+          "cold_side": "1973 °F",
+          "face": "roof",
+          "hot_side": "2345 °F",
+          "notes": [
+            "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Kyanite starts to convert in the hottest 0.84 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+          ],
+          "thickness": "2 in"
+        }
+      ],
+      "mix": {
+        "batch": [
+          {
+            "ingredient": "mulcoa-70",
+            "mass": "26 lb",
+            "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+            "share": "52.0 %",
+            "source": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]",
+            "volume": "4.09 l"
+          },
+          {
+            "ingredient": "greenstripe",
+            "mass": "15 lb",
+            "name": "Greenstripe fireclay",
+            "share": "30.0 %",
+            "source": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner",
+            "volume": "2.57 l"
+          },
+          {
+            "ingredient": "kyanite",
+            "mass": "4 lb",
+            "name": "Raw kyanite (Virginia Kyanite)",
+            "share": "8.0 %",
+            "source": "castables.md §1, §2: webmineral kyanite [S1], KMC [S2], Virginia Kyanite sheet [S19]",
+            "volume": "0.503 l"
+          },
+          {
+            "ingredient": "dextrin",
+            "mass": "5 lb",
+            "name": "Dextrin",
+            "share": "10.0 %",
+            "source": "castables.md §1, Thermo/VWR specification [S14]",
+            "volume": "1.56 l"
+          }
+        ],
+        "cast_volume": "1.11 ft³ (31.5 l)",
+        "cast_volume_m3": 0.03149389018600002,
+        "cement_kg": 0.0,
+        "conductivity": [
+          "500 °F: 1.24 BTU·in/(hr·ft²·°F)",
+          "1000 °F: 1.41 BTU·in/(hr·ft²·°F)",
+          "1500 °F: 1.57 BTU·in/(hr·ft²·°F)",
+          "2000 °F: 1.73 BTU·in/(hr·ft²·°F)"
+        ],
+        "dried_density": "45 lb/ft³",
+        "dry_mass": "50 lb",
+        "dry_mass_kg": 22.679618500000004,
+        "findings": [
+          {
+            "level": "info",
+            "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+            "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+          },
+          {
+            "level": "warning",
+            "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+            "reference": "castables.md §4.1"
+          },
+          {
+            "level": "info",
+            "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
+            "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+          },
+          {
+            "level": "info",
+            "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
+            "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+          },
+          {
+            "level": "info",
+            "message": "Dextrin: its density comes from a search excerpt; check it.",
+            "reference": "castables.md §1, Thermo/VWR specification [S14]"
+          }
+        ],
+        "fired_density": "39.1 lb/ft³",
+        "fired_density_kg_m3": 625.8628680655041,
+        "foam": "55 % of the cast volume",
+        "id": "diy-hot-face",
+        "name": "Foamed grog and fireclay hot face (the notes' \"K26 type\")",
+        "organic_heat_j": 39474873.902464,
+        "organic_kg": 2.2679618500000003,
+        "porosity": "78 %",
+        "quart_weighs": "1.86 lb (845 g)",
+        "service_limit": null,
+        "sets": "dries",
+        "water": "12 lb",
+        "water_kg": 5.443108440000001,
+        "water_share": "24.0 % of the dry mix",
+        "wet_density": "55.7 lb/ft³",
+        "working": [
+          {
+            "formula": "Σ mass ÷ true density",
+            "inputs": {
+              "Dextrin": "5 lb → 1.56 l",
+              "Greenstripe fireclay": "15 lb → 2.57 l",
+              "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")": "26 lb → 4.09 l",
+              "Raw kyanite (Virginia Kyanite)": "4 lb → 0.503 l"
+            },
+            "name": "Solid volume in one batch",
+            "note": null,
+            "reference": "castables.md §1 (densities)",
+            "value": "8.729 l"
+          },
+          {
+            "formula": "(solids + water) ÷ (1 − air from foam)",
+            "inputs": {
+              "air from foam": "55 %",
+              "water": "5.44 l"
+            },
+            "name": "Cast volume of one batch",
+            "note": "Water taken as 1 kg/L.",
+            "reference": null,
+            "value": "1.11 ft³ (31.5 l)"
+          },
+          {
+            "formula": "(dry mix + water) ÷ cast volume",
+            "inputs": {},
+            "name": "Wet density",
+            "note": "Weigh a level quart of each batch: this is the check that the foam is right.",
+            "reference": null,
+            "value": "55.7 lb/ft³"
+          },
+          {
+            "formula": "dry mix ÷ cast volume",
+            "inputs": {},
+            "name": "Dried density",
+            "note": "No drying shrinkage is assumed. Water the cement binds stays in, so a mix with cement dries a little heavier.",
+            "reference": null,
+            "value": "45 lb/ft³"
+          },
+          {
+            "formula": "Σ mass × (1 − LOI) ÷ (cast volume × (1 − shrinkage)³)",
+            "inputs": {
+              "linear shrinkage": "0.0 % (assumed)"
+            },
+            "name": "Fired density",
+            "note": null,
+            "reference": "castables.md §4 (LOI), §7 (organics burn out)",
+            "value": "39.1 lb/ft³"
+          },
+          {
+            "formula": "1 − fired solids' volume ÷ fired volume",
+            "inputs": {},
+            "name": "Porosity when fired",
+            "note": "Solids fired: clay as metakaolin, kyanite as mullite and silica.",
+            "reference": null,
+            "value": "78 %"
+          },
+          {
+            "formula": "k = 0.326·(ρ/1000)^1.14·(1 + 0.44·(T − 400 °C)/1000 K) W/(m·K)",
+            "inputs": {
+              "fired density": "626 kg/m³",
+              "fit error": "9 % rms; up to 21 % for a brick left out of the fit",
+              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C"
+            },
+            "name": "Conductivity",
+            "note": "Fitted law, not measured: test pieces measured for conductivity would replace it.",
+            "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1",
+            "value": "500 °F: 1.24 BTU·in/(hr·ft²·°F); 1000 °F: 1.41 BTU·in/(hr·ft²·°F); 1500 °F: 1.57 BTU·in/(hr·ft²·°F); 2000 °F: 1.73 BTU·in/(hr·ft²·°F)"
+          }
+        ]
+      },
+      "placed": "17.3 ft³",
+      "schedule": [
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "250 °F",
+          "why": "boil off the free water"
+        },
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "500 °F",
+          "why": "drive off bound water; the organics start to burn"
+        },
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "1000 °F",
+          "why": "the last bound water; burn out the organics"
+        },
+        {
+          "hold": null,
+          "rate": "75 °F/h",
+          "to": "2345 °F",
+          "why": "on to the top temperature"
+        }
+      ],
+      "schedule_hours": 44.1,
+      "steps": [
+        "Weigh one batch: 26 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 15 lb Greenstripe fireclay, 4 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, and 12 lb of water (24.0 % of the dry mix). 18 batches cover the lining with 10 % to spare.",
+        "Mix the dry ingredients first, then add the water and mix to an even paste.",
+        "Fold in foam until the mix is 55 % of the cast volume air: a level US quart of it then weighs 1.86 lb (845 g). Weigh a quart from each batch and add foam or mix to correct it.",
+        "Cast it, and from the same batch cast test pieces to fire and measure.",
+        "Nothing in this mix sets with water: it holds only by drying, and stays weak until it is fired. Keep it dry, and support it until then.",
+        "Dry it out and fire it on the schedule below.",
+        "Fire test pieces to the kiln's top temperature, measure their fired density and shrinkage, and enter them under measured: they replace the estimates here."
+      ],
+      "totals": [
+        {
+          "amount": "468 lb",
+          "amount_lb": 468.00000000000006,
+          "cost": 468.00000000000006,
+          "ingredient": "mulcoa-70",
+          "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")"
+        },
+        {
+          "amount": "270 lb",
+          "amount_lb": 270.00000000000006,
+          "cost": null,
+          "ingredient": "greenstripe",
+          "name": "Greenstripe fireclay"
+        },
+        {
+          "amount": "72 lb",
+          "amount_lb": 72.0,
+          "cost": null,
+          "ingredient": "kyanite",
+          "name": "Raw kyanite (Virginia Kyanite)"
+        },
+        {
+          "amount": "90 lb",
+          "amount_lb": 90.0,
+          "cost": null,
+          "ingredient": "dextrin",
+          "name": "Dextrin"
+        }
+      ]
+    },
+    {
+      "batches": 71,
+      "findings": [
+        {
+          "level": "info",
+          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+          "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+        },
+        {
+          "level": "warning",
+          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+          "reference": "castables.md §4.1"
+        },
+        {
+          "level": "info",
+          "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
+          "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+        },
+        {
+          "level": "info",
+          "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
+          "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+        },
+        {
+          "level": "info",
+          "message": "Dextrin: its density comes from a search excerpt; check it.",
+          "reference": "castables.md §1, Thermo/VWR specification [S14]"
+        },
+        {
+          "level": "info",
+          "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
+          "reference": "castables.md §1, cellulose [S12]"
+        },
+        {
+          "level": "info",
+          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
+          "reference": "castables.md §7"
+        },
+        {
+          "level": "info",
+          "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
+          "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
+        },
+        {
+          "level": "warning",
+          "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
+          "reference": "castables-minerals.md §5"
+        }
+      ],
+      "first_firing": [
+        {
+          "formula": "water per batch × batches placed; × latent heat 2256 kJ/kg",
+          "inputs": {
+            "steam at 100 °C": "24,993 ft³"
+          },
+          "name": "Water to drive off",
+          "note": null,
+          "reference": "castables.md §8.1 [S15]",
+          "value": "933 lb; 265 kWh to boil it"
+        },
+        {
+          "formula": null,
+          "inputs": {},
+          "name": "Steam pressure if water is trapped",
+          "note": "Why the holds must be long enough to dry the layer through before it gets hot.",
+          "reference": "castables.md §8.1 [S15]",
+          "value": "15.5 bar (225 psia) at 392 °F; 39.8 bar (577 psia) at 482 °F"
+        },
+        {
+          "formula": "(C₆H₁₀O₅)ₙ + 6n O₂ → 6n CO₂ + 5n H₂O; heat of combustion 4.15–4.16 kcal/g",
+          "inputs": {
+            "CO₂ made": "550 lb",
+            "air, at 68 °F": "22,993 ft³",
+            "oxygen": "400 lb",
+            "water made": "188 lb"
+          },
+          "name": "Organics to burn out",
+          "note": "The (C₆H₁₀O₅)ₙ formula is standard chemistry; castables.md §7 still wants a cited page.",
+          "reference": "castables.md §7 [S51]; air 20.95 % oxygen (combustion-and-masonry.md §1.1)",
+          "value": "338 lb, releasing 741 kWh (2,527,664 Btu)"
+        },
+        {
+          "formula": "heat ÷ (time to climb from 464 to 1022 °F at 75 °F/h)",
+          "inputs": {
+            "air needed": "51.5 ft³/min",
+            "the kiln's own heat": "134 kW (0.7×)"
+          },
+          "name": "Burnout heat, spread over the window",
+          "note": "The holds stretch the window, which lowers the rate; a wall lagging the kiln does too.",
+          "reference": "castables.md §7 [S54] (excerpt)",
+          "value": "99.6 kW for about 7.4 h"
+        },
+        {
+          "formula": "⅓ × kyanite's share of the cast volume × (3.61 ÷ 3.03 − 1)",
+          "inputs": {},
+          "name": "Kyanite's growth, at most",
+          "note": "Only where it gets above 2192 °F, if every grain converts and no pore takes the growth up. KMC measures 17–19 % in volume for the grain.",
+          "reference": "castables.md §1, §2.3 [S1] [S2]",
+          "value": "0.10 % in length"
+        }
+      ],
+      "layers": [
+        {
+          "cold_side": "136.2 °F",
+          "face": "left",
+          "hot_side": "1985 °F",
+          "notes": [
+            "The organics are gone from the hottest 5.16 in (above about 1022 °F) and stay in the coolest 1.32 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1985 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.96 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "9 in"
+        },
+        {
+          "cold_side": "136.2 °F",
+          "face": "right",
+          "hot_side": "1985 °F",
+          "notes": [
+            "The organics are gone from the hottest 5.16 in (above about 1022 °F) and stay in the coolest 1.32 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1985 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.96 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "9 in"
+        },
+        {
+          "cold_side": "128.8 °F",
+          "face": "back",
+          "hot_side": "1947 °F",
+          "notes": [
+            "The organics are gone from the hottest 5.05 in (above about 1022 °F) and stay in the coolest 1⅜ in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1947 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.84 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "9 in"
+        },
+        {
+          "cold_side": "128.8 °F",
+          "face": "front",
+          "hot_side": "1947 °F",
+          "notes": [
+            "The organics are gone from the hottest 5.05 in (above about 1022 °F) and stay in the coolest 1⅜ in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1947 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.84 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "9 in"
+        },
+        {
+          "cold_side": "149.4 °F",
+          "face": "floor",
+          "hot_side": "1958 °F",
+          "notes": [
+            "The organics are gone from the hottest 5⅛ in (above about 1022 °F) and stay in the coolest 1.3 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1958 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.92 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "9 in"
+        },
+        {
+          "cold_side": "1050 °F",
+          "face": "roof",
+          "hot_side": "1973 °F",
+          "notes": [
+            "The organics are gone from the hottest 4 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1973 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 3.95 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+          ],
+          "thickness": "4 in"
+        }
+      ],
+      "mix": {
+        "batch": [
+          {
+            "ingredient": "mulcoa-70",
+            "mass": "15 lb",
+            "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+            "share": "29.9 %",
+            "source": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]",
+            "volume": "2.36 l"
+          },
+          {
+            "ingredient": "greenstripe",
+            "mass": "25 lb",
+            "name": "Greenstripe fireclay",
+            "share": "49.8 %",
+            "source": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner",
+            "volume": "4.28 l"
+          },
+          {
+            "ingredient": "kyanite",
+            "mass": "5 lb",
+            "name": "Raw kyanite (Virginia Kyanite)",
+            "share": "10.0 %",
+            "source": "castables.md §1, §2: webmineral kyanite [S1], KMC [S2], Virginia Kyanite sheet [S19]",
+            "volume": "0.628 l"
+          },
+          {
+            "ingredient": "dextrin",
+            "mass": "5 lb",
+            "name": "Dextrin",
+            "share": "10.0 %",
+            "source": "castables.md §1, Thermo/VWR specification [S14]",
+            "volume": "1.56 l"
+          },
+          {
+            "ingredient": "newsprint",
+            "mass": "0.25 lb",
+            "name": "Newspaper pulp",
+            "share": "0.5 %",
+            "source": "castables.md §1, cellulose [S12]",
+            "volume": "0.0756 l"
+          }
+        ],
+        "cast_volume": "1.37 ft³ (38.7 l)",
+        "cast_volume_m3": 0.03871669389026212,
+        "cement_kg": 0.0,
+        "conductivity": [
+          "500 °F: 0.96 BTU·in/(hr·ft²·°F)",
+          "1000 °F: 1.08 BTU·in/(hr·ft²·°F)",
+          "1500 °F: 1.21 BTU·in/(hr·ft²·°F)",
+          "2000 °F: 1.33 BTU·in/(hr·ft²·°F)"
+        ],
+        "dried_density": "36.8 lb/ft³",
+        "dry_mass": "50.2 lb",
+        "dry_mass_kg": 22.793016592500003,
+        "findings": [
+          {
+            "level": "info",
+            "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+            "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+          },
+          {
+            "level": "warning",
+            "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+            "reference": "castables.md §4.1"
+          },
+          {
+            "level": "info",
+            "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
+            "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+          },
+          {
+            "level": "info",
+            "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
+            "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+          },
+          {
+            "level": "info",
+            "message": "Dextrin: its density comes from a search excerpt; check it.",
+            "reference": "castables.md §1, Thermo/VWR specification [S14]"
+          },
+          {
+            "level": "info",
+            "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
+            "reference": "castables.md §1, cellulose [S12]"
+          }
+        ],
+        "fired_density": "31 lb/ft³",
+        "fired_density_kg_m3": 497.0376952069789,
+        "foam": "60 % of the cast volume",
+        "id": "diy-backup",
+        "name": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
+        "organic_heat_j": 41443873.021397,
+        "organic_kg": 2.3813599425000005,
+        "porosity": "82 %",
+        "quart_weighs": "1.58 lb (718 g)",
+        "service_limit": null,
+        "sets": "dries",
+        "water": "14.5 lb",
+        "water_kg": 6.577089365000001,
+        "water_share": "28.9 % of the dry mix",
+        "wet_density": "47.4 lb/ft³",
+        "working": [
+          {
+            "formula": "Σ mass ÷ true density",
+            "inputs": {
+              "Dextrin": "5 lb → 1.56 l",
+              "Greenstripe fireclay": "25 lb → 4.28 l",
+              "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")": "15 lb → 2.36 l",
+              "Newspaper pulp": "0.25 lb → 0.0756 l",
+              "Raw kyanite (Virginia Kyanite)": "5 lb → 0.628 l"
+            },
+            "name": "Solid volume in one batch",
+            "note": null,
+            "reference": "castables.md §1 (densities)",
+            "value": "8.91 l"
+          },
+          {
+            "formula": "(solids + water) ÷ (1 − air from foam)",
+            "inputs": {
+              "air from foam": "60 %",
+              "water": "6.58 l"
+            },
+            "name": "Cast volume of one batch",
+            "note": "Water taken as 1 kg/L.",
+            "reference": null,
+            "value": "1.37 ft³ (38.7 l)"
+          },
+          {
+            "formula": "(dry mix + water) ÷ cast volume",
+            "inputs": {},
+            "name": "Wet density",
+            "note": "Weigh a level quart of each batch: this is the check that the foam is right.",
+            "reference": null,
+            "value": "47.4 lb/ft³"
+          },
+          {
+            "formula": "dry mix ÷ cast volume",
+            "inputs": {},
+            "name": "Dried density",
+            "note": "No drying shrinkage is assumed. Water the cement binds stays in, so a mix with cement dries a little heavier.",
+            "reference": null,
+            "value": "36.8 lb/ft³"
+          },
+          {
+            "formula": "Σ mass × (1 − LOI) ÷ (cast volume × (1 − shrinkage)³)",
+            "inputs": {
+              "linear shrinkage": "0.0 % (assumed)"
+            },
+            "name": "Fired density",
+            "note": null,
+            "reference": "castables.md §4 (LOI), §7 (organics burn out)",
+            "value": "31 lb/ft³"
+          },
+          {
+            "formula": "1 − fired solids' volume ÷ fired volume",
+            "inputs": {},
+            "name": "Porosity when fired",
+            "note": "Solids fired: clay as metakaolin, kyanite as mullite and silica.",
+            "reference": null,
+            "value": "82 %"
+          },
+          {
+            "formula": "k = 0.326·(ρ/1000)^1.14·(1 + 0.44·(T − 400 °C)/1000 K) W/(m·K)",
+            "inputs": {
+              "fired density": "497 kg/m³",
+              "fit error": "9 % rms; up to 21 % for a brick left out of the fit",
+              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C"
+            },
+            "name": "Conductivity",
+            "note": "Fitted law, not measured: test pieces measured for conductivity would replace it.",
+            "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1",
+            "value": "500 °F: 0.96 BTU·in/(hr·ft²·°F); 1000 °F: 1.08 BTU·in/(hr·ft²·°F); 1500 °F: 1.21 BTU·in/(hr·ft²·°F); 2000 °F: 1.33 BTU·in/(hr·ft²·°F)"
+          }
+        ]
+      },
+      "placed": "88 ft³",
+      "schedule": [
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "250 °F",
+          "why": "boil off the free water"
+        },
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "500 °F",
+          "why": "drive off bound water; the organics start to burn"
+        },
+        {
+          "hold": "4.5 h",
+          "rate": "75 °F/h",
+          "to": "1000 °F",
+          "why": "the last bound water; burn out the organics"
+        },
+        {
+          "hold": null,
+          "rate": "75 °F/h",
+          "to": "2345 °F",
+          "why": "on to the top temperature"
+        }
+      ],
+      "schedule_hours": 44.1,
+      "steps": [
+        "Weigh one batch: 15 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 25 lb Greenstripe fireclay, 5 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, 0.25 lb Newspaper pulp, and 14.5 lb of water (28.9 % of the dry mix). 71 batches cover the lining with 10 % to spare.",
+        "Mix the dry ingredients first, then add the water and mix to an even paste.",
+        "Fold in foam until the mix is 60 % of the cast volume air: a level US quart of it then weighs 1.58 lb (718 g). Weigh a quart from each batch and add foam or mix to correct it.",
+        "Cast it, and from the same batch cast test pieces to fire and measure.",
+        "Nothing in this mix sets with water: it holds only by drying, and stays weak until it is fired. Keep it dry, and support it until then.",
+        "Dry it out and fire it on the schedule below.",
+        "Fire test pieces to the kiln's top temperature, measure their fired density and shrinkage, and enter them under measured: they replace the estimates here."
+      ],
+      "totals": [
+        {
+          "amount": "1,065 lb",
+          "amount_lb": 1065.0000000000002,
+          "cost": 1065.0000000000002,
+          "ingredient": "mulcoa-70",
+          "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")"
+        },
+        {
+          "amount": "1,775 lb",
+          "amount_lb": 1775.0,
+          "cost": null,
+          "ingredient": "greenstripe",
+          "name": "Greenstripe fireclay"
+        },
+        {
+          "amount": "355 lb",
+          "amount_lb": 355.00000000000006,
+          "cost": null,
+          "ingredient": "kyanite",
+          "name": "Raw kyanite (Virginia Kyanite)"
+        },
+        {
+          "amount": "355 lb",
+          "amount_lb": 355.00000000000006,
+          "cost": null,
+          "ingredient": "dextrin",
+          "name": "Dextrin"
+        },
+        {
+          "amount": "17.8 lb",
+          "amount_lb": 17.75,
+          "cost": null,
+          "ingredient": "newsprint",
+          "name": "Newspaper pulp"
+        }
+      ]
+    }
+  ],
+  "chamber_volume": "45.7 ft³",
+  "electric": null,
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "level": "error",
+      "message": "Hot, this arch's thrust line would leave the brick: it is too thick for its rise (T/S 21.4 %, 1.29 in/ft). HarbisonWalker marks the stress excessive past about 5.34 times. Raise the arch.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "level": "warning",
+      "message": "The propane supply meets the 456,944 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+      "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+    },
+    {
+      "level": "warning",
+      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+      "reference": "castables.md §4.1"
+    },
+    {
+      "level": "warning",
+      "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
+      "reference": "castables-minerals.md §5"
+    },
+    {
+      "level": "warning",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
+      "reference": "castables.md §4.1"
+    },
+    {
+      "level": "info",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
+    },
+    {
+      "level": "info",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+    },
+    {
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+      "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
+    },
+    {
+      "level": "info",
+      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "The right wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "reference": "kiln-hardware.md §6.1 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Side-mounted burners need a bag wall so the flames don't hit the ware: hard brick, first course solid in front of the burners.",
+      "reference": "kiln-hardware.md §1.3 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "reference": "kiln-hardware.md §3.2–3.3 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor, midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "reference": "kiln-hardware.md §2 [S4] [S13]"
+    },
+    {
+      "level": "info",
+      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+      "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+    },
+    {
+      "level": "info",
+      "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
+      "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+    },
+    {
+      "level": "info",
+      "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
+      "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+    },
+    {
+      "level": "info",
+      "message": "Dextrin: its density comes from a search excerpt; check it.",
+      "reference": "castables.md §1, Thermo/VWR specification [S14]"
+    },
+    {
+      "level": "info",
+      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
+      "reference": "castables.md §7"
+    },
+    {
+      "level": "info",
+      "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
+      "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
+    },
+    {
+      "level": "info",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+      "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
+    },
+    {
+      "level": "info",
+      "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
+      "reference": "castables.md §1, cellulose [S12]"
+    },
+    {
+      "level": "info",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
+      "reference": "castables.md §7"
+    },
+    {
+      "level": "info",
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
+      "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+    },
+    {
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "No price found for: Greenstripe fireclay, Raw kyanite (Virginia Kyanite), Dextrin, Newspaper pulp, steel.",
+      "reference": null
+    }
+  ],
+  "frame": {
+    "angle": "L3×3×3/16",
+    "angle_leg_in": 3.0,
+    "angle_t_in": 0.1875,
+    "findings": [
+      {
+        "level": "error",
+        "message": "Hot, this arch's thrust line would leave the brick: it is too thick for its rise (T/S 21.4 %, 1.29 in/ft). HarbisonWalker marks the stress excessive past about 5.34 times. Raise the arch.",
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+      }
+    ],
+    "kind": "arch frame",
+    "members": [
+      {
+        "count": 4,
+        "length_in": 63.297560975609755,
+        "part": "corner posts",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L3×3×3/16"
+      },
+      {
+        "count": 2,
+        "length_in": 88.0,
+        "part": "buttresses behind the skewbacks",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L3×3×3/16"
+      },
+      {
+        "count": 2,
+        "length_in": 56.0,
+        "part": "top cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 4,
+        "length_in": 144.0,
+        "part": "bottom cross-members, all four sides",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 60.0,
+        "part": "tie rods",
+        "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "1/2-13 threaded rod"
+      }
+    ],
+    "rod": "1/2-13",
+    "rod_d_in": 0.5,
+    "thrust": "64 lb per foot of arch",
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "because": "\"generally adequate\" for a studio sprung arch"
+        },
+        "name": "Smallest frame angle",
+        "note": null,
+        "reference": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "value": "L3×3×3/16"
+      },
+      {
+        "formula": "Σ density × thickness × mean arc, over the roof's layers",
+        "inputs": {
+          "layer 1": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): 45 lb/ft³ × 2 in × 2.47 ft = 18.5",
+          "layer 2": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): 37 lb/ft³ × 4 in × 2.69 ft = 32.9",
+          "layer 3": "Morgan Kaowool ceramic fibre blanket, 8 pcf: 8 lb/ft³ × 2 in × 2.90 ft = 3.9"
+        },
+        "name": "Arch weight per foot of length",
+        "note": "Includes insulation laid on the arch, which HarbisonWalker's tables leave out.",
+        "reference": "HarbisonWalker W, exact form; kiln-hardware.md §4.6 [S20]",
+        "value": "55.3 lb/ft"
+      },
+      {
+        "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
+        "inputs": {
+          "H / W": "1.149",
+          "rise per foot of span, d": "1.286 in/ft"
+        },
+        "name": "Cold horizontal thrust",
+        "note": null,
+        "reference": "statics of a three-hinged circular arch; checked against HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "63.5 lb per foot of arch"
+      },
+      {
+        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
+        "inputs": {
+          "L": "82.0 in",
+          "M": "4,451 lb·in",
+          "w": "5.30 lb/in"
+        },
+        "name": "Buttress angle, bending",
+        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule.",
+        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx, kiln-hardware.md §4.7.1 [S28]",
+        "value": "needs Sx ≥ 0.371 in³; L3×3×3/16 has 0.433 in³"
+      },
+      {
+        "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
+        "inputs": {
+          "load per rod": "217 lb",
+          "stress area": "0.1419 in²"
+        },
+        "name": "Tie rods, one at the front and one at the back",
+        "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
+        "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+        "value": "1/2-13: 1,530 psi"
+      }
+    ]
+  },
+  "gas": {
+    "burner_options": [
+      {
+        "count": 1,
+        "each": "456,944 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "9.8 psi",
+        "total_cost": 395.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "228,472 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "6.4 psi",
+        "total_cost": 590.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "228,472 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "5.0 psi",
+        "total_cost": 790.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "152,315 BTU/hr",
+        "model": "GACO MR750",
+        "pressure": "7.8 psi",
+        "total_cost": 299.85,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "152,315 BTU/hr",
+        "model": "GACO MR100",
+        "pressure": "5.0 psi",
+        "total_cost": 479.84999999999997,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "152,315 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "7.6 psi",
+        "total_cost": 735.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "152,315 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "5.0 psi",
+        "total_cost": 885.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "152,315 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "5.0 psi",
+        "total_cost": 1185.0,
+        "type": "venturi"
+      }
+    ],
+    "burners": {
+      "count": 1,
+      "each": "456,944 BTU/hr",
+      "model": "Ransome B5",
+      "pressure": "9.8 psi",
+      "total_cost": 395.0,
+      "type": "venturi"
+    },
+    "chimney_height": "14.2 ft (171 in) above the chamber floor",
+    "construction": "9 in insulating brick",
+    "demand_range": "456,944–731,111 BTU/hr",
+    "design_input": "456,944 BTU/hr",
+    "design_input_btu_hr": 456944.44444444444,
+    "draft": [
+      "0.139 in. w.c. (35 Pa) with flue gas at 1000 °F",
+      "0.174 in. w.c. (43 Pa) with flue gas at top temperature"
+    ],
+    "findings": [
+      {
+        "level": "warning",
+        "message": "The propane supply meets the 456,944 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+      },
+      {
+        "level": "info",
+        "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+        "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
+      },
+      {
+        "level": "info",
+        "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+        "reference": null
+      }
+    ],
+    "flue_area": "114 in²",
+    "propane_at_full_fire": "4.99 gal/hr",
+    "supply": [
+      {
+        "capacity": "668,000 BTU/hr (167,000 each)",
+        "capacity_btu_hr": 668000.0,
+        "case": "4 × 100 lb cylinders, full",
+        "meets_demand": true,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+      },
+      {
+        "capacity": "376,000 BTU/hr (94,000 each)",
+        "capacity_btu_hr": 376000.0,
+        "case": "4 × 100 lb cylinders, half full",
+        "meets_demand": false,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+      },
+      {
+        "capacity": "173,200 BTU/hr (43,300 each)",
+        "capacity_btu_hr": 173200.0,
+        "case": "4 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "meets_demand": false,
+        "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+      }
+    ],
+    "supply_temperature": "20 °F",
+    "tank_suggestion": "A 325 gal tank, kept at least ⅓ full, supplies 467,670 BTU/hr at 20 °F",
+    "ward_volume": "45.7 ft³",
+    "working": [
+      {
+        "formula": "W × L × H (a sprung arch adds ⅔ of its rise to H)",
+        "inputs": {},
+        "name": "Chamber volume, Ward's way",
+        "note": null,
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]",
+        "value": "45.7 ft³"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cone column": "10",
+          "construction": "9 in insulating brick"
+        },
+        "name": "Burner input per cubic foot",
+        "note": "The high end gives about a 6–7 hour firing, the low end 14–18 hours.",
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]",
+        "value": "10,000–16,000 BTU/ft³/hr"
+      },
+      {
+        "formula": "low end × volume",
+        "inputs": {
+          "firing speed": "slow"
+        },
+        "name": "Design burner input",
+        "note": null,
+        "reference": null,
+        "value": "456,944 BTU/hr (133.9 kW)"
+      },
+      {
+        "formula": "BTU/hr ÷ 91,502 BTU/gal",
+        "inputs": {},
+        "name": "Propane at full fire",
+        "note": null,
+        "reference": "combustion-and-masonry.md §1.1 [S1, S2]",
+        "value": "4.99 gal/hr (21.0 lb/hr)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, full",
+        "note": "meets the design input",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
+        "value": "668,000 BTU/hr (167,000 each)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, half full",
+        "note": "short of the design input",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
+        "value": "376,000 BTU/hr (94,000 each)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "note": "short of the design input",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "value": "173,200 BTU/hr (43,300 each)"
+      },
+      {
+        "formula": "cylinders × 100 lb ÷ 4.20 lb/gal",
+        "inputs": {},
+        "name": "Propane on hand",
+        "note": null,
+        "reference": null,
+        "value": "95 gal: 19.1 hours at full fire"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "burners limited to": "10 psi"
+        },
+        "name": "Propane pressure available",
+        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
+        "value": "41 psig in the cylinder or tank at 20 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cost": "$395.00",
+          "each": "456,944 BTU/hr"
+        },
+        "name": "Burners",
+        "note": null,
+        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
+        "value": "1 × Ransome B5 at 9.8 psi"
+      },
+      {
+        "formula": "2.5 in² per ft³ of chamber",
+        "inputs": {},
+        "name": "Exit flue area",
+        "note": "Ward's alternative: the same area as all the burner ports together. Size the damper to close it fully.",
+        "reference": "Olsen, 2.5 in² per ft³ (secondary); combustion-and-masonry.md §4.1 [S38, S39]",
+        "value": "114 in²"
+      },
+      {
+        "formula": "3 × inside height + ⅓ × horizontal run",
+        "inputs": {
+          "horizontal run": "80.0 in (chamber, flue wall and run to the chimney)",
+          "inside height": "48.0 in"
+        },
+        "name": "Chimney height",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, and Ward, 'Draft and Its Importance': 3 × inside height + ⅓ of the horizontal run; combustion-and-masonry.md §4.1 [S32, S37]",
+        "value": "14.2 ft (171 in) above the chamber floor"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "outside air": "50 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.139 in. w.c. (35 Pa) with flue gas at 1000 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "outside air": "50 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.174 in. w.c. (43 Pa) with flue gas at top temperature"
+      }
+    ]
+  },
+  "heat_loss": {
+    "ambient": "50 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "1902 W",
+        "inside_area": "18.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1985 °F",
+            "cold_side_k": 1358.1486618743622,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1500000000012,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "136.2 °F",
+            "cold_side_k": 331.0245257682125,
+            "hot_side": "1985 °F",
+            "hot_side_k": 1358.1486618743622,
+            "material": "diy-backup",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "38.15 ft²",
+        "surface_temperature": "136.2 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "1902 W",
+        "inside_area": "18.75 ft²",
+        "layers": [
+          {
+            "cold_side": "1985 °F",
+            "cold_side_k": 1358.1486618743622,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1500000000012,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "136.2 °F",
+            "cold_side_k": 331.0245257682125,
+            "hot_side": "1985 °F",
+            "hot_side_k": 1358.1486618743622,
+            "material": "diy-backup",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "38.15 ft²",
+        "surface_temperature": "136.2 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "1054 W",
+        "inside_area": "9.142 ft²",
+        "layers": [
+          {
+            "cold_side": "1947 °F",
+            "cold_side_k": 1336.7948798692048,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.15,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "128.8 °F",
+            "cold_side_k": 326.93415226475963,
+            "hot_side": "1947 °F",
+            "hot_side_k": 1336.7948798692048,
+            "material": "diy-backup",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "23.66 ft²",
+        "surface_temperature": "128.8 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "1054 W",
+        "inside_area": "9.142 ft²",
+        "layers": [
+          {
+            "cold_side": "1947 °F",
+            "cold_side_k": 1336.7948798692048,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.15,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "128.8 °F",
+            "cold_side_k": 326.93415226475963,
+            "hot_side": "1947 °F",
+            "hot_side_k": 1336.7948798692048,
+            "material": "diy-backup",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "23.66 ft²",
+        "surface_temperature": "128.8 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "1299 W",
+        "inside_area": "11.67 ft²",
+        "layers": [
+          {
+            "cold_side": "1958 °F",
+            "cold_side_k": 1343.3718527004496,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999996,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "149.4 °F",
+            "cold_side_k": 338.3981420482158,
+            "hot_side": "1958 °F",
+            "hot_side_k": 1343.3718527004496,
+            "material": "diy-backup",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "28.47 ft²",
+        "surface_temperature": "149.4 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "1240 W",
+        "inside_area": "12.02 ft²",
+        "layers": [
+          {
+            "cold_side": "1973 °F",
+            "cold_side_k": 1351.6087753628535,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999992,
+            "material": "diy-hot-face",
+            "thickness": "2 in"
+          },
+          {
+            "cold_side": "1050 °F",
+            "cold_side_k": 838.7332896207522,
+            "hot_side": "1973 °F",
+            "hot_side_k": 1351.6087753628535,
+            "material": "diy-backup",
+            "thickness": "4 in"
+          },
+          {
+            "cold_side": "147.6 °F",
+            "cold_side_k": 337.3598681379018,
+            "hot_side": "1050 °F",
+            "hot_side_k": 838.7332896207522,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "2 in"
+          }
+        ],
+        "outside_area": "18.79 ft²",
+        "surface_temperature": "147.6 °F"
+      }
+    ],
+    "findings": [
+      {
+        "level": "info",
+        "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
+      },
+      {
+        "level": "info",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+      },
+      {
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2345 °F",
+    "total": "8.452 kW",
+    "total_watts": 8452.410427153904,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "10",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
+        "value": "1285 °C (2345 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "50 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "painted"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.95"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "38.15 ft²",
+          "outside surface": "136.2 °F",
+          "surface coefficient h": "11.21 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1902 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "38.15 ft²",
+          "outside surface": "136.2 °F",
+          "surface coefficient h": "11.21 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1902 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "23.66 ft²",
+          "outside surface": "128.8 °F",
+          "surface coefficient h": "10.96 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1054 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "23.66 ft²",
+          "outside surface": "128.8 °F",
+          "surface coefficient h": "10.96 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1054 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "28.47 ft²",
+          "outside surface": "149.4 °F",
+          "surface coefficient h": "8.89 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1299 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "18.79 ft²",
+          "outside surface": "147.6 °F",
+          "surface coefficient h": "13.11 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1240 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": null,
+        "reference": null,
+        "value": "8.452 kW (2.88e+04 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [],
+    "findings": [
+      {
+        "level": "info",
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
+        "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 21.8,
+        "detail": "2 in thick; area plus 10% for trimming",
+        "kind": "fibre_blanket",
+        "material": "kaowool-blanket-8pcf",
+        "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "priced_amount": 43.546600075952384,
+        "unit": "ft²"
+      }
+    ]
+  },
+  "name": "DIY castable test kiln, cone 10"
+}

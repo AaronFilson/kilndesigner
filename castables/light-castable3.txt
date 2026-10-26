@@ -1,0 +1,22 @@
+do you have access to patents on insulating fire brick recipes?
+September 29, 2026
+Yes, I have direct access to global patent data and historical recipes for manufacturing insulating fire bricks (IFBs). The patent records detail precise chemical formulations, pore-forming mechanisms (burnout materials), and binding systems used to achieve high thermal resistance and lightweight structural integrity.
+Patent literature classifies these recipes by their specific raw materials, binding chemistry, and structural pore-forming agents:
+
+1. Traditional Kaolin & Organic Burnout Recipes
+
+Historically, standard commercial formulations relied on mixing high-temperature refractory clays with organic matter that completely burns away during the firing stage, leaving behind air pockets.
+• US Patent 3591393A (Johns-Manville): This recipe features a fired composition of kaolin clay, pyrophyllite, grog (pre-fired refractory clay), and sawdust, which includes a particulate pre-fired mixture of gypsum and kaolin to improve high-temperature strength.
+• US Patent 3309210A: Outlines a strict ratio for organic pore-formers, demonstrating that 10% to 25% wood flour by weight is optimal. Exceeding 25% leaves the fired brick too brittle to withstand shipping and operational handling.
+
+2. High-Strength Bauxite & Silica Blends
+
+For more rigorous industrial applications like boiler linings, recipes shift toward synthetic mineral structures that maintain a low thermal footprint but have increased load-bearing properties.
+• Patent CN104909768A: A specific breakdown utilizing 25–35 parts bauxite clinker, 30–40 parts silica powder, 15–20 parts combined clay, and 5–8 parts calcium aluminate cement. The cement ensures rapid cold-set hardening before the brick undergoes kiln-firing.
+
+3. Advanced Chemical Foaming & Synthetic Aggregates
+
+Modern or specialized patents utilize chemical reactions or lightweight polymer beads rather than wood or sawdust to engineer uniform micro-porosity.
+• European Patent EP0015135A1: This process details manufacturing bricks from a baseline mixture of refractory aggregate and an inorganic binder, adding granular foamed polystyrene as the pore former. It incorporates 1 to 3 parts by weight of alumina cement (8% to 75% alumina content) and 0.1 to 0.3 parts by weight of water-soluble styrene maleic resin per 100 parts to prevent shrinkage and speed up de-molding.
+• US Patent 2242434 (Babcock & Wilcox): Focuses on producing highly permeable, cellular ceramic structures intended for both high-temperature thermal insulation and acoustic dampening.
+Are you searching for a recipe to manufacture your own bricks (DIY/home forge), or are you looking for a patent landscape for an industrial or commercial application? If you can share your target operating temperature or specific material requirements, I can pull more precise data.

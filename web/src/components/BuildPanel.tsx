@@ -4,6 +4,7 @@ import type { Build, Report } from "@kilndesigner/api-client";
 import { useState } from "react";
 
 import { fileUrl, useBuild, useReport, useStartBuild } from "../api";
+import { Castables } from "./Castables";
 import { Drawings } from "./Drawings";
 import { KilnViewer } from "./KilnViewer";
 import { Materials } from "./Materials";
@@ -17,7 +18,7 @@ const DOWNLOADS: [string, string][] = [
   ["report.json", "Report (JSON)"],
 ];
 
-type Tab = "model" | "drawings" | "materials" | "report";
+type Tab = "model" | "drawings" | "materials" | "castables" | "report";
 
 /** "Report", or "Report (1 error, 5 warnings)". */
 export function reportTabLabel(report: Report | undefined): string {
@@ -38,6 +39,7 @@ function Built({ build }: { build: Build }) {
     ["model", "3D model"],
     ["drawings", "Drawings"],
     ["materials", "Materials"],
+    ...(report.data?.castables.length ? [["castables", "Castables"] as [Tab, string]] : []),
     ["report", reportTabLabel(report.data)],
   ];
   const downloads = DOWNLOADS.filter(([file]) => build.files.includes(file));
@@ -72,6 +74,7 @@ function Built({ build }: { build: Build }) {
           <p className="muted">Loading the report…</p>
         )}
         {tab === "materials" && report.data && <Materials report={report.data} />}
+        {tab === "castables" && report.data && <Castables report={report.data} />}
         {tab === "report" && report.data && <ReportView report={report.data} />}
         {report.error && <p className="error">The report could not be loaded: {report.error.message}</p>}
       </div>

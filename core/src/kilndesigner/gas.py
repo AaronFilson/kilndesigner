@@ -25,7 +25,6 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.cones import cone_temperature
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.library import material
 from kilndesigner.model import Cylinders, Gas, Kiln, SprungArch, Tank
 from kilndesigner.shape import chamber_shape
 from kilndesigner.units import Q_, Quantity, si
@@ -64,7 +63,9 @@ def gas_data() -> dict[str, Any]:
 
 def wall_class(kiln: Kiln) -> WallClass:
     """Ward's construction class from the walls' hot face."""
-    kind = material(kiln.lining.walls[0].material).kind
+    from kilndesigner.castable import resolve_material
+
+    kind = resolve_material(kiln, kiln.lining.walls[0].material).kind
     if kind in ("dense_firebrick", "dense_castable"):
         return "hard_brick"
     if kind in ("fibre_blanket", "fibre_board"):
@@ -94,8 +95,17 @@ def interpolate(x: float, xs: list[float], ys: list[float]) -> float:
     return float(np.interp(x, xs, ys))
 
 
+MIN_RATED_PSI = 5.0
+
+
 def venturi_pressure(btu: float, psi: list[float], ratings: list[float]) -> float | None:
-    """Supply pressure (psi) a venturi burner needs for ``btu``; ratings rise with √pressure."""
+    """Supply pressure (psi) a venturi burner needs for ``btu``; ratings rise with √pressure.
+
+    Only the 5 psi and higher ratings are used: the in. w.c. and 2 psi entries probably use a
+    different orifice (combustion-and-masonry.md §3.2), so below 5 psi no pressure is given.
+    """
+    kept = [(p, r) for p, r in zip(psi, ratings, strict=True) if p >= MIN_RATED_PSI]
+    psi, ratings = [p for p, _ in kept], [r for _, r in kept]
     if btu > ratings[-1]:
         return None
     if btu <= ratings[0]:
@@ -495,7 +505,9 @@ def design_gas(kiln: Kiln) -> GasDesign:
                 ),
             )
         )
-        to = si(t_cold, "K")
+        # Warm air gives the least draft, so use the site's air, not the coldest day (codes
+        # give no summer design figure: structure-and-draft.md §4).
+        to = si(kiln.site.ambient, "K")
         for label, flue in (
             ("flue gas at 1000 °F", Q_(1000, "degF")),
             ("flue gas at top temperature", top),
@@ -507,11 +519,11 @@ def design_gas(kiln: Kiln) -> GasDesign:
                 Step(
                     name="Draft at the chimney's base",
                     value=line,
-                    inputs={"outside air": show(t_cold, temp_unit)},
+                    inputs={"outside air": show(kiln.site.ambient, temp_unit)},
                     reference=DRAFT_SOURCE,
                 )
             )  # fmt: skip
-    findings.append(Finding(level="warning", message=GAS_SAFETY))
+    findings.append(Finding(level="info", message=GAS_SAFETY))
     return GasDesign(
         construction=WALL_WORDS[construction],
         ward_volume=f"{volume_ft3:.1f} ft³",

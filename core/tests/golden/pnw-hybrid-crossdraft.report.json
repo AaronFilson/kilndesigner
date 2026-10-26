@@ -3,17 +3,17 @@
     "findings": [
       {
         "level": "info",
-        "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
         "reference": null
       },
       {
         "level": "info",
-        "message": "No price found for: Kanthal APM wire.",
+        "message": "No price found for: Kanthal APM wire, steel.",
         "reference": null
       },
       {
         "level": "warning",
-        "message": "The priced materials come to $9,476, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $12,561, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
@@ -71,11 +71,48 @@
         "priced_as": "Ransome B5, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
         "unit_price": "$395.00"
+      },
+      {
+        "buy": "566 bricks",
+        "cost": 3084.7000000000003,
+        "item": "Chimney and flue duct: hard firebrick",
+        "needed": "566 straights (with 5 % for cuts)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      },
+      {
+        "buy": "36 ft",
+        "cost": null,
+        "item": "L4×4×5/16",
+        "needed": "32.4 ft (corner posts, buttresses behind the skewbacks)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "60 ft",
+        "cost": null,
+        "item": "¼ × 2 in flat bar",
+        "needed": "54.0 ft (top cross-members, front and back, bottom cross-members, all four sides)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "11 ft",
+        "cost": null,
+        "item": "1/2-13 threaded rod",
+        "needed": "9.3 ft (tie rods)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 9476.46
+    "total": 12561.16
   },
+  "castables": [],
   "chamber_volume": "45.2 ft³",
   "electric": {
     "alloy": "Kanthal APM",
@@ -103,9 +140,14 @@
     },
     "findings": [
       {
-        "level": "warning",
+        "level": "info",
         "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
         "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
+      },
+      {
+        "level": "info",
+        "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
+        "reference": "electrical-supply.md §1 [E1–E3], §3"
       },
       {
         "level": "info",
@@ -118,7 +160,7 @@
         "reference": null
       },
       {
-        "level": "warning",
+        "level": "info",
         "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
         "reference": null
       }
@@ -245,28 +287,28 @@
     },
     {
       "level": "warning",
-      "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
-      "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
-    },
-    {
-      "level": "warning",
-      "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
+      "message": "The priced materials come to $12,561, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
-      "level": "warning",
-      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
-      "reference": null
+      "level": "info",
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
     },
     {
-      "level": "warning",
-      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The steel that takes the arch's thrust is not designed or counted yet. A 60° skewback is the usual choice.",
-      "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
-      "level": "warning",
-      "message": "The priced materials come to $9,476, over the $5,000 budget, before steel, hardware and shipping.",
-      "reference": null
+      "level": "info",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+    },
+    {
+      "level": "info",
+      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
     },
     {
       "level": "info",
@@ -280,12 +322,27 @@
     },
     {
       "level": "info",
+      "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
+      "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
+    },
+    {
+      "level": "info",
+      "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
+      "reference": "electrical-supply.md §1 [E1–E3], §3"
+    },
+    {
+      "level": "info",
       "message": "The tool chose 8 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. 12 elements would take 8 AWG (3.26 mm); set elements: 12 in the design's electric heat to use them.",
       "reference": "electric-and-thermal.md §1.6 [S9, S13]"
     },
     {
       "level": "info",
       "message": "The elements alone can't hold the top temperature; in this hybrid the burners take over before then.",
+      "reference": null
+    },
+    {
+      "level": "info",
+      "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
       "reference": null
     },
     {
@@ -305,6 +362,11 @@
     },
     {
       "level": "info",
+      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+      "reference": null
+    },
+    {
+      "level": "info",
       "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
       "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; combustion-and-masonry.md §1.1"
     },
@@ -315,8 +377,43 @@
     },
     {
       "level": "info",
+      "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "level": "info",
+      "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+      "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+    },
+    {
+      "level": "info",
+      "message": "The right wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "reference": "kiln-hardware.md §6.1 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Side-mounted burners need a bag wall so the flames don't hit the ware: hard brick, first course solid in front of the burners.",
+      "reference": "kiln-hardware.md §1.3 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "reference": "kiln-hardware.md §3.2–3.3 [S4]"
+    },
+    {
+      "level": "info",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor, midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "reference": "kiln-hardware.md §2 [S4] [S13]"
+    },
+    {
+      "level": "info",
       "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
       "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "level": "info",
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
+      "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
     },
     {
       "level": "info",
@@ -330,15 +427,141 @@
     },
     {
       "level": "info",
-      "message": "Prices were checked on 2026-10-21 and will change. Steel, hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
       "reference": null
     },
     {
       "level": "info",
-      "message": "No price found for: Kanthal APM wire.",
+      "message": "No price found for: Kanthal APM wire, steel.",
       "reference": null
     }
   ],
+  "frame": {
+    "angle": "L4×4×5/16",
+    "angle_leg_in": 4.0,
+    "angle_t_in": 0.3125,
+    "findings": [
+      {
+        "level": "info",
+        "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it.",
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+      },
+      {
+        "level": "info",
+        "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+        "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+      }
+    ],
+    "kind": "arch frame",
+    "members": [
+      {
+        "count": 4,
+        "length_in": 55.33055638202916,
+        "part": "corner posts",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L4×4×5/16"
+      },
+      {
+        "count": 2,
+        "length_in": 84.0,
+        "part": "buttresses behind the skewbacks",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L4×4×5/16"
+      },
+      {
+        "count": 2,
+        "length_in": 52.0,
+        "part": "top cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 4,
+        "length_in": 136.0,
+        "part": "bottom cross-members, all four sides",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 56.0,
+        "part": "tie rods",
+        "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "1/2-13 threaded rod"
+      }
+    ],
+    "rod": "1/2-13",
+    "rod_d_in": 0.5,
+    "thrust": "231 lb per foot of arch",
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "because": "\"generally adequate\" for a studio sprung arch"
+        },
+        "name": "Smallest frame angle",
+        "note": null,
+        "reference": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "value": "L3×3×3/16"
+      },
+      {
+        "formula": "Σ density × thickness × mean arc, over the roof's layers",
+        "inputs": {
+          "layer 1": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable: 98 lb/ft³ × 3 in × 2.57 ft = 63.1",
+          "layer 2": "Morgan Kaowool ceramic fibre blanket, 8 pcf: 8 lb/ft³ × 2 in × 2.79 ft = 3.7"
+        },
+        "name": "Arch weight per foot of length",
+        "note": "Includes insulation laid on the arch, which HarbisonWalker's tables leave out.",
+        "reference": "HarbisonWalker W, exact form; kiln-hardware.md §4.6 [S20]",
+        "value": "66.8 lb/ft"
+      },
+      {
+        "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
+        "inputs": {
+          "H / W": "0.911",
+          "rise per foot of span, d": "1.607 in/ft"
+        },
+        "name": "Cold horizontal thrust",
+        "note": null,
+        "reference": "statics of a three-hinged circular arch; checked against HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "60.9 lb per foot of arch"
+      },
+      {
+        "formula": "hinges at the intrados at the crown and the extrados at the skewbacks: Hmax = M_P / (y_crown − y_P); factor = Hmax / H with both at mid-thickness",
+        "inputs": {
+          "T/S": "10.7 %",
+          "factor": "3.79"
+        },
+        "name": "Thrust of the heated arch, free to rise",
+        "note": null,
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+        "value": "230.6 lb per foot of arch"
+      },
+      {
+        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
+        "inputs": {
+          "L": "76.0 in",
+          "M": "13,874 lb·in",
+          "w": "19.22 lb/in"
+        },
+        "name": "Buttress angle, bending",
+        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule.",
+        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx, kiln-hardware.md §4.7.1 [S28]",
+        "value": "needs Sx ≥ 1.156 in³; L4×4×5/16 has 1.270 in³"
+      },
+      {
+        "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
+        "inputs": {
+          "load per rod": "730 lb",
+          "stress area": "0.1419 in²"
+        },
+        "name": "Tie rods, one at the front and one at the back",
+        "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
+        "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+        "value": "1/2-13: 5,146 psi"
+      }
+    ]
+  },
   "gas": {
     "burner_options": [
       {
@@ -361,7 +584,7 @@
         "count": 3,
         "each": "241,111 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "2.8 psi",
+        "pressure": "5.0 psi",
         "total_cost": 1185.0,
         "type": "venturi"
       },
@@ -377,7 +600,7 @@
         "count": 4,
         "each": "180,833 BTU/hr",
         "model": "Ransome B4",
-        "pressure": "4.1 psi",
+        "pressure": "5.0 psi",
         "total_cost": 1180.0,
         "type": "venturi"
       },
@@ -385,7 +608,7 @@
         "count": 4,
         "each": "180,833 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "1.6 psi",
+        "pressure": "5.0 psi",
         "total_cost": 1580.0,
         "type": "venturi"
       },
@@ -401,7 +624,7 @@
         "count": 5,
         "each": "144,667 BTU/hr",
         "model": "GACO MR100",
-        "pressure": "4.5 psi",
+        "pressure": "5.0 psi",
         "total_cost": 799.75,
         "type": "venturi"
       }
@@ -420,8 +643,8 @@
     "design_input": "723,333 BTU/hr",
     "design_input_btu_hr": 723333.3333333334,
     "draft": [
-      "0.150 in. w.c. (37 Pa) with flue gas at 1000 °F",
-      "0.186 in. w.c. (46 Pa) with flue gas at top temperature"
+      "0.137 in. w.c. (34 Pa) with flue gas at 1000 °F",
+      "0.172 in. w.c. (43 Pa) with flue gas at top temperature"
     ],
     "findings": [
       {
@@ -445,7 +668,7 @@
         "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
       },
       {
-        "level": "warning",
+        "level": "info",
         "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
         "reference": null
       }
@@ -597,22 +820,22 @@
       {
         "formula": null,
         "inputs": {
-          "outside air": "20 °F"
+          "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.150 in. w.c. (37 Pa) with flue gas at 1000 °F"
+        "value": "0.137 in. w.c. (34 Pa) with flue gas at 1000 °F"
       },
       {
         "formula": null,
         "inputs": {
-          "outside air": "20 °F"
+          "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.186 in. w.c. (46 Pa) with flue gas at top temperature"
+        "value": "0.172 in. w.c. (43 Pa) with flue gas at top temperature"
       }
     ]
   },
@@ -626,19 +849,25 @@
         "layers": [
           {
             "cold_side": "1520 °F",
+            "cold_side_k": 1100.0597654999779,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999999,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
             "cold_side": "848.3 °F",
+            "cold_side_k": 726.6458222311958,
             "hot_side": "1520 °F",
+            "hot_side_k": 1100.0597654999779,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
             "cold_side": "181.2 °F",
+            "cold_side_k": 356.0518934828609,
             "hot_side": "848.3 °F",
+            "hot_side_k": 726.6458222311958,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
@@ -653,19 +882,25 @@
         "layers": [
           {
             "cold_side": "1520 °F",
+            "cold_side_k": 1100.0597654999779,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999999,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
             "cold_side": "848.3 °F",
+            "cold_side_k": 726.6458222311958,
             "hot_side": "1520 °F",
+            "hot_side_k": 1100.0597654999779,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
             "cold_side": "181.2 °F",
+            "cold_side_k": 356.0518934828609,
             "hot_side": "848.3 °F",
+            "hot_side_k": 726.6458222311958,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
@@ -680,19 +915,25 @@
         "layers": [
           {
             "cold_side": "1475 °F",
+            "cold_side_k": 1074.9651621297508,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
             "cold_side": "818.3 °F",
+            "cold_side_k": 709.9964181731954,
             "hot_side": "1475 °F",
+            "hot_side_k": 1074.9651621297508,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
             "cold_side": "173.5 °F",
+            "cold_side_k": 351.78276964917694,
             "hot_side": "818.3 °F",
+            "hot_side_k": 709.9964181731954,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
@@ -707,19 +948,25 @@
         "layers": [
           {
             "cold_side": "1475 °F",
+            "cold_side_k": 1074.9651621297508,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
             "cold_side": "818.3 °F",
+            "cold_side_k": 709.9964181731954,
             "hot_side": "1475 °F",
+            "hot_side_k": 1074.9651621297508,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
             "cold_side": "173.5 °F",
+            "cold_side_k": 351.78276964917694,
             "hot_side": "818.3 °F",
+            "hot_side_k": 709.9964181731954,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
@@ -734,13 +981,17 @@
         "layers": [
           {
             "cold_side": "1236 °F",
+            "cold_side_k": 942.2712055950825,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
             "cold_side": "238.9 °F",
+            "cold_side_k": 388.09919088330497,
             "hot_side": "1236 °F",
+            "hot_side_k": 942.2712055950825,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
@@ -755,13 +1006,17 @@
         "layers": [
           {
             "cold_side": "1814 °F",
+            "cold_side_k": 1263.3797694296604,
             "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999976,
             "material": "kast-o-lite-30-li-plus",
             "thickness": "3 in"
           },
           {
             "cold_side": "279.2 °F",
+            "cold_side_k": 410.47753187949235,
             "hot_side": "1814 °F",
+            "hot_side_k": 1263.3797694296604,
             "material": "kaowool-blanket-8pcf",
             "thickness": "2 in"
           }
@@ -771,6 +1026,26 @@
       }
     ],
     "findings": [
+      {
+        "level": "info",
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+      },
+      {
+        "level": "info",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+      },
+      {
+        "level": "info",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+      },
+      {
+        "level": "info",
+        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+      },
       {
         "level": "info",
         "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
@@ -794,7 +1069,7 @@
         },
         "name": "Top temperature",
         "note": null,
-        "reference": "Orton cone chart (2016), self-supporting cones; electric-and-thermal.md §8 [S75]",
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
         "value": "1285 °C (2345 °F)"
       },
       {
@@ -1276,8 +1551,8 @@
         "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
       },
       {
-        "level": "warning",
-        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The steel that takes the arch's thrust is not designed or counted yet. A 60° skewback is the usual choice.",
+        "level": "info",
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
         "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
       },
       {

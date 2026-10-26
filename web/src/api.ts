@@ -1,5 +1,7 @@
 // The API, as TanStack Query hooks over the generated client.
 import { createClient, type Build, type Problem } from "@kilndesigner/api-client";
+
+import type { KilnDocument } from "./design";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const api = createClient();
@@ -27,6 +29,43 @@ function fail(response: Response, error: unknown): never {
 export const fileUrl = (key: string, name: string) =>
   `/api/builds/${key}/files/${name.split("/").map(encodeURIComponent).join("/")}`;
 
+/** A design to save or check: the YAML (the file, or the YAML tab) or the document (the form). */
+export type DesignInput = { source: string } | { document: KilnDocument };
+
+function body(input: DesignInput) {
+  return "source" in input
+    ? { source: input.source }
+    : { document: input.document as unknown as Record<string, unknown> };
+}
+
+/** Check a design without saving it; the result is the design both ways. */
+export async function checkDesign(input: DesignInput) {
+  const { data, error, response } = await api.POST("/api/designs/check", { body: body(input) });
+  return data ? { ...data, document: data.document as unknown as KilnDocument } : fail(response, error);
+}
+
+export function useTemplates() {
+  return useQuery({
+    queryKey: ["templates"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET("/api/templates");
+      return data ?? fail(response, error);
+    },
+  });
+}
+
+export function useLibrary() {
+  return useQuery({
+    queryKey: ["library"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET("/api/library");
+      return data ?? fail(response, error);
+    },
+  });
+}
+
 export function useDesigns() {
   return useQuery({
     queryKey: ["designs"],
@@ -52,8 +91,8 @@ export function useDesign(id: string) {
 export function useCreateDesign() {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (source: string) => {
-      const { data, error, response } = await api.POST("/api/designs", { body: { source } });
+    mutationFn: async (input: DesignInput) => {
+      const { data, error, response } = await api.POST("/api/designs", { body: body(input) });
       return data ?? fail(response, error);
     },
     onSuccess: (design) => {
@@ -66,10 +105,10 @@ export function useCreateDesign() {
 export function useSaveVersion(id: string) {
   const client = useQueryClient();
   return useMutation({
-    mutationFn: async (source: string) => {
+    mutationFn: async (input: DesignInput) => {
       const { data, error, response } = await api.POST("/api/designs/{design_id}/versions", {
         params: { path: { design_id: id } },
-        body: { source },
+        body: body(input),
       });
       return data ?? fail(response, error);
     },

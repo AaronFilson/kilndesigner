@@ -1,7 +1,7 @@
 // What to buy and what to cut: the bill of materials and the brick cut list.
 import type { Report } from "@kilndesigner/api-client";
 
-import { Findings } from "./ReportView";
+import { Findings, Notes } from "./ReportView";
 
 const money = (value: number) =>
   value.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
@@ -46,6 +46,7 @@ export function Materials({ report }: { report: Report }) {
         </tfoot>
       </table>
       <Findings findings={bom.findings} />
+      <Notes findings={bom.findings} />
       {masonry && masonry.cut_list.length > 0 && (
         <table>
           <caption>Cut list</caption>

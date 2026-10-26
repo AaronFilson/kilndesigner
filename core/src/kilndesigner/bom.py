@@ -10,8 +10,11 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.castable import CastableReport
 from kilndesigner.electric import ElectricDesign
+from kilndesigner.frame import FrameDesign
 from kilndesigner.gas import GasDesign
+from kilndesigner.hardware import CHIMNEY_BRICK
 from kilndesigner.masonry import Masonry
 from kilndesigner.model import Kiln
 from kilndesigner.units import parse_quantity, si
@@ -80,6 +83,9 @@ def bill_of_materials(
     masonry: Masonry,
     electric: ElectricDesign | None,
     gas: GasDesign | None = None,
+    frame: FrameDesign | None = None,
+    chimney_bricks: int = 0,
+    castables: list[CastableReport] | None = None,
 ) -> Bom:
     prices = price_list()
     lines: list[BomLine] = []
@@ -162,6 +168,57 @@ def bill_of_materials(
             )
         )
         total += b.total_cost
+    for c in castables or []:
+        for t in c.totals:
+            if not t.amount_lb:
+                continue
+            lines.append(
+                BomLine(
+                    item=f"{t.name}, for {c.mix.name}",
+                    needed=f"{t.amount} for {c.batches} batches",
+                    buy=f"{math.ceil(t.amount_lb):g} lb",
+                    unit_price=None if t.cost is None else f"${t.cost / t.amount_lb:,.2f}/lb",
+                    cost=t.cost,
+                    priced_as=None if t.cost is None else "your price, in the design",
+                    source=None if t.cost is None else "the design file",
+                )
+            )
+            if t.cost is None:
+                unpriced.append(t.name)
+            else:
+                total += t.cost
+    if chimney_bricks:
+        item = prices.for_material(CHIMNEY_BRICK)
+        unit_price = None if item is None else si(parse_quantity(item.price), "USD")
+        cost = None if unit_price is None else chimney_bricks * unit_price
+        lines.append(
+            BomLine(
+                item="Chimney and flue duct: hard firebrick",
+                needed=f"{chimney_bricks} straights (with 5 % for cuts)",
+                buy=f"{chimney_bricks} bricks",
+                unit_price=None if unit_price is None else f"${unit_price:,.2f}",
+                cost=cost,
+                priced_as=None if item is None else f"{item.description}, {item.seller}",
+                source=None if item is None else item.source,
+            )
+        )
+        total += cost or 0.0
+        if cost is None:
+            unpriced.append("chimney brick")
+    if frame is not None:
+        by_steel: dict[str, float] = {}
+        for m in frame.members:
+            by_steel[m.steel] = by_steel.get(m.steel, 0.0) + m.total_ft
+        for steel, feet in by_steel.items():
+            parts = ", ".join(m.part for m in frame.members if m.steel == steel)
+            lines.append(
+                BomLine(
+                    item=steel, needed=f"{feet:.1f} ft ({parts})",
+                    buy=f"{math.ceil(feet * 1.1):g} ft", unit_price=None, cost=None,
+                    priced_as=None, source=frame.members[0].source,
+                )
+            )  # fmt: skip
+        unpriced.append("steel")
     if kiln.loading.type == "car":
         cost = kiln.loading.car_hardware_cost
         lines.append(
@@ -184,15 +241,18 @@ def bill_of_materials(
         Finding(
             level="info",
             message=(
-                f"Prices were checked on {prices.checked} and will change. Steel, hardware, "
-                "electrical parts (relays, controller, wiring), gas fittings and shipping are not "
-                "included."
+                f"Prices were checked on {prices.checked} and will change. Steel is listed by "
+                "length, with 10 % extra, but not priced. Hardware, electrical parts (relays, "
+                "controller, wiring), gas fittings and shipping are not included."
             ),
         )
     )
     if unpriced:
         findings.append(
-            Finding(level="info", message="No price found for: " + ", ".join(unpriced) + ".")
+            Finding(
+                level="info",
+                message="No price found for: " + ", ".join(dict.fromkeys(unpriced)) + ".",
+            )
         )
     budget = kiln.site.materials_budget
     if budget is not None and total > si(budget, "USD"):

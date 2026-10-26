@@ -5,15 +5,18 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.bom import Bom, bill_of_materials
+from kilndesigner.castable import CastableReport, castable_reports
 from kilndesigner.electric import ElectricDesign, design_elements
+from kilndesigner.frame import FrameDesign, design_frame
 from kilndesigner.gas import GasDesign, design_gas
-from kilndesigner.geometry import GeometryNotSupportedError
+from kilndesigner.geometry import GeometryNotSupportedError, lining_parts
+from kilndesigner.hardware import build_hardware
 from kilndesigner.heatloss import HeatLoss, heat_loss
 from kilndesigner.hybrid import HybridAnalysis, analyse_hybrid
 from kilndesigner.masonry import Masonry, plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.shape import chamber_shape
-from kilndesigner.units import Q_
+from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, show
 
 ENGINE_VERSION = "0.1.0"
@@ -29,6 +32,8 @@ class Report(BaseModel):
     electric: ElectricDesign | None
     gas: GasDesign | None
     hybrid: HybridAnalysis | None
+    frame: FrameDesign
+    castables: list[CastableReport]
     masonry: Masonry | None
     bom: Bom | None
     findings: list[Finding]
@@ -60,6 +65,24 @@ def design_report(kiln: Kiln) -> Report:
                     ),
                 )
             )
+    frame = design_frame(kiln)
+    hardware = build_hardware(kiln, frame, gas)
+    findings += [*frame.findings, *hardware.findings]
+    # The heat the kiln puts in while its castables burn out: the elements, or else the burners
+    heat_watts = (
+        electric.installed_watts
+        if electric is not None
+        else si(Q_(gas.design_input_btu_hr, "BTU/hr"), "W")
+        if gas is not None
+        else None
+    )
+    placed: dict[str, float] = {}
+    for part in lining_parts(kiln):
+        if kiln.castable(part.material) is not None:
+            placed[part.material] = placed.get(part.material, 0.0) + part.volume * 1e-9
+    castables = castable_reports(kiln, loss, heat_watts, placed)
+    for c in castables:
+        findings += c.findings
     masonry: Masonry | None = None
     bom: Bom | None = None
     try:
@@ -67,9 +90,12 @@ def design_report(kiln: Kiln) -> Report:
     except GeometryNotSupportedError as e:
         findings.append(Finding(level="info", message=f"No masonry plan or bill of materials: {e}"))
     if masonry is not None:
-        bom = bill_of_materials(kiln, masonry, electric, gas)
+        bom = bill_of_materials(
+            kiln, masonry, electric, gas, frame, hardware.chimney_bricks, castables
+        )
         findings += [*masonry.findings, *bom.findings]
     order = {"error": 0, "warning": 1, "info": 2}
+    findings = list({(f.level, f.message): f for f in findings}.values())  # once each
     findings.sort(key=lambda f: order[f.level])
     volume = Q_(chamber_shape(kiln).volume, "m**3")
     return Report(
@@ -80,6 +106,8 @@ def design_report(kiln: Kiln) -> Report:
         electric=electric,
         gas=gas,
         hybrid=hybrid,
+        frame=frame,
+        castables=castables,
         masonry=masonry,
         bom=bom,
         findings=findings,

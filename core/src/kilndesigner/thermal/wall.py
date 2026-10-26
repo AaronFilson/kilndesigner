@@ -18,6 +18,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 
 from kilndesigner.numeric import find_root, integrate
+from kilndesigner.thermal.air import T_MAX as AIR_T_MAX
 from kilndesigner.thermal.conductivity import Conductivity
 from kilndesigner.thermal.surface import Surface
 
@@ -100,7 +101,14 @@ def solve_wall(
     def mismatch(t_surface: float) -> float:
         return march(t_surface)[0] - t_inside
 
-    _, q, temps, h = march(find_root(mismatch, t_ambient + 1e-9, t_inside))
+    # The surface film can't be hotter than the air table goes (ADR 0009: refuse, don't guess).
+    hottest = min(t_inside, 2 * AIR_T_MAX - t_ambient)
+    if mismatch(hottest) < 0:
+        raise ValueError(
+            f"the outside surface would run above {hottest - 273.15:.0f} °C, past the air "
+            "properties the surface model is checked for; insulate the wall more"
+        )
+    _, q, temps, h = march(find_root(mismatch, t_ambient + 1e-9, hottest))
     return WallResult(
         heat_flow=q,
         hot_face=temps[0],

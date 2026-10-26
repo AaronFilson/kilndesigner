@@ -19,6 +19,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.cones import cone_temperature
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.library import Alloy, alloy, awg_diameter
 from kilndesigner.model import Electric, Kiln
@@ -38,9 +39,12 @@ COIL_RATIO = (5.0, 6.0)  # outside coil diameter / wire diameter, coils in groov
 PITCH_RATIO = (2.0, 4.0)  # coil pitch / wire diameter
 COIL_SOURCE = "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]"
 GROOVED_MAX_FURNACE = Q_(1250, "degC")  # Kanthal key data, spiral in grooves [S14]
+CONE_10_FAST = cone_temperature("10", 150)  # the hottest that studio kiln makers build for
 KANTHAL_MIN_WIRE = Q_(3, "mm")  # Kanthal minimum for grooved elements, for long life [S9, S13]
 # An assumption: the wire runs hotter than the kiln. Ct changes by under 1% across 100 °C at
-# kiln temperatures (§1.2), so the exact margin barely matters.
+# kiln temperatures (§1.2), so the exact margin barely matters for resistance. Kanthal's one
+# published example is 106 K above a 1000 °C furnace for AF rod-over-bend at 3.98 W/cm²
+# (electrical-supply.md §5); no figure exists for coils in grooves.
 WIRE_ABOVE_KILN = Q_(100, "delta_degC")
 COURSE_HEIGHT = Q_(2.5, "in")  # one groove per brick course at most (§5: 9 × 4½ × 2½ in)
 GAUGES = range(8, 21)
@@ -325,7 +329,24 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
         )
     else:
         best = choose(candidates)
-        elements = _element_result(best, wire, voltage, power, groove, us)
+        elements = _element_result(best, wire, voltage, power, groove, us, supply.phase)
+        # Current follows V/R: +5 % at the top of ANSI C84.1 Range A, more again while the wire
+        # is cold (R falls by Ct). Makers design at the 80 % limit too (Skutt KM1027: 48 A on 60 A;
+        # electrical-supply.md §1–3), so this is a note.
+        hot_amps = power / (root3 * voltage)
+        ct = wire.temperature_factor(wire_temp)
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The elements draw {hot_amps:.1f} A hot at {show(supply.voltage)}. At +5 % "
+                    f"supply voltage (ANSI C84.1 Range A) that is {1.05 * hot_amps:.1f} A, and "
+                    f"{1.05 * hot_amps * ct:.1f} A while the wire is cold, against the "
+                    f"{limit_current:.0f} A continuous limit. Kiln makers rate kilns the same way."
+                ),
+                reference="electrical-supply.md §1 [E1–E3], §3",
+            )
+        )
         p_e, v_e = power / best.rows, voltage / best.series
         working.extend(_element_steps(best, p_e, v_e, rho_t, max_load, us))
         if best.diameter < si(KANTHAL_MIN_WIRE, "m"):
@@ -388,7 +409,7 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             )
     findings.append(
         Finding(
-            level="warning",
+            level="info",
             message=(
                 "Electrical work must follow your local code and be checked by a licensed "
                 "electrician. These results are engineering guidance, not an approved design."
@@ -427,7 +448,9 @@ def _check_temperatures(
                 level="error",
                 message=(
                     f"{wire.name} is rated to {show(wire.max_air_temperature, temp_unit)} in air; "
-                    f"elements here would run near {show(wire_temp, temp_unit)}."
+                    f"elements here would run near {show(wire_temp, temp_unit)}. The wire is taken "
+                    f"as {show(WIRE_ABOVE_KILN)} above the kiln, an assumption: Kanthal gives no "
+                    "figure for coils in grooves."
                 ),
                 reference=wire.source,
             )
@@ -435,7 +458,8 @@ def _check_temperatures(
     if si(top, "K") > si(GROOVED_MAX_FURNACE, "K"):
         findings.append(
             Finding(
-                level="warning",
+                # Usual practice up to cone 10, so a note there; past cone 10 it is a warning.
+                level="info" if si(top, "K") <= si(CONE_10_FAST, "K") + 1e-6 else "warning",
                 message=(
                     f"Kanthal lists {show(GROOVED_MAX_FURNACE, temp_unit)} as the highest furnace "
                     f"temperature for coils in grooves; this kiln reaches {show(top, temp_unit)}. "
@@ -447,7 +471,13 @@ def _check_temperatures(
 
 
 def _element_result(
-    c: Candidate, wire: Alloy, voltage: float, power: float, groove: float, us: bool
+    c: Candidate,
+    wire: Alloy,
+    voltage: float,
+    power: float,
+    groove: float,
+    us: bool,
+    phase: int = 1,
 ) -> ElementResult:
     p_e, v_e = power / c.rows, voltage / c.series
     rho20 = si(wire.resistivity, "ohm*m")
@@ -462,6 +492,9 @@ def _element_result(
         if c.series > 1
         else f"{c.rows} in parallel, each across the full voltage"
     )
+    if phase == 3:
+        # v_e = line voltage / series: only true in delta (electrical-supply.md §4).
+        wiring += f", in delta: {strings // 3} string(s) across each pair of lines"
     return ElementResult(
         count=c.rows,
         wiring=wiring,

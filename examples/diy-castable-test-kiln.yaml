@@ -1,0 +1,84 @@
+# The test kiln from the castable notes (castables/dense-castable.txt): 28 in wide, 60 in long and
+# 48 in high inside, under a cast dome with a 3 in rise. The lining is two castables mixed from
+# fireclay, grog, kyanite and dextrin, foamed: a 2 in "K26-type" hot face and a "K16-type"
+# backup. The recipes are the notes' 50 lb batches; how much foam they need is a guess the
+# engine checks (it reports the fired density each gives). Treat every number in it as a
+# starting point for test pieces, not a result.
+schema: 1
+name: DIY castable test kiln, cone 10
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28 in
+  depth: 60 in
+  height: 45 in # to the springline; the dome adds 3 in
+roof:
+  type: sprung_arch
+  rise: 3 in
+loading:
+  type: door
+  face: right
+castables:
+  - id: diy-hot-face
+    name: Foamed grog and fireclay hot face (the notes' "K26 type")
+    ingredients:
+      - ingredient: mulcoa-70 # Clay Art Center's CE70, $50 per 50 lb (2026-10-23)
+        mass: 26 lb
+        price: 1.00 USD/lb
+      - ingredient: greenstripe
+        mass: 15 lb
+      - ingredient: kyanite
+        mass: 4 lb
+      - ingredient: dextrin
+        mass: 5 lb
+    water: 12 lb
+    foam: 55
+  - id: diy-backup
+    name: Foamed fireclay backup with paper fibre (the notes' "K16 type")
+    ingredients:
+      - ingredient: mulcoa-70
+        mass: 15 lb
+        price: 1.00 USD/lb
+      - ingredient: greenstripe
+        mass: 25 lb
+      - ingredient: kyanite
+        mass: 5 lb
+      - ingredient: dextrin
+        mass: 5 lb
+      - ingredient: newsprint
+        mass: 0.25 lb
+    water: 14.5 lb
+    foam: 60
+lining:
+  walls:
+    - material: diy-hot-face
+      thickness: 2 in
+    - material: diy-backup
+      thickness: 9 in
+  roof:
+    - material: diy-hot-face
+      thickness: 2 in
+    - material: diy-backup
+      thickness: 4 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  gas:
+    burners:
+      type: venturi
+      wall: front
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+    firing_speed: slow
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  propane_price: 3.50 USD/gallon

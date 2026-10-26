@@ -11,10 +11,9 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner import cones
-from kilndesigner.library import material
 from kilndesigner.model import Face, Kiln
 from kilndesigner.shape import chamber_shape
-from kilndesigner.thermal.surface import StillAirSurface
+from kilndesigner.thermal.surface import RA_RANGE, RA_SOURCE, StillAirSurface
 from kilndesigner.thermal.wall import Slab, solve_wall
 from kilndesigner.units import Q_, Quantity, si
 from kilndesigner.working import Finding, Step, show
@@ -35,6 +34,8 @@ class LayerResult(BaseModel):
     thickness: str
     hot_side: str
     cold_side: str
+    hot_side_k: float
+    cold_side_k: float
 
 
 class FaceResult(BaseModel):
@@ -104,12 +105,16 @@ def heat_loss(
     faces: list[FaceResult] = []
     total = 0.0
     excerpt_materials: set[str] = set()
+    hottest_beyond_data: dict[str, float] = {}  # material id → hottest face past its k data, K
+    coolest_below_data: dict[str, float] = {}  # material id → coolest face below its k data, K
+
+    from kilndesigner.castable import resolve_material
 
     for shape in chamber_shape(kiln).faces():
         layers = kiln.lining.for_face(shape.face, door_face=kiln.door_face)
         slabs: list[Slab] = []
         for layer in layers:
-            m = material(layer.material)
+            m = resolve_material(kiln, layer.material)
             if m.status == "excerpt":
                 excerpt_materials.add(m.name)
             slabs.append(Slab(m.id, si(layer.thickness, "m"), m.k))
@@ -119,14 +124,28 @@ def heat_loss(
         )
         result = solve_wall(slabs, t_in, t_air, surface, area=shape.area_at)
         total += result.heat_flow
+        ra, covered = surface.rayleigh_in_range(result.surface, t_air)
+        if not covered:
+            lo, hi = RA_RANGE[shape.orientation]
+            findings.append(
+                Finding(
+                    level="warning",
+                    message=(
+                        f"{shape.face}: the outside air's Rayleigh number is {ra:.1e}, outside "
+                        f"the {lo:.0e} to {hi:.0e} its convection correlation is checked for, "
+                        "so this face's loss is less certain."
+                    ),
+                    reference=RA_SOURCE,
+                )
+            )
 
         temps = result.temperatures
         layer_results: list[LayerResult] = []
         for i, layer in enumerate(layers):
-            m = material(layer.material)
+            m = resolve_material(kiln, layer.material)
             hot = Q_(temps[i], "K")
             limit = m.max_service_temperature
-            if si(hot, "K") > si(limit, "K") + 1e-6:
+            if limit is not None and si(hot, "K") > si(limit, "K") + 1e-6:
                 findings.append(
                     Finding(
                         level="error",
@@ -138,12 +157,19 @@ def heat_loss(
                         reference=m.source,
                     )
                 )
+            data_top, data_bottom = m.k.temperatures[-1], m.k.temperatures[0]
+            if len(m.k.temperatures) > 1 and temps[i] > data_top + 1e-6:
+                hottest_beyond_data[m.id] = max(hottest_beyond_data.get(m.id, 0.0), temps[i])
+            if len(m.k.temperatures) > 1 and temps[i + 1] < data_bottom - 1e-6:
+                coolest_below_data[m.id] = min(coolest_below_data.get(m.id, 1e9), temps[i + 1])
             layer_results.append(
                 LayerResult(
                     material=m.id,
                     thickness=show(layer.thickness, len_unit),
                     hot_side=show(hot, temp_unit),
                     cold_side=show(Q_(temps[i + 1], "K"), temp_unit),
+                    hot_side_k=temps[i],
+                    cold_side_k=temps[i + 1],
                 )
             )
         faces.append(
@@ -180,6 +206,29 @@ def heat_loss(
             formula="sum of the six faces",
         )
     )
+    for material_id in sorted({*hottest_beyond_data, *coolest_below_data}):
+        m = resolve_material(kiln, material_id)
+        ends: list[str] = []
+        if material_id in coolest_below_data:
+            ends.append(
+                f"down to {show(Q_(coolest_below_data[material_id], 'K'), temp_unit)} (data "
+                f"from {show(Q_(m.k.temperatures[0], 'K'), temp_unit)})"
+            )
+        if material_id in hottest_beyond_data:
+            ends.append(
+                f"up to {show(Q_(hottest_beyond_data[material_id], 'K'), temp_unit)} (data to "
+                f"{show(Q_(m.k.temperatures[-1], 'K'), temp_unit)})"
+            )
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"{m.name} runs {' and '.join(ends)}; past its data sheet's points the "
+                    "conductivity is carried on along the nearest pair of points."
+                ),
+                reference=m.source,
+            )
+        )
     if excerpt_materials:
         findings.append(
             Finding(

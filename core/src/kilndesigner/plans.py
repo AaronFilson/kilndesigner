@@ -168,9 +168,46 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
             ],
         }
         summary.append(["Switch from elements to burners", h.switch_over])
+    f = report.frame
+    frame: dict[str, Any] = {
+        "title": "Case" if f.kind == "welded case" else "Steel frame",
+        "rows": [[m.part, m.steel, str(m.count), f"{m.length_in:.1f} in"] for m in f.members],
+        "thrust": f.thrust,
+    }
+    working.append({"title": frame["title"], "steps": _steps(f.working)})
+    castables = [
+        {
+            "name": c.mix.name,
+            "batch": [[b.name, b.mass, b.share] for b in c.mix.batch]
+            + [["Water", c.mix.water, c.mix.water_share]],
+            "rows": [
+                [label, value]
+                for label, value in (
+                    ("Foam", c.mix.foam),
+                    ("One batch casts", c.mix.cast_volume),
+                    ("A level US quart weighs", c.mix.quart_weighs),
+                    ("Dried / fired density", f"{c.mix.dried_density} / {c.mix.fired_density}"),
+                    ("Conductivity (estimated)", "; ".join(c.mix.conductivity)),
+                    ("Service limit", c.mix.service_limit or "not sourced: test it"),
+                    ("Placed / batches", f"{c.placed} / {c.batches}"),
+                )
+                if value
+            ],
+            "steps": c.steps,
+            "schedule": [[s.to, s.rate, s.hold or "—", s.why] for s in c.schedule],
+            "layers": [f"{x.face}, {x.thickness}: {' '.join(x.notes)}" for x in c.layers],
+        }
+        for c in report.castables
+    ]
+    for c in report.castables:
+        working.append(
+            {"title": f"Castable: {c.mix.name}", "steps": _steps([*c.mix.working, *c.first_firing])}
+        )
     return {
         "name": kiln.name,
         "engine_version": report.engine_version,
+        "frame": frame,
+        "castables": castables,
         "paper": "us-letter" if us else "a4",
         "summary": summary,
         "findings": [f.model_dump(mode="json") for f in findings],

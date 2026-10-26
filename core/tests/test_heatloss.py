@@ -20,11 +20,25 @@ def test_cone_10_is_1285_c_at_60_per_hour() -> None:
     assert si(cone_temperature("5½"), "degC") == 1203
 
 
+def test_pce_cones_to_42_at_their_one_rate() -> None:
+    """ASTM C24 Table X1.1: cone 15 1430 °C and 32½ 1724 at 150 °C/h; 42 2015 at 600 (cones.md)."""
+    assert si(cone_temperature("15", 150), "degC") == 1430
+    assert si(cone_temperature("32 1/2", 150), "degC") == 1724
+    assert si(cone_temperature("38", 100), "degC") == 1835
+    assert si(cone_temperature("42", 600), "degC") == 2015
+    with pytest.raises(ValueError, match="only at 150 °C/h"):
+        cone_temperature("20")
+    with pytest.raises(ValueError, match="not in the Orton table"):
+        cone_temperature("22", 150)
+
+
 def test_every_library_material_loads_with_increasing_k_points() -> None:
     for m in materials().values():
         k = m.k
         assert all(v > 0 for v in k.values)
-        assert m.max_service_temperature.check("[temperature]")
+        limit = m.max_service_temperature
+        assert limit is not None
+        assert limit.check("[temperature]")
 
 
 def test_front_loader_heat_loss_is_plausible() -> None:
@@ -34,6 +48,17 @@ def test_front_loader_heat_loss_is_plausible() -> None:
     assert 3 < total_kw < 9
     assert len(result.faces) == 6
     assert not [f for f in result.findings if f.level == "error"]
+
+
+def test_k_past_the_data_sheet_is_one_note_per_material_not_a_warning() -> None:
+    """JM 26's sheet stops at 1832 °F; at cone 10 that is normal, so it is a note."""
+    result = heat_loss(load_design(EXAMPLES / "electric-front-loader.yaml"))
+    past = [f for f in result.findings if "past its data sheet's points" in f.message]
+    jm26 = [f for f in past if "JM 26" in f.message]
+    assert len(jm26) == 1
+    assert "up to 2345 °F (data to 1832 °F)" in jm26[0].message
+    assert all(f.level == "info" for f in past)
+    assert not [f for f in result.findings if f.level == "warning"]
 
 
 def test_a_low_rated_brick_on_the_hot_face_is_an_error() -> None:

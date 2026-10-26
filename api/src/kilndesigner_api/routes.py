@@ -17,7 +17,12 @@ from sqlalchemy.orm import selectinload
 
 from kilndesigner import Kiln, dump_design, parse_design
 from kilndesigner.build import build_key, design_document
+from kilndesigner.castable import CastableError, ingredients, mix_analysis
+from kilndesigner.cones import cone_names, cone_rates
+from kilndesigner.gas import gas_data
+from kilndesigner.library import alloys, materials
 from kilndesigner.report import Report
+from kilndesigner.templates import templates
 from kilndesigner.units import UnitError
 from kilndesigner_api import db, schemas
 from kilndesigner_api.jobs import JobRunner
@@ -36,12 +41,14 @@ class InvalidDesignError(Exception):
 
 
 def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
-    """Validate a design, returning it with the YAML to store."""
+    """Validate a design, returning it with the YAML to store. A castable mix the engine can't
+    work out is refused here, with where it is, rather than failing its build later."""
     try:
         if body.source is not None:
-            return parse_design(body.source), body.source
-        kiln = Kiln.model_validate(body.document)
-        return kiln, dump_design(kiln)
+            kiln, source = parse_design(body.source), body.source
+        else:
+            kiln = Kiln.model_validate(body.document)
+            source = dump_design(kiln)
     except yaml.YAMLError as e:
         raise InvalidDesignError([schemas.Problem(loc=[], msg=f"not valid YAML: {e}")]) from e
     except ValidationError as e:
@@ -49,6 +56,25 @@ def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
         raise InvalidDesignError(problems) from e
     except UnitError as e:
         raise InvalidDesignError([schemas.Problem(loc=[], msg=str(e))]) from e
+    problems: list[schemas.Problem] = []
+    known = set(materials()) | {m.id for m in kiln.castables or []}
+    for face in ("walls", "floor", "roof", "door"):
+        for i, layer in enumerate(getattr(kiln.lining, face) or []):
+            if layer.material not in known:
+                problems.append(
+                    schemas.Problem(
+                        loc=["lining", face, i, "material"],
+                        msg=f"no material or castable called {layer.material!r}",
+                    )
+                )
+    for i, mix in enumerate(kiln.castables or []):
+        try:
+            mix_analysis(kiln, mix)
+        except CastableError as e:
+            problems.append(schemas.Problem(loc=["castables", i], msg=str(e)))
+    if problems:
+        raise InvalidDesignError(problems)
+    return kiln, source
 
 
 async def _session(request: Request) -> AsyncIterator[AsyncSession]:
@@ -129,6 +155,60 @@ async def health() -> dict[str, str]:
 async def design_schema() -> dict[str, Any]:
     """The design file's JSON Schema: the generated forms are built from it."""
     return Kiln.model_json_schema(by_alias=True)
+
+
+@router.get("/templates")
+async def list_templates() -> list[schemas.Template]:
+    """The kinds of kiln a design can start from, each a complete design."""
+    return [
+        schemas.Template(
+            id=t.id,
+            title=t.title,
+            description=t.description,
+            document=design_document(t.kiln),
+            source=t.source,
+        )
+        for t in templates()
+    ]
+
+
+@router.get("/library")
+async def library() -> schemas.Library:
+    """What the forms offer: the materials library, alloys, cones and burners."""
+    gas = gas_data()
+    burners = [
+        schemas.LibraryEntry(id=name, name=f"{name} (venturi)")
+        for name in gas["venturi_burners"]["models"]
+    ] + [
+        schemas.LibraryEntry(id=name, name=f"Ward {name} (power)")
+        for name in gas["power_burners"]["models"]
+    ]
+    return schemas.Library(
+        materials=[
+            schemas.LibraryMaterial(
+                id=m.id, name=m.name, kind=m.kind, max_service=m.max_service, density=m.density
+            )
+            for m in materials().values()
+        ],
+        ingredients=[
+            schemas.LibraryIngredient(
+                id=i.id, name=i.name, role=i.role, needs_density=i.density is None
+            )
+            for i in ingredients().values()
+        ],
+        alloys=[schemas.LibraryEntry(id=a.id, name=a.name) for a in alloys().values()],
+        cones=list(cone_names()),
+        cone_rates={c: list(cone_rates(c)) for c in cone_names()},
+        burners=burners,
+    )
+
+
+@router.post("/designs/check")
+async def check_design(body: schemas.DesignInput) -> schemas.CheckedDesign:
+    """Check a design without saving it, and return it as both a document and YAML: the form and
+    the YAML tab trade the design through here."""
+    kiln, source = read_design(body)
+    return schemas.CheckedDesign(document=design_document(kiln), source=source)
 
 
 @router.get("/designs")
