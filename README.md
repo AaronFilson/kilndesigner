@@ -30,6 +30,7 @@ docker compose up
 ```
 
 Then open http://localhost:8080. The first start builds the images, which takes a few minutes.
+It needs Docker Engine 25 or later.
 Designs are kept in Postgres and built files in the `data` volume, so both survive a restart.
 The app is reachable from this machine only, because there is no sign-in yet.
 
@@ -45,6 +46,15 @@ npm run dev
 ```
 
 Then open http://localhost:5173.
+
+### On a small machine
+
+On an older laptop the app can take more CPU and memory than the computer can spare. Copy
+`small-machine.env` to `.env` and adjust it: the worker then runs one build at a time, with its
+CPUs and memory capped. On a Mac with Colima, start Docker's VM with `scripts/colima.sh start`,
+which starts it at the size set there and at a low priority, and stop it with
+`scripts/colima.sh stop` when you're done: the VM gives its memory back to macOS only when it
+stops.
 
 ## What it does today
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 from functools import cache
 from pathlib import Path
 
+from pydantic import PositiveInt
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -19,6 +20,9 @@ class Settings(BaseSettings):
     """Where built files go: ``<data_dir>/builds/<build key>/``."""
     jobs: str = "arq"
     """``arq`` sends builds to the worker; ``inline`` runs them in the API process."""
+    worker_jobs: PositiveInt = 10
+    """How many builds the worker runs at once (10 is arq's default). Each one wants a CPU and a
+    few hundred MB, so a small machine should run one at a time."""
     cors_origins: list[str] = ["http://localhost:5173"]
 
 

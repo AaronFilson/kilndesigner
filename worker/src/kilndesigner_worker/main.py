@@ -30,6 +30,7 @@ class WorkerSettings:
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)
+    max_jobs = get_settings().worker_jobs
     job_timeout = 600
     """A build with plans takes seconds; a slow machine gets plenty of room."""
     keep_result = 0

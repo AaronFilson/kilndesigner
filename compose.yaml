@@ -6,6 +6,11 @@
 # Every port is published on this machine only (127.0.0.1). There is no sign-in yet (that
 # arrives with the hosted app, M5), so think before opening the web app to the network: change
 # its port to "8080:8080".
+#
+# On a small or old machine, copy small-machine.env to .env: the worker then runs one build at a
+# time, with its CPUs and memory capped. Its VM settings are for scripts/colima.sh.
+#
+# Needs Docker Engine 25 or later, for the health checks' start_interval.
 
 name: kilndesigner
 
@@ -15,11 +20,19 @@ name: kilndesigner
 x-server: &server
   image: kilndesigner-server
   pull_policy: never
-  environment:
+  environment: &server-env
     KILNDESIGNER_DATABASE_URL: postgresql+asyncpg://kilndesigner:kilndesigner@postgres:5432/kilndesigner
     KILNDESIGNER_REDIS_URL: redis://valkey:6379/0
   volumes: [data:/data]
   restart: unless-stopped
+
+# Each check starts a process in the container, so check every 2 s only while a service starts,
+# then every 30 s: on a slow machine, checking every 2 s for good is a steady load.
+x-health: &health
+  start_period: 60s
+  start_interval: 2s
+  interval: 30s
+  retries: 3
 
 services:
   postgres:
@@ -31,18 +44,18 @@ services:
     ports: ["127.0.0.1:5432:5432"]
     volumes: [postgres:/var/lib/postgresql]
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "kilndesigner"]
-      interval: 2s
-      retries: 30
+      <<: *health
+      # Over TCP, as the others connect: on its first start the image sets up the database on a
+      # server that listens on its socket only
+      test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-U", "kilndesigner"]
     restart: unless-stopped
 
   valkey:
     image: valkey/valkey:9-alpine
     ports: ["127.0.0.1:6379:6379"]
     healthcheck:
+      <<: *health
       test: ["CMD", "valkey-cli", "ping"]
-      interval: 2s
-      retries: 30
     restart: unless-stopped
 
   migrate:
@@ -60,17 +73,24 @@ services:
       migrate: { condition: service_completed_successfully }
       valkey: { condition: service_healthy }
     healthcheck:
+      <<: *health
       test:
         - CMD
         - python
         - -c
         - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health')
-      interval: 2s
-      retries: 60
+      start_period: 120s
 
   worker:
     <<: *server
     command: ["arq", "kilndesigner_worker.main.WorkerSettings"]
+    environment:
+      <<: *server-env
+      KILNDESIGNER_WORKER_JOBS: # passed on from .env when set there; otherwise the default
+    # A build takes all the CPU it can get, which the API and the database then wait for
+    # (ADR 0011). 0 is no cap.
+    cpus: ${KILNDESIGNER_WORKER_CPUS:-0}
+    mem_limit: ${KILNDESIGNER_WORKER_MEMORY:-0}
     depends_on:
       migrate: { condition: service_completed_successfully }
       valkey: { condition: service_healthy }
