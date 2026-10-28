@@ -7,6 +7,7 @@ import {
   type Burners,
   type Castable,
   type Electric,
+  fromMm,
   type Gas,
   joinQuantity,
   type KilnDocument,
@@ -19,6 +20,7 @@ import {
   portFrom,
   setIn,
   splitQuantity,
+  toMm,
   WALLS,
   type WallFace,
 } from "../design";
@@ -486,14 +488,20 @@ function PortSize({
 function Places({
   title,
   places,
+  least = 1,
+  fresh,
   onChange,
 }: {
   title: string;
   places: Place[];
+  /** How few there can be: a kiln needs a burner, but can do without spy holes. */
+  least?: number;
+  /** Where one added to an empty list goes; otherwise it starts where the last one is. */
+  fresh?: Place;
   onChange: (places: Place[]) => void;
 }) {
   const set = (i: number, place: Place) => onChange(places.map((p, j) => (j === i ? place : p)));
-  const last = places.at(-1);
+  const last = places.at(-1) ?? fresh;
   return (
     <div className="places" role="group" aria-label={`${title}s, where each goes`}>
       <ol>
@@ -521,7 +529,7 @@ function Places({
               type="button"
               className="secondary"
               aria-label={`Remove ${title.toLowerCase()} ${i + 1}`}
-              disabled={places.length === 1}
+              disabled={places.length <= least}
               onClick={() => onChange(places.filter((_, j) => j !== i))}
             >
               Remove
@@ -579,6 +587,10 @@ function Ports({
   const setSpy = (next: NonNullable<KilnDocument["spy_holes"]>) =>
     onChange(setIn(doc, ["spy_holes"], tidy(next)));
   const placedLater = "Each where it's placed (build first, or drag it in the 3D model)";
+  // A spy hole added to none goes up the middle of the door's wall, halfway up
+  const door = doc.loading?.face ?? "front";
+  const halfway = fromMm((toMm(doc.chamber.height) ?? 0) / 2, doc.units);
+  const freshSpy: Place = { wall: door, across: fromMm(0, doc.units), up: halfway };
   return (
     <Section title="Ports and spy holes">
       <p className="muted section-note">
@@ -655,9 +667,9 @@ function Ports({
           value={spy.places ? "placed" : "door"}
           options={[
             ["door", "Up the door"],
-            ["placed", built("spy") || spy.places ? "Each where it's placed" : placedLater],
+            ["placed", layout || spy.places ? "Each where it's placed" : placedLater],
           ]}
-          disabled={built("spy") || spy.places ? [] : ["placed"]}
+          disabled={layout || spy.places ? [] : ["placed"]}
           onChange={(v) => {
             if (v === "placed" && layout) {
               setSpy({ ...spy, count: undefined, places: placesFrom(layout, "spy") });
@@ -686,8 +698,14 @@ function Ports({
           seed={seed("spy")}
           onChange={(port) => setSpy({ ...spy, port })}
         />
-        {spy.places && spy.places.length > 0 && (
-          <Places title="Spy hole" places={spy.places} onChange={(places) => setSpy({ ...spy, places })} />
+        {spy.places && (
+          <Places
+            title="Spy hole"
+            places={spy.places}
+            least={0}
+            fresh={freshSpy}
+            onChange={(places) => setSpy({ ...spy, places })}
+          />
         )}
       </div>
     </Section>

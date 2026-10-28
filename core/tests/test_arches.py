@@ -66,6 +66,33 @@ def test_a_catenary_moved_out_stays_that_far_from_the_inside() -> None:
     assert _area(ring) == pytest.approx(4.5 * curve.length(2.25), rel=1e-3)
 
 
+def test_a_flat_catenary_meets_the_floor_and_its_layers_stay_parallel() -> None:
+    """40 wide and only 5 high. With a at the half span, 20 (cosh 1 − 1) = 10.9 high, so a is
+    longer than the half span; and the curve meets the floor at a slant, so a layer on it reaches
+    the floor further out than its thickness past the foot."""
+    curve = CatenaryCurve(40, 5)
+    assert curve.a > 20
+    assert curve.z(20) == pytest.approx(0, abs=1e-9)
+    assert curve.z(-20) == pytest.approx(0, abs=1e-9)
+    assert curve.z(0) == pytest.approx(5)
+    assert _area(curve.offset(0.0, 2000)) == pytest.approx(curve.area, rel=1e-5)
+    # The inside curve, carried on under the floor past its feet
+    xs = np.linspace(-40, 40, 80001)
+    inside = np.column_stack([xs, curve.z(0) + curve.a - curve.a * np.cosh(xs / curve.a)])
+
+    def distance(point: tuple[float, float]) -> float:
+        return float(np.min(np.hypot(inside[:, 0] - point[0], inside[:, 1] - point[1])))
+
+    layer = curve.offset(4.5, 40)
+    for point in layer[1:-1]:
+        assert distance(point) == pytest.approx(4.5, abs=1e-3)
+    half = curve.half_width(4.5)
+    assert half > 20 + 4.5
+    assert layer[0] == pytest.approx((-half, 0))
+    assert layer[-1] == pytest.approx((half, 0))
+    assert distance((half, 0.0)) == pytest.approx(4.5, abs=1e-3)
+
+
 def test_a_sail_dome_passes_through_the_four_corners() -> None:
     dome = SailDome(28, 48, 6)
     corner = math.hypot(14, 24)
@@ -145,6 +172,35 @@ def test_a_domes_parts_fill_the_lining_exactly() -> None:
         (np.arange(n) + 0.5) / n * out_w - out_w / 2, (np.arange(n) + 0.5) / n * out_d - out_d / 2
     )
     top = dome.centre + np.sqrt(np.maximum((dome.radius + shell) ** 2 - x * x - y * y, 0.0))
+    above = float(np.sum(np.maximum(top, 0.0))) * out_w * out_d / n / n
+    envelope = out_w * out_d * (36 + 7) * IN + above
+    chamber = 30 * IN * 36 * IN * 36 * IN + dome.volume
+    assert sum(p.volume for p in parts) == pytest.approx(envelope - chamber, rel=2e-3)
+
+
+def test_a_steep_dome_caps_only_the_wall_layers_under_its_sphere() -> None:
+    """A 23 in rise over 30 × 36 in: the sphere's radius is (549 + 23²) / (2 × 23) = 23.43 in,
+    549 in² being the half-diagonal squared. On walls of three 4½ in layers, the third starts
+    15 + 9 = 24 in out from the middle at the sides and 18 + 9 = 27 in at the ends: past the
+    sphere, so there's nothing above it to fill. The first two layers are under it."""
+    four_and_a_half = [
+        {"material": m, "thickness": "4.5 in"} for m in ("ifb-jm26", "ifb-k23", "ifb-k23")
+    ]
+    lining = {**_dome().lining.model_dump(mode="json"), "walls": four_and_a_half}
+    kiln = _changed(_dome(), roof={"type": "dome", "rise": "23 in"}, lining=lining)
+    dome = SailDome(30 * IN, 36 * IN, 23 * IN)
+    assert dome.radius == pytest.approx((549 + 23**2) / (2 * 23) * IN)
+    parts = lining_parts(kiln)
+    caps = {(p.wall, p.name.split("/")[1].split("-")[0]) for p in parts if p.cap}
+    assert caps == {(w, n) for w in ("left", "right", "back", "front") for n in ("1", "2")}
+    # The parts still fill the lining exactly: everything outside the chamber, up to the outer
+    # sphere (the roof's 5 in moved out), over the whole kiln
+    out_w, out_d = (30 + 27) * IN, (36 + 27) * IN
+    n = 800
+    x, y = np.meshgrid(
+        (np.arange(n) + 0.5) / n * out_w - out_w / 2, (np.arange(n) + 0.5) / n * out_d - out_d / 2
+    )
+    top = dome.centre + np.sqrt(np.maximum((dome.radius + 5 * IN) ** 2 - x * x - y * y, 0.0))
     above = float(np.sum(np.maximum(top, 0.0))) * out_w * out_d / n / n
     envelope = out_w * out_d * (36 + 7) * IN + above
     chamber = 30 * IN * 36 * IN * 36 * IN + dome.volume

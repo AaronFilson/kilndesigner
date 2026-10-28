@@ -27,6 +27,7 @@ dev = [
     # A second, independent implementation of the convection correlations, for the tests only
     "ht>=1.2",
     "httpx>=0.28",
+    "pytest-cov>=7",
 ]
 
 [tool.pytest.ini_options]
@@ -37,6 +38,15 @@ markers = [
     "db: needs Postgres (KILNDESIGNER_TEST_DATABASE_URL)",
     "compose: needs a running `docker compose up` (KILNDESIGNER_COMPOSE_URL)",
 ]
+
+[tool.coverage.run]
+branch = true
+source = ["kilndesigner", "kilndesigner_cli", "kilndesigner_api", "kilndesigner_worker"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 98
 
 [tool.ruff]
 line-length = 100

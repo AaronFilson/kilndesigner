@@ -311,6 +311,23 @@ select {
   font-size: 0.85em;
 }
 
+.viewer-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+.viewer-check input {
+  margin: 0;
+}
+
 .viewer-legend {
   position: absolute;
   top: 0.5rem;
@@ -560,9 +577,14 @@ select {
   background: var(--surface);
 }
 
+/* A section's heading is its card's title: inside the card (a floated legend isn't drawn on the
+   border) and plainly bigger than the subheadings within it */
 .form-section legend {
-  padding: 0 0.25rem;
-  font-weight: 600;
+  float: left;
+  grid-column: 1 / -1;
+  padding: 0;
+  font-size: 1.2em;
+  font-weight: 700;
 }
 
 .field {
@@ -634,10 +656,15 @@ select {
   border-top: 1px solid var(--border);
 }
 
+/* Small capitals in the muted colour, so a subheading never reads as a section's */
 .subgroup h3 {
   grid-column: 1 / -1;
   margin: 0;
-  font-size: 0.95em;
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .places {

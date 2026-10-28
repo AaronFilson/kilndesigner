@@ -7,7 +7,8 @@ from kilndesigner.cones import cone_temperature
 from kilndesigner.heatloss import heat_loss
 from kilndesigner.library import materials
 from kilndesigner.shape import Arch
-from kilndesigner.units import si
+from kilndesigner.thermal.surface import RA_SOURCE
+from kilndesigner.units import Q_, si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 
@@ -78,13 +79,27 @@ def test_more_insulation_loses_less_heat() -> None:
 
 
 def test_colder_air_loses_more_heat() -> None:
-    from kilndesigner.units import Q_
-
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     assert (
         heat_loss(kiln, ambient=Q_(20, "degF")).total_watts
         > heat_loss(kiln, ambient=Q_(90, "degF")).total_watts
     )
+
+
+def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
+    """Held 1 °F above its 70 °F air, the kiln's outside barely warms. The floor's Rayleigh number
+    falls below the 10⁵ that hot-face-down convection is checked from (thermal-properties.md §5),
+    so its loss is flagged; the walls (checked from 0.1) and roof (from 10⁴) are still covered."""
+    kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
+    result = heat_loss(kiln, inside=Q_(71, "degF"))
+    assert result.working[0].name == "Inside temperature"
+    assert result.working[0].value == "71 °F"
+    [warning] = [f for f in result.findings if f.level == "warning"]
+    assert warning.message.startswith("floor: the outside air's Rayleigh number is ")
+    assert "outside the 1e+05 to 1e+10 its convection correlation is checked for" in warning.message
+    assert warning.reference == RA_SOURCE
+    ra = float(warning.message.split("number is ")[1].split(",")[0])
+    assert 0 < ra < 1e5
 
 
 def test_arch_geometry() -> None:

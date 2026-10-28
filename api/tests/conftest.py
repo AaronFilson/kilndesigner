@@ -8,6 +8,7 @@ from pathlib import Path
 import httpx
 import pytest
 from sqlalchemy import text
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from kilndesigner_api import db
 from kilndesigner_api.jobs import InlineRunner
@@ -18,12 +19,18 @@ EXAMPLES = Path(__file__).parents[2] / "examples"
 
 
 @pytest.fixture
-async def runner(database_url: str, tmp_path: Path) -> AsyncIterator[InlineRunner]:
+async def sessions(database_url: str) -> AsyncIterator[async_sessionmaker[AsyncSession]]:
+    """Sessions on a test database emptied once per test, before any fixture adds rows."""
     engine = db.make_engine(database_url)
     async with engine.begin() as conn:
         await conn.execute(text("TRUNCATE design, design_version, build CASCADE"))
-    yield InlineRunner(db.make_sessions(engine), tmp_path)
+    yield db.make_sessions(engine)
     await engine.dispose()
+
+
+@pytest.fixture
+def runner(sessions: async_sessionmaker[AsyncSession], tmp_path: Path) -> InlineRunner:
+    return InlineRunner(sessions, tmp_path)
 
 
 @pytest.fixture
@@ -42,3 +49,24 @@ async def client(
 @pytest.fixture
 def example() -> str:
     return (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
+
+
+@pytest.fixture
+async def older_schema_key(sessions: async_sessionmaker[AsyncSession]) -> str:
+    """The build key of a version saved under an older schema. It no longer validates, so the app
+    keeps it as it is, and a build of it fails."""
+    key = "saved-under-schema-0"
+    name = "A kiln saved under an older schema"
+    async with sessions() as s:
+        s.add(
+            db.DesignVersion(
+                design=db.Design(name=name),
+                number=1,
+                schema_version=0,
+                document={"schema": 0, "name": name},
+                source="schema: 0\n",
+                build_key=key,
+            )
+        )
+        await s.commit()
+    return key

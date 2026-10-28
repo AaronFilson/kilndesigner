@@ -3,8 +3,8 @@
 // becomes a place in the design, to save and build; the engine checks it fits (ADR 0005: the
 // model is the engine's, so a moved port is only a marker until it's built).
 import { type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { type Group, Matrix4, Mesh, type Ray, Vector3 } from "three";
+import { useEffect, useRef, useState } from "react";
+import { type Group, Matrix4, Mesh, type Ray, Raycaster, Vector2, Vector3 } from "three";
 
 import {
   fromMm,
@@ -34,6 +34,11 @@ export interface Marker {
 }
 
 type Moving = { key: string; wall: WallFace; across: number; up: number };
+
+/** What a spy hole is called in this kiln ("Spy hole", or "Peephole" in an electric one). */
+export function spyWord(ports: Pick<Marker, "kind" | "title">[]): string {
+  return ports.find((p) => p.kind === "spy")?.title.replace(/\s*\d+$/, "") ?? "Spy hole";
+}
 
 const KIND_COLOURS: Record<PortKind, string> = {
   burner: "#e8833a",
@@ -84,29 +89,54 @@ export function markers(layout: Layout, doc: KilnDocument | null | undefined): M
   return found;
 }
 
+type Spot = { wall: WallFace; across: number; up: number };
+
+function placeAt(at: Spot, units: Layout["units"]): Place {
+  return { wall: at.wall, across: fromMm(at.across, units), up: fromMm(at.up, units) };
+}
+
+/** The design with the burners or the spy holes placed one by one, at ``places``. */
+function placing(doc: KilnDocument, kind: "burner" | "spy", places: Place[]): KilnDocument {
+  if (kind === "burner") {
+    const burners = { ...doc.heat.gas?.burners, places, count: undefined };
+    return setIn(doc, ["heat", "gas", "burners"], burners);
+  }
+  return setIn(doc, ["spy_holes"], { ...doc.spy_holes, places, count: undefined });
+}
+
 /** The design with one port moved: every port of its kind becomes a place, as they now are. */
 export function moved(
   doc: KilnDocument,
   all: Marker[],
   marker: Marker,
-  to: { wall: WallFace; across: number; up: number },
+  to: Spot,
   units: Layout["units"],
 ): KilnDocument {
   if (marker.kind === "flue") {
     const next = setIn(doc, ["draft", "flue_wall"], to.wall);
     return setIn(next, ["draft", "flue_across"], fromMm(to.across, units));
   }
-  const places: Place[] = all
+  const places = all
     .filter((m) => m.kind === marker.kind)
-    .map((m) => {
-      const at = m.key === marker.key ? to : m;
-      return { wall: at.wall, across: fromMm(at.across, units), up: fromMm(at.up, units) };
-    });
-  if (marker.kind === "burner") {
-    const burners = { ...doc.heat.gas?.burners, places, count: undefined };
-    return setIn(doc, ["heat", "gas", "burners"], burners);
-  }
-  return setIn(doc, ["spy_holes"], { ...doc.spy_holes, places, count: undefined });
+    .map((m) => placeAt(m.key === marker.key ? to : m, units));
+  return placing(doc, marker.kind, places);
+}
+
+/** The design with a spy hole added at ``to``: the others become places, as they now are. */
+export function added(doc: KilnDocument, all: Marker[], to: Spot, units: Layout["units"]): KilnDocument {
+  const places = all.filter((m) => m.kind === "spy").map((m) => placeAt(m, units));
+  return placing(doc, "spy", [...places, placeAt(to, units)]);
+}
+
+/** The design without one spy hole: the others become places, as they now are. */
+export function removed(
+  doc: KilnDocument,
+  all: Marker[],
+  marker: Marker,
+  units: Layout["units"],
+): KilnDocument {
+  const places = all.filter((m) => m.kind === "spy" && m.key !== marker.key).map((m) => placeAt(m, units));
+  return placing(doc, "spy", places);
 }
 
 /** How high a wall's inside reaches at ``across`` (mm), between the layout's samples. */
@@ -202,6 +232,7 @@ function MarkerMesh({
       position={centre}
       rotation={marker.round && sideways ? [0, 0, Math.PI / 2] : [0, 0, 0]}
       renderOrder={10}
+      userData={{ port: true }}
       raycast={facing || active ? Mesh.prototype.raycast : () => {}}
       onPointerDown={onDown}
       onPointerMove={onMove}
@@ -236,21 +267,76 @@ function MarkerMesh({
   );
 }
 
+/** A ray in the scene, in the markers' group: the model's millimetres, z up. */
+function inModel(group: Group, ray: Ray): Ray {
+  return ray.clone().applyMatrix4(new Matrix4().copy(group.matrixWorld).invert());
+}
+
 /** The markers, drawn in the model's own millimetres with z up, as the engine placed them. */
 export function PortMarkers({
   layout,
-  draft,
+  all,
+  picked,
+  adding,
   onDrop,
+  onPick,
+  onAdd,
   onHover,
 }: {
   layout: Layout;
-  draft: KilnDocument | null | undefined;
+  /** The markers, where the design (as edited) puts them: see ``markers``. */
+  all: Marker[];
+  /** The marker last pressed, shown lit, for the viewer to offer to remove. */
+  picked: string | null;
+  /** A click on a wall adds a spy hole there. */
+  adding: boolean;
   /** A marker was moved and let go: ``to`` is where, on which wall. */
-  onDrop: (marker: Marker, all: Marker[], to: { wall: WallFace; across: number; up: number }) => void;
+  onDrop: (marker: Marker, all: Marker[], to: Spot) => void;
+  onPick: (key: string) => void;
+  onAdd: (to: Spot) => void;
   onHover: (text: string | null) => void;
 }) {
   const controls = useThree((s) => s.controls) as { enabled: boolean } | null;
+  const gl = useThree((s) => s.gl);
+  const camera = useThree((s) => s.camera);
   const group = useRef<Group>(null);
+  const add = useRef(onAdd);
+  useEffect(() => {
+    add.current = onAdd;
+  });
+  // One added is the size of those built; a build with none gives no size, so none is added
+  const spy = layout.ports.find((p) => p.kind === "spy");
+  // The canvas's own pointer events, so a click anywhere on a wall counts, whatever part of the
+  // model is in front of it. Not a drag (that turns the model) nor a click on a marker (that
+  // picks it up).
+  useEffect(() => {
+    if (!adding || !spy) return;
+    const canvas = gl.domElement;
+    let from: { x: number; y: number } | null = null;
+    const press = (e: PointerEvent) => {
+      from = { x: e.clientX, y: e.clientY };
+    };
+    const release = (e: PointerEvent) => {
+      if (!from || !group.current || Math.hypot(e.clientX - from.x, e.clientY - from.y) > 4) return;
+      from = null;
+      const box = canvas.getBoundingClientRect();
+      const pointer = new Vector2(
+        ((e.clientX - box.left) / box.width) * 2 - 1,
+        -((e.clientY - box.top) / box.height) * 2 + 1,
+      );
+      const raycaster = new Raycaster();
+      raycaster.setFromCamera(pointer, camera);
+      if (raycaster.intersectObject(group.current, true).length > 0) return;
+      const hit = wallHit(layout, inModel(group.current, raycaster.ray), spy);
+      if (hit) add.current(hit);
+    };
+    canvas.addEventListener("pointerdown", press);
+    canvas.addEventListener("pointerup", release);
+    return () => {
+      canvas.removeEventListener("pointerdown", press);
+      canvas.removeEventListener("pointerup", release);
+    };
+  }, [adding, spy, gl, camera, layout]);
   // Which walls face the camera, checked each frame and kept only when it changes
   const [facing, setFacing] = useState<string>("");
   useFrame(({ camera }) => {
@@ -262,7 +348,6 @@ export function PortMarkers({
     }).join(" ");
     if (seen !== facing) setFacing(seen);
   });
-  const all = useMemo(() => markers(layout, draft), [layout, draft]);
   const [drag, setDrag] = useState<Moving | null>(null);
   // A marker dropped stays where it was dropped until the design it was dropped into comes back
   const [dropped, setDropped] = useState<Moving | null>(null);
@@ -273,11 +358,8 @@ export function PortMarkers({
   const describe = (m: Marker) => {
     const at = (mm: number) => fromMm(mm, layout.units);
     const where = `${at(m.across)} across and ${at(m.up)} up the ${m.wall} wall`;
-    return `${m.title}: ${where}${m.cut ? "" : " (it didn't fit, so it isn't cut)"}. Drag it to move it.`;
-  };
-  const toModel = (ray: Ray) => {
-    const inverse = new Matrix4().copy(group.current!.matrixWorld).invert();
-    return ray.clone().applyMatrix4(inverse);
+    const how = m.kind === "spy" ? "Drag it to move it, or click it to remove it." : "Drag it to move it.";
+    return `${m.title}: ${where}${m.cut ? "" : " (it didn't fit, so it isn't cut)"}. ${how}`;
   };
 
   return (
@@ -287,7 +369,7 @@ export function PortMarkers({
           key={m.key}
           layout={layout}
           marker={m}
-          active={drag?.key === m.key}
+          active={drag?.key === m.key || picked === m.key}
           facing={facing.split(" ").includes(m.wall)}
           onHover={(hovered) => onHover(hovered ? describe(hovered) : null)}
           onDown={(e) => {
@@ -295,11 +377,12 @@ export function PortMarkers({
             (e.target as Element).setPointerCapture(e.pointerId);
             if (controls) controls.enabled = false;
             setDrag({ key: m.key, wall: m.wall, across: m.across, up: m.up });
+            onPick(m.key);
           }}
           onMove={(e) => {
-            if (drag?.key !== m.key) return;
+            if (drag?.key !== m.key || !group.current) return;
             e.stopPropagation();
-            const hit = wallHit(layout, toModel(e.ray), m);
+            const hit = wallHit(layout, inModel(group.current, e.ray), m);
             if (hit) {
               setDrag({ key: m.key, ...hit });
               onHover(describe({ ...m, ...hit }));

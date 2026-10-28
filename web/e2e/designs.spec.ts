@@ -186,6 +186,59 @@ test("the model is seen from each side, cut in half, and its parts named", async
     await expect(status).toContainText(/(layer \d from the inside|Element \d)/, { timeout: 1000 });
   }).toPass();
   await expect(status).not.toContainText("/"); // the title, not the part's id
+
+  // As a wireframe, only the parts' outlines are drawn, and a part can still be clicked and named
+  await button("Wireframe").click();
+  await expect(button("Wireframe")).toHaveAttribute("aria-pressed", "true");
+  await page.mouse.click(box.x + 8, box.y + box.height / 2); // the background lets go of the part
+  await expect(status).toContainText("Drag to turn");
+  await expect(async () => {
+    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(status).toContainText(/(layer \d from the inside|Element \d)/, { timeout: 1000 });
+  }).toPass();
+});
+
+test("a peephole is added on the model where it's clicked, and taken out again", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const id = await saved(request, cleanup, design("E2E peepholes"), { built: true });
+  await page.goto(`/designs/${id}`);
+  const viewer = page.getByLabel("3D model of the kiln");
+  const canvas = viewer.locator("canvas");
+  await expect(canvas).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await viewer.getByRole("button", { name: "Front", exact: true }).click();
+  await viewer.getByRole("button", { name: "Move ports" }).click();
+  await viewer.getByLabel("Stop turning").check();
+  // The camera has come round to the front once the picture stops changing
+  let seen: Buffer = Buffer.alloc(0);
+  await expect
+    .poll(async () => {
+      const now = await canvas.screenshot();
+      const still = now.equals(seen);
+      seen = now;
+      return still;
+    })
+    .toBe(true);
+  const box = await viewer.boundingBox();
+  if (!box) throw new Error("no viewer");
+  const form = page.getByRole("form", { name: "Design" });
+  const rows = form.getByRole("button", { name: /^Remove spy hole \d+$/ });
+
+  // Clicked on the front, beside the three up the door: a fourth goes there, and all are placed
+  await viewer.getByRole("button", { name: "Add a peephole" }).click();
+  const at = { x: box.x + box.width * 0.4, y: box.y + box.height * 0.45 };
+  await page.mouse.click(at.x, at.y);
+  await expect(form.getByLabel("Spy holes go")).toHaveValue("placed");
+  await expect(rows).toHaveCount(4);
+  await expect(form.getByLabel("Spy hole 4, wall")).toHaveValue("front");
+
+  // Clicked again, it's picked, and taken out
+  await page.mouse.click(at.x, at.y);
+  await viewer.getByRole("button", { name: "Remove peephole 4" }).click();
+  await expect(rows).toHaveCount(3);
 });
 
 const gasExample = readFileSync(
@@ -341,6 +394,7 @@ test("a burner port dragged on the model is placed there, saved and built there"
   await page.waitForLoadState("networkidle");
   await viewer.getByRole("button", { name: "Front", exact: true }).click();
   await viewer.getByRole("button", { name: "Move ports" }).click();
+  await viewer.getByLabel("Stop turning").check();
 
   // The markers are drawn in the model: find burner port 1 by pointing at it
   const box = await viewer.boundingBox();
@@ -356,6 +410,21 @@ test("a burner port dragged on the model is placed there, saved and built there"
     }
   }
   expect(at, "burner port 1's marker").not.toBeNull();
+
+  // With turning stopped, a drag that misses every port leaves the model as it was
+  const model = () =>
+    viewer.locator("canvas").screenshot({
+      mask: [viewer.getByRole("toolbar"), status, viewer.locator(".viewer-legend")],
+    });
+  const off = { x: box.x + box.width * 0.1, y: box.y + box.height * 0.5 };
+  await page.mouse.move(off.x, off.y); // off the ports first, so the status is the same after
+  const before = await model();
+  await page.mouse.down();
+  for (let i = 1; i <= 8; i++) await page.mouse.move(off.x + i * 12, off.y);
+  await page.mouse.up();
+  expect((await model()).equals(before), "the model didn't turn").toBe(true);
+
+  await page.mouse.move(at!.x, at!.y);
   await page.mouse.down();
   for (let i = 1; i <= 8; i++) await page.mouse.move(at!.x + i * 4, at!.y - i * 4);
   await page.mouse.up();

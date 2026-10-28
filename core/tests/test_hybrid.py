@@ -53,6 +53,76 @@ def test_cheap_propane_moves_the_crossover() -> None:
     assert any("for control" in f.message for f in analysis.findings)
 
 
+PNW_TEXT = PNW.read_text(encoding="utf-8")
+
+
+def test_a_hybrid_needs_elements_and_burners() -> None:
+    with pytest.raises(ValueError, match="a hybrid needs both elements and burners"):
+        analyse_hybrid(load_design(EXAMPLES / "gas-crossdraft.yaml"), 11_520)
+
+
+def test_a_hybrid_needs_both_prices() -> None:
+    kiln = parse_design(PNW_TEXT.replace("  electricity_price: 0.12 USD/kWh\n", ""))
+    with pytest.raises(ValueError, match="give the site's electricity_price and propane_price"):
+        analyse_hybrid(kiln, 11_520)
+
+
+def test_elements_that_can_hold_the_top_temperature_have_no_ceiling_below_it() -> None:
+    kiln = load_design(PNW)
+    loss_at_top = heat_loss(kiln).total_watts
+    analysis = analyse_hybrid(kiln, loss_at_top + 1000)
+    assert analysis.electric_ceiling == (
+        "the top temperature (2345 °F); the elements could fire it alone"
+    )
+    assert analysis.electric_ceiling_c == pytest.approx(1285)  # cone 10 at 60 °C/h
+    assert analysis.switch_over_reason == "as set in the design"
+
+
+def test_oxidation_firing_with_no_set_switch_hands_over_at_the_ceiling() -> None:
+    """With no reduction and no off_above, the only limit is the electric ceiling. At $0.12/kWh
+    and $3.50/gal electricity is the cheaper useful heat everywhere, and the analysis says so."""
+    text = PNW_TEXT.replace("reduction: true", "reduction: false").replace(
+        "    off_above: 1650 degF\n", ""
+    )
+    analysis = analyse_hybrid(parse_design(text), 11_520)
+    assert analysis.switch_over == analysis.electric_ceiling
+    assert analysis.switch_over_reason == "the elements can't raise the kiln any further above it"
+    assert all(p.propane_reducing_per_kwh is None for p in analysis.points)
+    assert all(p.propane_per_kwh > p.electric_per_kwh for p in analysis.points)
+    assert analysis.cost_crossover is None
+    cheaper = next(s for s in analysis.working if s.name == "Cheaper heat")
+    assert cheaper.value == "electricity, at every temperature in the firing"
+    switch = next(s for s in analysis.working if s.name == "Switch-over")
+    assert switch.reference is None  # no reduction, so the reduction source doesn't apply
+    advice = "electricity is the cheaper heat at every temperature"
+    assert any(advice in f.message for f in analysis.findings)
+
+
+def test_elements_left_on_into_reduction_are_a_warning() -> None:
+    """Reduction from about 900 °C (1652 °F) [S66]; Kanthal allows A-1 and APM only 1050 °C
+    (1922 °F) in CO- and H₂-rich gas [S9]. Elements set to stay on to 1900 °F hand over at the
+    start of reduction instead, with a warning."""
+    text = PNW_TEXT.replace("off_above: 1650 degF", "off_above: 1900 degF")
+    analysis = analyse_hybrid(parse_design(text), 11_520)
+    assert analysis.switch_over_c == pytest.approx(900)
+    assert analysis.switch_over == "1652 °F"
+    assert analysis.switch_over_reason == "reduction starts about here and attacks the elements"
+    [warning] = [f for f in analysis.findings if f.level == "warning"]
+    assert warning.message.startswith("The elements stay on to 1900 °F, past the start of")
+    assert "Kanthal allows A-1 and APM only 1922 °F" in warning.message
+
+
+def test_dear_electricity_makes_propane_the_cheaper_heat_throughout() -> None:
+    """At $0.40/kWh, propane at $3.50/gal is cheaper per useful kWh even at the top: there is no
+    crossover, and the hand-over stays where the design sets it."""
+    text = PNW_TEXT.replace("0.12 USD/kWh", "0.40 USD/kWh")
+    analysis = analyse_hybrid(parse_design(text), 11_520)
+    assert analysis.cost_crossover is None
+    assert all(p.electric_per_kwh == pytest.approx(0.40) for p in analysis.points)
+    assert all(p.propane_per_kwh < 0.40 for p in analysis.points)
+    assert analysis.switch_over_reason == "as set in the design"
+
+
 def test_propane_cost_per_kwh_units() -> None:
     # 26.82 kWh/gal of HHV; at 25 °C and λ 1 about 93% of it is available
     assert propane_cost_per_kwh(2.682, 298.15, 1.0) == pytest.approx(0.1 / 0.929, rel=0.01)

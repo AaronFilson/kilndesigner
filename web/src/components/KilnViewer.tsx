@@ -4,7 +4,7 @@
 import { Bounds, OrbitControls, useBounds } from "@react-three/drei";
 import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { useQuery } from "@tanstack/react-query";
-import { Component, type ReactNode, useEffect, useState } from "react";
+import { Component, type ReactNode, useEffect, useMemo, useState } from "react";
 import {
   BufferGeometry,
   Color,
@@ -23,7 +23,7 @@ import { mergeGeometries, mergeVertices } from "three/addons/utils/BufferGeometr
 
 import type { KilnDocument, Layout } from "../design";
 import { colourOf, loadLook, palette, PALETTES, type PaletteId, saveLook, type ViewerLook } from "../palettes";
-import { moved, PortMarkers } from "./PortMarkers";
+import { added, markers, moved, PortMarkers, removed, spyWord } from "./PortMarkers";
 
 /** What a part of the model is: from the build's parts.json, by the part's name. */
 export interface PartInfo {
@@ -155,6 +155,29 @@ function meshes(scene: Group): Mesh[] {
 
 type Outline = LineSegments<EdgesGeometry, LineBasicMaterial>;
 
+const PICKED_LINE = "#e8833a";
+
+/**
+ * The page's text colour, which stands out against the viewer's background in either theme: a
+ * wireframe's lines have no faces behind them. Read again when the theme changes.
+ */
+function useInk(): string {
+  const read = () => getComputedStyle(document.documentElement).getPropertyValue("--text").trim();
+  const [ink, setInk] = useState(read);
+  useEffect(() => {
+    const update = () => setInk(read());
+    const themed = new MutationObserver(update);
+    themed.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const dark = matchMedia("(prefers-color-scheme: dark)");
+    dark.addEventListener("change", update);
+    return () => {
+      themed.disconnect();
+      dark.removeEventListener("change", update);
+    };
+  }, []);
+  return ink;
+}
+
 /** The node that carries a part's name: the mesh, or the group of its primitives. */
 function partNode(object: Object3D): Object3D {
   for (let o: Object3D | null = object; o; o = o.parent) {
@@ -198,6 +221,9 @@ function Model({
   parts,
   look,
   cut,
+  wire,
+  ink,
+  faintBurners,
   selected,
   onSelect,
 }: {
@@ -205,11 +231,19 @@ function Model({
   parts: Record<string, PartInfo>;
   look: ViewerLook;
   cut: boolean;
+  /** Only the parts' outlines, seen through: a skeleton of the kiln, drawn in ``ink``. */
+  wire: boolean;
+  ink: string;
+  /** While ports are moved: a burner stands in front of its port, and stays where it was built
+   * until the design is built again, so it's drawn faint and the port is what's picked up. */
+  faintBurners: boolean;
   selected: string | null;
   onSelect: (name: string) => void;
 }) {
   useEffect(() => {
-    const edges = palette(look.palette).edges;
+    const { edges: onFaces, background } = palette(look.palette);
+    // A palette with its own background has edges to suit it; otherwise the theme's text colour
+    const edges = wire && !background ? ink : onFaces;
     for (const mesh of meshes(scene)) {
       const material = mesh.material as MeshStandardMaterial;
       const name = partName(mesh);
@@ -218,17 +252,28 @@ function Model({
       const colour = colourOf(look, parts[name]?.kind);
       if (colour) material.color.set(colour);
       else if (mesh.userData.builtColour instanceof Color) material.color.copy(mesh.userData.builtColour);
+      const faint = faintBurners && name.startsWith("burner/");
+      if (material.transparent !== faint) {
+        material.transparent = faint;
+        material.depthWrite = !faint;
+        material.needsUpdate = true;
+      }
+      material.opacity = faint ? 0.25 : 1;
+      material.visible = !wire; // hidden faces can still be clicked
     }
-    if (look.edges || scene.userData.outlines) {
+    if (look.edges || wire || scene.userData.outlines) {
       for (const lines of outlines(scene)) {
-        lines.visible = look.edges;
-        lines.material.color.set(edges);
+        lines.visible = look.edges || wire;
+        // With no faces to light up, the part picked is picked out by its outline
+        lines.material.color.set(wire && partName(lines) === selected ? PICKED_LINE : edges);
         lines.material.clippingPlanes = cut ? [CUT] : [];
       }
     }
-  }, [scene, parts, look, cut, selected]);
+  }, [scene, parts, look, cut, wire, ink, faintBurners, selected]);
 
   const pick = (event: ThreeEvent<MouseEvent>) => {
+    // A click on a port's marker is the marker's, even where a part (a burner) stands in front
+    if (event.intersections.some((i) => i.object.userData.port === true)) return;
     event.stopPropagation();
     // A cut hides the front half but doesn't stop it being hit: take the first part showing.
     const hit = event.intersections.find((i) => !cut || CUT.distanceToPoint(i.point) >= 0);
@@ -258,11 +303,23 @@ export function KilnViewer({
   const parts = useParts(partsUrl);
   const [view, setView] = useState<View>("3d");
   const [cut, setCut] = useState(false);
+  const [wire, setWire] = useState(false);
+  const ink = useInk();
   const [selected, setSelected] = useState<string | null>(null);
   const [look, setLook] = useState<ViewerLook>(loadLook);
   const [moving, setMoving] = useState(false);
+  // While moving ports: a drag that misses a port doesn't turn the model (it can still zoom)
+  const [still, setStill] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
+  // The marker last pressed, which can be removed if it's a spy hole; and adding a spy hole
+  const [picked, setPicked] = useState<string | null>(null);
+  const [adding, setAdding] = useState(false);
   const movable = layout !== undefined && onEdit !== undefined && layout.ports.length > 0;
+  const all = useMemo(() => (layout ? markers(layout, draft) : []), [layout, draft]);
+  const pickedSpy = all.find((m) => m.key === picked && m.kind === "spy");
+  const spy = spyWord(layout?.ports ?? []).toLowerCase();
+  // A spy hole added is the size of those built
+  const canAdd = layout?.ports.some((p) => p.kind === "spy") ?? false;
   const info = selected ? parts.data?.[selected] : undefined;
   const changeLook = (next: ViewerLook) => {
     setLook(next);
@@ -285,7 +342,10 @@ export function KilnViewer({
           onCreated={({ gl }) => {
             gl.localClippingEnabled = true;
           }}
-          onPointerMissed={() => setSelected(null)}
+          onPointerMissed={() => {
+            setSelected(null);
+            setPicked(null);
+          }}
         >
           <hemisphereLight args={["#ffffff", "#8a8070", 1.4]} />
           <directionalLight position={[5, 10, 7]} intensity={1.6} />
@@ -297,8 +357,12 @@ export function KilnViewer({
                 parts={parts.data ?? NO_PARTS}
                 look={look}
                 cut={cut}
+                wire={wire}
+                ink={ink}
+                faintBurners={movable && moving}
                 selected={selected}
-                onSelect={setSelected}
+                // While ports are moved, a click on the model lets go of the marker picked
+                onSelect={(name) => (moving ? setPicked(null) : setSelected(name))}
               />
               <Aim view={view} />
             </Bounds>
@@ -306,14 +370,22 @@ export function KilnViewer({
           {model.data && movable && moving && (
             <PortMarkers
               layout={layout}
-              draft={draft}
+              all={all}
+              picked={picked}
+              adding={adding}
               onHover={setHovered}
+              onPick={setPicked}
               onDrop={(marker, all, to) =>
                 onEdit((doc) => moved(doc, all, marker, to, layout.units))
               }
+              onAdd={(to) => {
+                onEdit((doc) => added(doc, all, to, layout.units));
+                setAdding(false);
+              }}
             />
           )}
-          <OrbitControls makeDefault />
+          {/* Zooms toward what's under the pointer, so a port a few pixels across can be zoomed to */}
+          <OrbitControls makeDefault zoomToCursor enableRotate={!(movable && moving && still)} />
         </Canvas>
       </CanvasBoundary>
       <div className="viewer-tools" role="toolbar" aria-label="View">
@@ -344,6 +416,14 @@ export function KilnViewer({
         >
           Outlines
         </button>
+        <button
+          type="button"
+          aria-pressed={wire}
+          className={wire ? "active" : undefined}
+          onClick={() => setWire(!wire)}
+        >
+          Wireframe
+        </button>
         {movable && (
           <button
             type="button"
@@ -352,10 +432,45 @@ export function KilnViewer({
             onClick={() => {
               setMoving(!moving);
               setHovered(null);
+              setSelected(null);
+              setPicked(null);
+              setAdding(false);
             }}
           >
             Move ports
           </button>
+        )}
+        {movable && moving && (
+          <>
+            <label className="viewer-check">
+              <input type="checkbox" checked={still} onChange={(e) => setStill(e.target.checked)} />
+              Stop turning
+            </label>
+            <button
+              type="button"
+              aria-pressed={adding}
+              className={adding ? "active" : undefined}
+              disabled={!canAdd}
+              title={canAdd ? undefined : `Build with a ${spy} first: one added is the size of those built`}
+              onClick={() => {
+                setAdding(!adding);
+                setPicked(null);
+              }}
+            >
+              Add a {spy}
+            </button>
+            {pickedSpy && (
+              <button
+                type="button"
+                onClick={() => {
+                  onEdit((doc) => removed(doc, all, pickedSpy, layout.units));
+                  setPicked(null);
+                }}
+              >
+                Remove {pickedSpy.title.toLowerCase()}
+              </button>
+            )}
+          </>
         )}
         <select
           aria-label="Model colours"
@@ -395,12 +510,15 @@ export function KilnViewer({
         </div>
       )}
       <p className="viewer-info" role="status">
-        {moving && hovered ? (
+        {adding ? (
+          <span>Click the wall where the new {spy} goes.</span>
+        ) : moving && hovered ? (
           <span>{hovered}</span>
         ) : moving ? (
           <span className="muted">
-            Drag a port (orange: burners, blue: spy holes, grey: the flue) across its wall or onto
-            another, then save and build. Red ones didn't fit.
+            Drag a port across its wall or onto another, then save and build: orange is a
+            burner's (the burner is faint), blue a spy hole, grey the flue, red didn't fit. Scroll
+            over a port to zoom to it.
           </span>
         ) : selected ? (
           <>

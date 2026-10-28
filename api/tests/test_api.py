@@ -10,6 +10,8 @@ from kilndesigner_api.tasks import refresh_build_keys
 
 pytestmark = [pytest.mark.anyio, pytest.mark.db]
 
+EXAMPLES = Path(__file__).parents[2] / "examples"
+
 
 async def test_a_saved_design_comes_back_as_written(
     client: httpx.AsyncClient, example: str
@@ -179,3 +181,100 @@ async def test_checking_a_design_turns_it_either_way(
     bad = await client.post("/api/designs/check", json={"document": {"name": "x"}})
     assert bad.status_code == 422
     assert (await client.get("/api/designs")).json() == []  # nothing was saved
+
+
+async def test_the_api_answers_a_health_check(client: httpx.AsyncClient) -> None:
+    response = await client.get("/api/health")
+    assert response.status_code == 200
+    assert response.json() == {"status": "ok"}
+
+
+async def test_the_design_schema_uses_the_names_the_file_uses(client: httpx.AsyncClient) -> None:
+    schema = (await client.get("/api/schema")).json()
+    assert schema["title"] == "Kiln"
+    assert "schema" in schema["properties"]  # the file's name for schema_version
+    assert "schema_version" not in schema["properties"]
+    assert {"name", "firing", "chamber", "lining", "heat"} <= set(schema["required"])
+
+
+async def test_a_design_comes_as_yaml_or_as_json_but_not_both(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    for body in ({}, {"source": example, "document": {"name": "x"}}):
+        response = await client.post("/api/designs/check", json=body)
+        assert response.status_code == 422
+        assert "send either `source` (YAML) or `document` (JSON)" in response.text
+    assert (await client.get("/api/designs")).json() == []
+
+
+async def test_a_lining_material_the_library_lacks_is_refused_with_where_it_is(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    source = example.replace("kaowool-blanket-8pcf", "mystery-wool", 1).replace(
+        "ifb-k23", "unobtainium"
+    )
+    response = await client.post("/api/designs", json={"source": source})
+    assert response.status_code == 422
+    assert response.json()["detail"] == [
+        {
+            "loc": ["lining", "walls", 1, "material"],
+            "msg": "no material or castable called 'mystery-wool'",
+        },
+        {
+            "loc": ["lining", "floor", 1, "material"],
+            "msg": "no material or castable called 'unobtainium'",
+        },
+    ]
+    assert (await client.get("/api/designs")).json() == []
+
+
+async def test_a_lining_can_be_cast_from_the_designs_own_mixes(client: httpx.AsyncClient) -> None:
+    source = (EXAMPLES / "diy-castable-test-kiln.yaml").read_text(encoding="utf-8")
+    response = await client.post("/api/designs", json={"source": source})
+    assert response.status_code == 201, response.text
+    document = response.json()["latest"]["document"]
+    assert [m["id"] for m in document["castables"]] == ["diy-hot-face", "diy-backup"]
+    assert document["lining"]["walls"][0]["material"] == "diy-hot-face"
+
+
+async def test_a_castable_mix_the_engine_cannot_work_out_is_refused_with_which_one(
+    client: httpx.AsyncClient,
+) -> None:
+    source = (EXAMPLES / "diy-castable-test-kiln.yaml").read_text(encoding="utf-8")
+    source = source.replace("ingredient: kyanite", "ingredient: unobtainium", 1)
+    response = await client.post("/api/designs", json={"source": source})
+    assert response.status_code == 422
+    [problem] = response.json()["detail"]
+    assert problem["loc"] == ["castables", 0]
+    assert problem["msg"].startswith("diy-hot-face: no ingredient 'unobtainium'")
+
+
+async def test_a_version_that_was_never_saved_is_not_found(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    design = (await client.post("/api/designs", json={"source": example})).json()
+    missing = await client.get(f"/api/designs/{design['id']}/versions/2")
+    assert missing.status_code == 404
+    assert missing.json() == {"detail": "no such version"}
+
+
+async def test_a_failed_build_says_why_and_can_be_queued_again(
+    client: httpx.AsyncClient, runner: InlineRunner, older_schema_key: str, tmp_path: Path
+) -> None:
+    key = older_schema_key
+    queued = await client.post(f"/api/builds/{key}")
+    assert queued.status_code == 202, queued.text
+    assert queued.json()["status"] == "queued"
+    await runner.wait()
+
+    failed = (await client.get(f"/api/builds/{key}")).json()
+    assert failed["status"] == "failed"
+    assert "validation errors for Kiln" in failed["error"]
+    assert failed["finished_at"] is not None
+    assert list((tmp_path / "builds").iterdir()) == []  # nothing half-written is left behind
+    assert (await client.get(f"/api/builds/{key}/report")).status_code == 404
+
+    again = (await client.post(f"/api/builds/{key}")).json()
+    assert (again["status"], again["error"], again["finished_at"]) == ("queued", None, None)
+    await runner.wait()
+    assert (await client.get(f"/api/builds/{key}")).json()["status"] == "failed"

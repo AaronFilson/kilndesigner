@@ -104,3 +104,84 @@ def test_the_cold_thrust_formula_reproduces_harbisonwalkers_table() -> None:
     consts = steel_data()["arch_constants"]
     for d, factor in zip(consts["d"], consts["h_factor"], strict=True):
         assert cold_thrust_factor(12.0, d) == pytest.approx(factor, rel=0.007)
+
+
+def _gas_crossdraft(roof: dict[str, str]) -> Kiln:
+    """The gas cross-draft (28 × 48 × 40 in inside; 8 in walls, a 7 in floor, a 5 in roof) with
+    another roof."""
+    document = load_design(EXAMPLES / "gas-crossdraft.yaml").model_dump(mode="json", by_alias=True)
+    return Kiln.model_validate({**document, "roof": roof})
+
+
+def test_a_flat_roofed_gas_kiln_gets_merrills_angle_frame() -> None:
+    """Merrill's flat-top: 2 × 2 × 3/16 roof angle and ⅜ in rods "4 inches longer than the width
+    of the kiln" (kiln-hardware.md §4.2 [S16]). Outside, the kiln is 28 + 2 × 8 = 44 in wide and
+    7 + 40 + 5 = 52 in tall; the rods cross the 44 in and both 2 in angle legs, plus 4 in."""
+    frame = design_frame(_gas_crossdraft({"type": "flat"}))
+    assert (frame.kind, frame.angle, frame.rod) == ("angle frame", "L2×2×3/16", "3/8-16")
+    assert (frame.angle_leg_in, frame.angle_t_in, frame.rod_d_in) == (2, 0.1875, 0.375)
+    assert frame.thrust is None  # a flat roof pushes nothing out
+    assert frame.findings == []
+    members = {m.part: m for m in frame.members}
+    assert set(members) == {"corner posts", "roof angle, all four sides", "tie rods"}
+    assert (members["corner posts"].count, members["corner posts"].length_in) == (4, 52)
+    assert (members["tie rods"].count, members["tie rods"].length_in) == (2, 44 + 2 * 2 + 4)
+    merrill = "Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]"
+    assert {m.source for m in frame.members} == {merrill}
+
+
+@pytest.mark.parametrize("rise", ["16 in", "-3 in"])
+def test_an_arch_that_isnt_a_segment_is_refused_its_thrust(rise: str) -> None:
+    """A segmental arch rises more than nothing and less than half its span; outside that,
+    HarbisonWalker's method doesn't apply, so no thrust is given and nothing is sized by it."""
+    frame = design_frame(_gas_crossdraft({"type": "sprung_arch", "rise": rise}))
+    [error] = [f for f in frame.findings if f.level == "error"]
+    assert error.message == (
+        f"The arch's rise of {float(rise.split()[0]):.2f} in must be above 0 and below half the "
+        "28.0 in span for a segmental arch, so the frame can't be checked."
+    )
+    assert frame.thrust is None
+    names = [s.name for s in frame.working]
+    assert names == ["Smallest frame angle", "Arch weight per foot of length"]
+    # The bricked door's smallest angle, from Pitelka, and builders' ½ in rods, unchecked
+    assert (frame.angle, frame.rod) == ("L3×3×3/16", "1/2-13")
+    assert not any("Weld the frame" in f.message for f in frame.findings)
+    assert {m.part for m in frame.members} >= {"corner posts", "buttresses behind the skewbacks"}
+
+
+def test_an_arch_too_heavy_for_any_angle_or_rod_says_so() -> None:
+    """A 9 in hard-brick arch over 120 in, 72 in long inside (90 in outside). The thrust passes
+    what the largest angle, L4×4×3/8 (Sx 1.50 in³, AISC), carries between the corner posts, and
+    what a ¾ in rod's 0.334 in² carries at HarbisonWalker's 12,000 psi."""
+    hard = [{"material": "hard-firebrick-kx99", "thickness": "9 in"}]
+    kiln = Kiln.model_validate(
+        {
+            "name": "big hard arch",
+            "firing": {"cone": "10"},
+            "chamber": {"width": "120 in", "depth": "72 in", "height": "60 in"},
+            "roof": {"type": "sprung_arch", "rise": "16 in"},
+            "lining": {"walls": hard, "floor": hard, "roof": hard},
+            "heat": {"gas": {"supply": {"type": "cylinders", "count": 4}}},
+        }
+    )
+    frame = design_frame(kiln)
+    assert [f.message for f in frame.findings if f.level == "error"] == [
+        "No angle up to L4×4×3/8 carries the arch's thrust over 90 in between the corner posts. "
+        "Add posts along the side walls.",
+        "No rod up to ¾ in carries the arch's thrust.",
+    ]
+    assert frame.thrust is not None
+    thrust = float(frame.thrust.split()[0])  # lb per foot of arch
+    # Bending: M = wL²/8 over the 90 in, against 12,000 psi
+    needed = thrust / 12 * 90**2 / 8 / 12000
+    assert needed > 1.50
+    bending = _value(frame, "Buttress angle, bending")
+    assert float(bending.split("≥ ")[1].split()[0]) == pytest.approx(needed, rel=1e-3)
+    # The rods: half the thrust on the 90 in (7.5 ft) each, on 0.334 in²
+    rods = _value(frame, "Tie rods, one at the front and one at the back")
+    psi = float(rods.split(": ")[1].split()[0].replace(",", ""))
+    assert psi == pytest.approx(thrust * 7.5 / 2 / 0.334, rel=1e-3)
+    assert psi > 12000
+    assert frame.rod == "3/4-10"
+    assert frame.angle == "L3×3×3/16"  # nothing passed, so the smallest stands
+    assert not any("Weld the frame" in f.message for f in frame.findings)

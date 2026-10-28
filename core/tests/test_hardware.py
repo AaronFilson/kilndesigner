@@ -125,10 +125,10 @@ def test_a_car_kiln_has_a_car() -> None:
     assert any("not sized" in f.message for f in hw.findings)
 
 
-def _gas(**changes: object) -> tuple[Hardware, Kiln, Report]:
-    """The gas cross-draft, with parts of its design replaced: ``heat_gas_burners={...}`` merges
-    into heat.gas.burners, and so on along the path."""
-    document = load_design(EXAMPLES / "gas-crossdraft.yaml").model_dump(mode="json", by_alias=True)
+def _example(name: str, **changes: object) -> tuple[Hardware, Kiln, Report]:
+    """An example, with parts of its design replaced: ``heat__gas__burners={...}`` replaces
+    heat.gas.burners, and so on along the path."""
+    document = load_design(EXAMPLES / name).model_dump(mode="json", by_alias=True)
     for path, value in changes.items():
         *parents, last = path.split("__")
         target = document
@@ -138,6 +138,16 @@ def _gas(**changes: object) -> tuple[Hardware, Kiln, Report]:
     kiln = Kiln.model_validate(document)
     report = design_report(kiln)
     return build_hardware(kiln, report.frame, report.gas), kiln, report
+
+
+def _gas(**changes: object) -> tuple[Hardware, Kiln, Report]:
+    """The gas cross-draft (28 × 48 × 40 in inside, 8 in walls), changed."""
+    return _example("gas-crossdraft.yaml", **changes)
+
+
+def _electric(**changes: object) -> tuple[Hardware, Kiln, Report]:
+    """The electric front-loader (22½ × 22½ × 24 in inside, 5½ in walls), changed."""
+    return _example("electric-front-loader.yaml", **changes)
 
 
 def _spots(hw: Hardware, kind: str) -> list[tuple[str, float, float, float, float]]:
@@ -304,3 +314,169 @@ def test_a_power_burner_with_no_sourced_port_is_not_drawn() -> None:
     assert not any(o.name.startswith("port/burner") for o in hw.openings)
     assert any("port size" in f.message for f in hw.findings)
     assert math.isfinite(hw.chimney_bricks)
+
+
+def test_burners_with_no_sourced_port_size_are_cut_to_the_size_given() -> None:
+    hw, _, report = _gas(
+        heat__gas__burners={"model": "GACO MR100", "port": {"width": "5 in", "height": "5 in"}}
+    )
+    assert report.gas is not None
+    assert report.gas.burners is not None
+    assert report.gas.burners.model == "GACO MR100"
+    assert [s[3:] for s in _spots(hw, "burner")] == [(5, 5)] * report.gas.burners.count
+    assert any(
+        f.level == "info"
+        and f.message == "The burner ports are the size given; no source gives one for GACO MR100."
+        for f in hw.findings
+    )
+    # No source gives an MR100's body either, so no burner is drawn in its port
+    assert not any(p.name.startswith("burner/") for p in hw.pieces)
+
+
+def test_burners_that_cant_fire_the_kiln_get_no_ports() -> None:
+    """One GACO MR750 can't deliver the cross-draft's design input within 10 psi."""
+    hw, _, report = _gas(heat__gas__burners={"model": "GACO MR750", "count": 1})
+    assert report.gas is not None
+    assert report.gas.burners is None
+    assert any("The burners chosen can't deliver" in f.message for f in report.gas.findings)
+    assert _spots(hw, "burner") == []
+    assert not any(p.name.startswith("burner/") for p in hw.pieces)
+    assert not any("bag wall" in f.message for f in hw.findings)
+    assert len(_spots(hw, "flue")) == 1  # the rest of the kiln is still drawn
+
+
+def test_a_flat_roofed_gas_kiln_is_framed_in_roof_angle_and_rods() -> None:
+    """Merrill's flat-top frame (frame.py): L2×2×3/16 round the top of the walls, 45 in up (40 in
+    inside and the 5 in roof), and ⅜ in rods 44 + 2 × 2 + 4 = 52 in long across it."""
+    hw, _, report = _gas(roof={"type": "flat"})
+    assert report.frame.kind == "angle frame"
+    pieces = {p.name: p for p in hw.pieces}
+    left = pieces["frame/left-top"]
+    assert left.title == "Roof angle, left side"
+    assert left.detail == "L2×2×3/16; Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]"
+    assert max(hi[2] for _, hi in left.boxes) == pytest.approx((45 + 0.1875) * MM)
+    for i in range(4):
+        post = pieces[f"frame/post-{i + 1}"]
+        assert min(lo[2] for lo, _ in post.boxes) == pytest.approx(-7 * MM)  # under the floor
+        assert max(hi[2] for _, hi in post.boxes) == pytest.approx((45 + 0.1875) * MM)
+    for end in ("front", "back"):
+        [rod] = pieces[f"frame/{end}-rod"].cylinders
+        assert (rod.axis, rod.radius, rod.length) == pytest.approx((0, 0.1875 * MM, 52 * MM))
+
+
+def test_the_chimneys_bricks_are_its_volume_in_straights() -> None:
+    """The stack and the duct to it, in 9 × 4½ × 2½ in straights, with the 5 % for cuts the bill
+    of materials gives."""
+    straight = 9 * 4.5 * 2.5 * MM**3
+    hw, _, _ = _gas()
+    pieces = {p.name: p for p in hw.pieces}
+    volume = pieces["chimney/stack"].volume + pieces["chimney/duct"].volume
+    assert hw.chimney_bricks == math.ceil(volume / straight * 1.05)
+
+    # Built against the flue wall: no duct, and the stack's near wall on the wall's outside
+    hw, _, _ = _gas(draft={"type": "cross", "flue_wall": "back", "run_to_chimney": "0 in"})
+    pieces = {p.name: p for p in hw.pieces}
+    assert "chimney/duct" not in pieces
+    stack = pieces["chimney/stack"]
+    assert min(lo[1] for lo, _ in stack.boxes) == pytest.approx((24 + 8) * MM)
+    assert hw.chimney_bricks == math.ceil(stack.volume / straight * 1.05)
+
+
+@pytest.mark.parametrize("draft", [{"type": "up"}, None], ids=["up-draft", "no draft"])
+def test_an_up_draft_flue_is_a_square_in_the_roof_with_no_chimney(
+    draft: dict[str, str] | None,
+) -> None:
+    hw, _, report = _gas(draft=draft)
+    assert report.gas is not None
+    assert report.gas.chimney_height is None
+    [flue] = [o for o in hw.openings if o.name == "port/flue"]
+    (x0, y0, z0), (x1, y1, _) = flue.box
+    side = math.sqrt(float(report.gas.flue_area.split()[0])) * MM  # Ward's area, square
+    assert (x1 - x0, y1 - y0) == pytest.approx((side, side))
+    assert ((x0 + x1) / 2, (y0 + y1) / 2) == pytest.approx((0, 0), abs=1e-9)  # mid-roof
+    assert z0 == pytest.approx((40 - 1) * MM)  # from an inch below the springline, up
+    assert flue.round_axis is None
+    assert _spots(hw, "flue") == []  # not a port in a wall, to show or move
+    assert not any(p.name.startswith("chimney/") for p in hw.pieces)
+    assert hw.chimney_bricks == 0
+
+
+def test_an_up_draft_flue_can_be_round_and_is_checked_against_wards_area() -> None:
+    hw, _, _ = _gas(draft={"type": "up", "flue_port": {"diameter": "10 in"}})
+    [flue] = [o for o in hw.openings if o.name == "port/flue"]
+    (x0, y0, _), (x1, y1, _) = flue.box
+    assert (flue.round_axis, x1 - x0, y1 - y0) == pytest.approx((2, 10 * MM, 10 * MM))
+    # π × 5² = 78.5 in², under the 2.5 in² per ft³ of the 33 ft³ chamber
+    assert any(
+        f.level == "warning" and "The flue port is 79 in², under the 83 in²" in f.message
+        for f in hw.findings
+    )
+
+
+def test_a_flue_too_wide_for_a_narrow_wall_is_made_taller() -> None:
+    """A kiln 12 in wide with its flue in the back wall: three 2½ in courses would make the flue
+    wider than the 10 in the wall leaves, so it goes up a course at a time until it fits."""
+    hw, _, report = _gas(
+        chamber={"width": "12 in", "depth": "100 in", "height": "48 in"},
+        heat__gas__burners={"wall": "left"},
+    )
+    assert report.gas is not None
+    area = float(report.gas.flue_area.split()[0])
+    courses = next(n for n in range(3, 9) if area / (2.5 * n) <= 12 - 2)
+    assert courses > 3
+    [(wall, across, up, width, height)] = _spots(hw, "flue")
+    assert (wall, across) == ("back", 0)
+    assert height == pytest.approx(courses * 2.5)
+    assert up == pytest.approx(height / 2)  # at the foot of the wall
+    assert width == pytest.approx(math.ceil(area / height * 4) / 4)  # to the next ¼ in
+    assert width * height >= area
+    assert not _errors(hw)
+
+
+def test_a_car_rolls_out_of_its_end_on_rails_a_kiln_long() -> None:
+    """Outside, the cross-draft runs from y = −32 to 32 in (48 in inside, 8 in walls)."""
+    hw, _, _ = _gas(loading={"type": "car", "face": "front"})
+    rails = next(p for p in hw.pieces if p.name == "car/rails")
+    assert len(rails.boxes) == 2
+    for lo, hi in rails.boxes:  # out of the front, as far again as the kiln is long
+        assert (lo[1], hi[1]) == pytest.approx((-(32 + 64) * MM, 32 * MM))
+    side_wall = "a car through a side wall is drawn with its rails under the kiln only"
+    assert not any(side_wall in f.message for f in hw.findings)
+
+    hw, _, _ = _gas(loading={"type": "car", "face": "right"})
+    rails = next(p for p in hw.pieces if p.name == "car/rails")
+    for lo, hi in rails.boxes:
+        assert (lo[1], hi[1]) == pytest.approx((-32 * MM, 32 * MM))
+    assert any(side_wall in f.message for f in hw.findings)
+
+
+def test_an_electric_kilns_door_in_a_side_wall_takes_that_side_of_the_case() -> None:
+    hw, _, _ = _electric(loading={"face": "left"}, heat__electric__walls=["right", "back"])
+    names = {p.name for p in hw.pieces}
+    assert "case/left" not in names
+    assert {"case/right", "case/back", "case/top", "case/bottom", "door/case"} <= names
+    # The door's ⅛ in plate is on the outside of the left wall, 11¼ + 5½ in from the middle
+    [(lo, hi)] = next(p for p in hw.pieces if p.name == "door/case").boxes
+    assert (lo[0], hi[0]) == pytest.approx((-(16.75 + 0.125) * MM, -16.75 * MM))
+    assert {o.name for o in hw.openings} == {"port/spy-1", "port/spy-2", "port/spy-3"}
+    assert {s[0] for s in _spots(hw, "spy")} == {"left"}
+
+
+def test_electric_peepholes_say_how_many_where_and_what_size() -> None:
+    reference = "electric-kiln-hardware.md §4 [S3] [S6]"
+
+    def note(hw: Hardware) -> Finding:
+        return next(f for f in hw.findings if "peephole" in f.message)
+
+    hw, _, _ = _electric(spy_holes={"count": 2})
+    assert _spots(hw, "spy") == [("front", 0, 8, 1, 1), ("front", 0, 16, 1, 1)]  # 24 in, thirds
+    assert note(hw).message == "2 peepholes, 1 in round, in the door, spaced evenly."
+    assert note(hw).reference == reference
+
+    hw, _, _ = _electric(spy_holes={"places": [{"wall": "back", "up": "12 in"}]})
+    assert _spots(hw, "spy") == [("back", 0, 12, 1, 1)]
+    assert note(hw).message == "1 peephole, 1 in round, where the design places them."
+
+    hw, _, _ = _electric(spy_holes={"count": 1, "port": {"width": "1 in", "height": "2 in"}})
+    assert _spots(hw, "spy") == [("front", 0, 12, 1, 2)]
+    assert note(hw).message == "1 peephole, 1 × 2 in, in the door, spaced evenly."

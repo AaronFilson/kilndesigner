@@ -2,7 +2,7 @@ import { Ray, Vector3 } from "three";
 import { describe, expect, it } from "vitest";
 
 import type { KilnDocument, Layout, WallFrame } from "../design";
-import { fit, markers, moved, topAt, wallHit } from "./PortMarkers";
+import { added, fit, markers, moved, removed, spyWord, topAt, wallHit } from "./PortMarkers";
 
 const IN = 25.4;
 const inches = (mm: number) => Math.round((mm / IN) * 1000) / 1000;
@@ -82,6 +82,27 @@ describe("markers", () => {
     ]);
     expect(shown[0]?.width).toBe(4 * IN); // its size is the built one's
   });
+
+  it("puts a place with no across in the middle, and one whose height isn't a length where it was built", () => {
+    const vague: KilnDocument = {
+      ...doc,
+      heat: { gas: { ...doc.heat.gas!, burners: { places: [{ wall: "left", up: "high" }] } } },
+    };
+    const [burner] = markers(layout, vague);
+    expect([burner?.wall, burner?.across, inches(burner?.up ?? 0)]).toEqual(["left", 0, 5]);
+  });
+
+  it("leaves the flue on its built wall when the draft doesn't say, and as built when its across isn't a length", () => {
+    const offCentre: Layout = {
+      ...layout,
+      ports: layout.ports.map((p) => (p.kind === "flue" ? { ...p, across: 2 * IN } : p)),
+    };
+    const flue = (draft: KilnDocument["draft"]) =>
+      markers(offCentre, { ...doc, draft }).find((m) => m.kind === "flue");
+    expect([flue({ type: "cross" })?.wall, flue({ type: "cross" })?.across]).toEqual(["back", 0]);
+    expect(inches(flue({ type: "cross", flue_across: "the middle" })?.across ?? 0)).toBe(2);
+    expect(markers(offCentre, null).find((m) => m.kind === "flue")?.across).toBe(2 * IN);
+  });
 });
 
 describe("moved", () => {
@@ -101,6 +122,60 @@ describe("moved", () => {
     const all = markers(layout, doc);
     const next = moved(doc, all, all[2]!, { wall: "right", across: 100, up: 0 }, "metric");
     expect(next.draft).toEqual({ type: "cross", flue_wall: "right", flue_across: "100 mm" });
+  });
+});
+
+describe("added and removed", () => {
+  const withSpy: Layout = {
+    ...layout,
+    ports: [
+      ...layout.ports,
+      { name: "port/spy-1", title: "Spy hole 1", kind: "spy", wall: "right", across: -3 * IN,
+        up: 8 * IN, width: 2.25 * IN, height: 2.5 * IN, round: false, cut: true },
+      { name: "port/spy-2", title: "Spy hole 2", kind: "spy", wall: "right", across: 3 * IN,
+        up: 30 * IN, width: 2.25 * IN, height: 2.5 * IN, round: false, cut: true },
+    ], // prettier-ignore
+  };
+  const counted: KilnDocument = {
+    ...doc,
+    spy_holes: { count: 2, port: { width: "2.25 in", height: "2.5 in" } },
+  };
+
+  it("adds a spy hole where it's put, the others placed where they are", () => {
+    const all = markers(withSpy, counted);
+    const next = added(counted, all, { wall: "back", across: 2 * IN, up: 20 * IN }, "us");
+    expect(next.spy_holes).toEqual({
+      port: { width: "2.25 in", height: "2.5 in" },
+      places: [
+        { wall: "right", across: "-3 in", up: "8 in" },
+        { wall: "right", across: "3 in", up: "30 in" },
+        { wall: "back", across: "2 in", up: "20 in" },
+      ],
+    });
+    // Shown at once, the size of the others, and named after them
+    const shown = markers(withSpy, next).filter((m) => m.kind === "spy");
+    expect(shown.map((m) => [m.title, m.wall, inches(m.width)])).toEqual([
+      ["Spy hole 1", "right", 2.25],
+      ["Spy hole 2", "right", 2.25],
+      ["Spy hole 3", "back", 2.25],
+    ]);
+  });
+
+  it("removes one, down to none at all", () => {
+    let next = counted;
+    for (const left of [1, 0]) {
+      const all = markers(withSpy, next);
+      next = removed(next, all, all.find((m) => m.key === "spy-0")!, "us");
+      expect(next.spy_holes?.places).toHaveLength(left);
+    }
+    expect(next.spy_holes?.places).toEqual([]);
+    expect(markers(withSpy, next).filter((m) => m.kind === "spy")).toEqual([]);
+  });
+
+  it("calls them what the build calls them", () => {
+    expect(spyWord(withSpy.ports)).toBe("Spy hole");
+    expect(spyWord([{ kind: "spy", title: "Peephole 2" }])).toBe("Peephole");
+    expect(spyWord([])).toBe("Spy hole");
   });
 });
 
@@ -127,6 +202,26 @@ describe("fit", () => {
     expect(topAt(layout, "front", 7 * IN)).toBeCloseTo(42 * IN);
     expect(topAt(layout, "front", 99 * IN)).toBe(40 * IN);
   });
+
+  it("takes the height before a sheer step rather than dividing by zero, and a wall sampled once as level", () => {
+    const stepped: Layout = {
+      ...layout,
+      walls: {
+        ...layout.walls,
+        front: { ...layout.walls.front, top: [[0, 30 * IN], [0, 40 * IN], [14 * IN, 40 * IN]] },
+        left: { ...layout.walls.left, top: [[0, 36 * IN]] },
+        right: { ...layout.walls.right, top: [] },
+      },
+    }; // prettier-ignore
+    expect(topAt(stepped, "front", 0)).toBe(30 * IN);
+    expect(topAt(stepped, "left", 10 * IN)).toBe(36 * IN);
+    expect(topAt(stepped, "right", 0)).toBe(0);
+  });
+
+  it("snaps a metric kiln's ports to 5 mm", () => {
+    const metric: Layout = { ...layout, units: "metric" };
+    expect(fit(metric, "left", 12, 103, burner)).toEqual({ across: 10, up: 105 });
+  });
 });
 
 describe("wallHit", () => {
@@ -143,5 +238,15 @@ describe("wallHit", () => {
     expect(hit(fromLeft)).toEqual({ wall: "left", across: 10, up: 6 });
     const away = new Ray(new Vector3(0, -100 * IN, 20 * IN), new Vector3(0, -1, 0));
     expect(wallHit(layout, away, burner)).toBeNull();
+  });
+
+  it("passes by a wall whose plane the ray meets beyond its edge", () => {
+    const burner = { kind: "burner" as const, width: 4 * IN, height: 4 * IN };
+    // From out past the front-left corner: it meets the front's plane 32 in to the left, off the
+    // wall, and goes on to the left wall
+    const corner = new Ray(new Vector3(-100 * IN, -100 * IN, 20 * IN), new Vector3(1, 1, 0).normalize());
+    expect(wallHit(layout, corner, burner)?.wall).toBe("left");
+    const wide = new Ray(new Vector3(60 * IN, -100 * IN, 20 * IN), new Vector3(0, 1, 0));
+    expect(wallHit(layout, wide, burner)).toBeNull();
   });
 });

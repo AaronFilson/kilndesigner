@@ -1,9 +1,12 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { colourOf, DEFAULT_LOOK, loadLook, saveLook } from "./palettes";
+import { colourOf, DEFAULT_LOOK, loadLook, palette, type PaletteId, saveLook } from "./palettes";
 import { applyAppearance, loadAppearance, saveAppearance } from "./theme";
 
-afterEach(() => localStorage.clear());
+afterEach(() => {
+  localStorage.clear();
+  vi.restoreAllMocks();
+});
 
 describe("appearance", () => {
   it("is the system theme in terracotta until one is chosen, and is remembered", () => {
@@ -47,5 +50,22 @@ describe("the model's colours", () => {
       '{"palette": "plaid", "custom": {"Steel": "red", "Burners": "#00ff00"}}',
     );
     expect(loadLook()).toEqual({ palette: "built", edges: false, custom: { Burners: "#00ff00" } });
+  });
+
+  it("are as built when what's stored can't be read, or names a palette there isn't", () => {
+    localStorage.setItem("kilndesigner.viewer", "{not json");
+    expect(loadLook()).toEqual(DEFAULT_LOOK);
+    expect(palette("plaid" as PaletteId).id).toBe("built");
+  });
+});
+
+describe("a browser that won't store anything", () => {
+  it("still takes a look and an appearance, for as long as the page is open", () => {
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new DOMException("The quota has been exceeded.", "QuotaExceededError");
+    });
+    expect(() => saveLook({ ...DEFAULT_LOOK, edges: true })).not.toThrow();
+    expect(() => saveAppearance({ theme: "dark", accent: "cobalt" })).not.toThrow();
+    expect(loadLook()).toEqual(DEFAULT_LOOK);
   });
 });

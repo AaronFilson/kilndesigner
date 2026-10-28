@@ -97,6 +97,40 @@ def test_growing_area_reduces_flux_density_like_a_cylinder() -> None:
     assert result.heat_flow == pytest.approx(700.0 / resistance, rel=1e-6)
 
 
+def test_a_flat_wall_is_solved_per_square_metre() -> None:
+    """Without an area function the wall is 1 m², so the heat flow is a flux (W/m²)."""
+    result = solve_wall([slab("fire brick", 0.2, 4.0)], 1400 + C, 50 + C, FixedSurface(19.0))
+    assert result.outside_area == 1.0
+    assert result.surface_coefficient == 19.0
+    assert result.interfaces == ()
+    assert result.temperatures == (result.hot_face, result.surface)
+    # one layer and a film: q = ΔT / (L/k + 1/h)
+    assert result.heat_flow == pytest.approx(1350 / (0.2 / 4.0 + 1 / 19.0), rel=1e-6)
+
+
+def test_a_wall_needs_a_layer() -> None:
+    with pytest.raises(ValueError, match="at least one layer"):
+        solve_wall([], 1400 + C, 50 + C, FixedSurface(19.0))
+
+
+@pytest.mark.parametrize("t_inside", [50 + C, 20 + C])
+def test_the_inside_must_be_hotter_than_the_air(t_inside: float) -> None:
+    with pytest.raises(ValueError, match="hotter than the air outside"):
+        solve_wall([slab("brick", 0.2, 1.0)], t_inside, 50 + C, FixedSurface(19.0))
+
+
+def test_a_surface_past_the_air_table_is_refused() -> None:
+    """ADR 0009. Air properties stop at 1000 K, so the film (Ts + T∞)/2 may reach 1000 K: with
+    27 °C air, a surface up to 1700 K (1427 °C). A 5 mm wall of k = 1 at 1627 °C, with the
+    textbook outside h = 19, would run near 300 + 1600 × (1/19) / (0.005 + 1/19) = 1761 K."""
+    with pytest.raises(ValueError, match="would run above 1427 °C") as refused:
+        solve_wall([slab("thin", 0.005, 1.0)], 1900.0, 300.0, FixedSurface(19.0))
+    assert "insulate the wall more" in str(refused.value)
+    # Twice as thick, it runs at 300 + 1600 × 0.0526 / 0.0626 = 1644 K, and is solved
+    result = solve_wall([slab("thin", 0.01, 1.0)], 1900.0, 300.0, FixedSurface(19.0))
+    assert result.surface == pytest.approx(300 + 1600 * (1 / 19) / (0.01 + 1 / 19), rel=1e-6)
+
+
 ifb = st.floats(min_value=0.02, max_value=0.3)
 
 
