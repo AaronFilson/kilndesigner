@@ -68,6 +68,12 @@ products and aimed at industry. So:
   stops short of the walls' outside, no door, ports or flue), drawings were only downloads, the
   viewer only spun, and designing meant editing YAML. M4 is done when it passes the four points
   under its milestone below, worked in that order; the hosted app (M5) waits for it.
+- **2026-10-23 · DIY castables join M4 (point 5).** The author's notes (`castables/*.txt`) are
+  chat transcripts, so none of their numbers are used; [castables.md](../research/castables.md)
+  sources the data. A mix's conductivity comes from its fired density by a power law fitted to
+  nine Morgan K and JM firebricks (8.9 % rms, up to 21 % for a brick left out of the fit).
+  Maxwell–Eucken and Landauer models were tried and fit worse. Mixes outside 480–1250 kg/m³
+  are refused.
 
 ## The first two users
 
@@ -220,13 +226,14 @@ references used. The plans print the working, so a builder can check it.
 | **M1** | **Electric kiln engine** | `kilndesigner build` turns a YAML spec into an electric front-loader box kiln: geometry (STEP, glTF), steady-state heat loss, element design, and a JSON report | Parametric B-rep CAD, unit-safe numerical code, property-based tests (Hypothesis), golden files |
 | **M2** | **Plans** | A dimensioned PDF and a DXF, the brick course plan, a cut list and a bill of materials | Typst document generation, 2D projection from 3D, deterministic output |
 | **M3** | **Gas and hybrid: the author's kiln** | A cross-draft with a cast dome, as a car kiln and as a door kiln, with costs side by side; burner sizing; the propane supply check; the electric-to-gas switch-over chart; plans to build from | Combustion and fuel-supply models, optimisation (SciPy), cost modelling, comparing designs |
-| **M4** | **A kiln you can design in the app** | `docker compose up`, then: (1) the model is a kiln you could build: the arch on skewbacks over the full walls, the steel frame, a door or a car, burner and flue ports, the chimney and spy holes, coloured by material; (2) dimensioned drawings, course plans, the bill of materials and the cut list shown in the page (files still downloadable); (3) a viewer with front, side, top and section views, a cutaway and named parts; (4) a design started from a kiln type and edited with choices, not YAML (YAML stays as a tab). Each point has browser tests | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber, Playwright |
+| **M4** | **A kiln you can design in the app** | `docker compose up`, then: (1) the model is a kiln you could build: the arch on skewbacks over the full walls, the steel frame, a door or a car, burner and flue ports, the chimney and spy holes, coloured by material; (2) dimensioned drawings, course plans, the bill of materials and the cut list shown in the page (files still downloadable); (3) a viewer with front, side, top and section views, a cutaway and named parts; (4) a design started from a kiln type and edited with choices, not YAML (YAML stays as a tab); (5) castables you mix yourself: a batch recipe in the design gives its wet, dried and fired densities, a conductivity checked against published firebricks, what the temperatures in the wall do to it (kyanite, quartz, burnout), the batches and ingredients the lining needs, and the first firing (water, organics, heat, a dry-out schedule), refusing mixes outside the checked range. Each point has browser tests | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber, Playwright |
 | **M5** | **Hosted app** | Accounts, design sharing by link, deploys with approval to AWS, tracing and metrics | Multi-tenant Postgres (row-level security), OIDC with PKCE, CDK in Python, keyless deploys with rollback, OpenTelemetry |
 | **M6** | **Firing simulation** | Transient heat-up along a schedule, results in Parquet, charts and a wall heatmap in the viewer | Finite-volume numerics, DuckDB analytics, GPU shaders for the heatmap |
 | **M7** | **Wood and off-grid: the client's kiln** | A firebox, natural-draft burners, the chimney and draft, fuel per firing, and plans for a site with no mains power | Natural-draft modelling, multi-fuel designs, plans that stand alone |
 | **M8** | **AI assistants** | An MCP server: "design a cone 10 gas kiln for 12 cubic feet, under $3,000" | MCP in Python, with tools that return the working |
 | **M9** | **Real firings** | Import firing logs from the author's controller, compare them with the simulation, and fit wall properties to them | Parameter estimation (SciPy), data ingestion, model-versus-measurement reports |
 | Later | **Glass** | Templates, top-element layouts, annealing schedules | |
+| Later | **Drag to stretch, with grid snap** | In the viewer, drag a handle on a wall, the floor, the arch or a port to resize it, as in a CAD tool. Sizes snap to a grid you set (whole bricks by default, or inches or millimetres), the handle shows the size as you drag, and letting go changes the same field the form edits and rebuilds the kiln. A size outside the checked range is refused with the reason (ADR 0009) | Direct manipulation in React Three Fiber, snapping and constraints, a fast rebuild |
 
 ### Status (2026-10-21, overnight)
 

@@ -24,6 +24,7 @@ from kilndesigner.units import (
     MassPrice,
     Money,
     Power,
+    SpringRate,
     Temperature,
     Voltage,
     VolumePrice,
@@ -97,6 +98,23 @@ class SprungArch(Spec):
             "over the ring, such as insulation, are only its load"
         ),
     )
+    ties: Literal["rigid", "springs"] = Field(
+        default="rigid",
+        description=(
+            "How the tie rods hold the arch: nutted tight to the frame (rigid), or through a "
+            "compression spring at each end, so the frame gives as the arch grows hot"
+        ),
+    )
+    spring_rate: SpringRate | None = Field(
+        default=None,
+        description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
+    )
+
+    @model_validator(mode="after")
+    def _springs_have_a_rate(self) -> SprungArch:
+        if self.ties == "springs" and self.spring_rate is None:
+            raise ValueError("springs on the tie rods need their spring_rate, from the listing")
+        return self
 
 
 class CatenaryArch(Spec):

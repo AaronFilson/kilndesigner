@@ -610,3 +610,37 @@ Inputs from the example: chamber 22.5 × 22.5 × 24 in; 240 V single phase on a 
 - [S22] Kanthal, *Handbook: Resistance Heating Alloys and Systems for Industrial Furnaces*, cat. 1-A-5B-3, 09.2001 (third-party copy). https://www.ibt.co.il/uploaded_files/documents/file1359965681_U3423.pdf
 - [S23] Euclid's Kiln Parts, *Element Pinning* (one-page PDF). Download URL not recovered; local copy `scratch/research/electric/euclid-pinning/pinning.pdf`.
 - [S24] Rohde, *How to fit ROHDE heating elements*, 01/2008 (Bath Potters' Supplies copy). https://www.bathpotters.co.uk/userfiles/file/element-installation-instructions.pdf
+- [S25] Paragon, *Lid/Door Safety Switch* manual IM-235/2-07 (search summary only): the door rotary switch sits on top of the hinge shaft; elements should cut out when the door is opened 1–2 in. https://www.manualsdir.com/manuals/170667/paragon-lid_door-safety-switch.html
+- [S26] The Ceramic Shop, *Paragon CT102322* product page (retailer, search summary only): CT kilns pre-drilled for a vent; a 12 in rolling stand recommended with the Orton VentMaster. https://www.theceramicshop.com/product/42368/ct102322-kiln-240v-1p/
+- [S27] Krueger Pottery, *Paragon Dragon* listing and other retailer copies (search summary only): ¾ in steel hinge rod, 160° swing, two spring-loaded latches; one copy leaves the rod size blank. Same maker text as [S18]; not independent. https://kruegerpottery.com/products/par_dragon
+- [S28] City of Orono, MN, code excerpt (search summary only; page did not load): kiln sides and tops 18 in from noncombustible and 3 ft from combustible walls, reducible per listing, matching the UMC text L&L quotes [S1]. https://publicinfo.ci.orono.mn.us/WebLink/0/doc/81211/Page2.aspx
+
+## Corroboration (2026-10-24)
+
+Target: three independent sources per value (different makers count; retailers repeating one
+maker do not). Search effort this pass was limited; Paragon, Cress and Olympic full manuals and
+UMC/NEC/NFPA texts were not obtained first-hand.
+
+At three or more independent sources:
+- Wall clearance 12 in minimum / 18 in preferred: L&L [S1], Evenheat [S16], Olympic [S17] at
+  12 in; Skutt [S10], UMC via L&L [S1] and Orono [S28] at 18 in. Values disagree (12 vs 18 in);
+  the 12 in figures rest on the UL listing, the 18 in on the code (UMC allows reduction per listing [S28]).
+- Masonry floor 2 in, 12 in beyond the kiln: Skutt [S10], L&L [S1], Evenheat [S16] (all citing UMC).
+- Stand raising the kiln about 8 in: L&L [S1], Skutt [S10] [S11]; Paragon's vent stand is 12 in
+  [S26] (secondary). Only 2 makers at 8 in; disagreement 8 vs 12 in for vented kilns.
+- Thermocouple protrusion about 1 in: L&L [S1] [S7], Skutt [S9], Olympic and Evenheat [S16] [S17].
+- Vent holes ¼ in per 4 ft³: Orton [S15], L&L [S1]; Skutt [S11] differs (3 × 3/16 in near 7 ft³
+  against 2 × ¼ in). Two agree, one disagrees.
+- Peephole 1 in: L&L [S3] [S6], Paragon [S18] (secondary); Olympic tapered, no size. Only 2.
+- Outlet ≥4 ft from openings, central duct table: Skutt and L&L only (2).
+- Kiln room ventilation, sprinklers, room temperature: 1–2 makers each.
+
+Short of three (only 1 source found, or one maker): 1/8 in welded steel case [S6] (used by
+`core/src/kilndesigner/frame.py` and `hardware.py`); ¾ in hinge rod [S18] [S27] (one maker,
+retailer copies; used by `hardware.py`); DE-STA-CO clamps [S2]; door swing 147–180°; ½ in
+door step; door weights; 24 in front of the controller; 1 in control-box standoff [S18];
+thermocouple diameters; every UL 499 clause (one standard, read first-hand [S21] — the
+primary text, so a single source is adequate, but not corroborated); the NEC 15 ft disconnect
+reading (L&L only, NEC not read). Door-switch behaviour has a second Paragon source [S25]
+(elements off at 1–2 in opening), still one maker plus L&L.
+

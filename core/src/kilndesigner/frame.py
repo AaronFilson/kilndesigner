@@ -770,11 +770,16 @@ def design_frame(kiln: Kiln) -> FrameDesign:
             reference=ARCH_THEORY_SOURCE,
         )
     )
+    rigid = thrust
+    if kiln.roof.ties == "springs":
+        thrust = _sprung_ties(kiln, span_in, cold, rigid, o, working, findings)
     in_table = (
         heated_table["t_over_s"][0] <= t_over_s <= heated_table["t_over_s"][-1]
         and consts["d"][0] <= d <= consts["d"][-1]
     )
-    if heated > MAX_PRINTED_HEATED:
+    if thrust < rigid - 1e-9:
+        pass  # the springs set the hot thrust, not the rigid frame's statics
+    elif heated > MAX_PRINTED_HEATED:
         # Only a guard: HarbisonWalker's own rise and thickness rules are the limits
         findings.append(
             Finding(
@@ -923,6 +928,76 @@ def design_frame(kiln: Kiln) -> FrameDesign:
         working=working,
         findings=findings,
     )
+
+
+GROWTH_IN_PER_FT = 3 / 32  # the most brickwork grows hot: Olsen 4th ed. p.51 (1/16–3/32 in/ft)
+GROWTH_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.51: 1/16–3/32 in per ft (0.5–0.8 %), with IFB's 0.5–0.7 % "
+    "reversible expansion (thermal-properties.md §2); olsen-kiln-book.md"
+)
+SPRING_SOURCE = (
+    "a spring's force grows by its rate × its travel; the rods' share capped at the rigid frame's "
+    "hot thrust (arch-springs.md, arch-thrust-theory.md)"
+)
+
+
+def _sprung_ties(
+    kiln: Kiln,
+    span_in: float,
+    cold: float,
+    rigid: float,
+    o: Outside,
+    working: list[Step],
+    findings: list[Finding],
+) -> float:
+    """The hot thrust (lb per ft) when each tie rod ends in a compression spring.
+
+    The springs are set to carry the cold thrust; as the arch grows by ΔS across its span,
+    each end gives ΔS/2 and its spring pushes back k·ΔS/2 more. The thrust can't pass what a
+    rigid frame would see (Heyman's maximum), so it's the smaller of the two.
+    """
+    assert isinstance(kiln.roof, SprungArch) and kiln.roof.spring_rate is not None
+    k = si(kiln.roof.spring_rate, "lbf/in")
+    growth = span_in / 12 * GROWTH_IN_PER_FT
+    feet = o.depth / 12
+    cold_rod = cold * feet / 2
+    hot_rod = min(cold_rod + k * growth / 2, rigid * feet / 2)
+    working.append(
+        Step(
+            name="Growth of the arch's span, hot",
+            value=f"{growth:.3f} in",
+            formula="ΔS = span in ft × 3/32 in",
+            inputs={"span": f"{span_in:.1f} in"},
+            reference=GROWTH_SOURCE,
+        )
+    )
+    working.append(
+        Step(
+            name="Tie rod load with springs, hot",
+            value=f"{hot_rod:,.0f} lb per rod (rigid: {rigid * feet / 2:,.0f} lb)",
+            formula="P = P_cold + k·ΔS/2, no more than the rigid frame's",
+            inputs={
+                "P_cold, the spring's preload": f"{cold_rod:,.0f} lb",
+                "k, each spring": f"{k:,.0f} lbf/in",
+                "each spring's travel, hot": f"{growth / 2:.3f} in",
+                "set length: compress each spring by": f"{cold_rod / k:.2f} in, cold",
+            },
+            reference=SPRING_SOURCE,
+        )
+    )
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                f"Set each spring {cold_rod / k:.2f} in shorter than free, cold; hot it takes "
+                f"{growth / 2:.3f} in more, so pick one whose solid height leaves that room. "
+                "Keep the springs outside the insulation and steel: music wire is good to about "
+                "250 °F."
+            ),
+            reference="arch-springs.md (spring temperature limits)",
+        )
+    )
+    return hot_rod * 2 / feet
 
 
 def _ring_of(steel: str, part: str, o: Outside, leg: float, source: str) -> list[Member]:

@@ -36,10 +36,14 @@ STACK_C = 0.0342  # K/m, stack-effect equation [S42]
 ATMOSPHERE = 101_325.0  # Pa
 PA_PER_IN_WC = 249.09
 CHIMNEY_SOURCE = (
-    "Olsen, The Kiln Book, and Ward, 'Draft and Its Importance': 3 × inside height + ⅓ of the "
-    "horizontal run; combustion-and-masonry.md §4.1 [S32, S37]"
+    "Olsen, The Kiln Book, 4th ed., p.80 (Principle 5), and Ward, 'Draft and Its Importance': "
+    "3 × inside height + ⅓ of the horizontal run; olsen-kiln-book.md; "
+    "combustion-and-masonry.md §4.1 [S32, S37]"
 )
-FLUE_SOURCE = "Olsen, 2.5 in² per ft³ (secondary); combustion-and-masonry.md §4.1 [S38, S39]"
+FLUE_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.236: 2.5 in² per ft³ (one of his three methods); "
+    "olsen-kiln-book.md; combustion-and-masonry.md §4.1 [S38, S39]"
+)
 # The research covers US studio gas kilns of about 10 to 60 ft³ (kiln-hardware.md, its scope):
 # past that the burner counts, flue and chimney aren't sourced
 LARGEST_FT3 = 60.0

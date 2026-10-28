@@ -211,6 +211,22 @@ describe("DesignForm", () => {
     expect(screen.getByText(/springs from the floor and is the side walls too/)).toBeTruthy();
   });
 
+  it("puts springs on an arch's tie rods with their rate, and takes them off again", () => {
+    const last = live({ ...electric, roof: { type: "sprung_arch", rise: "3.75 in" } });
+    expect(screen.queryByLabelText("Each spring's rate, from its listing")).toBeNull();
+    set("Tie rods", "springs");
+    expect(last().roof).toEqual({
+      type: "sprung_arch",
+      rise: "3.75 in",
+      ties: "springs",
+      spring_rate: "283 lbf/in",
+    });
+    set("Each spring's rate, from its listing", "300");
+    expect(last().roof).toMatchObject({ spring_rate: "300 lbf/in" });
+    set("Tie rods", "rigid");
+    expect(last().roof).toEqual({ type: "sprung_arch", rise: "3.75 in" });
+  });
+
   it("gives a dome a rise at its centre, and a flat roof none", () => {
     const last = live({ ...electric, roof: { type: "dome", rise: "4 in" } });
     expect(screen.getByText(/A dome on all four walls/)).toBeTruthy();

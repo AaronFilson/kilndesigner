@@ -27,6 +27,7 @@ import {
 
 const LENGTH = ["in", "mm", "ft", "cm"];
 const TEMPERATURE = ["degF", "degC"];
+const SPRING_RATE = ["lbf/in", "N/mm"];
 const UNIT_LABELS: Record<string, string> = {
   degF: "°F",
   degC: "°C",
@@ -840,6 +841,32 @@ export function DesignForm({
             value={roof.rise}
             units={LENGTH}
             onChange={(v) => change(["roof", "rise"], v)}
+          />
+        )}
+        {roof.type === "sprung_arch" && (
+          <Choice
+            label="Tie rods"
+            value={roof.ties ?? "rigid"}
+            options={[
+              ["rigid", "Nutted tight to the frame"],
+              ["springs", "Through a spring at each end"],
+            ]}
+            onChange={(v) =>
+              change(
+                ["roof"],
+                v === "springs"
+                  ? { ...roof, ties: v, spring_rate: roof.spring_rate ?? "283 lbf/in" }
+                  : { type: roof.type, rise: roof.rise, ring: roof.ring },
+              )
+            }
+          />
+        )}
+        {roof.type === "sprung_arch" && roof.ties === "springs" && (
+          <Quantity
+            label="Each spring's rate, from its listing"
+            value={roof.spring_rate}
+            units={SPRING_RATE}
+            onChange={(v) => change(["roof", "spring_rate"], v)}
           />
         )}
         {roof.type === "catenary_arch" && (

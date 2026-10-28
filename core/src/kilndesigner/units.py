@@ -78,6 +78,7 @@ _DIMENSION_NAMES = {
     "[currency] / [mass]": "price per unit of mass",
     "[currency]": "amount of money",
     "[mass] / [length] ** 3": "density",
+    "[mass] / [time] ** 2": "spring rate (force per length)",
 }
 
 
@@ -130,3 +131,4 @@ Money = Annotated[pint.Quantity, QuantityField("[currency]", "5000 USD")]
 Mass = Annotated[pint.Quantity, QuantityField("[mass]", "50 lb")]
 Density = Annotated[pint.Quantity, QuantityField("[mass] / [length] ** 3", "2.6 g/cm**3")]
 MassPrice = Annotated[pint.Quantity, QuantityField("[currency] / [mass]", "1.02 USD/lb")]
+SpringRate = Annotated[pint.Quantity, QuantityField("[mass] / [time] ** 2", "283 lbf/in")]

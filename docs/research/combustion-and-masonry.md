@@ -342,6 +342,7 @@ Check against the NFPA 54-2006 Table F.1 values given in the Fisher reamer manua
 | Chimney height, natural draft (Olsen) | 3 × the downward pull + ⅓ × the horizontal pull | Olsen, *The Kiln Book*, cited on the CAD forum (secondary) [S37] |
 | Same rule (Ward) | "Three times the interior height plus 1/3 the linear draw or chamber length" | [S32] |
 | Ward worked example | 36 in. interior height and 54 in. linear draw (36 depth + 9 back wall + 9 to the chimney base): 3 × 36 + 54/3 = 126 in. (10.5 ft) | [S32] |
+| Same rule (Olsen, Baker, Cardew, via archaeology review) | Olsen: 3 ft per ft of downward pull + 1 ft per 3 ft horizontal. Baker: 3 ft per ft down + 1 ft per 3.5 ft horizontal. Cardew measures downward pull from the springer, Olsen from the crown. | Peacey, *Internet Archaeology* 1 [S82] |
 | Starting height (other books) | "approximately three times the inside kiln height" | Robinson, *Ceramics Monthly*, Apr 2020 [S30] |
 | Forced-draft reduction | chimney "can be reduced by as much as 25 percent" with forced-draft burners | Kiln Book excerpt (secondary) [S38] |
 | Power burners | chimney only needs to clear the building | [S26] [S32] |
@@ -384,6 +385,8 @@ US form **(derived)** from the SI form, at sea level (a = 101,325 Pa, 1 in. w.c.
 ΔP (in. w.c.) ≈ 7.63 × H_ft × (1/T_o,°R − 1/T_i,°R)
 
 Woodheat.org gives 1 Pa ≈ 0.004 in. w.c. [S44].
+
+Wikipedia "Stack effect" gives the US form ΔP (psi) = 0.0188 · a (psia) · h (ft) · (1/T_o − 1/T_i) in °R [S80]. At a = 14.696 psia and 27.7 in. w.c./psi this is 7.65 in. w.c. per ft·(1/°R), within 0.3 % of the 7.63 derived above. Rumford.com states draft is proportional to height, flue temperature and atmospheric pressure [S81].
 
 Draft-driven flow (first estimate) [S42]:
 
@@ -508,6 +511,7 @@ Sand-form domes: **NOT FOUND** as a documented method with numbers.
 
 - A sourced rule of "1.5 in. rise per ft of span": **NOT FOUND**.
 - Forum builders use 2 to 4 in./ft. Angle-iron bracing holds the thrust [S61].
+- A CAD forum post attributes to Olsen a minimum rise of 1½ in./ft and a maximum of 3 in./ft (secondary; **ask the user for Olsen p.__ to confirm**) [S84].
 - A 60° skewback is called "standard" in a masonry supplier's form, and 60–70° is typical in masonry [S62].
 - Geometry **(derived)** for a circular arch of span S and radius R:
   - Rise = R − √(R² − S²/4).
@@ -721,3 +725,49 @@ This uses the plan's inputs: 35 ft³, cone 10, IFB walls, four 100 lb cylinders,
 - [S75] Sheffield Pottery, blanket and board. https://www.sheffield-pottery.com/collections/bricks-refractories-and-kaowool
 - [S76] Ferguson, 2×2×¼ in. × 20 ft angle. https://www.ferguson.com/product/2-x-2-x-1/4-in.-x-20-ft-iron-angle-in-black-baikkb20ft/2122272.html (via search summary)
 - [S77] TEMCo Industrial, Kanthal A-1. https://temcoindustrial.com/electrical/wire/resistance-wire/?page=5 (via search summary)
+- [S78] Northern Arizona Univ., "Composition of the Earth's Atmosphere" (O₂ 20.95 %, N₂ 78.08 %, Ar 0.93 % by volume, dry air). https://jan.ucc.nau.edu/jclark/Education%20Mesonet/Composition of the Atmosphere.htm (via search summary)
+- [S79] Pearson AFR calculator (propane AFR_st = 5 × (32.00 + 3.76 × 28.0134)/44.10 ≈ 15.6); EngineLabs, "What is the stoichiometric point" (propane ≈ 15.5). https://www.pearson.com/channels/it/calculators/afr-calculator ; https://www.enginelabs.com/?p=5717 (via search summary)
+- [S80] Wikipedia, "Stack effect" (US form, C = 0.0188). https://en.wikipedia.org/wiki/Stack_effect (via search summary; mirrors on chemeurope/handwiki are copies, not independent)
+- [S81] Rumford.com, "Chimney draft". https://rumford.com/draft.html (via search summary)
+- [S82] A. Peacey, "Superstructures" §11.1.5, *Internet Archaeology* 1 (Olsen, Baker and Cardew chimney rules). https://intarch.ac.uk/journal/issue1/peacey/supers.html (via search summary)
+- [S83] CAD forum, "inlet height vs chimney height" (Olsen: downdraft inlet area = outlet area, secondary). https://community.ceramicartsdaily.org/topic/4294-inlet-height-vs-chimney-height/
+- [S84] CAD forum, "metal frame for sprung arch kiln" (Olsen arch rise 1½–3 in./ft, secondary). https://community.ceramicartsdaily.org/topic/15978-metal-frame-for-sprung-arch-kiln/
+- [S85] Laguna LE-2040 gas kiln listing (54.1 ft³, 541,000 BTU/hr max, cone 10 ≈ 10,000 BTU/ft³/hr derived). https://www.theceramicshop.com/product/39374/laguna-model-le-2040-gas-kiln/ ; NM Clay 11.67 ft³ cone 10 kiln, 280,000 BTU/hr (≈ 24,000 BTU/ft³/hr derived). https://nmclay.com/ok2831gas-kiln-28-25-x-31-5-gas (via search summary)
+- [S86] Reach.dog / High Temp Tools, Kast-O-Lite 30 (90 lb/ft³, 3,000 °F, k = 4.54 BTU·in/hr·ft²·°F at 2,000 °F); Distribution International, Kast-O-Lite 30 LI G Plus (1.44–1.6 g/cc). https://acceptance.reach.dog/shop/hightemptools/products/kast-o-lite-30-5 ; https://shop.distributioninternational.com/refractories/refractories-castable/recakl30lip55h (via search summary)
+
+---
+
+## Corroboration (2026-10-24)
+
+Rule: an item needs ≥ 3 **independent** sources. Resellers reprinting one sheet count once: Propane Warehouse [S1] and Pro Tank Supply [S2] are one source; Flame Engineering [S3] is reproduced by both, so table 2.1 is one source; Motorsnorkel and US Carburetion [S10] are one. Ward pages [S20]–[S32] count as one source (one company). Search-summary-only sources are weaker than a read page.
+
+Engine uses (grep of core/src/kilndesigner): combustion.py and gas.py (HHV 91,502 BTU/gal, §1.1), castable.py (O₂ 20.95 %), data/gas.yaml (§2.1, 2.2, 2.4, 1.2, 3.1–3.3), gas.py (chimney §4.1, flue 2.5 in²/ft³, draft §4.2), masonry.py and geometry.py (arch §6.5, cure §6.2), hybrid.py (λ = 0.9, §8), materials.yaml (§6.1), prices.yaml (§9).
+
+| Item | Independent sources | Agreement | Notes / discrepancies |
+|---|---|---|---|
+| Propane HHV per gallon | 5 ([S1/S2], [S3], [S4], [S5], Ward [S20]) | 91,410–91,690; spread 0.3 % | Engine 91,502 is inside the spread. OK. |
+| Propane LHV | 3 ([S4], [S5], [S5b]) | 84,250 vs 84,950 BTU/gal (0.8 %) | Small basis difference. |
+| HHV per ft³ vapor | 3 ([S1/S2], Ward [S21], CM [S30]); 2,516 in §3.4 has 1 weak blog | 2,488 vs 2,500 rounded | §3.4 table uses 2,516; 1.1 % above [S1]'s 2,488. Affects only the derived orifice check. |
+| Liquid density | 3 ([S1/S2] 4.20, [S3] 4.23, NIST [S6] 4.228) | 0.7 % | Ward's 4.5 rejected (7 % high). Engine 91,502 BTU/gal implies 4.20 basis. |
+| Vapor SG | 3 ([S1] 1.50, [S3] 1.53, Ward [S22] 1.522) | 2 % | OK. |
+| O₂ in air 20.95 % | 3 ([S1] stoich basis, NAU [S78], textbook AFR calc [S79] uses 3.76 N₂/O₂ = 21.0 %) | agree | castable.py 0.2095 OK. |
+| Stoich air 23.86 ft³/ft³ | 3 ([S1], derivation, [S79]) | 23.8–23.87 | CM "≈ 25" [S30] is a rounding (5 % high). |
+| Mass AFR 15.67 | 2 published ([S79] 15.6, 15.5) + derivation | **15.67 derived vs 15.6 (0.4 %) and 15.5 (1.1 %)** | Difference is molar-mass/air basis (21 % vs 20.95 %). Not used by engine found in grep. |
+| Vapor pressure (NIST) | 3 (NIST [S6], [S3], Ward [S23]) | within 3 psi | [S1/S2] runs 4–22 psi high; disagreement unchanged. |
+| 100 lb cylinder table 2.1 | **only 1 source** ([S3]; [S1]/[S2] copy it; a Country Plans forum post (countryplans.com/smf/index.php?msg=149128) cites the same table) | — | gas.yaml relies on it. Still short. |
+| Conservative table 2.2 | **only 2** ([S10], [S11]) | agree where read | Emerson LP-10 [S8] likely holds the original; not readable. |
+| ASME table 2.4 | **only 1** (secondary [S13]) | — | gas.yaml uses it; original source unnamed. |
+| D×L×K rule | 2 ([S1/S2], [S12]) | agree | **only 2 sources found**. |
+| Ward BTU/ft³/hr table 3.1 | **only 1 primary** (Ward [S28], [S29] same author) | Laguna LE-2040 ≈ 10,000 and NM Clay ≈ 24,000 BTU/ft³/hr [S85] bracket Ward's ranges; forum 14,000 [S85 search] | Not independent confirmation of the table; data/gas.yaml depends on Ward alone. Ask the user for Olsen's burner-sizing figures (Olsen p.__). |
+| Venturi/power burner ratings 3.2, 3.3 | 1 (manufacturer data) | — | Manufacturer ratings; 1 source is appropriate (it is the data sheet). |
+| Orifice equation | 3 (Eng-Tips [S33], ORNL/Eclipse [S34], NFPA 54 Table F.1 via Fisher [S35]) | constant 1655 vs 1658.5 (0.2 %); formula 2 % below NFPA table | Unchanged. |
+| Chimney rule 3H + L/3 | 4 (Ward [S32], Olsen via CAD [S37], Peacey on Olsen/Baker/Cardew [S82], Robinson [S30] for the 3H part) | agree in form | **Baker uses L/3.5, not L/3** (≈ 4 % lower height for Ward's example: 123.4 vs 126 in.). Olsen measures downward pull from the crown, Cardew from the springer; gas.py uses interior height, which matches Ward. |
+| Flue 2.5 in²/ft³ (Olsen) | **only 2, both secondary** ([S38], [S39]) | — | gas.py FLUE_SOURCE uses it. Ward's rule (flue = burner port area) [S32] and Olsen via [S83] (inlet = outlet for downdraft) are a different basis. **Ask the user for Olsen p.__**. |
+| Stack-effect ΔP | 4 (Wikipedia flue-gas stack [S42], Wikipedia stack effect [S80], Engineering ToolBox [S43], Rumford [S81]) | US form 7.65 vs 7.63 derived (0.3 %) | Both Wikipedia articles share editors; counted as one would leave 3. OK. |
+| Draft flow C = 0.65–0.70 | 2 ([S42], [S80], same wiki family) | — | **only 1–2 sources found**. |
+| Arch rise / 60° skewback | 3 for 60° (Masonry Magazine [S62] 60–70°, forum [S61], geometry derivation); rise: Olsen 1½–3 in./ft via [S84], forum 2–4 in./ft [S61] | partly | The doc's earlier "1.5 in./ft NOT FOUND" is now secondarily attributed to Olsen [S84]; derived 60° arch rise 1.608 in./ft sits inside Olsen's 1½–3 range. Ask the user for Olsen p.__. masonry.py §6.5 value unaffected. |
+| Kast-O-Lite 30 LI Plus | 3 for density/rating ([S50] HWI 92–98, [S51]/[S52] 90, [S86] 90 and 90–100) | 90 vs 92 lb/ft³ (2 %) | k at 2,000 °F: **HWI 4.9 vs High Temp Tools 4.54 BTU·in/hr·ft²·°F (7 % lower)**; materials.yaml uses HWI. |
+| Mizzou cure schedule | **only 1** ([S54] quoting High Temp Tools) + HWI general [S56] | — | masonry.py §6.2 cites it. |
+| Reduction λ = 0.9 | derived only; atmosphere ratios 1 source [S66] | — | **only 1 source**; hybrid.py REDUCTION_AIR is an estimate. |
+| Wood firebox, Bourry, wood use | 1–2 each, mostly secondary | — | Unchanged; ask the user for Olsen p.__ on grate/chimney ratio. |
+| Prices | 1 each (a price is a single listing) | — | Not applicable. |

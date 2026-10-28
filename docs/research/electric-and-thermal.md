@@ -31,7 +31,11 @@ Unit conversions used:
 | Kanthal APM | 1.45 | not stated | 7.10 | 1425 | 1500 | 0.70 | [S2] |
 | Kanthal AF | 1.39 | 836 | 7.15 | 1300 | 1500 | 0.70 | [S3] |
 | Kanthal D | 1.35 | 812 | 7.25 | 1300 | 1500 | 0.70 | [S4] |
-| Nikrothal 80 (NiCr 80/20) | 1.09 | not stated | 8.30 | 1200 | 1400 | 0.88 | [S5] |
+| Nikrothal 80 (NiCr 80/20) | 1.09 | not stated | 8.30 (other makers: 8.40–8.41 [S81, S82, S83]) | 1200 | 1400 | 0.88 | [S5]; ρ also [S81], 1.08 [S82]; max temp [S81, S82], Omega 1150 [S83] |
+
+Cross-checks (2026-10-24): A-1-class FeCrAl, Aperam Resistohm 145 gives ρ 1.45, density 7.10,
+melting 1500 °C, but max 1300 °C [S79]. JLC FeCrAl 135 gives 7.25 g/cm³ and max 1200 °C [S80].
+See the Corroboration section.
 
 Nominal composition of A-1 and APM: 22% Cr, 5.8% Al, balance Fe [S6].
 
@@ -74,6 +78,9 @@ Notes:
 - Nikrothal 80's Ct is not monotonic. It peaks at 500 °C (1.05) and dips to 1.04 from 600 to 900 °C.
   Interpolate it piecewise. Do not fit a smooth curve.
 - Ct is tabulated to two decimals only. Linear interpolation between rows is the practical choice.
+- Independent cross-check (derived from mean temperature coefficients): Aperam Resistohm 145,
+  33×10⁻⁶/K over 20–1000 °C, gives Ct(1000) = 1 + 33e-6 × 980 = 1.032 vs Kanthal A-1 1.04 [S79].
+  JLC NiCr 80:20, 60×10⁻⁶/K, gives Ct(1000) = 1.059 vs Nikrothal 80 1.05 [S82].
 
 ### 1.3 Generic FeCrAl equivalents (Chinese GB/T 1234 grades)
 
@@ -261,7 +268,7 @@ jurisdiction has adopted.
 | Appliance branch circuit | 422.10(A) | The 125% minimum, as forums cite it [S23] |
 | Single non-motor appliance OCPD maximum | 422.11(E) | Not above the marked rating. If unmarked: 20 A for ≤ 13.3 A, or 150% of rating for > 13.3 A, with the next standard size up permitted [S23] |
 | Conductor protection | 240.4 | Still applies to the conductors [S23] |
-| Standard ampere ratings | 240.6(A) | Fuses and inverse-time breakers: 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1600, 2000, 2500, 3000, 4000, 5000 and 6000 A; fuses also 1, 3, 6, 10 and 601 A. Manufacturers make other ratings, "and the use of these non-standard ampere ratings is permitted". From the 2005 NEC [S79] Verified |
+| Standard ampere ratings | 240.6(A) | Fuses and inverse-time breakers: 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1600, 2000, 2500, 3000, 4000, 5000 and 6000 A; fuses also 1, 3, 6, 10 and 601 A. Manufacturers make other ratings, "and the use of these non-standard ampere ratings is permitted". From the 2005 NEC [S100] Verified |
 | Receptacle rating | 210.21(B)(1) | A single receptacle on an individual branch circuit must be rated ≥ the branch circuit. This bears on a 50 A cord on a 60 A circuit [S24] |
 | Industrial process heating | Article 425 | One forum opinion classes kilns here, which would make them continuous loads [S24]. Unverified |
 
@@ -587,6 +594,7 @@ Derived quantities:
   science review of 2026-10-28 found: Neutrium's 1.177 kg/m³ at 300 K is Holman's 1.1774, where
   Incropera gives 1.1614. The review puts the difference at under 2 % in h_c. Neither book was
   read here. (This corrects an earlier note that they matched Incropera.)
+- Cross-checked 2026-10-24 against Çengel Table A-9 [S84]: k and μ agree within about 1–2 % at every row, and Çengel's density (1.176 kg/m³ at 27 °C) matches the ideal-gas value p/(R·T) = 1.1766.
 
 ### 6.4 Worked multi-layer wall examples (validation tests)
 
@@ -725,6 +733,9 @@ Small kilns need more W/ft³, because the wall area per unit volume is larger.
 
 ## 8. Orton cone temperature equivalents
 
+See also `cones.md` (2026-10-24): PCE cones 15 to 42 from ASTM C24 Table X1.1, and a re-check
+of this table against Orton's own °F chart.
+
 Values are in °C. "SSB" means self-supporting regular cones and "LRB" means large regular cones.
 The rates are the heating rate over the last 100 °C or so of the firing.
 
@@ -797,6 +808,60 @@ Other notes:
   table in code. Temperature equivalents are factual data, but the chart layout is copyrighted.
 
 ---
+
+## Corroboration (2026-10-24)
+
+The goal is at least three independent sources per item. Resellers and distributors that copy a
+maker's sheet (Foundry Service, SSFBS, Clay-Planet, Distribution International, lookpolymers,
+MatWeb, Krueger listings) are **not** independent of that maker. Kanthal pages [S1–S6, S9, S13,
+S14, S16] count as one source (one maker). Morgan JM, K, TJM and Kaowool/Cerawool sheets count as
+one maker. §8 (cones) is out of scope here.
+
+| Item (section) | Independent sources | Agreement | Discrepancy / note |
+|---|---|---|---|
+| FeCrAl A-1 class ρ20 1.45, density 7.10, melt 1500 (§1.1) | 3: Kanthal [S1], Aperam [S79], GB/T suppliers [S8] (weak) | ρ and density agree exactly | Aperam max temp 1300 °C vs Kanthal A-1 1400 °C. That is a grade difference, not an error |
+| FeCrAl max temp 1400 °C (A-1) (§1.1, §1.4) | **only 1** (Kanthal). Others give 1300 [S79], 1200 [S80] for their own grades | — | Engine `alloys.yaml` A-1 1400 °C depends on Kanthal alone. That is right for genuine A-1 wire, but not for generic FeCrAl |
+| Kanthal D density 7.25 (§1.1) | 2: Kanthal [S4], JLC FeCrAl 135 7.25 [S80] | agree | short by one |
+| NiCr 80/20 ρ20 1.09 (§1.1) | 3: Kanthal [S5], NiWire 1.09 [S81], JLC 1.08 [S82] | agree within 1% | — |
+| NiCr 80/20 density 8.30 (§1.1) | 4 | **disagree** | Kanthal 8.30 vs NiWire 8.40, JLC 8.41, Omega 8.41 [S81–S83]. About 1.3%. It affects wire mass only (`alloys.yaml` Nikrothal 80), not resistance |
+| NiCr 80/20 max temp 1200 (§1.1) | 4 | mostly | Kanthal, NiWire and JLC give 1200. Omega gives 1150 (2100 °F) [S83] |
+| NiCr melting 1400 (§1.1) | 3: Kanthal, NiWire, Omega [S81, S83] | agree | — |
+| Emissivity 0.70 / 0.88 of oxidized wire (§1.1) | **only 1** (Kanthal) | — | not found elsewhere |
+| Ct tables (§1.2) | 2 makers for derived end points: Aperam [S79], JLC [S82] give mean TCR only | A-1 Ct(1000) 1.032 vs 1.04; NiCr 1.059 vs 1.05 | Full tables are Kanthal only. **Only 1 source for the row-by-row values.** The others are mean coefficients, so the shape (e.g. Nikrothal's 500 °C peak) is not corroborated |
+| Atmosphere limits (§1.4, `hybrid.py`) | **only 1** (Kanthal [S9]). Aperam says pre-oxidise below 1000 °C for 7–8 h before reducing use and calls N₂, NH₃ and hydrocarbons harmful [S79] | qualitatively consistent with the Kanthal 7–10 h at 1050 °C | numbers single-source |
+| FeCrAl better than NiCr in sulphur (§1.5) | 2: Kanthal [S6], Aperam [S79] | agree | short by one |
+| Surface load 17.5 W/in² (2.71 W/cm²) for A-1 in grooves at ~2300 °F (§1.6, `electric.py` SURFACE_LOAD) | 2: Krueger [S15], Kanthal key data 3–4 W/cm² at 1000 °C for grooves [S14]. Forum "Brauer" figure 3.5 W/cm² below 900 °C, 1.5 W/cm² near 1350 °C [S86] (unverified). A patent cites 30.5 W/in² at ~1200 °C [S87] | loosely: Krueger's 2.71 W/cm² at 1260 °C sits below Kanthal's 3–4 at 1000 °C, as expected | **only 2 credible sources.** The patent's 30.5 W/in² (4.7 W/cm²) is far above the others. It is probably a different duty, but record it |
+| On/off control −20%, D/d 5–12, pitch 2–4 d (§1.6) | **only 1** (Kanthal [S13], confirmed again [S86]) | — | — |
+| Kanthal worked example (§1.7) | 1 (Kanthal), re-derived here | reproduces | a validation test, so a single source is acceptable |
+| AWG formula and table (§2) | 3: ASTM B258 abstract [S18], Wikipedia [S19], and the closed-form formula re-computed | agree | — |
+| NEC 125% continuous load, 3 h definition (§3, `electric.py`) | ≥4: EC&M [S20], Mike Holt [S21, S89], EC mag [S22], L&L [S25], solar-forum quotation of Art. 100 [S88] | agree | NEC text still not read first-hand |
+| 48 A kiln → 60 A breaker, 6 AWG Cu (§3) | 3: L&L [S25], Austin Gallery table [S90], CAD forum installs [S24] | agree | One forum post reports a Paragon page saying 50 A for an older TnF-82 (unverified) |
+| JM 23 / JM 26 / JM 28 k(T) (§4.1, `materials.yaml`, `ifb_conductivity.yaml`) | **only 1 maker** (Morgan, several sheets [S29–S32]). BNZ 23 [S91] is a different, denser product (593 kg/m³ vs 480) | — | BNZ 23: 0.14 W/(m·K) at 260 °C, 0.19 at 538, 0.23 at 816, 0.26 at 1093. Morgan K-23: 0.13 / 0.17 / 0.20 / 0.24 at about the same points. JM 23 0.12 at 400 °C vs BNZ 23 about 0.165 interpolated. Not a contradiction (different grade), but no second maker confirms JM 23 |
+| BNZ "PA 23" vs K-23 (§4.1) | — | — | Already flagged. BNZ 23 at 0.14 W/(m·K) (0.97 Btu) at 500 °F [S91] contradicts the lookpolymers "PA 23" 1.60 at 500 °F, which supports the suspicion that "PA 23" is mislabelled |
+| KX-99 dense brick k (§4.2, `materials.yaml`) | **only 1** (HWI; Foundry Service and SSFBS are resellers) | — | Generic fire-clay 1.4 W/(m·K) at 500 °C [S37] is close to KX-99 1.40–1.54. A Plibrico fireclay sheet gives 8.2 at 400 °F to 9.5 at 2000 °F Btu·in [S92] (a lower-alumina product, about 10% lower) |
+| Kaowool 8 pcf k(T) (§4.3, `materials.yaml`) | 3 for "1260 °C blanket, 128 kg/m³": Morgan Kaowool [S38/S39], MatWeb copy (not independent), CNBM [S93], Morgan Cerawool [S41] (same maker) | **disagree at high T** | At ~1000 °C: Kaowool 0.26–0.30, Cerawool 0.25, CNBM 0.17 W/(m·K), and a supplier listing gives 0.20. The CNBM value is 35–45% lower than Morgan's. The engine uses Morgan's (the conservative choice for heat loss) |
+| Fibre specific heat 1.13 kJ/(kg·K) (§4.3) | 2: Distribution International Kaowool [S42], Unifrax Durablanket S listing 0.27 Btu/(lb·°F) [S94] | agree | both are distributor listings |
+| Kast-O-Lite 26, Mizzou (§4.5) | **only 1** (HWI). All other copies are resellers | — | — |
+| PROMASIL calcium silicate (§4.6, `materials.yaml`) | 2: Promat [S49], BNZ ZelieBlok [S50] (a comparable product) | similar: 0.085 vs 0.08 at 200, 0.105 vs 0.10 at 400, 0.145 vs 0.12 at 600 °C | Within 17% at 600 °C. Short by one |
+| Mineral wool (§4.6) | 1 (ROCKWOOL) | — | — |
+| Oxidized steel ε 0.79 (§4.7, `heatloss.py`) | 2: CIBSE via IES-VE [S52], Engineering ToolBox [S53]. EngineersEdge/Optris tables [S95] list wide ranges | agree on 0.79 | CIBSE values are normal emissivity, and ToolBox values are at 300 K. Hemispherical ε at shell temperature can differ. Brick: CIBSE 0.93 vs ToolBox fire-clay 0.75 |
+| Brick sizes 9 × 4½ × 2½ (§5, `masonry.py`) | ≥3: Larkin [S54], SSFBS [S55], Armadillo [S56], Bailey [S57], HWI Greentherm listings [S96] | agree | — |
+| Arch/wedge tapers (§5, `masonry.py` ARCH) | 2: Larkin [S54], Bailey [S57] (#1 arch 3 in: 2.73 vs 2¾). Forum confirms #2 arch 2½ → 1¾ [S97] | agree | ASTM C909 table still not read. **Short.** Wedge tapers rest on Larkin alone |
+| ASTM C680 scope (§6.1) | 2: ASTM and ANSI abstracts (same document) | — | **only 1 effective source** |
+| Churchill–Chu vertical plate (§6.2) | ≥3: ULA notes [S60], EngineersEdge [S61], Caleb Bell `ht` library citing Churchill & Chu 1975 and Incropera 6th ed. [S98], Maya HTT [S99] | agree | — |
+| Horizontal plate 0.54/0.15/0.27 (§6.2) | 2: Maya HTT/Lloyd–Moran [S62], COMSOL [S62]. The `ht` library [S98] lists McAdams/VDI/Rohsenow alternatives, which differ | partial | **Short of 3 independent sources quoting the same constants.** `ht` shows McAdams vs VDI vs Rohsenow differ by up to ±15% (hot side) and ±50% (cold side) for one test case |
+| Air properties (§6.3, `thermal/air.py`) | 3: Neutrium [S63], Çengel [S84], Incropera [S85] | k, μ, c_p within ~1–2% | Incropera ρ(300 K) 1.1614 vs Neutrium 1.177 (1.3%). Neutrium matches ideal gas, so no change is needed |
+| Worked wall examples (§6.4) | single-source validation cases, re-derived | reproduce | acceptable as tests |
+| erf, semi-infinite and slab solutions (§6.5) | mathematical. [S66], [S67], Carslaw & Jaeger | agree | — |
+| Energy rules of thumb (§7, `electric.py` W/ft³) | L&L [S69], Skutt [S70], Lakeside [S71] are 3 independent methods. W/ft³ derived from 2 makers [S73, S74] | methods differ: L&L about 62.5% of kW×h for high fire, Skutt 50% | W/ft³ is **2 makers plus forum**. No maker publishes a W/ft³ rule |
+
+Summary: at ≥3 independent sources are AWG, NEC 125%/3 h, the 48 A → 60 A example, NiCr ρ and
+melting point, FeCrAl A-1-class ρ and density, standard straight brick size, Churchill–Chu, air
+properties, the transient solutions and the energy methods. Single-maker items that **cannot reach
+three by nature** (proprietary product data): all Kanthal-specific figures (Ct rows, atmosphere
+table, element key data, emissivity), Morgan JM/K IFB, HWI KX-99, Kast-O-Lite and Mizzou. For these
+the second and third sources can only be the same maker's other sheets, or comparable products,
+which are listed above.
 
 ## Gaps (not found)
 
@@ -896,4 +961,25 @@ Other notes:
 - [S76] Orton, Cone 10 self-supporting. https://www.ortonceramic.com/product-page/10-self-supporting-25-box
 - [S77] Orton, Pyrometric cones FAQ. https://www.ortonceramic.com/pyrometric-cones-faq
 - [S78] Orton, °F cone chart 022–14 (PDF). https://www.ortonceramic.com/files/2676/File/Orton-Cone-Chart-F-022-14.pdf
-- [S79] T. Crnko, "Overcurrent protection, part 2", IAEI Magazine, May/June 2007 (2005 NEC). https://iaeimagazine.org/features/overcurrent-protection-part-2
+- [S100] T. Crnko, "Overcurrent protection, part 2", IAEI Magazine, May/June 2007 (2005 NEC). https://iaeimagazine.org/features/overcurrent-protection-part-2
+- [S79] Aperam Alloys Rescal, Resistohm 145 data sheet, April 2012 (PDF, read). https://www.aperam.com/sites/default/files/documents/datasheet_RESISTOHM_145.pdf
+- [S80] JLC Electromet, FeCrAl data sheet, May 2016 (PDF, read). https://www.jlcelectromet.com/downloads/20.data.sheet.FeCrAl.pdf
+- [S81] NiWire, Nichrome 80 data sheet (search extract). https://www.mikrocontroller.net/attachment/659182/Nichrome_80.pdf
+- [S82] JLC Electromet, Nickel-Chromium data sheet, Dec 2020 (PDF, read). https://www.jlcelectromet.com/downloads/2.data.sheet.NiCr.pdf
+- [S83] Omega (DwyerOmega), NI80 resistance heating wire (search extract). https://www.dwyeromega.com/en-us/2100-f-max-80-nickel-20-chromium-resistance-heating-wire/p/NI80 ; Concept Alloys Chromel A: https://conceptalloys.com/?p=5624
+- [S84] Çengel, Heat and Mass Transfer, Table A-9, Properties of air at 1 atm (PDF, read). https://www.me.psu.edu/cimbala/me420/Links/Table_A_9_CC_Properties_of_Air.pdf
+- [S85] University of Waterloo ME 353, air properties after Incropera & DeWitt Table A.4 (read). https://www.mhtlab.uwaterloo.ca/courses_old/me353/maple/tp/airprops1.html
+- [S86] Kanthal, Element surface load. https://kanthal.com/en/knowledge-hub/heating-material-knowledge/element-surface-load ; Gold Refining Forum, element design (cites "Brauer", unverified). https://www.goldrefiningforum.com/threads/how-to-design-electric-elements-for-kilns.22204/
+- [S87] US Patent 5,126,535, Furnace and kiln construction (search extract). https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/5126535
+- [S88] Solar-electric forum, "The 125% rules and the NEC" (quotes Art. 100). https://forum.solar-electric.com/discussion/comment/331643
+- [S89] Mike Holt forum, NEC 210.20(A) clarification. https://forums.mikeholt.com/threads/nec-210-20-a-clarification.2555041/post-2638656
+- [S90] Austin Gallery, Kiln electrical requirements. https://www.austingallery.org/blog/kiln-electrical-requirements
+- [S91] BNZ 23 insulating firebrick listing (ASTM C182, search extract). https://ibspot.com/products/bnz-materials-9-x-4-5-x-2-5-2300-f-insulating-firebrick-12ct-box
+- [S92] Plibrico fireclay brick sheet via Forno Bravo (search extract). https://community.fornobravo.com/filedata/fetch?id=284408
+- [S93] CNBM, Fibra cerámica data sheet (search extract). https://safe-energy.cl/pdf/CNBM/Fibra_Ceramica.pdf
+- [S94] Distribution International, Unifrax Durablanket S 8 pcf. https://shop.distributioninternational.com/refractories/ceramic-fiber/ceramic-fiber-blankets/cfbt8104dsu
+- [S95] EngineersEdge emissivity table. https://engineersedge.com/heat_transfer/emissivity.htm ; Optris emissivity table: https://optris.com/us/technology/emissivity-table/
+- [S96] Distribution International, HWI Greentherm 23/26 straights 9 × 4½ × 2½. https://shop.distributioninternational.com/refractories/refractories-bricks/rebr23094525sgh
+- [S97] Forno Bravo forum, Firebricks in South Florida (#2 arch taper). https://community.fornobravo.com/forum/pizza-oven-design-and-installation/getting-started/6976-firebricks-in-south-florida?p=96376
+- [S98] Caleb Bell, `ht` library, Free convection to immersed bodies (read). https://ht.readthedocs.io/en/latest/ht.conv_free_immersed.html
+- [S99] Maya HTT, Vertical plate, isothermal. https://thermal.mayahtt.com/tmwiz/convect/natural/vp-isot/about.htm

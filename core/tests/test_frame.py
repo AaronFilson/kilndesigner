@@ -425,3 +425,35 @@ def test_an_arch_too_heavy_for_any_angle_or_rod_says_so() -> None:
     assert frame.rod == "3/4-10"
     assert frame.angle == "L3×3×3/16"  # nothing passed, so the smallest stands
     assert not any("Weld the frame" in f.message for f in frame.findings)
+
+
+def _with_springs(rate: str) -> str:
+    text = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")
+    return text.replace(
+        "  rise: 3.75 in", f"  rise: 3.75 in\n  ties: springs\n  spring_rate: {rate}", 1
+    )
+
+
+def test_springs_keep_the_hot_thrust_near_the_cold() -> None:
+    """28 in span × 3/32 in/ft (Olsen p.51) = 0.219 in; each 283 lbf/in spring takes half:
+    193 lb cold + 283 × 0.109 = 224 lb per rod, against 730 lb with rigid ties."""
+    frame = design_frame(parse_design(_with_springs("283 lbf/in")))
+    step = next(s for s in frame.working if s.name == "Tie rod load with springs, hot")
+    assert step.value.startswith("224 lb per rod (rigid: 730 lb)")
+    assert frame.angle == "L3×3×3/16"
+    assert not [f for f in frame.findings if f.level == "warning"]
+
+
+def test_stiff_springs_are_capped_at_the_rigid_frame() -> None:
+    """A spring stiffer than the arch can push stays at Heyman's maximum, and the table
+    warning comes back."""
+    frame = design_frame(parse_design(_with_springs("100000 lbf/in")))
+    step = next(s for s in frame.working if s.name == "Tie rod load with springs, hot")
+    assert step.value.startswith("730 lb per rod")
+    assert frame.angle == "L4×4×5/16"
+    assert any("outside it" in f.message for f in frame.findings)
+
+
+def test_springs_need_their_rate() -> None:
+    with pytest.raises(ValidationError, match="spring_rate"):
+        parse_design(_with_springs("283 lbf/in").replace("  spring_rate: 283 lbf/in", ""))

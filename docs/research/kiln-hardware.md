@@ -884,6 +884,39 @@ Books:
 
 ---
 
+## Corroboration (2026-10-24)
+
+Goal: at least three independent sources per fact. Resellers or calculator sites that copy one
+table count as one source. Values were not changed; disagreements are listed.
+
+Engine-facing items (`core/src/kilndesigner/frame.py`, `data/steel.yaml`, `hardware.py`):
+
+| Item | Sources now | Agreement | Notes |
+|---|---|---|---|
+| AISC angle/channel properties (§4.7.1, `steel.yaml`) | 3: [S28]; beamdimensions.com AISC 360-16 entry [S42] (L3×3×¼: A 1.44, I 1.23, x̄ 0.84); hand calc from geometry (§4.7.1, L2×2×¼ x̄) | agrees | [S42] is a re-host of AISC data, so only partly independent. Engineers Edge angle table [S43] could not be fetched (HTTP 526). Sx 0.569 checks as I/c = 1.23 ÷ 2.164 **(derived)** |
+| UNC tensile stress areas (§4.7.3, `steel.yaml`) | ⅜-16, ½-13: 4 ([S29] [S32] [S44] [S45]); ⅝-11, ¾-10: 2 tables + formula | agrees to 4 figures where read | **⅝-11 and ¾-10: only 2 tables found** (Fastenal, Portland Bolt) plus the formula. ASME B1.1 still not read |
+| A307 Grade A 60 ksi min tensile (§4.7.4) | 3: [S33] [S29]; ASTM A307 abstract via ANSI/GlobalSpec [S46]; Lawson Products rod listing [S47] (reseller) | agrees | |
+| A36 36 ksi yield, 58–80 ksi tensile | 58–80 ksi: 3 ([S33] [S29] [S46], A307 Grade C cites A36 for it). 36 ksi yield: **only 2** ([S33] [S29]) | agrees | ASTM A36 itself not read |
+| 12,000 psi hot-binding stress limit (`steel.yaml` `binding_stress`) | **only 1 source** [S20] | — | No second furnace text found by search. Ask the user whether Olsen gives a steel stress (ask the user for Olsen p.__) |
+| Arch geometry formulas 1–13 (§4.3, `frame.py`) | 3: [S20]; chord–sagitta geometry (derivation, §4.4 checks); Pitelka's worked arches [S4] [S11] reproduce r and h | agrees within 1/16 in | Geometry is exact; independent of any one book |
+| Middle-third rule for line of thrust | 2: [S20]; McDowell via AIME paper [S48] | agrees | **only 2 sources** |
+| W, H, F constants and heated Hmax table (§4.3, `frame.py` thrust) | **only 1 source** [S20] (F = √(H²+(W/2)²) is checkable by statics) | — | Engine thrust rests on one manufacturer table. Ask the user for Olsen's arch-thrust treatment (Olsen p.__) |
+| M = wL²/8 (§4.5 buttress check) | 3: [S41]; textbook statics (any); AISC Manual Table 3-23 (not read) — count 2 read | agrees | **only 2 read** |
+| Steel 490 lb/ft³ | 2: [S39]; AISC weights reproduce it (§4.7.2) | agrees | only 2 |
+| Frame members: angle 2×2 to 4×4, ½ in rods (frame.py PITELKA, ½ in minimum) | 4 builds/books: [S4] [S11] [S7] [S17] [S34] (Rhodes 2×2 for small kilns); forum [S21] | broadly agree (2×2 small, 3×3 general, 4×4 hinged door) | No span-based rule anywhere; builds only. Merrill's ⅜ in rods [S16] are below the engine's ½ in minimum (flat top, not arch) |
+| Rise 1.608–3 in/ft, Pitelka ≥ 2 in/ft | 4: [S20] [S14] [S11] [S18] | agree in range | Cuzick 1½ in/ft and HW fireclay 1½ sit below Pitelka's 2 |
+| Brick-up door 9 in (hardware.py §6.1) | 2: [S4], Berggren 7 in [S7] | **disagree: 9 in vs 7 in** | only 2 |
+| Hinged door ¼×4×4 angle, ¾ in pin (hardware.py §6.2) | **only 1** [S13] | — | Electric-kiln ¾ in hinge rod (other file) is a different context |
+| Car rails/wheels (hardware.py §6.3) | forum [S24] [S25] secondary; McDowell [S35] no sizes | no numbers | still NOT FOUND |
+| Port = burner + 1 in; set-back ½ in (hardware.py §1.1) | 4: [S1] [S5] [S6] [S12]; Rohde 0.79 in [S38] | agree | Ward and the forum may not be independent |
+| Chimney inside ≥ flue; 4½ in mortared hard brick (hardware.py §3.2) | chimney/flue: 3 ([S15] Olsen, [S34], [S14]) | **disagree**: Norsker flue > chimney; Olsen/Rhodes chimney ≥ flue; Pitelka 1.20, Berggren 0.90 | unresolved; ask the user for Olsen 4th ed. p. 78 directly |
+| Horizontal pull: extra chimney per ft of run | 3 (Rhodes, Olsen/Ward, Norsker) | **disagree**: 2 ft vs ⅓ ft vs 1/3.5 ft (6×) | |
+| Flue area per ft³ | 3 (Olsen 2.5, Norsker 2.63, Rhodes 4.0 in²/ft³) | **disagree**: Rhodes 1.5× | |
+| Spy hole 1½–2½ in (hardware.py §2) | 3: [S13] [S4] [S7] | agree in range | no maker figure |
+
+Searches that found nothing new: arch-thrust texts beyond HarbisonWalker; a 12,000 psi or other
+hot-steel allowable; frame steel sized by span; studio car-kiln rail and wheel sizes.
+
 ## Sources
 
 - [S1] M. Ward, "Converting Electric Kilns to Gas", *Clay Times*, May 2003, Ward Burner Systems. https://www.wardburner.com/converting-electric/
@@ -927,3 +960,10 @@ Books:
 - [S39] Iowa Department of Transportation, Materials IM 569, "Computing Structural Steel Weight" (revised 2015-10-20): "Steel: 490 lb./ft.³". https://ia.iowadot.gov/erl/current/IM/content/569.htm
 - [S40] Ward Burner Systems, Power Burners. https://www.wardburner.com/burners/power-burners/
 - [S41] American Wood Council / AF&PA, *Beam Design Formulas with Shear and Moment Diagrams*, Design Aid No. 6 (2005 NDS edition, © 2007), Figure 1 "Simple Beam – Uniformly Distributed Load" (formulas printed as images; read from the rendered page). https://awc.org/wp-content/uploads/2021/12/AWC-DA6-BeamFormulas-0710.pdf
+- [S42] beamdimensions.com, L3x3x1/4 (AISC equal angles; re-host of AISC data, search summary). https://beamdimensions.com/database/American/AISC/Equal_angles/L3x3x1/4
+- [S43] Engineers Edge, ASTM A36 steel angle section properties (HTTP 526, not read). https://ns1.engineersedge.com/standard_material/Steel_angle_properties.htm
+- [S44] Engineers Edge, ANSI inch thread stress area table (search summary: ⅜-16 0.0775, ½-13 0.1419). https://engineersedge.com/hardware/ansi_inch_size_thread_stress_15800.htm
+- [S45] eFunda, UNC thread table (search summary: ⅜-16 0.0775). https://www.efunda.com/designstandards/screws/screw8un.cfm
+- [S46] ASTM A307 abstracts (ANSI webstore / GlobalSpec; Grade A 60 ksi min; Grade C to A36, 58–80 ksi). https://webstore.ansi.org/standards/astm/astma30707 ; https://standards.globalspec.com/std/3814645/astm-a307-03
+- [S47] Lawson Products, ASTM A307 Grade A threaded rod, 60,000 psi (reseller listing). https://www.lawsonproducts.com/products/threaded-rod-steel-1-4-20-x-36-1344412
+- [S48] "Development of Bonded Basic Roofs for Open-Hearth Furnaces", AIME Transactions (OneMine), citing McDowell's arch stability conditions (middle third). https://onemine.org/documents/part-i-papers-development-of-bonded-basic-roofs-for-open-hearth-furnaces

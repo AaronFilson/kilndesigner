@@ -211,7 +211,7 @@ def test_without_a_bill_of_materials_no_materials_line_is_shown() -> None:
 def test_importing_the_cli_switches_the_console_to_utf8(monkeypatch: pytest.MonkeyPatch) -> None:
     # A Windows console defaults to a code page with no Ω; a captured stream can't be switched.
     console = io.BytesIO()
-    stdout = io.TextIOWrapper(console, encoding="cp1252")
+    stdout = io.TextIOWrapper(console, encoding="cp1252", newline="\n")  # the same on Windows
     monkeypatch.setattr(sys, "stdout", stdout)
     monkeypatch.setattr(sys, "stderr", io.StringIO())
     importlib.reload(kilndesigner_cli.main)

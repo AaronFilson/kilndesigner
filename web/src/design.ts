@@ -16,7 +16,13 @@ export interface KilnDocument {
   chamber: { width: string; depth: string; height: string };
   roof?:
     | { type: "flat" }
-    | { type: "sprung_arch"; rise: string }
+    | {
+        type: "sprung_arch";
+        rise: string;
+        ring?: number;
+        ties?: "rigid" | "springs";
+        spring_rate?: string;
+      }
     | { type: "catenary_arch" }
     | { type: "dome"; rise: string };
   loading?: {
