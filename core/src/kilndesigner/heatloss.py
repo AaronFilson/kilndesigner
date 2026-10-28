@@ -203,9 +203,24 @@ def heat_loss(
         Step(
             name="Total heat loss at top temperature",
             value=f"{show(total_q, 'kW')} ({show(total_q, 'BTU/hr', 3)})",
-            formula="sum of the six faces",
+            formula=f"sum of the {({4: 'four', 6: 'six'}).get(len(faces), len(faces))} faces",
         )
     )
+    curved = {
+        "catenary_arch": "a catenary arch's outside loses heat as an upright wall as tall as it",
+        "dome": "a dome's outside loses heat as a flat roof facing up, over its whole area",
+    }.get(kiln.roof.type)
+    if curved:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"For convection, {curved}: no correlation for a curved shell is sourced, so "
+                    "its loss is less certain."
+                ),
+                reference=RA_SOURCE,
+            )
+        )
     for material_id in sorted({*hottest_beyond_data, *coolest_below_data}):
         m = resolve_material(kiln, material_id)
         ends: list[str] = []

@@ -7,13 +7,17 @@ Model units are millimetres; dimensions are labelled in the design's units.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Literal
 from xml.sax.saxutils import escape
 
+import numpy as np
+
 from kilndesigner.geometry import COLOURS, Part, arch_outline, lining_parts
 from kilndesigner.masonry import IN, LayerPlan
-from kilndesigner.model import Kiln
+from kilndesigner.model import CatenaryArch, Kiln
+from kilndesigner.shape import CatenaryCurve
 from kilndesigner.units import si
 
 type Axis = Literal[0, 1, 2]
@@ -85,14 +89,65 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
     return None
 
 
+def _crossings(
+    points: tuple[tuple[float, float], ...], along: Literal[0, 1], at: float
+) -> list[tuple[float, float]]:
+    """Where a line crosses a closed outline in the x–z plane, as spans of the other coordinate:
+    ``along`` 0 is the line x = at (spans of z), 1 the line z = at (spans of x)."""
+    hits: list[float] = []
+    for p, q in zip(points, points[1:] + points[:1], strict=True):
+        a, b = p[along], q[along]
+        if (a <= at < b) or (b <= at < a):
+            t = (at - a) / (b - a)
+            hits.append(p[1 - along] + t * (q[1 - along] - p[1 - along]))
+    hits.sort()
+    return list(zip(hits[::2], hits[1::2], strict=False))
+
+
+def _dome_cut(p: Part, axis: Axis, steps: int = 96) -> Rect | None:
+    """A dome layer or a wall's top under it, cut through the centre line: across (y = 0, in the
+    x–z plane) or along (x = 0, in the y–z plane), as an outline between its bottom and top."""
+    assert p.dome is not None
+    d, springline = p.dome, p.lo[2]
+    lo, hi = p.lo[1 - axis], p.hi[1 - axis]  # across the cut: x for y = 0, y for x = 0
+    if not p.lo[axis] - 1e-6 <= 0 <= p.hi[axis] + 1e-6:
+        return None
+    s = np.linspace(lo, hi, steps + 1)
+    zero = np.zeros_like(s)
+    top = d.heights(s, zero, d.radius + d.thickness)
+    inside = d.heights(s, zero, d.radius)
+    bottom = np.full_like(s, springline) if p.cap else np.maximum(inside, springline)
+    keep = top > bottom + 1e-6
+    if not keep.any():
+        return None
+    lower = [(float(a), float(b)) for a, b in zip(s[keep], bottom[keep], strict=True)]
+    upper = [(float(a), float(b)) for a, b in zip(s[keep], top[keep], strict=True)]
+    points = (*lower, *reversed(upper))
+    us, vs = [a for a, _ in points], [b for _, b in points]
+    fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+    return Rect(min(us), min(vs), max(us) - min(us), max(vs) - min(vs), fill, p.name, points)
+
+
 def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rect]:
     rects: list[Rect] = []
     for p in parts:
+        fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+        if p.dome is not None:
+            if axis != 2 and abs(at) < 1e-6 and (rect := _dome_cut(p, axis)):
+                rects.append(rect)
+            continue  # a dome is all above the springline, so the plan misses it
         if p.profile is not None and axis == 1:
             if p.lo[1] - 1e-6 <= at <= p.hi[1] + 1e-6:
-                fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
                 x0, z0, x1, z1 = p.lo[0], p.lo[2], p.hi[0], p.hi[2]
                 rects.append(Rect(x0, z0, x1 - x0, z1 - z0, fill, p.name, p.profile))
+            continue
+        if p.profile is not None:
+            # Along the kiln (x = at: spans of z, drawn y–z) or the plan (z = at: spans of x)
+            for a, b in _crossings(p.profile, 0 if axis == 0 else 1, at):
+                if axis == 0:
+                    rects.append(Rect(p.lo[1], a, p.length_y, b - a, fill, p.name))
+                else:
+                    rects.append(Rect(a, p.lo[1], b - a, p.length_y, fill, p.name))
             continue
         if p.arch is not None:
             if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6 and (rect := _arch_cut(p, axis)):
@@ -128,12 +183,22 @@ def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> li
     )
     plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
 
+    # A catenary's inside width is its span at the floor; at mid-height it is narrower
+    catenary = CatenaryCurve(w, h) if isinstance(kiln.roof, CatenaryArch) else None
     for view, inner_w in ((front, w), (side, d)):
         x0, y0, x1, y1 = view.bounds()
-        view.dims += [
+        across = (
             Dimension(
+                -inner_w / 2, 0, inner_w / 2, 0, -0.12 * h,
+                f"{length_text(inner_w, us)} inside, at the floor",
+            )
+            if catenary is not None and view is front
+            else Dimension(
                 -inner_w / 2, h, inner_w / 2, h, -0.35 * h, f"{length_text(inner_w, us)} inside"
-            ),
+            )
+        )  # fmt: skip
+        view.dims += [
+            across,
             Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside"),
             Dimension(
                 -inner_w / 2, 0, -inner_w / 2, h, 0.3 * inner_w, f"{length_text(h, us)} inside"
@@ -141,8 +206,13 @@ def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> li
             Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
         ]
     x0, y0, x1, y1 = plan.bounds()
+    plan_w = w
+    if catenary is not None:
+        plan_w = 2 * catenary.a * math.acosh((catenary.height + catenary.a - h / 2) / catenary.a)
     plan.dims += [
-        Dimension(-w / 2, -d / 2, w / 2, -d / 2, -0.3 * d, f"{length_text(w, us)} inside"),
+        Dimension(
+            -plan_w / 2, -d / 2, plan_w / 2, -d / 2, -0.3 * d, f"{length_text(plan_w, us)} inside"
+        ),
         Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} outside"),
         Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
     ]

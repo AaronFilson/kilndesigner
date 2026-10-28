@@ -1,15 +1,22 @@
 // The design as choices: every part of a design file as a form, so a kiln can be designed
 // without writing YAML. The form edits the JSON document; the API checks it (ADR 0006).
 import type { Library } from "@kilndesigner/api-client";
-import { type ReactNode, useId } from "react";
+import { type ReactNode, useId, useState } from "react";
 
 import {
+  type Burners,
   type Castable,
   type Electric,
   type Gas,
   joinQuantity,
   type KilnDocument,
   type Layer,
+  type Layout,
+  type Place,
+  type Port,
+  type PortKind,
+  placesFrom,
+  portFrom,
   setIn,
   splitQuantity,
   WALLS,
@@ -89,11 +96,14 @@ function Choice<T extends string | number>({
   label,
   value,
   options,
+  disabled = [],
   onChange,
 }: {
   label: string;
   value: T | undefined;
   options: [T, string][];
+  /** Options shown but not open to choose, for now. */
+  disabled?: T[];
   onChange: (value: T) => void;
 }) {
   return (
@@ -107,7 +117,7 @@ function Choice<T extends string | number>({
       >
         {value === undefined && <option value="">Choose…</option>}
         {options.map(([v, text]) => (
-          <option key={String(v)} value={String(v)}>
+          <option key={String(v)} value={String(v)} disabled={disabled.includes(v)}>
             {text}
           </option>
         ))}
@@ -400,6 +410,290 @@ function Castables({
   );
 }
 
+type Shape = "auto" | "round" | "rect";
+
+/** A port's size: as the engine chooses (`auto` says how), round, or a rectangle. Switching shape
+ * starts from the size the last build used, when there is one. */
+function PortSize({
+  label,
+  port,
+  auto,
+  seed,
+  onChange,
+}: {
+  label: string;
+  port: Port | undefined;
+  auto: string;
+  seed: Port | undefined;
+  onChange: (port: Port | undefined) => void;
+}) {
+  const [picked, setPicked] = useState<Shape>("round");
+  const shape: Shape =
+    port === undefined
+      ? "auto"
+      : port.width !== undefined || port.height !== undefined
+        ? "rect"
+        : port.diameter !== undefined
+          ? "round"
+          : picked;
+  const side = port?.diameter ?? port?.width ?? seed?.diameter ?? seed?.width;
+  return (
+    <>
+      <Choice
+        label={label}
+        value={shape}
+        options={[
+          ["auto", auto],
+          ["round", "Round"],
+          ["rect", "Rectangular"],
+        ]}
+        onChange={(v) => {
+          if (v !== "auto") setPicked(v);
+          if (v === "auto") onChange(undefined);
+          else if (v === "round") onChange({ diameter: side });
+          else onChange({ width: side, height: port?.height ?? seed?.height ?? side });
+        }}
+      />
+      {shape === "round" && (
+        <Quantity
+          label={`${label}: diameter`}
+          value={port?.diameter}
+          units={LENGTH}
+          onChange={(v) => onChange({ diameter: v })}
+        />
+      )}
+      {shape === "rect" && (
+        <>
+          <Quantity
+            label={`${label}: width`}
+            value={port?.width}
+            units={LENGTH}
+            onChange={(v) => onChange({ ...port, width: v })}
+          />
+          <Quantity
+            label={`${label}: height`}
+            value={port?.height}
+            units={LENGTH}
+            onChange={(v) => onChange({ ...port, height: v })}
+          />
+        </>
+      )}
+    </>
+  );
+}
+
+/** Ports placed one by one: each one's wall, across from the middle and up from the floor. */
+function Places({
+  title,
+  places,
+  onChange,
+}: {
+  title: string;
+  places: Place[];
+  onChange: (places: Place[]) => void;
+}) {
+  const set = (i: number, place: Place) => onChange(places.map((p, j) => (j === i ? place : p)));
+  const last = places.at(-1);
+  return (
+    <div className="places" role="group" aria-label={`${title}s, where each goes`}>
+      <ol>
+        {places.map((p, i) => (
+          <li key={i}>
+            <Choice
+              label={`${title} ${i + 1}, wall`}
+              value={p.wall}
+              options={faceOptions}
+              onChange={(wall) => set(i, { ...p, wall })}
+            />
+            <Quantity
+              label={`${title} ${i + 1}, across`}
+              value={p.across}
+              units={LENGTH}
+              onChange={(v) => set(i, { ...p, across: v })}
+            />
+            <Quantity
+              label={`${title} ${i + 1}, up`}
+              value={p.up}
+              units={LENGTH}
+              onChange={(v) => set(i, { ...p, up: v ?? "" })}
+            />
+            <button
+              type="button"
+              className="secondary"
+              aria-label={`Remove ${title.toLowerCase()} ${i + 1}`}
+              disabled={places.length === 1}
+              onClick={() => onChange(places.filter((_, j) => j !== i))}
+            >
+              Remove
+            </button>
+          </li>
+        ))}
+      </ol>
+      {last && (
+        <button type="button" className="secondary" onClick={() => onChange([...places, { ...last }])}>
+          Add a {title.toLowerCase()}
+        </button>
+      )}
+    </div>
+  );
+}
+
+const SIDES: (WallFace | undefined)[] = ["left", "right"];
+
+/** A catenary is its own side walls: the door goes to the front, the burners there too, and the
+ * flue to the back. Ports placed one by one are left where they are, for the check to point out. */
+function offTheSides(doc: KilnDocument): KilnDocument {
+  let next = doc;
+  if (SIDES.includes(doc.loading?.face)) next = setIn(next, ["loading", "face"], "front");
+  if (doc.heat.gas && SIDES.includes(doc.heat.gas.burners?.wall)) {
+    next = setIn(next, ["heat", "gas", "burners", "wall"], "front");
+  }
+  if (doc.draft && SIDES.includes(doc.draft.flue_wall)) next = setIn(next, ["draft", "flue_wall"], "back");
+  return next;
+}
+
+/** A part of the document with nothing left in it is left out. */
+function tidy<T extends object>(value: T): T | undefined {
+  return Object.values(value).some((v) => v !== undefined) ? value : undefined;
+}
+
+function Ports({
+  doc,
+  layout,
+  onChange,
+}: {
+  doc: KilnDocument;
+  layout: Layout | undefined;
+  onChange: (document: KilnDocument) => void;
+}) {
+  const gas = doc.heat.gas;
+  const burners = gas?.burners ?? {};
+  const spy = doc.spy_holes ?? {};
+  const draft = doc.draft;
+  const built = (kind: PortKind) => layout?.ports.find((p) => p.kind === kind);
+  const seed = (kind: PortKind) => {
+    const spot = built(kind);
+    return spot && layout ? portFrom(spot, layout.units) : undefined;
+  };
+  const setBurners = (next: Burners) => onChange(setIn(doc, ["heat", "gas", "burners"], next));
+  const setSpy = (next: NonNullable<KilnDocument["spy_holes"]>) =>
+    onChange(setIn(doc, ["spy_holes"], tidy(next)));
+  const placedLater = "Each where it's placed (build first, or drag it in the 3D model)";
+  return (
+    <Section title="Ports and spy holes">
+      <p className="muted section-note">
+        Across is from the middle of the wall, to your right as you stand outside facing it; up is
+        from the floor to the hole's centre. Ports can also be dragged on the 3D model.
+      </p>
+      {gas && (
+        <div className="subgroup" role="group" aria-label="Burner ports">
+          <h3>Burner ports</h3>
+          <Choice
+            label="Burner ports go"
+            value={burners.places ? "placed" : "spread"}
+            options={[
+              ["spread", "Spread evenly along one wall"],
+              ["placed", built("burner") || burners.places ? "Each where it's placed" : placedLater],
+            ]}
+            disabled={built("burner") || burners.places ? [] : ["placed"]}
+            onChange={(v) => {
+              if (v === "placed" && layout) {
+                setBurners({ ...burners, count: undefined, places: placesFrom(layout, "burner") });
+              } else if (v === "spread" && burners.places) {
+                setBurners({ ...burners, places: undefined, count: burners.places.length });
+              }
+            }}
+          />
+          {!burners.places && (
+            <Quantity
+              label="Ports' centres above the floor (blank: one course up)"
+              value={burners.up}
+              units={LENGTH}
+              onChange={(v) => setBurners({ ...burners, up: v })}
+            />
+          )}
+          <PortSize
+            label="Burner port size"
+            port={burners.port}
+            auto="Sized for the burner"
+            seed={seed("burner")}
+            onChange={(port) => setBurners({ ...burners, port })}
+          />
+          {burners.places && (
+            <Places
+              title="Burner"
+              places={burners.places}
+              onChange={(places) => setBurners({ ...burners, places })}
+            />
+          )}
+        </div>
+      )}
+      {gas && draft && (
+        <div className="subgroup" role="group" aria-label="Exit flue">
+          <h3>Exit flue</h3>
+          <PortSize
+            label="Flue port size"
+            port={draft.flue_port}
+            auto="Olsen's 2.5 in² per ft³"
+            seed={seed("flue")}
+            onChange={(port) => onChange(setIn(doc, ["draft", "flue_port"], port))}
+          />
+          {draft.type !== "up" && (
+            <Quantity
+              label="Flue across from the middle (blank: in the middle)"
+              value={draft.flue_across}
+              units={LENGTH}
+              onChange={(v) => onChange(setIn(doc, ["draft", "flue_across"], v))}
+            />
+          )}
+        </div>
+      )}
+      <div className="subgroup" role="group" aria-label="Spy holes">
+        <h3>Spy holes</h3>
+        <Choice
+          label="Spy holes go"
+          value={spy.places ? "placed" : "door"}
+          options={[
+            ["door", "Up the door"],
+            ["placed", built("spy") || spy.places ? "Each where it's placed" : placedLater],
+          ]}
+          disabled={built("spy") || spy.places ? [] : ["placed"]}
+          onChange={(v) => {
+            if (v === "placed" && layout) {
+              setSpy({ ...spy, count: undefined, places: placesFrom(layout, "spy") });
+            } else if (v === "door" && spy.places) {
+              setSpy({ ...spy, places: undefined, count: spy.places.length });
+            }
+          }}
+        />
+        {!spy.places && (
+          <Field label="How many (blank: three)">
+            <input
+              type="number"
+              min={0}
+              max={12}
+              value={spy.count ?? ""}
+              onChange={(e) =>
+                setSpy({ ...spy, count: e.target.value === "" ? undefined : Number(e.target.value) })
+              }
+            />
+          </Field>
+        )}
+        <PortSize
+          label="Spy hole size"
+          port={spy.port}
+          auto={gas ? "A quarter brick, 2¼ × 2½ in" : "1 in round"}
+          seed={seed("spy")}
+          onChange={(port) => setSpy({ ...spy, port })}
+        />
+        {spy.places && spy.places.length > 0 && (
+          <Places title="Spy hole" places={spy.places} onChange={(places) => setSpy({ ...spy, places })} />
+        )}
+      </div>
+    </Section>
+  );
+}
+
 const DEFAULT_ELECTRIC: Electric = {
   supply: { voltage: "240 V", phase: 1, breaker: "60 A" },
   alloy: "kanthal-a1",
@@ -414,10 +708,13 @@ const DEFAULT_GAS: Gas = {
 export function DesignForm({
   document: doc,
   library,
+  layout,
   onChange,
 }: {
   document: KilnDocument;
   library: Library;
+  /** Where the last build put the ports, to start placing them by hand from. */
+  layout?: Layout;
   onChange: (document: KilnDocument) => void;
 }) {
   const change: Change = (path, value) => onChange(setIn(doc, path, value));
@@ -478,7 +775,18 @@ export function DesignForm({
         {(["width", "depth", "height"] as const).map((k) => (
           <Quantity
             key={k}
-            label={{ width: "Width", depth: "Depth", height: "Height" }[k]}
+            label={
+              {
+                width: roof.type === "catenary_arch" ? "Width, at the floor" : "Width",
+                depth: "Depth",
+                height:
+                  roof.type === "catenary_arch"
+                    ? "Height, to the crown"
+                    : roof.type === "flat"
+                      ? "Height"
+                      : "Height, to the springline",
+              }[k]
+            }
             value={doc.chamber[k]}
             units={LENGTH}
             onChange={(v) => change(["chamber", k], v)}
@@ -490,18 +798,41 @@ export function DesignForm({
           options={[
             ["flat", "Flat"],
             ["sprung_arch", "Sprung arch"],
+            ["catenary_arch", "Catenary arch, from the floor"],
+            ["dome", "Dome"],
           ]}
-          onChange={(v) =>
-            change(["roof"], v === "flat" ? { type: "flat" } : { type: "sprung_arch", rise: "3.75 in" })
-          }
+          onChange={(v) => {
+            // A rise carries over between a sprung arch and a dome
+            const rise = "rise" in roof ? roof.rise : "3.75 in";
+            let next = setIn(
+              doc,
+              ["roof"],
+              v === "flat" || v === "catenary_arch" ? { type: v } : { type: v, rise },
+            );
+            if (v === "catenary_arch") next = offTheSides(next);
+            onChange(next);
+          }}
         />
-        {roof.type === "sprung_arch" && (
+        {(roof.type === "sprung_arch" || roof.type === "dome") && (
           <Quantity
-            label="Arch rise"
+            label={roof.type === "dome" ? "Dome rise, at the centre" : "Arch rise"}
             value={roof.rise}
             units={LENGTH}
             onChange={(v) => change(["roof", "rise"], v)}
           />
+        )}
+        {roof.type === "catenary_arch" && (
+          <p className="muted section-note">
+            The arch springs from the floor and is the side walls too, so the door, the burners and
+            the flue go in the front or back wall (choosing it moves them there). It's fired with
+            gas: elements in its curved walls aren't designed here.
+          </p>
+        )}
+        {roof.type === "dome" && (
+          <p className="muted section-note">
+            A dome on all four walls: a sphere through the chamber's top corners, rising to the
+            rise at its centre.
+          </p>
         )}
       </Section>
 
@@ -712,25 +1043,34 @@ export function DesignForm({
               ]}
               onChange={(v) => change(["heat", "gas", "burners", "model"], v || undefined)}
             />
-            <Field label="Number of burners (blank: chosen for you)">
-              <input
-                type="number"
-                min={1}
-                value={gas.burners?.count ?? ""}
-                onChange={(e) =>
-                  change(
-                    ["heat", "gas", "burners", "count"],
-                    e.target.value ? Number(e.target.value) : undefined,
-                  )
-                }
-              />
-            </Field>
-            <Choice
-              label="Burners fire through"
-              value={gas.burners?.wall ?? "front"}
-              options={faceOptions}
-              onChange={(v) => change(["heat", "gas", "burners", "wall"], v)}
-            />
+            {gas.burners?.places ? (
+              <p className="muted section-note">
+                {gas.burners.places.length} burners, one for each port placed under Ports and spy
+                holes.
+              </p>
+            ) : (
+              <>
+                <Field label="Number of burners (blank: chosen for you)">
+                  <input
+                    type="number"
+                    min={1}
+                    value={gas.burners?.count ?? ""}
+                    onChange={(e) =>
+                      change(
+                        ["heat", "gas", "burners", "count"],
+                        e.target.value ? Number(e.target.value) : undefined,
+                      )
+                    }
+                  />
+                </Field>
+                <Choice
+                  label="Burners fire through"
+                  value={gas.burners?.wall ?? "front"}
+                  options={faceOptions}
+                  onChange={(v) => change(["heat", "gas", "burners", "wall"], v)}
+                />
+              </>
+            )}
             <Choice
               label="Propane supply"
               value={gas.supply.type}
@@ -810,6 +1150,8 @@ export function DesignForm({
           </>
         )}
       </Section>
+
+      <Ports doc={doc} layout={layout} onChange={onChange} />
 
       <Section title="Site and costs">
         <Quantity

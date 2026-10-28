@@ -1,10 +1,10 @@
 // A design, edited two ways: as choices in a form, or as the YAML design file. Switching trades
 // the design through the API, which checks it, so each side always holds a valid design.
 import type { Problem } from "@kilndesigner/api-client";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 
 import { ApiError, checkDesign, type DesignInput, useLibrary } from "../api";
-import type { KilnDocument } from "../design";
+import type { KilnDocument, Layout } from "../design";
 import { DesignForm } from "./DesignForm";
 import { Problems } from "./Problems";
 import { YamlEditor } from "./YamlEditor";
@@ -14,6 +14,13 @@ export type Mode = "form" | "yaml";
 export interface Draft {
   document: KilnDocument;
   source: string;
+}
+
+/** A change made outside the editor (a port dragged on the model), applied once, by its id. */
+export interface Edit {
+  /** When it was made (Date.now()), so an editor started later passes it by. */
+  id: number;
+  apply: (document: KilnDocument) => KilnDocument;
 }
 
 function problemsOf(error: unknown): { message?: string; problems: Problem[] } {
@@ -32,6 +39,9 @@ export function DesignEditor({
   saving,
   saveError,
   onSave,
+  layout,
+  edit,
+  onDocument,
 }: {
   /** What to start editing. */
   initial: Draft;
@@ -44,6 +54,12 @@ export function DesignEditor({
   saving: boolean;
   saveError: unknown;
   onSave: (input: DesignInput) => void;
+  /** Where the last build put the ports. */
+  layout?: Layout;
+  /** A change from outside the editor; the YAML tab gives way to the form to show it. */
+  edit?: Edit | null;
+  /** Told the form's document each time it changes. */
+  onDocument?: (document: KilnDocument) => void;
 }) {
   const library = useLibrary();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -53,6 +69,11 @@ export function DesignEditor({
   const [inStep, setInStep] = useState(true);
   const [switching, setSwitching] = useState(false);
   const [switchError, setSwitchError] = useState<unknown>(null);
+  const applied = useRef<number | null>(null);
+  // An edit made before this editor started (for the version before a save) isn't for it
+  const started = useRef(Date.now());
+
+  useEffect(() => onDocument?.(document), [document, onDocument]);
 
   const changed =
     baseline === null ||
@@ -82,6 +103,18 @@ export function DesignEditor({
       setSwitching(false);
     }
   };
+
+  useEffect(() => {
+    if (!edit || edit.id < started.current || applied.current === edit.id) return;
+    if (mode === "yaml") {
+      // Shown in the form: the YAML is checked first, and if it isn't valid the edit waits
+      if (!switching && !switchError) void switchTo("form");
+      return;
+    }
+    applied.current = edit.id;
+    setDocument((d) => edit.apply(d));
+    setInStep(false);
+  }, [edit, mode, switching, switchError]); // switchTo is remade each render, so it isn't one
 
   const error = switchError ?? saveError;
   const shown = error ? problemsOf(error) : null;
@@ -131,6 +164,7 @@ export function DesignEditor({
         <DesignForm
           document={document}
           library={library.data}
+          layout={layout}
           onChange={(d) => {
             setDocument(d);
             setInStep(false);

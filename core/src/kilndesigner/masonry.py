@@ -30,7 +30,7 @@ from pydantic import BaseModel, ConfigDict
 from kilndesigner.castable import resolve_material
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
-from kilndesigner.model import Kiln
+from kilndesigner.model import CatenaryArch, Kiln
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, length_text
 
@@ -436,15 +436,26 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     for part in lining_parts(kiln):
         m = resolve_material(kiln, part.material)
-        if part.profile is not None:  # a skewback and the fill beside the arch
+        if part.profile is not None or part.dome is not None:
+            # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
+            # closing it; a dome's layer or a wall's top under it. No standard shapes turn these
+            # curves, so brick is counted by volume.
+            skewback = part.profile is not None and part.wall in ("left", "right")
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
+                cut = "the arch's angle" if skewback else "the curve"
+                bricks = "brick" if count == 1 else "bricks"
                 arch_lines.append(
-                    f"{layer_name(part)}: about {count} bricks by volume, cut to the arch's angle"
+                    f"{layer_name(part)}: about {count} {bricks} by volume, cut to {cut}"
                 )
             elif m.kind in CAST_KINDS:
                 cast_volume[m.id] += part.volume
+            elif m.kind in SHEET_KINDS:
+                sheet_area[m.id] += part.area
+                sheet_area_thickness[m.id] += part.volume
+                if not part.cap:
+                    sheet_thickness.setdefault(m.id, set()).add(round(part.thickness, 2))
             continue
         if m.kind in BRICK_KINDS and part.arch is not None:
             if part.cap:
@@ -598,13 +609,18 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
     if layers:
+        corners = (
+            ""
+            if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
+            else " At the corners the side walls run through and the back and door fit between "
+            "them, layer by layer."
+        )
         findings.append(
             Finding(
                 level="info",
                 message=(
                     "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage. At the corners the side walls run "
-                    "through and the back and door fit between them, layer by layer."
+                    f"cut, and {WASTE:.0%} extra for breakage.{corners}"
                 ),
                 reference=BRICK_SOURCE,
             )

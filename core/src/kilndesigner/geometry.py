@@ -9,6 +9,9 @@ solid, so the viewer can pick a part and show its working:
   the left and right walls run through and the back and front (door) fit between them;
 - the roof sits on top of everything.
 
+A catenary arch has no side walls: it stands on the floor, and the end walls close it inside its
+ends. A dome rests on all four walls, whose tops are filled up to it.
+
 build123d is imported lazily: it loads OpenCascade, which takes seconds, and the calculations
 don't need it.
 """
@@ -22,8 +25,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from kilndesigner.model import Face, Kiln, SprungArch
-from kilndesigner.shape import Arch
+import numpy as np
+
+from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, SprungArch
+from kilndesigner.shape import Arch, CatenaryCurve, SailDome
 from kilndesigner.units import si
 from kilndesigner.working import length_text
 
@@ -68,6 +73,7 @@ FACE_NAMES = {
     "door": "Door",
     "floor": "Floor",
     "roof": "Roof",
+    "arch": "Catenary arch",
 }
 
 
@@ -92,10 +98,28 @@ class ArchShape:
 
 
 @dataclass(frozen=True)
+class DomeShape:
+    """A layer of a dome: the part of a spherical shell, centred on the kiln's centre line at
+    height ``centre_z``, that lies over the part's plan and above the springline (mm). A wall's
+    cap under the dome has no thickness: it fills up to the sphere."""
+
+    radius: float
+    thickness: float
+    centre_z: float
+
+    def heights(self, x: np.ndarray, y: np.ndarray, r: float) -> np.ndarray:
+        """The sphere of radius ``r`` over (x, y); -inf where it doesn't reach."""
+        under = r * r - x * x - y * y
+        return np.where(under > 0, self.centre_z + np.sqrt(np.maximum(under, 0.0)), -np.inf)
+
+
+@dataclass(frozen=True)
 class Part:
     """One layer of one face. A box unless ``arch`` is set; then an arch ring, or (with
     ``cap``) the segment of an end wall that fills the arch above the springline. With
-    ``profile``, an outline in the x–z plane run along y: the skewback and fill on a wall top."""
+    ``profile``, an outline in the x–z plane run along y: the skewback and fill on a wall top,
+    a catenary's ring (``ring``, its thickness), or an end wall closing a catenary. With
+    ``dome``, a layer of a dome, or (with ``cap``) a wall's top filled up to it."""
 
     name: str
     material: str
@@ -107,6 +131,8 @@ class Part:
     cap: bool = False
     face: Face | None = None  # the face it belongs to; the name says "door" for the door
     profile: tuple[tuple[float, float], ...] | None = None
+    ring: float | None = None
+    dome: DomeShape | None = None
 
     @property
     def wall(self) -> str:
@@ -133,6 +159,8 @@ class Part:
             pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
             area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
             return area / 2 * self.length_y  # the shoelace formula, times the length
+        if self.dome is not None:
+            return self._dome_volume(self.dome)
         if self.arch is None:
             return (self.hi[0] - self.lo[0]) * (self.hi[1] - self.lo[1]) * (self.hi[2] - self.lo[2])
         if self.cap:
@@ -140,11 +168,33 @@ class Part:
         r, t, a = self.arch.radius, self.arch.thickness, self.arch.half_angle
         return a * ((r + t) ** 2 - r**2) * self.length_y
 
+    def _dome_volume(self, d: DomeShape, n: int = 500) -> float:
+        """Between the springline (or the shell's inside) and the sphere, over the part's plan,
+        summed on a fine grid (the midpoint rule)."""
+        (x0, y0, springline), (x1, y1, _) = self.lo, self.hi
+        xs = x0 + (np.arange(n) + 0.5) / n * (x1 - x0)
+        ys = y0 + (np.arange(n) + 0.5) / n * (y1 - y0)
+        x, y = np.meshgrid(xs, ys)
+        top = d.heights(x, y, d.radius + d.thickness)
+        bottom = (
+            np.full_like(x, springline)
+            if self.cap
+            else np.maximum(d.heights(x, y, d.radius), springline)
+        )
+        cell = (x1 - x0) * (y1 - y0) / n / n
+        return float(np.sum(np.maximum(top - bottom, 0.0)) * cell)
+
     @property
     def thickness(self) -> float:
         """Through the layer, the way heat flows (mm)."""
+        if self.ring is not None:
+            return self.ring
+        if self.dome is not None:
+            if not self.cap:
+                return self.dome.thickness
+            return self.length_y if self.wall in ("front", "back") else self.hi[0] - self.lo[0]
         if self.profile is not None:
-            return self.hi[0] - self.lo[0]
+            return self.length_y if self.wall in ("front", "back") else self.hi[0] - self.lo[0]
         if self.arch is not None:
             return self.length_y if self.cap else self.arch.thickness
         dx, dy, dz = (b - a for a, b in zip(self.lo, self.hi, strict=True))
@@ -174,6 +224,8 @@ def lining_parts(kiln: Kiln) -> list[Part]:
     """The lining as boxes and arch rings: pure arithmetic, testable without OpenCascade."""
     from kilndesigner.castable import resolve_material
 
+    if isinstance(kiln.roof, CatenaryArch):
+        return _catenary_parts(kiln)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
     walls = ("left", "right", "back", "front")
     layers = {f: _thicknesses(kiln, f) for f in walls}
@@ -265,10 +317,120 @@ def lining_parts(kiln: Kiln) -> list[Part]:
             cum += th
         parts += _skewbacks(kiln, arch, centre_z, cum, (y0, y1), layers)
         return parts
+    if isinstance(kiln.roof, Dome):
+        return parts + _dome_parts(kiln, parts, (x0, x1, y0, y1))
     for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
         add("roof", i, mat, (x0, y0, h + cum), (x1, y1, h + cum + th))
         cum += th
     return parts
+
+
+def _catenary_parts(kiln: Kiln) -> list[Part]:
+    """A catenary arch from the floor (combustion-and-masonry.md §6.6): the floor under it all,
+    the arch's rings standing on the floor and running from the outside of the back wall to the
+    outside of the front, and the end walls closing it inside its ends. Each ring is the inside
+    curve moved out by the layers inside it."""
+    from kilndesigner.castable import resolve_material
+
+    w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
+    curve = CatenaryCurve(w, h)
+    rings = _thicknesses(kiln, "roof")
+    ends = {f: _thicknesses(kiln, f) for f in ("front", "back")}
+    y0 = -d / 2 - sum(t for _, t in ends["front"])
+    y1 = d / 2 + sum(t for _, t in ends["back"])
+    reach = curve.half_width(sum(t for _, t in rings))
+    parts: list[Part] = []
+
+    def kind(mat: str) -> str:
+        return resolve_material(kiln, mat).kind
+
+    cum = 0.0
+    for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
+        lo, hi = (-reach, y0, -cum - th), (reach, y1, -cum)
+        parts.append(Part(f"floor/{i + 1}-{mat}", mat, kind(mat), lo, hi, face="floor"))
+        cum += th
+    inside = tuple(curve.offset(0.0))
+    sides: tuple[tuple[Face, int], ...] = (("back", 1), ("front", -1))
+    for face, sign in sides:
+        reached = 0.0
+        for i, (mat, th) in enumerate(ends[face]):
+            ys = sorted((sign * (d / 2 + reached), sign * (d / 2 + reached + th)))
+            name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}"
+            lo, hi = (-w / 2, ys[0], 0.0), (w / 2, ys[1], h)
+            parts.append(Part(name, mat, kind(mat), lo, hi, face=face, profile=inside))
+            reached += th
+    cum = 0.0
+    for i, (mat, th) in enumerate(rings):
+        outline = (*curve.offset(cum), *reversed(curve.offset(cum + th)))
+        half = curve.half_width(cum + th)
+        parts.append(
+            Part(
+                f"arch/{i + 1}-{mat}", mat, kind(mat), (-half, y0, 0.0), (half, y1, h + cum + th),
+                face="roof", profile=outline, ring=th,
+            )
+        )  # fmt: skip
+        cum += th
+    return parts
+
+
+def _dome_parts(
+    kiln: Kiln, walls: list[Part], plan: tuple[float, float, float, float]
+) -> list[Part]:
+    """A dome on the walls (combustion-and-masonry.md §6.7): each wall's top filled up to the
+    sphere, and the dome's layers over the whole kiln, the first resting on that fill."""
+    from kilndesigner.castable import resolve_material
+
+    assert isinstance(kiln.roof, Dome)
+    w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
+    dome = SailDome(w, d, si(kiln.roof.rise, "mm"))
+    centre, r = h + dome.centre, dome.radius
+    parts: list[Part] = []
+    for wall in walls:
+        if wall.face not in ("left", "right", "front", "back"):
+            continue
+        # The dome stands highest over the point of the wall's plan nearest the centre line
+        near_x = min(max(0.0, wall.lo[0]), wall.hi[0])
+        near_y = min(max(0.0, wall.lo[1]), wall.hi[1])
+        if r * r <= near_x**2 + near_y**2:
+            continue
+        top = centre + math.sqrt(r * r - near_x**2 - near_y**2)
+        if top <= h + 1e-6:
+            continue
+        parts.append(
+            Part(
+                f"{wall.name}-dome", wall.material, wall.kind, (wall.lo[0], wall.lo[1], h),
+                (wall.hi[0], wall.hi[1], top), cap=True, face=wall.face,
+                dome=DomeShape(r, 0.0, centre),
+            )
+        )  # fmt: skip
+    x0, x1, y0, y1 = plan
+    cum = 0.0
+    for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
+        parts.append(
+            Part(
+                f"roof/{i + 1}-{mat}", mat, resolve_material(kiln, mat).kind, (x0, y0, h),
+                (x1, y1, centre + r + cum + th), face="roof", dome=DomeShape(r + cum, th, centre),
+            )
+        )  # fmt: skip
+        cum += th
+    return parts
+
+
+def inside_top(kiln: Kiln, face: Face, u: float) -> float:
+    """How high a wall's inside face reaches at ``u`` along it (mm, from the floor): the
+    springline, or the curve where an arch or dome meets it. A catenary has no side walls."""
+    w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
+    end = face in ("front", "back")
+    if isinstance(kiln.roof, CatenaryArch):
+        return CatenaryCurve(w, h).z(u) if end and abs(u) < w / 2 else 0.0
+    if isinstance(kiln.roof, SprungArch) and end and abs(u) < w / 2:
+        arch = Arch(w, si(kiln.roof.rise, "mm"))
+        return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
+    if isinstance(kiln.roof, Dome) and abs(u) < (w if end else d) / 2:
+        dome = SailDome(w, d, si(kiln.roof.rise, "mm"))
+        off = d / 2 if end else w / 2  # the wall's distance from the centre line
+        return h + max(0.0, dome.centre + math.sqrt(dome.radius**2 - off**2 - u**2))
+    return h
 
 
 def _skewbacks(
@@ -375,6 +537,20 @@ def _arch_solid(part: Part) -> Any:
     return Pos(0, part.lo[1] - solid.bounding_box().min.Y, 0) * solid
 
 
+def _dome_solid(part: Part) -> Any:
+    """A dome layer: the shell between two spheres, over the part's plan, above the springline.
+    A wall's cap: its plan, from the springline up to the sphere."""
+    from build123d import Pos, Sphere
+
+    assert part.dome is not None
+    d = part.dome
+    plan = _box(part.lo, (part.hi[0], part.hi[1], part.hi[2] + 1))
+    solid: Any = plan & (Pos(0, 0, d.centre_z) * Sphere(d.radius + d.thickness))
+    if not part.cap:
+        solid = solid - Pos(0, 0, d.centre_z) * Sphere(d.radius)
+    return solid
+
+
 def _box(lo: tuple[float, ...], hi: tuple[float, ...]) -> Any:
     from build123d import Box, Pos
 
@@ -430,8 +606,14 @@ def build_model(
     holes = [(o, _opening_solid(o)) for o in (hardware.openings if hardware else [])]
     children: list[Any] = []
     for part in lining_parts(kiln):
-        boxed = part.arch is None and part.profile is None
-        solid: Any = _box(part.lo, part.hi) if boxed else _arch_solid(part)
+        boxed = part.arch is None and part.profile is None and part.dome is None
+        solid: Any = (
+            _box(part.lo, part.hi)
+            if boxed
+            else _dome_solid(part)
+            if part.dome is not None
+            else _arch_solid(part)
+        )
         solid = _cut(solid, holes)
         solid.label = part.name
         solid.color = Color(*COLOURS.get(part.kind, (0.8, 0.8, 0.8)))
@@ -477,7 +659,8 @@ def part_index(
 
     for p in lining_parts(kiln):
         detail = resolve_material(kiln, p.material).name
-        if p.profile is None and not p.cap:
+        skewback = p.profile is not None and p.wall in ("left", "right")
+        if not skewback and not p.cap:
             detail += f", {length_text(p.thickness, us)} thick"
         index[p.name] = entry(p.title, detail, p.kind)
     electric = report.electric
@@ -496,8 +679,8 @@ def part_index(
 
 def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     """Build the kiln with its elements, frame, door, ports and chimney, export it, and write
-    what each part is."""
-    from kilndesigner.hardware import build_hardware
+    what each part is and where its ports are."""
+    from kilndesigner.hardware import build_hardware, layout
 
     runs: list[ElementRun] = []
     if report.electric is not None and report.electric.elements is not None:
@@ -508,7 +691,13 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     parts = out_dir / "parts.json"
     index = part_index(kiln, report, hardware)
     parts.write_text(json.dumps(index, ensure_ascii=False, indent=2), "utf-8")
-    return {**written, "parts": parts}
+    places = out_dir / LAYOUT
+    places.write_text(json.dumps(layout(kiln, hardware), ensure_ascii=False, indent=2), "utf-8")
+    return {**written, "parts": parts, "layout": places}
+
+
+LAYOUT = "layout.json"
+"""The file in a build with each wall's frame and each port's place (hardware.layout)."""
 
 
 def export_model(model: Compound, out_dir: Path, stem: str = "kiln") -> dict[str, Path]:

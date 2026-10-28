@@ -3,7 +3,8 @@
 import type { Build, Report } from "@kilndesigner/api-client";
 import { useState } from "react";
 
-import { fileUrl, useBuild, useReport, useStartBuild } from "../api";
+import { fileUrl, useBuild, useLayout, useReport, useStartBuild } from "../api";
+import type { KilnDocument } from "../design";
 import { Castables } from "./Castables";
 import { Drawings } from "./Drawings";
 import { KilnViewer } from "./KilnViewer";
@@ -32,8 +33,15 @@ export function reportTabLabel(report: Report | undefined): string {
   return shown.length ? `Report (${shown.join(", ")})` : "Report";
 }
 
-function Built({ build }: { build: Build }) {
+/** The design being edited, and a way to change it from the model (a port moved). */
+interface Editing {
+  draft?: KilnDocument | null;
+  onEdit?: (apply: (document: KilnDocument) => KilnDocument) => void;
+}
+
+function Built({ build, draft, onEdit }: { build: Build } & Editing) {
   const report = useReport(build);
+  const layout = useLayout(build);
   const [tab, setTab] = useState<Tab>("model");
   const tabs: [Tab, string][] = [
     ["model", "3D model"],
@@ -65,6 +73,9 @@ function Built({ build }: { build: Build }) {
             <KilnViewer
               url={fileUrl(build.key, "kiln.glb")}
               partsUrl={fileUrl(build.key, "parts.json")}
+              layout={layout.data}
+              draft={draft}
+              onEdit={onEdit}
             />
           ) : (
             <p className="muted">This build has no 3D model.</p>
@@ -97,7 +108,7 @@ function Built({ build }: { build: Build }) {
   );
 }
 
-export function BuildPanel({ buildKey }: { buildKey: string }) {
+export function BuildPanel({ buildKey, draft, onEdit }: { buildKey: string } & Editing) {
   const build = useBuild(buildKey);
   const start = useStartBuild();
 
@@ -121,5 +132,5 @@ export function BuildPanel({ buildKey }: { buildKey: string }) {
       </p>
     );
   }
-  return <Built build={b} />;
+  return <Built build={b} draft={draft} onEdit={onEdit} />;
 }

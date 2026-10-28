@@ -87,6 +87,27 @@ def test_too_much_power_is_an_error() -> None:
     assert any("more than the circuit" in f.message for f in design.findings)
 
 
+def _front_loader_fired(firing: str) -> list[tuple[str, str]]:
+    text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
+    kiln = parse_design(text.replace('  cone: "10"', firing))
+    return [(f.level, f.message) for f in design_elements(kiln).findings]
+
+
+def test_past_the_wire_rating_and_past_cone_10_are_warnings() -> None:
+    """Hot wire wears out faster: a warning, as is a kiln past cone 10 by cone or temperature."""
+    hot = _front_loader_fired('  cone: "10"\n  top_temperature: 2400 °F')
+    assert [lv for lv, m in hot if "is rated to" in m] == ["warning"]
+    assert any("wear out faster" in m for _, m in hot)
+    grooves = "highest kiln temperature"
+    assert [lv for lv, m in hot if grooves in m] == ["warning"]
+    # Cone 11 at 60 °C/h is cooler than cone 10 fired fast, but it is past cone 10
+    eleven = _front_loader_fired('  cone: "11"')
+    assert [lv for lv, m in eleven if grooves in m] == ["warning"]
+    ten = _front_loader_fired('  cone: "10"')
+    assert [lv for lv, m in ten if grooves in m] == ["info"]
+    assert not [m for lv, m in hot + eleven + ten if lv == "error"]
+
+
 def test_three_phase_uses_root_three() -> None:
     text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
     kiln = parse_design(text.replace("phase: 1", "phase: 3").replace("60 A", "40 A"))

@@ -502,6 +502,35 @@ Sand-form domes: **NOT FOUND** as a documented method with numbers.
   - This is probably where the "about 1.5 in./ft" folk rule comes from, but no source confirms it.
 - Catenary arches: build them by hanging a chain and inverting the curve [S63]. A "height = base width" rule: **NOT FOUND**. Ward's volume formula treats the area as 2/3 × base × height (a parabola) [S28].
 
+### 6.6 Catenary arch statics (checked 2026-10-27)
+
+- Wikipedia [S63], verified: "a catenary is the ideal shape for a freestanding arch of constant
+  thickness"; in the hanging chain "the forces of tension become forces of compression and
+  everything is inverted". For y = a cosh(x/a): "The horizontal traction force at P1 and P2 is
+  T0 = wa, where w is the weight per unit length of the chain or cable", and "the vertical
+  component of the tension, T sin φ = ws" with the arc length s = a sinh(x/a).
+- **Derived** for a catenary arch springing from the floor, with span S and height H inside:
+  - a from H = a (cosh(S / 2a) − 1), solved numerically.
+  - The inside arc is 2a sinh(S / 2a); the area under it is S(H + a) − 2a² sinh(S / 2a).
+  - Each foot pushes out with H = w a and carries V = w a sinh(S / 2a), half the arch's weight,
+    where w is the arch's weight per unit of its length (Σ density × thickness of its layers, per
+    foot of kiln). Taken along the inside face: the ring's own thickness moves the line of thrust
+    out a little.
+  - This is the cold arch carrying only itself. How hot expansion changes it: **NOT FOUND**.
+- How the outward push at a catenary's feet is held (a curb, ties, buttresses), and its sizes:
+  **NOT FOUND**.
+
+### 6.7 Domes over a rectangular chamber (geometry derived)
+
+- A sail dome (domical vault): a sphere through the chamber's four top corners at the
+  springline, rising `rise` above it at the centre. With c the half-diagonal of the chamber's
+  inside, the radius is R = (c² + rise²) / 2 rise **(derived)**, as for a circular arch of span 2c.
+- Where the sphere meets a wall's inside face, its curve is a circle of radius √(R² − (half the
+  other side)²): each wall rises in a circular segment above the springline **(derived)**.
+- The rise must stay under c, or the sphere bulges out past the walls.
+- A dome's thrust on its walls, and the steel that holds it: **NOT FOUND**. Cast domes are noted
+  in §6.4 [S60].
+
 ---
 
 ## 7. Kiln car against door

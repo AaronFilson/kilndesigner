@@ -39,6 +39,13 @@ def cone_names() -> tuple[str, ...]:
     return tuple(_table()[1])
 
 
+def hotter_than(cone: str, other: str) -> bool:
+    """Whether ``cone`` comes after ``other`` in Orton's order, at any heating rate."""
+    names = cone_names()
+    cone_rates(cone)  # refuses a cone that isn't in the table
+    return names.index(normalise(cone)) > names.index(normalise(other))
+
+
 def cone_rates(cone: str) -> tuple[int, ...]:
     """The heating rates (°C/h) at which a cone's temperature is tabulated."""
     rates, cones = _table()

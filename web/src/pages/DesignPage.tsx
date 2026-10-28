@@ -2,19 +2,25 @@ import type { Design } from "@kilndesigner/api-client";
 import { useParams } from "@tanstack/react-router";
 import { useState } from "react";
 
-import { api, useDesign, useSaveVersion, useStartBuild } from "../api";
+import { api, useBuild, useDesign, useLayout, useSaveVersion, useStartBuild } from "../api";
 import { BuildPanel } from "../components/BuildPanel";
-import { DesignEditor, type Draft, type Mode } from "../components/DesignEditor";
-import type { KilnDocument } from "../design";
+import { DesignEditor, type Draft, type Edit, type Mode } from "../components/DesignEditor";
+import type { KilnDocument, Layout } from "../design";
 
 function Editor({
   design,
   mode,
   onModeChange,
+  layout,
+  edit,
+  onDocument,
 }: {
   design: Design;
   mode: Mode;
   onModeChange: (mode: Mode) => void;
+  layout: Layout | undefined;
+  edit: Edit | null;
+  onDocument: (document: KilnDocument) => void;
 }) {
   const save = useSaveVersion(design.id);
   const build = useStartBuild();
@@ -49,6 +55,9 @@ function Editor({
       onModeChange={onModeChange}
       saving={save.isPending}
       saveError={save.error}
+      layout={layout}
+      edit={edit}
+      onDocument={onDocument}
       onSave={(input) =>
         save.mutate(input, { onSuccess: (saved) => build.mutate(saved.latest.build_key) })
       }
@@ -81,6 +90,12 @@ export function DesignPage() {
   const design = useDesign(designId);
   // Kept here, so saving (which starts the editor again on the new version) keeps the tab
   const [mode, setMode] = useState<Mode>("form");
+  // The editor's document as it stands, for the model's port markers to follow, and a port
+  // moved on the model, for the editor to take in
+  const [draft, setDraft] = useState<KilnDocument | null>(null);
+  const [edit, setEdit] = useState<Edit | null>(null);
+  const build = useBuild(design.data?.latest.build_key ?? "", design.data !== undefined);
+  const layout = useLayout(build.data);
 
   if (design.isPending) return <main className="page muted">Loading…</main>;
   if (design.isError) return <main className="page error">{design.error.message}</main>;
@@ -96,9 +111,17 @@ export function DesignPage() {
           design={d}
           mode={mode}
           onModeChange={setMode}
+          layout={layout.data}
+          edit={edit}
+          onDocument={setDraft}
         />
         <section className="result-pane">
-          <BuildPanel key={d.latest.build_key} buildKey={d.latest.build_key} />
+          <BuildPanel
+            key={d.latest.build_key}
+            buildKey={d.latest.build_key}
+            draft={draft}
+            onEdit={(apply) => setEdit({ id: Date.now(), apply })}
+          />
         </section>
       </div>
     </main>

@@ -148,7 +148,7 @@ test("saving an edit adds a version, and an earlier version can be loaded back",
 
   await page.getByRole("tab", { name: "YAML" }).click();
   await page.locator(".cm-content").click();
-  await page.keyboard.press("Control+End");
+  await page.keyboard.press("ControlOrMeta+End"); // CodeMirror's Mod-End: Cmd on a Mac
   await page.keyboard.insertText("# Edited in the browser\n");
   await expect(status).toHaveText("Version 1 · unsaved changes");
   await page.getByRole("button", { name: "Save and build" }).click();
@@ -282,10 +282,157 @@ test("a castable outside the checked range is refused, saying why", async ({ pag
   await page.goto(`/designs/${id}`);
   await page.getByRole("tab", { name: "YAML" }).click();
   await page.locator(".cm-content").click();
-  await page.keyboard.press("Control+A");
+  await page.keyboard.press("ControlOrMeta+A");
   await page.keyboard.insertText(source);
   await page.getByRole("button", { name: "Save and build" }).click();
   await expect(page.getByRole("alert")).toContainText("480 to 1250 kg/m³");
+});
+
+test("the app and the model take the colours chosen, and keep them", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const id = await saved(request, cleanup, design("E2E colours"), { built: true });
+  await page.goto(`/designs/${id}`);
+  await page.getByLabel("Theme").selectOption("dark");
+  await page.getByLabel("Accent colour").selectOption("cobalt");
+  const root = page.locator("html");
+  await expect(root).toHaveAttribute("data-theme", "dark");
+  await expect(root).toHaveAttribute("data-accent", "cobalt");
+
+  const viewer = page.getByLabel("3D model of the kiln");
+  await expect(viewer.locator("canvas")).toBeVisible();
+  await viewer.getByLabel("Model colours").selectOption("blueprint");
+  await viewer.getByRole("button", { name: "Outlines" }).click();
+  await expect(viewer.getByRole("button", { name: "Outlines" })).toHaveAttribute("aria-pressed", "true");
+  const swatch = viewer.getByLabel("Colour for Insulating firebrick");
+  await expect(swatch).toHaveValue("#d6e6f5"); // the blueprint's
+  await swatch.fill("#ff00ff");
+
+  await page.reload();
+  await expect(root).toHaveAttribute("data-theme", "dark");
+  await expect(viewer.getByLabel("Model colours")).toHaveValue("blueprint");
+  await expect(viewer.getByLabel("Colour for Insulating firebrick")).toHaveValue("#ff00ff");
+  await viewer.getByRole("button", { name: "Reset colours" }).click();
+  await expect(viewer.getByLabel("Colour for Insulating firebrick")).toHaveValue("#d6e6f5");
+});
+
+/** The latest build's layout.json: where each port was cut. */
+async function layoutOf(request: APIRequestContext, id: string) {
+  const d = (await (await request.get(`/api/designs/${id}`)).json()) as {
+    latest: { number: number; build_key: string };
+  };
+  const response = await request.get(`/api/builds/${d.latest.build_key}/files/layout.json`);
+  if (!response.ok()) return null;
+  return (await response.json()) as { ports: { name: string; wall: string; across: number }[] };
+}
+
+test("a burner port dragged on the model is placed there, saved and built there", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const source = gasExample.replace(/^name: .*$/m, `name: "E2E move ports ${Date.now()}"`);
+  const id = await saved(request, cleanup, source, { built: true });
+  await page.goto(`/designs/${id}`);
+  const viewer = page.getByLabel("3D model of the kiln");
+  await expect(viewer.locator("canvas")).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await viewer.getByRole("button", { name: "Front", exact: true }).click();
+  await viewer.getByRole("button", { name: "Move ports" }).click();
+
+  // The markers are drawn in the model: find burner port 1 by pointing at it
+  const box = await viewer.boundingBox();
+  if (!box) throw new Error("no viewer");
+  const status = viewer.getByRole("status");
+  let at: { x: number; y: number } | null = null;
+  for (let y = 0.95; y > 0.3 && !at; y -= 0.015) {
+    for (let x = 0.2; x < 0.8 && !at; x += 0.01) {
+      await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
+      if ((await status.textContent())?.startsWith("Burner port 1")) {
+        at = { x: box.x + box.width * x, y: box.y + box.height * y };
+      }
+    }
+  }
+  expect(at, "burner port 1's marker").not.toBeNull();
+  await page.mouse.down();
+  for (let i = 1; i <= 8; i++) await page.mouse.move(at!.x + i * 4, at!.y - i * 4);
+  await page.mouse.up();
+
+  // The form now places each burner, the first where it was dropped
+  const form = page.getByRole("form", { name: "Design" });
+  await expect(form.getByLabel("Burner ports go")).toHaveValue("placed");
+  const across = form.getByLabel("Burner 1, across", { exact: true });
+  await expect(across).not.toHaveValue("-7");
+  const dropped = Number(await across.inputValue());
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page.locator(".toolbar > .muted")).toHaveText("Version 2");
+  await expect
+    .poll(async () => (await layoutOf(request, id))?.ports.find((p) => p.name === "port/burner-1")?.across, {
+      timeout: 180_000,
+    })
+    .toBeCloseTo(dropped * 25.4, 1);
+});
+
+const catenaryExample = readFileSync(
+  new URL("../../examples/catenary-gas-kiln.yaml", import.meta.url),
+  "utf-8",
+);
+const domeExample = readFileSync(
+  new URL("../../examples/dome-castable-kiln.yaml", import.meta.url),
+  "utf-8",
+);
+
+for (const [kind, example, arch, holds] of [
+  ["catenary arch", catenaryExample, "Catenary arch, layer 1 from the inside", /pushes out with/],
+  ["dome", domeExample, "Roof, layer 1 from the inside", /no source gives how hard/],
+] as const) {
+  test(`a ${kind} is built, named, drawn and its thrust spoken for`, async ({
+    page,
+    request,
+    cleanup,
+  }) => {
+    const source = example.replace(/^name: .*$/m, `name: "E2E ${kind} ${Date.now()}"`);
+    const id = await saved(request, cleanup, source, { built: true });
+    const d = (await (await request.get(`/api/designs/${id}`)).json()) as {
+      latest: { build_key: string };
+    };
+    const parts = (await (
+      await request.get(`/api/builds/${d.latest.build_key}/files/parts.json`)
+    ).json()) as Record<string, { title: string }>;
+    expect(Object.values(parts).map((p) => p.title)).toContain(arch);
+
+    await page.goto(`/designs/${id}`);
+    const viewer = page.getByLabel("3D model of the kiln");
+    await expect(viewer.locator("canvas")).toBeVisible();
+    await page.waitForLoadState("networkidle");
+    await expect(viewer.getByRole("alert")).toHaveCount(0);
+    await page.getByRole("tab", { name: "Drawings" }).click();
+    await expect(page.getByRole("img", { name: /^Section A–A/ })).toBeVisible();
+    await page.getByRole("tab", { name: /^Report/ }).click();
+    await expect(page.getByText(holds).first()).toBeVisible();
+  });
+}
+
+test("a kiln is given a catenary arch with choices, and its door moves off the side", async ({
+  page,
+  cleanup,
+}) => {
+  const name = `E2E catenary choice ${Date.now()}`;
+  await page.goto("/designs/new");
+  await page.getByRole("button", { name: /Gas cross-draft/ }).click();
+  const form = page.getByRole("form", { name: "Design" });
+  await form.getByLabel("Name").fill(name);
+  const roof = form.locator("label.field").filter({ has: page.getByText("Roof", { exact: true }) });
+  await roof.locator("select").selectOption("catenary_arch");
+  await expect(form.getByLabel("Height, to the crown", { exact: true })).toBeVisible();
+  await expect(form.getByLabel("The door's wall")).not.toHaveValue(/left|right/);
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  await page.getByRole("tab", { name: "YAML" }).click();
+  await expect(page.locator(".cm-content")).toContainText("type: catenary_arch");
 });
 
 test("a model that can't be loaded leaves the rest of the page working", async ({

@@ -91,7 +91,7 @@
     "findings": [
       {
         "level": "info",
-        "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
+        "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
         "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
       },
       {
@@ -257,7 +257,7 @@
     },
     {
       "level": "info",
-      "message": "Kanthal lists 2282 °F as the highest furnace temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
+      "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
       "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
     },
     {

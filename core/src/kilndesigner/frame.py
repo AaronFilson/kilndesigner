@@ -1,5 +1,8 @@
 """The steel that holds a kiln together: a frame for a sprung arch, or an electric kiln's case.
 
+A catenary needs no frame over it, but its feet push out (its thrust is worked out, but what holds
+the feet isn't sized); a dome's thrust has no source, so no steel is designed for it.
+
 A sprung arch pushes out on its skewbacks, and the frame must take that thrust: buttress angles
 along the top of the side walls, held at their ends by corner posts tied across the kiln by
 threaded rod (kiln-hardware.md §4.1). The thrust comes from HarbisonWalker's arch method
@@ -20,8 +23,8 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-from kilndesigner.model import Kiln, SprungArch
-from kilndesigner.shape import Arch, chamber_shape
+from kilndesigner.model import CatenaryArch, Dome, Kiln, SprungArch
+from kilndesigner.shape import Arch, CatenaryCurve, chamber_shape
 from kilndesigner.units import parse_quantity, si
 from kilndesigner.working import Finding, Step
 
@@ -106,7 +109,18 @@ def outside(kiln: Kiln) -> Outside:
         return sum(si(x.thickness, "in") for x in layers)
 
     w, d, h = (si(getattr(kiln.chamber, n), "in") for n in ("width", "depth", "height"))
-    top = h if isinstance(kiln.roof, SprungArch) else h + t("roof")
+    if isinstance(kiln.roof, CatenaryArch):
+        # The arch is the side walls: as wide outside as its outer layer at the floor
+        side = CatenaryCurve(w, h).half_width(t("roof")) - w / 2
+        return Outside(
+            width=w + 2 * side,
+            depth=d + t("front") + t("back"),
+            bottom=t("floor"),
+            wall_top=h + t("roof"),
+            left=side,
+            right=side,
+        )
+    top = h if isinstance(kiln.roof, SprungArch | Dome) else h + t("roof")
     return Outside(
         width=w + t("left") + t("right"),
         depth=d + t("front") + t("back"),
@@ -203,9 +217,108 @@ ARCH_THEORY_SOURCE = (
 )
 
 
+NO_FRAME = "no frame"
+"""A frame's kind when no steel is designed or drawn: a catenary, or a dome."""
+CATENARY_SOURCE = "statics of a catenary, combustion-and-masonry.md §6.6 [S63] (derived)"
+
+
+def _catenary_feet(kiln: Kiln) -> FrameDesign:
+    """A catenary carries its own weight in compression, so it needs no frame over it; its feet
+    push out, with the chain's horizontal tension turned round (combustion-and-masonry.md
+    §6.6). Nothing sourced sizes what holds them, so nothing is drawn."""
+    from kilndesigner.castable import resolve_material
+
+    span_ft = si(kiln.chamber.width, "ft")
+    curve = CatenaryCurve(span_ft, si(kiln.chamber.height, "ft"))
+    weight, lines = 0.0, []
+    for layer in kiln.lining.for_face("roof"):
+        m = resolve_material(kiln, layer.material)
+        rho, t = si(parse_quantity(m.density), "lb/ft**3"), si(layer.thickness, "ft")
+        weight += rho * t
+        lines.append(f"{m.name}: {rho:.0f} lb/ft³ × {t * 12:g} in = {rho * t:.1f} lb/ft²")
+    push = weight * curve.a
+    bear = weight * curve.a * math.sinh(span_ft / 2 / curve.a)
+    working = [
+        Step(
+            name="Catenary parameter",
+            value=f"a = {curve.a * 12:.2f} in",
+            formula="H = a (cosh(S / 2a) − 1), solved for a",
+            inputs={"span S": f"{span_ft * 12:g} in", "height H": f"{curve.height * 12:g} in"},
+            reference=CATENARY_SOURCE,
+        ),
+        Step(
+            name="Arch weight per foot of its length, per foot of kiln",
+            value=f"{weight:.1f} lb/ft²",
+            formula="Σ density × thickness, over the arch's layers",
+            inputs={f"layer {i + 1}": s for i, s in enumerate(lines)},
+            reference=CATENARY_SOURCE,
+        ),
+        Step(
+            name="Push out at each foot",
+            value=f"{push:.0f} lb per foot of kiln",
+            formula="H = w a: the hanging chain's horizontal tension, turned to thrust",
+            reference=CATENARY_SOURCE,
+            note="The cold arch carrying only itself; how heat changes it is not sourced.",
+        ),
+        Step(
+            name="Weight on each foot",
+            value=f"{bear:.0f} lb per foot of kiln",
+            formula="V = w a sinh(S / 2a): half the arch",
+            reference=CATENARY_SOURCE,
+        ),
+    ]
+    findings = [
+        Finding(
+            level="warning",
+            message=(
+                f"Each foot of the catenary pushes out with about {push:.0f} lb per foot of kiln, "
+                "cold. No source sizes what holds it (a curb, ties or buttresses at the feet), "
+                "so none is drawn: have it designed."
+            ),
+            reference="combustion-and-masonry.md §6.6",
+        )
+    ]
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=f"{push:.0f} lb per foot of kiln at each foot", members=[], working=working,
+        findings=findings,
+    )  # fmt: skip
+
+
+def _dome_unframed() -> FrameDesign:
+    """A dome pushes out on all four walls, and no source gives how hard: refuse to size steel
+    for it rather than guess (ADR 0009)."""
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=None, members=[],
+        working=[
+            Step(
+                name="Frame",
+                value="none designed",
+                reference="combustion-and-masonry.md §6.7",
+                note="No source gives a dome's thrust on its walls.",
+            )
+        ],
+        findings=[
+            Finding(
+                level="warning",
+                message=(
+                    "A dome pushes out on all four walls, and no source gives how hard, so no "
+                    "frame is designed or drawn: have the steel that holds it designed."
+                ),
+                reference="combustion-and-masonry.md §6.7",
+            )
+        ],
+    )  # fmt: skip
+
+
 def design_frame(kiln: Kiln) -> FrameDesign:
     o = outside(kiln)
     volume_ft3 = chamber_shape(kiln).volume / si(parse_quantity("1 ft**3"), "m**3")
+    if isinstance(kiln.roof, CatenaryArch):
+        return _catenary_feet(kiln)
+    if isinstance(kiln.roof, Dome):
+        return _dome_unframed()
     if not isinstance(kiln.roof, SprungArch):
         if kiln.heat.gas is None:
             return _case(kiln, o)

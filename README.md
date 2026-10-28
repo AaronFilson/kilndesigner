@@ -68,7 +68,13 @@ stops.
   temperature (combustion by Cantera), and when to switch over.
 - **Masonry**: brick-by-brick course plans with staggered joints, arches, castables, a cut list
   and a priced bill of materials.
-- **3D model and plans** from one set of parts, so they can't disagree.
+- **Roofs**: flat, a sprung arch on skewbacks, a catenary arch from the floor (with the push at
+  its feet) or a dome on all four walls.
+- **Ports where you want them**: burner ports, spy holes and the flue sized and placed by hand,
+  in the form or by dragging them on the 3D model, and checked to fit their walls.
+- **3D model and plans** from one set of parts, so they can't disagree. The model can be shown in
+  colour-blind safe, greyscale or blueprint colours, or colours you pick per material, and the
+  app in a light or dark theme.
 
 ## How it's built
 

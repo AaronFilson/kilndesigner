@@ -19,7 +19,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-from kilndesigner.cones import cone_temperature
+from kilndesigner.cones import cone_temperature, hotter_than
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.library import Alloy, alloy, awg_diameter
 from kilndesigner.model import Electric, Kiln
@@ -445,23 +445,29 @@ def _check_temperatures(
     if si(wire_temp, "K") > si(wire.max_air_temperature, "K"):
         findings.append(
             Finding(
-                level="error",
+                # The wire still works past its rating; it wears out faster, so a warning
+                level="warning",
                 message=(
                     f"{wire.name} is rated to {show(wire.max_air_temperature, temp_unit)} in air; "
-                    f"elements here would run near {show(wire_temp, temp_unit)}. The wire is taken "
-                    f"as {show(WIRE_ABOVE_KILN)} above the kiln, an assumption: Kanthal gives no "
-                    "figure for coils in grooves."
+                    f"elements here would run near {show(wire_temp, temp_unit)}, so expect them to "
+                    f"wear out faster. The wire is taken as {show(WIRE_ABOVE_KILN)} above the "
+                    "kiln, an assumption: Kanthal gives no figure for coils in grooves."
                 ),
                 reference=wire.source,
             )
         )
     if si(top, "K") > si(GROOVED_MAX_FURNACE, "K"):
+        cone = kiln.firing.cone
+        past_cone_10 = si(top, "K") > si(CONE_10_FAST, "K") + 1e-6 or (
+            cone is not None and hotter_than(cone, "10")
+        )
         findings.append(
             Finding(
-                # Usual practice up to cone 10, so a note there; past cone 10 it is a warning.
-                level="info" if si(top, "K") <= si(CONE_10_FAST, "K") + 1e-6 else "warning",
+                # Usual practice up to cone 10, so a note there; past cone 10, by the design's
+                # temperature or its cone, it is a warning.
+                level="warning" if past_cone_10 else "info",
                 message=(
-                    f"Kanthal lists {show(GROOVED_MAX_FURNACE, temp_unit)} as the highest furnace "
+                    f"Kanthal lists {show(GROOVED_MAX_FURNACE, temp_unit)} as the highest kiln "
                     f"temperature for coils in grooves; this kiln reaches {show(top, temp_unit)}. "
                     "Kiln makers build cone 10 kilns this way, with shorter element life."
                 ),

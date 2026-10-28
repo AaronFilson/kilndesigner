@@ -17,9 +17,9 @@ import math
 from dataclasses import dataclass, field
 from typing import Literal
 
-from kilndesigner.frame import CASE_T, FrameDesign, outside, skewback_top
-from kilndesigner.gas import GasDesign
-from kilndesigner.model import Kiln, SprungArch, WallFace
+from kilndesigner.frame import CASE_T, NO_FRAME, FrameDesign, outside, skewback_top
+from kilndesigner.gas import FLUE_SOURCE, GasDesign
+from kilndesigner.model import CatenaryArch, Dome, Kiln, Port, SprungArch, SpyHoles, WallFace
 from kilndesigner.units import si
 from kilndesigner.working import Finding
 
@@ -67,12 +67,44 @@ class Opening:
     round_axis: Literal[0, 1, 2] | None = None
 
 
+type PortKind = Literal["burner", "spy", "flue"]
+
+
+@dataclass(frozen=True)
+class PortSpot:
+    """Where a port was cut, on its wall's inside face (in): ``across`` is from the middle of the
+    wall, to the right as you face it from outside, and ``up`` from the floor to its centre."""
+
+    name: str
+    title: str
+    kind: PortKind
+    wall: WallFace
+    across: float
+    up: float
+    width: float
+    height: float
+    round: bool
+
+    def overlaps(self, other: PortSpot) -> bool:
+        if other.wall != self.wall:
+            return False
+        dx = abs(Faces.u_of(self.wall, self.across) - Faces.u_of(other.wall, other.across))
+        dz = abs(self.up - other.up)
+        return (
+            dx < (self.width + other.width) / 2 - 1e-6
+            and dz < (self.height + other.height) / 2 - 1e-6
+        )
+
+
 @dataclass
 class Hardware:
     pieces: list[Piece] = field(default_factory=list[Piece])
     openings: list[Opening] = field(default_factory=list[Opening])
     findings: list[Finding] = field(default_factory=list[Finding])
     chimney_bricks: int = 0
+    ports: list[PortSpot] = field(default_factory=list[PortSpot])
+    refused: list[PortSpot] = field(default_factory=list[PortSpot])
+    """Ports asked for that didn't fit, so weren't cut (each has an error finding)."""
 
 
 def _mm(b: tuple[tuple[float, float, float], tuple[float, float, float]]) -> Box:
@@ -94,6 +126,8 @@ class Faces:
             return sum(si(x.thickness, "in") for x in layers)
 
         self.thickness = {f: t(f) for f in ("left", "right", "front", "back")}
+        if isinstance(kiln.roof, CatenaryArch):  # the arch is the side walls, out to its feet
+            self.thickness["left"], self.thickness["right"] = o.left, o.right
         self.x0, self.x1 = -w / 2 - self.thickness["left"], w / 2 + self.thickness["right"]
         self.y0, self.y1 = -d / 2 - self.thickness["front"], d / 2 + self.thickness["back"]
         self.bottom = -o.bottom
@@ -132,6 +166,102 @@ class Faces:
     def normal_axis(face: WallFace) -> Literal[0, 1]:
         return 1 if face in ("front", "back") else 0
 
+    @staticmethod
+    def u_of(face: WallFace, across: float) -> float:
+        """Where ``across`` (to the right, facing the wall from outside) is along the face's u."""
+        return across if face in ("front", "right") else -across
+
+    def place(self, kiln: Kiln, hw: Hardware, spot: PortSpot) -> bool:
+        """Cut a port where ``spot`` says, if it fits on its wall's inside face and misses the
+        ports already cut there; otherwise say why, as an error, and cut nothing."""
+        from kilndesigner.geometry import inside_top
+
+        u, half = Faces.u_of(spot.wall, spot.across), self.inside[spot.wall] / 2
+        u0, u1 = u - spot.width / 2, u + spot.width / 2
+        z0, z1 = spot.up - spot.height / 2, spot.up + spot.height / 2
+        top = min(inside_top(kiln, spot.wall, x * MM) for x in (u0, u, u1)) / MM
+        clash = next((p for p in hw.ports if p.overlaps(spot)), None)
+        problem = None
+        if u0 < -half - 1e-6 or u1 > half + 1e-6:
+            problem = f"reaches past the side of the {spot.wall} wall, {2 * half:g} in wide inside"
+        elif z0 < -1e-6:
+            problem = "goes below the floor"
+        elif z1 > top + 1e-6:
+            problem = f"goes above the top of the {spot.wall} wall's inside, {top:.1f} in up there"
+        elif clash is not None:
+            problem = f"overlaps {clash.title.lower()}"
+        if problem is not None:
+            hw.findings.append(
+                Finding(
+                    level="error",
+                    message=(
+                        f"{spot.title} ({spot.width:g} × {spot.height:g} in, {spot.across:g} in "
+                        f"across and {spot.up:g} in up the {spot.wall} wall) {problem}, so it "
+                        "isn't cut. Move it or make it smaller."
+                    ),
+                )
+            )
+            hw.refused.append(spot)
+            return False
+        box = self.through(spot.wall, (u0, u1), (z0, z1))
+        axis = Faces.normal_axis(spot.wall) if spot.round else None
+        hw.openings.append(Opening(spot.name, spot.title, box, axis))
+        hw.ports.append(spot)
+        return True
+
+
+WALL_AXES: dict[WallFace, tuple[tuple[int, int, int], tuple[int, int, int]]] = {
+    # Each wall's outward normal, and the way "across" runs: to the right, facing it from outside
+    "front": ((0, -1, 0), (1, 0, 0)),
+    "back": ((0, 1, 0), (-1, 0, 0)),
+    "left": ((-1, 0, 0), (0, -1, 0)),
+    "right": ((1, 0, 0), (0, 1, 0)),
+}
+
+
+def layout(kiln: Kiln, hw: Hardware) -> dict[str, object]:
+    """Each wall's frame and each port's place, for the viewer to show and move the ports. In
+    millimetres and the model's coordinates (x across the width, y from the front to the back, z
+    up from the chamber floor): a wall's ``origin`` is the middle of its outside face at floor
+    level, and ``top`` is how high its inside face reaches at points ``across`` it."""
+    from kilndesigner.geometry import inside_top
+
+    f = Faces(kiln)
+    walls: dict[str, object] = {}
+    for face, (normal, right) in WALL_AXES.items():
+        half = f.inside[face] / 2
+        plane = f.plane(face) * MM
+        origin = (0.0, plane, 0.0) if face in ("front", "back") else (plane, 0.0, 0.0)
+        steps = [-half + 2 * half * i / 24 for i in range(25)]
+        walls[face] = {
+            "origin": origin,
+            "normal": normal,
+            "right": right,
+            "half_width": half * MM,
+            "thickness": f.thickness[face] * MM,
+            "top": [(a * MM, inside_top(kiln, face, Faces.u_of(face, a) * MM)) for a in steps],
+        }
+    spots = sorted(
+        [(p, True) for p in hw.ports] + [(p, False) for p in hw.refused],
+        key=lambda s: (s[0].kind, int(s[0].name.rsplit("-", 1)[-1]) if "-" in s[0].name else 0),
+    )
+    ports = [
+        {
+            "name": p.name,
+            "title": p.title,
+            "kind": p.kind,
+            "wall": p.wall,
+            "across": p.across * MM,
+            "up": p.up * MM,
+            "width": p.width * MM,
+            "height": p.height * MM,
+            "round": p.round,
+            "cut": cut,
+        }
+        for p, cut in spots
+    ]
+    return {"units": kiln.units, "walls": walls, "ports": ports}
+
 
 def build_hardware(kiln: Kiln, frame: FrameDesign, gas: GasDesign | None) -> Hardware:
     hw = Hardware()
@@ -163,6 +293,8 @@ def _angle(
 
 def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
     leg, t = frame.angle_leg_in, frame.angle_t_in
+    if frame.kind == NO_FRAME:
+        return  # a catenary or a dome: frame.py says why
     if frame.kind == "welded case":
         _case(kiln, f, hw)
         return
@@ -357,15 +489,21 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
         )
         from kilndesigner.castable import resolve_material
 
-        kinds = {
-            resolve_material(kiln, layer.material).kind
+        # Dense linings have their uses (salt, soda, wood), but the hardware drawn here is for IFB
+        layers = [
+            resolve_material(kiln, layer.material)
             for layer in kiln.lining.for_face(face, door_face=face)
-        }
-        if kinds & {"dense_firebrick", "dense_castable"}:
+        ]
+        dense = [m.name for m in layers if m.kind in {"dense_firebrick", "dense_castable"}]
+        if dense:
             hw.findings.append(
                 Finding(
                     level="warning",
-                    message="A hinged door should never be built from hard brick.",
+                    message=(
+                        f"This hinged door is lined with {' and '.join(dict.fromkeys(dense))}. "
+                        "Its frame and hinges follow Pitelka's hinged door, which holds one 4½ in "
+                        "layer of insulating brick, so have them checked for the heavier door."
+                    ),
                     reference="kiln-hardware.md §6.2 [S13]",
                 )
             )
@@ -512,14 +650,62 @@ for _model, (_length, _end) in RANSOME.items():
     )
 
 
+def _check_burner_port(
+    model: str,
+    port: Port,
+    body: tuple[float, float] | None,
+    hw: Hardware,
+) -> None:
+    """A port the design sizes: the burner must sit within it, with Ward's inch to spare."""
+    if body is None:
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=f"The burner ports are the size given; no source gives one for {model}.",
+                reference="kiln-hardware.md §1.4",
+            )
+        )
+        return
+    head, across = body[0], min(port.size_in())
+    if across < head:
+        hw.findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The {head:g} in head of a {model} won't sit within a port {across:g} in "
+                    "across. Ward: the burner sits within the port's perimeter."
+                ),
+                reference="kiln-hardware.md §1.1 [S3]",
+            )
+        )
+    elif across < head + 1 - 1e-6:
+        hw.findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"Ports {across:g} in across leave less than Ward's inch around the {head:g} "
+                    f"in head of a {model}. Too small a port starves the burner of secondary air, "
+                    "shortens the nozzle's life and makes the pilot unstable."
+                ),
+                reference="kiln-hardware.md §1.1 [S1] [S3]",
+            )
+        )
+
+
 def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
     b = gas.burners
     if b is None or kiln.heat.gas is None:
         return
-    face = kiln.heat.gas.burners.wall
+    asked = kiln.heat.gas.burners
     model = b.model.removeprefix("Ward ")
     spec = PORTS.get(b.model)
-    if spec is None:
+    body = spec[1] if spec is not None else None
+    if asked.port is not None:
+        pw, ph = asked.port.size_in()
+        shape = "round" if asked.port.round else "rect"
+        why = f"{pw:g} in round, as given" if shape == "round" else f"{pw:g} × {ph:g} in, as given"
+        _check_burner_port(model, asked.port, body, hw)
+    elif spec is None:
         hw.findings.append(
             Finding(
                 level="warning",
@@ -532,35 +718,37 @@ def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
             )
         )
         return
-    (shape, pw, ph), body, why = spec
-    span = f.inside[face]
-    for i in range(b.count):
-        u = -span / 2 + (i + 0.5) * span / b.count
-        z0 = COURSE  # one course above the floor (Pitelka [S4])
-        box = f.through(face, (u - pw / 2, u + pw / 2), (z0, z0 + ph))
-        axis = Faces.normal_axis(face)
-        hw.openings.append(
-            Opening(
-                f"port/burner-{i + 1}",
-                f"Burner port {i + 1}",
-                box,
-                axis if shape == "round" else None,
+    else:
+        (shape, pw, ph), _, why = spec
+    # One course above the floor (Pitelka [S4]), unless the design says where
+    up = si(asked.up, "in") if asked.up is not None else COURSE + ph / 2
+    places: list[tuple[WallFace, float, float]]
+    if asked.places is not None:
+        places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
+    else:
+        face, span = asked.wall, f.inside[asked.wall]
+        spread = [-span / 2 + (i + 0.5) * span / b.count for i in range(b.count)]
+        places = [(face, Faces.u_of(face, u), up) for u in spread]
+    for i, (face, across, z) in enumerate(places):
+        spot = PortSpot(
+            f"port/burner-{i + 1}", f"Burner port {i + 1}", "burner", face, across, z, pw, ph,
+            shape == "round",
+        )  # fmt: skip
+        if not f.place(kiln, hw, spot) or body is None:
+            continue
+        dia, length = body
+        # ½ in back from the outside of the port (Ward [S1])
+        centre = f.point(face, Faces.u_of(face, across), z, 0.5 + length / 2)
+        hw.pieces.append(
+            Piece(
+                f"burner/{i + 1}",
+                "burner",
+                f"Burner {i + 1} of {b.count}",
+                f"{model} at {b.pressure}, {b.each}. Port: {why}. Set ½ in back from the "
+                "port (kiln-hardware.md §1.1 [S1]).",
+                cylinders=(Cylinder(Faces.normal_axis(face), centre, dia / 2 * MM, length * MM),),
             )
         )
-        if body is not None:
-            dia, length = body
-            # ½ in back from the outside of the port (Ward [S1])
-            centre = f.point(face, u, z0 + ph / 2, 0.5 + length / 2)
-            hw.pieces.append(
-                Piece(
-                    f"burner/{i + 1}",
-                    "burner",
-                    f"Burner {i + 1} of {b.count}",
-                    f"{model} at {b.pressure}, {b.each}. Port: {why}. Set ½ in back from the "
-                    "port (kiln-hardware.md §1.1 [S1]).",
-                    cylinders=(Cylinder(axis, centre, dia / 2 * MM, length * MM),),
-                )
-            )
     hw.findings.append(
         Finding(
             level="info",
@@ -574,33 +762,66 @@ def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
     )
 
 
+def _check_flue(port: Port, area: float, hw: Hardware) -> None:
+    """A flue the design sizes, against the area Olsen's rule asks for."""
+    w, h = port.size_in()
+    given = math.pi * w * w / 4 if port.round else w * h
+    if given < area - 0.5:
+        hw.findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The flue port is {given:.0f} in², under the {area:.0f} in² of 2.5 in² per "
+                    "ft³ of chamber: the kiln may not draw enough to reach temperature."
+                ),
+                reference=FLUE_SOURCE,
+            )
+        )
+
+
 def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
     area = float(gas.flue_area.split()[0])
     draft = kiln.draft
+    port = draft.flue_port if draft is not None else None
+    if port is not None:
+        _check_flue(port, area, hw)
     if draft is None or draft.type == "up":
         # A flue port in the roof's centre (Pitelka's updrafts [S11]); no chimney is drawn.
-        side = math.sqrt(area)
+        sx, sy = port.size_in() if port is not None else (math.sqrt(area), math.sqrt(area))
         roof_top = 1e4
         box = _mm(
             (
-                (-side / 2, -side / 2, si(kiln.chamber.height, "in") - 1),
-                (side / 2, side / 2, roof_top),
+                (-sx / 2, -sy / 2, si(kiln.chamber.height, "in") - 1),
+                (sx / 2, sy / 2, roof_top),
             )
         )
-        hw.openings.append(Opening("port/flue", "Flue port", box))
+        hw.openings.append(
+            Opening("port/flue", "Flue port", box, 2 if port is not None and port.round else None)
+        )
         return
     face = draft.flue_wall
-    span = f.inside[face]
-    courses = 3
-    while area / (courses * COURSE) > span - 2 and courses < 8:
-        courses += 1
-    fh = courses * COURSE
-    fw = math.ceil(area / fh * 4) / 4
-    hw.openings.append(
-        Opening("port/flue", "Flue port", f.through(face, (-fw / 2, fw / 2), (0, fh)))
-    )
-    if gas.chimney_height is None:
+    if port is not None:
+        fw, fh = port.size_in()
+    else:
+        span = f.inside[face]
+        courses = 3
+        while area / (courses * COURSE) > span - 2 and courses < 8:
+            courses += 1
+        fh = courses * COURSE
+        fw = math.ceil(area / fh * 4) / 4
+    offset = si(draft.flue_across, "in") if draft.flue_across is not None else 0.0
+    flue = PortSpot(
+        "port/flue", "Flue port", "flue", face, offset, fh / 2, fw, fh,
+        port is not None and port.round,
+    )  # fmt: skip
+    if not f.place(kiln, hw, flue) or gas.chimney_height is None:
         return
+    # The chimney and its duct are centred on the flue, wherever it is along the wall
+    uc = Faces.u_of(face, offset)
+
+    def at(u: tuple[float, float]) -> tuple[float, float]:
+        return uc + u[0], uc + u[1]
+
     # The chimney: inside at least the flue's area (Rhodes [S34]), whole half-bricks, hard brick
     # 4½ in thick (Pitelka [S4]), its base `run_to_chimney` out from the flue wall.
     sizes = [4.5 * n for n in range(1, 5)]
@@ -615,14 +836,14 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> Non
     z0, z1 = f.bottom, height
     c0 = run  # the chimney's outside face nearest the kiln, w out from the flue wall
     walls = [
-        ("near", (-across / 2 - wall, across / 2 + wall), (c0, c0 + wall)),
+        ("near", at((-across / 2 - wall, across / 2 + wall)), (c0, c0 + wall)),
         (
             "far",
-            (-across / 2 - wall, across / 2 + wall),
+            at((-across / 2 - wall, across / 2 + wall)),
             (c0 + wall + along, c0 + 2 * wall + along),
         ),
-        ("side-1", (-across / 2 - wall, -across / 2), (c0 + wall, c0 + wall + along)),
-        ("side-2", (across / 2, across / 2 + wall), (c0 + wall, c0 + wall + along)),
+        ("side-1", at((-across / 2 - wall, -across / 2)), (c0 + wall, c0 + wall + along)),
+        ("side-2", at((across / 2, across / 2 + wall)), (c0 + wall, c0 + wall + along)),
     ]
     volume = 0.0
     boxes: list[Box] = []
@@ -644,10 +865,10 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> Non
     )
     if run > 0:
         duct = [
-            f.box(face, (-fw / 2 - wall, fw / 2 + wall), (f.bottom, 0), (0, c0 + wall)),
-            f.box(face, (-fw / 2 - wall, -fw / 2), (0, fh), (0, c0 + wall)),
-            f.box(face, (fw / 2, fw / 2 + wall), (0, fh), (0, c0 + wall)),
-            f.box(face, (-fw / 2 - wall, fw / 2 + wall), (fh, fh + wall), (0, c0 + wall)),
+            f.box(face, at((-fw / 2 - wall, fw / 2 + wall)), (f.bottom, 0), (0, c0 + wall)),
+            f.box(face, at((-fw / 2 - wall, -fw / 2)), (0, fh), (0, c0 + wall)),
+            f.box(face, at((fw / 2, fw / 2 + wall)), (0, fh), (0, c0 + wall)),
+            f.box(face, at((-fw / 2 - wall, fw / 2 + wall)), (fh, fh + wall), (0, c0 + wall)),
         ]
         for lo, hi in duct:
             volume += math.prod(h - lo_ for lo_, h in zip(lo, hi, strict=True)) / MM**3
@@ -665,7 +886,7 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> Non
         Opening(
             "port/chimney-inlet",
             "Chimney inlet",
-            f.box(face, (-fw / 2, fw / 2), (0, fh), (c0 - 1, c0 + wall + 1)),
+            f.box(face, at((-fw / 2, fw / 2)), (0, fh), (c0 - 1, c0 + wall + 1)),
         )
     )
     # The damper slot: about a foot above the flue, a course high, 3 in wider than the inside
@@ -676,7 +897,7 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> Non
             "Damper slot",
             f.box(
                 face,
-                (-across / 2 - 1.5, across / 2 + 1.5),
+                at((-across / 2 - 1.5, across / 2 + 1.5)),
                 (zd, zd + COURSE),
                 (c0 + wall + along - 1, c0 + 2 * wall + along + 1),
             ),
@@ -701,45 +922,62 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> Non
 def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     face = kiln.door_face
     assert face not in ("floor", "roof")
+    asked = kiln.spy_holes or SpyHoles()
     h = si(kiln.chamber.height, "in")
-    axis = Faces.normal_axis(face)
-    if electric:
-        # 1 in, full diameter through the brick, three per kiln (L&L Easy-Load [S3] [S6])
-        for i, frac in enumerate((0.25, 0.5, 0.75)):
-            z = h * frac
-            hw.openings.append(
-                Opening(
-                    f"port/spy-{i + 1}",
-                    f"Peephole {i + 1}",
-                    f.through(face, (-0.5, 0.5), (z - 0.5, z + 0.5)),
-                    axis,
-                )
-            )
-        hw.findings.append(
-            Finding(
-                level="info",
-                message=(
-                    "Three 1 in peepholes are cut through the door. Their heights are not sourced; "
-                    "they "
-                    "are spaced evenly."
-                ),
-                reference="electric-kiln-hardware.md §4 [S3] [S6]",
-            )
+    word = "Peephole" if electric else "Spy hole"
+    if asked.port is not None:
+        (sw, sh), is_round = asked.port.size_in(), asked.port.round
+    elif electric:
+        sw, sh, is_round = 1.0, 1.0, True  # full diameter through the brick (L&L [S3] [S6])
+    else:
+        sw, sh, is_round = 2.25, COURSE, False  # a quarter brick (Pitelka [S4])
+    n = asked.wanted
+    places: list[tuple[WallFace, float, float]]
+    if asked.places is not None:
+        places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
+    elif electric:
+        places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
+    else:
+        # The bottom hole about 8 in up [S13]; the top one level with the bottom of the arch
+        # [S4], or a foot below a flat roof [S13]; all a few inches off centre, the top one to
+        # the other side, so they miss the shelf posts.
+        top = h - COURSE if isinstance(kiln.roof, SprungArch | Dome) else h - 12
+        bottom = min(8.0, top / 3)
+        top += COURSE - sh  # the top hole's bottom, so its top stays put
+        bottoms = (
+            [bottom + (top - bottom) * i / (n - 1) for i in range(n)]
+            if n > 1
+            else [(bottom + top) / 2] * n
         )
-        return
-    # The top hole about level with the bottom of the arch [S4], or a foot below a flat roof [S13]
-    top = h - COURSE if isinstance(kiln.roof, SprungArch) else h - 12
-    bottom = min(8.0, top / 3)
-    for i, (z, u) in enumerate(((bottom, -3.0), ((bottom + top) / 2, -3.0), (top, 3.0))):
-        hw.openings.append(
-            Opening(
-                f"port/spy-{i + 1}",
-                f"Spy hole {i + 1}",
-                f.through(face, (u - 1.125, u + 1.125), (z, z + COURSE)),
-            )
+        sides = [3.0 if n > 1 and i == n - 1 else -3.0 for i in range(n)]
+        places = [
+            (face, Faces.u_of(face, u), z + sh / 2) for z, u in zip(bottoms, sides, strict=True)
+        ]
+    for i, (wall, across, up) in enumerate(places):
+        spot = PortSpot(
+            f"port/spy-{i + 1}", f"{word} {i + 1}", "spy", wall, across, up, sw, sh, is_round
         )
-    hw.findings.append(
-        Finding(
+        f.place(kiln, hw, spot)
+    hw.findings.append(_spy_hole_note(kiln.spy_holes, n, (sw, sh, is_round), electric=electric))
+
+
+def _spy_hole_note(
+    asked: SpyHoles | None, n: int, size: tuple[float, float, bool], *, electric: bool
+) -> Finding:
+    if n == 0:
+        return Finding(level="info", message="No spy holes: the cones can't be watched.")
+    if asked is None and electric:
+        return Finding(
+            level="info",
+            message=(
+                "Three 1 in peepholes are cut through the door. Their heights are not sourced; "
+                "they "
+                "are spaced evenly."
+            ),
+            reference="electric-kiln-hardware.md §4 [S3] [S6]",
+        )
+    if asked is None:
+        return Finding(
             level="info",
             message=(
                 "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the "
@@ -749,4 +987,25 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             ),
             reference="kiln-hardware.md §2 [S4] [S13]",
         )
+    w, h, is_round = size
+    shown = f"{w:g} in round" if is_round else f"{w:g} × {h:g} in"
+    where = (
+        "where the design places them"
+        if asked.places is not None
+        else "in the door, spaced evenly"
+        if electric
+        else "up the door, a few inches off centre so they miss the shelf posts"
+    )
+    holes = f"{n} {'peephole' if electric else 'spy hole'}{'' if n == 1 else 's'}"
+    if electric:
+        return Finding(
+            level="info",
+            message=f"{holes}, {shown}, {where}.",
+            reference="electric-kiln-hardware.md §4 [S3] [S6]",
+        )
+    uses = " Cone packs in the top and bottom, draw rings in the middle." if n >= 3 else ""
+    return Finding(
+        level="info",
+        message=f"{holes}, {shown}, {where}.{uses}",
+        reference="kiln-hardware.md §2 [S4] [S13]",
     )

@@ -65,6 +65,13 @@ def test_firing_needs_a_target() -> None:
         parse_design(MINIMAL.replace('firing: {cone: "6"}', "firing: {}"))
 
 
+def test_a_cone_must_be_in_the_table_even_beside_a_temperature() -> None:
+    with pytest.raises(ValidationError, match="not in the Orton table"):
+        parse_design(
+            MINIMAL.replace('firing: {cone: "6"}', 'firing: {cone: "99", top_temperature: 2300 °F}')
+        )
+
+
 def test_roof_is_chosen_by_type() -> None:
     kiln = parse_design(MINIMAL + "roof: {type: sprung_arch, rise: 4 in}\n")
     assert isinstance(kiln.roof, SprungArch)

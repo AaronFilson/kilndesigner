@@ -1,10 +1,14 @@
+/* The theme is light, dark, or as the system says (no data-theme); the accent is named for a
+   glaze (data-accent), with a shade for each theme. theme.ts sets both on the root element. */
 :root {
   --bg: #faf8f5;
   --surface: #ffffff;
   --text: #1f1b16;
   --muted: #6b635a;
   --border: #e3ddd4;
-  --accent: #b4532a;
+  --accent-light: #b4532a;
+  --accent-dark: #e07a4b;
+  --accent: var(--accent-light);
   --accent-text: #ffffff;
   --error: #b42318;
   --warning: #9a6700;
@@ -15,14 +19,39 @@
   line-height: 1.5;
 }
 
+:root[data-accent="shino"] {
+  --accent-light: #a45a14;
+  --accent-dark: #f0a95a;
+}
+
+:root[data-accent="celadon"] {
+  --accent-light: #2f7a68;
+  --accent-dark: #7fc4ae;
+}
+
+:root[data-accent="cobalt"] {
+  --accent-light: #2c58a6;
+  --accent-dark: #8aaef0;
+}
+
+:root[data-accent="tenmoku"] {
+  --accent-light: #7a4a1e;
+  --accent-dark: #d9a066;
+}
+
+:root[data-accent="copper"] {
+  --accent-light: #a3263c;
+  --accent-dark: #f08a99;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #171411;
     --surface: #211d19;
     --text: #f1ece6;
     --muted: #a39a90;
     --border: #3a342e;
-    --accent: #e07a4b;
+    --accent: var(--accent-dark);
     --accent-text: #171411;
     --error: #f97066;
     --warning: #f0b429;
@@ -30,6 +59,21 @@
     --viewer: #2a2520;
     color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --bg: #171411;
+  --surface: #211d19;
+  --text: #f1ece6;
+  --muted: #a39a90;
+  --border: #3a342e;
+  --accent: var(--accent-dark);
+  --accent-text: #171411;
+  --error: #f97066;
+  --warning: #f0b429;
+  --info: #7cb8e4;
+  --viewer: #2a2520;
+  color-scheme: dark;
 }
 
 * {
@@ -63,6 +107,24 @@ code {
   font-weight: 700;
   color: var(--text);
   text-decoration: none;
+}
+
+.appearance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  font-size: 0.85em;
+}
+
+.appearance label {
+  color: var(--muted);
+}
+
+.appearance select {
+  margin-right: 0.4rem;
+  padding: 0.2rem 0.3rem;
 }
 
 .page {
@@ -207,6 +269,7 @@ select {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
+  max-width: calc(100% - 14rem); /* clear of the legend */
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem;
@@ -243,16 +306,25 @@ select {
   padding: 1rem;
 }
 
+.viewer-tools select {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85em;
+}
+
 .viewer-legend {
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
-  margin: 0;
   padding: 0.4rem 0.6rem;
-  list-style: none;
   border-radius: 6px;
   background: color-mix(in srgb, var(--surface) 88%, transparent);
   font-size: 0.8em;
+}
+
+.viewer-legend ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
 .viewer-legend li {
@@ -261,11 +333,33 @@ select {
   gap: 0.4rem;
 }
 
+/* Each swatch is a colour picker: click it to choose the material's colour */
 .viewer-legend .swatch {
-  width: 0.8rem;
-  height: 0.8rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0;
   border: 1px solid var(--border);
   border-radius: 2px;
+  background: none;
+  cursor: pointer;
+}
+
+.viewer-legend .swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.viewer-legend .swatch::-webkit-color-swatch {
+  border: none;
+}
+
+.viewer-legend .swatch::-moz-color-swatch {
+  border: none;
+}
+
+.viewer-legend button {
+  margin-top: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.95em;
 }
 
 .downloads {
@@ -529,6 +623,43 @@ select {
 .form-section > div:not(.field),
 .layers {
   grid-column: 1 / -1;
+}
+
+/* A group of choices within a section: burner ports, the flue, spy holes */
+.subgroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.subgroup h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.95em;
+}
+
+.places {
+  grid-column: 1 / -1;
+}
+
+.places ol {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.places li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.places button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85em;
 }
 
 .layers ol {

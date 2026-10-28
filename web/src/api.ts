@@ -1,7 +1,7 @@
 // The API, as TanStack Query hooks over the generated client.
 import { createClient, type Build, type Problem } from "@kilndesigner/api-client";
 
-import type { KilnDocument } from "./design";
+import type { KilnDocument, Layout } from "./design";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const api = createClient();
@@ -136,9 +136,10 @@ const finished = (build: Build | null | undefined) =>
   build != null && (build.status === "done" || build.status === "failed");
 
 /** A build, polled while it runs. `null` means it has not been started. */
-export function useBuild(key: string) {
+export function useBuild(key: string, enabled = true) {
   return useQuery({
     queryKey: ["builds", key],
+    enabled,
     queryFn: async (): Promise<Build | null> => {
       const { data, error, response } = await api.GET("/api/builds/{key}", {
         params: { path: { key } },
@@ -161,6 +162,20 @@ export function useStartBuild() {
       return data ?? fail(response, error);
     },
     onSuccess: (build) => client.setQueryData(["builds", build.key], build),
+  });
+}
+
+/** Where a build put each port, and each wall's frame; undefined for a build without one. */
+export function useLayout(build: Build | null | undefined) {
+  return useQuery({
+    queryKey: ["layouts", build?.key],
+    enabled: build?.status === "done" && build.files.includes("layout.json"),
+    staleTime: Infinity, // a build never changes
+    queryFn: async () => {
+      const response = await fetch(fileUrl(build?.key ?? "", "layout.json"));
+      if (!response.ok) throw new ApiError(response.status, response.statusText);
+      return (await response.json()) as Layout;
+    },
   });
 }
 

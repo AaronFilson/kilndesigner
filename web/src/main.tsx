@@ -5,6 +5,9 @@ import { createRoot } from "react-dom/client";
 
 import { router } from "./router";
 import "./styles.css";
+import { applyAppearance, loadAppearance } from "./theme";
+
+applyAppearance(loadAppearance()); // before the first paint, so a dark theme doesn't flash light
 
 const queryClient = new QueryClient();
 

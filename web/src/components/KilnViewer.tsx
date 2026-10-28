@@ -1,12 +1,29 @@
 // The kiln's 3D model: the glTF the engine built (ADR 0005), framed to fit. Views from the front,
-// the side and the top, a cut through the middle to show the lining, and the name of any part
-// that's clicked.
+// the side and the top, a cut through the middle to show the lining, the name of any part that's
+// clicked, and the model's colours: as built, a palette, or picked per material.
 import { Bounds, OrbitControls, useBounds } from "@react-three/drei";
 import { Canvas, type ThreeEvent } from "@react-three/fiber";
 import { useQuery } from "@tanstack/react-query";
 import { Component, type ReactNode, useEffect, useState } from "react";
-import { type Group, Mesh, MeshStandardMaterial, type Object3D, Plane, Vector3 } from "three";
+import {
+  BufferGeometry,
+  Color,
+  EdgesGeometry,
+  type Group,
+  LineBasicMaterial,
+  LineSegments,
+  Mesh,
+  MeshStandardMaterial,
+  type Object3D,
+  Plane,
+  Vector3,
+} from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { mergeGeometries, mergeVertices } from "three/addons/utils/BufferGeometryUtils.js";
+
+import type { KilnDocument, Layout } from "../design";
+import { colourOf, loadLook, palette, PALETTES, type PaletteId, saveLook, type ViewerLook } from "../palettes";
+import { moved, PortMarkers } from "./PortMarkers";
 
 /** What a part of the model is: from the build's parts.json, by the part's name. */
 export interface PartInfo {
@@ -70,6 +87,7 @@ function useModel(url: string) {
         material.metalness = 0;
         material.roughness = 0.9;
         object.material = material;
+        object.userData.builtColour = material.color.clone(); // for going back to "As built"
       });
       return scene;
     },
@@ -127,24 +145,88 @@ function Aim({ view }: { view: View }) {
   return null;
 }
 
+function meshes(scene: Group): Mesh[] {
+  const found: Mesh[] = [];
+  scene.traverse((o) => {
+    if (o instanceof Mesh && o.material instanceof MeshStandardMaterial) found.push(o);
+  });
+  return found;
+}
+
+type Outline = LineSegments<EdgesGeometry, LineBasicMaterial>;
+
+/** The node that carries a part's name: the mesh, or the group of its primitives. */
+function partNode(object: Object3D): Object3D {
+  for (let o: Object3D | null = object; o; o = o.parent) {
+    if (typeof o.userData.name === "string") return o;
+  }
+  return object;
+}
+
+/**
+ * Every part's outline, made the first time outlines are shown and kept on the scene. A part's
+ * primitives are merged first, so the outline follows the part's edges, not the seams between its
+ * primitives (a curved face arrives as many).
+ */
+function outlines(scene: Group): Outline[] {
+  const kept = scene.userData.outlines as Outline[] | undefined;
+  if (kept) return kept;
+  scene.updateMatrixWorld(true);
+  const byPart = new Map<Object3D, BufferGeometry[]>();
+  for (const mesh of meshes(scene)) {
+    const node = partNode(mesh);
+    const toNode = node.matrixWorld.clone().invert().multiply(mesh.matrixWorld);
+    const shape = new BufferGeometry();
+    shape.setAttribute("position", mesh.geometry.getAttribute("position").clone());
+    shape.setIndex(mesh.geometry.getIndex()?.clone() ?? null);
+    byPart.set(node, [...(byPart.get(node) ?? []), shape.applyMatrix4(toNode)]);
+  }
+  const made: Outline[] = [];
+  for (const [node, shapes] of byPart) {
+    const merged = mergeVertices(mergeGeometries(shapes.map((g) => g.toNonIndexed())));
+    const lines = new LineSegments(new EdgesGeometry(merged, 25), new LineBasicMaterial());
+    lines.raycast = () => {}; // clicks go to the part, not its outline
+    node.add(lines);
+    made.push(lines);
+  }
+  scene.userData.outlines = made;
+  return made;
+}
+
 function Model({
   scene,
+  parts,
+  look,
   cut,
   selected,
   onSelect,
 }: {
   scene: Group;
+  parts: Record<string, PartInfo>;
+  look: ViewerLook;
   cut: boolean;
   selected: string | null;
   onSelect: (name: string) => void;
 }) {
   useEffect(() => {
-    scene.traverse((object) => {
-      if (!(object instanceof Mesh) || !(object.material instanceof MeshStandardMaterial)) return;
-      object.material.clippingPlanes = cut ? [CUT] : [];
-      object.material.emissive.set(partName(object) === selected ? "#8a3a10" : "#000000");
-    });
-  }, [scene, cut, selected]);
+    const edges = palette(look.palette).edges;
+    for (const mesh of meshes(scene)) {
+      const material = mesh.material as MeshStandardMaterial;
+      const name = partName(mesh);
+      material.clippingPlanes = cut ? [CUT] : [];
+      material.emissive.set(name === selected ? "#8a3a10" : "#000000");
+      const colour = colourOf(look, parts[name]?.kind);
+      if (colour) material.color.set(colour);
+      else if (mesh.userData.builtColour instanceof Color) material.color.copy(mesh.userData.builtColour);
+    }
+    if (look.edges || scene.userData.outlines) {
+      for (const lines of outlines(scene)) {
+        lines.visible = look.edges;
+        lines.material.color.set(edges);
+        lines.material.clippingPlanes = cut ? [CUT] : [];
+      }
+    }
+  }, [scene, parts, look, cut, selected]);
 
   const pick = (event: ThreeEvent<MouseEvent>) => {
     event.stopPropagation();
@@ -155,13 +237,38 @@ function Model({
   return <primitive object={scene} onClick={pick} />;
 }
 
-export function KilnViewer({ url, partsUrl }: { url: string; partsUrl: string }) {
+const NO_PARTS: Record<string, PartInfo> = {};
+
+export function KilnViewer({
+  url,
+  partsUrl,
+  layout,
+  draft,
+  onEdit,
+}: {
+  url: string;
+  partsUrl: string;
+  /** Where the build put the ports: with `onEdit`, they can be moved on the model. */
+  layout?: Layout;
+  /** The design as it is being edited, so the ports show where it now puts them. */
+  draft?: KilnDocument | null;
+  onEdit?: (apply: (document: KilnDocument) => KilnDocument) => void;
+}) {
   const model = useModel(url);
   const parts = useParts(partsUrl);
   const [view, setView] = useState<View>("3d");
   const [cut, setCut] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
+  const [look, setLook] = useState<ViewerLook>(loadLook);
+  const [moving, setMoving] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const movable = layout !== undefined && onEdit !== undefined && layout.ports.length > 0;
   const info = selected ? parts.data?.[selected] : undefined;
+  const changeLook = (next: ViewerLook) => {
+    setLook(next);
+    saveLook(next);
+  };
+  const background = palette(look.palette).background;
 
   if (model.isError) {
     return (
@@ -171,7 +278,7 @@ export function KilnViewer({ url, partsUrl }: { url: string; partsUrl: string })
     );
   }
   return (
-    <div className="viewer" aria-label="3D model of the kiln">
+    <div className="viewer" aria-label="3D model of the kiln" style={background ? { background } : undefined}>
       <CanvasBoundary>
         <Canvas
           camera={{ position: [3, 2, 3], fov: 35, near: 1, far: 1e7 }}
@@ -185,9 +292,26 @@ export function KilnViewer({ url, partsUrl }: { url: string; partsUrl: string })
           <directionalLight position={[-6, 3, -4]} intensity={0.5} />
           {model.data && (
             <Bounds fit clip margin={1.35}>
-              <Model scene={model.data} cut={cut} selected={selected} onSelect={setSelected} />
+              <Model
+                scene={model.data}
+                parts={parts.data ?? NO_PARTS}
+                look={look}
+                cut={cut}
+                selected={selected}
+                onSelect={setSelected}
+              />
               <Aim view={view} />
             </Bounds>
+          )}
+          {model.data && movable && moving && (
+            <PortMarkers
+              layout={layout}
+              draft={draft}
+              onHover={setHovered}
+              onDrop={(marker, all, to) =>
+                onEdit((doc) => moved(doc, all, marker, to, layout.units))
+              }
+            />
           )}
           <OrbitControls makeDefault />
         </Canvas>
@@ -212,19 +336,73 @@ export function KilnViewer({ url, partsUrl }: { url: string; partsUrl: string })
         >
           Cut in half
         </button>
+        <button
+          type="button"
+          aria-pressed={look.edges}
+          className={look.edges ? "active" : undefined}
+          onClick={() => changeLook({ ...look, edges: !look.edges })}
+        >
+          Outlines
+        </button>
+        {movable && (
+          <button
+            type="button"
+            aria-pressed={moving}
+            className={moving ? "active" : undefined}
+            onClick={() => {
+              setMoving(!moving);
+              setHovered(null);
+            }}
+          >
+            Move ports
+          </button>
+        )}
+        <select
+          aria-label="Model colours"
+          value={look.palette}
+          onChange={(e) => changeLook({ ...look, palette: e.target.value as PaletteId })}
+        >
+          {PALETTES.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.label}
+            </option>
+          ))}
+        </select>
       </div>
       {parts.data && legend(parts.data).length > 0 && (
-        <ul className="viewer-legend" aria-label="Materials in the model">
-          {legend(parts.data).map(([kind, colour]) => (
-            <li key={kind}>
-              <span className="swatch" style={{ background: colour }} aria-hidden="true" />
-              {kind}
-            </li>
-          ))}
-        </ul>
+        <div className="viewer-legend">
+          <ul aria-label="Materials in the model">
+            {legend(parts.data).map(([kind, built]) => (
+              <li key={kind}>
+                <input
+                  type="color"
+                  className="swatch"
+                  aria-label={`Colour for ${kind}`}
+                  value={colourOf(look, kind) ?? built}
+                  onChange={(e) =>
+                    changeLook({ ...look, custom: { ...look.custom, [kind]: e.target.value } })
+                  }
+                />
+                {kind}
+              </li>
+            ))}
+          </ul>
+          {Object.keys(look.custom).length > 0 && (
+            <button type="button" className="secondary" onClick={() => changeLook({ ...look, custom: {} })}>
+              Reset colours
+            </button>
+          )}
+        </div>
       )}
       <p className="viewer-info" role="status">
-        {selected ? (
+        {moving && hovered ? (
+          <span>{hovered}</span>
+        ) : moving ? (
+          <span className="muted">
+            Drag a port (orange: burners, blue: spy holes, grey: the flue) across its wall or onto
+            another, then save and build. Red ones didn't fit.
+          </span>
+        ) : selected ? (
           <>
             <strong>{info?.title ?? selected}</strong>
             {info?.detail && <span> {info.detail}</span>}

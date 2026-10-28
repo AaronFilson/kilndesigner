@@ -23,9 +23,9 @@ import numpy as np
 import yaml
 from pydantic import BaseModel, ConfigDict
 
-from kilndesigner.cones import cone_temperature
+from kilndesigner.cones import cone_temperature, hotter_than
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.model import Cylinders, Gas, Kiln, SprungArch, Tank
+from kilndesigner.model import CatenaryArch, Cylinders, Dome, Gas, Kiln, SprungArch, Tank
 from kilndesigner.shape import chamber_shape
 from kilndesigner.units import Q_, Quantity, si
 from kilndesigner.working import Finding, Step, show
@@ -73,13 +73,22 @@ def wall_class(kiln: Kiln) -> WallClass:
     return "insulating_brick"
 
 
-def ward_volume(kiln: Kiln) -> float:
-    """Ward's chamber volume (m³): a sprung arch counts as ⅔ of its rise (§3.1, [S28])."""
+def ward_volume(kiln: Kiln) -> tuple[float, str]:
+    """Ward's chamber volume (m³) and how it was found: a sprung arch counts as ⅔ of its rise, a
+    catenary as ⅔ of its base × height (§3.1, [S28]). Ward gives no formula for a dome, so its
+    space is worked out exactly."""
     c = kiln.chamber
     w, d, h = si(c.width, "m"), si(c.depth, "m"), si(c.height, "m")
+    if isinstance(kiln.roof, CatenaryArch):
+        return d * (4 / 3 * h * w / 2), "L × (4/3 × H × ½ base), H to the crown"
+    if isinstance(kiln.roof, Dome):
+        return chamber_shape(kiln).volume, (
+            "W × L × H, plus the space under the dome worked out exactly: Ward gives no formula "
+            "for a dome"
+        )
     if isinstance(kiln.roof, SprungArch):
         h += 2 / 3 * si(kiln.roof.rise, "m")
-    return w * d * h
+    return w * d * h, "W × L × H (a sprung arch adds ⅔ of its rise to H)"
 
 
 def ward_column(top: Quantity) -> str | None:
@@ -259,18 +268,30 @@ def design_gas(kiln: Kiln) -> GasDesign:
     top, _ = top_temperature(kiln)
     construction = wall_class(kiln)
     column = ward_column(top)
-    volume_m3 = ward_volume(kiln)
+    volume_m3, volume_formula = ward_volume(kiln)
     volume_ft3 = volume_m3 / si(Q_(1, "ft**3"), "m**3")
     ward = data["ward_btu_per_ft3_hr"]
-    if column is None:
+    # Past cone 10 by the design's temperature or by its cone, whichever it gives. Kilns are fired
+    # past it, so a warning; the burners are sized from the column the temperature reaches.
+    firing = kiln.firing
+    past: list[str] = []
+    if firing.top_temperature is not None and column is None:
+        past.append(show(top, temp_unit))
+    if firing.cone is not None and hotter_than(firing.cone, "10"):
+        past.append(f"cone {firing.cone}")
+    column = column or "10"
+    if past:
         findings.append(
             Finding(
-                level="error",
-                message="Ward's burner table stops at cone 10; this firing is hotter.",
+                level="warning",
+                message=(
+                    "Ward's burner table stops at cone 10, and this design goes past it "
+                    f"({' and '.join(past)}): the burners are sized from the cone {column} "
+                    "column and may be short of heat at the top."
+                ),
                 reference=ward["source"],
             )
         )
-        column = "10"
     low, high = ward["walls"][construction][ward["columns"].index(column)]
     demand = (high if gas.firing_speed == "fast" else low) * volume_ft3
     other = (low if gas.firing_speed == "fast" else high) * volume_ft3
@@ -278,7 +299,7 @@ def design_gas(kiln: Kiln) -> GasDesign:
         Step(
             name="Chamber volume, Ward's way",
             value=f"{volume_ft3:.1f} ft³",
-            formula="W × L × H (a sprung arch adds ⅔ of its rise to H)",
+            formula=volume_formula,
             reference=ward["source"],
         ),
         Step(
@@ -408,12 +429,13 @@ def design_gas(kiln: Kiln) -> GasDesign:
     max_psi = 10.0 if isinstance(gas.supply, Cylinders) else min(20.0, tank_psig - 10.0)
     options = _burner_options(demand, gas.burners.type, max_psi)
     chosen: BurnerOption | None = None
-    if gas.burners.model or gas.burners.count:
+    wanted = gas.burners.wanted
+    if gas.burners.model or wanted:
         matching = [
             o
             for o in options
             if (gas.burners.model is None or o.model.endswith(gas.burners.model))
-            and (gas.burners.count is None or o.count == gas.burners.count)
+            and (wanted is None or o.count == wanted)
         ]
         chosen = matching[0] if matching else None
         if chosen is None:
@@ -476,8 +498,8 @@ def design_gas(kiln: Kiln) -> GasDesign:
     chimney: str | None = None
     draft: list[str] = []
     if kiln.draft is not None and kiln.draft.type in ("cross", "down"):
-        inside_h = si(kiln.chamber.height, "in")
-        if isinstance(kiln.roof, SprungArch):
+        inside_h = si(kiln.chamber.height, "in")  # a catenary's height is to its crown already
+        if isinstance(kiln.roof, SprungArch | Dome):
             inside_h += si(kiln.roof.rise, "in")
         along = (
             si(kiln.chamber.depth, "in")

@@ -7,6 +7,7 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 
+import { AppearanceMenu } from "./components/AppearanceMenu";
 import { DesignList } from "./pages/DesignList";
 import { DesignPage } from "./pages/DesignPage";
 import { NewDesign } from "./pages/NewDesign";
@@ -18,6 +19,7 @@ const root = createRootRoute({
         <Link to="/" className="brand">
           Kilndesigner
         </Link>
+        <AppearanceMenu />
       </nav>
       <Outlet />
     </>

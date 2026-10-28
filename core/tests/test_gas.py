@@ -28,13 +28,45 @@ def pnw():  # type: ignore[no-untyped-def]
 def test_ward_volume_counts_two_thirds_of_the_arch(pnw) -> None:  # type: ignore[no-untyped-def]
     """Ward: sprung arch volume = W × L × (wall height + ⅔ rise) [S28]."""
     expected_in3 = 28 * 60 * (44 + 2 / 3 * 3.75)
-    assert ward_volume(pnw) == pytest.approx(si(Q_(expected_in3, "in**3"), "m**3"))
+    assert ward_volume(pnw)[0] == pytest.approx(si(Q_(expected_in3, "in**3"), "m**3"))
 
 
 def test_ward_column_by_cone() -> None:
     assert ward_column(Q_(1000, "degC")) == "6"  # above cone 06 (998 °C)
     assert ward_column(Q_(1285, "degC")) == "10"
     assert ward_column(Q_(1300, "degC")) is None
+
+
+def _fired(pnw, **firing: object):  # type: ignore[no-untyped-def]
+    kiln = pnw.model_copy(update={"firing": pnw.firing.model_copy(update=firing)})
+    return design_gas(kiln)
+
+
+def _past(gas) -> list[tuple[str, str]]:  # type: ignore[no-untyped-def]
+    return [(f.level, f.message) for f in gas.findings if "stops at cone 10" in f.message]
+
+
+def test_past_cone_10_is_a_warning_sized_from_cone_10(pnw) -> None:  # type: ignore[no-untyped-def]
+    """Hotter than Ward's last column: warn, and size from the cone 10 figures."""
+    gas = _fired(pnw, top_temperature=Q_(1300, "degC"))
+    [(level, message)] = _past(gas)
+    assert level == "warning"
+    assert "(2372 °F)" in message
+    assert gas.design_input_btu_hr == pytest.approx(design_gas(pnw).design_input_btu_hr)
+
+
+def test_past_cone_10_by_the_cone_or_the_temperature(pnw) -> None:  # type: ignore[no-untyped-def]
+    """The design's cone counts even when its temperature is given, and the other way round."""
+    # Cone 11 with a cooler temperature: the cone is past cone 10, sized by the temperature
+    [(level, message)] = _past(_fired(pnw, cone="11", top_temperature=Q_(2300, "degF")))
+    assert level == "warning"
+    assert "(cone 11)" in message
+    # Both past it
+    [(_, both)] = _past(_fired(pnw, cone="11", top_temperature=Q_(2400, "degF")))
+    assert "(2400 °F and cone 11)" in both
+    # Cone 10 fired fast is cone 10, though hotter than cone 10 at 60 °C/h
+    assert _past(_fired(pnw, final_rate=150)) == []
+    assert _past(design_gas(pnw)) == []
 
 
 def test_pnw_burner_input(pnw) -> None:  # type: ignore[no-untyped-def]
