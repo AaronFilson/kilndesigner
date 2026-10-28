@@ -30,7 +30,8 @@ from pydantic import BaseModel, ConfigDict
 from kilndesigner.castable import resolve_material
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
-from kilndesigner.model import CatenaryArch, Kiln
+from kilndesigner.model import CatenaryArch, Kiln, SprungArch
+from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, length_text
 
@@ -306,9 +307,11 @@ class ArchRing:
     rings: int  # rings along the kiln, one brick deep each
 
     def describe(self) -> str:
+        rings = f"{self.rings} ring{'' if self.rings == 1 else 's'}"
+        straights = self.straights // self.rings
         return (
-            f"{self.rings} rings, each of {self.shaped // self.rings} {self.shape} bricks and "
-            f"{self.straights // self.rings} straights"
+            f"{rings}, each of {self.shaped // self.rings} {self.shape} bricks and {straights} "
+            f"straight{'' if straights == 1 else 's'}"
         )
 
 
@@ -316,7 +319,8 @@ def arch_ring(part: Part) -> ArchRing | None:
     """The standard arch-brick count: enough tapered bricks to turn the ring's curve.
 
     Around a ring of radial depth L, the outer arc is longer than the inner by 2θ·L; each tapered
-    brick makes up (2½ in − its thin end) of that. The rest of the inner arc is straights.
+    brick makes up (2½ in − its thin end) of that. Every brick is 2½ in across the outer arc, so
+    the ring takes the outer arc ÷ 2½ in bricks, rounded up once: the rest are straights.
     """
     if part.arch is None:
         return None
@@ -336,8 +340,9 @@ def arch_ring(part: Part) -> ArchRing | None:
         n_straight = (inner_arc - n_shaped * thin) / BRICK[2]
         if n_straight >= -0.5:  # the gentlest taper that can turn the curve
             rings = math.ceil(part.length_y / along - TOL / along)
-            per_ring_shaped = math.ceil(n_shaped)
-            per_ring_straight = max(0, math.ceil(n_straight))
+            per_ring_shaped = math.ceil(n_shaped - 1e-9)
+            per_ring = math.ceil((inner_arc + gain) / BRICK[2] - 1e-9)
+            per_ring_straight = max(0, per_ring - per_ring_shaped)
             return ArchRing(shape, per_ring_shaped * rings, per_ring_straight * rings, rings)
     return None
 
@@ -434,6 +439,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
 
     arch_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
+    under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
     for part in lining_parts(kiln):
         m = resolve_material(kiln, part.material)
         if part.profile is not None or part.dome is not None:
@@ -482,6 +488,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 continue
             if len(plans) > 1:
                 side_by_side.append((part, plans))
+            if isinstance(kiln.roof, SprungArch) and part.wall in ("left", "right"):
+                under_skewbacks.extend(plan.laying for plan in plans)
             layers.extend(plans)
             for piece in (p for plan in plans for p in plan.pieces):
                 if piece.is_whole:
@@ -547,18 +555,35 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=ARCH_SOURCE,
             )
         )
-    if any(p.arch is not None and not p.cap for p in lining_parts(kiln)):
+    if isinstance(kiln.roof, SprungArch):
+        arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
+        skew = 90 - math.degrees(arch.half_angle)
         findings.append(
             Finding(
                 level="info",
                 message=(
                     "The skewbacks and the fill beside the arch are drawn along the arch's radius "
-                    "at the springline and counted by volume. A 60° skewback is the usual "
-                    "choice. The steel that takes the arch's thrust is in the frame."
+                    "at the springline and counted by volume. The skewback's face must match the "
+                    f"arch: {skew:.0f}° to the horizontal here, 90° less half the arch's central "
+                    "angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at "
+                    "2.302 in/ft). The steel that takes the arch's thrust is in the frame."
                 ),
-                reference="combustion-and-masonry.md §6.5 [S61, S62]",
+                reference="kiln-hardware.md §5.2 [S20]",
             )
         )
+        if "stretcher" in under_skewbacks:
+            findings.append(
+                Finding(
+                    level="warning",
+                    message=(
+                        'HarbisonWalker: "A stretcher course should never be used immediately '
+                        'below the skewback." Brick in these side walls is laid as stretchers, '
+                        "so the course under each skewback is one: have it checked, or lay "
+                        "that course another way."
+                    ),
+                    reference="kiln-hardware.md §4.1 [S20]",
+                )
+            )
     if any(kiln.castable(mid) is None for mid in cast_volume):
         findings.append(
             Finding(
@@ -623,16 +648,6 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                     f"cut, and {WASTE:.0%} extra for breakage.{corners}"
                 ),
                 reference=BRICK_SOURCE,
-            )
-        )
-    if any(p.part.name.startswith("roof/") for p in layers):
-        findings.append(
-            Finding(
-                level="warning",
-                message=(
-                    "A flat brick roof can't support itself. It needs a support this tool doesn't "
-                    "design yet, such as a steel frame with hangers or a sprung arch."
-                ),
             )
         )
     return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))

@@ -238,6 +238,20 @@ references used. The plans print the working, so a builder can check it.
 - Not done in M3: skewbacks and the steel frame, a sourced car-hardware price, and the fuel and
   electricity used per firing (which needs M6).
 
+### Status (2026-10-28)
+
+- M4 is in progress on branch `m4`. A science review (`docs/reviews/2026-10-28-science-review.md`)
+  set the work in `10-28-26.md`; its status section says what's done.
+- Done: the breaker limit (NEC 422.11(E)), burner pressures read from their curves, HarbisonWalker's
+  arch rules enforced, doors refused in a sprung arch's springing walls, domes over doors checked
+  as sliced arches, flat roofs checked as jack arches, gas kilns over 60 ft³ refused, and the 3D
+  canvas under test (web 99.6 % of lines, Python 99.7 % branch, both enforced in CI).
+- New research: `domes-over-doors.md`, `flat-roofs.md`, `door-headers.md`.
+- Open: door-header statics (refractory allowables not found), steel for domes, the buttress
+  position (S5), validation notebooks, and the fixes waiting on the research files left on the
+  Windows machine.
+- Performance on small machines: `docs/reviews/2026-10-28-performance-review.md`.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
 the client's plans before the app exists.

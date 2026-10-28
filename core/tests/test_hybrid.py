@@ -109,7 +109,23 @@ def test_elements_left_on_into_reduction_are_a_warning() -> None:
     assert analysis.switch_over_reason == "reduction starts about here and attacks the elements"
     [warning] = [f for f in analysis.findings if f.level == "warning"]
     assert warning.message.startswith("The elements stay on to 1900 °F, past the start of")
-    assert "Kanthal allows A-1 and APM only 1922 °F" in warning.message
+    assert "Kanthal allows Kanthal APM only 1922 °F" in warning.message
+
+
+def test_the_reduction_warning_needs_reduction_and_quotes_the_wires_own_limit() -> None:
+    """It fired without reduction, and always quoted A-1's 1050 °C (the review's electric 8).
+    Kanthal D is allowed only 1000 °C (1832 °F) in CO- and H₂-rich gas [S9]."""
+    late = PNW_TEXT.replace("off_above: 1650 degF", "off_above: 1900 degF")
+    oxidising = late.replace("reduction: true", "reduction: false")
+    assert "reduction: false" in oxidising
+    analysis = analyse_hybrid(parse_design(oxidising), 11_520)
+    assert not [f for f in analysis.findings if "past the start of reduction" in f.message]
+    kanthal_d = late.replace("alloy: kanthal-apm", "alloy: kanthal-d")
+    assert kanthal_d != late
+    [warning] = [
+        f for f in analyse_hybrid(parse_design(kanthal_d), 11_520).findings if f.level == "warning"
+    ]
+    assert "Kanthal allows Kanthal D only 1832 °F" in warning.message
 
 
 def test_dear_electricity_makes_propane_the_cheaper_heat_throughout() -> None:
@@ -121,6 +137,14 @@ def test_dear_electricity_makes_propane_the_cheaper_heat_throughout() -> None:
     assert all(p.electric_per_kwh == pytest.approx(0.40) for p in analysis.points)
     assert all(p.propane_per_kwh < 0.40 for p in analysis.points)
     assert analysis.switch_over_reason == "as set in the design"
+    # Said in the working and the findings, as the opposite case is
+    cheaper = next(s for s in analysis.working if s.name == "Cheaper heat")
+    assert cheaper.value == "propane, at every temperature in the firing"
+    assert any(
+        f.message.startswith("At $0.40/kWh and $3.50/gal, propane is the cheaper heat at every")
+        for f in analysis.findings
+    )
+    assert not [f for f in analysis.findings if "electricity is the cheaper" in f.message]
 
 
 def test_propane_cost_per_kwh_units() -> None:

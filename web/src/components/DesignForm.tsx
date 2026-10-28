@@ -59,7 +59,10 @@ function Quantity({
   onChange: (value: string | undefined) => void;
 }) {
   const [number, unit] = splitQuantity(value);
-  const chosen = units.includes(unit) ? unit : (units[0] ?? "");
+  // A unit the field doesn't list, as a file written by hand may have, is shown and kept: picked
+  // as the first listed, an edit would rewrite "1 m" as "1.2 in"
+  const shown = unit !== "" && !units.includes(unit) ? [...units, unit] : units;
+  const chosen = shown.includes(unit) ? unit : (shown[0] ?? "");
   const id = useId();
   return (
     <div className="field">
@@ -74,13 +77,13 @@ function Quantity({
             onChange(e.target.value === "" ? undefined : joinQuantity(e.target.value, chosen))
           }
         />
-        {units.length > 1 ? (
+        {shown.length > 1 ? (
           <select
             aria-label={`${label}, unit`}
             value={chosen}
             onChange={(e) => number !== "" && onChange(joinQuantity(number, e.target.value))}
           >
-            {units.map((u) => (
+            {shown.map((u) => (
               <option key={u} value={u}>
                 {UNIT_LABELS[u] ?? u}
               </option>

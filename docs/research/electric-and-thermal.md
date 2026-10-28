@@ -261,6 +261,7 @@ jurisdiction has adopted.
 | Appliance branch circuit | 422.10(A) | The 125% minimum, as forums cite it [S23] |
 | Single non-motor appliance OCPD maximum | 422.11(E) | Not above the marked rating. If unmarked: 20 A for ≤ 13.3 A, or 150% of rating for > 13.3 A, with the next standard size up permitted [S23] |
 | Conductor protection | 240.4 | Still applies to the conductors [S23] |
+| Standard ampere ratings | 240.6(A) | Fuses and inverse-time breakers: 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300, 350, 400, 450, 500, 600, 700, 800, 1000, 1200, 1600, 2000, 2500, 3000, 4000, 5000 and 6000 A; fuses also 1, 3, 6, 10 and 601 A. Manufacturers make other ratings, "and the use of these non-standard ampere ratings is permitted". From the 2005 NEC [S79] Verified |
 | Receptacle rating | 210.21(B)(1) | A single receptacle on an individual branch circuit must be rated ≥ the branch circuit. This bears on a 50 A cord on a 60 A circuit [S24] |
 | Industrial process heating | Article 425 | One forum opinion classes kilns here, which would make them continuous loads [S24]. Unverified |
 
@@ -582,8 +583,10 @@ Derived quantities:
 
 - ν = μ/ρ. For example, ν = 1.572e-5 m²/s at 300 K.
 - Pr = c_p·μ/k. For example, Pr = 0.712 at 300 K.
-- These values match the Incropera Table A.4 values commonly quoted for 300 K. The Incropera table
-  itself was not read.
+- These are Holman's values (*Heat Transfer*, Table A-5), not Incropera's (Table A.4), as the
+  science review of 2026-10-28 found: Neutrium's 1.177 kg/m³ at 300 K is Holman's 1.1774, where
+  Incropera gives 1.1614. The review puts the difference at under 2 % in h_c. Neither book was
+  read here. (This corrects an earlier note that they matched Incropera.)
 
 ### 6.4 Worked multi-layer wall examples (validation tests)
 
@@ -893,3 +896,4 @@ Other notes:
 - [S76] Orton, Cone 10 self-supporting. https://www.ortonceramic.com/product-page/10-self-supporting-25-box
 - [S77] Orton, Pyrometric cones FAQ. https://www.ortonceramic.com/pyrometric-cones-faq
 - [S78] Orton, °F cone chart 022–14 (PDF). https://www.ortonceramic.com/files/2676/File/Orton-Cone-Chart-F-022-14.pdf
+- [S79] T. Crnko, "Overcurrent protection, part 2", IAEI Magazine, May/June 2007 (2005 NEC). https://iaeimagazine.org/features/overcurrent-protection-part-2

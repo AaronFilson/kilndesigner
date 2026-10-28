@@ -89,6 +89,14 @@ class SprungArch(Spec):
 
     type: Literal["sprung_arch"] = "sprung_arch"
     rise: Length = Field(description="Height of the arch's inside above the springline")
+    ring: int = Field(
+        default=1,
+        ge=1,
+        description=(
+            "How many of the roof's layers, from the inside, make the arch's ring. Layers laid "
+            "over the ring, such as insulation, are only its load"
+        ),
+    )
 
 
 class CatenaryArch(Spec):
@@ -105,6 +113,14 @@ class Dome(Spec):
 
     type: Literal["dome"] = "dome"
     rise: Length = Field(description="Height of the dome's inside above the springline, mid-dome")
+    ring: int = Field(
+        default=1,
+        ge=1,
+        description=(
+            "How many of the roof's layers, from the inside, make the dome's shell. Layers laid "
+            "over it, such as insulation, are only its load"
+        ),
+    )
 
 
 type Roof = Annotated[FlatRoof | SprungArch | CatenaryArch | Dome, Field(discriminator="type")]
@@ -460,7 +476,32 @@ class Kiln(Spec):
 
     @model_validator(mode="after")
     def _a_roof_it_can_build(self) -> Kiln:
+        if isinstance(self.roof, SprungArch):
+            rise, span = si(self.roof.rise, "in"), si(self.chamber.width, "in")
+            if not 0 < rise <= span / 2:
+                raise ValueError(
+                    "a sprung arch's rise must be more than 0 and at most half the chamber's "
+                    f"width, {span / 2:g} in: past that it isn't a segment of a circle"
+                )
+            layers = len(self.lining.for_face("roof"))
+            if self.roof.ring > layers:
+                raise ValueError(
+                    f"the arch's ring can't be {self.roof.ring} layers: the roof has {layers}"
+                )
+            # The arch's skewbacks stand on the side walls, and a door or car is a whole wall
+            if self.loading.face in ("left", "right"):
+                what = "the car" if self.loading.type == "car" else "the door"
+                raise ValueError(
+                    f"a sprung arch springs from the left and right walls, so {what} can't be "
+                    f"the {self.loading.face} wall: nothing would carry the arch over it. Put it "
+                    "in the front or back wall, under the arch's end"
+                )
         if isinstance(self.roof, Dome):
+            layers = len(self.lining.for_face("roof"))
+            if self.roof.ring > layers:
+                raise ValueError(
+                    f"the dome's ring can't be {self.roof.ring} layers: the roof has {layers}"
+                )
             rise = si(self.roof.rise, "in")
             corner = math.hypot(si(self.chamber.width, "in"), si(self.chamber.depth, "in")) / 2
             if not 0 < rise < corner:

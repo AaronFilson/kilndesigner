@@ -387,7 +387,7 @@ describe("NewDesign", () => {
     expect(server.sent["POST /api/designs"]).toEqual({ source: "name: Test kiln # mine\n" });
   });
 
-  it("opens a design file that isn't valid as it is, and saving it says what's wrong", async () => {
+  it("opens a design file that isn't valid as it is, says what's wrong, and saves only the file", async () => {
     created();
     const problems = [{ loc: ["chamber"], msg: "Field required" }];
     server.routes.set("POST /api/designs/check", () => json({ detail: problems }, 422));
@@ -397,10 +397,16 @@ describe("NewDesign", () => {
     fireEvent.change(screen.getByLabelText("Open a design file…"), { target: { files: [file] } });
     await onTab("YAML");
     expect(yaml().state.doc.toString()).toBe("name: Half done\n");
-    expect(screen.queryByRole("alert")).toBeNull();
-    fireEvent.click(screen.getByRole("button", { name: "Save and build" }));
+    // What's wrong is shown straight away
     expect((await screen.findByRole("alert")).textContent).toBe("chamber Field required");
-    expect(server.sent["POST /api/designs"]).toEqual({ source: "name: Half done\n" });
+    // The choices wait for a design that checks: the file is checked again, and stays as YAML
+    fireEvent.click(screen.getByRole("tab", { name: "Choices" }));
+    await waitFor(() => expect(server.log.filter((l) => l === "POST /api/designs/check")).toHaveLength(2));
+    expect(screen.getByRole("tab", { name: "YAML" }).getAttribute("aria-selected")).toBe("true");
+    // Saving sends the file, never the placeholder behind it (the review's bug)
+    fireEvent.click(screen.getByRole("button", { name: "Save and build" }));
+    await waitFor(() => expect(server.sent["POST /api/designs"]).toEqual({ source: "name: Half done\n" }));
+    expect((await screen.findByRole("alert")).textContent).toBe("chamber Field required");
     expect(screen.getByRole("heading", { name: "New design" })).toBeTruthy();
   });
 

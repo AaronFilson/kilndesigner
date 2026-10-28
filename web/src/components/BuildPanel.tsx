@@ -3,7 +3,7 @@
 import type { Build, Report } from "@kilndesigner/api-client";
 import { useState } from "react";
 
-import { fileUrl, useBuild, useLayout, useReport, useStartBuild } from "../api";
+import { fileUrl, hasReport, useBuild, useLayout, useReport, useStartBuild } from "../api";
 import type { KilnDocument } from "../design";
 import { Castables } from "./Castables";
 import { Drawings } from "./Drawings";
@@ -81,7 +81,11 @@ function Built({ build, draft, onEdit }: { build: Build } & Editing) {
             <p className="muted">This build has no 3D model.</p>
           ))}
         {tab === "drawings" && <Drawings build={build} />}
-        {tab !== "model" && tab !== "drawings" && report.isPending && (
+        {/* A query that isn't run counts as pending, so a build without a report says so */}
+        {tab !== "model" && tab !== "drawings" && !hasReport(build) && (
+          <p className="muted">This build has no report.</p>
+        )}
+        {tab !== "model" && tab !== "drawings" && hasReport(build) && report.isPending && (
           <p className="muted">Loading the report…</p>
         )}
         {tab === "materials" && report.data && <Materials report={report.data} />}

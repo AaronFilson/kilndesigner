@@ -72,6 +72,30 @@ def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
             mix_analysis(kiln, mix)
         except CastableError as e:
             problems.append(schemas.Problem(loc=["castables", i], msg=str(e)))
+    electric, gas = kiln.heat.electric, kiln.heat.gas
+    if electric is not None and electric.alloy not in alloys():
+        problems.append(
+            schemas.Problem(
+                loc=["heat", "electric", "alloy"], msg=f"no alloy called {electric.alloy!r}"
+            )
+        )
+    if gas is not None and gas.burners.model is not None:
+        # Named as the engine matches them: the end of a name, among the burners of that type
+        names = (
+            gas_data()["venturi_burners"]["models"]
+            if gas.burners.type == "venturi"
+            else [f"Ward {m}" for m in gas_data()["power_burners"]["models"]]
+        )
+        if not any(name.endswith(gas.burners.model) for name in names):
+            problems.append(
+                schemas.Problem(
+                    loc=["heat", "gas", "burners", "model"],
+                    msg=(
+                        f"no {gas.burners.type} burner called {gas.burners.model!r}; the "
+                        f"library has: {', '.join(names)}"
+                    ),
+                )
+            )
     if problems:
         raise InvalidDesignError(problems)
     return kiln, source

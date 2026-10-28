@@ -20,11 +20,24 @@ GOLDEN = Path(__file__).parent / "golden"
 def test_report_matches_golden(path: Path, update_golden: bool) -> None:
     report = design_report(load_design(path)).model_dump(mode="json")
     golden = GOLDEN / f"{path.stem}.report.json"
-    text = json.dumps(report, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     if update_golden or not golden.exists():
+        old = json.loads(golden.read_text(encoding="utf-8")) if golden.exists() else None
+        text = json.dumps(_keep_close(report, old), indent=2, ensure_ascii=False, sort_keys=True)
         GOLDEN.mkdir(exist_ok=True)
-        golden.write_text(text, encoding="utf-8", newline="\n")
+        golden.write_text(text + "\n", encoding="utf-8", newline="\n")
     assert report == _approx(json.loads(golden.read_text(encoding="utf-8")))
+
+
+def _keep_close(new: object, old: object) -> object:
+    """``new``, but with ``old``'s floats where they agree to 1e-9, so that regenerating on
+    another platform doesn't rewrite every last-bit difference into the diff."""
+    if isinstance(new, float) and isinstance(old, float):
+        return old if new == pytest.approx(old, rel=1e-9) else new
+    if isinstance(new, dict) and isinstance(old, dict):
+        return {k: _keep_close(v, old.get(k)) for k, v in new.items()}  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType, reportUnknownArgumentType]
+    if isinstance(new, list) and isinstance(old, list) and len(new) == len(old):  # pyright: ignore[reportUnknownArgumentType]
+        return [_keep_close(n, o) for n, o in zip(new, old, strict=True)]  # pyright: ignore[reportUnknownVariableType, reportUnknownArgumentType]
+    return new
 
 
 def _approx(value: object) -> object:

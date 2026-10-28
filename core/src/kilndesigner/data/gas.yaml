@@ -11,17 +11,19 @@ ward_btu_per_ft3_hr:
     ceramic_fibre: [[4000, 6000], [6000, 8000], [7000, 10000]]
 
 # Burner ratings, BTU/hr on propane by supply pressure in psi (11 in. w.c. = 0.397 psi),
-# with prices checked 2026-10-21 (§3.2 [S27], §3.3 [S22]).
+# with prices checked 2026-10-21 (§3.2 [S27], §3.3 [S22]). curve_from_psi is the lowest
+# pressure whose rating lies on the 5–20 psi ratings' √pressure curve, so the same orifice
+# (derived, §3.2): GACO's 11 in. w.c. ratings are about twice it, another orifice.
 venturi_burners:
   source: "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]"
   models:
-    Ransome B1: {price: 165.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [5900, 9700, 13900, 21600, 30700, 43000]}
-    Ransome B2: {price: 219.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [9000, 14800, 20900, 33200, 46700, 66400]}
-    Ransome B3: {price: 245.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [34200, 55300, 77500, 123000, 175900, 246000]}
-    Ransome B4: {price: 295.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [55300, 89800, 126700, 200500, 286600, 403400]}
-    Ransome B5: {price: 395.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [89800, 145200, 205400, 324700, 462400, 649400]}
-    GACO MR750: {price: 99.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [72000, 76840, 121570, 172000, 210500, 243150]}
-    GACO MR100: {price: 159.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [94000, 96600, 152830, 216300, 264650, 305660]}
+    Ransome B1: {curve_from_psi: 0.397, price: 165.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [5900, 9700, 13900, 21600, 30700, 43000]}
+    Ransome B2: {curve_from_psi: 0.397, price: 219.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [9000, 14800, 20900, 33200, 46700, 66400]}
+    Ransome B3: {curve_from_psi: 0.397, price: 245.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [34200, 55300, 77500, 123000, 175900, 246000]}
+    Ransome B4: {curve_from_psi: 0.397, price: 295.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [55300, 89800, 126700, 200500, 286600, 403400]}
+    Ransome B5: {curve_from_psi: 0.397, price: 395.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [89800, 145200, 205400, 324700, 462400, 649400]}
+    GACO MR750: {curve_from_psi: 2, price: 99.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [72000, 76840, 121570, 172000, 210500, 243150]}
+    GACO MR100: {curve_from_psi: 2, price: 159.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [94000, 96600, 152830, 216300, 264650, 305660]}
 power_burners:
   source: "Ward Burner Systems power burners, rated at 11 in. w.c. propane; combustion-and-masonry.md §3.3 [S22]"
   models:

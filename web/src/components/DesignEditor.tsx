@@ -32,6 +32,7 @@ function problemsOf(error: unknown): { message?: string; problems: Problem[] } {
 
 export function DesignEditor({
   initial,
+  unchecked,
   baseline,
   mode: initialMode = "form",
   onModeChange,
@@ -45,6 +46,9 @@ export function DesignEditor({
 }: {
   /** What to start editing. */
   initial: Draft;
+  /** Why the initial YAML didn't check, if it didn't: it's shown, and its document is only a
+   * placeholder, so the form waits until the YAML checks. */
+  unchecked?: unknown;
   /** What counts as unchanged: the saved version, or null for a new design. */
   baseline: Draft | null;
   mode?: Mode;
@@ -66,9 +70,9 @@ export function DesignEditor({
   const [document, setDocument] = useState(initial.document);
   const [source, setSource] = useState(initial.source);
   // The form's document and the YAML agree until one of them is edited
-  const [inStep, setInStep] = useState(true);
+  const [inStep, setInStep] = useState(unchecked === undefined);
   const [switching, setSwitching] = useState(false);
-  const [switchError, setSwitchError] = useState<unknown>(null);
+  const [switchError, setSwitchError] = useState<unknown>(unchecked ?? null);
   const applied = useRef<number | null>(null);
   // An edit made before this editor started (for the version before a save) isn't for it
   const started = useRef(Date.now());

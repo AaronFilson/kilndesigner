@@ -43,7 +43,7 @@ export function legend(parts: Record<string, PartInfo>): [string, string][] {
   return [...seen];
 }
 
-type View = "3d" | "front" | "side" | "top";
+export type View = "3d" | "front" | "side" | "top";
 
 // The engine's model is z-up; glTF turns it y-up, so the kiln's front faces +z and its right
 // side +x. Each view puts the camera along a direction from the kiln's centre.
@@ -70,27 +70,30 @@ function partName(object: Object3D): string {
 }
 
 /**
+ * A loaded model, ready to show: each part gets its own material so it can be picked out. glTF's
+ * default metallicFactor is 1, so the CAD export arrives as metal, which renders black wherever it
+ * has nothing to reflect: brick, fibre and castable are matte.
+ */
+export function prepare(scene: Group): Group {
+  scene.traverse((object) => {
+    if (!(object instanceof Mesh) || !(object.material instanceof MeshStandardMaterial)) return;
+    const material = object.material.clone();
+    material.metalness = 0;
+    material.roughness = 0.9;
+    object.material = material;
+    object.userData.builtColour = material.color.clone(); // for going back to "As built"
+  });
+  return scene;
+}
+
+/**
  * The model is loaded here, outside the canvas, so a model that can't be loaded is a message and
  * not an error thrown inside React Three Fiber, which reports every error it sees as uncaught.
  */
 function useModel(url: string) {
   return useQuery({
     queryKey: ["models", url],
-    queryFn: async () => {
-      const { scene } = await new GLTFLoader().loadAsync(url);
-      scene.traverse((object) => {
-        if (!(object instanceof Mesh) || !(object.material instanceof MeshStandardMaterial)) return;
-        // Each part gets its own material so it can be picked out. glTF's default
-        // metallicFactor is 1, so the CAD export arrives as metal, which renders black wherever
-        // it has nothing to reflect: brick, fibre and castable are matte.
-        const material = object.material.clone();
-        material.metalness = 0;
-        material.roughness = 0.9;
-        object.material = material;
-        object.userData.builtColour = material.color.clone(); // for going back to "As built"
-      });
-      return scene;
-    },
+    queryFn: async () => prepare((await new GLTFLoader().loadAsync(url)).scene),
     staleTime: Infinity, // a build never changes
     retry: 1,
   });
@@ -134,7 +137,7 @@ class CanvasBoundary extends Component<{ children: ReactNode }, { failed: boolea
  * keep the camera within a few fits of the kiln, so the camera is sent straight to the framing
  * distance rather than placed far out and pulled in.
  */
-function Aim({ view }: { view: View }) {
+export function Aim({ view }: { view: View }) {
   const bounds = useBounds();
   useEffect(() => {
     const [x, y, z] = VIEWS.find(([id]) => id === view)?.[2] ?? [1, 1, 1];
@@ -156,6 +159,48 @@ function meshes(scene: Group): Mesh[] {
 type Outline = LineSegments<EdgesGeometry, LineBasicMaterial>;
 
 const PICKED_LINE = "#e8833a";
+const PICKED_GLOW = "#8a3a10";
+
+interface Showing {
+  look: ViewerLook;
+  /** Only the parts' outlines, seen through: a skeleton of the kiln, drawn in ``ink``. */
+  wire: boolean;
+  /** The theme's text colour. */
+  ink: string;
+  /** While ports are moved: a burner stands in front of its port, and stays where it was built
+   * until the design is built again, so it's drawn faint and the port is what's picked up. */
+  faintBurners: boolean;
+  selected: string | null;
+}
+
+/**
+ * How a part's faces are drawn: its colour (undefined: as built), its glow when it's the part
+ * picked, faint if it's a burner while ports are moved, and hidden in a wireframe (hidden faces
+ * can still be clicked).
+ */
+export function faceLook(
+  name: string,
+  kind: string | undefined,
+  { look, wire, faintBurners, selected }: Omit<Showing, "ink">,
+): { colour: string | undefined; emissive: string; faint: boolean; visible: boolean } {
+  return {
+    colour: colourOf(look, kind),
+    emissive: name === selected ? PICKED_GLOW : "#000000",
+    faint: faintBurners && name.startsWith("burner/"),
+    visible: !wire,
+  };
+}
+
+/**
+ * A part's outline colour. A palette with its own background has edges to suit it; otherwise a
+ * wireframe, with no faces behind its lines, is drawn in the theme's ink. With no faces to light
+ * up, the part picked in a wireframe is picked out by its outline.
+ */
+export function outlineColour(name: string, { look, wire, ink, selected }: Omit<Showing, "faintBurners">): string {
+  if (wire && name === selected) return PICKED_LINE;
+  const { edges, background } = palette(look.palette);
+  return wire && !background ? ink : edges;
+}
 
 /**
  * The page's text colour, which stands out against the viewer's background in either theme: a
@@ -216,7 +261,7 @@ function outlines(scene: Group): Outline[] {
   return made;
 }
 
-function Model({
+export function Model({
   scene,
   parts,
   look,
@@ -226,46 +271,34 @@ function Model({
   faintBurners,
   selected,
   onSelect,
-}: {
+}: Showing & {
   scene: Group;
   parts: Record<string, PartInfo>;
-  look: ViewerLook;
   cut: boolean;
-  /** Only the parts' outlines, seen through: a skeleton of the kiln, drawn in ``ink``. */
-  wire: boolean;
-  ink: string;
-  /** While ports are moved: a burner stands in front of its port, and stays where it was built
-   * until the design is built again, so it's drawn faint and the port is what's picked up. */
-  faintBurners: boolean;
-  selected: string | null;
   onSelect: (name: string) => void;
 }) {
   useEffect(() => {
-    const { edges: onFaces, background } = palette(look.palette);
-    // A palette with its own background has edges to suit it; otherwise the theme's text colour
-    const edges = wire && !background ? ink : onFaces;
+    const showing = { look, wire, ink, faintBurners, selected };
     for (const mesh of meshes(scene)) {
       const material = mesh.material as MeshStandardMaterial;
       const name = partName(mesh);
+      const { colour, emissive, faint, visible } = faceLook(name, parts[name]?.kind, showing);
       material.clippingPlanes = cut ? [CUT] : [];
-      material.emissive.set(name === selected ? "#8a3a10" : "#000000");
-      const colour = colourOf(look, parts[name]?.kind);
+      material.emissive.set(emissive);
       if (colour) material.color.set(colour);
       else if (mesh.userData.builtColour instanceof Color) material.color.copy(mesh.userData.builtColour);
-      const faint = faintBurners && name.startsWith("burner/");
       if (material.transparent !== faint) {
         material.transparent = faint;
         material.depthWrite = !faint;
         material.needsUpdate = true;
       }
       material.opacity = faint ? 0.25 : 1;
-      material.visible = !wire; // hidden faces can still be clicked
+      material.visible = visible;
     }
     if (look.edges || wire || scene.userData.outlines) {
       for (const lines of outlines(scene)) {
         lines.visible = look.edges || wire;
-        // With no faces to light up, the part picked is picked out by its outline
-        lines.material.color.set(wire && partName(lines) === selected ? PICKED_LINE : edges);
+        lines.material.color.set(outlineColour(partName(lines), showing));
         lines.material.clippingPlanes = cut ? [CUT] : [];
       }
     }

@@ -11,7 +11,7 @@ import pytest
 
 from kilndesigner import load_design
 from kilndesigner.drawings import section_views
-from kilndesigner.frame import NO_FRAME, design_frame
+from kilndesigner.frame import NO_FRAME, design_frame, dome_slices
 from kilndesigner.gas import ward_volume
 from kilndesigner.geometry import build_model, inside_top, lining_parts
 from kilndesigner.hardware import build_hardware, layout
@@ -30,7 +30,10 @@ def _catenary() -> Kiln:
 
 
 def _dome() -> Kiln:
-    return load_design(EXAMPLES / "dome-castable-kiln.yaml")
+    """The dome example at 8 in of rise, as these tests derive it. The example itself rises 9 in,
+    which carries the dome over its door (test below)."""
+    kiln = load_design(EXAMPLES / "dome-castable-kiln.yaml")
+    return _changed(kiln, roof={**kiln.roof.model_dump(mode="json"), "rise": "8 in"})
 
 
 def _changed(kiln: Kiln, **changes: object) -> Kiln:
@@ -251,27 +254,151 @@ def test_a_domes_walls_rise_under_it_and_its_volume_counts_it() -> None:
 
 
 def test_a_catenarys_feet_push_out_with_the_chains_tension() -> None:
+    """Statics: each foot carries half the arch's weight, its whole ring weighed, and pushes out
+    with the chain's tension, H = w·a, w the weight spread along the inside curve. Weighed per
+    foot of the inside curve, the outer layers came out short and the thrust about 7 % low (the
+    review's structure 13)."""
     kiln = _catenary()
     frame = design_frame(kiln)
     assert frame.kind == NO_FRAME
     assert frame.members == []
     curve = CatenaryCurve(40 / 12, 48 / 12)
-    # JM 26 at its library density, 4.5 in, and 8 pcf blanket, 2 in
+
+    def area(inner: float, outer: float) -> float:
+        """A ring's cross-section between two curves moved out (ft²)."""
+        return _area([*curve.offset(inner, 400), *reversed(curve.offset(outer, 400))])
+
+    # JM 26 at its library density, 4.5 in, under 8 pcf blanket, 2 in
     rho = si(parse_quantity(material("ifb-jm26").density), "lb/ft**3")
-    w = rho * 4.5 / 12 + 8 * 2 / 12
-    assert frame.thrust == f"{w * curve.a:.0f} lb per foot of kiln at each foot"
+    weight = rho * area(0, 4.5 / 12) + 8 * area(4.5 / 12, 6.5 / 12)
+    bear = next(s.value for s in frame.working if s.name == "Weight on each foot")
+    assert float(bear.split()[0]) == pytest.approx(weight / 2, abs=1)
+    assert frame.thrust is not None
+    push = weight / curve.arc_length * curve.a
+    assert float(frame.thrust.split()[0]) == pytest.approx(push, abs=0.5)
+    # Against the old weighing, 7 % more
+    old = (rho * 4.5 / 12 + 8 * 2 / 12) * curve.a
+    assert push / old == pytest.approx(1.07, abs=0.01)
     assert any(f.level == "warning" and "pushes out" in f.message for f in frame.findings)
     hw = build_hardware(kiln, frame, design_report(kiln).gas)
     assert not any(p.name.startswith("frame/") for p in hw.pieces)
 
 
-def test_no_frame_is_designed_for_a_dome() -> None:
+def test_a_domes_thrust_is_given_but_no_steel_is_sized_for_it() -> None:
     frame = design_frame(_dome())
-    assert frame.kind == NO_FRAME
-    assert any("no source gives how hard" in f.message for f in frame.findings)
+    assert (frame.kind, frame.members) == (NO_FRAME, [])
+    [loads] = [f for f in frame.findings if "No source sizes the steel for a dome" in f.message]
+    assert loads.level == "warning"
+    assert "a tie across the door's head and one across the wall opposite" in loads.message
+    assert frame.thrust is not None
+    assert frame.thrust.endswith("lb per foot on the left and right walls, hot")
+
+
+def _rise(kiln: Kiln, rise: str, **changes: object) -> Kiln:
+    roof = {**kiln.roof.model_dump(mode="json"), "rise": rise}
+    return _changed(kiln, roof=roof, **changes)
+
+
+def test_a_dome_over_a_door_is_checked_as_arches_parallel_to_the_door() -> None:
+    """domes-over-doors.md §D4.2, the example's chamber at 8 in of rise, door in a 30 in wall: the
+    middle slice is 3.00 in thick against HarbisonWalker's 2.64 in for its 3.06 in of rise, the
+    slice at the end wall 3.36 in against 3.22; 8.90 in of rise passes (derived there)."""
+    kiln = _rise(_dome(), "8 in")
+    middle, *_, end = dome_slices(kiln)
+    assert (middle.thickness, middle.rise, middle.thickest) == pytest.approx(
+        (3.00, 3.06, 2.64), abs=0.01
+    )
+    assert (end.thickness, end.rise, end.thickest) == pytest.approx((3.36, 3.51, 3.22), abs=0.01)
+    assert math.degrees(middle.half_angle) == pytest.approx(23.05, abs=0.05)
+    errors = [f.message for f in design_frame(kiln).findings if f.level == "error"]
+    [too_thick] = errors
+    assert "3.00 in in the middle, where HarbisonWalker allows 2.64 in" in too_thick
+    assert (
+        "Raise the dome to at least 8.9 in, or put the door in a side wall, so the slices span "
+        "the longer way" in too_thick
+    )
+    # The door in a 36 in wall: the slices span the other way, and pass (§D4.2)
+    side = _changed(kiln, loading={"type": "door", "face": "left"})
+    middle, *_, end = dome_slices(side)
+    assert (middle.thickest, end.thickest) == pytest.approx((4.24, 4.87), abs=0.01)
+    assert not [f for f in design_frame(side).findings if f.level == "error"]
+    # The example rises 9 in, past the 8.9 in its front door needs
+    example = load_design(EXAMPLES / "dome-castable-kiln.yaml")
+    assert not [f for f in design_frame(example).findings if f.level == "error"]
+
+
+def test_a_thin_shell_near_a_hemisphere_fails_heymans_factor() -> None:
+    """Near a hemisphere through the corners the slice at the door nears a semicircle, where the
+    thinnest arch that stands is 0.107 of its radius (Rizzi et al. [D5]): ¼ in won't do."""
+    shell = [{"material": "kast-o-lite-30-li-plus", "thickness": "0.25 in"}]
+    kiln = _rise(_dome(), "23 in", lining={**_dome().lining.model_dump(mode="json"), "roof": shell})
+    frame = design_frame(kiln)
+    assert any(
+        "times as thick as the thinnest that stands, under Heyman's 2" in f.message
+        for f in frame.findings
+    )
+
+
+def _shell(kiln: Kiln, thickness: str, **changes: object) -> Kiln:
+    roof = [{"material": "kast-o-lite-30-li-plus", "thickness": thickness}]
+    return _changed(kiln, lining={**kiln.lining.model_dump(mode="json"), "roof": roof}, **changes)
+
+
+def test_a_too_thick_dome_is_told_what_rise_would_do_and_which_way_to_turn() -> None:
+    """An 8 in shell over the example's chamber. With the door in a 36 in wall the slices already
+    span the long way, so only more rise helps: 13.3 in. With the door in a 30 in wall no rise
+    under the half-diagonal is enough, and turning the door would let the slices span 36 in."""
+
+    def too_thick(face: str) -> str:
+        kiln = _shell(_dome(), "8 in", loading={"type": "door", "face": face})
+        [message] = [
+            f.message for f in design_frame(kiln).findings if "too thick for their own" in f.message
+        ]
+        return message
+
+    assert too_thick("left").endswith("Raise the dome to at least 13.3 in.")
+    assert too_thick("front").endswith(
+        "Raise or thin the dome, or put the door in a side wall, so the slices span the longer way "
+        "and rise more."
+    )
+
+
+def test_a_dome_slice_whose_hot_thrust_line_leaves_it_gets_no_steel() -> None:
+    kiln = _rise(_shell(_dome(), "6 in"), "3 in")
+    frame = design_frame(kiln)
+    assert any("would push its thrust line out of the ring" in f.message for f in frame.findings)
+    assert (frame.kind, frame.thrust) == (NO_FRAME, None)
+
+
+def test_a_domes_ring_must_be_layers_it_has() -> None:
+    with pytest.raises(ValueError, match="the dome's ring can't be 3 layers: the roof has 2"):
+        _changed(_dome(), roof={"type": "dome", "rise": "9 in", "ring": 3})
+
+
+def test_a_dome_of_fibre_is_refused() -> None:
+    blanket = [{"material": "kaowool-blanket-8pcf", "thickness": "3 in"}]
+    kiln = _changed(_dome(), lining={**_dome().lining.model_dump(mode="json"), "roof": blanket})
+    frame = design_frame(kiln)
+    assert any(
+        "which can't carry a dome" in f.message for f in frame.findings if f.level == "error"
+    )
+    assert frame.members == []
 
 
 # What is refused
+
+
+def test_a_sprung_arch_is_refused_a_door_or_car_in_a_wall_it_springs_from() -> None:
+    """The arch's skewbacks stand on the left and right walls, and a door or car is a whole wall:
+    in either, nothing would carry the arch over it (the review's structure 1; Rhodes advises
+    against it, door-headers.md). The end walls only close the arch."""
+    kiln = load_design(EXAMPLES / "gas-crossdraft.yaml")
+    for loading in ({"type": "door", "face": "left"}, {"type": "car", "face": "right"}):
+        what = loading["type"]
+        with pytest.raises(ValueError, match=f"so the {what} can't be the {loading['face']} wall"):
+            _changed(kiln, loading=loading)
+    for face in ("front", "back"):
+        assert _changed(kiln, loading={"type": "door", "face": face}).door_face == face
 
 
 def test_a_catenary_is_refused_side_walls_and_elements() -> None:

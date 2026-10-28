@@ -1,7 +1,9 @@
 """Properties of air at 1 atm, from the Neutrium table (electric-and-thermal.md §6.3, [S63]).
 
-Linear interpolation between the table's rows, 250 K to 1000 K. The table matches the values
-commonly quoted from Incropera Table A.4.
+Linear interpolation between the table's rows, 250 K to 1000 K. The table is Holman's (Heat
+Transfer, Table A-5) rather than Incropera's Table A.4, as the science review of 2026-10-28 found:
+its 300 K density is Holman's 1.177 kg/m³, not Incropera's 1.161. The two differ by under 2 % in
+the surface coefficient.
 """
 
 from __future__ import annotations

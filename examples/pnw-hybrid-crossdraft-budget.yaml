@@ -15,7 +15,7 @@ roof:
   rise: 3.75 in
 loading:
   type: door
-  face: right
+  face: front # an end wall: the arch springs from the sides
 lining:
   walls:
     - material: ifb-jm26

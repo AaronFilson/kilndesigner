@@ -57,7 +57,11 @@ def catenary() -> list[View]:
 def dome() -> list[View]:
     # 30 in wide, 36 in deep, 36 in to the springline, an 8 in rise; walls 4.5 + 2.5 + 1 in;
     # 3 in of castable then 2 in of blanket over the dome
-    return section_views(_load("dome-castable-kiln"))
+    kiln = _load("dome-castable-kiln")
+    roof = {**kiln.roof.model_dump(mode="json"), "rise": "8 in"}  # the example rises 9 in
+    return section_views(
+        Kiln.model_validate({**kiln.model_dump(mode="json", by_alias=True), "roof": roof})
+    )
 
 
 def test_lengths_are_labelled_in_the_designs_units() -> None:
@@ -162,7 +166,7 @@ def test_a_sprung_arch_along_the_kiln_is_a_band_over_the_end_caps(sprung: list[V
 
 def test_the_plan_of_an_arched_kiln_is_cut_below_the_arch(sprung: list[View]) -> None:
     plan = sprung[2]
-    assert {p.split("/")[0] for p in _parts(plan)} == {"left", "door", "front", "back"}
+    assert {p.split("/")[0] for p in _parts(plan)} == {"left", "right", "door", "back"}
     assert not [p for p in _parts(plan) if "skewback" in p or p.endswith("-arch")]
 
 

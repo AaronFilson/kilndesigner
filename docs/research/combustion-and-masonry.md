@@ -256,7 +256,21 @@ Ward venturi page [S27]. Prices were checked 2026-10-21.
 | GACO MR750 | 72,000 | — | 76,840 | 121,570 | 172,000 | 210,500 | 243,150 | $99.95 |
 | GACO MR100 | 94,000 | — | 96,600 | 152,830 | 216,300 | 264,650 | 305,660 | $159.95 |
 
-- **Derived check:** from 5 to 20 psi, the MR100 figures grow with the square root of gauge pressure. 216,300 ÷ 152,830 = 1.415 and 305,660 ÷ 216,300 = 1.413, against √2 = 1.414. So BTU/hr ≈ 68,400 × √(psig) for the MR100 and ≈ 54,400 × √(psig) for the MR750 in that range **(derived)**. The 11 in. w.c. and 2 psi entries do not follow this, so they probably use a different orifice.
+- **Derived check:** from 5 to 20 psi, the MR100 figures grow with the square root of gauge pressure. 216,300 ÷ 152,830 = 1.415 and 305,660 ÷ 216,300 = 1.413, against √2 = 1.414. So BTU/hr ≈ 68,400 × √(psig) for the MR100 and ≈ 54,400 × √(psig) for the MR750 in that range **(derived)**.
+- **Every model against that curve** (checked 2026-10-28, **derived**): each rating ÷ (its 5 psi rating × √(p ÷ 5)) − 1.
+
+  | Model | 11 in. w.c. | 1 psi | 2 psi | 10 psi | 15 psi | 20 psi |
+  |---|---|---|---|---|---|---|
+  | Ransome B1 | −3.1 % | +0.4 % | +1.7 % | +0.5 % | — | −0.5 % |
+  | Ransome B2 | −3.8 % | −0.3 % | −0.5 % | −0.5 % | — | 0.0 % |
+  | Ransome B3 | −1.3 % | +0.5 % | −0.4 % | +1.1 % | — | 0.0 % |
+  | Ransome B4 | −2.1 % | +0.1 % | −0.1 % | +1.1 % | — | +0.6 % |
+  | Ransome B5 | −1.9 % | 0.0 % | 0.0 % | +0.7 % | — | 0.0 % |
+  | GACO MR750 | +110 % | — | −0.1 % | 0.0 % | 0.0 % | 0.0 % |
+  | GACO MR100 | +118 % | — | −0.1 % | +0.1 % | 0.0 % | 0.0 % |
+
+  - Every 2 psi rating, and every Ransome rating down to 11 in. w.c., lies within 4 % of the curve: the same orifice. Only GACO's two 11 in. w.c. ratings sit about twice above it, so they probably use a different (low-pressure) orifice. This corrects an earlier note here that the 2 psi entries were off the curve too.
+  - Between published pressures on one orifice, a burner's pressure for a given output can be read by interpolating √pressure. Below the lowest of them (11 in. w.c. for the Ransomes, 2 psi for the GACOs) the high-pressure orifice's output is not published.
 - Ward only sells the printed orifice charts ($9.50 each, $14.95 for both). They cover 4 in. w.c. to 25 psi and drill sizes #80 to ½ in., for natural gas and propane. The page does not reproduce the tables, so they are **NOT FOUND** [S31].
 
 ### 3.3 Venturi (atmospheric) against power (blower) burners
@@ -528,8 +542,10 @@ Sand-form domes: **NOT FOUND** as a documented method with numbers.
 - Where the sphere meets a wall's inside face, its curve is a circle of radius √(R² − (half the
   other side)²): each wall rises in a circular segment above the springline **(derived)**.
 - The rise must stay under c, or the sphere bulges out past the walls.
-- A dome's thrust on its walls, and the steel that holds it: **NOT FOUND**. Cast domes are noted
-  in §6.4 [S60].
+- A dome's thrust on its walls: see `domes-over-doors.md`, which works it out (derived) from
+  membrane theory and from Heyman's slicing of a half dome, with the rule the engine applies to a
+  dome over a door. The steel that holds a dome: still **NOT FOUND**. Cast domes are noted in §6.4
+  [S60].
 
 ---
 

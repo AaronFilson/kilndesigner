@@ -53,7 +53,7 @@
         "buy": "17 ft",
         "cost": null,
         "item": "⅛ in steel plate",
-        "needed": "14.7 ft (side and back plates, top and bottom plates)",
+        "needed": "14.7 ft (left, right and back plates, top and bottom plates)",
         "priced_as": null,
         "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
         "unit_price": null
@@ -138,6 +138,16 @@
         "value": "11.52 kW"
       },
       {
+        "formula": "20 A up to 13.3 A; above that, 150 % of the kiln's current, or the next standard size up",
+        "inputs": {
+          "kiln's current": "48 A"
+        },
+        "name": "Largest breaker allowed",
+        "note": null,
+        "reference": "NEC 422.11(E), a single non-motor appliance, as reported; standard sizes 240.6(A); electric-and-thermal.md §3 [S23, S79]",
+        "value": "80 A"
+      },
+      {
         "formula": "ρ_T = ρ20 · Ct",
         "inputs": {
           "Ct": "1.05",
@@ -147,7 +157,7 @@
         "name": "Wire resistivity when hot",
         "note": "The wire is assumed to run 100 °C above the kiln; Ct changes little there.",
         "reference": "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal A-1 data sheet [S1], atmospheres [S9]",
-        "value": "1.52e-06 mm²⋅Ω/m"
+        "value": "1.52 mm²⋅Ω/m"
       },
       {
         "formula": null,
@@ -227,8 +237,8 @@
   "findings": [
     {
       "level": "warning",
-      "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
-      "reference": null
+      "message": "The case, or a band round the roof, must squeeze it across its span with about 68 lb per foot, cold. No source gives a band's size or tension for a kiln roof, so none is drawn: have it designed.",
+      "reference": "flat-roofs.md §3"
     },
     {
       "level": "info",
@@ -277,6 +287,11 @@
     },
     {
       "level": "info",
+      "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
+      "reference": "flat-roofs.md §3.2, §4.2"
+    },
+    {
+      "level": "info",
       "message": "Three 1 in peepholes are cut through the door. Their heights are not sourced; they are spaced evenly.",
       "reference": "electric-kiln-hardware.md §4 [S3] [S6]"
     },
@@ -300,13 +315,24 @@
     "angle": null,
     "angle_leg_in": 0.0,
     "angle_t_in": 0.125,
-    "findings": [],
+    "findings": [
+      {
+        "level": "info",
+        "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
+        "reference": "flat-roofs.md §3.2, §4.2"
+      },
+      {
+        "level": "warning",
+        "message": "The case, or a band round the roof, must squeeze it across its span with about 68 lb per foot, cold. No source gives a band's size or tension for a kiln roof, so none is drawn: have it designed.",
+        "reference": "flat-roofs.md §3"
+      }
+    ],
     "kind": "welded case",
     "members": [
       {
         "count": 3,
         "length_in": 36.5,
-        "part": "side and back plates",
+        "part": "left, right and back plates",
         "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
         "steel": "⅛ in steel plate"
       },
@@ -320,7 +346,7 @@
     ],
     "rod": null,
     "rod_d_in": 0.0,
-    "thrust": null,
+    "thrust": "68 lb per foot of roof, cold",
     "working": [
       {
         "formula": null,
@@ -329,6 +355,19 @@
         "note": null,
         "reference": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
         "value": "welded ⅛ in steel"
+      },
+      {
+        "formula": "H = 3WS / 8d, the thrust line in the middle third; fm = 2H / bd",
+        "inputs": {
+          "S": "22.5 in",
+          "W": "19.4 lb per ft² of roof, every layer, × S",
+          "d": "4.5 in of Morgan Thermal Ceramics JM 26 insulating firebrick",
+          "fm": "2.5 psi"
+        },
+        "name": "Flat roof, as a jack arch",
+        "note": "BIA's method is for cold brick masonry between abutments that don't move; heat and the clamp's own squeeze aren't in it (flat-roofs.md §2.5).",
+        "reference": "BIA Technical Note 31A, jack arches; flat-roofs.md §2 [F2]",
+        "value": "spans 22.5 in between the left and right walls; the frame must squeeze it with 68 lb per foot, 128 lb in all, cold"
       }
     ]
   },
@@ -708,11 +747,6 @@
         "level": "info",
         "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
         "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
-      },
-      {
-        "level": "warning",
-        "message": "A flat brick roof can't support itself. It needs a support this tool doesn't design yet, such as a steel frame with hangers or a sprung arch.",
-        "reference": null
       }
     ],
     "quantities": [

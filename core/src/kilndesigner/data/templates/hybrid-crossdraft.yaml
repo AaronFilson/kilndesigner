@@ -15,7 +15,7 @@ roof:
   rise: 3.75 in # a 60° arch: 0.134 × the span
 loading:
   type: door
-  face: right
+  face: front # an end wall: the arch springs from the sides
 lining:
   walls:
     - material: ifb-jm26

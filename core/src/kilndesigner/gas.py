@@ -40,6 +40,9 @@ CHIMNEY_SOURCE = (
     "horizontal run; combustion-and-masonry.md §4.1 [S32, S37]"
 )
 FLUE_SOURCE = "Olsen, 2.5 in² per ft³ (secondary); combustion-and-masonry.md §4.1 [S38, S39]"
+# The research covers US studio gas kilns of about 10 to 60 ft³ (kiln-hardware.md, its scope):
+# past that the burner counts, flue and chimney aren't sourced
+LARGEST_FT3 = 60.0
 DRAFT_SOURCE = "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]"
 GAS_SAFETY = (
     "Gas piping, regulators, safety valves and the installation must be done or checked by a "
@@ -104,23 +107,32 @@ def interpolate(x: float, xs: list[float], ys: list[float]) -> float:
     return float(np.interp(x, xs, ys))
 
 
-MIN_RATED_PSI = 5.0
+def _on_one_orifice(spec: dict[str, Any]) -> tuple[list[float], list[float]]:
+    """A venturi burner's published pressures (psi) and ratings (BTU/hr) from its
+    ``curve_from_psi`` up: the ones on the same √pressure curve, so the same orifice
+    (combustion-and-masonry.md §3.2)."""
+    kept = [
+        (p, r) for p, r in zip(spec["psi"], spec["btu_hr"], strict=True)
+        if p >= spec["curve_from_psi"]
+    ]  # fmt: skip
+    return [p for p, _ in kept], [r for _, r in kept]
 
 
-def venturi_pressure(btu: float, psi: list[float], ratings: list[float]) -> float | None:
-    """Supply pressure (psi) a venturi burner needs for ``btu``; ratings rise with √pressure.
+def venturi_pressure(btu: float, spec: dict[str, Any]) -> float | None:
+    """Supply pressure (psi) at which a venturi burner gives ``btu``, read from its ratings.
 
-    Only the 5 psi and higher ratings are used: the in. w.c. and 2 psi entries probably use a
-    different orifice (combustion-and-masonry.md §3.2), so below 5 psi no pressure is given.
+    Between published pressures on one orifice, output rises with √pressure, so √pressure is
+    interpolated. Outside them nothing is published: None.
     """
-    kept = [(p, r) for p, r in zip(psi, ratings, strict=True) if p >= MIN_RATED_PSI]
-    psi, ratings = [p for p, _ in kept], [r for _, r in kept]
-    if btu > ratings[-1]:
+    psi, ratings = _on_one_orifice(spec)
+    if not ratings[0] <= btu <= ratings[-1]:
         return None
-    if btu <= ratings[0]:
-        return psi[0]
     root = interpolate(btu, ratings, [math.sqrt(p) for p in psi])
     return root**2
+
+
+def _pressure_text(psi: float) -> str:
+    return f"{psi:.1f} psi" if psi >= 1 else f"{psi * 27.7:.0f} in. w.c."
 
 
 class BurnerOption(BaseModel):
@@ -174,13 +186,14 @@ def _burner_options(
         each = demand / count
         if kind == "venturi":
             for name, spec in data["venturi_burners"]["models"].items():
-                p = venturi_pressure(each, spec["psi"], spec["btu_hr"])
+                # A burner too big for the load at its lowest published pressure isn't listed:
+                # at the pressures given it would put in more than the load
+                p = venturi_pressure(each, spec)
                 if p is None or p > max_psi:
                     continue
                 options.append(
                     BurnerOption(
-                        model=name, type="venturi", count=count,
-                        pressure=f"{p:.1f} psi" if p >= 1 else f"{p * 27.7:.0f} in. w.c.",
+                        model=name, type="venturi", count=count, pressure=_pressure_text(p),
                         each=f"{each:,.0f} BTU/hr", total_cost=count * spec["price"],
                     )
                 )  # fmt: skip
@@ -255,6 +268,120 @@ def _tank_suggestion(demand: float, t_f: float) -> str | None:
     return None
 
 
+def _oversized(gas: Gas, demand: float, max_psi: float) -> tuple[BurnerOption, float] | None:
+    """The burners the design names, when each is bigger than its share of the load even at the
+    lowest pressure its ratings are published for on one orifice: at that pressure, and what
+    they draw there. None if the design doesn't name both a venturi model and a count."""
+    asked = gas.burners
+    count = asked.wanted
+    spec = gas_data()["venturi_burners"]["models"].get(asked.model or "")
+    if asked.type != "venturi" or spec is None or count is None:
+        return None
+    psi, ratings = _on_one_orifice(spec)
+    if demand / count >= ratings[0] or psi[0] > max_psi:
+        return None
+    option = BurnerOption(
+        model=asked.model or "", type="venturi", count=count, pressure=_pressure_text(psi[0]),
+        each=f"{ratings[0]:,.0f} BTU/hr", total_cost=count * spec["price"],
+    )  # fmt: skip
+    return option, count * ratings[0]
+
+
+def _choose_burners(
+    gas: Gas, demand: float, t_f: float, working: list[Step], findings: list[Finding]
+) -> tuple[BurnerOption | None, float, list[BurnerOption]]:
+    """The burners, what they draw (BTU/hr), and the other sets that would do."""
+    data = gas_data()
+    vapour = data["vapour_pressure"]
+    tank_psig = interpolate(t_f, vapour["temps_f"], vapour["psig"])
+    max_psi = 10.0 if isinstance(gas.supply, Cylinders) else min(20.0, tank_psig - 10.0)
+    working.append(
+        Step(
+            name="Propane pressure available",
+            value=f"{tank_psig:.0f} psig in the cylinder or tank at {t_f:.0f} °F",
+            inputs={"burners limited to": f"{max_psi:.3g} psi"},
+            reference=vapour["source"],
+            note=(
+                "With cylinders, burners are kept to 10 psi or less so the regulator still works "
+                "when the cylinders are cold and low."
+            ),
+        )
+    )
+    options = _burner_options(demand, gas.burners.type, max_psi)
+    chosen: BurnerOption | None = None
+    draw = demand
+    wanted = gas.burners.wanted
+    source = data["venturi_burners"]["source"]
+    if gas.burners.model or wanted:
+        matching = [
+            o
+            for o in options
+            if (gas.burners.model is None or o.model.endswith(gas.burners.model))
+            and (wanted is None or o.count == wanted)
+        ]
+        chosen = matching[0] if matching else None
+        big = _oversized(gas, demand, max_psi) if chosen is None else None
+        if big is not None:
+            chosen, draw = big
+            findings.append(
+                Finding(
+                    level="warning",
+                    message=(
+                        f"Each {chosen.model} gives {chosen.each} at {chosen.pressure}, the lowest "
+                        "pressure its ratings are published for on one orifice, and that is more "
+                        f"than the {demand / chosen.count:,.0f} BTU/hr each this kiln needs. Its "
+                        "output lower down isn't published, so the supply is checked against the "
+                        f"{draw:,.0f} BTU/hr the {chosen.count} burners draw there. Fewer or "
+                        "smaller burners would run within their ratings."
+                    ),
+                    reference=f"{source}; the curve, §3.2 (derived)",
+                )
+            )
+        elif chosen is None:
+            findings.append(
+                Finding(
+                    level="error",
+                    message=(
+                        "The burners chosen can't deliver the design input within "
+                        f"{max_psi:.3g} psi. Choose more or bigger burners."
+                    ),
+                )
+            )
+    elif options:
+        chosen = options[0]
+    else:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"No set of up to 8 {gas.burners.type} burners in the library delivers the "
+                    f"{demand:,.0f} BTU/hr design input within {max_psi:.3g} psi, the most this "
+                    f"supply allows at {t_f:.0f} °F, so none is chosen."
+                ),
+                reference=data[f"{gas.burners.type}_burners"]["source"],
+            )
+        )
+    if chosen is not None:
+        working.append(
+            Step(
+                name="Burners",
+                value=f"{chosen.count} × {chosen.model} at {chosen.pressure}",
+                inputs={"each": chosen.each, "cost": f"${chosen.total_cost:,.2f}"},
+                reference=data[f"{chosen.type}_burners"]["source"],
+                note=(
+                    None
+                    if chosen.type != "venturi"
+                    else "The pressure at which each gives its share, read from its published "
+                    "ratings: between them, output rises with √pressure (§3.2, derived)."
+                    if draw == demand
+                    else "The lowest pressure its ratings are published for on one orifice; each "
+                    "gives more than its share there (§3.2, derived)."
+                ),
+            )
+        )
+    return chosen, draw, options
+
+
 def design_gas(kiln: Kiln) -> GasDesign:
     gas = kiln.heat.gas
     if gas is None:
@@ -316,15 +443,6 @@ def design_gas(kiln: Kiln) -> GasDesign:
             inputs={"firing speed": gas.firing_speed},
         ),
     ]
-    gal_hr = demand / PROPANE_BTU_PER_GAL
-    working.append(
-        Step(
-            name="Propane at full fire",
-            value=f"{gal_hr:.2f} gal/hr ({gal_hr * PROPANE_LB_PER_GAL:.1f} lb/hr)",
-            formula="BTU/hr ÷ 91,502 BTU/gal",
-            reference="combustion-and-masonry.md §1.1 [S1, S2]",
-        )
-    )
     if kiln.heat.electric is not None:
         findings.append(
             Finding(
@@ -336,7 +454,6 @@ def design_gas(kiln: Kiln) -> GasDesign:
             )
         )
 
-    # The supply
     t_cold = (
         kiln.site.coldest_ambient if kiln.site.coldest_ambient is not None else kiln.site.ambient
     )
@@ -348,7 +465,38 @@ def design_gas(kiln: Kiln) -> GasDesign:
                 message="The vaporization tables start at 0 °F; colder firing can't be checked.",
             )
         )
-    cases, liquid_gal = _supply_cases(gas, demand, t_f)
+
+    # The burners, and what they draw: the supply must keep up with that
+    chamber_ft3 = chamber_shape(kiln).volume / si(Q_(1, "ft**3"), "m**3")
+    too_big = chamber_ft3 > LARGEST_FT3
+    if too_big:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"At {chamber_ft3:.0f} ft³ this kiln is bigger than the sources here cover, "
+                    f"studio gas kilns of up to about {LARGEST_FT3:.0f} ft³, so its burners and "
+                    "chimney aren't sized."
+                ),
+                reference="kiln-hardware.md, its scope",
+            )
+        )
+        chosen, draw, options = None, demand, []
+    else:
+        chosen, draw, options = _choose_burners(gas, demand, t_f, working, findings)
+    gal_hr = draw / PROPANE_BTU_PER_GAL
+    working.append(
+        Step(
+            name="Propane at full fire",
+            value=f"{gal_hr:.2f} gal/hr ({gal_hr * PROPANE_LB_PER_GAL:.1f} lb/hr)",
+            formula="BTU/hr ÷ 91,502 BTU/gal",
+            inputs={} if draw == demand else {"the burners draw": f"{draw:,.0f} BTU/hr"},
+            reference="combustion-and-masonry.md §1.1 [S1, S2]",
+        )
+    )
+
+    # The supply
+    cases, liquid_gal = _supply_cases(gas, draw, t_f)
     for case in cases:
         working.append(
             Step(
@@ -366,13 +514,14 @@ def design_gas(kiln: Kiln) -> GasDesign:
                 level="error",
                 message=(
                     f"Even full, the propane supply gives only {cases[0].capacity} at "
-                    f"{show(t_cold, temp_unit)}, short of the {demand:,.0f} BTU/hr the burners "
+                    f"{show(t_cold, temp_unit)}, short of the {draw:,.0f} BTU/hr the burners "
                     "need. The kiln would stall before the top."
                 ),
                 reference=cases[0].source,
             )
         )
-        if gas.firing_speed == "fast" and cases[0].capacity_btu_hr >= other:
+        # Only when the burners can turn down to a slow firing's input
+        if gas.firing_speed == "fast" and cases[0].capacity_btu_hr >= other and draw == demand:
             findings.append(
                 Finding(
                     level="info",
@@ -385,11 +534,12 @@ def design_gas(kiln: Kiln) -> GasDesign:
                 )
             )
     elif not worst.meets_demand:
+        need = "design input" if draw == demand else "the burners draw"
         findings.append(
             Finding(
                 level="warning",
                 message=(
-                    f"The propane supply meets the {demand:,.0f} BTU/hr design input when full "
+                    f"The propane supply meets the {draw:,.0f} BTU/hr {need} when full "
                     f"but not in the conservative case ({worst.case}: {worst.capacity}) at "
                     f"{show(t_cold, temp_unit)}. Expect the kiln to slow near the top as the "
                     "cylinders cool and empty. Use more cylinders or a tank."
@@ -421,56 +571,8 @@ def design_gas(kiln: Kiln) -> GasDesign:
             ),
         )
     )  # fmt: skip
-    tank = _tank_suggestion(demand, t_f)
+    tank = _tank_suggestion(draw, t_f)
 
-    # The burners
-    vapour = data["vapour_pressure"]
-    tank_psig = interpolate(t_f, vapour["temps_f"], vapour["psig"])
-    max_psi = 10.0 if isinstance(gas.supply, Cylinders) else min(20.0, tank_psig - 10.0)
-    options = _burner_options(demand, gas.burners.type, max_psi)
-    chosen: BurnerOption | None = None
-    wanted = gas.burners.wanted
-    if gas.burners.model or wanted:
-        matching = [
-            o
-            for o in options
-            if (gas.burners.model is None or o.model.endswith(gas.burners.model))
-            and (wanted is None or o.count == wanted)
-        ]
-        chosen = matching[0] if matching else None
-        if chosen is None:
-            findings.append(
-                Finding(
-                    level="error",
-                    message=(
-                        "The burners chosen can't deliver the design input within "
-                        f"{max_psi:.0f} psi. Choose more or bigger burners."
-                    ),
-                )
-            )
-    elif options:
-        chosen = options[0]
-    working.append(
-        Step(
-            name="Propane pressure available",
-            value=f"{tank_psig:.0f} psig in the cylinder or tank at {t_f:.0f} °F",
-            inputs={"burners limited to": f"{max_psi:.0f} psi"},
-            reference=vapour["source"],
-            note=(
-                "With cylinders, burners are kept to 10 psi or less so the regulator still works "
-                "when the cylinders are cold and low."
-            ),
-        )
-    )
-    if chosen is not None:
-        working.append(
-            Step(
-                name="Burners",
-                value=f"{chosen.count} × {chosen.model} at {chosen.pressure}",
-                inputs={"each": chosen.each, "cost": f"${chosen.total_cost:,.2f}"},
-                reference=data[f"{chosen.type}_burners"]["source"],
-            )
-        )
     if gas.burners.type == "power":
         findings.append(
             Finding(
@@ -497,7 +599,7 @@ def design_gas(kiln: Kiln) -> GasDesign:
     )
     chimney: str | None = None
     draft: list[str] = []
-    if kiln.draft is not None and kiln.draft.type in ("cross", "down"):
+    if kiln.draft is not None and kiln.draft.type in ("cross", "down") and not too_big:
         inside_h = si(kiln.chamber.height, "in")  # a catenary's height is to its crown already
         if isinstance(kiln.roof, SprungArch | Dome):
             inside_h += si(kiln.roof.rise, "in")

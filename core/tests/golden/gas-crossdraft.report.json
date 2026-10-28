@@ -77,10 +77,10 @@
         "unit_price": null
       },
       {
-        "buy": "56 ft",
+        "buy": "33 ft",
         "cost": null,
         "item": "¼ × 2 in flat bar",
-        "needed": "50.0 ft (top cross-members, front and back, bottom cross-members, all four sides)",
+        "needed": "29.3 ft (top cross-members, front and back, bottom cross-members, front and back, bottom cross-members, sides)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
@@ -107,6 +107,16 @@
       "level": "warning",
       "message": "The propane supply meets the 528,889 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
       "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+    },
+    {
+      "level": "warning",
+      "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it, so the steel is sized past what's been checked.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "level": "warning",
+      "message": "HarbisonWalker: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, so the course under each skewback is one: have it checked, or lay that course another way.",
+      "reference": "kiln-hardware.md §4.1 [S20]"
     },
     {
       "level": "info",
@@ -150,17 +160,12 @@
     },
     {
       "level": "info",
-      "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it.",
-      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
-    },
-    {
-      "level": "info",
       "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
       "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
     },
     {
       "level": "info",
-      "message": "The right wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
       "reference": "kiln-hardware.md §6.1 [S4]"
     },
     {
@@ -175,18 +180,18 @@
     },
     {
       "level": "info",
-      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor, midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
       "reference": "kiln-hardware.md §2 [S4] [S13]"
     },
     {
       "level": "info",
-      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle.",
+      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle.",
       "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
     },
     {
       "level": "info",
-      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
-      "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 60° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+      "reference": "kiln-hardware.md §5.2 [S20]"
     },
     {
       "level": "info",
@@ -215,8 +220,8 @@
     "angle_t_in": 0.25,
     "findings": [
       {
-        "level": "info",
-        "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it.",
+        "level": "warning",
+        "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it, so the steel is sized past what's been checked.",
         "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
       },
       {
@@ -249,9 +254,16 @@
         "steel": "¼ × 2 in flat bar"
       },
       {
-        "count": 4,
-        "length_in": 124.0,
-        "part": "bottom cross-members, all four sides",
+        "count": 2,
+        "length_in": 52.0,
+        "part": "bottom cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 72.0,
+        "part": "bottom cross-members, sides",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "¼ × 2 in flat bar"
       },
@@ -289,6 +301,28 @@
         "value": "66.8 lb/ft"
       },
       {
+        "formula": null,
+        "inputs": {
+          "layers from the inside": "1"
+        },
+        "name": "Arch ring",
+        "note": "The layers laid over the ring are its load, not part of it.",
+        "reference": null,
+        "value": "3 in, T/S 10.7 %"
+      },
+      {
+        "formula": "T ≤ (h − S/48) ÷ cos ½θ",
+        "inputs": {
+          "S": "28 in",
+          "h": "3.75 in",
+          "½θ": "30.0°"
+        },
+        "name": "Thickest ring for the rise",
+        "note": null,
+        "reference": "HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "3.66 in"
+      },
+      {
         "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
         "inputs": {
           "H / W": "0.911",
@@ -318,8 +352,8 @@
           "w": "19.22 lb/in"
         },
         "name": "Buttress angle, bending",
-        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule.",
-        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx, kiln-hardware.md §4.7.1 [S28]",
+        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule. Sx is about a geometric axis, bending parallel to a leg. An angle free to twist bends about its principal axis instead, where its Sz is 0.778 in³: 12,646 psi. Which applies depends on how the brickwork holds the angle, which no source here says.",
+        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx and Sz, kiln-hardware.md §4.7.1 [S28]",
         "value": "needs Sx ≥ 0.820 in³; L4×4×1/4 has 1.030 in³"
       },
       {
@@ -349,7 +383,7 @@
         "count": 2,
         "each": "264,444 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "5.0 psi",
+        "pressure": "3.3 psi",
         "total_cost": 790.0,
         "type": "venturi"
       },
@@ -365,7 +399,7 @@
         "count": 3,
         "each": "176,296 BTU/hr",
         "model": "Ransome B4",
-        "pressure": "5.0 psi",
+        "pressure": "3.9 psi",
         "total_cost": 885.0,
         "type": "venturi"
       },
@@ -373,7 +407,7 @@
         "count": 3,
         "each": "176,296 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "5.0 psi",
+        "pressure": "1.5 psi",
         "total_cost": 1185.0,
         "type": "venturi"
       },
@@ -389,7 +423,7 @@
         "count": 4,
         "each": "132,222 BTU/hr",
         "model": "GACO MR100",
-        "pressure": "5.0 psi",
+        "pressure": "3.7 psi",
         "total_cost": 639.8,
         "type": "venturi"
       },
@@ -495,6 +529,27 @@
         "value": "528,889 BTU/hr (155 kW)"
       },
       {
+        "formula": null,
+        "inputs": {
+          "burners limited to": "10 psi"
+        },
+        "name": "Propane pressure available",
+        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
+        "value": "41 psig in the cylinder or tank at 20 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cost": "$590.00",
+          "each": "264,444 BTU/hr"
+        },
+        "name": "Burners",
+        "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
+        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
+        "value": "2 × Ransome B4 at 8.5 psi"
+      },
+      {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
         "inputs": {},
         "name": "Propane at full fire",
@@ -539,27 +594,6 @@
         "note": null,
         "reference": null,
         "value": "95 gal: 16.5 hours at full fire"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "burners limited to": "10 psi"
-        },
-        "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "cost": "$590.00",
-          "each": "264,444 BTU/hr"
-        },
-        "name": "Burners",
-        "note": null,
-        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × Ransome B4 at 8.5 psi"
       },
       {
         "formula": "2.5 in² per ft³ of chamber",
@@ -1042,13 +1076,18 @@
     "findings": [
       {
         "level": "info",
-        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle.",
+        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 19 bricks by volume, cut to the arch's angle.",
         "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
       },
       {
         "level": "info",
-        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
-        "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 60° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+        "reference": "kiln-hardware.md §5.2 [S20]"
+      },
+      {
+        "level": "warning",
+        "message": "HarbisonWalker: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, so the course under each skewback is one: have it checked, or lay that course another way.",
+        "reference": "kiln-hardware.md §4.1 [S20]"
       },
       {
         "level": "info",

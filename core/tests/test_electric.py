@@ -8,7 +8,13 @@ from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from kilndesigner import load_design, parse_design
-from kilndesigner.electric import design_elements, surface_load, wire_diameter, wire_length
+from kilndesigner.electric import (
+    design_elements,
+    largest_breaker,
+    surface_load,
+    wire_diameter,
+    wire_length,
+)
 from kilndesigner.heatloss import heat_loss
 from kilndesigner.library import alloy, awg_diameter
 from kilndesigner.units import si
@@ -203,8 +209,9 @@ def test_elements_in_one_wall_that_cant_take_thick_wire() -> None:
 
 
 def test_too_little_power_for_the_loss_is_an_error() -> None:
-    """2 kW can't hold a 7 ft³ kiln at cone 10, whose steady loss is several kW."""
-    kiln = parse_design(FRONT.replace("alloy: kanthal-a1", "alloy: kanthal-a1\n    power: 2 kW"))
+    """2 kW can't hold a 7 ft³ kiln at cone 10, whose steady loss is several kW. (On a 20 A
+    breaker: 2 kW draws 8.3 A, too little for the example's 60 A.)"""
+    kiln = parse_design(_with_power("2 kW", breaker="20 A"))
     loss = heat_loss(kiln).total_watts
     design = design_elements(kiln, loss)
     ratio = next(s for s in design.working if s.name.startswith("Installed power over"))
@@ -230,19 +237,79 @@ def test_a_cone_6_kiln_is_inside_kanthals_limits() -> None:
     assert step.inputs["ρ20"] == "1.45 mm²⋅Ω/m"
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "electric.py:291 labels ρ_T, worked in Ω·m, as Ω·mm²/m, so the step shows 1.511e-06 "
-        "instead of 1.511 (the golden reports carry the same slip)"
-    ),
-)
 def test_the_hot_resistivity_step_is_in_ohm_mm2_per_m() -> None:
     """A-1: ρ20 = 1.45 Ω·mm²/m (§1.1 [S1]); at 1322 °C, Ct = 1.04 + 0.01 × 22/100 (§1.2)."""
     design = design_elements(parse_design(FRONT.replace('cone: "10"', 'cone: "6"')))
     step = next(s for s in design.working if s.name == "Wire resistivity when hot")
     ct = 1.04 + 0.01 * 22 / 100
     assert float(step.value.split()[0]) == pytest.approx(1.45 * ct, abs=5e-4)
+
+
+@pytest.mark.parametrize(
+    ("amps", "largest"),
+    [
+        (12.5, 20),  # 13.3 A or less: 20 A (NEC 422.11(E)(2))
+        (13.3, 20),
+        (13.4, 25),  # 150 % is 20.1 A; the next standard size up is 25 A
+        (4000 / 240, 25),  # 150 % is 25 A to the last bit of floating point: 25 A is standard
+        (30, 45),  # 45 A is a standard size
+        (36, 60),  # 54 A isn't: the next one up is 60 A
+        (48, 80),  # L&L's 48 A kiln: 72 A, so 80 A
+    ],
+)
+def test_the_largest_breaker_follows_nec_422_11_e(amps: float, largest: float) -> None:
+    """Electric-and-thermal.md §3: 20 A up to 13.3 A, then 150 % with the next standard size
+    up (240.6(A) [S79]) permitted [S23]."""
+    assert largest_breaker(amps) == largest
+
+
+def _with_power(power: str, breaker: str = "60 A", voltage: str = "240 V") -> str:
+    return (
+        FRONT.replace("alloy: kanthal-a1", f"alloy: kanthal-a1\n    power: {power}")
+        .replace("breaker: 60 A", f"breaker: {breaker}")
+        .replace("voltage: 240 V", f"voltage: {voltage}")
+    )
+
+
+def test_a_breaker_too_big_for_the_kiln_is_an_error() -> None:
+    """The review's case: 4 kW at 240 V draws 16.7 A, so at most 25 A, not 60 A."""
+    design = design_elements(parse_design(_with_power("4 kW")))
+    step = next(s for s in design.working if s.name == "Largest breaker allowed")
+    assert step.value == "25 A"
+    assert step.inputs == {"kiln's current": "16.7 A"}
+    errors = [f for f in design.findings if f.level == "error"]
+    assert [f.message for f in errors] == [
+        "A 60 A breaker is too big for a kiln that draws 16.7 A: it wouldn't protect the "
+        "kiln's own wiring, terminal block and cord. NEC 422.11(E) allows at most 25 A here, "
+        "and the breaker must still be at least 125 % of the current, 20.8 A. Use a smaller "
+        "breaker, or install more power."
+    ]
+    assert errors[0].reference is not None
+    assert "422.11(E)" in errors[0].reference
+
+
+@pytest.mark.parametrize(
+    ("power", "breaker", "voltage", "too_big"),
+    [
+        ("8.64 kW", "60 A", "240 V", False),  # 36 A: 150 % is 54 A, so up to 60 A
+        ("8.64 kW", "70 A", "240 V", True),
+        ("1.5 kW", "20 A", "120 V", False),  # 12.5 A: up to 20 A
+        ("1.5 kW", "25 A", "120 V", True),
+    ],
+)
+def test_the_breaker_check_allows_the_rule_and_no_more(
+    power: str, breaker: str, voltage: str, too_big: bool
+) -> None:
+    design = design_elements(parse_design(_with_power(power, breaker, voltage)))
+    assert any("is too big for a kiln" in f.message for f in design.findings) is too_big
+
+
+def test_a_circuit_sized_kiln_is_never_on_too_big_a_breaker(front_loader_design) -> None:  # type: ignore[no-untyped-def]
+    """With the power left out the kiln draws 80 % of the breaker, under the 150 % limit."""
+    _, design = front_loader_design
+    step = next(s for s in design.working if s.name == "Largest breaker allowed")
+    assert step.value == "80 A"
+    assert not [f for f in design.findings if "is too big for a kiln" in f.message]
 
 
 def test_current_at_high_supply_voltage_and_cold_wire_is_shown() -> None:

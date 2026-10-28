@@ -11,21 +11,29 @@ export function NewDesign() {
   const create = useCreateDesign();
   const build = useStartBuild();
   const navigate = useNavigate();
-  const [start, setStart] = useState<{ draft: Draft; mode: Mode; key: string } | null>(null);
+  const [start, setStart] = useState<{
+    draft: Draft;
+    mode: Mode;
+    key: string;
+    unchecked?: unknown;
+  } | null>(null);
 
   const open = async (files: FileList | null) => {
     const file = files?.[0];
     if (!file) return;
     const source = await file.text();
-    // A file opens in the YAML tab as it is, even if it isn't valid yet: saving says what's wrong
+    // A file opens in the YAML tab as it is, even if it isn't valid yet. Then what's wrong is
+    // shown, and the document is only a placeholder until the YAML checks
     let document: KilnDocument;
+    let unchecked: unknown;
     try {
       document = (await checkDesign({ source })).document;
-    } catch {
+    } catch (e) {
       const empty = { width: "", depth: "", height: "" };
       document = { name: "", firing: {}, chamber: empty, lining: { walls: [] }, heat: {} };
+      unchecked = e;
     }
-    setStart({ draft: { document, source }, mode: "yaml", key: `file-${Date.now()}` });
+    setStart({ draft: { document, source }, mode: "yaml", key: `file-${Date.now()}`, unchecked });
   };
 
   return (
@@ -69,6 +77,7 @@ export function NewDesign() {
         <DesignEditor
           key={start.key}
           initial={start.draft}
+          unchecked={start.unchecked}
           baseline={null}
           mode={start.mode}
           saving={create.isPending}

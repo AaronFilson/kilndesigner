@@ -90,7 +90,9 @@ def test_a_car_kiln_is_priced_from_the_designs_own_estimate() -> None:
     assert without.total == 0.0
     assert any("set loading.car_hardware_cost" in f.message for f in without.findings)
 
-    priced = parse_design(text.replace("face: right", "face: right\n  car_hardware_cost: 1500 USD"))
+    car_end = "face: front # an end wall: the arch springs from the sides"
+    assert car_end in text
+    priced = parse_design(text.replace(car_end, "face: front\n  car_hardware_cost: 1500 USD"))
     bom = bill_of_materials(priced, NO_MASONRY, None)
     [car] = bom.lines
     assert (car.unit_price, car.cost, car.priced_as) == (

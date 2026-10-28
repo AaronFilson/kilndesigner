@@ -18,7 +18,7 @@ roof:
   rise: 3 in
 loading:
   type: door
-  face: right
+  face: front # an end wall: the arch springs from the sides
 castables:
   - id: diy-hot-face
     name: Foamed grog and fireclay hot face (the notes' "K26 type")

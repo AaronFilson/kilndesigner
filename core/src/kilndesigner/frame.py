@@ -14,17 +14,20 @@ can only make it bigger.
 
 from __future__ import annotations
 
+import itertools
 import math
 from dataclasses import dataclass
 from functools import cache
 from importlib import resources
 from typing import Any
 
+import numpy as np
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.heatloss import top_temperature
 from kilndesigner.model import CatenaryArch, Dome, Kiln, SprungArch
-from kilndesigner.shape import Arch, CatenaryCurve, chamber_shape
+from kilndesigner.shape import Arch, CatenaryCurve, SailDome, chamber_shape
 from kilndesigner.units import parse_quantity, si
 from kilndesigner.working import Finding, Step
 
@@ -49,7 +52,8 @@ class Angle:
     leg: float  # in
     t: float  # in
     w: float  # lb/ft
-    sx: float  # in³
+    sx: float  # in³, about a geometric axis
+    sz: float  # in³, about the minor principal axis
 
 
 def angles() -> list[Angle]:
@@ -141,27 +145,57 @@ def skewback_top(kiln: Kiln) -> float:
     return centre + (arch.radius + roof) * math.cos(arch.half_angle)
 
 
-def _arch_weight(kiln: Kiln, arch: Arch) -> tuple[float, float, list[str]]:
-    """The arch's weight per foot of length (lb/ft) and its load-bearing thickness (in): every
-    layer's density × thickness × mean arc, the exact form of HarbisonWalker's W (§4.6)."""
+LOOSE = ("fibre_blanket", "fibre_board", "backup_insulation")
+"""Kinds of material that can't carry an arch's thrust: they're only ever its load."""
+
+
+@dataclass(frozen=True)
+class ArchLoad:
+    """An arch's weight and its ring: the layers the design marks as the ring, from the inside;
+    the rest are laid on the ring and are only load (HarbisonWalker's tables leave them out)."""
+
+    weight: float  # lb per foot of arch length, every layer
+    ring: float  # in, the ring's thickness
+    ring_kinds: tuple[str, ...]
+    loose: tuple[str, ...]  # ring layers that can't carry thrust, by name
+    lines: tuple[str, ...]
+
+
+def _arch_load(kiln: Kiln, arch: Arch) -> ArchLoad:
+    """Every layer's density × thickness × mean arc, the exact form of HarbisonWalker's W
+    (§4.6), and the ring's thickness."""
     from kilndesigner.castable import resolve_material
 
-    weight = 0.0
-    solid = 0.0
+    assert isinstance(kiln.roof, SprungArch)
+    weight, ring = 0.0, 0.0
+    kinds: list[str] = []
+    loose: list[str] = []
     lines: list[str] = []
     r = arch.radius
-    for layer in kiln.lining.for_face("roof"):
+    for i, layer in enumerate(kiln.lining.for_face("roof")):
         m = resolve_material(kiln, layer.material)
         rho = si(parse_quantity(m.density), "lb/ft**3")
         t = si(layer.thickness, "in")
         mean_arc_ft = (r + t / 2) * 2 * arch.half_angle / 12
         wt = rho * (t / 12) * mean_arc_ft
         weight += wt
-        if m.kind not in ("fibre_blanket", "fibre_board", "backup_insulation"):
-            solid += t
+        if i < kiln.roof.ring:
+            ring += t
+            kinds.append(m.kind)
+            if m.kind in LOOSE:
+                loose.append(m.name)
         lines.append(f"{m.name}: {rho:.0f} lb/ft³ × {t:g} in × {mean_arc_ft:.2f} ft = {wt:.1f}")
         r += t
-    return weight, solid, lines
+    return ArchLoad(weight, ring, tuple(kinds), tuple(loose), tuple(lines))
+
+
+def ring_outside(kiln: Kiln) -> float:
+    """How far out from the chamber's centre line the arch's ring reaches at the skewback (in):
+    its outer corner."""
+    assert isinstance(kiln.roof, SprungArch)
+    arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
+    rings = kiln.lining.for_face("roof")[: kiln.roof.ring]
+    return (arch.radius + sum(si(x.thickness, "in") for x in rings)) * math.sin(arch.half_angle)
 
 
 def cold_thrust_factor(span: float, rise: float) -> float:
@@ -230,12 +264,20 @@ def _catenary_feet(kiln: Kiln) -> FrameDesign:
 
     span_ft = si(kiln.chamber.width, "ft")
     curve = CatenaryCurve(span_ft, si(kiln.chamber.height, "ft"))
-    weight, lines = 0.0, []
+    # Each layer's weight over its own length, at its mid-thickness: the outer layers are longer
+    # than the inside curve the statics run along
+    total, cum, lines = 0.0, 0.0, []
     for layer in kiln.lining.for_face("roof"):
         m = resolve_material(kiln, layer.material)
         rho, t = si(parse_quantity(m.density), "lb/ft**3"), si(layer.thickness, "ft")
-        weight += rho * t
-        lines.append(f"{m.name}: {rho:.0f} lb/ft³ × {t * 12:g} in = {rho * t:.1f} lb/ft²")
+        length = curve.length(cum + t / 2)
+        total += rho * t * length
+        lines.append(
+            f"{m.name}: {rho:.0f} lb/ft³ × {t * 12:g} in × {length:.2f} ft = "
+            f"{rho * t * length:.1f} lb"
+        )
+        cum += t
+    weight = total / curve.arc_length
     push = weight * curve.a
     bear = weight * curve.a * math.sinh(span_ft / 2 / curve.a)
     working = [
@@ -249,8 +291,14 @@ def _catenary_feet(kiln: Kiln) -> FrameDesign:
         Step(
             name="Arch weight per foot of its length, per foot of kiln",
             value=f"{weight:.1f} lb/ft²",
-            formula="Σ density × thickness, over the arch's layers",
-            inputs={f"layer {i + 1}": s for i, s in enumerate(lines)},
+            formula=(
+                "Σ density × thickness × length at mid-thickness, over the arch's layers, ÷ the "
+                "inside curve's length"
+            ),
+            inputs={
+                **{f"layer {i + 1}": s for i, s in enumerate(lines)},
+                "inside curve": f"{curve.arc_length:.2f} ft",
+            },
             reference=CATENARY_SOURCE,
         ),
         Step(
@@ -285,30 +333,272 @@ def _catenary_feet(kiln: Kiln) -> FrameDesign:
     )  # fmt: skip
 
 
-def _dome_unframed() -> FrameDesign:
-    """A dome pushes out on all four walls, and no source gives how hard: refuse to size steel
-    for it rather than guess (ADR 0009)."""
-    return FrameDesign(
-        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
-        thrust=None, members=[],
-        working=[
-            Step(
-                name="Frame",
-                value="none designed",
-                reference="combustion-and-masonry.md §6.7",
-                note="No source gives a dome's thrust on its walls.",
+DOME_SOURCE = (
+    "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 "
+    "[D3] [D4] (derived)"
+)
+
+
+@dataclass(frozen=True)
+class DomeSlice:
+    """One arch of a dome sliced parallel to its door wall, ``at`` in from the middle (in)."""
+
+    at: float
+    thickness: float  # the ring's, in the slice's plane (in)
+    half_angle: float  # radians
+    rise: float  # the slice's own rise above its springings (in)
+    factor: float  # thickness over the thinnest that stands, cold (Heyman)
+    thickest: float  # HarbisonWalker's limit for the slice's rise (in)
+    weight: float  # lb per inch of the walls it spans, every layer
+
+
+def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[DomeSlice]:
+    """The dome as arches parallel to the door wall, spanning the two walls either side, from the
+    middle out to the end wall (the dome is symmetric). ``rise`` (in) overrides the design's."""
+    from kilndesigner.castable import resolve_material
+
+    assert isinstance(kiln.roof, Dome)
+    w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
+    span, length = (w, d) if kiln.door_face in ("front", "back") else (d, w)
+    dome = SailDome(w, d, si(kiln.roof.rise, "in") if rise is None else rise)
+    layers = [
+        (si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3") / 1728,
+         si(x.thickness, "in"))
+        for x in kiln.lining.for_face("roof")
+    ]  # fmt: skip
+    ring = sum(t for _, t in layers[: kiln.roof.ring])
+    table = steel_data()["arch_minimum_thickness"]
+    slices: list[DomeSlice] = []
+    for i in range(count):
+        y = length / 2 * i / (count - 1)
+        inside = math.sqrt(dome.radius**2 - y**2)
+        alpha = math.asin(min(1.0, span / 2 / inside))
+        own_rise = inside * (1 - math.cos(alpha))
+        thickness = math.sqrt((dome.radius + ring) ** 2 - y**2) - inside
+        eta = float(np.interp(math.degrees(alpha), table["half_angle_deg"], table["eta"]))
+        weight, r = 0.0, dome.radius
+        for density, t in layers:  # each layer's slice: its thickness × centre radius × arc
+            lo, hi = math.sqrt(r**2 - y**2), math.sqrt((r + t) ** 2 - y**2)
+            weight += density * (hi - lo) * (lo + hi) / 2 * 2 * alpha
+            r += t
+        slices.append(
+            DomeSlice(
+                y, thickness, alpha, own_rise, thickness / (inside + thickness / 2) / eta,
+                (own_rise - span / 48) / math.cos(alpha), weight,
             )
-        ],
-        findings=[
+        )  # fmt: skip
+    return slices
+
+
+def _dome_frame(kiln: Kiln) -> FrameDesign:
+    """A sail dome with a door: it stands as arches parallel to the door wall, spanning the two
+    walls either side, if every one stands (domes-over-doors.md §D4, §D7). Its thrust on those
+    walls is worked out; no source sizes the steel for it yet."""
+    from kilndesigner.castable import resolve_material
+
+    assert isinstance(kiln.roof, Dome)
+    data = steel_data()
+    rule, minimum = data["rise_per_foot"], data["arch_minimum_thickness"]
+    working: list[Step] = []
+    findings: list[Finding] = []
+    door = kiln.door_face
+    w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
+    span, length = (w, d) if door in ("front", "back") else (d, w)
+    walls = "the left and right walls" if door in ("front", "back") else "the front and back walls"
+    rings = kiln.lining.for_face("roof")[: kiln.roof.ring]
+    kinds = [resolve_material(kiln, x.material) for x in rings]
+    if loose := [m.name for m in kinds if m.kind in LOOSE]:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The dome's ring includes {' and '.join(loose)}, which can't carry a dome: "
+                    "the ring must be brick or castable. Set the roof's ring to the layers that "
+                    "are."
+                ),
+                reference=DOME_SOURCE,
+            )
+        )
+        return _unframed(working, findings)
+    slices = dome_slices(kiln)
+    middle, end = slices[0], slices[-1]
+
+    def where(s: DomeSlice) -> str:
+        if s is middle:
+            return "in the middle"
+        return "at the end walls" if s is end else f"{s.at:.1f} in from the middle"
+
+    def describe(s: DomeSlice) -> str:
+        return (
+            f"{s.thickness:.2f} in thick, {math.degrees(s.half_angle):.1f}° each side, rising "
+            f"{s.rise:.2f} in ({12 * s.rise / span:.2f} in/ft); factor {s.factor:.0f}; "
+            f"HarbisonWalker allows {s.thickest:.2f} in"
+        )
+
+    working.append(
+        Step(
+            name="Dome, as arches parallel to the door wall",
+            value=f"{len(slices)} slices spanning {walls}, {span:g} in apart",
+            inputs={"in the middle": describe(middle), "at the end wall": describe(end)},
+            formula=(
+                "each slice a circular arch: ρ = √(R² − y²), sin α = ½S/ρ, its own rise "
+                "ρ(1 − cos α); factor = (t/r) ÷ the thinnest t/r that stands; HarbisonWalker: "
+                "t ≤ (h − S/48) ÷ cos α"
+            ),
+            reference=f"{DOME_SOURCE}; {minimum['source']}; {data['arch_constants']['source']}",
+            note=(
+                "Applying HarbisonWalker's rules for sprung arches to a dome's slices is an "
+                "assumption (domes-over-doors.md §D8). The door wall and the wall opposite carry "
+                "nothing."
+            ),
+        )
+    )
+    weak = min(slices, key=lambda s: s.factor)
+    if weak.factor < minimum["safety"]:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"Over a door in the {door} wall the dome stands as arches spanning {walls}, "
+                    f"and the slice {where(weak)} is only {weak.factor:.1f} "
+                    "times as thick as the thinnest that stands, under Heyman's "
+                    f"{minimum['safety']}. "
+                    "Thicken the dome."
+                ),
+                reference=DOME_SOURCE,
+            )
+        )
+    too_thick = [s for s in slices if s.thickness > s.thickest + 1e-9]
+    if too_thick:
+        worst = max(too_thick, key=lambda s: s.thickness - s.thickest)
+        # The least rise at which every slice passes, if any below the half-diagonal does
+        corner = math.hypot(w, d) / 2
+        lo, hi = si(kiln.roof.rise, "in"), corner * 0.999
+        passes = all(s.thickness <= s.thickest for s in dome_slices(kiln, rise=hi))
+        if passes:
+            for _ in range(40):
+                mid = (lo + hi) / 2
+                ok = all(s.thickness <= s.thickest for s in dome_slices(kiln, rise=mid))
+                lo, hi = (lo, mid) if ok else (mid, hi)
+        change = f"Raise the dome to at least {hi:.1f} in" if passes else "Raise or thin the dome"
+        other = "a side wall" if door in ("front", "back") else "the front or back wall"
+        if length > span:  # the slices span the shorter way: turned, they'd rise more
+            change += (
+                f", or put the door in {other}, so the slices span the longer way and rise more"
+            )
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"Over a door in the {door} wall the dome stands as arches spanning {walls}, "
+                    f"and they're too thick for their own rise: {worst.thickness:.2f} in "
+                    f"{where(worst)}, where HarbisonWalker allows "
+                    f"{max(worst.thickest, 0):.2f} in, so the line of thrust would drop out of "
+                    f"the dome when it heats. {change}."
+                ),
+                reference=f"{DOME_SOURCE}; {data['arch_constants']['source']}",
+            )
+        )
+    low, high = rule["general"]
+    for m in kinds:
+        a, b = rule.get(m.kind, rule["general"])
+        low, high = max(low, a), min(high, b)
+    steep = [s for s in slices if not low - 1e-9 <= 12 * s.rise / span <= high + 1e-9]
+    if steep:
+        s = steep[0]
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The dome's slices over the door rise {12 * s.rise / span:.2f} in per foot "
+                    f"of span {where(s)}; HarbisonWalker gives {low:g}–{high:g} "
+                    "in/ft for a roof arch of this ring."
+                ),
+                reference=rule["source"],
+            )
+        )
+    # The thrust on the walls the slices span, cold and heated (the heated factor as for a
+    # sprung arch, free to rise)
+    hot: list[tuple[float, float]] = []
+    for s in slices:
+        cold = cold_thrust_factor(span, s.rise) * s.weight
+        factor = heated_thrust_factor(span, s.rise, s.thickness)
+        if factor is None:
+            findings.append(
+                Finding(
+                    level="error",
+                    message=(
+                        f"Hot, the dome's slice {where(s)} would push its "
+                        "thrust line out of the ring: it is too thick for its rise. Raise the dome "
+                        "or thin it."
+                    ),
+                    reference=ARCH_THEORY_SOURCE,
+                )
+            )
+            return _unframed(working, findings)
+        hot.append((cold * 12, factor * cold * 12))  # lb per foot of wall
+    steps = length / 2 / (len(slices) - 1)
+    total = 2 * sum(
+        (a + b) / 2 * steps / 12 for (_, a), (_, b) in itertools.pairwise(hot)
+    )  # lb along each wall, hot
+    peak_cold, peak_hot = max(c for c, _ in hot), max(h for _, h in hot)
+    working.append(
+        Step(
+            name=f"Thrust on {walls}",
+            value=(
+                f"up to {peak_hot:.0f} lb per foot hot ({peak_cold:.0f} cold); {total:.0f} lb "
+                "along each wall"
+            ),
+            formula=(
+                "H = W·(sin α − (1 − cos α)/α) / (2(1 − cos α)) for each slice, W its weight; "
+                "× the heated factor"
+            ),
+            reference=f"{DOME_SOURCE}; {ARCH_THEORY_SOURCE}",
+            note="Each layer of the roof counts as weight; only the ring as thickness.",
+        )
+    )
+    s_over_t = max(100 * s.thickness / span for s in slices)
+    if peak_hot > MAX_PRINTED_HEATED * peak_cold:
+        findings.append(
             Finding(
                 level="warning",
                 message=(
-                    "A dome pushes out on all four walls, and no source gives how hard, so no "
-                    "frame is designed or drawn: have the steel that holds it designed."
+                    f"Hot, the dome's slices push {peak_hot / peak_cold:.1f} times their cold "
+                    f"thrust, more than the {MAX_PRINTED_HEATED:g} times HarbisonWalker prints "
+                    "before it marks the stress excessive. A higher dome pushes less."
                 ),
-                reference="combustion-and-masonry.md §6.7",
+                reference=ARCH_THEORY_SOURCE,
             )
-        ],
+        )
+    if s_over_t > data["heated_factor"]["t_over_s"][-1]:
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The dome's slices reach T/S {s_over_t:.1f} %, past the 10 % of "
+                    "HarbisonWalker's "
+                    "heated-arch table, so their hot thrust is worked out from statics past what's "
+                    "been checked."
+                ),
+                reference=ARCH_THEORY_SOURCE,
+            )
+        )
+    findings.append(
+        Finding(
+            level="warning",
+            message=(
+                f"The dome pushes out on {walls} with up to {peak_hot:.0f} lb per foot hot, "
+                f"{total:.0f} lb along each, and a tie across the door's head and one across the "
+                f"wall opposite take {total / 2:.0f} lb each. No source sizes the steel for a "
+                "dome, so none is drawn: have it designed for these."
+            ),
+            reference=DOME_SOURCE,
+        )
+    )
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=f"{peak_hot:.0f} lb per foot on {walls}, hot", members=[], working=working,
+        findings=findings,
     )  # fmt: skip
 
 
@@ -318,7 +608,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)
     if isinstance(kiln.roof, Dome):
-        return _dome_unframed()
+        return _dome_frame(kiln)
     if not isinstance(kiln.roof, SprungArch):
         if kiln.heat.gas is None:
             return _case(kiln, o)
@@ -346,156 +636,236 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     span_in = si(kiln.chamber.width, "in")
     arch = Arch(span_in, si(kiln.roof.rise, "in"))
     d = arch.rise / (span_in / 12)
-    weight, solid_t, lines = _arch_weight(kiln, arch)
+    load = _arch_load(kiln, arch)
     working.append(
         Step(
             name="Arch weight per foot of length",
-            value=f"{weight:.1f} lb/ft",
+            value=f"{load.weight:.1f} lb/ft",
             formula="Σ density × thickness × mean arc, over the roof's layers",
-            inputs={f"layer {i + 1}": s for i, s in enumerate(lines)},
+            inputs={f"layer {i + 1}": s for i, s in enumerate(load.lines)},
             reference="HarbisonWalker W, exact form; kiln-hardware.md §4.6 [S20]",
             note="Includes insulation laid on the arch, which HarbisonWalker's tables leave out.",
         )
     )
     consts = data["arch_constants"]
     heated_table = data["heated_factor"]
-    thrust: float | None = None
-    t_over_s = 100 * solid_t / span_in
-    if not 0 < arch.rise < span_in / 2:
+    rule = data["rise_per_foot"]
+    t_over_s = 100 * load.ring / span_in
+    if load.loose:
         findings.append(
             Finding(
                 level="error",
                 message=(
-                    f"The arch's rise of {arch.rise:.2f} in must be above 0 and below half the "
-                    f"{span_in:.1f} in span for a segmental arch, so the frame can't be checked."
+                    f"The arch's ring includes {' and '.join(load.loose)}, which can't carry an "
+                    "arch's thrust: the ring must be brick or castable. Set the roof's ring to the "
+                    "layers that are."
+                ),
+                reference=rule["source"],
+            )
+        )
+        return _unframed(working, findings)
+    working.append(
+        Step(
+            name="Arch ring",
+            value=f"{load.ring:g} in, T/S {t_over_s:.1f} %",
+            inputs={"layers from the inside": str(kiln.roof.ring)},
+            note="The layers laid over the ring are its load, not part of it.",
+        )
+    )
+    # HarbisonWalker's rise for a roof arch, by its brick; the strictest of the ring's
+    low, high = rule["general"]
+    for kind in load.ring_kinds:
+        lo, hi = rule.get(kind, rule["general"])
+        low, high = max(low, lo), min(high, hi)
+    if not low - 1e-9 <= d <= high + 1e-9:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The arch rises {d:.2f} in per foot of span. HarbisonWalker gives {low:g}–"
+                    f"{high:g} in/ft for a roof arch of this ring: a rise of "
+                    f"{low * span_in / 12:.2f}–{high * span_in / 12:.2f} in on this span."
+                ),
+                reference=rule["source"],
+            )
+        )
+    # HarbisonWalker's thickest ring: ¼ in per foot of span is the lowest the line of thrust may
+    # rise, so T ≤ (h − S/48) ÷ cos ½θ
+    thickest = (arch.rise - span_in / 48) / math.cos(arch.half_angle)
+    working.append(
+        Step(
+            name="Thickest ring for the rise",
+            value=f"{thickest:.2f} in",
+            formula="T ≤ (h − S/48) ÷ cos ½θ",
+            inputs={
+                "h": f"{arch.rise:.2f} in",
+                "S": f"{span_in:g} in",
+                "½θ": f"{math.degrees(arch.half_angle):.1f}°",
+            },
+            reference=consts["source"],
+        )
+    )
+    if load.ring > thickest + 1e-9:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The arch's {load.ring:g} in ring is thicker than HarbisonWalker allows for "
+                    f"its rise, {max(thickest, 0):.2f} in: the line of thrust would drop too low. "
+                    "Raise the arch or thin the ring."
                 ),
                 reference=consts["source"],
             )
         )
-    else:
-        h_factor = cold_thrust_factor(span_in, arch.rise)
-        cold = h_factor * weight
-        working.append(
-            Step(
-                name="Cold horizontal thrust",
-                value=f"{cold:.1f} lb per foot of arch",
-                formula="H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
-                inputs={"rise per foot of span, d": f"{d:.3f} in/ft", "H / W": f"{h_factor:.3f}"},
-                reference=(
-                    f"statics of a three-hinged circular arch; checked against {consts['source']}"
+    # The skewback needs the wall under it: the ring's outer corner must be within the side walls
+    corner, wall = ring_outside(kiln), span_in / 2 + min(o.left, o.right)
+    if corner > wall + 1e-6:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The arch's ring reaches {corner - wall:.2f} in past the outside of the side "
+                    "walls at the skewback, so the skewback has no wall to stand on. Thicken the "
+                    "side walls or thin the ring."
                 ),
             )
         )
-        thrust = cold
-        heated = heated_thrust_factor(span_in, arch.rise, solid_t)
-        if heated is None or heated > MAX_PRINTED_HEATED:
-            findings.append(
-                Finding(
-                    level="error",
-                    message=(
-                        "Hot, this arch's thrust line would "
-                        + (
-                            "leave the brick: it is too thick for its rise"
-                            if heated is None
-                            else f"push {heated:.1f} times its cold thrust"
-                        )
-                        + f" (T/S {t_over_s:.1f} %, {d:.2f} in/ft). HarbisonWalker marks the "
-                        f"stress excessive past about {MAX_PRINTED_HEATED:g} times. Raise the arch."
-                    ),
-                    reference=ARCH_THEORY_SOURCE,
-                )
+    h_factor = cold_thrust_factor(span_in, arch.rise)
+    cold = h_factor * load.weight
+    working.append(
+        Step(
+            name="Cold horizontal thrust",
+            value=f"{cold:.1f} lb per foot of arch",
+            formula="H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
+            inputs={"rise per foot of span, d": f"{d:.3f} in/ft", "H / W": f"{h_factor:.3f}"},
+            reference=(
+                f"statics of a three-hinged circular arch; checked against {consts['source']}"
+            ),
+        )
+    )
+    heated = heated_thrust_factor(span_in, arch.rise, load.ring)
+    if heated is None:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    "Hot, this arch's thrust line would leave the ring: it is too thick for its "
+                    f"rise (T/S {t_over_s:.1f} %, {d:.2f} in/ft), so no steel can be sized for it. "
+                    "Raise the arch or thin the ring."
+                ),
+                reference=ARCH_THEORY_SOURCE,
             )
-        else:
-            thrust = heated * cold
-            working.append(
-                Step(
-                    name="Thrust of the heated arch, free to rise",
-                    value=f"{thrust:.1f} lb per foot of arch",
-                    formula=(
-                        "hinges at the intrados at the crown and the extrados at the skewbacks: "
-                        "Hmax = M_P / (y_crown − y_P); factor = Hmax / H with both at mid-thickness"
-                    ),
-                    inputs={"T/S": f"{t_over_s:.1f} %", "factor": f"{heated:.2f}"},
-                    reference=ARCH_THEORY_SOURCE,
-                )
+        )
+        return _unframed(working, findings)
+    thrust = heated * cold
+    working.append(
+        Step(
+            name="Thrust of the heated arch, free to rise",
+            value=f"{thrust:.1f} lb per foot of arch",
+            formula=(
+                "hinges at the intrados at the crown and the extrados at the skewbacks: "
+                "Hmax = M_P / (y_crown − y_P); factor = Hmax / H with both at mid-thickness"
+            ),
+            inputs={"T/S": f"{t_over_s:.1f} %", "factor": f"{heated:.2f}"},
+            reference=ARCH_THEORY_SOURCE,
+        )
+    )
+    in_table = (
+        heated_table["t_over_s"][0] <= t_over_s <= heated_table["t_over_s"][-1]
+        and consts["d"][0] <= d <= consts["d"][-1]
+    )
+    if heated > MAX_PRINTED_HEATED:
+        # Only a guard: HarbisonWalker's own rise and thickness rules are the limits
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"Hot, this arch pushes {heated:.1f} times its cold thrust, more than the "
+                    f"{MAX_PRINTED_HEATED:g} times HarbisonWalker prints before it marks the "
+                    "stress "
+                    "excessive. The steel is sized for it; a higher arch pushes less."
+                ),
+                reference=ARCH_THEORY_SOURCE,
             )
-            in_table = (
-                heated_table["t_over_s"][0] <= t_over_s <= heated_table["t_over_s"][-1]
-                and consts["d"][0] <= d <= consts["d"][-1]
+        )
+    elif not in_table:
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The heated thrust is worked out from statics. HarbisonWalker's table, which "
+                    f"it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at "
+                    f"{t_over_s:.1f} % and {d:.2f} in/ft, is outside it, so the steel is sized "
+                    "past what's been checked."
+                ),
+                reference=ARCH_THEORY_SOURCE,
             )
-            if not in_table:
-                findings.append(
-                    Finding(
-                        level="info",
-                        message=(
-                            f"The heated thrust is worked out from statics. HarbisonWalker's "
-                            f"table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; "
-                            f"this arch, at {t_over_s:.1f} % and {d:.2f} in/ft, is outside it."
-                        ),
-                        reference=ARCH_THEORY_SOURCE,
-                    )
-                )
+        )
 
     chosen = floor
     rod = data["rods"]["sizes"][1]  # ½-13, what builders use [S7] [S17]
-    if thrust is not None:
-        length = o.depth  # the buttress spans between the corner posts
-        moment = (thrust / 12) * length**2 / 8
-        needed = moment / limit
-        fits = [a for a in angles() if a.sx >= needed and a.leg >= floor.leg and a.t >= floor.t]
-        if not fits:
-            findings.append(
-                Finding(
-                    level="error",
-                    message=(
-                        f"No angle up to L4×4×3/8 carries the arch's thrust over {length:.0f} in "
-                        "between the corner posts. Add posts along the side walls."
-                    ),
-                    reference=data["angles"]["source"],
-                )
-            )
-        else:
-            chosen = fits[0]
-        working.append(
-            Step(
-                name="Buttress angle, bending",
-                value=f"needs Sx ≥ {needed:.3f} in³; {chosen.name} has {chosen.sx:.3f} in³",
-                formula="M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
-                inputs={
-                    "w": f"{thrust / 12:.2f} lb/in",
-                    "L": f"{length:.1f} in",
-                    "M": f"{moment:,.0f} lb·in",
-                },
-                reference=(
-                    f"{data['binding_stress_source']}; AISC Sx, kiln-hardware.md §4.7.1 [S28]"
+    length = o.depth  # the buttress spans between the corner posts
+    moment = (thrust / 12) * length**2 / 8
+    needed = moment / limit
+    fits = [a for a in angles() if a.sx >= needed and a.leg >= floor.leg and a.t >= floor.t]
+    if not fits:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"No angle up to L4×4×3/8 carries the arch's thrust over {length:.0f} in "
+                    "between the corner posts. Add posts along the side walls."
                 ),
-                note="A cautious first check, derived in kiln-hardware.md §4.5; not a sourced "
-                "design rule.",
+                reference=data["angles"]["source"],
             )
         )
-        per_rod = thrust * (o.depth / 12) / 2
-        for size in data["rods"]["sizes"][1:]:
-            rod = size
-            if per_rod / size["stress_area"] <= limit:
-                break
-        else:
-            findings.append(
-                Finding(level="error", message="No rod up to ¾ in carries the arch's thrust.")
-            )
-        working.append(
-            Step(
-                name="Tie rods, one at the front and one at the back",
-                value=f"{rod['name']}: {per_rod / rod['stress_area']:,.0f} psi",
-                formula="thrust × length ÷ 2 rods ÷ tensile stress area",
-                inputs={
-                    "load per rod": f"{per_rod:,.0f} lb",
-                    "stress area": f"{rod['stress_area']} in²",
-                },
-                reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
-                note="½ in is the smallest used here, because builders use it (kiln-hardware.md "
-                "§4.2 [S7] [S17]).",
-            )
+    else:
+        chosen = fits[0]
+    working.append(
+        Step(
+            name="Buttress angle, bending",
+            value=f"needs Sx ≥ {needed:.3f} in³; {chosen.name} has {chosen.sx:.3f} in³",
+            formula="M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
+            inputs={
+                "w": f"{thrust / 12:.2f} lb/in",
+                "L": f"{length:.1f} in",
+                "M": f"{moment:,.0f} lb·in",
+            },
+            reference=(
+                f"{data['binding_stress_source']}; AISC Sx and Sz, kiln-hardware.md §4.7.1 [S28]"
+            ),
+            note=(
+                "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design "
+                "rule. Sx is about a geometric axis, bending parallel to a leg. An angle free to "
+                f"twist bends about its principal axis instead, where its Sz is {chosen.sz:.3f} "
+                f"in³: {moment / chosen.sz:,.0f} psi. Which applies depends on how the brickwork "
+                "holds the angle, which no source here says."
+            ),
         )
+    )
+    per_rod = thrust * (o.depth / 12) / 2
+    for size in data["rods"]["sizes"][1:]:
+        rod = size
+        if per_rod / size["stress_area"] <= limit:
+            break
+    else:
+        findings.append(
+            Finding(level="error", message="No rod up to ¾ in carries the arch's thrust.")
+        )
+    working.append(
+        Step(
+            name="Tie rods, one at the front and one at the back",
+            value=f"{rod['name']}: {per_rod / rod['stress_area']:,.0f} psi",
+            formula="thrust × length ÷ 2 rods ÷ tensile stress area",
+            inputs={
+                "load per rod": f"{per_rod:,.0f} lb",
+                "stress area": f"{rod['stress_area']} in²",
+            },
+            reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
+            note="½ in is the smallest used here, because builders use it (kiln-hardware.md "
+            "§4.2 [S7] [S17]).",
+        )
+    )
 
     top = skewback_top(kiln)
     leg = chosen.leg
@@ -521,13 +891,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
             length_in=o.width + 2 * leg,
             source=PITELKA,
         ),
-        Member(
-            part="bottom cross-members, all four sides",
-            steel=FLAT_BAR,
-            count=4,
-            length_in=o.width + o.depth + 4 * leg,
-            source=PITELKA,
-        ),
+        *_ring_of(FLAT_BAR, "bottom cross-members", o, leg, PITELKA),
         Member(
             part="tie rods",
             steel=f"{rod['name']} threaded rod",
@@ -536,7 +900,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
             source=f"length: {MERRILL}",
         ),
     ]
-    if not any(f.level == "error" for f in findings) and thrust is not None:
+    if not any(f.level == "error" for f in findings):
         findings.append(
             Finding(
                 level="info",
@@ -554,16 +918,204 @@ def design_frame(kiln: Kiln) -> FrameDesign:
         angle_t_in=chosen.t,
         rod=rod["name"],
         rod_d_in=rod["d"],
-        thrust=None if thrust is None else f"{thrust:.0f} lb per foot of arch",
+        thrust=f"{thrust:.0f} lb per foot of arch",
         members=members,
         working=working,
         findings=findings,
     )
 
 
+def _ring_of(steel: str, part: str, o: Outside, leg: float, source: str) -> list[Member]:
+    """Members once round the kiln's outside: two across the front and back, two along the
+    sides, each long enough to lap the corners by a leg."""
+    return [
+        Member(part=f"{part}, front and back", steel=steel, count=2, length_in=o.width + 2 * leg,
+               source=source),
+        Member(part=f"{part}, sides", steel=steel, count=2, length_in=o.depth + 2 * leg,
+               source=source),
+    ]  # fmt: skip
+
+
+def _unframed(working: list[Step], findings: list[Finding]) -> FrameDesign:
+    """An arch whose thrust can't be worked out: no steel is shown, and the findings say why."""
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=None, members=[], working=working, findings=findings,
+    )  # fmt: skip
+
+
+FLAT_SOURCE = "BIA Technical Note 31A, jack arches; flat-roofs.md §2 [F2]"
+FLAT_CHECKED_IN = 36.0
+"""The longest one-way flat roof in the sources: Merrill's rows, squeezed by rods (§4.3 [F9])."""
+FLAT_LONGEST_IN = 45.0
+"""About the longest flat brick roof in the sources, on four walls: L&L's lids and Nils Lou's
+roof (flat-roofs.md §4.1, §4.3, derived)."""
+FLAT_IFB_TOP_F = 2450.0
+"""BNZ: suspended flat IFB roofs no hotter than 1345 °C, 2450 °F (flat-roofs.md §4.4 [F15])."""
+FRICTION = 0.60
+"""BIA's friction between brick masonry units (§2.2 [F2]); for IFB none is sourced."""
+ROW_IN = 4.5  # a row of roof brick, as Merrill's: bricks on end, 4½ in across the row (§4.3)
+
+
+def _flat_roof(kiln: Kiln, working: list[Step], findings: list[Finding]) -> float | None:
+    """A flat roof over a whole-wall door spans one way, between the walls either side of the
+    door, as a jack arch squeezed by its frame (flat-roofs.md §2, §4). Returns its thrust, lb per
+    inch of roof, or None for a fibre roof."""
+    from kilndesigner.castable import resolve_material
+
+    door = kiln.door_face
+    w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
+    span, length = (w, d) if door in ("front", "back") else (d, w)
+    walls = "the left and right walls" if door in ("front", "back") else "the front and back walls"
+    layers = kiln.lining.for_face("roof")
+    slab = resolve_material(kiln, layers[0].material)
+    depth = si(layers[0].thickness, "in")
+    if slab.kind in LOOSE:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "A fibre roof can't span as a flat arch: it hangs from its frame, which isn't "
+                    "designed here."
+                ),
+            )
+        )
+        return None
+    load = sum(
+        si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3")
+        / 1728
+        * si(x.thickness, "in")
+        for x in layers
+    )  # lb per square inch of roof, every layer
+    thrust = 3 * load * span**2 / (8 * depth)  # lb per inch: H = 3WS/8d, W = load × S
+    working.append(
+        Step(
+            name="Flat roof, as a jack arch",
+            value=(
+                f"spans {span:g} in between {walls}; the frame must squeeze it with "
+                f"{thrust * 12:.0f} lb per foot, {thrust * length:.0f} lb in all, cold"
+            ),
+            formula="H = 3WS / 8d, the thrust line in the middle third; fm = 2H / bd",
+            inputs={
+                "S": f"{span:g} in",
+                "d": f"{depth:g} in of {slab.name}",
+                "W": f"{load * 144:.1f} lb per ft² of roof, every layer, × S",
+                "fm": f"{2 * thrust / depth:.1f} psi",
+            },
+            reference=FLAT_SOURCE,
+            note=(
+                "BIA's method is for cold brick masonry between abutments that don't move; heat "
+                "and the clamp's own squeeze aren't in it (flat-roofs.md §2.5)."
+            ),
+        )
+    )
+    if 4 * depth / (3 * span) > FRICTION:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"The flat roof is {depth:g} in deep over {span:g} in: too deep for its span "
+                    "to "
+                    "hold at its ends by friction. BIA's jack arches need the span more than about "
+                    f"2.2 times the depth, at the friction of {FRICTION:g} it gives for brick "
+                    "(none "
+                    "is sourced for insulating firebrick). Make it thinner or use an arch."
+                ),
+                reference=FLAT_SOURCE,
+            )
+        )
+    if span > FLAT_LONGEST_IN:
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"A flat roof over {span:g} in is longer than any flat brick roof in the "
+                    "sources, "
+                    f"about {FLAT_LONGEST_IN:g} in. Use an arch or a dome."
+                ),
+                reference="flat-roofs.md §4.5",
+            )
+        )
+    elif span > FLAT_CHECKED_IN:
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The flat roof spans {span:g} in, past the longest one-way flat roof in the "
+                    f"sources, Merrill's {FLAT_CHECKED_IN:g} in; flat lids of about "
+                    f"{FLAT_LONGEST_IN:g} "
+                    "in rest on all four walls, and makers move to fibre there."
+                ),
+                reference="flat-roofs.md §4.1, §4.3",
+            )
+        )
+    top = si(top_temperature(kiln)[0], "degF")
+    if slab.kind == "insulating_firebrick" and top > FLAT_IFB_TOP_F:
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"BNZ keeps flat insulating-firebrick roofs to {FLAT_IFB_TOP_F:g} °F, where "
+                    f"IFB still holds together; this kiln reaches {top:.0f} °F. It says to use a "
+                    "sprung arch above that."
+                ),
+                reference="flat-roofs.md §4.4 [F15]",
+            )
+        )
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                f"The flat roof stays up only while it's squeezed across its {span:g} in span: "
+                "tighten its band or rods after the first firing and every few firings after, as "
+                "the makers say, because the brick shrinks and works loose. No maker document read "
+                "shows a front-loader with a flat brick roof (L&L and Bailey arch theirs)."
+            ),
+            reference="flat-roofs.md §3.2, §4.2",
+        )
+    )
+    return thrust
+
+
 def _flat_frame(kiln: Kiln, o: Outside) -> FrameDesign:
-    """A gas kiln with a flat roof: angle round the roof, rods across (Merrill's flat-top)."""
+    """A gas kiln with a flat roof: angle round the roof, and Merrill's rod through each row of
+    roof brick, squeezing it across its span (kiln-hardware.md §4.2 [S16])."""
     a = angle("L2×2×3/16")
+    working: list[Step] = [
+        Step(name="Frame", value=f"{a.name} with 3/8 in rods", reference=MERRILL)
+    ]
+    findings: list[Finding] = []
+    thrust = _flat_roof(kiln, working, findings)
+    across = kiln.door_face in ("front", "back")
+    length = o.depth if across else o.width
+    rows = max(2, math.ceil(length / ROW_IN - 1e-9))
+    rod = steel_data()["rods"]["sizes"][0]  # Merrill's 3/8 in
+    if thrust is not None:
+        per_rod = thrust * ROW_IN
+        stress = per_rod / rod["stress_area"]
+        working.append(
+            Step(
+                name="Rods across the roof, one every 4½ in",
+                value=f"{rows} rods: {per_rod:.0f} lb each, {stress:,.0f} psi",
+                formula=(
+                    "the roof's thrust × 4½ in, a row of Merrill's brick, ÷ the rod's tensile "
+                    "stress area"
+                ),
+                reference=f"{MERRILL}; {steel_data()['binding_stress_source']}",
+            )
+        )
+        if stress > float(steel_data()["binding_stress_psi"]):
+            findings.append(
+                Finding(
+                    level="error",
+                    message=(
+                        f"A 3/8 in rod every 4½ in across the roof would carry {stress:,.0f} psi, "
+                        "past HarbisonWalker's 12,000 psi for hot steel. Use a thinner or lighter "
+                        "roof, or an arch."
+                    ),
+                    reference=steel_data()["binding_stress_source"],
+                )
+            )
     members = [
         Member(
             part="corner posts",
@@ -572,18 +1124,12 @@ def _flat_frame(kiln: Kiln, o: Outside) -> FrameDesign:
             length_in=o.bottom + o.wall_top,
             source=MERRILL,
         ),
+        *_ring_of(a.name, "roof angle", o, a.leg, MERRILL),
         Member(
-            part="roof angle, all four sides",
-            steel=a.name,
-            count=4,
-            length_in=o.width + o.depth + 4 * a.leg,
-            source=MERRILL,
-        ),
-        Member(
-            part="tie rods",
+            part="rods across the roof, one every 4½ in",
             steel="3/8-16 threaded rod",
-            count=2,
-            length_in=o.width + 2 * a.leg + 4,
+            count=rows,
+            length_in=(o.width if across else o.depth) + 2 * a.leg + 4,
             source=MERRILL,
         ),
     ]
@@ -594,10 +1140,10 @@ def _flat_frame(kiln: Kiln, o: Outside) -> FrameDesign:
         angle_t_in=a.t,
         rod="3/8-16",
         rod_d_in=0.375,
-        thrust=None,
+        thrust=None if thrust is None else f"{thrust * 12:.0f} lb per foot of roof, cold",
         members=members,
-        working=[Step(name="Frame", value=f"{a.name} with 3/8 in rods", reference=MERRILL)],
-        findings=[],
+        working=working,
+        findings=findings,
     )
 
 
@@ -605,10 +1151,12 @@ CASE_T = 0.125  # in, L&L's welded case [S6]
 
 
 def _case(kiln: Kiln, o: Outside) -> FrameDesign:
-    """An electric kiln in a welded steel case, as the makers build them."""
+    """An electric kiln in a welded steel case, as the makers build them: a plate on each wall but
+    the door's."""
+    walls = [w for w in ("left", "right", "back", "front") if w != kiln.door_face]
     plates = [
         Member(
-            part="side and back plates",
+            part=f"{', '.join(walls[:-1])} and {walls[-1]} plates",
             steel="⅛ in steel plate",
             count=3,
             length_in=o.bottom + o.wall_top,
@@ -622,6 +1170,21 @@ def _case(kiln: Kiln, o: Outside) -> FrameDesign:
             source=CASE_SOURCE,
         ),
     ]
+    working = [Step(name="Case", value="welded ⅛ in steel", reference=CASE_SOURCE)]
+    findings: list[Finding] = []
+    thrust = _flat_roof(kiln, working, findings)
+    if thrust is not None:
+        findings.append(
+            Finding(
+                level="warning",
+                message=(
+                    f"The case, or a band round the roof, must squeeze it across its span with "
+                    f"about {thrust * 12:.0f} lb per foot, cold. No source gives a band's size or "
+                    "tension for a kiln roof, so none is drawn: have it designed."
+                ),
+                reference="flat-roofs.md §3",
+            )
+        )
     return FrameDesign(
         kind="welded case",
         angle=None,
@@ -629,8 +1192,8 @@ def _case(kiln: Kiln, o: Outside) -> FrameDesign:
         angle_t_in=CASE_T,
         rod=None,
         rod_d_in=0,
-        thrust=None,
+        thrust=None if thrust is None else f"{thrust * 12:.0f} lb per foot of roof, cold",
         members=plates,
-        working=[Step(name="Case", value="welded ⅛ in steel", reference=CASE_SOURCE)],
-        findings=[],
+        working=working,
+        findings=findings,
     )

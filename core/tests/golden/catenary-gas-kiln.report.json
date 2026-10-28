@@ -83,7 +83,7 @@
     },
     {
       "level": "warning",
-      "message": "Each foot of the catenary pushes out with about 12 lb per foot of kiln, cold. No source sizes what holds it (a curb, ties or buttresses at the feet), so none is drawn: have it designed.",
+      "message": "Each foot of the catenary pushes out with about 13 lb per foot of kiln, cold. No source sizes what holds it (a curb, ties or buttresses at the feet), so none is drawn: have it designed.",
       "reference": "combustion-and-masonry.md §6.6"
     },
     {
@@ -148,7 +148,7 @@
     },
     {
       "level": "info",
-      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor, midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
       "reference": "kiln-hardware.md §2 [S4] [S13]"
     },
     {
@@ -179,7 +179,7 @@
     "findings": [
       {
         "level": "warning",
-        "message": "Each foot of the catenary pushes out with about 12 lb per foot of kiln, cold. No source sizes what holds it (a curb, ties or buttresses at the feet), so none is drawn: have it designed.",
+        "message": "Each foot of the catenary pushes out with about 13 lb per foot of kiln, cold. No source sizes what holds it (a curb, ties or buttresses at the feet), so none is drawn: have it designed.",
         "reference": "combustion-and-masonry.md §6.6"
       }
     ],
@@ -187,7 +187,7 @@
     "members": [],
     "rod": null,
     "rod_d_in": 0.0,
-    "thrust": "12 lb per foot of kiln at each foot",
+    "thrust": "13 lb per foot of kiln at each foot",
     "working": [
       {
         "formula": "H = a (cosh(S / 2a) − 1), solved for a",
@@ -201,15 +201,16 @@
         "value": "a = 7.40 in"
       },
       {
-        "formula": "Σ density × thickness, over the arch's layers",
+        "formula": "Σ density × thickness × length at mid-thickness, over the arch's layers, ÷ the inside curve's length",
         "inputs": {
-          "layer 1": "Morgan Thermal Ceramics JM 26 insulating firebrick: 50 lb/ft³ × 4.5 in = 18.7 lb/ft²",
-          "layer 2": "Morgan Kaowool ceramic fibre blanket, 8 pcf: 8 lb/ft³ × 2 in = 1.3 lb/ft²"
+          "inside curve": "9.15 ft",
+          "layer 1": "Morgan Thermal Ceramics JM 26 insulating firebrick: 50 lb/ft³ × 4.5 in × 9.74 ft = 182.4 lb",
+          "layer 2": "Morgan Kaowool ceramic fibre blanket, 8 pcf: 8 lb/ft³ × 2 in × 10.59 ft = 14.1 lb"
         },
         "name": "Arch weight per foot of its length, per foot of kiln",
         "note": null,
         "reference": "statics of a catenary, combustion-and-masonry.md §6.6 [S63] (derived)",
-        "value": "20.1 lb/ft²"
+        "value": "21.5 lb/ft²"
       },
       {
         "formula": "H = w a: the hanging chain's horizontal tension, turned to thrust",
@@ -217,7 +218,7 @@
         "name": "Push out at each foot",
         "note": "The cold arch carrying only itself; how heat changes it is not sourced.",
         "reference": "statics of a catenary, combustion-and-masonry.md §6.6 [S63] (derived)",
-        "value": "12 lb per foot of kiln"
+        "value": "13 lb per foot of kiln"
       },
       {
         "formula": "V = w a sinh(S / 2a): half the arch",
@@ -225,7 +226,7 @@
         "name": "Weight on each foot",
         "note": null,
         "reference": "statics of a catenary, combustion-and-masonry.md §6.6 [S63] (derived)",
-        "value": "92 lb per foot of kiln"
+        "value": "98 lb per foot of kiln"
       }
     ]
   },
@@ -259,7 +260,7 @@
         "count": 2,
         "each": "213,333 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "5.0 psi",
+        "pressure": "2.2 psi",
         "total_cost": 790.0,
         "type": "venturi"
       },
@@ -275,7 +276,7 @@
         "count": 3,
         "each": "142,222 BTU/hr",
         "model": "GACO MR100",
-        "pressure": "5.0 psi",
+        "pressure": "4.3 psi",
         "total_cost": 479.84999999999997,
         "type": "venturi"
       },
@@ -291,7 +292,7 @@
         "count": 3,
         "each": "142,222 BTU/hr",
         "model": "Ransome B4",
-        "pressure": "5.0 psi",
+        "pressure": "2.5 psi",
         "total_cost": 885.0,
         "type": "venturi"
       }
@@ -389,6 +390,27 @@
         "value": "426,667 BTU/hr (125 kW)"
       },
       {
+        "formula": null,
+        "inputs": {
+          "burners limited to": "10 psi"
+        },
+        "name": "Propane pressure available",
+        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
+        "value": "41 psig in the cylinder or tank at 20 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cost": "$319.90",
+          "each": "213,333 BTU/hr"
+        },
+        "name": "Burners",
+        "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
+        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
+        "value": "2 × GACO MR100 at 9.7 psi"
+      },
+      {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
         "inputs": {},
         "name": "Propane at full fire",
@@ -433,27 +455,6 @@
         "note": null,
         "reference": null,
         "value": "95 gal: 20.4 hours at full fire"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "burners limited to": "10 psi"
-        },
-        "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "cost": "$319.90",
-          "each": "213,333 BTU/hr"
-        },
-        "name": "Burners",
-        "note": null,
-        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × GACO MR100 at 9.7 psi"
       },
       {
         "formula": "2.5 in² per ft³ of chamber",

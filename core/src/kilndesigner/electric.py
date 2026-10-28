@@ -31,6 +31,15 @@ CONTINUOUS_FRACTION = 0.8
 CONTINUOUS_SOURCE = (
     "NEC 210.20(A) continuous loads at 125%, as applied by L&L; electric-and-thermal.md §3 [S25]"
 )
+# NEC 240.6(A), fuses and inverse-time breakers, to 600 A (electric-and-thermal.md §3 [S79])
+STANDARD_BREAKERS = (
+    15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 110, 125, 150, 175, 200, 225, 250, 300,
+    350, 400, 450, 500, 600,
+)  # fmt: skip
+BREAKER_MAX_SOURCE = (
+    "NEC 422.11(E), a single non-motor appliance, as reported; standard sizes 240.6(A); "
+    "electric-and-thermal.md §3 [S23, S79]"
+)
 # Krueger Pottery: about 17.5 W/in² for Kanthal A-1 coils in brick grooves, kilns rated about
 # 2300 °F (electric-and-thermal.md §1.6, [S15]).
 KILN_SURFACE_LOAD = Q_(17.5, "W/in**2")
@@ -64,6 +73,17 @@ def wire_length(power: float, voltage: float, diameter: float, rho_t: float) -> 
 def surface_load(power: float, diameter: float, length: float) -> float:
     """W/m² of wire surface."""
     return power / (math.pi * diameter * length)
+
+
+def largest_breaker(amps: float) -> float:
+    """The biggest breaker (A) NEC 422.11(E) allows for a kiln drawing ``amps``, with no rating
+    marked on it: 20 A up to 13.3 A; above that, 150 % of the current, or the next standard size
+    up when 150 % isn't one."""
+    if amps <= 13.3:
+        return 20.0
+    limit = 1.5 * amps
+    # A hair of tolerance, so that 150 % of 16.666… A is the standard 25 A and not 30 A
+    return next((s for s in STANDARD_BREAKERS if s >= limit * (1 - 1e-9)), limit)
 
 
 @dataclass(frozen=True)
@@ -279,6 +299,36 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                 reference=CONTINUOUS_SOURCE,
             )
         )
+    line_current = power / (root3 * voltage)
+    largest = largest_breaker(line_current)
+    working.append(
+        Step(
+            name="Largest breaker allowed",
+            value=show(Q_(largest, "A")),
+            formula=(
+                "20 A up to 13.3 A; above that, 150 % of the kiln's current, or the next "
+                "standard size up"
+            ),
+            inputs={"kiln's current": show(Q_(line_current, "A"), digits=3)},
+            reference=BREAKER_MAX_SOURCE,
+        )
+    )
+    if breaker > largest * (1 + 1e-9):
+        draws = show(Q_(line_current, "A"), digits=3)
+        least = show(Q_(line_current / CONTINUOUS_FRACTION, "A"), digits=3)
+        findings.append(
+            Finding(
+                level="error",
+                message=(
+                    f"A {show(supply.breaker)} breaker is too big for a kiln that draws {draws}: "
+                    "it wouldn't protect the kiln's own wiring, terminal block and cord. NEC "
+                    f"422.11(E) allows at most {show(Q_(largest, 'A'))} here, and the breaker must "
+                    f"still be at least 125 % of the current, {least}. Use a smaller breaker, or "
+                    "install more power."
+                ),
+                reference=BREAKER_MAX_SOURCE,
+            )
+        )
 
     top, _ = top_temperature(kiln)
     wire_temp = top + WIRE_ABOVE_KILN
@@ -288,7 +338,7 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
     working.append(
         Step(
             name="Wire resistivity when hot",
-            value=show(Q_(rho_t, "ohm*mm**2/m"), "ohm*mm**2/m"),
+            value=show(Q_(rho_t, "ohm*m"), "ohm*mm**2/m"),
             formula="ρ_T = ρ20 · Ct",
             inputs={
                 "ρ20": show(wire.resistivity),
@@ -364,7 +414,6 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                 )
             findings.append(_thin_wire(best, everything, electric, kiln.door_face))
 
-    line_current = power / (root3 * voltage)
     volume = _chamber_volume(kiln)
     per_volume = Q_(power / volume, "W/m**3")
     working.append(

@@ -11,7 +11,7 @@ import kilndesigner_cli.main
 from kilndesigner import Kiln, load_design
 from kilndesigner.build import BuildResult, build_design
 from kilndesigner.report import design_report
-from kilndesigner_cli.main import app, comparison_rows, summary
+from kilndesigner_cli.main import COMPARED, app, comparison_rows, summary
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 ELECTRIC = EXAMPLES / "electric-front-loader.yaml"
@@ -28,14 +28,20 @@ def _design(tmp_path: Path, old: str, new: str) -> Path:
     return path
 
 
+def _starts(header: str) -> list[int]:
+    """Where each column of ``compare``'s table starts: where its design's name does."""
+    starts: list[int] = []
+    for name in header.split():
+        starts.append(header.index(name, starts[-1] + 1 if starts else 0))
+    return starts
+
+
 def _table(output: str) -> dict[str, list[str]]:
     """The cells of each row of ``compare``'s table, by the row's label."""
     header, *lines = output.splitlines()
-    width = len(header) - len(header.lstrip())
-    names = header.split()
-    col = header.index(names[1]) - width
-    starts = range(width, width + col * len(names), col)
-    return {line[:width].strip(): [line[i : i + col].strip() for i in starts] for line in lines}
+    starts = _starts(header)
+    bounds = list(zip(starts, [*starts[1:], None], strict=True))
+    return {line[: starts[0]].strip(): [line[a:b].strip() for a, b in bounds] for line in lines}
 
 
 def test_check_accepts_a_valid_design() -> None:
@@ -67,6 +73,42 @@ def test_compare_shows_each_design() -> None:
     assert "pnw-hybrid-crossdraft-budget" in result.output
     assert "Burner input" in result.output
     assert "Materials (priced)" in result.output
+
+
+def test_compare_keeps_long_cells_apart_and_its_rows_in_one_order() -> None:
+    """Columns were as wide as the longest design name, so "$2,750 + unpriced items" ran into the
+    next column; and the rows came in the order of the first design given (the review's bugs)."""
+    one = runner.invoke(app, ["compare", str(ELECTRIC), str(GAS)])
+    other = runner.invoke(app, ["compare", str(GAS), str(ELECTRIC)])
+    assert one.exit_code == other.exit_code == 0
+    for result in (one, other):
+        header, *lines = result.stdout.splitlines()
+        for line in lines:
+            # Every cell ends at least two spaces before the next column starts
+            assert all(line[s - 2 : s] == "  " for s in _starts(header)[1:]), line
+    labels = [list(_table(r.stdout)) for r in (one, other)]
+    assert labels[0] == labels[1]
+    assert labels[0] == [label for label in COMPARED if label in labels[0]]
+    table = _table(one.stdout)
+    assert table["Materials (priced)"][0].endswith("+ unpriced items")
+    assert table["Materials (priced)"][1].startswith("$")
+
+
+def test_a_castable_that_cant_be_worked_out_is_refused_without_a_traceback(tmp_path: Path) -> None:
+    """A CastableError reached the user as a traceback (the review's materials 14)."""
+    text = (EXAMPLES / "diy-castable-test-kiln.yaml").read_text(encoding="utf-8")
+    bad = tmp_path / "bad.yaml"
+    bad.write_text(
+        text.replace("ingredient: kyanite", "ingredient: unobtainium", 1), encoding="utf-8"
+    )
+    for command in (
+        ["compare", str(ELECTRIC), str(bad)],
+        ["build", str(bad), "--no-model", "--no-plans", "--out", str(tmp_path / "out")],
+    ):
+        result = runner.invoke(app, command)
+        assert result.exit_code == 2, result.output
+        assert "no ingredient 'unobtainium'; the library has:" in result.stderr
+        assert result.exception is None or isinstance(result.exception, SystemExit)
 
 
 def test_schema_is_json() -> None:

@@ -178,6 +178,13 @@ describe("BuildPanel", () => {
     expect(screen.queryByRole("tab", { name: "Castables" })).toBeNull();
   });
 
+  it("says a finished build without a report has none, instead of loading it forever", async () => {
+    server.routes.set("GET /api/builds/k", () => json(build({ files: ["kiln.glb"] })));
+    show(<BuildPanel buildKey="k" />);
+    fireEvent.click(await screen.findByRole("tab", { name: "Materials" }));
+    expect(screen.getByRole("tabpanel", { name: "Materials" }).textContent).toBe("This build has no report.");
+  });
+
   it("has a tab for the castables when the design mixes its own", async () => {
     const mixed = {
       ...report,

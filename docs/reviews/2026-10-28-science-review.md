@@ -30,6 +30,10 @@ The rest rest on one reviewer's evidence, which is given with each finding.
 
 ## Fix these first
 
+> **Status, end of 28 October:** fixes 1, 3 and 5 are done (fix 1 with the owner's rules for
+> domes and flat roofs), and most of the structure, bug and coverage items. Fixes 2 and 4 wait on
+> the missing research files. See `docs/planning/10-28-26.md`, "Status at the end of 28 October".
+
 1. ✔ **A door or car in a wall the roof stands on** (critical, structure 1). A sprung arch springs
    from the left and right walls, and a sail dome bears on all four. The engine lets the door or
    car go in any of them, and nothing carries the roof across the opening.

@@ -179,10 +179,15 @@ export function useLayout(build: Build | null | undefined) {
   });
 }
 
+/** Whether a build has a report to load: one that finished and wrote it. */
+export function hasReport(build: Build): boolean {
+  return build.status === "done" && build.files.includes("report.json");
+}
+
 export function useReport(build: Build) {
   return useQuery({
     queryKey: ["reports", build.key],
-    enabled: build.status === "done" && build.files.includes("report.json"),
+    enabled: hasReport(build),
     staleTime: Infinity, // a build never changes
     queryFn: async () => {
       const { data, error, response } = await api.GET("/api/builds/{key}/report", {

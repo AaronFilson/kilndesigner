@@ -16,7 +16,7 @@ roof:
   rise: 3.75 in
 loading:
   type: car
-  face: right
+  face: front # an end wall: the arch springs from the sides
 lining:
   walls:
     - material: ifb-jm26
@@ -49,7 +49,7 @@ heat:
   gas:
     burners:
       type: venturi
-      wall: front
+      wall: right # not on the car, which rolls out the front
     supply:
       type: cylinders
       count: 4

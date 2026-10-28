@@ -117,7 +117,9 @@ def test_a_domes_rise_must_keep_it_inside_the_walls() -> None:
     §6.7): rising as far as half the 30 × 36 in chamber's diagonal, √(30² + 36²)/2 = 23.4 in, it
     would bulge out past the walls."""
     text = (EXAMPLES / "dome-castable-kiln.yaml").read_text(encoding="utf-8")
-    rise = "rise: 8 in # at the centre"
+    rise = (
+        "rise: 9 in # at the centre: the least that carries the dome over the front door is 8.9 in"
+    )
     assert rise in text
     assert parse_design(text).roof.type == "dome"
     refusal = r"less than half the chamber's diagonal, 23\.4 in"

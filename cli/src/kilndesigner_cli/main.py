@@ -12,6 +12,7 @@ from pydantic import ValidationError
 
 from kilndesigner import Kiln, load_design
 from kilndesigner.build import DRAWINGS, build_design
+from kilndesigner.castable import CastableError
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
 from kilndesigner.units import UnitError
@@ -40,7 +41,7 @@ def _load(path: Path) -> Kiln:
 def _report(kiln: Kiln, path: Path) -> Report:
     try:
         return design_report(kiln)
-    except UnknownEntryError as e:
+    except (UnknownEntryError, CastableError) as e:
         typer.echo(f"{path}: {e}", err=True)
         raise typer.Exit(code=2) from e
 
@@ -81,6 +82,20 @@ def summary(report: Report) -> str:
     return "\n".join(lines)
 
 
+COMPARED = (
+    "Chamber volume",
+    "Heat loss at top",
+    "Hottest outside face",
+    "Installed power",
+    "Burner input",
+    "Propane supply keeps up",
+    "Switch to burners at",
+    "Materials (priced)",
+    "Errors / warnings",
+)
+"""The rows of ``compare``'s table, in the order they're shown."""
+
+
 def comparison_rows(report: Report) -> dict[str, str]:
     """The headline numbers of a design, for comparing designs side by side."""
     hottest = max(
@@ -118,13 +133,18 @@ def compare(
 ) -> None:
     """Compare designs side by side: size, heat loss, fuel, cost and problems."""
     columns = [(d.stem, comparison_rows(_report(_load(d), d))) for d in designs]
-    labels = list(dict.fromkeys(label for _, rows in columns for label in rows))
+    # The same rows in the same order whichever design comes first, and each column as wide as
+    # its widest cell, so long cells don't run into the next
+    labels = [label for label in COMPARED if any(label in rows for _, rows in columns)]
     width = max(len(label) for label in labels) + 2
-    col = max(max(len(name) for name, _ in columns), 20) + 2
-    typer.echo(" " * width + "".join(name.ljust(col) for name, _ in columns))
+    widths = [
+        max(len(name), *(len(rows.get(label, "—")) for label in labels)) + 2
+        for name, rows in columns
+    ]
+    typer.echo(" " * width + "".join(n.ljust(w) for (n, _), w in zip(columns, widths, strict=True)))
     for label in labels:
-        cells = "".join(rows.get(label, "—").ljust(col) for _, rows in columns)
-        typer.echo(label.ljust(width) + cells)
+        cells = (r.get(label, "—").ljust(w) for (_, r), w in zip(columns, widths, strict=True))
+        typer.echo(label.ljust(width) + "".join(cells))
 
 
 @app.command()
@@ -138,7 +158,7 @@ def build(
     kiln = _load(design)
     try:
         result = build_design(kiln, out, model=model, plans=plans)
-    except UnknownEntryError as e:
+    except (UnknownEntryError, CastableError) as e:
         typer.echo(f"{design}: {e}", err=True)
         raise typer.Exit(code=2) from e
     for note in result.notes:

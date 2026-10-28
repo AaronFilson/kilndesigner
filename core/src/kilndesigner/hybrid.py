@@ -27,6 +27,7 @@ from kilndesigner.combustion import (
     SOURCE as COMBUSTION_SOURCE,
 )
 from kilndesigner.heatloss import heat_loss, top_temperature
+from kilndesigner.library import alloy
 from kilndesigner.model import Kiln
 from kilndesigner.numeric import find_root
 from kilndesigner.units import Q_, Quantity, si
@@ -40,7 +41,6 @@ REDUCTION_SOURCE = (
 )
 OXIDATION_O2 = 0.03  # oxidation means more than 3% excess oxygen (Frenzel) [S69]
 REDUCTION_AIR = 0.9  # a moderate reduction, λ = 0.9 (combustion-and-masonry.md §8, derived)
-ELEMENT_REDUCTION_LIMIT = Q_(1050, "degC")  # Kanthal A-1/APM in endothermic gas [S9]
 
 
 class CostPoint(BaseModel):
@@ -179,12 +179,11 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
                 value=cross_text,
             )
         )
-    elif first.propane_per_kwh > e_price:
+    else:
+        # No crossover: one heat is cheaper from the first temperature to the top
+        cheaper = "electricity" if first.propane_per_kwh > e_price else "propane"
         working.append(
-            Step(
-                name="Cheaper heat",
-                value="electricity, at every temperature in the firing",
-            )
+            Step(name="Cheaper heat", value=f"{cheaper}, at every temperature in the firing")
         )
 
     # The switch-over.
@@ -220,15 +219,20 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
             reference=REDUCTION_SOURCE if gas.reduction else None,
         )
     )
-    if electric.off_above is not None and si(electric.off_above, "K") > si(REDUCTION_START, "K"):
+    on_past = electric.off_above is not None and si(electric.off_above, "K") > si(
+        REDUCTION_START, "K"
+    )
+    if gas.reduction and on_past:
+        assert electric.off_above is not None
+        wire = alloy(electric.alloy)
         findings.append(
             Finding(
                 level="warning",
                 message=(
                     f"The elements stay on to {show(electric.off_above, unit)}, past the start of "
                     "reduction. Reduction attacks the alumina layer that protects the wire; "
-                    f"Kanthal allows A-1 and APM only {show(ELEMENT_REDUCTION_LIMIT, unit)} in "
-                    "CO- and H₂-rich gas."
+                    f"Kanthal allows {wire.name} only {show(wire.max_reducing_temperature, unit)} "
+                    "in CO- and H₂-rich gas."
                 ),
                 reference="electric-and-thermal.md §1.4, §1.5 [S9]",
             )
@@ -241,6 +245,18 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
                     f"At ${e_price:.2f}/kWh and ${p_price:.2f}/gal, electricity is the cheaper "
                     "heat at every temperature, so run the elements as long as they can keep the "
                     "schedule, and add the burners alongside them rather than instead of them."
+                ),
+                reference=COMBUSTION_SOURCE,
+            )
+        )
+    elif crossover is None:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"At ${e_price:.2f}/kWh and ${p_price:.2f}/gal, propane is the cheaper heat at "
+                    "every temperature, so the elements save nothing on fuel at any stage of the "
+                    "firing."
                 ),
                 reference=COMBUSTION_SOURCE,
             )

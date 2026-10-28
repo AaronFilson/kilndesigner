@@ -135,7 +135,9 @@ function Mix({ c }: { c: CastableReport }) {
       <Findings findings={c.findings} />
       <Notes findings={c.findings} />
       <details className="working">
-        <summary>Working ({m.working.length} steps)</summary>
+        <summary>
+          Working ({m.working.length} step{m.working.length === 1 ? "" : "s"})
+        </summary>
         <ol>
           {m.working.map((s) => (
             <li key={s.name}>

@@ -101,7 +101,9 @@ def test_the_electric_kiln_has_a_case_a_hinged_door_and_peepholes() -> None:
 def test_a_dense_hinged_door_asks_for_its_hardware_to_be_checked() -> None:
     """Pitelka's hinged door is one layer of IFB [S13]: a heavier door is a warning, not a rule."""
     text = (EXAMPLES / "gas-crossdraft.yaml").read_text(encoding="utf-8")
-    hinged = text.replace("face: right", "face: right\n  door: hinged")
+    door = "face: front # an end wall: the arch springs from the sides"
+    assert door in text
+    hinged = text.replace(door, "face: front\n  door: hinged")
 
     def door_findings(source: str) -> list[Finding]:
         kiln = parse_design(source)
@@ -237,7 +239,7 @@ def test_spy_holes_can_be_counted_sized_and_placed() -> None:
     hw, _, _ = _gas(spy_holes={"count": 5, "port": {"diameter": "2 in"}})
     spots = _spots(hw, "spy")
     assert len(spots) == 5
-    assert {s[0] for s in spots} == {"right"}  # the door
+    assert {s[0] for s in spots} == {"front"}  # the door
     assert [s[3:] for s in spots] == [(2, 2)] * 5
     assert [s[2] for s in spots] == sorted(s[2] for s in spots)  # from the bottom up
     assert any("5 spy holes, 2 in round" in f.message for f in hw.findings)
@@ -443,7 +445,8 @@ def test_a_car_rolls_out_of_its_end_on_rails_a_kiln_long() -> None:
     side_wall = "a car through a side wall is drawn with its rails under the kiln only"
     assert not any(side_wall in f.message for f in hw.findings)
 
-    hw, _, _ = _gas(loading={"type": "car", "face": "right"})
+    # A car can't be a sprung arch's springing wall, but it can be a flat roof's side
+    hw, _, _ = _gas(loading={"type": "car", "face": "right"}, roof={"type": "flat"})
     rails = next(p for p in hw.pieces if p.name == "car/rails")
     for lo, hi in rails.boxes:
         assert (lo[1], hi[1]) == pytest.approx((-32 * MM, 32 * MM))
@@ -451,10 +454,21 @@ def test_a_car_rolls_out_of_its_end_on_rails_a_kiln_long() -> None:
 
 
 def test_an_electric_kilns_door_in_a_side_wall_takes_that_side_of_the_case() -> None:
-    hw, _, _ = _electric(loading={"face": "left"}, heat__electric__walls=["right", "back"])
+    hw, _, report = _electric(loading={"face": "left"}, heat__electric__walls=["right", "back"])
     names = {p.name for p in hw.pieces}
     assert "case/left" not in names
-    assert {"case/right", "case/back", "case/top", "case/bottom", "door/case"} <= names
+    # The front, no longer the door's, gets its plate (the review's bugs: it had none)
+    assert {
+        "case/right",
+        "case/back",
+        "case/front",
+        "case/top",
+        "case/bottom",
+        "door/case",
+    } <= names
+    [(lo, hi)] = next(p for p in hw.pieces if p.name == "case/front").boxes
+    assert hi[1] < lo[1] + 0.2 * MM  # ⅛ in thick
+    assert report.frame.members[0].part == "right, back and front plates"
     # The door's ⅛ in plate is on the outside of the left wall, 11¼ + 5½ in from the middle
     [(lo, hi)] = next(p for p in hw.pieces if p.name == "door/case").boxes
     assert (lo[0], hi[0]) == pytest.approx((-(16.75 + 0.125) * MM, -16.75 * MM))

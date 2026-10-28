@@ -12,7 +12,7 @@ chamber:
   height: 36 in # to the springline; the dome rises above it
 roof:
   type: dome
-  rise: 8 in # at the centre
+  rise: 9 in # at the centre: the least that carries the dome over the front door is 8.9 in
 loading:
   type: door
   face: front

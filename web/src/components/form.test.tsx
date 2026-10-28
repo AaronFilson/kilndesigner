@@ -138,6 +138,14 @@ describe("DesignForm", () => {
     expect(last()?.chamber.height).toBe("24 mm");
   });
 
+  it("shows a size in a unit it doesn't list as written, and keeps that unit when it's edited", () => {
+    const last = form({ ...electric, chamber: { ...electric.chamber, width: "1 m" } });
+    expect(field("Width").value).toBe("1");
+    expect((screen.getByLabelText("Width, unit") as HTMLSelectElement).value).toBe("m");
+    fireEvent.change(screen.getByLabelText("Width"), { target: { value: "1.2" } });
+    expect(last()?.chamber.width).toBe("1.2 m");
+  });
+
   it("adds, moves and removes lining layers", () => {
     const last = form(electric);
     fireEvent.click(screen.getByRole("button", { name: "Add a layer to the walls" }));

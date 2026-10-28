@@ -124,26 +124,26 @@
       {
         "buy": "40 ft",
         "cost": null,
-        "item": "L3×3×3/16",
-        "needed": "35.8 ft (corner posts, buttresses behind the skewbacks)",
+        "item": "L4×4×5/16",
+        "needed": "36.1 ft (corner posts, buttresses behind the skewbacks)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
       },
       {
-        "buy": "64 ft",
+        "buy": "38 ft",
         "cost": null,
         "item": "¼ × 2 in flat bar",
-        "needed": "57.3 ft (top cross-members, front and back, bottom cross-members, all four sides)",
+        "needed": "34.3 ft (top cross-members, front and back, bottom cross-members, front and back, bottom cross-members, sides)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
       },
       {
-        "buy": "11 ft",
+        "buy": "12 ft",
         "cost": null,
         "item": "1/2-13 threaded rod",
-        "needed": "10.0 ft (tie rods)",
+        "needed": "10.3 ft (tie rods)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
@@ -967,11 +967,6 @@
   "engine_version": "0.1.0",
   "findings": [
     {
-      "level": "error",
-      "message": "Hot, this arch's thrust line would leave the brick: it is too thick for its rise (T/S 21.4 %, 1.29 in/ft). HarbisonWalker marks the stress excessive past about 5.34 times. Raise the arch.",
-      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
-    },
-    {
       "level": "warning",
       "message": "The propane supply meets the 456,944 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
       "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
@@ -1018,7 +1013,12 @@
     },
     {
       "level": "info",
-      "message": "The right wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+      "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+    },
+    {
+      "level": "info",
+      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
       "reference": "kiln-hardware.md §6.1 [S4]"
     },
     {
@@ -1033,7 +1033,7 @@
     },
     {
       "level": "info",
-      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor, midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
       "reference": "kiln-hardware.md §2 [S4] [S13]"
     },
     {
@@ -1083,8 +1083,8 @@
     },
     {
       "level": "info",
-      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
-      "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 66° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+      "reference": "kiln-hardware.md §5.2 [S20]"
     },
     {
       "level": "info",
@@ -1098,14 +1098,14 @@
     }
   ],
   "frame": {
-    "angle": "L3×3×3/16",
-    "angle_leg_in": 3.0,
-    "angle_t_in": 0.1875,
+    "angle": "L4×4×5/16",
+    "angle_leg_in": 4.0,
+    "angle_t_in": 0.3125,
     "findings": [
       {
-        "level": "error",
-        "message": "Hot, this arch's thrust line would leave the brick: it is too thick for its rise (T/S 21.4 %, 1.29 in/ft). HarbisonWalker marks the stress excessive past about 5.34 times. Raise the arch.",
-        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+        "level": "info",
+        "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+        "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
       }
     ],
     "kind": "arch frame",
@@ -1115,32 +1115,39 @@
         "length_in": 63.297560975609755,
         "part": "corner posts",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
-        "steel": "L3×3×3/16"
+        "steel": "L4×4×5/16"
       },
       {
         "count": 2,
-        "length_in": 88.0,
+        "length_in": 90.0,
         "part": "buttresses behind the skewbacks",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
-        "steel": "L3×3×3/16"
+        "steel": "L4×4×5/16"
       },
       {
         "count": 2,
-        "length_in": 56.0,
+        "length_in": 58.0,
         "part": "top cross-members, front and back",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "¼ × 2 in flat bar"
       },
       {
-        "count": 4,
-        "length_in": 144.0,
-        "part": "bottom cross-members, all four sides",
+        "count": 2,
+        "length_in": 58.0,
+        "part": "bottom cross-members, front and back",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "¼ × 2 in flat bar"
       },
       {
         "count": 2,
-        "length_in": 60.0,
+        "length_in": 90.0,
+        "part": "bottom cross-members, sides",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 62.0,
         "part": "tie rods",
         "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
         "steel": "1/2-13 threaded rod"
@@ -1148,7 +1155,7 @@
     ],
     "rod": "1/2-13",
     "rod_d_in": 0.5,
-    "thrust": "64 lb per foot of arch",
+    "thrust": "177 lb per foot of arch",
     "working": [
       {
         "formula": null,
@@ -1173,6 +1180,28 @@
         "value": "55.3 lb/ft"
       },
       {
+        "formula": null,
+        "inputs": {
+          "layers from the inside": "1"
+        },
+        "name": "Arch ring",
+        "note": "The layers laid over the ring are its load, not part of it.",
+        "reference": null,
+        "value": "2 in, T/S 7.1 %"
+      },
+      {
+        "formula": "T ≤ (h − S/48) ÷ cos ½θ",
+        "inputs": {
+          "S": "28 in",
+          "h": "3.00 in",
+          "½θ": "24.2°"
+        },
+        "name": "Thickest ring for the rise",
+        "note": null,
+        "reference": "HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "2.65 in"
+      },
+      {
         "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
         "inputs": {
           "H / W": "1.149",
@@ -1184,27 +1213,38 @@
         "value": "63.5 lb per foot of arch"
       },
       {
+        "formula": "hinges at the intrados at the crown and the extrados at the skewbacks: Hmax = M_P / (y_crown − y_P); factor = Hmax / H with both at mid-thickness",
+        "inputs": {
+          "T/S": "7.1 %",
+          "factor": "2.78"
+        },
+        "name": "Thrust of the heated arch, free to rise",
+        "note": null,
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+        "value": "176.5 lb per foot of arch"
+      },
+      {
         "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
         "inputs": {
           "L": "82.0 in",
-          "M": "4,451 lb·in",
-          "w": "5.30 lb/in"
+          "M": "12,365 lb·in",
+          "w": "14.71 lb/in"
         },
         "name": "Buttress angle, bending",
-        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule.",
-        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx, kiln-hardware.md §4.7.1 [S28]",
-        "value": "needs Sx ≥ 0.371 in³; L3×3×3/16 has 0.433 in³"
+        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule. Sx is about a geometric axis, bending parallel to a leg. An angle free to twist bends about its principal axis instead, where its Sz is 0.930 in³: 13,296 psi. Which applies depends on how the brickwork holds the angle, which no source here says.",
+        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx and Sz, kiln-hardware.md §4.7.1 [S28]",
+        "value": "needs Sx ≥ 1.030 in³; L4×4×5/16 has 1.270 in³"
       },
       {
         "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
         "inputs": {
-          "load per rod": "217 lb",
+          "load per rod": "603 lb",
           "stress area": "0.1419 in²"
         },
         "name": "Tie rods, one at the front and one at the back",
         "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
         "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
-        "value": "1/2-13: 1,530 psi"
+        "value": "1/2-13: 4,251 psi"
       }
     ]
   },
@@ -1230,7 +1270,7 @@
         "count": 2,
         "each": "228,472 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "5.0 psi",
+        "pressure": "2.5 psi",
         "total_cost": 790.0,
         "type": "venturi"
       },
@@ -1262,7 +1302,7 @@
         "count": 3,
         "each": "152,315 BTU/hr",
         "model": "Ransome B4",
-        "pressure": "5.0 psi",
+        "pressure": "2.9 psi",
         "total_cost": 885.0,
         "type": "venturi"
       },
@@ -1270,7 +1310,7 @@
         "count": 3,
         "each": "152,315 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "5.0 psi",
+        "pressure": "1.1 psi",
         "total_cost": 1185.0,
         "type": "venturi"
       }
@@ -1368,6 +1408,27 @@
         "value": "456,944 BTU/hr (133.9 kW)"
       },
       {
+        "formula": null,
+        "inputs": {
+          "burners limited to": "10 psi"
+        },
+        "name": "Propane pressure available",
+        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
+        "value": "41 psig in the cylinder or tank at 20 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cost": "$395.00",
+          "each": "456,944 BTU/hr"
+        },
+        "name": "Burners",
+        "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
+        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
+        "value": "1 × Ransome B5 at 9.8 psi"
+      },
+      {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
         "inputs": {},
         "name": "Propane at full fire",
@@ -1412,27 +1473,6 @@
         "note": null,
         "reference": null,
         "value": "95 gal: 19.1 hours at full fire"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "burners limited to": "10 psi"
-        },
-        "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
-      },
-      {
-        "formula": null,
-        "inputs": {
-          "cost": "$395.00",
-          "each": "456,944 BTU/hr"
-        },
-        "name": "Burners",
-        "note": null,
-        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "1 × Ransome B5 at 9.8 psi"
       },
       {
         "formula": "2.5 in² per ft³ of chamber",
@@ -1775,8 +1815,8 @@
     "findings": [
       {
         "level": "info",
-        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. A 60° skewback is the usual choice. The steel that takes the arch's thrust is in the frame.",
-        "reference": "combustion-and-masonry.md §6.5 [S61, S62]"
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 66° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+        "reference": "kiln-hardware.md §5.2 [S20]"
       }
     ],
     "quantities": [

@@ -43,8 +43,8 @@ jobs:
         run: uv run pyright
       - name: The engine never imports a surface (ADR 0002)
         run: uv run lint-imports
-      - name: Tests
-        run: uv run pytest
+      - name: Tests, with branch coverage (fails under 98%)
+        run: uv run pytest --cov
 
   web:
     runs-on: ubuntu-24.04
@@ -58,8 +58,8 @@ jobs:
         run: npm ci
       - name: Types (the app, the client and the browser tests)
         run: npm run check
-      - name: Unit tests
-        run: npm test
+      - name: Unit tests, with line coverage (fails under 98%)
+        run: npm run coverage --workspace @kilndesigner/web
 
   compose:
     # The self-hosted app as a user runs it: a design saved, built and fetched through the API,

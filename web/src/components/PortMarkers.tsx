@@ -198,6 +198,19 @@ export function fit(
   return { across: a, up: Math.min(top, Math.max(marker.height / 2, snap(up))) };
 }
 
+type Point = { x: number; y: number };
+
+/** A press and a release close enough to be a click: further apart, it's a drag that turns the
+ * model. */
+export function isClick(from: Point | null, to: Point): boolean {
+  return from !== null && Math.hypot(to.x - from.x, to.y - from.y) <= 4;
+}
+
+/** A point on the canvas (client pixels) in normalised device coordinates, -1 to 1, y up. */
+export function toDevice(at: Point, box: Pick<DOMRect, "left" | "top" | "width" | "height">): Vector2 {
+  return new Vector2(((at.x - box.left) / box.width) * 2 - 1, -((at.y - box.top) / box.height) * 2 + 1);
+}
+
 function MarkerMesh({
   layout,
   marker,
@@ -312,20 +325,16 @@ export function PortMarkers({
   useEffect(() => {
     if (!adding || !spy) return;
     const canvas = gl.domElement;
-    let from: { x: number; y: number } | null = null;
+    let from: Point | null = null;
     const press = (e: PointerEvent) => {
       from = { x: e.clientX, y: e.clientY };
     };
     const release = (e: PointerEvent) => {
-      if (!from || !group.current || Math.hypot(e.clientX - from.x, e.clientY - from.y) > 4) return;
+      const to = { x: e.clientX, y: e.clientY };
+      if (!group.current || !isClick(from, to)) return;
       from = null;
-      const box = canvas.getBoundingClientRect();
-      const pointer = new Vector2(
-        ((e.clientX - box.left) / box.width) * 2 - 1,
-        -((e.clientY - box.top) / box.height) * 2 + 1,
-      );
       const raycaster = new Raycaster();
-      raycaster.setFromCamera(pointer, camera);
+      raycaster.setFromCamera(toDevice(to, canvas.getBoundingClientRect()), camera);
       if (raycaster.intersectObject(group.current, true).length > 0) return;
       const hit = wallHit(layout, inModel(group.current, raycaster.ray), spy);
       if (hit) add.current(hit);

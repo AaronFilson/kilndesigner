@@ -389,6 +389,7 @@ def _case(kiln: Kiln, f: Faces, hw: Hardware) -> None:
         "left": ((f.x0 - t, f.y0, f.bottom), (f.x0, f.y1, top)),
         "right": ((f.x1, f.y0, f.bottom), (f.x1 + t, f.y1, top)),
         "back": ((f.x0 - t, f.y1, f.bottom), (f.x1 + t, f.y1 + t, top)),
+        "front": ((f.x0 - t, f.y0 - t, f.bottom), (f.x1 + t, f.y0, top)),
         "top": ((f.x0 - t, f.y0, top), (f.x1 + t, f.y1 + t, top + t)),
         "bottom": ((f.x0 - t, f.y0, f.bottom - t), (f.x1 + t, f.y1 + t, f.bottom)),
     }
@@ -942,7 +943,11 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
         # [S4], or a foot below a flat roof [S13]; all a few inches off centre, the top one to
         # the other side, so they miss the shelf posts.
         top = h - COURSE if isinstance(kiln.roof, SprungArch | Dome) else h - 12
-        bottom = min(8.0, top / 3)
+        # Burners firing through the door: the bottom hole a course clear above their ports
+        above = [
+            p.up + p.height / 2 + COURSE for p in hw.ports if p.kind == "burner" and p.wall == face
+        ]
+        bottom = max([min(8.0, top / 3), *above])
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]
@@ -981,9 +986,9 @@ def _spy_hole_note(
             level="info",
             message=(
                 "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the "
-                "floor, midway and near the top, a few inches off centre so they miss the shelf "
-                "posts. "
-                "Cone packs in the top and bottom, draw rings in the middle."
+                "floor (a course above any burner ports there), midway and near the top, a few "
+                "inches off centre so they miss the shelf posts. Cone packs in the top and bottom, "
+                "draw rings in the middle."
             ),
             reference="kiln-hardware.md §2 [S4] [S13]",
         )

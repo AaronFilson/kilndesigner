@@ -250,13 +250,15 @@ def test_a_60_degree_arch_is_turned_with_no_1_arches() -> None:
 
     R = (14² + 3.75²) / (2 × 3.75) = 28.008 in and θ = asin(14 / R) = 0.5234 rad (30°). The outer
     arc is 2θ × 4½ = 4.711 in longer than the inner, and a No. 1 arch, 2½ in tapering to 2⅛,
-    makes up ⅜ in of it: 12.56, so 13 a ring. The inner arc, 2θR = 29.32 in, less 12.56 × 2⅛ in,
-    leaves 1.05 straights: 2. Rings are a brick's 9 in long: 54 / 9 = 6.
+    makes up ⅜ in of it: 12.56, so 13 a ring. Every brick is 2½ in across the outer arc,
+    2θ(R + 4½) = 34.03 in: 13.6 bricks, so 14, and the 14th is a straight. (Rounded separately,
+    the straights came out 2: one more than closes the ring, the review's bug.) Rings are a
+    brick's 9 in long: 54 / 9 = 6.
     """
     ring = arch_ring(arch_layer(28, 3.75, 4.5))
-    assert ring == ArchRing("No. 1 arch", shaped=13 * 6, straights=2 * 6, rings=6)
+    assert ring == ArchRing("No. 1 arch", shaped=13 * 6, straights=1 * 6, rings=6)
     assert ring is not None
-    assert ring.describe() == "6 rings, each of 13 No. 1 arch bricks and 2 straights"
+    assert ring.describe() == "6 rings, each of 13 No. 1 arch bricks and 1 straight"
 
 
 def test_a_tighter_arch_takes_a_steeper_taper() -> None:
@@ -272,10 +274,10 @@ def test_a_tighter_arch_takes_a_steeper_taper() -> None:
 def test_a_9_inch_arch_is_turned_with_wedges_in_4_inch_rings() -> None:
     """The 60° arch above, 9 in deep: the outer arc is 2θ × 9 = 9.42 in longer. No. 1-X wedges
     (¼ in each) would take 37.7, 85 in of inside face against the 29.32 in arc. No. 1 wedges
-    (⅝ in): 15.07, 28.26 in of it, and 0.42 straights: 16 and 1. Wedges lie 4½ in along the
-    kiln: 54 / 4½ = 12 rings."""
+    (⅝ in): 15.07, so 16; the outer arc, 38.74 in, takes 15.5 bricks, so the 16 wedges close it
+    with no straight. Wedges lie 4½ in along the kiln: 54 / 4½ = 12 rings."""
     ring = arch_ring(arch_layer(28, 3.75, 9))
-    assert ring == ArchRing("No. 1 wedge", shaped=16 * 12, straights=1 * 12, rings=12)
+    assert ring == ArchRing("No. 1 wedge", shaped=16 * 12, straights=0, rings=12)
 
 
 @pytest.mark.parametrize(
@@ -316,7 +318,7 @@ def gas_crossdraft_with_a_brick_arch(thickness: str) -> Kiln:
 
 
 def test_a_brick_arch_is_bought_in_arch_bricks() -> None:
-    """The 60° arch's rings: 13 No. 1 arches and 2 straights each (above). 64 in / 9 in is 7.1,
+    """The 60° arch's rings: 13 No. 1 arches and 1 straight each (above). 64 in / 9 in is 7.1,
     so 8 rings: 104 arch bricks, and 115 with 10 % for breakage."""
     result = plan_masonry(gas_crossdraft_with_a_brick_arch("4.5 in")).result
     jm26 = "Morgan Thermal Ceramics JM 26 insulating firebrick"
@@ -325,7 +327,7 @@ def test_a_brick_arch_is_bought_in_arch_bricks() -> None:
     assert shaped.detail == "104 in the arch plus 10% for breakage"
     arches = next(f for f in result.findings if f.message.startswith("Arch bricks"))
     assert (
-        "Roof, layer 1 from the inside: 8 rings, each of 13 No. 1 arch bricks and 2 straights;"
+        "Roof, layer 1 from the inside: 8 rings, each of 13 No. 1 arch bricks and 1 straight;"
         in arches.message
     )
     assert arches.reference == (
@@ -346,3 +348,20 @@ def test_a_brick_arch_no_shape_fits_is_counted_by_volume() -> None:
     count = math.ceil(roof.volume / BRICK_VOLUME)
     arches = next(f.message for f in result.findings if f.message.startswith("Arch bricks"))
     assert f"Roof, layer 1 from the inside: about {count} bricks by volume;" in arches
+
+
+@pytest.mark.parametrize(
+    ("span", "straights"),
+    [(45, 5), (36, 1)],
+)
+def test_the_arch_counts_match_pitelkas_published_arches(span: float, straights: int) -> None:
+    """Pitelka's 4½ in arches at 2.3 in/ft: 45 in, "18 rows of #1 arch and 5 rows of
+    straights"; 36 in, "18 rows of #1 arch plus one straight in theory" (kiln-hardware.md §4.4
+    [S4] [S11])."""
+    ring = arch_ring(arch_layer(span, 2.302 * span / 12, 4.5))
+    assert ring is not None
+    assert (ring.shape, ring.shaped // ring.rings, ring.straights // ring.rings) == (
+        "No. 1 arch",
+        18,
+        straights,
+    )

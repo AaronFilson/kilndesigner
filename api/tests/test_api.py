@@ -228,6 +228,33 @@ async def test_a_lining_material_the_library_lacks_is_refused_with_where_it_is(
     assert (await client.get("/api/designs")).json() == []
 
 
+async def test_an_alloy_or_burner_the_library_lacks_is_refused_when_saved(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    """They were saved, and failed only at build (the review's bugs)."""
+    source = example.replace("alloy: kanthal-a1", "alloy: unobtainium")
+    response = await client.post("/api/designs", json={"source": source})
+    assert response.status_code == 422
+    assert response.json()["detail"] == [
+        {"loc": ["heat", "electric", "alloy"], "msg": "no alloy called 'unobtainium'"}
+    ]
+    gas = (EXAMPLES / "gas-crossdraft.yaml").read_text(encoding="utf-8")
+    named = gas.replace("wall: front\n    supply", "wall: front\n      model: MR1000\n    supply")
+    response = await client.post("/api/designs", json={"source": named})
+    assert response.status_code == 422
+    [problem] = response.json()["detail"]
+    assert problem["loc"] == ["heat", "gas", "burners", "model"]
+    assert problem["msg"].startswith("no venturi burner called 'MR1000'; the library has: ")
+    # Named the way the engine matches them, by the end of the name
+    ok = gas.replace("wall: front\n    supply", "wall: front\n      model: MR100\n    supply")
+    assert (await client.post("/api/designs/check", json={"source": ok})).status_code == 200
+    power = gas.replace("type: venturi", "type: power").replace(
+        "wall: front\n    supply", "wall: front\n      model: MB300\n    supply"
+    )
+    assert (await client.post("/api/designs/check", json={"source": power})).status_code == 200
+    assert (await client.get("/api/designs")).json() == []
+
+
 async def test_a_lining_can_be_cast_from_the_designs_own_mixes(client: httpx.AsyncClient) -> None:
     source = (EXAMPLES / "diy-castable-test-kiln.yaml").read_text(encoding="utf-8")
     response = await client.post("/api/designs", json={"source": source})

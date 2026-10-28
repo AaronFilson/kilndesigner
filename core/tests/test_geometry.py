@@ -299,7 +299,8 @@ def test_a_build_writes_the_model_what_each_part_is_and_the_ports(
 def test_ports_cut_the_lining_and_chimney_but_not_the_burners() -> None:
     """The gas cross-draft under a flat roof, so every lining part is a box: each solid is its
     part less what the openings take out of it. Its Ransome B4 ports are round, 4¾ in, and lie
-    wholly inside the front wall; the flue, spy holes, chimney inlet and damper are rectangles."""
+    wholly inside the front wall, the door; the flue, spy holes, chimney inlet and damper are
+    rectangles."""
     kiln = _changed("gas-crossdraft.yaml", roof={"type": "flat"})
     report = design_report(kiln)
     hw = build_hardware(kiln, report.frame, report.gas)
@@ -321,8 +322,8 @@ def test_ports_cut_the_lining_and_chimney_but_not_the_burners() -> None:
 
     for p in parts:
         assert solids[p.name].volume == pytest.approx(p.volume - removed(p.lo, p.hi), rel=1e-6)
-    # The ports went through the front (burners), back (flue) and door (spy holes)
-    for name in ("front/1-ifb-jm26", "back/1-ifb-jm26", "door/1-ifb-jm26"):
+    # The ports went through the door (the burners and the spy holes) and the back (the flue)
+    for name in ("door/1-ifb-jm26", "back/1-ifb-jm26"):
         part = next(p for p in parts if p.name == name)
         assert removed(part.lo, part.hi) > 0, name
 

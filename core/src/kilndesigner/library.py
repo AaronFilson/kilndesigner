@@ -88,6 +88,11 @@ class Alloy(_Entry):
     def max_air_temperature(self) -> Quantity:
         return parse_quantity(self.max_temperature_air, "[temperature]")
 
+    @property
+    def max_reducing_temperature(self) -> Quantity:
+        """The hottest Kanthal allows the wire in CO- and H₂-rich (endothermic) gas."""
+        return parse_quantity(self.max_temperature_endothermic_gas, "[temperature]")
+
 
 class UnknownEntryError(KeyError):
     def __str__(self) -> str:

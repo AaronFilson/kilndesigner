@@ -78,15 +78,85 @@ def test_pnw_burner_input(pnw) -> None:  # type: ignore[no-untyped-def]
 
 
 def test_venturi_pressure_follows_the_ratings() -> None:
-    spec = gas_data()["venturi_burners"]["models"]["GACO MR100"]
-    assert venturi_pressure(216_300, spec["psi"], spec["btu_hr"]) == pytest.approx(10.0)
+    models = gas_data()["venturi_burners"]["models"]
+    spec = models["GACO MR100"]
+    assert venturi_pressure(216_300, spec) == pytest.approx(10.0)
     # between table points, rating grows with √pressure
-    p = venturi_pressure(184_565, spec["psi"], spec["btu_hr"])
+    p = venturi_pressure(184_565, spec)
     assert p is not None
     assert math.sqrt(p) == pytest.approx((math.sqrt(5) + math.sqrt(10)) / 2, rel=1e-3)
-    assert venturi_pressure(400_000, spec["psi"], spec["btu_hr"]) is None
-    # the in. w.c. and 2 psi entries may be another orifice, so nothing below 5 psi is given
-    assert venturi_pressure(10_000, spec["psi"], spec["btu_hr"]) == pytest.approx(5.0)
+    assert venturi_pressure(400_000, spec) is None
+    # Below 5 psi too: the 2 psi rating is on the same √pressure curve (§3.2, derived)
+    assert venturi_pressure(96_600, spec) == pytest.approx(2.0)
+    low = venturi_pressure(120_000, spec)
+    assert low is not None
+    assert 2 < low < 5
+    # GACO's 11 in. w.c. rating is another orifice, so nothing below 2 psi is given
+    assert venturi_pressure(50_000, spec) is None
+    # A Ransome's ratings stay on the curve down to 11 in. w.c. (0.397 psi)
+    b4 = models["Ransome B4"]
+    assert venturi_pressure(55_300, b4) == pytest.approx(0.397)
+    assert venturi_pressure(50_000, b4) is None
+
+
+def test_burners_are_listed_at_the_pressure_that_gives_their_share() -> None:
+    """At 5 psi a burner gives its 5 psi rating, not the load: one below that rating runs at a
+    lower pressure (the review's gas 4). Every option's pressure gives back its share."""
+    gas = design_gas(load_design(EXAMPLES / "gas-crossdraft.yaml"))
+    models = gas_data()["venturi_burners"]["models"]
+    for o in gas.burner_options:
+        each = float(o.each.split()[0].replace(",", ""))
+        p = venturi_pressure(each, models[o.model])
+        assert p is not None
+        assert o.pressure == (f"{p:.1f} psi" if p >= 1 else f"{p * 27.7:.0f} in. w.c.")
+    b5 = next(o for o in gas.burner_options if o.count == 2 and o.model == "Ransome B5")
+    assert b5.pressure == "3.3 psi"  # 264,444 BTU/hr, under its 324,700 at 5 psi
+
+
+def test_named_burners_too_big_at_their_lowest_pressure_are_checked_at_what_they_draw() -> None:
+    """Eight GACO MR100s share 528,889 BTU/hr: 66,111 each, under the 96,600 an MR100 gives at
+    2 psi, the lowest pressure on its high-pressure orifice. They draw 8 × 96,600 there, and
+    the supply is checked against that (the review's gas 4)."""
+    eight = "wall: front\n      model: GACO MR100\n      count: 8\n    supply"
+    gas = design_gas(parse_design(GAS.replace("wall: front\n    supply", eight)))
+    assert gas.burners is not None
+    assert (gas.burners.count, gas.burners.pressure, gas.burners.each) == (
+        8,
+        "2.0 psi",
+        "96,600 BTU/hr",
+    )
+    [warning] = [f.message for f in gas.findings if "lowest pressure its ratings" in f.message]
+    assert "more than the 66,111 BTU/hr each this kiln needs" in warning
+    assert "checked against the 772,800 BTU/hr the 8 burners draw there" in warning
+    full_fire = next(s for s in gas.working if s.name == "Propane at full fire")
+    assert full_fire.inputs == {"the burners draw": "772,800 BTU/hr"}
+    assert gas.propane_at_full_fire == f"{772_800 / 91_502:.2f} gal/hr"
+    # Four cylinders give 668,000 BTU/hr full at 20 °F: short of the draw, not of the input
+    [error] = [f.message for f in gas.findings if f.level == "error"]
+    assert "short of the 772,800 BTU/hr the burners need" in error
+    # A slow firing wouldn't help: these burners can't turn down to it
+    assert not [f for f in gas.findings if "slow firing" in f.message]
+
+
+def test_when_no_burner_fits_a_finding_says_why() -> None:
+    """A 56.7 ft³ (Ward's way) kiln of hard brick needs 20,000 BTU/ft³/hr, 1,133,333 BTU/hr; a
+    tank at −20 °F holds 10.7 psig (NIST [S6]), leaving 0.7 psi, and eight Ransome B5s give under
+    1 million there."""
+    text = (
+        GAS.replace("width: 28 in", "width: 48 in")
+        .replace(
+            "  walls:\n    - material: ifb-jm26", "  walls:\n    - material: hard-firebrick-kx99"
+        )
+        .replace(CYLINDERS, "type: tank\n      gallons: 1000")
+        .replace("coldest_ambient: 20 degF", "coldest_ambient: -20 degF")
+    )
+    gas = design_gas(parse_design(text))
+    assert gas.burners is None
+    assert gas.burner_options == []
+    assert (
+        "No set of up to 8 venturi burners in the library delivers the 1,133,333 BTU/hr design "
+        "input within 0.7 psi, the most this supply allows at -20 °F, so none is chosen."
+    ) in [f.message for f in gas.findings if f.level == "error"]
 
 
 def test_draft_is_figured_at_the_sites_air_not_the_coldest_day(pnw) -> None:  # type: ignore[no-untyped-def]
@@ -188,27 +258,47 @@ def test_a_hard_brick_kiln_takes_wards_hard_brick_column() -> None:
     assert gas.demand_range == f"{16_000 * volume_ft3:,.0f}–{20_000 * volume_ft3:,.0f} BTU/hr"
 
 
-def test_a_big_kiln_needs_more_than_one_power_burner_and_more_than_a_tank() -> None:
-    """48 × 60 in by 40 in plus ⅔ of a 3.75 in rise: 70.8 ft³ × 16,000 = 1,133,333 BTU/hr. The
-    biggest Ward power burner, the MB700, gives 795,000 [S22], so it takes two: MB500s at 595,000
-    each, as the MB400's 475,000 is short. A 1000 gal tank ⅓ full gives 1,031,230 BTU/hr at
-    20 °F [S13], so no tank is big enough."""
+def test_a_kiln_past_the_sourced_sizes_is_refused_its_burners_and_chimney() -> None:
+    """48 × 60 in by 40 in plus a 3.75 in arch: 71.5 ft³, past the research's studio kilns of up
+    to about 60 ft³. It used to crash past about 130 ft³ (no chimney size held the flue) and
+    lose its burners past 8 (the review's gas 7). A 1000 gal tank ⅓ full gives 1,031,230 BTU/hr
+    at 20 °F [S13], short of the 1,133,333 the kiln would need."""
     text = (
         GAS.replace("width: 28 in", "width: 48 in")
         .replace("depth: 48 in", "depth: 60 in")
         .replace("type: venturi", "type: power")
         .replace(CYLINDERS, "type: tank\n      gallons: 1000")
     )
-    gas = design_gas(parse_design(text))
+    kiln = parse_design(text)
+    gas = design_gas(kiln)
     demand = 16_000 * 48 * 60 * (40 + 2 / 3 * 3.75) / 1728
+    assert gas.design_input_btu_hr == pytest.approx(demand)
+    assert (gas.burners, gas.burner_options, gas.chimney_height) == (None, [], None)
+    errors = [f.message for f in gas.findings if f.level == "error"]
+    assert "At 71 ft³ this kiln is bigger than the sources here cover" in errors[0]
+    assert gas.tank_suggestion is None
+    assert [s.capacity_btu_hr for s in gas.supply] == pytest.approx([1_031_230])
+    # Far past it, the whole report is refused, not crashed
+    huge = text.replace("width: 48 in", "width: 72 in").replace("depth: 60 in", "depth: 90 in")
+    from kilndesigner.report import design_report
+
+    assert any(
+        "bigger than the sources here cover" in f.message
+        for f in design_report(parse_design(huge)).errors
+    )
+
+
+def test_a_big_kiln_needs_more_than_one_power_burner() -> None:
+    """48 × 48 in by 40 in plus the arch: 57 ft³ × 16,000 = 906,667 BTU/hr, past the biggest
+    Ward power burner, the MB700's 795,000 [S22]. Two MB400s at 475,000 each carry it."""
+    text = GAS.replace("width: 28 in", "width: 48 in").replace("type: venturi", "type: power")
+    gas = design_gas(parse_design(text))
+    demand = 16_000 * 48 * 48 * (40 + 2 / 3 * 3.75) / 1728
     assert gas.design_input_btu_hr == pytest.approx(demand)
     assert all(o.count >= 2 for o in gas.burner_options)
     assert gas.burners is not None
-    assert (gas.burners.count, gas.burners.model) == (2, "Ward MB500")
-    assert gas.burners.total_cost == pytest.approx(2 * 1389)
-    assert gas.tank_suggestion is None
-    assert [s.capacity_btu_hr for s in gas.supply] == pytest.approx([1_031_230])
-    assert any(f.level == "error" and "Even full" in f.message for f in gas.findings)
+    assert (gas.burners.count, gas.burners.model) == (2, "Ward MB400")
+    assert gas.burners.total_cost == pytest.approx(2 * 1229)
 
 
 def test_firing_below_the_vaporization_tables_is_an_error() -> None:
