@@ -312,7 +312,7 @@ class Supplying:
     altitude: float
 
 
-def _named_model(kind: Literal["venturi", "power"], named: str) -> str | None:
+def named_model(kind: Literal["venturi", "power"], named: str) -> str | None:
     """The library's name for the burner a design names: 'MR100' or 'Ward MB400' will do."""
     for name in gas_data()[f"{kind}_burners"]["models"]:
         if (name if kind == "venturi" else f"Ward {name}").endswith(named):
@@ -495,22 +495,24 @@ def _tank_suggestion(demand: float, t_f: float) -> str | None:
     return None
 
 
-def _oversized(gas: Gas, demand: float, how: Supplying) -> tuple[BurnerOption, float] | None:
-    """The burners the design names, when each is bigger than its share of the load even at the
-    lowest pressure its ratings are published for on one orifice: at that pressure, and what
-    they draw there. None if the design doesn't name both a venturi model and a count, or the
-    burners are on a line (they run at the line's pressure)."""
+def _oversized(
+    gas: Gas, demand: float, how: Supplying, only: str | None
+) -> tuple[BurnerOption, float] | None:
+    """The burners the design names (``only``, the library's name for them), when each is bigger
+    than its share of the load even at the lowest pressure its ratings are published for on one
+    orifice: at that pressure, and what they draw there. None if the design doesn't name both a
+    venturi model and a count, or the burners are on a line (they run at the line's pressure)."""
     asked = gas.burners
     count = asked.wanted
-    spec = gas_data()["venturi_burners"]["models"].get(asked.model or "")
-    if asked.type != "venturi" or spec is None or count is None or how.line:
+    spec = gas_data()["venturi_burners"]["models"].get(only or "")
+    if asked.type != "venturi" or only is None or spec is None or count is None or how.line:
         return None
     psi, ratings = _on_one_orifice(spec)
     low = ratings[0] * how.altitude
     if demand / count >= low or psi[0] > how.max_psi:
         return None
     option = BurnerOption(
-        model=asked.model or "",
+        model=only,
         type="venturi",
         count=count,
         pressure=_pressure_text(psi[0]),
@@ -686,7 +688,7 @@ def _choose_burners(
         _short_of_the_rule(wanted * each, demand, need, findings)
         return Burning(None, wanted, each, "the design: burners.rating", [])
     options = _burner_options(demand, kind, how, gas.fuel)
-    only = _named_model(kind, asked.model) if asked.model else None
+    only = named_model(kind, asked.model) if asked.model else None
     source = data[f"{kind}_burners"]["source"]
     if asked.model and only is None:
         known = list(data[f"{kind}_burners"]["models"])
@@ -707,7 +709,7 @@ def _choose_burners(
         if matching:
             chosen = matching[0]
             return _burning(chosen, _each(chosen, demand, how, gas), demand, how, working, options)
-        big = _oversized(gas, demand, how)
+        big = _oversized(gas, demand, how, only)
         if big is not None:
             chosen, draw = big
             findings.append(
@@ -802,7 +804,7 @@ def _short_of_the_rule(full: float, demand: float, need: Demand, findings: list[
             level="info",
             message=(
                 f"The burners give {full:,.0f} BTU/hr at full fire, "
-                f"{full / need.dome_ft3 if need.roof == 'dome' else full / _ft3(need):,.0f} "
+                f"{full / need.dome_ft3:,.0f} "
                 f"BTU per ft³ an hour, under the {demand:,.0f} BTU/hr of the rule of thumb "
                 f"({need.btu_per_ft3_hr:,.0f} BTU/ft³/hr). That fires more slowly, not worse: "
                 "Olsen fired a 36 ft³ dense cross-draft on 6,000 BTU/ft³/hr to cone 10 in 12–15 "
@@ -812,13 +814,6 @@ def _short_of_the_rule(full: float, demand: float, need: Demand, findings: list[
             reference=f"{OLSEN_INPUT}, p.226",
         )
     )
-
-
-def _ft3(need: Demand) -> float:
-    rise = 2 / 3 * need.rise if need.roof == "sprung_arch" else 0.0
-    if need.roof == "catenary":
-        return need.depth * 4 / 3 * need.height * need.width / 2 / 1728
-    return need.width * need.depth * (need.height + rise) / 1728
 
 
 def _burning(
@@ -1203,7 +1198,9 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             )
         )
     else:
-        cases, liquid_gal = _supply_cases(gas, draw, t_f)
+        # With no burners chosen there is no draw: the supply is checked against the design input
+        load = draw if burning.count > 0 else demand
+        cases, liquid_gal = _supply_cases(gas, load, t_f)
         _check_supply(gas, need, burning, demand, cases, t_f, t_cold, temp_unit, working, findings)
         hours = liquid_gal / (draw / PROPANE_BTU_PER_GAL) if draw > 0 else math.inf
         working.append(
@@ -1347,8 +1344,9 @@ def _check_supply(
     working: list[Step],
     findings: list[Finding],
 ) -> None:
-    """Propane cylinders or a tank against what the burners draw, at the coldest air."""
-    draw = burning.draw
+    """Propane cylinders or a tank against what the burners draw, at the coldest air; with no
+    burners chosen, against the design input (the sheet's P = D)."""
+    draw = burning.draw if burning.count > 0 else demand
     for case in cases:
         working.append(
             Step(

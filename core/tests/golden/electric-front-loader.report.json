@@ -296,12 +296,12 @@
       {
         "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
         "inputs": {
-          "p (limit)": "9 W/in²"
+          "p (limit)": "17.5 W/in²"
         },
         "name": "Smallest wire for the surface-load limit",
         "note": null,
-        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
-        "value": "2.94 mm"
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
+        "value": "2.36 mm"
       },
       {
         "formula": null,

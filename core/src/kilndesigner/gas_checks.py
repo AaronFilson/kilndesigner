@@ -83,7 +83,7 @@ class Demand:
     depth: float  # in, front to back: every chamber in a row
     height: float  # in: to the springline, or a catenary's crown
     rise: float  # in, a sprung arch's
-    dome_ft3: float  # a dome's chamber, worked out exactly
+    dome_ft3: float  # Ward's volume, ft³; a dome's or a round chamber's worked out exactly
     btu_per_ft3_hr: float
     what: str  # "9 in insulating brick, cone 10, the fast (high) end"
     source: str

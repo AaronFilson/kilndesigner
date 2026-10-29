@@ -48,6 +48,11 @@ function InputCell({
   const scale = cell.scale ?? 1;
   const offset = cell.offset ?? 0;
   const shown = value * scale + offset;
+  const text = number(shown);
+  // Typed back, it must read as a number: "1.23 × 10⁹" doesn't, so it's written out plainly
+  const plain = text.includes("×")
+    ? String(Number(shown.toPrecision(4)))
+    : text.replace(/,/g, "").replace("−", "-");
   const [draft, setDraft] = useState<string | null>(null);
   return (
     <span className="sheet-input">
@@ -55,7 +60,7 @@ function InputCell({
         type="text"
         inputMode="decimal"
         aria-label={`${cell.symbol}, ${cell.meaning}`}
-        value={draft ?? number(shown).replace(/,/g, "").replace("−", "-")}
+        value={draft ?? plain}
         onChange={(e) => {
           setDraft(e.target.value);
           const v = Number(e.target.value);

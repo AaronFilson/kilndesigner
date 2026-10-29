@@ -858,7 +858,8 @@ export function DesignForm({
                 ["roof"],
                 v === "springs"
                   ? { ...roof, ties: v, spring_rate: roof.spring_rate ?? "283 lbf/in" }
-                  : { type: roof.type, rise: roof.rise, ring: roof.ring },
+                  : // Back to rigid: drop only the springs, keeping the rest (ring, buttressed)
+                    setIn(setIn(roof, ["ties"], undefined), ["spring_rate"], undefined),
               )
             }
           />

@@ -67,6 +67,19 @@ describe("CheckSheet", () => {
     expect(area.value).toBe("0.1");
   });
 
+  it("writes a very large or small input as a number that can be typed back", () => {
+    const big: Check = {
+      ...rod,
+      cells: [{ symbol: "Ra", meaning: "Rayleigh number", value: 1.234e9 } as Check["cells"][0]],
+      requirements: [],
+      lever: null,
+    };
+    render(<CheckSheet check={big} />);
+    const ra = screen.getByLabelText("Ra, Rayleigh number") as HTMLInputElement;
+    expect(ra.value).toBe("1234000000");
+    expect(Number(ra.value)).toBe(1.234e9);
+  });
+
   it("states a rule that isn't a formula", () => {
     const ring: Check = {
       ...rod,

@@ -81,6 +81,8 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
     electric, gas = kiln.heat.electric, kiln.heat.gas
     if electric is None or gas is None:
         raise ValueError("a hybrid needs both elements and burners")
+    if gas.fuel != "propane":
+        raise ValueError("the hybrid's costs are worked out for propane only")
     site = kiln.site
     if site.electricity_price is None or site.propane_price is None:
         raise ValueError("give the site's electricity_price and propane_price")

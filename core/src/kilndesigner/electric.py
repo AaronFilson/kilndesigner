@@ -515,7 +515,9 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             )
         )
         p_e, v_e = power / best.rows, voltage / best.series
-        working.extend(_element_steps(best, p_e, v_e, rho_t, preferred, us))
+        # The limit the chosen wire was held to: Olsen's, or Krueger's when nothing fits his
+        limit = (preferred, SURFACE_LOAD_SOURCE) if within else (max_load, MOST_LOAD_SOURCE)
+        working.extend(_element_steps(best, p_e, v_e, rho_t, limit, us))
         if best.diameter < si(KANTHAL_MIN_WIRE, "m"):
             everything = candidates
             if electric.elements is not None:
@@ -700,8 +702,14 @@ def _element_result(
 
 
 def _element_steps(
-    c: Candidate, p_e: float, v_e: float, rho_t: float, max_load: float, us: bool
+    c: Candidate,
+    p_e: float,
+    v_e: float,
+    rho_t: float,
+    limit: tuple[float, str],
+    us: bool,
 ) -> list[Step]:
+    max_load, limit_source = limit
     load_unit = "W/in**2" if us else "W/cm**2"
     short = "in" if us else "mm"
     d_min = wire_diameter(p_e, v_e, max_load, rho_t)
@@ -716,7 +724,7 @@ def _element_steps(
             value=show(Q_(d_min, "m"), "mm", 3),
             formula="d³ = 4·ρ_T·P² / (π²·U²·p)",
             inputs={"p (limit)": show(Q_(max_load, "W/m**2"), load_unit, 3)},
-            reference=SURFACE_LOAD_SOURCE,
+            reference=limit_source,
         ),
         Step(
             name="Wire chosen",

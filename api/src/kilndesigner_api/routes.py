@@ -19,7 +19,7 @@ from kilndesigner import Kiln, dump_design, parse_design
 from kilndesigner.build import build_key, design_document
 from kilndesigner.castable import CastableError, ingredients, mix_analysis
 from kilndesigner.cones import cone_names, cone_rates
-from kilndesigner.gas import gas_data
+from kilndesigner.gas import gas_data, named_model
 from kilndesigner.library import alloys, materials
 from kilndesigner.report import Report
 from kilndesigner.templates import templates
@@ -81,17 +81,18 @@ def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
         )
     if gas is not None and gas.burners.model is not None:
         # Named as the engine matches them: the end of a name, among the burners of that type
-        names = (
-            gas_data()["venturi_burners"]["models"]
-            if gas.burners.type == "venturi"
-            else [f"Ward {m}" for m in gas_data()["power_burners"]["models"]]
-        )
-        if not any(name.endswith(gas.burners.model) for name in names):
+        kind = gas.burners.type
+        if named_model(kind, gas.burners.model) is None:
+            names = (
+                list(gas_data()["venturi_burners"]["models"])
+                if kind == "venturi"
+                else [f"Ward {m}" for m in gas_data()["power_burners"]["models"]]
+            )
             problems.append(
                 schemas.Problem(
                     loc=["heat", "gas", "burners", "model"],
                     msg=(
-                        f"no {gas.burners.type} burner called {gas.burners.model!r}; the "
+                        f"no {kind} burner called {gas.burners.model!r}; the "
                         f"library has: {', '.join(names)}"
                     ),
                 )

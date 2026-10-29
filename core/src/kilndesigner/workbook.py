@@ -47,6 +47,15 @@ def _to_shown(c: Cell, ref: str) -> str:
     return f"={scaled}+{_number(c.offset)}" if c.offset else f"={scaled}"
 
 
+def _holds(op: str, a: str, b: str) -> str:
+    """A requirement as a formula, with the part in a billion that ≤ and ≥ allow in the engine
+    and the page (kilndesigner.sheet._slack), so a value on its limit passes here too."""
+    if op not in ("<=", ">="):
+        return f"={a}{op}{b}"
+    slack = f"1E-9*MAX(ABS({a}),ABS({b}))"
+    return f"={a}<={b}+{slack}" if op == "<=" else f"={a}>={b}-{slack}"
+
+
 def _formula(
     ws: Worksheet, row: int, col: int, formula: str, fmt: Format | None, value: object
 ) -> None:
@@ -125,7 +134,7 @@ def _write_check(ws: Worksheet, check: Check, label: str, formats: tuple[Format,
         for q in check.requirements:
             a, b = ref[q.left], ref[q.right]
             ws.write_string(row, 0, requirement_text(q))
-            _formula(ws, row, 1, f"={a}{q.op}{b}", None, q.holds)
+            _formula(ws, row, 1, _holds(q.op, a, b), None, q.holds)
             left, right = by[q.left], by[q.right]
             if not (left.offset or right.offset):  # a ratio of temperatures means nothing
                 ratio = (left.value or 0) / right.value if right.value else 0

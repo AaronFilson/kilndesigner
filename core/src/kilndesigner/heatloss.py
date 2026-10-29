@@ -176,7 +176,9 @@ def heat_loss(
             if limit is not None and temps[i] > si(limit, "K") * (1 - 1e-6):
                 rating = service_temperature(shape.face, m.name, i, hot, limit, m.source, temp_unit)
                 if (check := rating.check()).status != "pass":
-                    faces_over.setdefault(m.id, []).append(shape.face)
+                    seen = faces_over.setdefault(m.id, [])
+                    if shape.face not in seen:  # once a face, if two of its layers are this
+                        seen.append(shape.face)
                     if temps[i] > over.get(m.id, (0.0, check, ""))[0]:
                         over[m.id] = (
                             temps[i],

@@ -382,6 +382,26 @@ def test_a_big_kiln_is_sized_not_refused() -> None:
     assert not [f for f in report.errors if "bigger than" in f.message]
 
 
+def test_a_kiln_too_big_for_the_library_checks_its_supply_against_the_input() -> None:
+    """With no set of library burners big enough, none is chosen and nothing is drawn: the propane
+    supply is checked against the design input, as its sheet says (P = D), not against nothing
+    (that raised SheetMismatchError)."""
+    text = (
+        GAS.replace("width: 28 in", "width: 200 in")
+        .replace("depth: 48 in", "depth: 300 in")
+        .replace("height: 40 in", "height: 120 in")
+    )
+    assert text.count("200 in") == 1
+    assert text.count("300 in") == 1
+    gas = design_gas(parse_design(text))
+    assert gas.burners is None
+    assert gas.full_fire_btu_hr == 0
+    assert gas.supply
+    assert not gas.supply[0].meets_demand
+    short = next(f for f in gas.findings if f.check and f.check.id == "gas.supply-full")
+    assert f"{gas.design_input_btu_hr:,.0f} BTU/hr" in short.message
+
+
 def test_a_big_kiln_needs_more_than_one_power_burner() -> None:
     """48 × 48 in by 40 in plus the arch: 57 ft³ × 16,000 (fast) = 906,667 BTU/hr, past the
     biggest Ward power burner, the MB700's 795,000 [S22]. Two MB400s at 475,000 each carry it."""

@@ -75,7 +75,18 @@ def design_report(kiln: Kiln) -> Report:
     hybrid: HybridAnalysis | None = None
     if electric is not None and gas is not None:
         site = kiln.site
-        if site.electricity_price is not None and site.propane_price is not None:
+        if kiln.heat.gas is not None and kiln.heat.gas.fuel != "propane":
+            # The cost comparison is worked out for propane by the gallon only (ADR 0009)
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        "When the elements should hand over to the burners is worked out for "
+                        "propane only, so it isn't given for this natural-gas kiln."
+                    ),
+                )
+            )
+        elif site.electricity_price is not None and site.propane_price is not None:
             hybrid = analyse_hybrid(kiln, electric.installed_watts)
             findings += hybrid.findings
         else:

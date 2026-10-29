@@ -115,8 +115,9 @@ def comparison_rows(report: Report) -> dict[str, str]:
     if report.gas is not None:
         g = report.gas
         rows["Burner input"] = g.design_input
-        meets = sum(s.meets_demand for s in g.supply)
-        rows["Propane supply keeps up"] = f"in {meets} of {len(g.supply)} cases"
+        if g.supply:  # a line (natural gas) has no cylinders or tank to check
+            meets = sum(s.meets_demand for s in g.supply)
+            rows["Propane supply keeps up"] = f"in {meets} of {len(g.supply)} cases"
     if report.hybrid is not None:
         rows["Switch to burners at"] = report.hybrid.switch_over
     if report.bom is not None:

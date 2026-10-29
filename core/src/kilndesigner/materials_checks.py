@@ -1,5 +1,5 @@
 """The masonry's and the bill of materials' checks as sheets (ADR 0013): a brick layer's thickness
-in whole bricks, the course under a skewback, and the priced materials against the budget."""
+in whole bricks, and the priced materials against the budget."""
 
 from __future__ import annotations
 
@@ -52,18 +52,6 @@ def whole_bricks(
     return s
 
 
-def stretcher_under_skewback(layings: list[str], source: str) -> Sheet:
-    s = Sheet("masonry.skewback-course", "The course under the skewbacks", reference=source)
-    for laying in layings:
-        s.fact("the side walls' brick, laid as", laying, source="the course plan")
-    s.rule(
-        'HarbisonWalker: "A stretcher course should never be used immediately below the skewback."',
-        holds=False,
-        level="warning",
-    )
-    return s
-
-
 def within_budget(lines: list[tuple[str, float, str | None]], budget: float) -> Sheet:
     """Each priced line's cost (USD), their sum, and the design's budget."""
     s = Sheet("bom.budget", "The priced materials against the budget")
@@ -78,4 +66,4 @@ def within_budget(lines: list[tuple[str, float, str | None]], budget: float) -> 
     return s
 
 
-__all__ = ["stretcher_under_skewback", "whole_bricks", "within_budget"]
+__all__ = ["whole_bricks", "within_budget"]
