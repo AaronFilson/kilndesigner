@@ -22,6 +22,7 @@ from kilndesigner.hybrid import CostPoint, HybridAnalysis
 from kilndesigner.masonry import MasonryPlan, plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.report import Report
+from kilndesigner.sheet import Check, cell_text, requirement_text
 from kilndesigner.working import Finding, Step
 
 LAYING_WORDS = {
@@ -89,6 +90,40 @@ def _steps(steps: list[Step]) -> list[dict[str, Any]]:
     return [s.model_dump(mode="json") for s in steps]
 
 
+def _finding(f: Finding) -> dict[str, Any]:
+    """A finding as the plans list it, with its sheet's mark (E1, W2) in place of the sheet."""
+    return f.model_dump(mode="json", exclude={"check"}) | {
+        "label": f.check.label if f.check else None
+    }
+
+
+def _check(c: Check) -> dict[str, Any]:
+    """A finding's sheet as the plans print it: every row, each requirement, what would pass."""
+    return {
+        "label": c.label,
+        "title": c.title,
+        "status": c.status,
+        "rule": c.rule,
+        "rule_met": c.rule_holds,
+        "rows": [
+            [
+                x.symbol,
+                x.meaning,
+                f"{x.symbol} = {x.formula}" if x.formula else "",
+                cell_text(x),
+                x.source or "",
+            ]
+            for x in c.cells
+        ],
+        "requirements": [
+            [requirement_text(r), "holds" if r.holds else f"fails ({r.level})", r.margin]
+            for r in c.requirements
+        ],
+        "solve": c.solve,
+        "reference": c.reference,
+    }
+
+
 def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dict[str, Any]:
     us = kiln.units == "us"
     summary = [
@@ -137,7 +172,7 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
             ["Chamber volume, Ward's way", g.ward_volume],
             ["Burner input, Ward's range", g.demand_range],
             ["Design burner input", g.design_input],
-            ["Propane at full fire", g.propane_at_full_fire],
+            [f"{g.fuel.capitalize()} at full fire", g.propane_at_full_fire],
         ]
         if g.burners is not None:
             b = g.burners
@@ -210,7 +245,8 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
         "castables": castables,
         "paper": "us-letter" if us else "a4",
         "summary": summary,
-        "findings": [f.model_dump(mode="json") for f in findings],
+        "findings": [_finding(f) for f in findings],
+        "checks": [_check(f.check) for f in findings if f.check is not None],
         "faces": [f.model_dump(mode="json") for f in report.heat_loss.faces],
         "elements": elements,
         "gas": gas,

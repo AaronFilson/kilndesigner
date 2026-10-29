@@ -66,6 +66,11 @@ below 250 °F (music wire) or 475 °F (Cr-Si); bolt them on the outside of the s
 
 ## 4. Fiber paper/board as the allowance
 
+Olsen's 4th edition has no springs (the user, who has read it). It allows for expansion in the
+walls instead: 1/16 in per foot of wall in a steel frame, a ¼ in fiber pad at the brick ends,
+no joints under 4 ft in a flexible frame (p.52–53). Its growth figure,
+1/16–3/32 in per foot (p.51), is what the engine uses for a sprung arch's span with springs.
+
 | # | Fact | Status | Sources |
 |---|---|---|---|
 | 4.1 | Bio-soluble fiber paper: recovery ≥ 60 % after compression to 50 % thickness, 500 °C, 3 h | Excerpt (patent claim) | [P12] |

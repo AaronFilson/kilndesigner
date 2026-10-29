@@ -19,11 +19,13 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner import electric_checks as sheets
 from kilndesigner.cones import cone_temperature, hotter_than
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.library import Alloy, alloy, awg_diameter
 from kilndesigner.model import Electric, Kiln
 from kilndesigner.shape import chamber_shape
+from kilndesigner.sheet import Sheet
 from kilndesigner.units import Q_, Quantity, parse_quantity, si
 from kilndesigner.working import Finding, Step, show
 
@@ -40,10 +42,20 @@ BREAKER_MAX_SOURCE = (
     "NEC 422.11(E), a single non-motor appliance, as reported; standard sizes 240.6(A); "
     "electric-and-thermal.md §3 [S23, S79]"
 )
-# Krueger Pottery: about 17.5 W/in² for Kanthal A-1 coils in brick grooves, kilns rated about
-# 2300 °F (electric-and-thermal.md §1.6, [S15]).
-KILN_SURFACE_LOAD = Q_(17.5, "W/in**2")
-SURFACE_LOAD_SOURCE = "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
+# Olsen: normal electric kilns run 5–9 W/in² of wire surface, and a cone 10 kiln is designed at
+# 6.4–9 (4th ed. p.254, p.257); Kanthal's chart for A-1 as he prints it gives about 6.6–9.6 near
+# cone 10 (p.253). Krueger's 17.5 W/in² for hobby kilns (electric-and-thermal.md §1.6 [S15]) is
+# above every point on that chart.
+KILN_SURFACE_LOAD = Q_(9, "W/in**2")
+SURFACE_LOAD_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 "
+    "for cone 10; Kanthal's A-1 chart, p.253"
+)
+# The most any source runs coils in grooves at: Krueger's hobby kilns, A-1 at about 2300 °F. Above
+# Olsen's 9 the elements wear out faster (he goes to thinner wire when a coil won't fit, p.260);
+# above this the engine has no source at all.
+MOST_SURFACE_LOAD = Q_(17.5, "W/in**2")
+MOST_LOAD_SOURCE = "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
 COIL_RATIO = (5.0, 6.0)  # outside coil diameter / wire diameter, coils in grooves
 PITCH_RATIO = (2.0, 4.0)  # coil pitch / wire diameter
 COIL_SOURCE = "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]"
@@ -88,7 +100,7 @@ def largest_breaker(amps: float) -> float:
 
 @dataclass(frozen=True)
 class Candidate:
-    rows: int
+    rows: int  # elements
     series: int
     gauge: int
     diameter: float  # m
@@ -97,6 +109,9 @@ class Candidate:
     coil_outside: float  # m
     turns: float
     pitch: float  # m
+    grooves: int = 1
+    """Groove rows each element runs through, round its walls: Olsen's elements run several
+    (4th ed. p.259–260: about 22 ft of stretched coil each)."""
 
     @property
     def pitch_ratio(self) -> float:
@@ -170,38 +185,40 @@ def _candidates(
         if phases == 3 and rows % 3:
             continue
         per_leg = rows // 3 if phases == 3 else rows
-        for series in range(1, per_leg + 1):
-            if per_leg % series:
-                continue
-            p_e, v_e = power / rows, voltage / series
-            d_min = wire_diameter(p_e, v_e, max_load, rho_t)
-            for gauge in reversed(GAUGES):  # from the thinnest
-                d = si(awg_diameter(gauge), "m")
-                if d < d_min:
-                    continue  # over the surface-load limit
-                length = wire_length(p_e, v_e, d, rho_t)
-                outside = sum(COIL_RATIO) / 2 * d
-                turns = length / (math.pi * (outside - d))
-                candidate = Candidate(
-                    rows, series, gauge, d, length, surface_load(p_e, d, length),
-                    outside, turns, groove / turns,
-                )  # fmt: skip
-                if candidate.pitch_ratio < PITCH_RATIO[0]:
-                    break  # the coil is too long for the groove, and thicker wire is longer still
-                if candidate.pitch_ratio <= PITCH_RATIO[1]:
-                    found.append(candidate)
+        for grooves in range(1, max_rows // rows + 1):
+            run = groove * grooves  # each element's coil, stretched along its grooves
+            for series in range(1, per_leg + 1):
+                if per_leg % series:
+                    continue
+                p_e, v_e = power / rows, voltage / series
+                d_min = wire_diameter(p_e, v_e, max_load, rho_t)
+                for gauge in reversed(GAUGES):  # from the thinnest
+                    d = si(awg_diameter(gauge), "m")
+                    if d < d_min:
+                        continue  # over the surface-load limit
+                    length = wire_length(p_e, v_e, d, rho_t)
+                    outside = sum(COIL_RATIO) / 2 * d
+                    turns = length / (math.pi * (outside - d))
+                    candidate = Candidate(
+                        rows, series, gauge, d, length, surface_load(p_e, d, length),
+                        outside, turns, run / turns, grooves,
+                    )  # fmt: skip
+                    if candidate.pitch_ratio < PITCH_RATIO[0]:
+                        break  # too long for its grooves, and thicker wire is longer still
+                    if candidate.pitch_ratio <= PITCH_RATIO[1]:
+                        found.append(candidate)
     return found
 
 
 def choose(candidates: list[Candidate]) -> Candidate:
-    """The fewest elements, since each is a groove to cut and a pair of terminals to wire; then
-    the thickest wire that fits them, since thicker wire lasts longer (Kanthal [S9]); then the
-    lowest surface load, which also lasts longer (Krueger [S15]); then the pitch nearest the
-    middle of its range."""
+    """The fewest elements, since each is a pair of terminals to wire; then the thickest wire
+    that fits them, since thicker wire lasts longer (Kanthal [S9]); then the lowest surface load,
+    which also lasts longer (Olsen p.254); then the pitch nearest the middle of its range; then
+    the fewest grooves."""
     middle = sum(PITCH_RATIO) / 2
     return min(
         candidates,
-        key=lambda c: (c.rows, -c.diameter, c.load, abs(c.pitch_ratio - middle)),
+        key=lambda c: (c.rows, -c.diameter, c.load, abs(c.pitch_ratio - middle), c.grooves),
     )
 
 
@@ -254,6 +271,68 @@ def _walls(walls: Sequence[str]) -> str:
     return f"the {', '.join(walls[:-1])} and {walls[-1]} walls"
 
 
+def _no_wire_sheet(
+    electric: Electric,
+    wire: Alloy,
+    power: float,
+    power_source: str,
+    voltage: float,
+    groove: float,
+    max_rows: int,
+    rho_t: float,
+    ct: float,
+) -> Sheet:
+    """The sheet behind "no wire fits": the arrangement of elements that comes nearest to fitting,
+    with the thinnest wire the surface load allows and its coil stretched along the groove.
+    Thicker wire is longer, so if that coil is too long, every thicker one is too."""
+    max_load = si(MOST_SURFACE_LOAD, "W/m**2")
+    sizes = sorted(si(awg_diameter(g), "m") for g in GAUGES)
+    coil = sum(COIL_RATIO) / 2
+    best: tuple[float, sheets.Arrangement, float, float | None] | None = None
+    for rows in range(1, max_rows + 1):
+        if electric.elements is not None and rows != electric.elements:
+            continue
+        if electric.supply.phase == 3 and rows % 3:
+            continue
+        per_leg = rows // 3 if electric.supply.phase == 3 else rows
+        for grooves in range(1, max_rows // rows + 1):
+            for series in (s for s in range(1, per_leg + 1) if per_leg % s == 0):
+                p_e, v_e = power / rows, voltage / series
+                d = wire_diameter(p_e, v_e, max_load, rho_t)
+                turns = wire_length(p_e, v_e, d, rho_t) / (math.pi * (coil - 1) * d)
+                pitch = groove * grooves / turns / d
+                gauge = next((g for g in sizes if g >= d), None)
+                fit = pitch if gauge is None else pitch * (d / gauge) ** 2
+                score = min(fit / PITCH_RATIO[0], sizes[-1] / d)
+                if best is None or score > best[0]:
+                    arrangement = sheets.Arrangement(rows, series, max_rows, grooves)
+                    best = (score, arrangement, d, gauge)
+    a = best[1] if best else sheets.Arrangement(electric.elements or 1, 1, max_rows)
+    gauge = best[3] if best else None
+    s = sheets.no_wire_fits(
+        power, power_source, voltage, a, wire.resistivity, ct, wire.source, MOST_SURFACE_LOAD,
+        MOST_LOAD_SOURCE, awg_diameter(min(GAUGES)),
+        None if gauge is None else Q_(gauge, "m"), coil, PITCH_RATIO[0], COIL_SOURCE,
+        groove * a.grooves,
+    )  # fmt: skip
+    if best is None:
+        s.rule(
+            f"The walls have room for {max_rows} grooves, one per brick course; the elements must "
+            "fit them, in threes on a three-phase supply.",
+            holds=False,
+        )
+    else:
+        s.agrees("d", best[2])
+        if s.check().status == "pass":
+            s.rule(
+                "A standard gauge from 8 to 20 AWG must lie between the thinnest wire the surface "
+                "load allows and the thickest whose coil fits the groove at 2–4 wire diameters; "
+                "none does.",
+                holds=False,
+            )
+    return s
+
+
 def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> ElectricDesign:
     electric = kiln.heat.electric
     if electric is None:
@@ -287,16 +366,22 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
         )
     )
     power = si(electric.power, "W") if electric.power is not None else supply_power
-    if power > supply_power * (1 + 1e-9):
+    power_source = (
+        "the design: electric power"
+        if electric.power is not None
+        else "the circuit's continuous limit (the design leaves the power out)"
+    )
+    supplying = sheets.supply_power(voltage, breaker, supply.phase, power, power_source)
+    supplying.agrees("P_s", supply_power)
+    if (check := supplying.check()).status != "pass":
         findings.append(
-            Finding(
-                level="error",
+            Finding.failed(
+                check,
                 message=(
                     f"{show(Q_(power, 'W'), 'kW')} is more than the circuit can supply "
                     f"continuously ({show(Q_(supply_power, 'W'), 'kW')}). Use a bigger circuit or "
                     f"install less power."
                 ),
-                reference=CONTINUOUS_SOURCE,
             )
         )
     line_current = power / (root3 * voltage)
@@ -313,12 +398,16 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             reference=BREAKER_MAX_SOURCE,
         )
     )
-    if breaker > largest * (1 + 1e-9):
+    sizing = sheets.breaker_size(
+        voltage, supply.phase, power, power_source, breaker, largest, BREAKER_MAX_SOURCE
+    )
+    sizing.agrees("I", line_current)
+    if (check := sizing.check()).status != "pass":
         draws = show(Q_(line_current, "A"), digits=3)
         least = show(Q_(line_current / CONTINUOUS_FRACTION, "A"), digits=3)
         findings.append(
-            Finding(
-                level="error",
+            Finding.failed(
+                check,
                 message=(
                     f"A {show(supply.breaker)} breaker is too big for a kiln that draws {draws}: "
                     "it wouldn't protect the kiln's own wiring, terminal block and cord. NEC "
@@ -353,7 +442,8 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
 
     groove = _groove_length(kiln, electric)
     max_rows = int(si(kiln.chamber.height, "m") // si(COURSE_HEIGHT, "m"))
-    max_load = si(KILN_SURFACE_LOAD, "W/m**2")
+    max_load = si(MOST_SURFACE_LOAD, "W/m**2")
+    preferred = si(KILN_SURFACE_LOAD, "W/m**2")
     candidates = _candidates(
         power=power,
         voltage=voltage,
@@ -366,9 +456,12 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
     )
     elements: ElementResult | None = None
     if not candidates:
+        nearest = _no_wire_sheet(
+            electric, wire, power, power_source, voltage, groove, max_rows, rho_t, ct
+        )
         findings.append(
-            Finding(
-                level="error",
+            Finding.failed(
+                nearest.check(),
                 message=(
                     "No standard wire gauge gives elements that fit the grooves with a coil pitch "
                     "of 2–4 wire diameters under the surface-load limit. Change the element walls, "
@@ -378,8 +471,32 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             )
         )
     else:
-        best = choose(candidates)
+        # Olsen's load where anything fits it; else the lowest that fits (he goes to thinner wire
+        # when a coil won't fit, p.260), with a warning: the elements wear out sooner
+        within = [c for c in candidates if c.load <= preferred * (1 + 1e-9)]
+        best = (
+            choose(within)
+            if within
+            else min(candidates, key=lambda c: (c.load, c.rows, -c.diameter))
+        )
         elements = _element_result(best, wire, voltage, power, groove, us, supply.phase)
+        if not within:
+            loading = sheets.surface_load(
+                power / best.rows, best.diameter, best.length, KILN_SURFACE_LOAD,
+                SURFACE_LOAD_SOURCE,
+            )  # fmt: skip
+            loading.agrees("p", best.load)
+            findings.append(
+                Finding.failed(
+                    loading.check(),
+                    message=(
+                        f"No wire that fits the grooves runs at Olsen's 9 W/in² or less: the "
+                        f"coolest is {show(Q_(best.load, 'W/m**2'), 'W/in**2', 3)}. The elements "
+                        "will wear out sooner. Elements in more walls, or less power, would bring "
+                        "it down."
+                    ),
+                )
+            )
         # Current follows V/R: +5 % at the top of ANSI C84.1 Range A, more again while the wire
         # is cold (R falls by Ct). Makers design at the 80 % limit too (Skutt KM1027: 48 A on 60 A;
         # electrical-supply.md §1–3), so this is a note.
@@ -398,7 +515,7 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
             )
         )
         p_e, v_e = power / best.rows, voltage / best.series
-        working.extend(_element_steps(best, p_e, v_e, rho_t, max_load, us))
+        working.extend(_element_steps(best, p_e, v_e, rho_t, preferred, us))
         if best.diameter < si(KANTHAL_MIN_WIRE, "m"):
             everything = candidates
             if electric.elements is not None:
@@ -436,16 +553,18 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                 note="Power above the loss is what heats the ware and walls near the top.",
             )
         )
-        if ratio <= 1.0 and kiln.heat.gas is None:
-            findings.append(
-                Finding(
-                    level="error",
-                    message=(
-                        "The installed power is no more than the heat loss at top temperature: "
-                        "the kiln can never reach it. Add power or insulation."
-                    ),
+        if kiln.heat.gas is None:
+            enough = sheets.power_over_loss(power, power_source, heat_loss_watts)
+            if (check := enough.check()).status != "pass":
+                findings.append(
+                    Finding.failed(
+                        check,
+                        message=(
+                            "The installed power is no more than the heat loss at top "
+                            "temperature: the kiln can never reach it. Add power or insulation."
+                        ),
+                    )
                 )
-            )
         elif ratio <= 1.0:
             findings.append(
                 Finding(
@@ -491,38 +610,45 @@ def _check_temperatures(
     findings: list[Finding],
     temp_unit: str,
 ) -> None:
-    if si(wire_temp, "K") > si(wire.max_air_temperature, "K"):
+    # The wire still works past its rating; it wears out faster, so a warning
+    rating = sheets.wire_rating(
+        wire.name, top, WIRE_ABOVE_KILN, wire.max_air_temperature, wire.source, temp_unit
+    )
+    rating.agrees("T_w", wire_temp)
+    if (check := rating.check()).status != "pass":
         findings.append(
-            Finding(
-                # The wire still works past its rating; it wears out faster, so a warning
-                level="warning",
+            Finding.failed(
+                check,
                 message=(
                     f"{wire.name} is rated to {show(wire.max_air_temperature, temp_unit)} in air; "
                     f"elements here would run near {show(wire_temp, temp_unit)}, so expect them to "
                     f"wear out faster. The wire is taken as {show(WIRE_ABOVE_KILN)} above the "
                     "kiln, an assumption: Kanthal gives no figure for coils in grooves."
                 ),
-                reference=wire.source,
             )
         )
     if si(top, "K") > si(GROOVED_MAX_FURNACE, "K"):
+        # Usual practice up to cone 10, so a note there; past cone 10, by the design's
+        # temperature or its cone, it is a warning, and its sheet says why
         cone = kiln.firing.cone
-        past_cone_10 = si(top, "K") > si(CONE_10_FAST, "K") + 1e-6 or (
-            cone is not None and hotter_than(cone, "10")
+        grooves = sheets.grooves_past_cone_10(
+            top,
+            GROOVED_MAX_FURNACE,
+            CONE_10_FAST,
+            cone,
+            cone is not None and hotter_than(cone, "10"),
+            temp_unit,
         )
-        findings.append(
-            Finding(
-                # Usual practice up to cone 10, so a note there; past cone 10, by the design's
-                # temperature or its cone, it is a warning.
-                level="warning" if past_cone_10 else "info",
-                message=(
-                    f"Kanthal lists {show(GROOVED_MAX_FURNACE, temp_unit)} as the highest kiln "
-                    f"temperature for coils in grooves; this kiln reaches {show(top, temp_unit)}. "
-                    "Kiln makers build cone 10 kilns this way, with shorter element life."
-                ),
-                reference="Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]",
-            )
+        message = (
+            f"Kanthal lists {show(GROOVED_MAX_FURNACE, temp_unit)} as the highest kiln "
+            f"temperature for coils in grooves; this kiln reaches {show(top, temp_unit)}. "
+            "Kiln makers build cone 10 kilns this way, with shorter element life."
         )
+        reference = "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
+        if (check := grooves.check()).status != "pass":
+            findings.append(Finding.failed(check, message=message, reference=reference))
+        else:
+            findings.append(Finding(level="info", message=message, reference=reference))
 
 
 def _element_result(
@@ -565,10 +691,10 @@ def _element_result(
         coil_outside_diameter_mm=c.coil_outside * 1000,
         turns_each=show(c.turns, digits=4),
         close_wound_length_each=show(Q_(c.turns * c.diameter, "m"), short),
-        stretched_length_each=show(Q_(groove, "m"), short),
+        stretched_length_each=show(Q_(groove * c.grooves, "m"), short),
         pitch=f"{show(Q_(c.pitch, 'm'), short, 3)} ({c.pitch_ratio:.2f} × wire diameter)",
-        groove_rows=c.rows,
-        groove_length_each=show(Q_(groove, "m"), short),
+        groove_rows=c.rows * c.grooves,
+        groove_length_each=show(Q_(groove * c.grooves, "m"), short),
         wire_mass_total=show(Q_(mass, "kg"), "lb" if us else "kg", 3),
     )
 

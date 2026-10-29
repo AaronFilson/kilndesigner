@@ -1,0 +1,98 @@
+# Mansimran Singh's round coal downdraft, Delhi Blue Pottery, New Delhi (Olsen, The Kiln Book,
+# 4th ed., p.133–135, p.207): a domed round kiln with four coal fireboxes, fired to cone 10 in 19
+# to 20 hours.
+#
+# From the book: chamber 7 ft across (Fig 5-10, a 38 ft² floor, p.207); 5 ft from the floor to
+# the springline and a 2 ft dome rise (Fig 5-11); floor 9 in thick (Fig 5-11); four arched
+# fireboxes, each 24 in wide inside (Fig 5-11) with a 24 × 24 in grate, 4 ft² (p.207, Fig 8-18),
+# opening into the chamber through a 15 × 24 in firebox flue (p.134); twelve 6 × 6 in floor exit
+# flues into a 24 × 16 in flue channel to the chimney (the flue port here), the chimney 24 × 24 in
+# inside (Fig 5-10); coal; cone 10 (p.133).
+# Assumed: the walls are 18 in, the least of the 18–22 in that carried the domes of early domed
+# and downdraft kilns (p.45). The wall is notched 9 in deep at each firebox (p.134), so it is
+# thicker than 9 in. The brick isn't named: dense brick, as in those load-bearing walls;
+# medium-duty firebrick (Olsen's intermediate duty, p.18). The dome is 9 in
+# thick, the thickest of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296). The floor is
+# built on the ground (on_ground): it stands on a flue collection channel 12 in deep (Fig 5-11),
+# not on a stand. Each firebox's length is taken as its grate's 24 in. The chimney's height is a
+# faint "29' T…" (?) on Fig 5-10: 29 ft is used. The run from the kiln to the chimney, the door
+# and the air: engine defaults (9 in, a bricked door, 70 °F).
+# Not modelled: the fireboxes are spaced evenly round the wall, the door between two of them; the
+# engine puts one on each of its four faces. The 12 in deep flue channel under the floor, and the
+# floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
+# the user) doesn't fit the drawn sizes, which give about 235 ft³ (derived); the drawing is used.
+schema: 1
+name: Singh's round coal downdraft, Delhi Blue Pottery
+units: us
+firing:
+  cone: "10"
+chamber:
+  shape: round
+  width: 84 in
+  depth: 84 in
+  height: 60 in # floor to springline (Fig 5-11)
+  on_ground: true # over a flue collection channel 12 in deep (Fig 5-11)
+roof:
+  type: dome
+  rise: 24 in
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 18 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: coal
+    fireboxes:
+      - position: left
+        width: 24 in
+        length: 24 in
+        grate:
+          width: 24 in
+          length: 24 in
+        inlet:
+          width: 24 in
+          height: 15 in
+      - position: right
+        width: 24 in
+        length: 24 in
+        grate:
+          width: 24 in
+          length: 24 in
+        inlet:
+          width: 24 in
+          height: 15 in
+      - position: back
+        width: 24 in
+        length: 24 in
+        grate:
+          width: 24 in
+          length: 24 in
+        inlet:
+          width: 24 in
+          height: 15 in
+      - position: front
+        width: 24 in
+        length: 24 in
+        grate:
+          width: 24 in
+          length: 24 in
+        inlet:
+          width: 24 in
+          height: 15 in
+draft:
+  type: down
+  flue_wall: back
+  flue_port: # the flue channel to the chimney
+    width: 24 in
+    height: 16 in
+  chimney:
+    height: 29 ft # "29' T…" (?)
+    inside:
+      width: 24 in
+      depth: 24 in

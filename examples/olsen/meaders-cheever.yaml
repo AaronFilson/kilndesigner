@@ -1,0 +1,62 @@
+# Cheever Meaders's groundhog, Cleveland (Mossy Creek), Georgia (Olsen, The Kiln Book, 4th ed.,
+# p.112–113, Figs 4-86 to 4-89): his last kiln, a wood-fired shallow-firebox groundhog of rubble
+# brick, the design his grandson David Meaders adapted (meaders-david, p.115).
+#
+# From the book (Fig 4-89, the view from the chimney end): 48 in from the floor to the crown; 5 ft
+# (faint) wide across the base at that end; 12 ft long along the arch; six flue holes 5 × 9 in in
+# the back wall; walls "RUBBLE BRICK", read as common clay brick.
+# Assumed: the 5 ft, the only width printed, is the width all along. The arch a half-circle, "a
+# cylinder sliced lengthwise at the centre" (p.112): on 5 ft it rises 30 in, so with the 48 in
+# crown it springs from walls 18 in high. A shallow firebox takes a third of a groundhog's length
+# (p.112): 4 ft of the 12 ft, as David Meaders's firebox (meaders-david, p.115), leaving 8 ft of
+# chamber; the firebox the chamber's full width (p.112). Walls, arch and floor 9 in of common
+# brick, the walls' brick carried into the arch and floor; 9 in walls stand to 8 ft unsupported
+# (p.41). Groundhogs are dug into the ground under earth, or built on the ground and braced with
+# rock (p.112): the arch is buttressed and the floor is on the ground. Cone 10, from the Gulgong
+# racer, Olsen's wood cross-draft after the groundhog (gulgong-racer, p.119). Shallow-firebox
+# groundhogs load from the front (p.112). The exit flues as 5 in wide and 9 in high. The chimney's
+# height isn't printed: 8 ft, inside Olsen's 5–10 ft for groundhogs (p.112), the height of David
+# Meaders's chimney on the kiln adapted from this one (meaders-david, p.115). Its section: engine
+# default (the top is marked "2'" and "1'", both faint).
+# Not modelled: the engine takes one exit flue, so one of the six is entered. The central post or
+# opening, 30 in (faint) high. No grate is printed: the wood burns on the firebox floor. The
+# floor's loss into the ground, which the engine doesn't work out. Common brick has no rating for
+# kiln heat, so its service temperature isn't checked.
+schema: 1
+name: Cheever Meaders's groundhog
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 5 ft
+  depth: 8 ft
+  height: 18 in # to the springline: the 48 in crown less the half-circle's 30 in
+  on_ground: true # dug in, or built on the ground (p.112)
+roof:
+  type: sprung_arch
+  rise: 30 in # a half-circle on the 5 ft span
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: building-brick-common # "RUBBLE BRICK" (Fig 4-89)
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 5 ft
+        length: 4 ft
+draft:
+  type: cross
+  flue_wall: back
+  flue_port:
+    width: 5 in
+    height: 9 in
+  chimney:
+    height: 8 ft # Olsen's 5–10 ft for groundhogs (p.112); David Meaders's 8 ft (p.115)

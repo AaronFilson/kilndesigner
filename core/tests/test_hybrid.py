@@ -110,6 +110,10 @@ def test_elements_left_on_into_reduction_are_a_warning() -> None:
     [warning] = [f for f in analysis.findings if f.level == "warning"]
     assert warning.message.startswith("The elements stay on to 1900 °F, past the start of")
     assert "Kanthal allows Kanthal APM only 1922 °F" in warning.message
+    check = warning.check
+    assert check is not None
+    assert check.requirements[0].margin == "T_off = 1,900 °F, 248 °F over T_red = 900 °C"
+    assert check.solve == "Passes when T_off ≤ 1,652 °F"
 
 
 def test_the_reduction_warning_needs_reduction_and_quotes_the_wires_own_limit() -> None:

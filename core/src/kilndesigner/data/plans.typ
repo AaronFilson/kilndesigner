@@ -42,9 +42,19 @@
   ..d.summary.map(row => (row.at(0), row.at(1))).flatten()
 )
 
+// σ_allow as σ with "allow" set below: in a check's symbols and formulas
+#let subscripts(body) = {
+  show regex("\p{L}[\p{L}\p{N}]*_[\p{L}\p{N}]+"): it => {
+    let parts = it.text.split("_")
+    [#parts.at(0)#sub(parts.slice(1).join("_"))]
+  }
+  body
+}
+
 = Findings
 #for f in d.findings [
-  - #text(fill: level-colour(f.level), weight: "bold")[#upper(f.level)] #f.message
+  - #text(fill: level-colour(f.level), weight: "bold")[#if f.label != none [#f.label] else [#upper(f.level)]] #f.message
+    #if f.label != none [ #link(label("check-" + f.label))[(the formulas and numbers: #f.label)] ]
     #if f.reference != none [ #text(size: 8pt, fill: luma(110))[(#f.reference)] ]
 ]
 
@@ -185,6 +195,27 @@
 )
 #text(size: 8pt, fill: luma(100))[
   Priced as: #d.bom.lines.filter(l => l.priced_as != none).map(l => l.priced_as + " [" + l.source + "]").join("; ").
+]
+
+#if d.checks.len() > 0 [
+  = Why each warning and error
+  Each finding above is a check: its inputs, with where each comes from, and the formulas that
+  follow from them, down to the requirement it fails. The same sheets are in `checks.xlsx`, where
+  the inputs can be changed and the formulas recalculate.
+  #for c in d.checks [
+    #heading(level: 2)[#c.label · #c.title] #label("check-" + c.label)
+    #if c.rule != none [ *Rule#if not c.rule_met [, not met]:* #emph(c.rule) ]
+    #subscripts(table(
+      columns: (auto, 1fr, auto, auto, 1fr),
+      [Symbol], [What it is], [Formula], [Value], [From],
+      ..c.rows.map(r => (r.at(0), r.at(1), r.at(2), r.at(3), text(size: 8pt, r.at(4)))).flatten()
+    ))
+    #for r in c.requirements [
+      - #subscripts[*#r.at(0)*: #r.at(1). #r.at(2)]
+    ]
+    #if c.solve != none [ #subscripts[*#c.solve*] ]
+    #if c.reference != none [ #text(size: 8pt, fill: luma(100))[#c.reference] ]
+  ]
 ]
 
 = Working

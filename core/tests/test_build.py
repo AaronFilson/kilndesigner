@@ -40,7 +40,8 @@ def test_the_document_round_trips() -> None:
 def test_a_build_without_model_or_plans_writes_the_report(tmp_path: Path) -> None:
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     result = build_design(kiln, tmp_path, model=False, plans=False)
-    assert result.written == [tmp_path / "report.json"]
+    # The report, and the workbook of its warning's sheet (the case band, W1)
+    assert result.written == [tmp_path / "report.json", tmp_path / "checks.xlsx"]
     assert result.notes == []
 
 
@@ -58,13 +59,14 @@ def test_a_plans_build_writes_the_pdf_the_dxf_and_the_drawings(
     assert result.notes == []
     drawings = out / DRAWINGS
     svgs = sorted(drawings.glob("*.svg"))
-    assert result.written[:4] == [
+    assert result.written[:5] == [
         out / "report.json",
+        out / "checks.xlsx",
         out / "plans.pdf",
         out / "sections.dxf",
         drawings / "index.json",
     ]
-    assert sorted(result.written[4:]) == svgs
+    assert sorted(result.written[5:]) == svgs
     assert {p.name for p in svgs} >= {"view-1.svg", "view-2.svg", "view-3.svg", "course-1.svg"}
     assert all(p.is_file() for p in result.written)
     assert (out / "plans.pdf").read_bytes().startswith(b"%PDF")
@@ -82,7 +84,7 @@ def test_the_drawings_index_describes_each_svg(plans_build: tuple[Path, BuildRes
     out, result = plans_build
     folder = out / DRAWINGS
     index = json.loads((folder / "index.json").read_text(encoding="utf-8"))
-    assert [folder / d["file"] for d in index] == result.written[4:]
+    assert [folder / d["file"] for d in index] == result.written[5:]
     assert [d["kind"] for d in index[:3]] == ["section"] * 3
     assert {d["kind"] for d in index[3:]} == {"course plan"}
     assert index[0]["title"] == "Section A–A: across the kiln, looking at the back"
@@ -104,7 +106,7 @@ def test_a_shape_without_a_3d_model_is_noted(
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     result = build_design(kiln, tmp_path, model=True, plans=False)
     assert result.notes == ["No 3D model: this roof has no solid model yet"]
-    assert result.written == [tmp_path / "report.json"]
+    assert result.written == [tmp_path / "report.json", tmp_path / "checks.xlsx"]
 
 
 def test_a_shape_without_plans_is_noted(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
@@ -115,7 +117,7 @@ def test_a_shape_without_plans_is_noted(monkeypatch: pytest.MonkeyPatch, tmp_pat
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     result = build_design(kiln, tmp_path, model=False, plans=True)
     assert result.notes == ["No plans: this roof can't be drawn yet"]
-    assert result.written == [tmp_path / "report.json"]
+    assert result.written == [tmp_path / "report.json", tmp_path / "checks.xlsx"]
     assert not (tmp_path / "plans.pdf").exists()
     assert not (tmp_path / DRAWINGS).exists()
 
@@ -127,6 +129,7 @@ def test_a_model_build_writes_the_model_and_what_each_part_is(tmp_path: Path) ->
     assert result.notes == []
     assert result.written == [
         tmp_path / "report.json",
+        tmp_path / "checks.xlsx",
         tmp_path / "kiln.step",
         tmp_path / "kiln.glb",
         tmp_path / "parts.json",

@@ -2,6 +2,7 @@
 
 import pytest
 
+from kilndesigner.sheet import Sheet
 from kilndesigner.units import Q_
 from kilndesigner.working import Finding, Step, length_text, show
 
@@ -50,9 +51,23 @@ def test_steps_and_findings_carry_their_references() -> None:
     step = Step(name="Top temperature", value="1285 °C", reference="Orton")
     assert step.inputs == {}
     assert step.formula is None
-    finding = Finding(level="warning", message="hot", reference="electric-and-thermal.md §1.6")
+    finding = Finding(level="info", message="hot", reference="electric-and-thermal.md §1.6")
     assert finding.reference == "electric-and-thermal.md §1.6"
     with pytest.raises(ValueError, match="frozen"):
         step.name = "other"  # pyright: ignore[reportAttributeAccessIssue]
     with pytest.raises(ValueError, match="level"):
         Finding.model_validate({"level": "fatal", "message": "x"})
+
+
+def test_a_warning_or_an_error_is_raised_by_its_check() -> None:
+    """Every warning and error links to the sheet that raised it (ADR 0013)."""
+    with pytest.raises(ValueError, match="raised by a check"):
+        Finding(level="warning", message="hot")
+    s = Sheet("test.hot", "Hot")
+    s.given("T", "the hot face", Q_(2400, "degF"))
+    s.given("T_max", "its rating", Q_(2300, "degF"))
+    s.require("T", "<=", "T_max", level="warning")
+    check = s.check()
+    assert Finding(level="warning", message="hot", check=check).check == check
+    with pytest.raises(ValueError, match="raised by a check"):
+        Finding(level="error", message="hot", check=check)  # the check fails as a warning

@@ -2,11 +2,13 @@
   "bom": {
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "No price found for: steel.",
         "reference": null
@@ -41,10 +43,10 @@
         "unit_price": "$150.00"
       },
       {
-        "buy": "6.5 lb",
-        "cost": 361.72499999999997,
+        "buy": "10 lb",
+        "cost": 556.5,
         "item": "Kanthal A-1 wire",
-        "needed": "6 elements of 10 AWG, 37.84 ft each (5.7 lb)",
+        "needed": "2 elements of 9 AWG, 143.1 ft each (9.06 lb)",
         "priced_as": "Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found), TEMCo Industrial",
         "source": "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)",
         "unit_price": "$55.65/lb"
@@ -57,10 +59,28 @@
         "priced_as": null,
         "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
         "unit_price": null
+      },
+      {
+        "buy": "14 ft",
+        "cost": null,
+        "item": "L2×2×3/16",
+        "needed": "12.5 ft (roof angle, front and back, roof angle, sides)",
+        "priced_as": null,
+        "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
+        "unit_price": null
+      },
+      {
+        "buy": "31 ft",
+        "cost": null,
+        "item": "3/8-16 threaded rod",
+        "needed": "27.7 ft (rods across the roof, one every 4½ in)",
+        "priced_as": null,
+        "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
+        "unit_price": null
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 2750.205
+    "total": 2944.98
   },
   "castables": [],
   "chamber_volume": "7.03 ft³",
@@ -68,43 +88,146 @@
     "alloy": "Kanthal A-1",
     "continuous_current_limit": "48 A",
     "elements": {
-      "close_wound_length_each": "32.12 in",
-      "coil_outside_diameter": "0.56 in",
-      "coil_outside_diameter_mm": 14.234,
-      "cold_resistance_each": "3.179 Ω",
-      "count": 6,
+      "close_wound_length_each": "121.5 in",
+      "coil_outside_diameter": "0.629 in",
+      "coil_outside_diameter_mm": 15.983,
+      "cold_resistance_each": "9.537 Ω",
+      "count": 2,
       "current_each": "24 A",
-      "gauge": "10 AWG",
-      "groove_length_each": "67.5 in",
-      "groove_rows": 6,
-      "hot_resistance_each": "3.333 Ω",
-      "length_each": "37.84 ft",
-      "pitch": "0.214 in (2.10 × wire diameter)",
-      "power_each": "1920 W",
-      "stretched_length_each": "67.5 in",
-      "surface_load": "13.2 W/in²",
-      "turns_each": "315.2",
-      "wire_diameter": "0.102 in",
-      "wire_mass_total": "5.7 lb",
-      "wiring": "2 string(s) of 3 in series"
+      "gauge": "9 AWG",
+      "groove_length_each": "270 in",
+      "groove_rows": 8,
+      "hot_resistance_each": "10 Ω",
+      "length_each": "143.1 ft",
+      "pitch": "0.254 in (2.22 × wire diameter)",
+      "power_each": "5760 W",
+      "stretched_length_each": "270 in",
+      "surface_load": "9.33 W/in²",
+      "turns_each": "1062",
+      "wire_diameter": "0.114 in",
+      "wire_mass_total": "9.06 lb",
+      "wiring": "2 in parallel, each across the full voltage"
     },
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
         "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
       },
       {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "W",
+              "meaning": "power of each element",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the installed power ÷ the elements",
+              "symbol": "P_e",
+              "text": null,
+              "unit": "watt",
+              "value": 5760.0
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "mm",
+              "meaning": "the wire's diameter",
+              "offset": 0.0,
+              "scale": 1000.0,
+              "source": "the wire chosen: the coolest that fits the grooves (ASTM B258)",
+              "symbol": "d",
+              "text": null,
+              "unit": "mm",
+              "value": 0.002906
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "ft",
+              "meaning": "wire in each element",
+              "offset": 0.0,
+              "scale": 3.2808398950131235,
+              "source": "working: Wire length per element",
+              "symbol": "L",
+              "text": null,
+              "unit": "ft",
+              "value": 43.62592659196326
+            },
+            {
+              "expr": "P_e/(pi*d*L)",
+              "formula": "P_e/(π·d·L)",
+              "label": "W/in²",
+              "meaning": "surface load",
+              "offset": 0.0,
+              "scale": 0.00064516,
+              "source": "watts ÷ the wire's surface",
+              "symbol": "p",
+              "text": null,
+              "unit": "W/in**2",
+              "value": 14462.13251175191
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "W/in²",
+              "meaning": "Olsen's most for cone 10",
+              "offset": 0.0,
+              "scale": 0.00064516,
+              "source": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+              "symbol": "p_max",
+              "text": null,
+              "unit": "W/in**2",
+              "value": 13950.027900055802
+            }
+          ],
+          "id": "electric.surface-load",
+          "label": null,
+          "lever": {
+            "hi": 20000.0,
+            "lo": 10.0,
+            "step": null,
+            "symbol": "P_e"
+          },
+          "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "p",
+              "level": "warning",
+              "margin": "p = 9.33 W/in², 103.7 % of p_max = 9 W/in²",
+              "op": "<=",
+              "right": "p_max"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when P_e ≤ 5,556 W",
+          "status": "warning",
+          "title": "The elements' surface load"
+        },
+        "level": "warning",
+        "message": "No wire that fits the grooves runs at Olsen's 9 W/in² or less: the coolest is 9.33 W/in². The elements will wear out sooner. Elements in more walls, or less power, would bring it down.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253"
+      },
+      {
+        "check": null,
         "level": "info",
         "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
         "reference": "electrical-supply.md §1 [E1–E3], §3"
       },
       {
+        "check": null,
         "level": "info",
-        "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+        "message": "The tool chose 2 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
         "reference": null
@@ -162,23 +285,23 @@
       {
         "formula": null,
         "inputs": {
-          "elements": "6",
-          "in series per string": "3"
+          "elements": "2",
+          "in series per string": "1"
         },
         "name": "Power and voltage per element",
         "note": null,
         "reference": null,
-        "value": "1920 W at 80 V"
+        "value": "5760 W at 240 V"
       },
       {
         "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
         "inputs": {
-          "p (limit)": "17.5 W/in²"
+          "p (limit)": "9 W/in²"
         },
         "name": "Smallest wire for the surface-load limit",
         "note": null,
-        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "2.36 mm"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "value": "2.94 mm"
       },
       {
         "formula": null,
@@ -186,7 +309,7 @@
         "name": "Wire chosen",
         "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]",
-        "value": "10 AWG, 2.59 mm"
+        "value": "9 AWG, 2.91 mm"
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
@@ -194,15 +317,15 @@
         "name": "Wire length per element",
         "note": null,
         "reference": null,
-        "value": "37.84 ft"
+        "value": "143.1 ft"
       },
       {
         "formula": "p = P / (π·d·L)",
         "inputs": {},
         "name": "Surface load",
         "note": null,
-        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "13.2 W/in²"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "value": "9.33 W/in²"
       },
       {
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
@@ -213,7 +336,7 @@
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
-        "value": "315 turns, 0.56 in outside, pitch 2.10 d"
+        "value": "1062 turns, 0.629 in outside, pitch 2.22 d"
       },
       {
         "formula": null,
@@ -236,95 +359,200 @@
   "engine_version": "0.1.0",
   "findings": [
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "W",
+            "meaning": "power of each element",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the installed power ÷ the elements",
+            "symbol": "P_e",
+            "text": null,
+            "unit": "watt",
+            "value": 5760.0
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "mm",
+            "meaning": "the wire's diameter",
+            "offset": 0.0,
+            "scale": 1000.0,
+            "source": "the wire chosen: the coolest that fits the grooves (ASTM B258)",
+            "symbol": "d",
+            "text": null,
+            "unit": "mm",
+            "value": 0.002906
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "ft",
+            "meaning": "wire in each element",
+            "offset": 0.0,
+            "scale": 3.2808398950131235,
+            "source": "working: Wire length per element",
+            "symbol": "L",
+            "text": null,
+            "unit": "ft",
+            "value": 43.62592659196326
+          },
+          {
+            "expr": "P_e/(pi*d*L)",
+            "formula": "P_e/(π·d·L)",
+            "label": "W/in²",
+            "meaning": "surface load",
+            "offset": 0.0,
+            "scale": 0.00064516,
+            "source": "watts ÷ the wire's surface",
+            "symbol": "p",
+            "text": null,
+            "unit": "W/in**2",
+            "value": 14462.13251175191
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "W/in²",
+            "meaning": "Olsen's most for cone 10",
+            "offset": 0.0,
+            "scale": 0.00064516,
+            "source": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+            "symbol": "p_max",
+            "text": null,
+            "unit": "W/in**2",
+            "value": 13950.027900055802
+          }
+        ],
+        "id": "electric.surface-load",
+        "label": "W1",
+        "lever": {
+          "hi": 20000.0,
+          "lo": 10.0,
+          "step": null,
+          "symbol": "P_e"
+        },
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "p",
+            "level": "warning",
+            "margin": "p = 9.33 W/in², 103.7 % of p_max = 9 W/in²",
+            "op": "<=",
+            "right": "p_max"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when P_e ≤ 5,556 W",
+        "status": "warning",
+        "title": "The elements' surface load"
+      },
       "level": "warning",
-      "message": "The case, or a band round the roof, must squeeze it across its span with about 68 lb per foot, cold. No source gives a band's size or tension for a kiln roof, so none is drawn: have it designed.",
-      "reference": "flat-roofs.md §3"
+      "message": "No wire that fits the grooves runs at Olsen's 9 W/in² or less: the coolest is 9.33 W/in². The elements will wear out sooner. Elements in more walls, or less power, would bring it down.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 243.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 230.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
       "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
       "reference": "electrical-supply.md §1 [E1–E3], §3"
     },
     {
+      "check": null,
       "level": "info",
-      "message": "The tool chose 6 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+      "message": "The tool chose 2 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
       "reference": "electric-and-thermal.md §1.6 [S9, S13]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
       "reference": "flat-roofs.md §3.2, §4.2"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Three 1 in peepholes are cut through the door. Their heights are not sourced; they are spaced evenly.",
       "reference": "electric-kiln-hardware.md §4 [S3] [S6]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
       "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "No price found for: steel.",
       "reference": null
     }
   ],
+  "fire": null,
   "frame": {
     "angle": null,
     "angle_leg_in": 0.0,
     "angle_t_in": 0.125,
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
         "reference": "flat-roofs.md §3.2, §4.2"
-      },
-      {
-        "level": "warning",
-        "message": "The case, or a band round the roof, must squeeze it across its span with about 68 lb per foot, cold. No source gives a band's size or tension for a kiln roof, so none is drawn: have it designed.",
-        "reference": "flat-roofs.md §3"
       }
     ],
     "kind": "welded case",
@@ -342,10 +570,32 @@
         "part": "top and bottom plates",
         "source": "L&L Easy-Load bulletin, 1/8 in welded steel case; electric-kiln-hardware.md §1.2 [S6]",
         "steel": "⅛ in steel plate"
+      },
+      {
+        "count": 2,
+        "length_in": 37.5,
+        "part": "roof angle, front and back",
+        "source": "Olsen, The Kiln Book, 4th ed., p.248–249: a flat roof needs an angle-iron frame, 'a basic requirement', with rows of brick held by tie bolts through them; size: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "L2×2×3/16"
+      },
+      {
+        "count": 2,
+        "length_in": 37.5,
+        "part": "roof angle, sides",
+        "source": "Olsen, The Kiln Book, 4th ed., p.248–249: a flat roof needs an angle-iron frame, 'a basic requirement', with rows of brick held by tie bolts through them; size: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "L2×2×3/16"
+      },
+      {
+        "count": 8,
+        "length_in": 41.5,
+        "part": "rods across the roof, one every 4½ in",
+        "source": "Olsen, The Kiln Book, 4th ed., p.248–249: a flat roof needs an angle-iron frame, 'a basic requirement', with rows of brick held by tie bolts through them",
+        "steel": "3/8-16 threaded rod"
       }
     ],
-    "rod": null,
-    "rod_d_in": 0.0,
+    "posts": 2,
+    "rod": "3/8-16",
+    "rod_d_in": 0.375,
     "thrust": "68 lb per foot of roof, cold",
     "working": [
       {
@@ -368,6 +618,14 @@
         "note": "BIA's method is for cold brick masonry between abutments that don't move; heat and the clamp's own squeeze aren't in it (flat-roofs.md §2.5).",
         "reference": "BIA Technical Note 31A, jack arches; flat-roofs.md §2 [F2]",
         "value": "spans 22.5 in between the left and right walls; the frame must squeeze it with 68 lb per foot, 128 lb in all, cold"
+      },
+      {
+        "formula": "the roof's thrust × 4½ in, a row of brick, ÷ the rod's tensile stress area",
+        "inputs": {},
+        "name": "Rods across the roof, one every 4½ in",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, 4th ed., p.248–249: a flat roof needs an angle-iron frame, 'a basic requirement', with rows of brick held by tie bolts through them; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+        "value": "8 rods: 26 lb each, 330 psi"
       }
     ]
   },
@@ -528,26 +786,31 @@
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 243.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 230.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
         "reference": null
@@ -744,6 +1007,7 @@
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
         "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"

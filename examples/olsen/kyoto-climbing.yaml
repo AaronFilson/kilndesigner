@@ -1,0 +1,65 @@
+# Kyoto-style climbing chamber kiln, the type (Olsen, The Kiln Book, 4th ed., p.89–94, p.205): the
+# wood-fired chamber kilns of south-east Kyoto, hundreds of them, each fired every fortnight until
+# the early 1960s (p.89–90). A type, not one kiln: this file draws one of them from the book's
+# ranges.
+#
+# From the book: "Kyoto climbing kiln dimensions: 6–7' tall, 4.5–6' wide" (Fig 4-28); in each
+# chamber a firebox (himae), a 9 in trough along the front wall behind a row of empty saggars,
+# stoked from both sides (p.92, Fig 4-34); arches peaked toward the back in reduction chambers
+# (p.91–92); climbing kilns, so the floor is on the ground (p.89–94).
+# Assumed: 5¼ ft (63 in) wide and 6½ ft (78 in) to the crown, the middle of each range. The depth
+# isn't given: the mean of the Bidai kiln's chambers, 41⅓ in (bidai, Fig 4-36). The arch rises
+# 20.7 in: Olsen uses 4–6 in per foot of span on chamber kilns (p.296), and 6 in/ft on the 41⅓ in
+# span along the draft, nearest the Kyoto kilns' tall arches, is a semicircle. So the springline
+# is at 57.3 in. Ten chambers, as the Kyomizu kiln Olsen fired for 2½ years (kyomizu, Fig 4-27).
+# The slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36). Walls 9½ in, inside Olsen's 9–10 in for
+# climbing kilns (p.99–100), and a 9 in arch, as the Bidai kiln. The bricks are local firebrick
+# with thick fireclay joints and no stated grade (bidai, p.94–95): medium-duty
+# firebrick (Olsen's intermediate duty, p.18); the floor as the walls (engine default). Cone 10, the hottest
+# chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93). No chimney is given, so the
+# engine sizes it, the exit flue too. The arches are held by masonry (buttressed): each chamber's
+# arch spans along the draft and throws its thrust onto the common wall and on to the chimney, the
+# front braced (p.95, p.97).
+# Not modelled: the main firebox (dogi), which the book doesn't size, and the flues, about 9 × 5 in
+# out and 9 × 4½ to 9 × 6 in in, 9 in apart (Fig 4-28), whose count isn't given. The engine's arch
+# spans the width, so it is laid across the 63 in with the same springline and crown; held by
+# masonry, it gets no steel. The doors are in a side wall; a sprung arch here springs from the
+# side walls, so the door is put in the front wall. The floor's loss into the ground isn't worked out by the engine.
+schema: 1
+name: Kyoto-style climbing kiln (type)
+units: us
+firing:
+  cone: "10" # not given for the type: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 63 in # 4½–6 ft (Fig 4-28)
+  depth: 41.33 in # the Bidai kiln's mean
+  height: 57.3 in # to the springline: 78 in to the crown, less the rise
+  chambers: 10 # as the Kyomizu kiln
+  slope: 18.4 degree # the Bidai kiln's 3 to 1
+  on_ground: true # climbing kilns (p.89–94)
+roof:
+  type: sprung_arch
+  rise: 20.7 in # 6 in per foot of the 41⅓ in span (p.296)
+  buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # local firebrick, grade not given
+      thickness: 9.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in # as the Bidai kiln's arch
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 10 # one himae in each chamber
+        position: front
+        width: 9 in # the trough (p.92)
+        length: 63 in # across the chamber
+draft:
+  type: cross
+  flue_wall: back

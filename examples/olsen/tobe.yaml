@@ -1,0 +1,64 @@
+# Tobe Village kiln, Shikoku (Olsen, The Kiln Book, 4th ed., p.90, p.92): the largest chamber
+# kiln, seven wood-fired chambers in series, 15,000 ft³ in all; destroyed in July 1963.
+#
+# From the book: seven chambers, 15,000 ft³ (425 m³) in all; the largest chamber 25 ft long,
+# 10 ft tall and 10 ft wide (p.90); the chamber's width almost equal to its height (p.92); a
+# climbing kiln (p.90, p.92), so the floor is on the ground.
+# Assumed: every chamber is the largest one's size, 25 ft across the kiln and 10 ft along it, the
+# way the Kyoto chambers lie (wide across, short along the draft; bidai, kawaii), and 10 ft to the
+# crown. The arch rises 5 ft, a semicircle on the 10 ft span along the draft: Olsen uses 4–6 in
+# per foot on chamber kilns of 4–8 ft span (p.296), and 6 in/ft on 10 ft is a semicircle. So the
+# springline is at 5 ft, and seven chambers come to about 14,800 ft³, near the printed 15,000 ft³.
+# Walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), and a 9 in arch, as the
+# Bidai kiln (bidai, Fig 4-36). The book names no brick: Japanese chamber kilns are built of local
+# firebrick (bidai, p.94–95), so medium-duty firebrick (Olsen's intermediate duty, p.18); the floor
+# as the walls (engine default). The slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36). Cone 10,
+# the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93): the book gives no
+# cone for this kiln. No firebox is sized, so the fire is a chamber firebox (himae) in each
+# chamber, the Kyoto kilns' 9 in trough along the front wall, stoked from both sides
+# (kyoto-climbing, p.92). No chimney is given, so the engine sizes it. The arches are held by
+# masonry (buttressed): in chamber kilns each chamber's arch spans along the draft and throws its
+# thrust onto the common wall and on to the chimney, the front braced (p.95, p.97); the book shows
+# no steel frame on them.
+# Not modelled: the other six chambers' own sizes, the main firebox and the steps between
+# chambers. The engine's arch spans the width, so it is laid across the 25 ft with the same
+# springline and crown; held by masonry, it gets no steel. The floor's loss into the ground isn't
+# worked out by the engine.
+schema: 1
+name: Tobe Village climbing kiln, Shikoku
+units: us
+firing:
+  cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 25 ft
+  depth: 10 ft
+  height: 5 ft # to the springline: 10 ft to the crown, less the rise
+  chambers: 7
+  slope: 18.4 degree # the Bidai kiln's 3 to 1
+  on_ground: true # a climbing kiln (p.90)
+roof:
+  type: sprung_arch
+  rise: 5 ft
+  buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # grade not given
+      thickness: 9.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in # as the Bidai kiln's arch
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 7 # one himae in each chamber
+        position: front
+        width: 9 in # the Kyoto trough (p.92)
+        length: 25 ft # across the chamber
+draft:
+  type: cross
+  flue_wall: back

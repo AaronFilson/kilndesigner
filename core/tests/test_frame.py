@@ -18,6 +18,7 @@ from kilndesigner.frame import (
     steel_data,
 )
 from kilndesigner.model import Kiln
+from kilndesigner.sheet import Check
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 
@@ -63,27 +64,36 @@ def test_the_buttress_is_sized_by_the_thrust() -> None:
     assert frame.rod == "1/2-13"
 
 
-def test_a_flat_thick_arch_is_refused_hot_and_given_no_steel() -> None:
-    """2 in of rise under a 4½ in dense arch over 54 in: the hot thrust line leaves the brick, so
-    there's no thrust to size steel by, and none is shown (the review's structure 4)."""
+def test_a_flat_thick_arch_takes_the_most_harbisonwalker_tabulates() -> None:
+    """2 in of rise under a 4½ in dense arch over 54 in: HarbisonWalker's heated-arch method has
+    no finite hot thrust (its thrust line can't hinge in the ring). Olsen builds such arches in
+    light frames that give, so the steel takes 5.34 × the cold thrust, with a note, not an error
+    (the user's rule: the book's kilns are built and fired)."""
     document = _dense_arch().model_dump(mode="json", by_alias=True)
     kiln = Kiln.model_validate({**document, "roof": {"type": "sprung_arch", "rise": "2 in"}})
     frame = design_frame(kiln)
-    errors = [f.message for f in frame.findings if f.level == "error"]
-    assert any(m.startswith("Hot, this arch's thrust line would leave the ring") for m in errors)
-    assert (frame.kind, frame.angle, frame.thrust, frame.members) == (NO_FRAME, None, None, [])
-    assert not any("Weld the frame" in f.message for f in frame.findings)
+    assert not [f for f in frame.findings if f.level == "error" and "thrust line" in f.message]
+    [note] = [f for f in frame.findings if "stress excessive" in f.message]
+    assert note.level == "info"
+    cold = float(_value(frame, "Cold horizontal thrust").split()[0])
+    hot = float(_value(frame, "Thrust of the heated arch").split()[0])
+    assert hot == pytest.approx(MAX_PRINTED_HEATED * cold, rel=1e-3)
+    # Under Olsen's 1½ in/ft: a warning
+    [low] = [f for f in frame.findings if f.check and f.check.id == "frame.rise"]
+    assert low.level == "warning"
 
 
 def test_an_electric_kiln_has_a_case_and_the_hybrid_an_arch_frame() -> None:
     electric = design_frame(load_design(EXAMPLES / "electric-front-loader.yaml"))
     assert electric.kind == "welded case"
+    # Its flat roof: Olsen's angle frame and a tie bolt through each row of brick (p.248–249)
+    assert {m.part for m in electric.members} >= {"rods across the roof, one every 4½ in"}
     hybrid = design_frame(load_design(EXAMPLES / "pnw-hybrid-crossdraft.yaml"))
     assert hybrid.kind == "arch frame"
-    # Its 3 in castable arch is 10.7 % of the 28 in span: past the table, worked out by statics,
-    # which sizes steel past what's been checked: a warning (the review's structure 3)
-    [past] = [f for f in hybrid.findings if "outside it" in f.message]
-    assert past.level == "warning"
+    # Its 3 in castable arch is 10.7 % of the 28 in span: past the table, worked out by the same
+    # statics, a note
+    [past] = [f for f in hybrid.findings if "is past it" in f.message]
+    assert past.level == "info"
     assert {m.part for m in hybrid.members} >= {"corner posts", "tie rods"}
 
 
@@ -101,11 +111,21 @@ def test_the_heated_thrust_formula_reproduces_harbisonwalkers_table() -> None:
 
 
 def test_a_thick_arch_past_the_table_is_worked_out_not_refused() -> None:
-    """The hybrid's 3 in arch over 28 in (T/S 10.7 %) gets a hot thrust, with a warning."""
+    """The hybrid's 3 in arch over 28 in (T/S 10.7 %) gets a hot thrust, with a note."""
     design = design_frame(load_design(EXAMPLES / "pnw-hybrid-crossdraft.yaml"))
-    assert not [f for f in design.findings if f.level == "error" and "arch" in f.message]
-    assert any("outside it" in f.message for f in design.findings)
+    assert not [f for f in design.findings if f.level in ("error", "warning")]
+    assert any("is past it" in f.message for f in design.findings)
     assert any(s.name.startswith("Thrust of the heated arch") for s in design.working)
+
+
+def test_olsens_fast_fire_arch_gets_olsens_angle() -> None:
+    """The fast-fire kiln's No. 1 arch, 4½ in of IFB over 27 in at 1½ in/ft: past
+    HarbisonWalker's method, so 5.34 × the cold thrust, and the frame comes out as the
+    2 × 2 × 3/16 in angle Olsen bolted on it (p.139)."""
+    frame = design_frame(load_design(EXAMPLES / "olsen" / "fast-fire.yaml"))
+    assert frame.kind == "arch frame"
+    assert frame.angle == "L2×2×3/16"
+    assert not [f for f in frame.findings if f.level in ("error", "warning")]
 
 
 def test_the_cold_thrust_formula_reproduces_harbisonwalkers_table() -> None:
@@ -181,6 +201,105 @@ def test_a_flat_roof_outside_what_the_sources_cover(
     assert [f.level for f in design_frame(kiln).findings if says in f.message] == [level]
 
 
+def _flat(width: str, roof: str) -> Kiln:
+    document = load_design(EXAMPLES / "gas-crossdraft.yaml").model_dump(mode="json", by_alias=True)
+    document["chamber"]["width"] = width
+    document["lining"]["roof"][0]["thickness"] = roof
+    return Kiln.model_validate({**document, "roof": {"type": "flat"}})
+
+
+def _check(kiln: Kiln, check_id: str) -> Check:
+    found = [f.check for f in design_frame(kiln).findings if f.check and f.check.id == check_id]
+    assert len(found) == 1, check_id
+    return found[0]
+
+
+def test_a_flat_roofs_sheets_say_what_would_pass() -> None:
+    """18 in under 9 in: the ends need μ = 4d/3S = 0.667 against BIA's 0.60, so d ≤ 8.1 in holds.
+    40 in passes Merrill's 36 in but not the 45 in of a roof on four walls."""
+    deep = _check(_flat("18 in", "9 in"), "frame.flat-friction")
+    assert deep.status == "error"
+    assert deep.requirements[0].margin == "μ_need = 0.6667, 111.1 % of μ = 0.6"
+    assert deep.solve == "Passes when t_1 ≤ 8.1 in"
+    assert next(c for c in deep.cells if c.symbol == "μ_need").formula == "4·t_1/(3·S)"
+    wide = _check(_flat("40 in", "3 in"), "frame.flat-span")
+    assert wide.status == "warning"
+    assert [r.holds for r in wide.requirements] == [True, False]
+    assert wide.solve == "Passes when S ≤ 36 in"
+    assert _check(_flat("48 in", "3 in"), "frame.flat-span").status == "error"
+
+
+def test_a_flat_roofs_rods_and_a_cases_band_carry_its_thrust_in_the_sheet() -> None:
+    document = load_design(EXAMPLES / "gas-crossdraft.yaml").model_dump(mode="json", by_alias=True)
+    document["chamber"]["width"] = "100 in"
+    document["lining"]["roof"] = [{"material": "mizzou-castable-plus", "thickness": "9 in"}]
+    rods = _check(Kiln.model_validate({**document, "roof": {"type": "flat"}}), "frame.flat-rod")
+    assert rods.status == "error"
+    assert next(c for c in rods.cells if c.symbol == "H").formula == "3·q·S²/(8·t_1)"
+    assert rods.solve is not None
+    assert rods.solve.startswith("Passes when A_s ≥ ")
+
+
+def test_an_electric_kiln_s_flat_roof_takes_olsens_rods() -> None:
+    """Olsen's electric flat roof: rows of brick held by tie bolts through them, in an angle-iron
+    frame, 'a basic requirement' (p.248–249). The electric example's 4½ in JM 26 over 22½ in: a
+    3/8 in rod every 4½ in carries it well inside 12,000 psi."""
+    frame = design_frame(load_design(EXAMPLES / "electric-front-loader.yaml"))
+    assert not [f for f in frame.findings if f.level in ("warning", "error")]
+    rods = next(m for m in frame.members if m.part.startswith("rods across the roof"))
+    assert rods.steel == "3/8-16 threaded rod"
+    assert rods.source is not None
+    assert "Olsen" in rods.source
+
+
+def test_a_domes_sheets_work_on_the_slice_that_decides_them() -> None:
+    """The dome example at 8 in of rise: the middle slice, 3.00 in thick against HarbisonWalker's
+    2.645 in, passes from 8.88 in of rise (the engine's own search says 8.9 in); its hot thrust
+    passes HarbisonWalker's printed 5.34 times from 9.17 in."""
+    document = load_design(EXAMPLES / "dome-castable-kiln.yaml").model_dump(
+        mode="json", by_alias=True
+    )
+    document["roof"]["rise"] = "8 in"
+    kiln = Kiln.model_validate(document)
+    thick = _check(kiln, "frame.dome-thickness")
+    assert thick.status == "error"
+    assert thick.requirements[0].margin == "T = 3 in, 113.4 % of T_max = 2.645 in"
+    assert thick.solve == "Passes when h ≥ 8.884 in"
+    hot = _check(kiln, "frame.dome-heated-factor")
+    assert hot.status == "warning"
+    assert hot.solve == "Passes when h ≥ 9.168 in"  # not where the hot line leaves the ring
+    steel = _check(kiln, "frame.dome-steel")
+    assert {"H", "F", "F_tie"} <= {c.symbol for c in steel.cells}
+    assert _check(kiln, "frame.dome-checked-range").solve == "Passes when t_1 ≤ 2.673 in"
+
+
+def test_a_thin_dome_says_how_thick_to_stand() -> None:
+    """Near a hemisphere, ¼ in of castable is under Heyman's factor of 2; η comes from his table
+    at the slice's half-angle, so only the thickness is solved for."""
+    document = load_design(EXAMPLES / "dome-castable-kiln.yaml").model_dump(
+        mode="json", by_alias=True
+    )
+    document["roof"]["rise"] = "23 in"
+    document["lining"]["roof"] = [{"material": "kast-o-lite-30-li-plus", "thickness": "0.25 in"}]
+    standing = _check(Kiln.model_validate(document), "frame.dome-factor")
+    assert standing.status == "error"
+    assert standing.lever is not None
+    assert standing.lever.symbol == "t_1"
+    assert standing.solve is not None
+    assert standing.solve.startswith("Passes when t_1 ≥ ")
+    eta = next(c for c in standing.cells if c.symbol == "η")
+    assert eta.source is not None
+    assert "interpolated" in eta.source
+
+
+def test_a_catenarys_sheet_shows_the_push_its_feet_need_held() -> None:
+    feet = _check(load_design(EXAMPLES / "catenary-gas-kiln.yaml"), "frame.catenary-feet")
+    by = {c.symbol: c for c in feet.cells}
+    assert by["H_a"].value == pytest.approx(by["H_k"].value)  # a solves the crown's height
+    assert by["H"].formula == "w·a"
+    assert (feet.status, feet.rule_holds) == ("warning", False)
+
+
 def test_a_fibre_flat_roof_hangs_from_its_frame_unchecked() -> None:
     """Fibre can't span as a flat arch; makers bolt fibre tops to a frame (flat-roofs.md §4.1)."""
     for name, roof_type in (
@@ -216,9 +335,6 @@ def test_an_ifb_flat_roof_past_bnzs_2450_f_is_a_warning() -> None:
     ]
     cool = design_frame(load_design(EXAMPLES / "electric-front-loader.yaml"))
     assert not [f for f in cool.findings if "BNZ keeps flat" in f.message]
-    assert any(
-        "The case, or a band round the roof, must squeeze it" in f.message for f in cool.findings
-    )
 
 
 @pytest.mark.parametrize("rise", ["16 in", "0 in", "-3 in"])
@@ -271,53 +387,49 @@ BLANKET = {"material": "kaowool-blanket-8pcf", "thickness": "2 in"}
 
 
 @pytest.mark.parametrize(
-    ("ring", "per_foot", "refused"),
+    ("ring", "per_foot", "warned"),
     [
-        (IFB, 1.608, "HarbisonWalker gives 2–3 in/ft"),  # insulating firebrick: 2–3
-        (IFB, 2.302, None),
-        (HARD, 1.25, "HarbisonWalker gives 1.5–3 in/ft"),  # fireclay: 1½–3
-        (HARD, 1.608, None),
-        (CASTABLE, 0.5, "HarbisonWalker gives 1–3 in/ft"),  # castables aren't named: 1–3
-        (CASTABLE, 1.608, None),
-        (CASTABLE, 3.5, "HarbisonWalker gives 1–3 in/ft"),
+        (IFB, 1.5, False),  # Olsen's No. 1 featheredge arch, his kits and fast-fire kiln
+        (IFB, 6.0, False),  # a semicircle: he has built 6 in/ft (p.51)
+        (HARD, 1.25, True),
+        (CASTABLE, 0.5, True),
+        (CASTABLE, 3.5, False),  # past HarbisonWalker's 3 in/ft: Olsen's chamber kilns run 4–6
     ],
 )
-def test_harbisonwalkers_rise_for_the_ring_is_enforced(
-    ring: dict[str, str], per_foot: float, refused: str | None
+def test_olsens_least_rise_is_a_warning_and_there_is_no_most(
+    ring: dict[str, str], per_foot: float, warned: bool
 ) -> None:
-    """kiln-hardware.md §4.4 [S20]: a roof arch rises 1 to 3 in/ft; fireclay brick 1½–3,
-    insulating firebrick 2–3 (the review's structure 2). A 0.5 in/ft arch used to pass."""
+    """Olsen p.51: about 1½ in per foot of span at least, what a featheredge gives; less 'can
+    result in structural difficulty'; 3 in/ft is 'generally' the most, but he has built 6 and
+    there is 'no hard-and-fast rule'. HarbisonWalker's 1–3 in/ft (2–3 for IFB) would refuse his
+    own kilns, so it no longer rules."""
     frame = design_frame(_arch_of([ring, BLANKET], 36, per_foot, walls="9 in"))
-    rise = [m for m in _errors(frame) if "per foot of span" in m]
-    if refused is None:
-        assert rise == []
-    else:
-        [message] = rise
-        assert refused in message
+    rise = [f for f in frame.findings if f.check and f.check.id == "frame.rise"]
+    assert [f.level for f in rise] == (["warning"] if warned else [])
+    assert not [m for m in _errors(frame) if "per foot of span" in m]
 
 
-def test_harbisonwalkers_thickest_ring_is_enforced() -> None:
+def test_past_harbisonwalkers_thickest_ring_the_steel_takes_5_34_times_the_cold() -> None:
     """T ≤ (h − S/48) ÷ cos ½θ: 8.3 in for a 36 in span at 2.302 in/ft, 4.7 in at 1.608
-    (kiln-hardware.md §4.5, derived)."""
+    (kiln-hardware.md §4.5, derived). Past it HarbisonWalker's method has no hot thrust, and the
+    steel takes the most it tabulates, with a note: no longer an error."""
     steep = design_frame(_arch_of([HARD], 36, 2.302))
-    assert _value(steep, "Thickest ring for the rise") == "8.28 in"
+    assert _value(steep, "Thickest ring for HarbisonWalker's heated-arch method") == "8.28 in"
     low = design_frame(_arch_of([{**HARD, "thickness": "6 in"}], 36, 1.608, walls="9 in"))
-    assert _value(low, "Thickest ring for the rise") == "4.70 in"
-    assert any(
-        "thicker than HarbisonWalker allows for its rise, 4.70 in" in m for m in _errors(low)
-    )
+    assert _value(low, "Thickest ring for HarbisonWalker's heated-arch method") == "4.70 in"
+    assert _errors(low) == [] or all("thicker" not in m for m in _errors(low))
+    assert any("stress excessive" in f.message for f in low.findings)
 
 
-def test_a_steep_factor_inside_harbisonwalkers_rules_is_a_warning_not_a_refusal() -> None:
-    """A 4½ in fireclay arch over 36 in at 1.608 in/ft is inside HarbisonWalker's rise and
-    thickness rules (4.70 in), but heats to 6.2 times its cold thrust, past the 5.34 HW prints.
-    It used to be refused; the 5.34 is only a guard (the review's structure 2). 24 in deep, so
-    an angle can carry the thrust between the corner posts."""
+def test_a_steep_factor_inside_harbisonwalkers_rules_takes_the_most_it_prints() -> None:
+    """A 4½ in fireclay arch over 36 in at 1.608 in/ft is inside HarbisonWalker's thickness rule
+    (4.70 in), but its statics heat it to 6.2 times its cold thrust, past the 5.34 HW prints
+    before 'stress excessive'. The steel takes 5.34 × (the frame gives first), with a note. 24 in
+    deep, so an angle can carry the thrust between the corner posts."""
     frame = design_frame(_arch_of([HARD], 36, 1.608, depth="24 in"))
     assert _errors(frame) == []
-    [guard] = [f for f in frame.findings if f"{MAX_PRINTED_HEATED:g} times" in f.message]
-    assert guard.level == "warning"
-    assert "pushes 6.2 times its cold thrust" in guard.message
+    assert not [f for f in frame.findings if f.level == "warning"]
+    assert any("stress excessive" in f.message for f in frame.findings)
     assert frame.kind == "arch frame"
 
 
@@ -389,42 +501,78 @@ def test_the_buttress_working_says_which_section_modulus_it_uses() -> None:
     assert "where its Sz is 0.778 in³" in step.note  # L4×4×¼ (AISC)
 
 
-def test_an_arch_too_heavy_for_any_angle_or_rod_says_so() -> None:
-    """A 9 in hard-brick arch over 120 in, 72 in long inside (90 in outside). The thrust passes
-    what the largest angle, L4×4×3/8 (Sx 1.50 in³, AISC), carries between the corner posts, and
-    what a ¾ in rod's 0.334 in² carries at HarbisonWalker's 12,000 psi."""
+def _big_hard_arch(roof: list[dict[str, str]], ring: int = 1, ties: str = "rigid") -> Kiln:
+    """A hard-brick arch over 120 in, 72 in long inside (90 in outside)."""
     hard = [{"material": "hard-firebrick-kx99", "thickness": "9 in"}]
-    kiln = Kiln.model_validate(
+    arch: dict[str, object] = {"type": "sprung_arch", "rise": "16 in", "ring": ring, "ties": ties}
+    if ties == "springs":
+        arch["spring_rate"] = "283 lbf/in"
+    return Kiln.model_validate(
         {
             "name": "big hard arch",
             "firing": {"cone": "10"},
             "chamber": {"width": "120 in", "depth": "72 in", "height": "60 in"},
-            "roof": {"type": "sprung_arch", "rise": "16 in"},
-            "lining": {"walls": hard, "floor": hard, "roof": hard},
+            "roof": arch,
+            "lining": {"walls": hard, "floor": hard, "roof": roof},
             "heat": {"gas": {"supply": {"type": "cylinders", "count": 4}}},
         }
     )
-    frame = design_frame(kiln)
-    assert [f.message for f in frame.findings if f.level == "error"] == [
-        "No angle up to L4×4×3/8 carries the arch's thrust over 90 in between the corner posts. "
-        "Add posts along the side walls.",
-        "No rod up to ¾ in carries the arch's thrust.",
-    ]
+
+
+def test_a_heavy_arch_gets_posts_along_its_sides() -> None:
+    """A 9 in hard-brick arch over 120 in is past what the largest angle, L4×4×3/8 (Sx 1.50 in³,
+    AISC), carries over the 90 in between the corner posts, and what a ¾ in rod's 0.334 in²
+    carries at HarbisonWalker's 12,000 psi. Builders brace large kilns with buckstays along the
+    sides (kiln-hardware.md §4.1–4.2): the engine adds the fewest posts that let the steel carry
+    the thrust between them, each pair tied across by a rod."""
+    frame = design_frame(_big_hard_arch([{"material": "hard-firebrick-kx99", "thickness": "9 in"}]))
+    assert not [f for f in frame.findings if f.level == "error"]
     assert frame.thrust is not None
-    thrust = float(frame.thrust.split()[0])  # lb per foot of arch
-    # Bending: M = wL²/8 over the 90 in, against 12,000 psi
-    needed = thrust / 12 * 90**2 / 8 / 12000
-    assert needed > 1.50
-    bending = _value(frame, "Buttress angle, bending")
-    assert float(bending.split("≥ ")[1].split()[0]) == pytest.approx(needed, rel=1e-3)
-    # The rods: half the thrust on the 90 in (7.5 ft) each, on 0.334 in²
-    rods = _value(frame, "Tie rods, one at the front and one at the back")
-    psi = float(rods.split(": ")[1].split()[0].replace(",", ""))
-    assert psi == pytest.approx(thrust * 7.5 / 2 / 0.334, rel=1e-3)
-    assert psi > 12000
-    assert frame.rod == "3/4-10"
-    assert frame.angle == "L3×3×3/16"  # nothing passed, so the smallest stands
+    w = float(frame.thrust.split()[0]) / 12  # lb per inch of arch
+    assert w * 90**2 / 8 / 12000 > 1.50  # the corner posts alone wouldn't do
+    n = frame.posts
+    bay = 90 / (n - 1)
+    assert _value(frame, "Posts along the side walls") == f"{n} each side, {bay:.1f} in apart"
+    assert w * bay**2 / 8 / 12000 <= 1.50  # an angle carries a bay
+    assert w * bay / 0.334 <= 12000  # and a ¾ in rod the busiest pair of posts
+    fewer = 90 / (n - 2)  # one post fewer each side
+    assert w * fewer**2 / 8 / 12000 > 1.50 or w * fewer / 0.334 > 12000
+    rods = _value(frame, f"Tie rods, one at each of the {n} pairs of posts")
+    assert float(rods.split(": ")[1].split()[0].replace(",", "")) <= 12000
+    parts = {m.part: m for m in frame.members}
+    assert parts["posts, at the corners and along the sides"].count == 2 * n
+    assert parts["tie rods"].count == n
+
+
+def test_an_arch_too_heavy_for_posts_at_18_in_says_so() -> None:
+    """Two 9 in rings: even with posts 18 in apart, two brick lengths, the closest the engine
+    sets, no listed angle or rod carries a bay's thrust. Each error's sheet says what would
+    pass."""
+    hard = {"material": "hard-firebrick-kx99", "thickness": "9 in"}
+    frame = design_frame(_big_hard_arch([hard, hard], ring=2))
+    errors = [f for f in frame.findings if f.level == "error"]
+    assert frame.posts == 6  # 90 in in five bays of 18 in
+    angle, rod = errors
+    assert angle.message == (
+        "No angle up to L4×4×3/8 carries the arch's thrust over 18 in between posts, the shortest "
+        "bay the engine sets (18 in or more). Lighten the arch, or hold it with masonry "
+        "(buttressed)."
+    )
+    assert rod.message.startswith("No rod up to 3/4-10 carries the arch's thrust: the busiest of "
+                                  "the 6 rods takes")  # fmt: skip
+    assert rod.check is not None
+    assert rod.check.solve is not None
+    assert rod.check.solve.startswith("Passes when A_s ≥ ")
     assert not any("Weld the frame" in f.message for f in frame.findings)
+    # With springs on its rods the frame keeps to its corner posts, and says why
+    sprung = design_frame(_big_hard_arch([hard, hard], ring=2, ties="springs"))
+    assert sprung.posts == 2
+    [angle] = [f for f in sprung.findings if f.check and f.check.id == "frame.buttress"]
+    assert angle.message.endswith("Tie the rods rigid, so posts can go along the side walls.")
+    assert angle.check is not None
+    assert angle.check.title == "Buttress angle, L4×4×3/8, in bending"
+    # Nothing passed, so the smallest stands: Olsen's for a kiln his 5 × 5 × 6 ft size or bigger
+    assert sprung.angle == "L3×3×1/4"
 
 
 def _with_springs(rate: str) -> str:
@@ -445,13 +593,13 @@ def test_springs_keep_the_hot_thrust_near_the_cold() -> None:
 
 
 def test_stiff_springs_are_capped_at_the_rigid_frame() -> None:
-    """A spring stiffer than the arch can push stays at Heyman's maximum, and the table
-    warning comes back."""
+    """A spring stiffer than the arch can push stays at Heyman's maximum, and the note that the
+    statics run past the table comes back."""
     frame = design_frame(parse_design(_with_springs("100000 lbf/in")))
     step = next(s for s in frame.working if s.name == "Tie rod load with springs, hot")
     assert step.value.startswith("730 lb per rod")
     assert frame.angle == "L4×4×5/16"
-    assert any("outside it" in f.message for f in frame.findings)
+    assert any("is past it" in f.message for f in frame.findings)
 
 
 def test_springs_need_their_rate() -> None:

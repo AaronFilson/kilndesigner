@@ -301,7 +301,11 @@ def test_ports_cut_the_lining_and_chimney_but_not_the_burners() -> None:
     part less what the openings take out of it. Its Ransome B4 ports are round, 4¾ in, and lie
     wholly inside the front wall, the door; the flue, spy holes, chimney inlet and damper are
     rectangles."""
-    kiln = _changed("gas-crossdraft.yaml", roof={"type": "flat"})
+    kiln = _changed(
+        "gas-crossdraft.yaml",
+        roof={"type": "flat"},
+        heat__gas__burners={"model": "Ransome B4", "count": 2},
+    )
     report = design_report(kiln)
     hw = build_hardware(kiln, report.frame, report.gas)
     solids = {c.label: c for c in build_model(kiln, hardware=hw).children}

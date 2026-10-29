@@ -88,7 +88,7 @@ async def test_a_build_writes_the_report_and_is_reused(
     assert build["status"] == "done", build["error"]
     assert "report.json" in build["files"]
     report = (await client.get(f"/api/builds/{key}/report")).json()
-    assert report["electric"]["elements"]["count"] >= 3
+    assert report["electric"]["elements"]["groove_rows"] >= 3  # an element may run several
     file = await client.get(f"/api/builds/{key}/files/kiln.glb")
     assert file.content[:4] == b"glTF"
 

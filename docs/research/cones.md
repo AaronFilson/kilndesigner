@@ -169,6 +169,10 @@ Sources:
 
 ## Discrepancies
 
+- Olsen, *The Kiln Book* 4th ed., Table A-11 (p.307–308) prints Orton equivalents with cone 7
+  (1251 °C) above cone 8 (1236 °C) and column headings that don't match Orton's. It is not used
+  as a source.
+
 1. LRB 14: Orton's chart prints 1388 @60 and 1366 @150, which is reversed. The 150 value is
    confirmed by the older NBS chart.
 2. LRB 04 @150: 1070 (2016 chart) vs 1060 (older NBS chart).

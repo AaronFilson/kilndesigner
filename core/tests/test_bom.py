@@ -196,3 +196,10 @@ def test_going_over_the_budget_is_a_warning() -> None:
         "The priced materials come to $624, over the $500 budget, before steel, hardware and "
         "shipping."
     )
+    # Its sheet: each priced line, their sum, the budget, and the budget that would do
+    check = warning.check
+    assert check is not None
+    assert check.id == "bom.budget"
+    assert [c.symbol for c in check.cells] == ["c_1", "B", "C"]
+    assert check.requirements[0].margin == "C = $624, 124.8 % of B = $500"
+    assert check.solve == "Passes when B ≥ $624"

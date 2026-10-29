@@ -16,8 +16,9 @@ from kilndesigner.frame import FrameDesign
 from kilndesigner.gas import GasDesign
 from kilndesigner.hardware import CHIMNEY_BRICK
 from kilndesigner.masonry import Masonry
+from kilndesigner.materials_checks import within_budget
 from kilndesigner.model import Kiln
-from kilndesigner.units import parse_quantity, si
+from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding
 
 
@@ -255,14 +256,18 @@ def bill_of_materials(
             )
         )
     budget = kiln.site.materials_budget
-    if budget is not None and total > si(budget, "USD"):
-        findings.append(
-            Finding(
-                level="warning",
-                message=(
-                    f"The priced materials come to ${total:,.0f}, over the "
-                    f"${si(budget, 'USD'):,.0f} budget, before steel, hardware and shipping."
-                ),
+    if budget is not None:
+        priced = [(x.item, x.cost, x.priced_as) for x in lines if x.cost is not None]
+        sheet = within_budget(priced, si(budget, "USD"))
+        sheet.agrees("C", Q_(total, "USD"))
+        if (check := sheet.check()).status != "pass":
+            findings.append(
+                Finding.failed(
+                    check,
+                    message=(
+                        f"The priced materials come to ${total:,.0f}, over the "
+                        f"${si(budget, 'USD'):,.0f} budget, before steel, hardware and shipping."
+                    ),
+                )
             )
-        )
     return Bom(lines=lines, total=total, prices_checked=prices.checked, findings=findings)

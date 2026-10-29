@@ -148,6 +148,8 @@ const KIND_WORDS: Record<string, string> = {
   insulating_castable: "Insulating castable",
   dense_castable: "Dense castable",
   backup_insulation: "Backup insulation",
+  building_brick: "Building brick",
+  stone: "Stone",
   diy_castable: "Your castables",
 };
 

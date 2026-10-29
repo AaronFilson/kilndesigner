@@ -349,6 +349,86 @@ export interface components {
             findings: components["schemas"]["Finding"][];
         };
         /**
+         * Cell
+         * @description One row: an input (no ``expr``) or a formula over the rows above. A fact that isn't a number
+         *     has ``text`` and no ``value``.
+         */
+        Cell: {
+            /** Symbol */
+            symbol: string;
+            /** Meaning */
+            meaning: string;
+            /** Value */
+            value?: number | null;
+            /** Text */
+            text?: string | null;
+            /**
+             * Unit
+             * @default
+             */
+            unit: string;
+            /**
+             * Label
+             * @default
+             */
+            label: string;
+            /**
+             * Scale
+             * @default 1
+             */
+            scale: number;
+            /**
+             * Offset
+             * @default 0
+             */
+            offset: number;
+            /** Expr */
+            expr?: string | null;
+            /** Formula */
+            formula?: string | null;
+            /** Source */
+            source?: string | null;
+        };
+        /**
+         * Check
+         * @description Why a finding was raised: its sheet, the requirements, and what would change the result.
+         */
+        Check: {
+            /** Id */
+            id: string;
+            /** Title */
+            title: string;
+            /** Label */
+            label?: string | null;
+            /** Reference */
+            reference?: string | null;
+            /** Cells */
+            cells: components["schemas"]["Cell"][];
+            /** Requirements */
+            requirements: components["schemas"]["Requirement"][];
+            /** Rule */
+            rule?: string | null;
+            /**
+             * Rule Holds
+             * @default true
+             */
+            rule_holds: boolean;
+            /**
+             * Rule Level
+             * @default error
+             * @enum {string}
+             */
+            rule_level: "warning" | "error";
+            lever?: components["schemas"]["Lever"] | null;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "pass" | "warning" | "error";
+            /** Solve */
+            solve?: string | null;
+        };
+        /**
          * CheckedDesign
          * @description A valid design, both ways: the JSON document the forms edit and the YAML the tab shows.
          */
@@ -520,7 +600,8 @@ export interface components {
         };
         /**
          * Finding
-         * @description Something the builder must know: a limit exceeded, an assumption, a safety note.
+         * @description Something the builder must know: a limit exceeded, an assumption, a safety note. A warning
+         *     or an error carries the check that raised it: its formulas, inputs and sources (ADR 0013).
          */
         Finding: {
             /**
@@ -532,6 +613,40 @@ export interface components {
             message: string;
             /** Reference */
             reference?: string | null;
+            check?: components["schemas"]["Check"] | null;
+        };
+        /** FireDesign */
+        FireDesign: {
+            /** Fuel */
+            fuel: string;
+            /** Fireboxes */
+            fireboxes: string[];
+            /** Grate Area */
+            grate_area: string | null;
+            /** Grate Area In2 */
+            grate_area_in2: number | null;
+            /** Chimney Height */
+            chimney_height: string | null;
+            /** Chimney Height In */
+            chimney_height_in: number | null;
+            /** Chimney Range */
+            chimney_range: string | null;
+            /** Chimney Area In2 */
+            chimney_area_in2: number;
+            /** Flue Area */
+            flue_area: string;
+            /** Flue Area In2 */
+            flue_area_in2: number;
+            /** Inlet Area In2 */
+            inlet_area_in2: number | null;
+            /** Full Fire Btu Hr */
+            full_fire_btu_hr: number;
+            /** Draft */
+            draft: string[];
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
         };
         /** FrameDesign */
         FrameDesign: {
@@ -555,9 +670,16 @@ export interface components {
             working: components["schemas"]["Step"][];
             /** Findings */
             findings: components["schemas"]["Finding"][];
+            /**
+             * Posts
+             * @default 2
+             */
+            posts: number;
         };
         /** GasDesign */
         GasDesign: {
+            /** Fuel */
+            fuel: string;
             /** Construction */
             construction: string;
             /** Ward Volume */
@@ -568,6 +690,8 @@ export interface components {
             design_input: string;
             /** Design Input Btu Hr */
             design_input_btu_hr: number;
+            /** Full Fire Btu Hr */
+            full_fire_btu_hr: number;
             /** Propane At Full Fire */
             propane_at_full_fire: string;
             burners: components["schemas"]["BurnerOption"] | null;
@@ -581,8 +705,14 @@ export interface components {
             tank_suggestion: string | null;
             /** Chimney Height */
             chimney_height: string | null;
+            /** Chimney Height In */
+            chimney_height_in: number | null;
             /** Flue Area */
             flue_area: string;
+            /** Flue Area In2 */
+            flue_area_in2: number;
+            /** Inlet Area In2 */
+            inlet_area_in2: number | null;
             /** Draft */
             draft: string[];
             /** Working */
@@ -675,6 +805,20 @@ export interface components {
             cold_side: string;
             /** Notes */
             notes: string[];
+        };
+        /**
+         * Lever
+         * @description The input the builder controls, and the range (SI) to look for a change of state in.
+         */
+        Lever: {
+            /** Symbol */
+            symbol: string;
+            /** Lo */
+            lo: number;
+            /** Hi */
+            hi: number;
+            /** Step */
+            step?: number | null;
         };
         /**
          * Library
@@ -847,6 +991,7 @@ export interface components {
             heat_loss: components["schemas"]["HeatLoss"];
             electric: components["schemas"]["ElectricDesign"] | null;
             gas: components["schemas"]["GasDesign"] | null;
+            fire?: components["schemas"]["FireDesign"] | null;
             hybrid: components["schemas"]["HybridAnalysis"] | null;
             frame: components["schemas"]["FrameDesign"];
             /** Castables */
@@ -855,6 +1000,27 @@ export interface components {
             bom: components["schemas"]["Bom"] | null;
             /** Findings */
             findings: components["schemas"]["Finding"][];
+        };
+        /** Requirement */
+        Requirement: {
+            /** Left */
+            left: string;
+            /**
+             * Op
+             * @enum {string}
+             */
+            op: "<=" | "<" | ">=" | ">";
+            /** Right */
+            right: string;
+            /**
+             * Level
+             * @enum {string}
+             */
+            level: "warning" | "error";
+            /** Holds */
+            holds: boolean;
+            /** Margin */
+            margin: string;
         };
         /** Segment */
         Segment: {

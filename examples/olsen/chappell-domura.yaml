@@ -1,0 +1,70 @@
+# John Chappell's Domura tandem kiln, Japan: its salt chamber (Olsen, The Kiln Book, 4th ed.,
+# p.33, p.126, p.243): a wood-fired salt-glaze kiln of 50 ft³ built against a two-chamber kiln of
+# 2 × 40 ft³, the two sharing a common wall and one chimney (p.126). Olsen and Chappell salted it
+# together (p.243; p.126 dates the kiln 1962, p.243 the firing 1963).
+#
+# From the book: the salt chamber 3 ft wide, 5 ft long and "3' TALL", "(9" WALLS)", its firebox
+# "30" below floor" (Fig 4-149); 50 ft³ (p.126); intermediate-duty fireclay brick (p.33), which is
+# ASTM medium duty (masonry-materials.md §2.1), so firebrick-medium-duty-smithfield; a foundation
+# of concrete block, then common red brick, then medium-duty firebrick (p.126, Fig 4-148), so the
+# floor is on the ground; wood, two fireboxes drawn; cross-draft; the chimney "12 X 12" tapering to
+# 9 X 9" 25' TALL" (Fig 4-149).
+# Assumed: the 3 ft is to the springline, and the arch rises 6 in, 2 in per foot of span, one of
+# Olsen's standard rises (Table A-2, p.298): with it the chamber comes to the printed 50 ft³,
+# where 3 × 5 × 3 ft alone is 45. A 9 in arch, as the walls. The floor 4½ in of the medium-duty
+# brick on 4½ in of common brick, one course each (Olsen's floors are 4½–5 in, p.173). Cone 10:
+# Olsen salts at cone 9–10 (p.128). The firebox isn't sized: 9 in wide across the chamber's 3 ft,
+# as the two-chamber kiln's firebox in the same drawing (9 in, across that kiln, Fig 4-149), fired
+# on its floor, since no grate is given. The exit flue, the run to the chimney and the steel are
+# the engine's; the book shows no buttress.
+# Not modelled: the two-chamber kiln, its chambers 4 ft wide and 31 in long, the second "5½'
+# TALL" (?), 40 ft³ each by the text but about 57 ft³ by the drawing, its firebox 9 in across the
+# kiln and 12 in below the floor with an 18 in opening in the side wall (Fig 4-149). The chimney
+# draws both kilns, so it is large for this one alone. Also left out: the firebox's depth, the bag
+# wall, the salt and its ports, the door (not shown), the mortar (2 sand, 2 grog (?), 1 stoneware
+# clay, p.33) and the floor's loss into the ground.
+schema: 1
+name: Chappell's Domura salt kiln
+units: us
+firing:
+  cone: "10" # Olsen salts at cone 9–10 (p.128)
+chamber:
+  width: 3 ft
+  depth: 5 ft
+  height: 3 ft # "3' TALL", taken to the springline
+  on_ground: true # on concrete block and common brick (p.126)
+roof:
+  type: sprung_arch
+  rise: 6 in # 2 in per foot of the 3 ft span (Table A-2, p.298)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # "intermediate-duty" (p.33)
+      thickness: 9 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 4.5 in
+    - material: building-brick-common # the red brick of the foundation (p.126)
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 9 in # as the two-chamber kiln's firebox (Fig 4-149)
+        length: 3 ft # across the chamber
+draft:
+  type: cross
+  flue_wall: back
+  chimney:
+    height: 25 ft
+    inside:
+      width: 12 in
+      depth: 12 in
+    top:
+      width: 9 in
+      depth: 9 in

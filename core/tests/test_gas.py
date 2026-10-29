@@ -31,6 +31,30 @@ def test_ward_volume_counts_two_thirds_of_the_arch(pnw) -> None:  # type: ignore
     assert ward_volume(pnw)[0] == pytest.approx(si(Q_(expected_in3, "in**3"), "m**3"))
 
 
+def test_the_burner_sheet_reads_a_line_a_rating_and_the_altitude() -> None:
+    """A burner rated by the design (Olsen's Eclipse TR-80, 214,200 BTU/hr, p.224) gives √σ of it
+    at altitude (0.928 at 5000 ft, p.230); a venturi on a line runs at the line's pressure, shown in
+    in. w.c. under a pound."""
+    from kilndesigner.gas_checks import Demand, Pressure, Ratings, burners
+
+    d = Demand("flat", 36, 36, 36, 0.0, 0.0, 10_000, "insulating brick", "Olsen p.226")
+    line = Pressure(tank=False, air_f=70, vapour=([], []), vapour_source="", line_psi=8 / 27.68)
+    rated = Ratings("Eclipse TR-80", "rated", (), (214_200,), "Olsen p.224", altitude=0.928)
+    s = burners(d, 2, "the design", rated, line, "warning")
+    assert s.env["f_alt"] == pytest.approx(0.928)
+    assert s.env["r_cap"] == pytest.approx(si(Q_(214_200 * 0.928, "BTU/hr"), "W"))
+    venturi = Ratings("a venturi", "venturi", (1, 4, 9), (50_000, 100_000, 150_000), "test", 0.928)
+
+    def p_max_unit(p: Pressure) -> str:
+        sheet = burners(d, 2, "the design", venturi, p, "warning")
+        assert sheet.env["r_low"] == pytest.approx(si(Q_(50_000 * 0.928, "BTU/hr"), "W"))
+        return next(c.unit for c in sheet.check().cells if c.symbol == "p_max")
+
+    assert p_max_unit(line) == "inch_H2O"  # 8 in. w.c. on the line
+    high = Pressure(tank=False, air_f=70, vapour=([], []), vapour_source="", line_psi=2.0)
+    assert p_max_unit(high) == "psi"
+
+
 def test_ward_column_by_cone() -> None:
     assert ward_column(Q_(1000, "degC")) == "6"  # above cone 06 (998 °C)
     assert ward_column(Q_(1285, "degC")) == "10"
@@ -52,6 +76,21 @@ def test_past_cone_10_is_a_warning_sized_from_cone_10(pnw) -> None:  # type: ign
     [(level, message)] = _past(gas)
     assert level == "warning"
     assert "(2372 °F)" in message
+    [check] = [f.check for f in gas.findings if "stops at cone 10" in f.message]
+    assert check is not None
+    assert check.requirements[0].margin == "T_top = 1,300 °C, 15 °C over T_10 = 1,285 °C"
+    assert check.rule_holds  # cone 10 itself is in Ward's table
+    # Given only a temperature, the sheet says how hot Ward's table goes
+    alone = pnw.model_copy(
+        update={
+            "firing": pnw.firing.model_copy(
+                update={"cone": None, "top_temperature": Q_(1300, "degC")}
+            )
+        }
+    )
+    [only] = [f.check for f in design_gas(alone).findings if "stops at cone 10" in f.message]
+    assert only is not None
+    assert only.solve == "Passes when T_top ≤ 1,285 °C"
     assert gas.design_input_btu_hr == pytest.approx(design_gas(pnw).design_input_btu_hr)
 
 
@@ -70,11 +109,21 @@ def test_past_cone_10_by_the_cone_or_the_temperature(pnw) -> None:  # type: igno
 
 
 def test_pnw_burner_input(pnw) -> None:  # type: ignore[no-untyped-def]
-    """9 in insulating brick at cone 10: 10,000–16,000 BTU/ft³/hr; fast firing uses 16,000."""
+    """9 in insulating brick at cone 10: 10,000–16,000 BTU/ft³/hr (Ward). A slow firing, the
+    default, takes 10,000, Olsen's Rule 1 (p.226); a fast one 16,000."""
     assert wall_class(pnw) == "insulating_brick"
-    gas = design_gas(pnw)
     volume_ft3 = 28 * 60 * (44 + 2.5) / 1728
-    assert gas.design_input_btu_hr == pytest.approx(16_000 * volume_ft3)
+    assert design_gas(pnw).design_input_btu_hr == pytest.approx(10_000 * volume_ft3)
+    fast = pnw.model_copy(
+        update={
+            "heat": pnw.heat.model_copy(
+                update={"gas": pnw.heat.gas.model_copy(update={"firing_speed": "fast"})}
+            )
+        }
+    )
+    assert design_gas(fast).design_input_btu_hr == pytest.approx(16_000 * volume_ft3)
+    step = next(s for s in design_gas(pnw).working if s.name == "Burner input per cubic foot")
+    assert step.inputs["Olsen's Rule 1"] == "7,000–10,000 BTU/ft³/hr"
 
 
 def test_venturi_pressure_follows_the_ratings() -> None:
@@ -110,11 +159,12 @@ def test_burners_are_listed_at_the_pressure_that_gives_their_share() -> None:
         assert p is not None
         assert o.pressure == (f"{p:.1f} psi" if p >= 1 else f"{p * 27.7:.0f} in. w.c.")
     b5 = next(o for o in gas.burner_options if o.count == 2 and o.model == "Ransome B5")
-    assert b5.pressure == "3.3 psi"  # 264,444 BTU/hr, under its 324,700 at 5 psi
+    assert b5.each == "165,278 BTU/hr"  # under its 205,400 at 2 psi
+    assert b5.pressure == "1.3 psi"
 
 
 def test_named_burners_too_big_at_their_lowest_pressure_are_checked_at_what_they_draw() -> None:
-    """Eight GACO MR100s share 528,889 BTU/hr: 66,111 each, under the 96,600 an MR100 gives at
+    """Eight GACO MR100s share 330,556 BTU/hr: 41,319 each, under the 96,600 an MR100 gives at
     2 psi, the lowest pressure on its high-pressure orifice. They draw 8 × 96,600 there, and
     the supply is checked against that (the review's gas 4)."""
     eight = "wall: front\n      model: GACO MR100\n      count: 8\n    supply"
@@ -125,38 +175,67 @@ def test_named_burners_too_big_at_their_lowest_pressure_are_checked_at_what_they
         "2.0 psi",
         "96,600 BTU/hr",
     )
-    [warning] = [f.message for f in gas.findings if "lowest pressure its ratings" in f.message]
-    assert "more than the 66,111 BTU/hr each this kiln needs" in warning
+    [big] = [f for f in gas.findings if "lowest pressure its ratings" in f.message]
+    warning = big.message
+    assert "more than the 41,319 BTU/hr each this kiln needs" in warning
     assert "checked against the 772,800 BTU/hr the 8 burners draw there" in warning
+    # Its sheet: the share against the 2 psi rating, and the count that would run within it
+    check = big.check
+    assert check is not None
+    assert (check.id, check.title, check.status) == (
+        "gas.burners",
+        "8 × GACO MR100 against the design input",
+        "warning",
+    )
+    assert [r.holds for r in check.requirements] == [True, False, True]  # p_0, r_0, r_cap
+    assert check.solve == "Passes when n ≤ 3"  # 330,556 ÷ 96,600 = 3.42
     full_fire = next(s for s in gas.working if s.name == "Propane at full fire")
     assert full_fire.inputs == {"the burners draw": "772,800 BTU/hr"}
     assert gas.propane_at_full_fire == f"{772_800 / 91_502:.2f} gal/hr"
+    assert gas.full_fire_btu_hr == pytest.approx(772_800)
     # Four cylinders give 668,000 BTU/hr full at 20 °F: short of the draw, not of the input
     [error] = [f.message for f in gas.findings if f.level == "error"]
-    assert "short of the 772,800 BTU/hr the burners need" in error
-    # A slow firing wouldn't help: these burners can't turn down to it
-    assert not [f for f in gas.findings if "slow firing" in f.message]
+    assert "short of the 772,800 BTU/hr the burners draw" in error
 
 
 def test_when_no_burner_fits_a_finding_says_why() -> None:
-    """A 56.7 ft³ (Ward's way) kiln of hard brick needs 20,000 BTU/ft³/hr, 1,133,333 BTU/hr; a
-    tank at −20 °F holds 10.7 psig (NIST [S6]), leaving 0.7 psi, and eight Ransome B5s give under
-    1 million there."""
-    text = (
-        GAS.replace("width: 28 in", "width: 48 in")
-        .replace(
-            "  walls:\n    - material: ifb-jm26", "  walls:\n    - material: hard-firebrick-kx99"
-        )
-        .replace(CYLINDERS, "type: tank\n      gallons: 1000")
-        .replace("coldest_ambient: 20 degF", "coldest_ambient: -20 degF")
+    """Natural gas at 2 psi: the library rates its burners for natural gas only at low pressure
+    (Olsen p.215: 11 in. w.c. or less), so none can be chosen; the design must rate its own."""
+    text = GAS.replace(CYLINDERS, "type: line\n      pressure: 2 psi").replace(
+        "  gas:\n", "  gas:\n    fuel: natural_gas\n"
     )
     gas = design_gas(parse_design(text))
     assert gas.burners is None
     assert gas.burner_options == []
-    assert (
-        "No set of up to 8 venturi burners in the library delivers the 1,133,333 BTU/hr design "
-        "input within 0.7 psi, the most this supply allows at -20 °F, so none is chosen."
-    ) in [f.message for f in gas.findings if f.level == "error"]
+    [none] = [f for f in gas.findings if f.message.startswith("No set of up to 40")]
+    assert none.message == (
+        "No set of up to 40 venturi burners in the library delivers the 330,556 BTU/hr design "
+        "input on natural gas within 2.0 psi, so none is chosen. Give the burners and their "
+        "rating."
+    )
+    assert none.check is not None
+    assert none.check.rule == "The burners must be ones whose ratings the library has."
+    # Rated by the design, they fire
+    rated = text.replace(
+        "wall: front\n    supply",
+        "wall: front\n      count: 4\n      rating: 90000 BTU/hr\n    supply",
+    )
+    fired = design_gas(parse_design(rated))
+    assert fired.full_fire_btu_hr == pytest.approx(360_000)
+    assert not [f for f in fired.findings if f.level == "error"]
+
+
+def test_the_vaporization_tables_start_at_0f() -> None:
+    """Colder than the tables: a tank at −20 °F can't be checked."""
+    text = GAS.replace(CYLINDERS, "type: tank\n      gallons: 1000").replace(
+        "coldest_ambient: 20 degF", "coldest_ambient: -20 degF"
+    )
+    gas = design_gas(parse_design(text))
+    [cold] = [f for f in gas.findings if f.message.startswith("The vaporization tables")]
+    assert cold.check is not None
+    # 0 °F, give or take the part-in-a-billion slack on ≥ (printed in powers of ten near 0)
+    assert cold.check.solve is not None
+    assert cold.check.solve.startswith("Passes when t ≥ ")
 
 
 def test_draft_is_figured_at_the_sites_air_not_the_coldest_day(pnw) -> None:  # type: ignore[no-untyped-def]
@@ -171,13 +250,25 @@ def test_draft_is_figured_at_the_sites_air_not_the_coldest_day(pnw) -> None:  # 
     assert design_gas(hotter).draft[0] < base[0]
 
 
+def _fast(kiln):  # type: ignore[no-untyped-def]
+    gas = kiln.heat.gas.model_copy(update={"firing_speed": "fast"})
+    return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"gas": gas})})
+
+
 def test_four_cylinders_at_20f_match_the_research_check(pnw) -> None:  # type: ignore[no-untyped-def]
-    """combustion-and-masonry.md §10: 668,000 full, 376,000 half, 173,200 conservative."""
-    gas = design_gas(pnw)
+    """combustion-and-masonry.md §10: 668,000 full, 376,000 half, 173,200 conservative, against
+    a fast firing's 16,000 BTU/ft³/hr."""
+    gas = design_gas(_fast(pnw))
     capacities = [s.capacity_btu_hr for s in gas.supply]
     assert capacities == pytest.approx([668_000, 376_000, 173_200])
     assert not any(s.meets_demand for s in gas.supply)
-    assert any(f.level == "error" and "stall" in f.message for f in gas.findings)
+    [stall] = [f for f in gas.findings if f.level == "error" and "stall" in f.message]
+    # The sheet: 16,000 BTU/ft³/hr × 45.21 ft³ against 4 × 167,000 read from the 20 °F row
+    check = stall.check
+    assert check is not None
+    assert check.id == "gas.supply-full"
+    assert check.requirements[0].margin == "C = 668,000 Btu/h, 92.35 % of P = 723,333 Btu/h"
+    assert check.solve == "Passes when n ≥ 5"  # 723,333 ÷ 167,000 cylinders
 
 
 def test_chosen_burners_cover_the_input(pnw) -> None:  # type: ignore[no-untyped-def]
@@ -188,12 +279,23 @@ def test_chosen_burners_cover_the_input(pnw) -> None:  # type: ignore[no-untyped
     assert float(gas.burners.pressure.split()[0]) <= 10
 
 
-def test_chimney_follows_the_rule(pnw) -> None:  # type: ignore[no-untyped-def]
-    """3 × (44 + 3.75) in + ⅓ × (60 in chamber + 8 in flue wall + 9 in to the chimney)."""
+def test_a_gas_kiln_chimney_reaches_the_kiln_top(pnw) -> None:  # type: ignore[no-untyped-def]
+    """Gas under pressure drives the flow: the chimney need only reach the kiln's top, with a
+    hood and stack above (Olsen p.151). PNW: 44 in to the springline, a 3.75 in rise and 5 in of
+    roof."""
     gas = design_gas(pnw)
-    expected = 3 * 47.75 + (60 + 8 + 9) / 3
-    assert gas.chimney_height is not None
-    assert f"({expected:.0f} in)" in gas.chimney_height
+    assert gas.chimney_height_in == pytest.approx(44 + 3.75 + 5)
+    assert gas.chimney_height == "4.4 ft (53 in) above the chamber floor"
+    assert not [f for f in gas.findings if f.check and f.check.id == "gas.chimney"]
+    # A chimney built lower than the kiln's top is a warning
+    low = PNW.read_text(encoding="utf-8").replace(
+        "  flue_wall: back\n", "  flue_wall: back\n  chimney:\n    height: 40 in\n"
+    )
+    [short] = [
+        f for f in design_gas(parse_design(low)).findings if f.check and f.check.id == "gas.chimney"
+    ]
+    assert short.level == "warning"
+    assert "12.8 in below the top of the kiln" in short.message
 
 
 def test_stack_draft_matches_the_research_example() -> None:
@@ -239,14 +341,14 @@ def test_a_fibre_kiln_at_cone_06_takes_wards_fibre_column() -> None:
     gas = design_gas(kiln)
     assert gas.construction == "6 in ceramic fibre"
     assert gas.demand_range == f"{4000 * volume_ft3:,.0f}–{6000 * volume_ft3:,.0f} BTU/hr"
-    assert gas.design_input_btu_hr == pytest.approx(6000 * volume_ft3)
+    assert gas.design_input_btu_hr == pytest.approx(4000 * volume_ft3)  # slow: the low end
     step = next(s for s in gas.working if s.name == "Burner input per cubic foot")
     assert step.inputs == {"construction": "6 in ceramic fibre", "cone column": "06"}
 
 
 def test_a_hard_brick_kiln_takes_wards_hard_brick_column() -> None:
     """A hot face of super-duty hard firebrick: Ward gives 16,000–20,000 BTU/ft³/hr for 9 in hard
-    brick at cone 10 [S28]; a fast firing takes the high end."""
+    brick at cone 10 [S28]; a slow firing takes the low end, Olsen's 16,000 (p.226)."""
     hot_face = "  walls:\n    - material: ifb-jm26"
     assert hot_face in GAS
     kiln = parse_design(GAS.replace(hot_face, "  walls:\n    - material: hard-firebrick-kx99"))
@@ -254,44 +356,40 @@ def test_a_hard_brick_kiln_takes_wards_hard_brick_column() -> None:
     gas = design_gas(kiln)
     volume_ft3 = 28 * 48 * (40 + 2 / 3 * 3.75) / 1728
     assert gas.construction == "9 in hard brick"
-    assert gas.design_input_btu_hr == pytest.approx(20_000 * volume_ft3)
+    assert gas.design_input_btu_hr == pytest.approx(16_000 * volume_ft3)
     assert gas.demand_range == f"{16_000 * volume_ft3:,.0f}–{20_000 * volume_ft3:,.0f} BTU/hr"
+    step = next(s for s in gas.working if s.name == "Burner input per cubic foot")
+    assert step.inputs["Olsen's Rule 1"] == "16,000–19,000 BTU/ft³/hr"
 
 
-def test_a_kiln_past_the_sourced_sizes_is_refused_its_burners_and_chimney() -> None:
-    """48 × 60 in by 40 in plus a 3.75 in arch: 71.5 ft³, past the research's studio kilns of up
-    to about 60 ft³. It used to crash past about 130 ft³ (no chimney size held the flue) and
-    lose its burners past 8 (the review's gas 7). A 1000 gal tank ⅓ full gives 1,031,230 BTU/hr
-    at 20 °F [S13], short of the 1,133,333 the kiln would need."""
+def test_a_big_kiln_is_sized_not_refused() -> None:
+    """Olsen's rules cover kilns to 500 ft³ (Kaneko's car kiln, p.170–172), so a big kiln is
+    sized: it used to be refused past 60 ft³, crash past about 130 ft³ (no chimney size held the
+    flue) and lose its burners past 8 (the review's gas 7). 72 × 90 in by 40 in plus the arch:
+    about 160 ft³, on power burners and a 1000 gal tank."""
+    from kilndesigner.report import design_report
+
     text = (
-        GAS.replace("width: 28 in", "width: 48 in")
-        .replace("depth: 48 in", "depth: 60 in")
+        GAS.replace("width: 28 in", "width: 72 in")
+        .replace("depth: 48 in", "depth: 90 in")
         .replace("type: venturi", "type: power")
         .replace(CYLINDERS, "type: tank\n      gallons: 1000")
     )
-    kiln = parse_design(text)
-    gas = design_gas(kiln)
-    demand = 16_000 * 48 * 60 * (40 + 2 / 3 * 3.75) / 1728
-    assert gas.design_input_btu_hr == pytest.approx(demand)
-    assert (gas.burners, gas.burner_options, gas.chimney_height) == (None, [], None)
-    errors = [f.message for f in gas.findings if f.level == "error"]
-    assert "At 71 ft³ this kiln is bigger than the sources here cover" in errors[0]
-    assert gas.tank_suggestion is None
-    assert [s.capacity_btu_hr for s in gas.supply] == pytest.approx([1_031_230])
-    # Far past it, the whole report is refused, not crashed
-    huge = text.replace("width: 48 in", "width: 72 in").replace("depth: 60 in", "depth: 90 in")
-    from kilndesigner.report import design_report
-
-    assert any(
-        "bigger than the sources here cover" in f.message
-        for f in design_report(parse_design(huge)).errors
-    )
+    report = design_report(parse_design(text))
+    assert report.gas is not None
+    assert report.gas.burners is not None
+    assert report.gas.chimney_height is not None
+    assert not [f for f in report.errors if "bigger than" in f.message]
 
 
 def test_a_big_kiln_needs_more_than_one_power_burner() -> None:
-    """48 × 48 in by 40 in plus the arch: 57 ft³ × 16,000 = 906,667 BTU/hr, past the biggest
-    Ward power burner, the MB700's 795,000 [S22]. Two MB400s at 475,000 each carry it."""
-    text = GAS.replace("width: 28 in", "width: 48 in").replace("type: venturi", "type: power")
+    """48 × 48 in by 40 in plus the arch: 57 ft³ × 16,000 (fast) = 906,667 BTU/hr, past the
+    biggest Ward power burner, the MB700's 795,000 [S22]. Two MB400s at 475,000 each carry it."""
+    text = (
+        GAS.replace("width: 28 in", "width: 48 in")
+        .replace("type: venturi", "type: power")
+        .replace("reduction: true", "reduction: true\n    firing_speed: fast")
+    )
     gas = design_gas(parse_design(text))
     demand = 16_000 * 48 * 48 * (40 + 2 / 3 * 3.75) / 1728
     assert gas.design_input_btu_hr == pytest.approx(demand)
@@ -325,27 +423,112 @@ def test_one_cylinder_cant_keep_up_even_with_a_slow_firing() -> None:
     assert not [f for f in gas.findings if "joined in parallel" in f.message]
 
 
-def test_burners_that_cant_deliver_the_input_are_an_error() -> None:
-    """One Ransome B1 gives 30,700 BTU/hr at 10 psi [S27], far short of 528,889."""
+def _loss(text: str) -> float:
+    from kilndesigner.heatloss import heat_loss
+
+    return heat_loss(parse_design(text)).total_watts
+
+
+def test_burners_that_cant_hold_the_top_are_an_error() -> None:
+    """One Ransome B1 gives 30,700 BTU/hr at 10 psi [S27]: at cone 10 only about a third of that
+    stays in the kiln, far short of what the lining loses there. The energy check fails."""
     one_b1 = "wall: front\n      model: Ransome B1\n      count: 1\n    supply"
     text = GAS.replace("wall: front\n    supply", one_b1)
+    gas = design_gas(parse_design(text), _loss(text))
+    assert gas.burners is not None
+    assert gas.full_fire_btu_hr == pytest.approx(30_700)
+    [top] = [f for f in gas.findings if f.check and f.check.id == "gas.top"]
+    assert top.level == "error"
+    assert "The kiln can't reach its top temperature" in top.message
+    assert top.check is not None
+    assert top.check.solve is not None
+    assert top.check.solve.startswith("Passes when n ≥ ")
+
+
+def test_named_burners_under_the_rule_fire_more_slowly() -> None:
+    """One Ransome B4 gives 286,600 BTU/hr at 10 psi [S27], under the 330,556 of the rule: a
+    slower firing, as Olsen's 36 ft³ kiln on 6,000 BTU/ft³/hr (p.226), and a note, not an error.
+    It holds the top: about a third of it beats the lining's loss."""
+    text = GAS.replace(
+        "wall: front\n    supply", "wall: front\n      model: B4\n      count: 1\n    supply"
+    )
+    gas = design_gas(parse_design(text), _loss(text))
+    assert not [f for f in gas.findings if f.level == "error"]
+    [slow] = [f for f in gas.findings if "fires more slowly" in f.message]
+    assert slow.level == "info"
+    assert gas.full_fire_btu_hr == pytest.approx(286_600)
+
+
+def test_a_named_power_burner_bigger_than_needed_is_used() -> None:
+    """One MB700 (795,000 BTU/hr) carries 528,889, though a smaller one would; it used to be
+    refused because only the smallest that fits was listed."""
+    text = GAS.replace("type: venturi", "type: power").replace(
+        "wall: front\n    supply", "wall: front\n      model: MB700\n      count: 1\n    supply"
+    )
+    gas = design_gas(parse_design(text))
+    assert gas.burners is not None
+    assert (gas.burners.model, gas.burners.count) == ("Ward MB700", 1)
+    assert not [f for f in gas.findings if f.level == "error" and "burners" in f.message]
+
+
+def test_a_power_burner_under_the_rule_fires_at_its_rating() -> None:
+    """One MB200, 270,000 BTU/hr [S22], under the rule's 330,556: it fires at its rating."""
+    text = GAS.replace("type: venturi", "type: power").replace(
+        "wall: front\n    supply",
+        "wall: front\n      model: Ward MB200\n      count: 1\n    supply",
+    )
+    gas = design_gas(parse_design(text))
+    assert gas.burners is not None
+    assert (gas.burners.model, gas.burners.each) == ("Ward MB200", "270,000 BTU/hr")
+    assert any("fires more slowly" in f.message for f in gas.findings)
+
+
+def test_a_burner_the_library_doesnt_have_is_an_error() -> None:
+    text = GAS.replace("wall: front\n    supply", "wall: front\n      model: Acme 9\n    supply")
     gas = design_gas(parse_design(text))
     assert gas.burners is None
-    assert (
-        "The burners chosen can't deliver the design input within 10 psi. Choose more or bigger "
-        "burners."
-    ) in [f.message for f in gas.findings if f.level == "error"]
-    assert not [s for s in gas.working if s.name == "Burners"]
+    [error] = [f for f in gas.findings if "Acme 9" in f.message]
+    assert error.message.startswith("Acme 9 isn't a venturi burner whose ratings the library has")
+    assert error.check is not None
+    assert error.check.rule == "The burners must be ones whose ratings the library has."
 
 
-def test_an_up_draft_has_no_chimney_rule() -> None:
-    """Olsen's and Ward's chimney rule is for cross- and down-draft kilns; an up-draft gets the
-    exit flue area only."""
+def test_the_conservative_supply_case_is_a_warning() -> None:
+    """Four cylinders at 20 °F: 668,000 full covers 330,556, but ¼ full, keeping 10 psi, they
+    give 4 × 43,300 [S10, S11]."""
+    gas = design_gas(load_design(EXAMPLES / "gas-crossdraft.yaml"))
+    [low] = [f for f in gas.findings if "conservative case" in f.message]
+    assert low.level == "warning"
+    assert low.check is not None
+    assert low.check.id == "gas.supply-low"
+    assert low.check.solve == "Passes when n ≥ 8"  # 330,556 ÷ 43,300 = 7.63
+
+
+def test_a_tank_colder_than_its_vapour_table_is_held_at_the_table() -> None:
+    """At −30 °F the vapour-pressure table (from −20 °F) is read at its first row, as the engine
+    reads it; the sheet shows the hold. Four GACO MR100s can't run at the 0.7 psi left: their
+    high-pressure orifice starts at 2 psi."""
+    text = (
+        GAS.replace(CYLINDERS, "type: tank\n      gallons: 1000")
+        .replace("coldest_ambient: 20 degF", "coldest_ambient: -30 degF")
+        .replace(
+            "wall: front\n    supply", "wall: front\n      model: MR100\n      count: 4\n    supply"
+        )
+    )
+    gas = design_gas(parse_design(text))
+    [none] = [f for f in gas.findings if f.message.startswith("The burners chosen aren't rated")]
+    assert none.check is not None
+    cells = {c.symbol: c for c in none.check.cells}
+    assert cells["t_c"].formula == "min(max(t, t_first), t_last)"
+
+
+def test_an_up_draft_has_no_chimney() -> None:
+    """An updraft's flue is in its roof, with a hood over it; no chimney is worked out."""
     gas = design_gas(parse_design(GAS.replace("type: cross", "type: up")))
     assert gas.chimney_height is None
     assert gas.draft == []
     names = [s.name for s in gas.working]
-    assert "Exit flue area" in names
+    assert "Exit flue, to start" in names
     assert "Chimney height" not in names
     assert "Draft at the chimney's base" not in names
 
@@ -356,3 +539,55 @@ def test_power_burners_need_electricity() -> None:
     assert gas.burners is not None
     assert gas.burners.model.startswith("Ward MB")
     assert any("power cut" in f.message for f in gas.findings)
+
+
+def test_the_altitude_factor_reproduces_olsens_table() -> None:
+    """Olsen p.230–232: burners give 0.9279 of their output at 5000 ft and 0.8579 at 10,000 ft.
+    √σ of NASA's standard atmosphere gives both to 0.2 %."""
+    from kilndesigner.gas import altitude_factor
+
+    assert altitude_factor(0.0) == pytest.approx(1.0)
+    assert altitude_factor(1524.0) == pytest.approx(0.9279, rel=0.002)
+    assert altitude_factor(3048.0) == pytest.approx(0.8579, rel=0.002)
+
+
+def test_burners_at_altitude_give_less() -> None:
+    """At 5000 ft a burner set gives about 7 % less, so the same input needs more pressure."""
+    high = GAS.replace(
+        "propane_price: 3.50 USD/gallon", "propane_price: 3.50 USD/gallon\n  elevation: 5000 ft"
+    )
+    gas = design_gas(parse_design(high))
+    step = next(s for s in gas.working if s.name == "Burner output at the site's elevation")
+    assert step.value == "× 0.9284"
+
+
+def test_the_flue_starts_at_the_burner_ports() -> None:
+    """Olsen: the exit flue as large as the burner ports together, then restricted (p.151); an
+    updraft over 40 ft³ about 20 % more (p.174: his 100 ft³ kit, 100 in² of inlets, 120–140 in²
+    out); without the ports' size, 1 in² per 7000 BTU/hr (p.236)."""
+    from kilndesigner.gas import starting_flue
+
+    assert starting_flue(50.0, 240_000, 24.0, updraft=True)[0] == pytest.approx(50.0)
+    assert starting_flue(100.0, 1e6, 100.0, updraft=True)[0] == pytest.approx(120.0)
+    assert starting_flue(100.0, 1e6, 100.0, updraft=False)[0] == pytest.approx(100.0)
+    assert starting_flue(None, 700_000, 50.0, updraft=False)[0] == pytest.approx(100.0)
+
+
+def test_natural_gas_ratings_follow_the_square_root_of_pressure() -> None:
+    """Olsen p.222: an MR100 gives 100,000 BTU/hr on natural gas at 8 in. w.c.; through the same
+    orifice, output goes as √pressure (p.216). Over 11 in. w.c. (low pressure, p.215) the library
+    has no natural-gas rating."""
+    from kilndesigner.gas import line_rating
+
+    spec = gas_data()["venturi_burners"]["models"]["GACO MR100"]
+    assert line_rating(spec, "natural_gas", 8 / 27.68) == pytest.approx(100_000)
+    assert line_rating(spec, "natural_gas", 2 / 27.68) == pytest.approx(50_000)
+    assert line_rating(spec, "natural_gas", 1.0) is None
+    assert (
+        line_rating(gas_data()["venturi_burners"]["models"]["Ransome B1"], "natural_gas", 0.3)
+        is None
+    )
+    # Propane on a line: on the curve, or a published low-pressure orifice
+    assert line_rating(spec, "propane", 10.0) == pytest.approx(216_300)
+    assert line_rating(spec, "propane", 0.397) == pytest.approx(94_000)
+    assert line_rating(spec, "propane", 0.6) is None

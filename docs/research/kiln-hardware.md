@@ -282,6 +282,8 @@ No source relates steel size to arch span. These are the sizes builders used.
 | Berggren, small downdraft | 27 in span, 4½ in IFB, 4 in rise | windmill-leg angle iron | one ½ in rod front and back | Verified | [S7] |
 | Davis, Durango wood kiln, > 50 ft³ | #1 arch and straights, 3 in series | 3 in angle at the corners; 6 in channel supports the arch | ½ in threaded rod, with springs | Verified | [S17] |
 | Merrill flat-top (CM, Apr 2023) | flat roof, not an arch | roof angle 2 × 2 × 3/16 × 72 in | twelve 3/8 in threaded rods, 58 in long ("4 inches longer than the width of the kiln") | Verified | [S16] |
+| Olsen, updraft 5 × 5 × 6 ft outside (4th ed. p.174) | sprung arch | corners 3 × 3 × ¼ in angle; floor perimeter 4 × 4 × ¼; door frame 3 × 3 × ¼; skewback brace 2 × 2 × ¼. "Can be larger (stronger), but not smaller"; 3/16 in angle for smaller kilns | top and bottom ties 2 × 2 × ¼; floor joists 2 × 2 × ¼ | Verified | Olsen 4th ed. p.174 |
+| Olsen, fast-fire wood kiln (4th ed. p.139, Fig. 5-36) | 4½ in IFB, featheredge skews | 2 × 2 × 3/16 in angle, bolted | | Verified | Olsen 4th ed. p.139 |
 | Forum | | angle at each corner; angle or channel round the bottom; bracing halfway up; angle behind the skews | all-thread across the top, front and back, so it can be tightened | (secondary) Excerpt | [S21] |
 | Rhodes, general guidance | sprung arch | "A steel angle iron is inserted just behind the skewback to hold it securely in place". "For small kilns, 2x2 inch angle iron is sufficient". "In large kilns, channel iron braces called buckstays are placed upright at the sides" | "Metal tie rods are used to hold the corner braces in place"; "... inch tie rods are suitable". The rod size is a fraction the OCR cannot read (one scan prints "^", the other "4"), so it is **not read** | Excerpt | [S34] |
 
@@ -296,6 +298,11 @@ Other frame details (Pitelka):
 **Conflict:** HarbisonWalker says tie rods are "in some cases" spring-loaded or manually
 adjusted for expansion [S20]. Pitelka and the forum advise against springs [S11] [S21]. The
 Durango kiln used springs [S17].
+
+Expansion allowance (Olsen, 4th ed. p.51–53, Verified): walls grow
+1/16–3/32 in per foot; in a steel frame leave 1/16 in per foot of wall, a ¼ in fiber pad at the
+brick ends, offset rather than straight through; an IFB kiln in a flexible frame needs no joints
+under 4 ft. The 4th edition does not mention springs on the tie rods.
 
 Expansion allowance (Norsker): firebrick expands 0.5–1 % each time the kiln is fired and
 shrinks back on cooling. Expansion joints of

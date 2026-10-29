@@ -14,6 +14,7 @@ from kilndesigner.masonry import (
     BRICK_VOLUME,
     IN,
     KERF,
+    TOL,
     ArchRing,
     Cut,
     arch_ring,
@@ -151,12 +152,19 @@ def test_a_thick_wall_is_counted_and_explained() -> None:
 
 def test_a_layer_whole_bricks_cant_make_says_where_why_and_what_to_do() -> None:
     findings = plan_masonry(front_loader_with_walls("6.75 in")).result.findings
-    message = next(f.message for f in findings if f.message.startswith("Left wall"))
+    finding = next(f for f in findings if f.message.startswith("Left wall"))
+    message = finding.message
     assert message.startswith(
         "Left wall, layer 1 from the inside is 6¾ in of Morgan Thermal Ceramics JM 26"
     )
     assert "missing from the brick count, the bill of materials and the price" in message
     assert message.endswith("Make it 5 in or 7 in thick.")
+    # Its sheet: 6¾ in is ¼ in from 7 in (4½ + 2½), the nearer of the sums of whole bricks
+    check = finding.check
+    assert check is not None
+    assert check.id == "masonry.thickness"
+    assert check.requirements[0].margin.startswith("Δ = 0.25 in, ")
+    assert check.solve == "Passes when T ≥ 6.961 in"  # within the planner's 1 mm of 7 in
 
 
 @settings(max_examples=50, deadline=None)
@@ -167,11 +175,12 @@ def test_a_layer_whole_bricks_cant_make_says_where_why_and_what_to_do() -> None:
 def test_every_course_fills_its_run_exactly(length: float, height: float) -> None:
     plan = plan_layer(wall(length, height))
     assert plan is not None
+    # exact to the planner's tolerance: a sliver thinner than TOL is never cut
     for course in plan.courses:
-        assert sum(p.length for p in course.pieces) == pytest.approx(length * IN)
+        assert sum(p.length for p in course.pieces) == pytest.approx(length * IN, abs=TOL)
         starts = [p.start for p in course.pieces]
         assert starts == sorted(starts)
-    assert sum(c.pieces[0].height for c in plan.courses) == pytest.approx(height * IN)
+    assert sum(c.pieces[0].height for c in plan.courses) == pytest.approx(height * IN, abs=TOL)
 
 
 def test_offcuts_are_reused() -> None:

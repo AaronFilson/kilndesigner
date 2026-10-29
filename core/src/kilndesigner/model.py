@@ -16,14 +16,17 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from kilndesigner import cones
 from kilndesigner.units import (
     Q_,
+    Angle,
     Current,
     Density,
     EnergyPrice,
+    Flow,
     Length,
     Mass,
     MassPrice,
     Money,
     Power,
+    Pressure,
     SpringRate,
     Temperature,
     Voltage,
@@ -71,14 +74,73 @@ class Lining(Spec):
 class Chamber(Spec):
     """The inside of the kiln: the space the lining encloses."""
 
-    width: Length = Field(description="Inside, side to side")
-    depth: Length = Field(description="Inside, front to back")
+    shape: Literal["box", "round"] = Field(
+        default="box",
+        description=(
+            "A box, or round: a cylinder, as bottle and many folk kilns are, whose width and "
+            "depth are its diameter"
+        ),
+    )
+    width: Length = Field(description="Inside, side to side (a round chamber's diameter)")
+    depth: Length = Field(
+        description="Inside, front to back (a round chamber's diameter); of one chamber in a row"
+    )
     height: Length = Field(
         description=(
             "Inside, floor to the roof: to the springline of a sprung arch or a dome, to the crown "
             "of a catenary arch"
         )
     )
+    chambers: int = Field(
+        default=1,
+        ge=1,
+        description=(
+            "Chambers of this size in a row, front to back, the gases passing from each into the "
+            "next: a climbing or tandem kiln"
+        ),
+    )
+    slope: Angle | None = Field(
+        default=None,
+        description=(
+            "How steeply the floor climbs from the firing end to the flue end: a climbing kiln, "
+            "an anagama or a tunnel kiln, as an angle (a 20 % slope is atan 0.2 = 11.3 degree)"
+        ),
+    )
+    on_ground: bool = Field(
+        default=False,
+        description=(
+            "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
+            "on a stand with air under it. Its loss into the ground isn't worked out"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_shape_it_can_be(self) -> Chamber:
+        if self.shape == "round" and abs(si(self.width, "in") - si(self.depth, "in")) > 1e-6:
+            raise ValueError("a round chamber's width and depth are both its diameter")
+        if self.shape == "round" and self.chambers > 1:
+            raise ValueError("chambers in a row are boxes; a round kiln is one chamber")
+        if self.slope is not None:
+            if f"{self.slope.units}" not in ("degree", "radian"):
+                raise ValueError(
+                    "give the slope as an angle, for example '11.3 degree': a slope in percent is "
+                    "the rise over the run, and 20 % is atan(0.2) = 11.3 degree"
+                )
+            if not 0 <= si(self.slope, "degree") < 60:
+                raise ValueError("a floor's slope must be from 0 to under 60 degrees")
+        return self
+
+    @property
+    def length(self) -> Length:
+        """The whole run, front to back, of the chambers in a row (their walls between left out)."""
+        return self.depth * self.chambers
+
+
+BUTTRESSED = (
+    "The roof's thrust is carried by masonry, not steel: thick or battered walls, buttresses, or "
+    "the earth of a hillside or a mound (Olsen, 4th ed. p.53, Fig. 2-35B; p.186). No steel is "
+    "sized"
+)
 
 
 class FlatRoof(Spec):
@@ -109,6 +171,7 @@ class SprungArch(Spec):
         default=None,
         description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
     )
+    buttressed: bool = Field(default=False, description=BUTTRESSED)
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
@@ -123,6 +186,7 @@ class CatenaryArch(Spec):
     is to the crown; the front and back walls close its ends."""
 
     type: Literal["catenary_arch"] = "catenary_arch"
+    buttressed: bool = Field(default=False, description=BUTTRESSED)
 
 
 class Dome(Spec):
@@ -131,6 +195,7 @@ class Dome(Spec):
 
     type: Literal["dome"] = "dome"
     rise: Length = Field(description="Height of the dome's inside above the springline, mid-dome")
+    buttressed: bool = Field(default=False, description=BUTTRESSED)
     ring: int = Field(
         default=1,
         ge=1,
@@ -141,7 +206,16 @@ class Dome(Spec):
     )
 
 
-type Roof = Annotated[FlatRoof | SprungArch | CatenaryArch | Dome, Field(discriminator="type")]
+class OpenTop(Spec):
+    """No built roof: the setting is covered with shards or broken ware for each firing, as in
+    folk updraft kilns (Olsen, 4th ed. p.152–157). Its heat loss isn't worked out."""
+
+    type: Literal["open"] = "open"
+
+
+type Roof = Annotated[
+    FlatRoof | SprungArch | CatenaryArch | Dome | OpenTop, Field(discriminator="type")
+]
 
 
 type WallFace = Literal["left", "right", "back", "front"]
@@ -269,7 +343,20 @@ class Burners(Spec):
     )
     count: int | None = Field(default=None, ge=1, description="Chosen for you when left out")
     model: str | None = Field(default=None, description="For example 'GACO MR100'")
-    wall: WallFace = Field(default="front", description="The wall the burners fire through")
+    rating: Power | None = Field(
+        default=None,
+        description=(
+            "Each burner's input at the supply's pressure, from its maker or the plans, for a "
+            "burner the library doesn't list: for example '36000 BTU/hr'. Give the count with it"
+        ),
+    )
+    wall: WallFace | Literal["floor"] = Field(
+        default="front",
+        description=(
+            "The wall the burners fire through, or the floor: an updraft's burners fire up through "
+            "ports round the edge of the floor"
+        ),
+    )
     port: Port | None = Field(
         default=None,
         description="The burner ports' size. Left out: the size the burner's sources give",
@@ -292,6 +379,18 @@ class Burners(Spec):
         if self.places is not None and self.count is not None and len(self.places) != self.count:
             raise ValueError(
                 f"give a place for each of the {self.count} burners, not {len(self.places)}"
+            )
+        if self.wall == "floor" and self.places is not None:
+            raise ValueError(
+                "floor burners are spaced round the edge of the floor for you: give their count, "
+                "not their places"
+            )
+        if self.rating is not None and self.wanted is None:
+            raise ValueError("give the count of burners with their rating")
+        if self.rating is not None and self.model is not None:
+            raise ValueError(
+                "give a burner model from the library, or a rating for one it doesn't list, not "
+                "both"
             )
         return self
 
@@ -345,32 +444,146 @@ class Tank(Spec):
     gallons: Literal[120, 150, 250, 325, 500, 1000]
 
 
-type PropaneSupply = Annotated[Cylinders | Tank, Field(discriminator="type")]
+class Line(Spec):
+    """Gas piped to the kiln: natural gas from the meter, or propane from a large tank through
+    its regulators. Nothing is vaporized at the kiln, so only the pressure matters."""
+
+    type: Literal["line"] = "line"
+    pressure: Pressure = Field(
+        description="At the burners: for example '8 inch_H2O' for natural gas, or '2 psi'"
+    )
+
+
+type GasSupply = Annotated[Cylinders | Tank | Line, Field(discriminator="type")]
 
 
 class Gas(Spec):
-    fuel: Literal["propane"] = "propane"
+    fuel: Literal["propane", "natural_gas"] = "propane"
     burners: Burners = Field(default_factory=Burners)
-    supply: PropaneSupply
+    supply: GasSupply
     reduction: bool = Field(default=True, description="Whether the kiln is fired in reduction")
     firing_speed: Literal["fast", "slow"] = Field(
-        default="fast",
+        default="slow",
         description=(
-            "Burners sized for a fast firing (about 6–7 hours, the high end of Ward's range) or "
-            "a slow one (about 14–18 hours, the low end)"
+            "Burners sized for a slow firing (Olsen's 10,000 BTU per ft³ per hour for insulating "
+            "brick, 16,000 for dense: the low end of Ward's range, about 8 hours in Olsen's IFB "
+            "updraft) or a fast one (the high end of Ward's, about 6–7 hours)"
         ),
     )
+
+    @model_validator(mode="after")
+    def _a_supply_for_the_gas(self) -> Gas:
+        if self.fuel == "natural_gas" and not isinstance(self.supply, Line):
+            raise ValueError(
+                "natural gas comes from a line: give the supply as a line, with its pressure"
+            )
+        return self
+
+
+class Grate(Spec):
+    """The grate the fuel burns on."""
+
+    width: Length = Field(description="Across the firebox")
+    length: Length = Field(description="Along the firebox, from its mouth")
+    gap: Length | None = Field(default=None, description="The clear space between its bars")
+
+
+class Firebox(Spec):
+    """A firebox, where wood, coal or oil burns before the flame enters the chamber."""
+
+    count: int = Field(default=1, ge=1, description="How many fireboxes of this size")
+    position: Literal["front", "back", "left", "right", "under"] = Field(
+        default="front",
+        description="Against which wall, or under the chamber's floor",
+    )
+    width: Length = Field(description="Inside, across its mouth")
+    length: Length = Field(description="Inside, from its mouth back")
+    height: Length | None = Field(
+        default=None, description="Inside, from the grate (or its floor) up to its roof"
+    )
+    grate: Grate | None = Field(
+        default=None, description="Left out: the fuel burns on the firebox's floor"
+    )
+    ash_pit: Length | None = Field(default=None, description="From the grate down")
+    inlet: Port | None = Field(
+        default=None, description="Each inlet flue from the firebox into the chamber"
+    )
+    inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
+    stoke_hole: Port | None = None
+
+
+class Fire(Spec):
+    """Wood, coal or oil, burned in fireboxes. The chimney draws the kiln (natural draft), unless
+    a blower drives the burners (forced draft)."""
+
+    fuel: Literal["wood", "coal", "oil"] = "wood"
+    fireboxes: list[Firebox] = Field(min_length=1)
+    forced: bool = Field(
+        default=False, description="A blower drives the air, as forced-oil burners do"
+    )
+    oil_burners: int | None = Field(default=None, ge=1, description="Oil burners or drip units")
+    oil_rate: Flow | None = Field(
+        default=None, description="Each oil burner's flow at full fire, for example '2 gallon/hour'"
+    )
+
+    @model_validator(mode="after")
+    def _oil_with_oil(self) -> Fire:
+        if self.fuel != "oil" and (self.oil_burners is not None or self.oil_rate is not None):
+            raise ValueError("oil burners and their rate are for oil firing")
+        return self
 
 
 class Heat(Spec):
     electric: Electric | None = None
     gas: Gas | None = None
+    fire: Fire | None = Field(default=None, description="Wood, coal or oil in fireboxes")
 
     @model_validator(mode="after")
     def _some_heat(self) -> Heat:
-        if self.electric is None and self.gas is None:
-            raise ValueError("give the kiln a heat source: electric, gas, or both")
+        if self.electric is None and self.gas is None and self.fire is None:
+            raise ValueError("give the kiln a heat source: electric, gas, a fire, or more than one")
         return self
+
+
+class Section(Spec):
+    """A flue's or a chimney's inside cross-section: round, by its diameter, or a rectangle, by its
+    two sides."""
+
+    diameter: Length | None = None
+    width: Length | None = None
+    depth: Length | None = None
+
+    @model_validator(mode="after")
+    def _one_shape(self) -> Section:
+        sides = (self.width, self.depth)
+        if self.diameter is not None and any(s is not None for s in sides):
+            raise ValueError("give a section a diameter, or a width and a depth, not both")
+        if self.diameter is None and any(s is None for s in sides):
+            raise ValueError("give a section a diameter, or both a width and a depth")
+        if any(si(s, "in") <= 0 for s in (self.diameter, *sides) if s is not None):
+            raise ValueError("a section's sizes must be more than zero")
+        return self
+
+    def area_in2(self) -> float:
+        """The inside area, in²."""
+        if self.diameter is not None:
+            return math.pi / 4 * si(self.diameter, "in") ** 2
+        assert self.width is not None
+        assert self.depth is not None
+        return si(self.width, "in") * si(self.depth, "in")
+
+
+class Chimney(Spec):
+    """A chimney as built: how tall, and its inside section."""
+
+    height: Length = Field(description="From the chamber floor to the chimney's top")
+    inside: Section | None = Field(
+        default=None, description="Inside, at the base. Left out: the size the engine works out"
+    )
+    top: Section | None = Field(
+        default=None,
+        description="Inside, at the top, for a chimney that tapers. Left out: as at the base",
+    )
 
 
 class Draft(Spec):
@@ -396,6 +609,12 @@ class Draft(Spec):
             "from outside; the chimney moves with it. Left out: in the middle"
         ),
     )
+    chimney: Chimney | None = Field(
+        default=None,
+        description=(
+            "The chimney as built, to check against Olsen's rules. Left out: the engine sizes it"
+        ),
+    )
 
     @model_validator(mode="after")
     def _flue_in_a_wall(self) -> Draft:
@@ -416,6 +635,13 @@ class Site(Spec):
     )
     coldest_ambient: Temperature | None = Field(
         default=None, description="The coldest air the kiln will be fired in"
+    )
+    elevation: Length | None = Field(
+        default=None,
+        description=(
+            "The site's height above sea level. Thinner air weakens burners and draft (Olsen "
+            "p.81, p.230). Left out: sea level"
+        ),
     )
     electricity_price: EnergyPrice | None = None
     propane_price: VolumePrice | None = None
@@ -494,6 +720,31 @@ class Kiln(Spec):
 
     @model_validator(mode="after")
     def _a_roof_it_can_build(self) -> Kiln:
+        powered = self.heat.gas is not None or self.heat.electric is not None
+        if isinstance(self.roof, OpenTop) and powered:
+            raise ValueError(
+                "an open top's heat loss isn't worked out, so burners or elements can't be sized "
+                "for it: fire it with wood, coal or oil, or give it a roof"
+            )
+        if self.chamber.on_ground and powered:
+            raise ValueError(
+                "a floor on the ground has its loss left out, so burners or elements can't be "
+                "sized against the total: leave on_ground out for a gas or electric kiln, and its "
+                "floor is counted as losing heat to the air under it"
+            )
+        if self.chamber.shape == "round":
+            if isinstance(self.roof, SprungArch | CatenaryArch):
+                raise ValueError("a round chamber takes a dome or a flat roof, not an arch")
+            if self.heat.electric is not None:
+                raise ValueError("elements in a round kiln's curved walls aren't designed here")
+            if isinstance(self.roof, Dome):
+                rise, radius = si(self.roof.rise, "in"), si(self.chamber.width, "in") / 2
+                if not 0 < rise <= radius:
+                    raise ValueError(
+                        "a round chamber's dome must rise more than 0 and at most its radius, "
+                        f"{radius:g} in (a hemisphere)"
+                    )
+            return self
         if isinstance(self.roof, SprungArch):
             rise, span = si(self.roof.rise, "in"), si(self.chamber.width, "in")
             if not 0 < rise <= span / 2:
@@ -533,7 +784,7 @@ class Kiln(Spec):
                     "elements in a catenary kiln aren't designed here, because its walls curve: "
                     "fire it with gas"
                 )
-            walls: list[tuple[str, WallFace]] = [("the door or car", self.loading.face)]
+            walls: list[tuple[str, str]] = [("the door or car", self.loading.face)]
             gas = self.heat.gas
             if gas is not None:
                 if gas.burners.places is None:
@@ -566,4 +817,4 @@ class Kiln(Spec):
             return None
         if self.loading.door is not None:
             return self.loading.door
-        return "hinged" if self.heat.gas is None else "bricked"
+        return "hinged" if self.heat.gas is None and self.heat.fire is None else "bricked"

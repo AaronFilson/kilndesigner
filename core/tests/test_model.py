@@ -6,7 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from kilndesigner import parse_design
-from kilndesigner.model import Burners, Draft, Firing, Heat, Lining, Port, SpyHoles
+from kilndesigner.model import Burners, Draft, Firing, Heat, Kiln, Lining, Port, SpyHoles
 from kilndesigner.units import si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
@@ -171,6 +171,88 @@ def test_a_catenary_is_its_own_side_walls(change: tuple[str, str], what: str, wa
     assert old in CATENARY
     with pytest.raises(ValidationError, match=f"so {what} can't go in the {wall} wall"):
         parse_design(CATENARY.replace(old, new))
+
+
+def _wood(**parts: object) -> dict[str, object]:
+    """A wood-fired kiln as a document, with whole parts replaced."""
+    hard = [_layer("hard-firebrick-kx99", "9 in")]
+    document: dict[str, object] = {
+        "name": "wood kiln",
+        "firing": {"cone": "10"},
+        "chamber": {"width": "48 in", "depth": "48 in", "height": "48 in"},
+        "lining": {"walls": hard},
+        "heat": {"fire": {"fireboxes": [{"width": "48 in", "length": "36 in"}]}},
+    }
+    return {**document, **parts}
+
+
+GAS = {"gas": {"supply": {"type": "cylinders", "count": 4}}}
+ELECTRIC = {"electric": {"supply": {"voltage": "240 V", "breaker": "60 A"}}}
+
+
+@pytest.mark.parametrize(
+    ("parts", "message"),
+    [
+        ({"chamber": {"shape": "round", "width": "84 in", "depth": "80 in", "height": "42 in"}},
+         "a round chamber's width and depth are both its diameter"),
+        ({"chamber": {"shape": "round", "width": "84 in", "depth": "84 in", "height": "42 in",
+                      "chambers": 2}}, "a round kiln is one chamber"),
+        ({"chamber": {"width": "48 in", "depth": "48 in", "height": "48 in", "slope": "20 %"}},
+         "give the slope as an angle"),
+        ({"chamber": {"width": "48 in", "depth": "48 in", "height": "48 in",
+                      "slope": "65 degree"}}, "from 0 to under 60 degrees"),
+        ({"chamber": {"shape": "round", "width": "84 in", "depth": "84 in", "height": "42 in"},
+          "roof": {"type": "sprung_arch", "rise": "10 in"}}, "takes a dome or a flat roof"),
+        ({"chamber": {"shape": "round", "width": "84 in", "depth": "84 in", "height": "42 in"},
+          "heat": {**ELECTRIC, "fire": None}}, "elements in a round kiln's curved walls"),
+        ({"chamber": {"shape": "round", "width": "84 in", "depth": "84 in", "height": "42 in"},
+          "roof": {"type": "dome", "rise": "50 in"}}, "at most its radius, 42 in"),
+        ({"roof": {"type": "open"}, "heat": GAS}, "an open top's heat loss isn't worked out"),
+        ({"chamber": {"width": "48 in", "depth": "48 in", "height": "48 in", "on_ground": True},
+          "heat": ELECTRIC}, "a floor on the ground has its loss left out"),
+        ({"heat": {"fire": {"fuel": "wood", "oil_burners": 2,
+                            "fireboxes": [{"width": "48 in", "length": "36 in"}]}}},
+         "oil burners and their rate are for oil firing"),
+        ({"heat": {"gas": {"fuel": "natural_gas", "supply": {"type": "cylinders", "count": 4}}}},
+         "natural gas comes from a line"),
+        ({"heat": {"gas": {"burners": {"wall": "floor",
+                                       "places": [{"wall": "front", "up": "4 in"}]},
+                           "supply": {"type": "cylinders", "count": 4}}}},
+         "floor burners are spaced round the edge of the floor"),
+        ({"heat": {"gas": {"burners": {"rating": "36000 BTU/hr"},
+                           "supply": {"type": "cylinders", "count": 4}}}},
+         "give the count of burners with their rating"),
+        ({"heat": {"gas": {"burners": {"rating": "36000 BTU/hr", "count": 6, "model": "GACO MR750"},
+                           "supply": {"type": "cylinders", "count": 4}}}},
+         "a rating for one it doesn't list, not both"),
+        ({"draft": {"type": "cross", "chimney": {"height": "10 ft",
+                                                "inside": {"diameter": "9 in", "width": "9 in"}}}},
+         "a diameter, or a width and a depth, not both"),
+        ({"draft": {"type": "cross", "chimney": {"height": "10 ft", "inside": {"width": "9 in"}}}},
+         "or both a width and a depth"),
+        ({"draft": {"type": "cross", "chimney": {"height": "10 ft",
+                                                "inside": {"diameter": "0 in"}}}},
+         "a section's sizes must be more than zero"),
+    ],
+)  # fmt: skip
+def test_what_a_wood_round_or_sloped_kiln_refuses(parts: dict[str, object], message: str) -> None:
+    """Olsen's kinds of kiln (round, climbing, open-topped, on the ground, fired with oil or
+    natural gas) each refuse what the engine can't work out for them, and say why."""
+    document = _wood(**parts)
+    heat = document["heat"]
+    if isinstance(heat, dict) and heat.get("fire", "") is None:
+        document["heat"] = {k: v for k, v in heat.items() if v is not None}
+    with pytest.raises(ValidationError, match=message):
+        Kiln.model_validate(document)
+
+
+def test_chambers_in_a_row_are_one_long_chamber() -> None:
+    kiln = Kiln.model_validate(
+        _wood(chamber={"width": "48 in", "depth": "40 in", "height": "48 in", "chambers": 3,
+                       "slope": "18.4 degree"})
+    )  # fmt: skip
+    assert si(kiln.chamber.length, "in") == pytest.approx(120)
+    assert si(kiln.chamber.slope, "degree") == pytest.approx(18.4)  # type: ignore[arg-type]
 
 
 def test_a_catenary_with_an_up_draft_has_no_flue_wall_to_check() -> None:

@@ -59,6 +59,9 @@ the same code is λ_a = 54 − 3.33×10⁻²·θ W/(m·K) for 20–800 °C, and 
 
 ## 2. Thermal expansion
 
+Olsen, 4th ed. p.51: each foot of refractory wall grows 1/16–3/32 in
+(0.52–0.78 %) heating and cooling, which agrees with the IFB figures below.
+
 ### 2.1 Refractories
 
 | Material | Value | Sources | Status |

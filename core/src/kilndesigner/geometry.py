@@ -47,6 +47,8 @@ COLOURS: dict[str, tuple[float, float, float]] = {
     "insulating_castable": (0.80, 0.78, 0.74),
     "dense_castable": (0.62, 0.60, 0.58),
     "backup_insulation": (0.85, 0.85, 0.90),
+    "building_brick": (0.66, 0.31, 0.23),
+    "stone": (0.58, 0.57, 0.54),
     "element": (0.55, 0.55, 0.58),
     "steel": (0.30, 0.32, 0.36),
     "burner": (0.72, 0.55, 0.28),
@@ -59,12 +61,21 @@ KIND_NAMES = {
     "insulating_castable": "Insulating castable",
     "dense_castable": "Dense castable",
     "backup_insulation": "Backup insulation",
+    "building_brick": "Building brick",
+    "stone": "Stone",
     "element": "Elements",
     "steel": "Steel",
     "burner": "Burners",
 }
-# Materials an arch can spring from: brick and castable, not fibre
-SOLID_KINDS = {"insulating_firebrick", "dense_firebrick", "insulating_castable", "dense_castable"}
+# Materials an arch can spring from: brick, castable and stone, not fibre
+SOLID_KINDS = {
+    "insulating_firebrick",
+    "dense_firebrick",
+    "insulating_castable",
+    "dense_castable",
+    "building_brick",
+    "stone",
+}
 FACE_NAMES = {
     "left": "Left wall",
     "right": "Right wall",
@@ -215,6 +226,24 @@ class GeometryNotSupportedError(NotImplementedError):
     pass
 
 
+def not_drawn(kiln: Kiln) -> str | None:
+    """Why the lining, the 3D model and the plans can't be drawn for this kiln yet, or None. The
+    calculations (heat loss, firing, chimney, roof) still run."""
+    c = kiln.chamber
+    if c.shape == "round":
+        return "round chambers are calculated but not yet drawn, laid out in brick or priced"
+    if kiln.roof.type == "open":
+        return "an open-topped kiln is calculated but not yet drawn, laid out in brick or priced"
+    if c.chambers > 1:
+        return (
+            "chambers in a row are calculated as one long chamber, but not yet drawn, laid out "
+            "in brick or priced"
+        )
+    if c.slope is not None and si(c.slope, "degree") > 0:
+        return "a sloping floor is calculated but not yet drawn, laid out in brick or priced"
+    return None
+
+
 def _thicknesses(kiln: Kiln, face: Face) -> list[tuple[str, float]]:
     layers = kiln.lining.for_face(face, door_face=kiln.door_face)
     return [(layer.material, si(layer.thickness, "mm")) for layer in layers]
@@ -224,6 +253,8 @@ def lining_parts(kiln: Kiln) -> list[Part]:
     """The lining as boxes and arch rings: pure arithmetic, testable without OpenCascade."""
     from kilndesigner.castable import resolve_material
 
+    if (why := not_drawn(kiln)) is not None:
+        raise GeometryNotSupportedError(why)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_parts(kiln)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
@@ -682,11 +713,13 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     what each part is and where its ports are."""
     from kilndesigner.hardware import build_hardware, layout
 
+    if (why := not_drawn(kiln)) is not None:
+        raise GeometryNotSupportedError(why)
     runs: list[ElementRun] = []
     if report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
-        runs = element_runs(kiln, el.count, el.coil_outside_diameter_mm)
-    hardware = build_hardware(kiln, report.frame, report.gas)
+        runs = element_runs(kiln, el.groove_rows, el.coil_outside_diameter_mm)
+    hardware = build_hardware(kiln, report.frame, report.gas, report.fire)
     written = export_model(build_model(kiln, runs, hardware), out_dir)
     parts = out_dir / "parts.json"
     index = part_index(kiln, report, hardware)

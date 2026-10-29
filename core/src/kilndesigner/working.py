@@ -7,8 +7,9 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from kilndesigner.sheet import Check
 from kilndesigner.units import Quantity, format_quantity
 
 
@@ -24,13 +25,33 @@ class Step(BaseModel):
 
 
 class Finding(BaseModel):
-    """Something the builder must know: a limit exceeded, an assumption, a safety note."""
+    """Something the builder must know: a limit exceeded, an assumption, a safety note. A warning
+    or an error carries the check that raised it: its formulas, inputs and sources (ADR 0013)."""
 
     model_config = ConfigDict(frozen=True)
 
     level: Literal["info", "warning", "error"]
     message: str
     reference: str | None = None
+    check: Check | None = None
+
+    @model_validator(mode="after")
+    def _raised_by_its_check(self) -> Finding:
+        if self.level != "info" and (self.check is None or self.check.status != self.level):
+            raise ValueError(
+                f"a {self.level} is raised by a check that fails at that level, with its formulas "
+                f"and inputs (ADR 0013): {self.message!r}"
+            )
+        return self
+
+    @classmethod
+    def failed(cls, check: Check, message: str, reference: str | None = None) -> Finding:
+        """The finding a failed check raises, at the check's level."""
+        if check.status == "pass":
+            raise ValueError(f"{check.id} passed: there is nothing to report")
+        return cls(
+            level=check.status, message=message, reference=reference or check.reference, check=check
+        )
 
 
 def show(value: Quantity | float | str, unit: str | None = None, digits: int = 4) -> str:

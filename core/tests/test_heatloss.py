@@ -34,12 +34,19 @@ def test_pce_cones_to_42_at_their_one_rate() -> None:
 
 
 def test_every_library_material_loads_with_increasing_k_points() -> None:
+    """Every refractory has its maker's service limit. Building brick, stone and clay fired in place
+    have none: no maker or standard rates them for kiln heat (masonry-materials.md §1.2, §3.3,
+    §4a)."""
+    unrated = {"building_brick", "stone"}
     for m in materials().values():
         k = m.k
         assert all(v > 0 for v in k.values)
+        assert list(k.temperatures) == sorted(k.temperatures)
         limit = m.max_service_temperature
-        assert limit is not None
-        assert limit.check("[temperature]")
+        expected = m.kind in unrated or m.id == "fireclay-brick-porous-norton"
+        assert (limit is None) == expected, m.id
+        if limit is not None:
+            assert limit.check("[temperature]")
 
 
 def test_front_loader_heat_loss_is_plausible() -> None:
@@ -62,13 +69,23 @@ def test_k_past_the_data_sheet_is_one_note_per_material_not_a_warning() -> None:
     assert not [f for f in result.findings if f.level == "warning"]
 
 
-def test_a_low_rated_brick_on_the_hot_face_is_an_error() -> None:
+def test_a_low_rated_brick_on_the_hot_face_is_a_warning() -> None:
+    """Past its class a brick shrinks and wears faster, but stands: Olsen's cone 10 fast-fire
+    kiln is 2300 °F brick (p.140). Once for each material, at its hottest face, naming them."""
     text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
     kiln = parse_design(text.replace("- material: ifb-jm26", "- material: ifb-k23", 1))
     result = heat_loss(kiln)
-    errors = [f for f in result.findings if f.level == "error"]
-    assert errors
-    assert "K-23" in errors[0].message
+    assert not [f for f in result.findings if f.level == "error"]
+    [warning] = [f for f in result.findings if f.level == "warning"]
+    assert "K-23" in warning.message
+    assert warning.message.startswith("left, right, back, front:")
+    # Its sheet: the hot face is the kiln's own top temperature, cone 10 at 60 °C/h (2345 °F),
+    # against K-23's 2300 °F, so a cooler firing is what passes
+    check = warning.check
+    assert check is not None
+    assert check.id == "heatloss.service.left.1"
+    assert check.requirements[0].margin == "T_hot = 2,345 °F, 45 °F over T_max = 2,300 °F"
+    assert check.solve == "Passes when T_hot ≤ 2,300 °F"
 
 
 def test_more_insulation_loses_less_heat() -> None:
@@ -100,6 +117,19 @@ def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
     assert warning.reference == RA_SOURCE
     ra = float(warning.message.split("number is ")[1].split(",")[0])
     assert 0 < ra < 1e5
+    # Its sheet works Ra out from the air's properties at the film temperature, and the face's
+    # length that would bring it into range (Ra goes as L³)
+    check = warning.check
+    assert check is not None
+    cells = {c.symbol: c for c in check.cells}
+    assert cells["Ra"].formula == "g·β·|T_s − T_a|·L³/(ν·α)"
+    assert cells["Ra"].value == pytest.approx(ra, rel=0.01)
+    assert check.requirements[0].margin.startswith("Ra = 71,6")
+    assert check.solve is not None
+    assert check.solve.startswith("Passes when L ≥ ")
+    length = float(check.solve.split("≥ ")[1].split()[0])
+    l_now = (cells["L"].value or 0) * cells["L"].scale
+    assert length == pytest.approx(l_now * (1e5 / (cells["Ra"].value or 1)) ** (1 / 3), rel=1e-3)
 
 
 def test_arch_geometry() -> None:

@@ -68,6 +68,12 @@ def build_design(kiln: Kiln, out: Path, *, model: bool = True, plans: bool = Tru
     out.mkdir(parents=True, exist_ok=True)
     (out / "report.json").write_text(result.report.model_dump_json(indent=2), encoding="utf-8")
     result.written.append(out / "report.json")
+    checks = [f.check for f in result.report.findings if f.check is not None]
+    if checks:
+        from kilndesigner.workbook import checks_workbook
+
+        (out / CHECKS).write_bytes(checks_workbook(checks))
+        result.written.append(out / CHECKS)
     if model:
         from kilndesigner.geometry import write_model
 
@@ -87,6 +93,9 @@ def build_design(kiln: Kiln, out: Path, *, model: bool = True, plans: bool = Tru
             result.notes.append(f"No plans: {e}")
     return result
 
+
+CHECKS = "checks.xlsx"
+"""The workbook of the report's checks: one worksheet per warning or error, with live formulas."""
 
 DRAWINGS = "drawings"
 """The folder in a build for the plans' drawings as SVG, with ``index.json`` listing them."""

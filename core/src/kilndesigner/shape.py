@@ -18,7 +18,7 @@ from itertools import pairwise
 import numpy as np
 from scipy.optimize import brentq
 
-from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch
 from kilndesigner.thermal.surface import Orientation
 from kilndesigner.units import si
 
@@ -169,12 +169,44 @@ class SailDome:
 
     def area(self, depth: float = 0.0) -> float:
         """The sphere moved out by ``depth`` over the chamber's plan grown by ``depth`` each side,
-        above the springline."""
+        above the springline. In polar form, a sphere of radius r over a plan reaching ρ(θ) from
+        the centre has area ∫ r(r − √(r² − ρ²)) dθ; ρ is the plan's edge or the springline circle,
+        whichever is nearer. Summed over θ it changes smoothly with ``depth``, so the lining's
+        ∫dx/A(x) converges (a grid over the plan steps as cells cross the springline)."""
         r = self.radius + depth
-        x, y, cell = _grid(self.width + 2 * depth, self.depth + 2 * depth)
-        under = np.maximum(r * r - x * x - y * y, 1e-12)
-        above = self.centre + np.sqrt(under) >= 0
-        return float(np.sum(np.where(above, r / np.sqrt(under), 0.0)) * cell)
+        half_w, half_d = self.width / 2 + depth, self.depth / 2 + depth
+        springline = math.sqrt(max(r * r - self.centre**2, 0.0))
+        n = 4096
+        theta = (np.arange(n) + 0.5) / n * math.pi / 2  # one quarter; the plan is symmetric
+        edge = np.minimum(half_w / np.cos(theta), half_d / np.sin(theta))
+        rho = np.minimum(edge, springline)
+        strip = r * (r - np.sqrt(np.maximum(r * r - rho * rho, 0.0)))
+        return float(4 * np.sum(strip) * math.pi / 2 / n)
+
+
+@dataclass(frozen=True)
+class RoundDome:
+    """A spherical cap over a round chamber of ``diameter``, ``rise`` above its springline."""
+
+    diameter: float
+    rise: float
+
+    @property
+    def radius(self) -> float:
+        """The sphere's radius: (r_b² + h²) / 2h, r_b the chamber's radius."""
+        return ((self.diameter / 2) ** 2 + self.rise**2) / (2 * self.rise)
+
+    @property
+    def volume(self) -> float:
+        """The cap's volume: πh(3r_b² + h²)/6."""
+        return math.pi * self.rise * (3 * (self.diameter / 2) ** 2 + self.rise**2) / 6
+
+    def area(self, depth: float = 0.0) -> float:
+        """The sphere moved out by ``depth``, over the wall's outside circle at that depth: a cap
+        of area 2πR·h_c."""
+        big, base = self.radius + depth, self.diameter / 2 + depth
+        cap = big - math.sqrt(max(big * big - base * base, 0.0))
+        return 2 * math.pi * big * cap
 
 
 @dataclass(frozen=True)
@@ -214,9 +246,17 @@ class ChamberShape:
     arch: Arch | None
     catenary: CatenaryCurve | None = None
     dome: SailDome | None = None
+    round: bool = False
+    """A cylinder of diameter ``width``."""
+    round_dome: RoundDome | None = None
+    open_top: bool = False
+    """No built roof (shards over the setting): no roof face."""
 
     @property
     def volume(self) -> float:
+        if self.round:
+            cap = self.round_dome.volume if self.round_dome is not None else 0.0
+            return math.pi / 4 * self.width**2 * self.height + cap
         if self.catenary is not None:
             return self.catenary.area * self.depth
         if self.dome is not None:
@@ -225,7 +265,18 @@ class ChamberShape:
         return (self.width * self.height + segment) * self.depth
 
     def faces(self) -> list[FaceShape]:
+        """Every face the lining covers. An arch springing from the floor (a groundhog's, Olsen
+        p.112) leaves no side walls, and an open top no roof."""
+        return [
+            f
+            for f in self._faces()
+            if f.inside_area > 0 and not (self.open_top and f.face == "roof")
+        ]
+
+    def _faces(self) -> list[FaceShape]:
         w, d, h = self.width, self.depth, self.height
+        if self.round:
+            return self._round_faces()
         if self.catenary is not None:
             return self._catenary_faces(self.catenary)
         floor = FaceShape("floor", "facing_down", w * d, w, d)
@@ -256,6 +307,31 @@ class ChamberShape:
             roof,
         ]
 
+    def _round_faces(self) -> list[FaceShape]:
+        """A cylinder: its wall as four quarters (so a door can be one of them), the floor a disc,
+        and a dome's cap or a flat disc over it. Each grows with the lining like a box's faces."""
+        dia, h = self.width, self.height
+
+        def quarter(t: float) -> float:
+            return math.pi * (dia + 2 * t) / 4 * (h + 2 * t)
+
+        def disc(t: float) -> float:
+            return math.pi / 4 * (dia + 2 * t) ** 2
+
+        arc = math.pi * dia / 4
+        walls = [
+            FaceShape(face, "vertical", arc * h, arc, h, grows=quarter)
+            for face in ("left", "right", "back", "front")
+        ]
+        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=disc)
+        dome = self.round_dome
+        roof = (
+            FaceShape("roof", "facing_up", dome.area(), dia, dia, grows=dome.area)
+            if dome is not None
+            else FaceShape("roof", "facing_up", disc(0), dia, dia, grows=disc)
+        )
+        return [*walls, floor, roof]
+
     def _catenary_faces(self, arch: CatenaryCurve) -> list[FaceShape]:
         """A catenary has no side walls: the arch runs from the floor over the top. Its outside
         is mostly upright, so it loses heat as a vertical wall as tall as the arch."""
@@ -273,8 +349,16 @@ class ChamberShape:
 
 
 def chamber_shape(kiln: Kiln) -> ChamberShape:
+    """The chamber's shape: chambers in a row count as one long chamber, the walls between them
+    losing no heat outside."""
     c = kiln.chamber
-    w, d, h = si(c.width, "m"), si(c.depth, "m"), si(c.height, "m")
+    w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
+    open_top = isinstance(kiln.roof, OpenTop)
+    if c.shape == "round":
+        dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None
+        return ChamberShape(w, w, h, None, round=True, round_dome=dome, open_top=open_top)
+    if open_top:
+        return ChamberShape(w, d, h, None, open_top=True)
     if isinstance(kiln.roof, SprungArch):
         return ChamberShape(w, d, h, Arch(w, si(kiln.roof.rise, "m")))
     if isinstance(kiln.roof, CatenaryArch):

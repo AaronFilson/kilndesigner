@@ -1,5 +1,8 @@
 // The report's headline numbers and its findings. The working stays a click away for each section.
 import type { Finding, Report, Step } from "@kilndesigner/api-client";
+import { useState } from "react";
+
+import { CheckSheet } from "./CheckSheet";
 
 function Rows({ rows }: { rows: [string, string | null | undefined][] }) {
   return (
@@ -36,17 +39,46 @@ function Working({ steps }: { steps: Step[] }) {
   );
 }
 
-/** Errors and warnings: things the design should change. Notes are shown by `Notes`. */
+function Problem({ finding: f }: { finding: Finding }) {
+  const check = f.check;
+  const anchor = check ? `#check-${check.id}` : undefined;
+  // A link to a sheet opens it, so a shared link lands on the working
+  const [open, setOpen] = useState(() => anchor !== undefined && window.location.hash === anchor);
+  return (
+    <li className={f.level}>
+      <span className="level">{check?.label ?? f.level}</span> {f.message}
+      {check && (
+        <>
+          {" "}
+          <a
+            href={anchor}
+            className="why"
+            aria-expanded={open}
+            onClick={(e) => {
+              e.preventDefault();
+              setOpen(!open);
+              if (!open) window.history.replaceState(null, "", anchor);
+            }}
+          >
+            {open ? "Hide the working" : "Why: the formulas and numbers"}
+          </a>
+        </>
+      )}
+      {f.reference && <cite>{f.reference}</cite>}
+      {check && open && <CheckSheet check={check} />}
+    </li>
+  );
+}
+
+/** Errors and warnings: things the design should change, each with the sheet that raised it.
+ * Notes are shown by `Notes`. */
 export function Findings({ findings }: { findings: Finding[] }) {
   const problems = findings.filter((f) => f.level !== "info");
   if (problems.length === 0) return null;
   return (
     <ul className="findings">
       {problems.map((f, i) => (
-        <li key={i} className={f.level}>
-          <span className="level">{f.level}</span> {f.message}
-          {f.reference && <cite>{f.reference}</cite>}
-        </li>
+        <Problem key={f.check?.id ?? i} finding={f} />
       ))}
     </ul>
   );

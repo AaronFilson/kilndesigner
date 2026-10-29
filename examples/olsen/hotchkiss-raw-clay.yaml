@@ -1,0 +1,67 @@
+# Six-chamber raw-clay climbing kiln, 1971 (Olsen, The Kiln Book, 4th ed., p.33, p.54–57): built
+# by Richard Hotchkiss and a workshop group of raw blocks of fireclay and sand that fired in place,
+# chamber 6 first and downward, and still firing after 30 years (p.33, p.55–57).
+#
+# From the book: six chambers on a slope, the "average chamber (5 x 5 x 6ft)" (p.56); raw blocks
+# of 50 % Lincoln 60 fireclay and 50 % coarse sand, 9 × 10 × 18 in and smaller, laid in a soft
+# mortar of the same mix (p.33, p.54–55); each arch roped until the arch below was finished to
+# buttress it, the arches near semicircles (p.55–56), so masonry holds them; the front and back
+# walls built first, the side walls last, with a door on one side (p.55–56); a domed firebox and
+# side stoking of the upper chambers (p.57); the chimney commercial firebrick to 12 ft, then 18 ft
+# of hydraulic water pipe, about 30 ft (p.56–57).
+# Assumed: the blocks as fireclay-brick-porous-norton. The user judges fired raw clay to lie
+# between low- and medium-duty hard brick, and masonry-materials.md §4a finds that its fired face
+# conducts like a porous fireclay brick. The whole wall is taken as fired, since the raw clay
+# behind the fired skin has no conductivity data above room temperature (§4a.6–4a.7); so the loss
+# is likely overstated. Cone 10: the book gives none, and a firing listing for the kiln asks for
+# "high-fire work" (§4a.6); Lincoln 60 is a stoneware clay that bloats at cone 11 (§4a.1), so
+# cone 10 is near its ceiling. The 5 × 5 ft plan is inside and the 6 ft to the crown; the arch, a
+# semicircle on the 5 ft span, rises 30 in, so the springline is at 42 in. Walls and arch 10 in,
+# a block's width, at the top of Olsen's 9–10 in for climbing kilns (p.99–100); the floor as the
+# walls (engine default), on the ground. The slope 22°, as Olsen draws a climbing kiln of five or
+# six chambers (Fig 3-15, p.81). Wood: the book doesn't name the fuel, but its captions show
+# firebox firing and side stoking (p.57). The fire is a 9 in stoking channel along each chamber's
+# front wall, Olsen's for side-stoked chambers (p.205). The chimney's section isn't given, so the
+# engine sizes it.
+# Not modelled: the domed main firebox, which the book doesn't size; the flue holes (Fig 2-40),
+# neither counted nor sized; the raw clay behind the fired face. Each arch springs between the
+# front and back walls; on the 5 ft square plan the engine's arch across the width has the same
+# span. The door is in a side wall; a sprung arch here springs from the side walls, so it is put
+# in the front wall. The floor's loss into the ground isn't worked out by the engine.
+schema: 1
+name: Hotchkiss six-chamber raw-clay climbing kiln, 1971
+units: us
+firing:
+  cone: "10" # not given: near the clay's ceiling, as it bloats at cone 11 (§4a.1)
+chamber:
+  width: 5 ft
+  depth: 5 ft
+  height: 42 in # to the springline: 6 ft to the crown, less the rise
+  chambers: 6
+  slope: 22 degree # Olsen's climbing kiln of five or six chambers (Fig 3-15)
+  on_ground: true # built up a slope (p.55–57)
+roof:
+  type: sprung_arch
+  rise: 30 in # a semicircle on the 5 ft span (p.55–56, photos)
+  buttressed: true # each arch buttressed by the arch below it (p.55–56)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: fireclay-brick-porous-norton # raw fireclay and sand, fired in place (§4a)
+      thickness: 10 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 6 # a stoking channel in each chamber
+        position: front
+        width: 9 in # Olsen's channel for side stoking (p.205)
+        length: 5 ft # across the chamber
+draft:
+  type: cross
+  flue_wall: back
+  chimney:
+    height: 30 ft # 12 ft of firebrick, then 18 ft of pipe (p.56–57)

@@ -17,6 +17,7 @@ from kilndesigner.electric import (
 )
 from kilndesigner.heatloss import heat_loss
 from kilndesigner.library import alloy, awg_diameter
+from kilndesigner.sheet import Check, number
 from kilndesigner.units import si
 from kilndesigner.working import Finding
 
@@ -40,6 +41,18 @@ def test_kanthal_worked_example() -> None:
     length = wire_length(20_000, 220, 5.0e-3, rho_t)
     assert length == pytest.approx(32.25, abs=0.01)
     assert surface_load(20_000, 5.0e-3, length) / 1e4 == pytest.approx(3.948, abs=0.001)
+
+
+def test_olsens_worked_example() -> None:
+    """Olsen's 10½ ft³ cone 10 kiln (*The Kiln Book*, 4th ed., p.258–260): 26 kW at 240 V in six
+    groups of 4333 W; B&S 10 wire (0.102 in) at 0.083 Ω/ft cold, Ct 1.04: 154.2 ft a group, at
+    7.4 W/in². He rounds the cold resistance to 12.8 Ω, and his load's denominator is a slip: the
+    exact figures are 154.0 ft and 7.3 W/in²."""
+    d = 0.102 * 0.0254
+    rho_t = 0.083 / 0.3048 * 1.04 * math.pi * d**2 / 4  # Ω·m, hot
+    length = wire_length(26_000 / 6, 240, d, rho_t)
+    assert length / 0.3048 == pytest.approx(154.2, abs=0.3)
+    assert surface_load(26_000 / 6, d, length) * 0.0254**2 == pytest.approx(7.3, abs=0.05)
 
 
 @pytest.mark.parametrize(
@@ -91,7 +104,33 @@ def test_too_much_power_is_an_error() -> None:
     text = (EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8")
     kiln = parse_design(text.replace("alloy: kanthal-a1", "alloy: kanthal-a1\n    power: 20 kW"))
     design = design_elements(kiln)
-    assert any("more than the circuit" in f.message for f in design.findings)
+    [error] = [f for f in design.findings if "more than the circuit" in f.message]
+    # Its sheet: P_s = f_c·I_b·V = 0.8 × 60 A × 240 V, against the 20 kW asked for
+    assert error.check is not None
+    assert error.check.requirements[0].margin == "P = 20 kW, 173.6 % of P_s = 11.52 kW"
+    assert error.check.solve == "Passes when P ≤ 11.52 kW"
+
+
+def test_no_wire_that_fits_shows_the_nearest_arrangement() -> None:
+    """20 kW in the front loader's three walls: the nearest is three elements of three grooves
+    each. At Krueger's 17.5 W/in², the most any source uses, the thinnest wire is 2.598 mm,
+    between 10 AWG (2.588 mm) and 9 AWG (2.906 mm); in 9 AWG the coil's pitch is under 2 wire
+    diameters, since pitch ÷ d goes as 1/d². Longer grooves would let it fit."""
+    kiln = parse_design(FRONT.replace("alloy: kanthal-a1", "alloy: kanthal-a1\n    power: 20 kW"))
+    [error] = [
+        f for f in design_elements(kiln).findings if f.check and f.check.id == "electric.no-wire"
+    ]
+    assert error.message.startswith("No standard wire gauge gives elements that fit")
+    check = error.check
+    assert check is not None
+    cells = {c.symbol: c for c in check.cells}
+    assert cells["c_g"].formula == "c·(d/d_g)²"
+    assert [r.margin for r in check.requirements] == [
+        "d = 2.598 mm, 79.58 % of d_max = 3.264 mm",
+        "c_g = 1.929, 96.46 % of c_min = 2",
+    ]
+    assert cells["G"].meaning == "groove for each element: round its walls, 3 rows"
+    assert check.solve == "Passes when G ≥ 209.9 in"
 
 
 def _front_loader_fired(firing: str) -> list[tuple[str, str]]:
@@ -113,6 +152,25 @@ def test_past_the_wire_rating_and_past_cone_10_are_warnings() -> None:
     ten = _front_loader_fired('  cone: "10"')
     assert [lv for lv, m in ten if grooves in m] == ["info"]
     assert not [m for lv, m in hot + eleven + ten if lv == "error"]
+
+
+def _checks(firing: str) -> dict[str, Check]:
+    kiln = parse_design(FRONT.replace('  cone: "10"', firing))
+    return {f.check.id: f.check for f in design_elements(kiln).findings if f.check}
+
+
+def test_the_wire_and_groove_sheets_say_how_hot_is_too_hot() -> None:
+    """A-1 is rated to 1400 °C (2552 °F) in air; the wire is taken 100 °C (180 °F) above the
+    kiln, so the kiln may reach 2372 °F. Past cone 10 by temperature, cone 10 at 150 °C/h
+    (2381 °F) is where it passes again; past it by its cone (11), no temperature does."""
+    hot = _checks('  cone: "10"\n  top_temperature: 2400 °F')
+    wire = hot["electric.wire-temperature"]
+    assert wire.requirements[0].margin == "T_w = 2,580 °F, 28 °F over T_max = 2,552 °F"
+    assert wire.solve == "Passes when T_top ≤ 2,372 °F"
+    assert hot["electric.grooves"].solve == "Passes when T_top ≤ 2,381 °F"
+    eleven = _checks('  cone: "11"')["electric.grooves"]
+    assert (eleven.status, eleven.rule_holds, eleven.lever) == ("warning", False, None)
+    assert eleven.cells[3].text == "11"
 
 
 def test_three_phase_uses_root_three() -> None:
@@ -177,8 +235,9 @@ def test_a_set_number_of_elements_is_kept() -> None:
 
 def test_three_phase_in_four_walls_takes_wire_over_3_mm() -> None:
     """208 V three-phase on a 60 A breaker, elements in all four walls: √3 × 208 × 48 = 17.3 kW,
-    in delta. The grooves are long enough for 8 AWG (3.264 mm, ASTM B258), which meets Kanthal's
-    3 mm minimum for grooved elements, so there's no note about thin wire."""
+    in delta. Three elements of three grooves each, as Olsen runs his (p.259–260), take 8 AWG
+    (3.264 mm, ASTM B258) at 8.78 W/in², under his 9 for cone 10, and meet Kanthal's 3 mm
+    minimum for grooved elements, so there's no note about thin wire."""
     text = (
         FRONT.replace("phase: 1", "phase: 3")
         .replace("240 V", "208 V")
@@ -190,9 +249,12 @@ def test_three_phase_in_four_walls_takes_wire_over_3_mm() -> None:
     assert e is not None
     assert e.gauge == "8 AWG"
     assert e.wire_diameter == "0.129 in"
-    assert e.wiring == "3 string(s) of 3 in series, in delta: 1 string(s) across each pair of lines"
+    assert e.wiring == (
+        "3 in parallel, each across the full voltage, in delta: 1 string(s) across each pair of "
+        "lines"
+    )
+    assert (e.count, e.groove_rows, e.surface_load) == (3, 9, "8.78 W/in²")
     assert 2.0 <= float(e.pitch.split("(")[1].split(" ")[0]) <= 4.0
-    assert float(e.surface_load.split()[0]) <= 17.5
     assert _thin_wire(design.findings) == []
     assert design.supply == "208 V, 3-phase, 60 A breaker"
 
@@ -217,11 +279,14 @@ def test_too_little_power_for_the_loss_is_an_error() -> None:
     ratio = next(s for s in design.working if s.name.startswith("Installed power over"))
     assert ratio.value == f"{2000 / loss:.3g}"
     assert 2000 / loss < 1
-    errors = [f.message for f in design.findings if f.level == "error"]
-    assert errors == [
+    errors = [f for f in design.findings if f.level == "error"]
+    assert [f.message for f in errors] == [
         "The installed power is no more than the heat loss at top temperature: the kiln can "
         "never reach it. Add power or insulation."
     ]
+    check = errors[0].check
+    assert check is not None
+    assert check.solve == f"Passes when P ≥ {number(loss / 1000)} kW"
 
 
 def test_a_cone_6_kiln_is_inside_kanthals_limits() -> None:
@@ -286,6 +351,12 @@ def test_a_breaker_too_big_for_the_kiln_is_an_error() -> None:
     ]
     assert errors[0].reference is not None
     assert "422.11(E)" in errors[0].reference
+    # Its sheet: I = P/V, 150 % of it is 25 A, a standard size, against the 60 A breaker
+    check = errors[0].check
+    assert check is not None
+    assert [c.symbol for c in check.cells] == ["P", "V", "k_φ", "I", "m", "I_150", "I_max", "I_b"]
+    assert check.requirements[0].margin == "I_b = 60 A, 240 % of I_max = 25 A"
+    assert check.solve == "Passes when I_b ≤ 25 A"
 
 
 @pytest.mark.parametrize(

@@ -11,8 +11,11 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner import cones
+from kilndesigner.heatloss_checks import rayleigh_range, service_temperature
 from kilndesigner.model import Face, Kiln
 from kilndesigner.shape import chamber_shape
+from kilndesigner.sheet import Check
+from kilndesigner.thermal.air import air as air_at
 from kilndesigner.thermal.surface import RA_RANGE, RA_SOURCE, StillAirSurface
 from kilndesigner.thermal.wall import Slab, solve_wall
 from kilndesigner.units import Q_, Quantity, si
@@ -107,10 +110,18 @@ def heat_loss(
     excerpt_materials: set[str] = set()
     hottest_beyond_data: dict[str, float] = {}  # material id → hottest face past its k data, K
     coolest_below_data: dict[str, float] = {}  # material id → coolest face below its k data, K
+    over: dict[str, tuple[float, Check, str]] = {}  # material → hottest past its rating: K, sheet
+    faces_over: dict[str, list[str]] = {}
+    unrated: dict[str, float] = {}  # material id → its hottest face, K, when no source rates it
 
     from kilndesigner.castable import resolve_material
 
+    fire = kiln.heat.fire
+    over_fire = fire is not None and any(fb.position == "under" for fb in fire.fireboxes)
+    grounded = kiln.chamber.on_ground and not over_fire
     for shape in chamber_shape(kiln).faces():
+        if (over_fire or grounded) and shape.face == "floor":
+            continue  # its heat goes into the firebox under it, or the ground, not the room air
         layers = kiln.lining.for_face(shape.face, door_face=kiln.door_face)
         slabs: list[Slab] = []
         for layer in layers:
@@ -124,20 +135,33 @@ def heat_loss(
         )
         result = solve_wall(slabs, t_in, t_air, surface, area=shape.area_at)
         total += result.heat_flow
-        ra, covered = surface.rayleigh_in_range(result.surface, t_air)
-        if not covered:
-            lo, hi = RA_RANGE[shape.orientation]
-            findings.append(
-                Finding(
-                    level="warning",
-                    message=(
-                        f"{shape.face}: the outside air's Rayleigh number is {ra:.1e}, outside "
-                        f"the {lo:.0e} to {hi:.0e} its convection correlation is checked for, "
-                        "so this face's loss is less certain."
-                    ),
-                    reference=RA_SOURCE,
-                )
+        ra, _ = surface.rayleigh_in_range(result.surface, t_air)
+        lo, hi = RA_RANGE[shape.orientation]
+        # The sheet decides; it's only written out near or past a limit, since the hybrid's
+        # search calls this many times and the sheet reproduces the same Ra (agrees)
+        if not lo * (1 + 1e-6) <= ra <= hi * (1 - 1e-6):
+            rayleigh = rayleigh_range(
+                shape.face,
+                result.surface,
+                t_air,
+                surface.length,
+                air_at(0.5 * (result.surface + t_air)),
+                (lo, hi),
+                temp_unit,
+                "in" if units == "us" else "m",
             )
+            rayleigh.agrees("Ra", ra)
+            if (check := rayleigh.check()).status != "pass":
+                findings.append(
+                    Finding.failed(
+                        check,
+                        message=(
+                            f"{shape.face}: the outside air's Rayleigh number is {ra:.1e}, "
+                            f"outside the {lo:.0e} to {hi:.0e} its convection correlation is "
+                            "checked for, so this face's loss is less certain."
+                        ),
+                    )
+                )
 
         temps = result.temperatures
         layer_results: list[LayerResult] = []
@@ -145,18 +169,23 @@ def heat_loss(
             m = resolve_material(kiln, layer.material)
             hot = Q_(temps[i], "K")
             limit = m.max_service_temperature
-            if limit is not None and si(hot, "K") > si(limit, "K") + 1e-6:
-                findings.append(
-                    Finding(
-                        level="error",
-                        message=(
-                            f"{shape.face}: {m.name} would run at {show(hot, temp_unit)} on its "
-                            f"hot side, above its {show(limit, temp_unit)} limit. Use a "
-                            f"higher-rated material or move it further out."
-                        ),
-                        reference=m.source,
-                    )
-                )
+            if limit is None and kiln.castable(m.id) is None:  # a mix has its own warning
+                unrated[m.id] = max(unrated.get(m.id, 0.0), temps[i])
+            # As for Ra: the sheet decides, written out only within a hair of the limit or past it;
+            # once for each material, at its hottest face
+            if limit is not None and temps[i] > si(limit, "K") * (1 - 1e-6):
+                rating = service_temperature(shape.face, m.name, i, hot, limit, m.source, temp_unit)
+                if (check := rating.check()).status != "pass":
+                    faces_over.setdefault(m.id, []).append(shape.face)
+                    if temps[i] > over.get(m.id, (0.0, check, ""))[0]:
+                        over[m.id] = (
+                            temps[i],
+                            check,
+                            f"{m.name} would run at {show(hot, temp_unit)} on its hot side, above "
+                            f"its {show(limit, temp_unit)} rating: past it a brick shrinks and "
+                            "wears faster. A higher-rated material, or this one further out, "
+                            "would last longer.",
+                        )
             data_top, data_bottom = m.k.temperatures[-1], m.k.temperatures[0]
             if len(m.k.temperatures) > 1 and temps[i] > data_top + 1e-6:
                 hottest_beyond_data[m.id] = max(hottest_beyond_data.get(m.id, 0.0), temps[i])
@@ -198,14 +227,65 @@ def heat_loss(
             )
         )
 
+    for material_id, (_, check, message) in over.items():
+        where = ", ".join(faces_over[material_id])
+        findings.append(Finding.failed(check, message=f"{where}: {message}"))
+    for material_id, hottest in sorted(unrated.items()):
+        m = resolve_material(kiln, material_id)
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"No maker or standard rates {m.name} for a kiln's heat, so its "
+                    f"{show(Q_(hottest, 'K'), temp_unit)} hot side isn't checked: watch it for "
+                    "slumping, bloating or spalling."
+                ),
+                reference=m.source,
+            )
+        )
     total_q = Q_(total, "W")
     working.append(
         Step(
             name="Total heat loss at top temperature",
             value=f"{show(total_q, 'kW')} ({show(total_q, 'BTU/hr', 3)})",
-            formula=f"sum of the {({4: 'four', 6: 'six'}).get(len(faces), len(faces))} faces",
+            formula=(
+                "sum of the "
+                f"{({3: 'three', 4: 'four', 5: 'five', 6: 'six'}).get(len(faces), len(faces))} "
+                "faces"
+            ),
         )
     )
+    if kiln.roof.type == "open":
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The kiln has no built roof (shards or broken ware over the setting), so the "
+                    "loss through its top isn't worked out or counted."
+                ),
+            )
+        )
+    if over_fire:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The chamber's floor stands over its fireboxes, so its heat goes into the "
+                    "firing, not the room, and it isn't counted. The fireboxes' own walls aren't "
+                    "counted either."
+                ),
+            )
+        )
+    if grounded:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The floor is built on the ground, and its loss into the ground isn't worked "
+                    "out or counted: no sourced model for the soil is in the library."
+                ),
+            )
+        )
     curved = {
         "catenary_arch": "a catenary arch's outside loses heat as an upright wall as tall as it",
         "dome": "a dome's outside loses heat as a flat roof facing up, over its whole area",

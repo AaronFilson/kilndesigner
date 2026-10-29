@@ -1,0 +1,46 @@
+# Kenzan's enamel kiln, the kin-gama (Olsen, The Kiln Book, 4th ed., p.165): a small round
+# wood-fired updraft whose flame rises round a muffle, for overglaze enamels and colours that
+# reduction spoils. Drawn from a 1915 sketch in Bernard Leach's notebook; the design goes back to
+# the Sung dynasty. Only the outer kiln is modelled.
+#
+# From the book (Fig 6-47): the top's outside diameter "2½" (no unit printed: feet) and the wall
+# 4 in thick, so 22 in across inside (derived); the firebox 2 ft wide and 2 ft high, with an
+# iron grate opening 15 × 19 in; the muffle 2½ ft tall on a pedestal marked "12'" (Flagged:
+# surely 12 in); wood.
+# Assumed: the outer kiln's height isn't printed: 42 in, the pedestal and the muffle together
+# (12 + 30 in, derived), the least that holds them. The firebox's length isn't printed: its
+# grate's 19 in. The temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft,
+# the only low-fire updraft whose temperature the book prints (p.160). The brick isn't named:
+# hard brick (Olsen's fast-fire wood kiln "can be built of IFB or hard brick", p.142);
+# medium-duty firebrick (Olsen's intermediate duty, p.18). The top isn't
+# described: engine default (a flat roof of the walls' layers), as are the floor and the air.
+# Not modelled: the muffle (2½ ft tall, 16–18 in across, its wall ½ in (?), two bands of seven
+# holes, a lid with a lip and a 6 in flue), its pedestal and the wedges between it and the wall.
+# The kiln is taken as a straight cylinder, the firebox as under it.
+schema: 1
+name: Kenzan enamel kiln (kin-gama)
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  shape: round
+  width: 22 in
+  depth: 22 in
+  height: 42 in # the pedestal and the muffle
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 4 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - position: under
+        width: 24 in
+        length: 19 in # the grate's
+        height: 24 in
+        grate:
+          width: 15 in
+          length: 19 in
+draft:
+  type: up

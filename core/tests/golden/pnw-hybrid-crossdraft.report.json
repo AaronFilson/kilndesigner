@@ -2,18 +2,153 @@
   "bom": {
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "No price found for: Kanthal APM wire, steel.",
         "reference": null
       },
       {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
+              "symbol": "c_1",
+              "text": null,
+              "unit": "USD",
+              "value": 4918.62
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+              "symbol": "c_2",
+              "text": null,
+              "unit": "USD",
+              "value": 2396.16
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+              "symbol": "c_3",
+              "text": null,
+              "unit": "USD",
+              "value": 450.0
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
+              "symbol": "c_4",
+              "text": null,
+              "unit": "USD",
+              "value": 921.68
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "Ransome B5 burner",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Ransome B5, Ward Burner Systems",
+              "symbol": "c_5",
+              "text": null,
+              "unit": "USD",
+              "value": 395.0
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "Chimney and flue duct: hard firebrick",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+              "symbol": "c_6",
+              "text": null,
+              "unit": "USD",
+              "value": 855.65
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "$",
+              "meaning": "the budget",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the design: site.materials_budget",
+              "symbol": "B",
+              "text": null,
+              "unit": "USD",
+              "value": 5000.0
+            },
+            {
+              "expr": "c_1 + c_2 + c_3 + c_4 + c_5 + c_6",
+              "formula": "c_1 + c_2 + c_3 + c_4 + c_5 + c_6",
+              "label": "$",
+              "meaning": "the priced materials",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": null,
+              "symbol": "C",
+              "text": null,
+              "unit": "USD",
+              "value": 9937.109999999999
+            }
+          ],
+          "id": "bom.budget",
+          "label": null,
+          "lever": {
+            "hi": 19874.22,
+            "lo": 0.0,
+            "step": null,
+            "symbol": "B"
+          },
+          "reference": null,
+          "requirements": [
+            {
+              "holds": false,
+              "left": "C",
+              "level": "warning",
+              "margin": "C = $9,937, 198.7 % of B = $5,000",
+              "op": "<=",
+              "right": "B"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when B ≥ $9,937",
+          "status": "warning",
+          "title": "The priced materials against the budget"
+        },
         "level": "warning",
-        "message": "The priced materials come to $12,561, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $9,937, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
@@ -55,28 +190,28 @@
         "unit_price": "$115.21"
       },
       {
-        "buy": "6.5 lb",
+        "buy": "16 lb",
         "cost": null,
         "item": "Kanthal APM wire",
-        "needed": "8 elements of 10 AWG, 28.38 ft each (5.7 lb)",
+        "needed": "2 elements of 8 AWG, 180.6 ft each (14.4 lb)",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "2 burners",
-        "cost": 790.0,
+        "buy": "1 burners",
+        "cost": 395.0,
         "item": "Ransome B5 burner",
-        "needed": "2 burners at 6.2 psi, 361,667 BTU/hr each",
+        "needed": "1 burners at 9.6 psi, 452,083 BTU/hr each",
         "priced_as": "Ransome B5, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
         "unit_price": "$395.00"
       },
       {
-        "buy": "566 bricks",
-        "cost": 3084.7000000000003,
+        "buy": "157 bricks",
+        "cost": 855.65,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "566 straights (with 5 % for cuts)",
+        "needed": "157 straights (with 5 % for cuts)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -110,7 +245,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 12561.16
+    "total": 9937.109999999999
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -118,48 +253,47 @@
     "alloy": "Kanthal APM",
     "continuous_current_limit": "48 A",
     "elements": {
-      "close_wound_length_each": "24.09 in",
-      "coil_outside_diameter": "0.56 in",
-      "coil_outside_diameter_mm": 14.234,
-      "cold_resistance_each": "2.384 Ω",
-      "count": 8,
+      "close_wound_length_each": "153.3 in",
+      "coil_outside_diameter": "0.707 in",
+      "coil_outside_diameter_mm": 17.951999999999998,
+      "cold_resistance_each": "9.537 Ω",
+      "count": 2,
       "current_each": "24 A",
-      "gauge": "10 AWG",
-      "groove_length_each": "60 in",
-      "groove_rows": 8,
-      "hot_resistance_each": "2.5 Ω",
-      "length_each": "28.38 ft",
-      "pitch": "0.254 in (2.49 × wire diameter)",
-      "power_each": "1440 W",
-      "stretched_length_each": "60 in",
-      "surface_load": "13.2 W/in²",
-      "turns_each": "236.4",
-      "wire_diameter": "0.102 in",
-      "wire_mass_total": "5.7 lb",
-      "wiring": "2 string(s) of 4 in series"
+      "gauge": "8 AWG",
+      "groove_length_each": "480 in",
+      "groove_rows": 16,
+      "hot_resistance_each": "10 Ω",
+      "length_each": "180.6 ft",
+      "pitch": "0.402 in (3.13 × wire diameter)",
+      "power_each": "5760 W",
+      "stretched_length_each": "480 in",
+      "surface_load": "6.58 W/in²",
+      "turns_each": "1193",
+      "wire_diameter": "0.129 in",
+      "wire_mass_total": "14.4 lb",
+      "wiring": "2 in parallel, each across the full voltage"
     },
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
         "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
         "reference": "electrical-supply.md §1 [E1–E3], §3"
       },
       {
-        "level": "info",
-        "message": "The tool chose 8 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. 12 elements would take 8 AWG (3.26 mm); set elements: 12 in the design's electric heat to use them.",
-        "reference": "electric-and-thermal.md §1.6 [S9, S13]"
-      },
-      {
+        "check": null,
         "level": "info",
         "message": "The elements alone can't hold the top temperature; in this hybrid the burners take over before then.",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
         "reference": null
@@ -217,23 +351,23 @@
       {
         "formula": null,
         "inputs": {
-          "elements": "8",
-          "in series per string": "4"
+          "elements": "2",
+          "in series per string": "1"
         },
         "name": "Power and voltage per element",
         "note": null,
         "reference": null,
-        "value": "1440 W at 60 V"
+        "value": "5760 W at 240 V"
       },
       {
         "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
         "inputs": {
-          "p (limit)": "17.5 W/in²"
+          "p (limit)": "9 W/in²"
         },
         "name": "Smallest wire for the surface-load limit",
         "note": null,
-        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "2.36 mm"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "value": "2.94 mm"
       },
       {
         "formula": null,
@@ -241,7 +375,7 @@
         "name": "Wire chosen",
         "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]",
-        "value": "10 AWG, 2.59 mm"
+        "value": "8 AWG, 3.26 mm"
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
@@ -249,15 +383,15 @@
         "name": "Wire length per element",
         "note": null,
         "reference": null,
-        "value": "28.38 ft"
+        "value": "180.6 ft"
       },
       {
         "formula": "p = P / (π·d·L)",
         "inputs": {},
         "name": "Surface load",
         "note": null,
-        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
-        "value": "13.2 W/in²"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "value": "6.58 W/in²"
       },
       {
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
@@ -268,7 +402,7 @@
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
-        "value": "236 turns, 0.56 in outside, pitch 2.49 d"
+        "value": "1193 turns, 0.707 in outside, pitch 3.13 d"
       },
       {
         "formula": null,
@@ -291,177 +425,574 @@
   "engine_version": "0.1.0",
   "findings": [
     {
-      "level": "error",
-      "message": "Even full, the propane supply gives only 668,000 BTU/hr (167,000 each) at 20 °F, short of the 723,333 BTU/hr the burners need. The kiln would stall before the top.",
-      "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber width",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "W",
+            "text": null,
+            "unit": "inch",
+            "value": 0.7111999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber depth",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 1.524
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber height, to the springline",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "H",
+            "text": null,
+            "unit": "inch",
+            "value": 1.1176
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the arch's rise",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "h_r",
+            "text": null,
+            "unit": "inch",
+            "value": 0.09525
+          },
+          {
+            "expr": "W*L*(H + 2/3*h_r)",
+            "formula": "W·L·(H + 2/3·h_r)",
+            "label": "ft³",
+            "meaning": "chamber volume, Ward's way",
+            "offset": 0.0,
+            "scale": 35.31466672148859,
+            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
+            "symbol": "V",
+            "text": null,
+            "unit": "ft**3",
+            "value": 1.2801574396799997
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/ft³/h",
+            "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+            "offset": 0.0,
+            "scale": 0.09662107767853079,
+            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+            "symbol": "b",
+            "text": null,
+            "unit": "british_thermal_unit / foot ** 3 / hour",
+            "value": 103497.08614585242
+          },
+          {
+            "expr": "b*V",
+            "formula": "b·V",
+            "label": "Btu/h",
+            "meaning": "design burner input",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "D",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 132492.5648148148
+          },
+          {
+            "expr": "D",
+            "formula": "D",
+            "label": "Btu/h",
+            "meaning": "what the burners draw at full fire",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "P",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 132492.5648148148
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the coldest air it fires in",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design",
+            "symbol": "t",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₁",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₁",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₂",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 277.59444444444443
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₂",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 18023.873333333333
+          },
+          {
+            "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+            "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "a straight line between the table's two nearest rows",
+            "symbol": "c",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "cylinders, joined in parallel",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design",
+            "symbol": "n",
+            "text": null,
+            "unit": "",
+            "value": 4.0
+          },
+          {
+            "expr": "n*c",
+            "formula": "n·c",
+            "label": "Btu/h",
+            "meaning": "what the supply gives",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+            "symbol": "C",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 50759.91644444445
+          }
+        ],
+        "id": "gas.supply-low",
+        "label": "W1",
+        "lever": {
+          "hi": 40.0,
+          "lo": 1.0,
+          "step": 1.0,
+          "symbol": "n"
+        },
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "C",
+            "level": "warning",
+            "margin": "C = 173,200 Btu/h, 38.31 % of P = 452,083 Btu/h",
+            "op": ">=",
+            "right": "P"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when n ≥ 11",
+        "status": "warning",
+        "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+      },
+      "level": "warning",
+      "message": "The propane supply meets the 452,083 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+      "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
     },
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
+            "symbol": "c_1",
+            "text": null,
+            "unit": "USD",
+            "value": 4918.62
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+            "symbol": "c_2",
+            "text": null,
+            "unit": "USD",
+            "value": 2396.16
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+            "symbol": "c_3",
+            "text": null,
+            "unit": "USD",
+            "value": 450.0
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
+            "symbol": "c_4",
+            "text": null,
+            "unit": "USD",
+            "value": 921.68
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "Ransome B5 burner",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Ransome B5, Ward Burner Systems",
+            "symbol": "c_5",
+            "text": null,
+            "unit": "USD",
+            "value": 395.0
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "Chimney and flue duct: hard firebrick",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+            "symbol": "c_6",
+            "text": null,
+            "unit": "USD",
+            "value": 855.65
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "$",
+            "meaning": "the budget",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design: site.materials_budget",
+            "symbol": "B",
+            "text": null,
+            "unit": "USD",
+            "value": 5000.0
+          },
+          {
+            "expr": "c_1 + c_2 + c_3 + c_4 + c_5 + c_6",
+            "formula": "c_1 + c_2 + c_3 + c_4 + c_5 + c_6",
+            "label": "$",
+            "meaning": "the priced materials",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": null,
+            "symbol": "C",
+            "text": null,
+            "unit": "USD",
+            "value": 9937.109999999999
+          }
+        ],
+        "id": "bom.budget",
+        "label": "W2",
+        "lever": {
+          "hi": 19874.22,
+          "lo": 0.0,
+          "step": null,
+          "symbol": "B"
+        },
+        "reference": null,
+        "requirements": [
+          {
+            "holds": false,
+            "left": "C",
+            "level": "warning",
+            "margin": "C = $9,937, 198.7 % of B = $5,000",
+            "op": "<=",
+            "right": "B"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when B ≥ $9,937",
+        "status": "warning",
+        "title": "The priced materials against the budget"
+      },
       "level": "warning",
-      "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it, so the steel is sized past what's been checked.",
-      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
-    },
-    {
-      "level": "warning",
-      "message": "HarbisonWalker: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, so the course under each skewback is one: have it checked, or lay that course another way.",
-      "reference": "kiln-hardware.md §4.1 [S20]"
-    },
-    {
-      "level": "warning",
-      "message": "The priced materials come to $12,561, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $9,937, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Kanthal lists 2282 °F as the highest kiln temperature for coils in grooves; this kiln reaches 2345 °F. Kiln makers build cone 10 kilns this way, with shorter element life.",
       "reference": "Kanthal key data for elements; electric-and-thermal.md §1.6 [S14]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
       "reference": "electrical-supply.md §1 [E1–E3], §3"
     },
     {
-      "level": "info",
-      "message": "The tool chose 8 elements of 10 AWG wire (2.59 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. 12 elements would take 8 AWG (3.26 mm); set elements: 12 in the design's electric heat to use them.",
-      "reference": "electric-and-thermal.md §1.6 [S9, S13]"
-    },
-    {
+      "check": null,
       "level": "info",
       "message": "The elements alone can't hold the top temperature; in this hybrid the burners take over before then.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "The burners are sized to fire the kiln on their own, because the elements are switched off before the top of the firing.",
       "reference": null
     },
     {
-      "level": "info",
-      "message": "Full, this supply could keep up with a slow firing (452,083 BTU/hr, about 14–18 hours) at this temperature. Set firing_speed: slow to size for it.",
-      "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]"
-    },
-    {
+      "check": null,
       "level": "info",
       "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
       "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
     },
     {
+      "check": null,
+      "level": "info",
+      "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+    },
+    {
+      "check": null,
       "level": "info",
       "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; combustion-and-masonry.md §1.1"
+      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Cost per firing needs a firing schedule and the heat stored in the walls and ware; that comes with the firing simulation (plan milestone M6).",
       "reference": null
     },
     {
+      "check": null,
+      "level": "info",
+      "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is past it, where the same statics carry on.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "check": null,
       "level": "info",
       "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
       "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
       "reference": "kiln-hardware.md §6.1 [S4]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Side-mounted burners need a bag wall so the flames don't hit the ware: hard brick, first course solid in front of the burners.",
       "reference": "kiln-hardware.md §1.3 [S4]"
     },
     {
+      "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
       "reference": "kiln-hardware.md §2 [S4] [S13]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
       "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 60° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
       "reference": "kiln-hardware.md §5.2 [S20]"
     },
     {
+      "check": null,
+      "level": "info",
+      "message": "HarbisonWalker, for industrial furnaces: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, as in Olsen's insulating-brick kilns, whose featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where you can, lay the course under each skewback as headers.",
+      "reference": "kiln-hardware.md §4.1 [S20]; Olsen, The Kiln Book, 4th ed., p.176"
+    },
+    {
+      "check": null,
       "level": "info",
       "message": "Castable: cure 16–24 h above 60 °F kept damp, never let it freeze, and dry it out slowly before the first firing (for Mizzou: 75 °F/h with a ½ h hold per inch at 250, 500 and 1000 °F). Follow the maker's sheet for your castable.",
       "reference": "combustion-and-masonry.md §6.2 [S54, S56]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
       "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "No price found for: Kanthal APM wire, steel.",
       "reference": null
     }
   ],
+  "fire": null,
   "frame": {
     "angle": "L4×4×5/16",
     "angle_leg_in": 4.0,
     "angle_t_in": 0.3125,
     "findings": [
       {
-        "level": "warning",
-        "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is outside it, so the steel is sized past what's been checked.",
+        "check": null,
+        "level": "info",
+        "message": "The heated thrust is worked out from statics. HarbisonWalker's table, which it matches to 4 %, covers T/S 4–10 % and 1–3 in/ft; this arch, at 10.7 % and 1.61 in/ft, is past it, where the same statics carry on.",
         "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
@@ -512,6 +1043,7 @@
         "steel": "1/2-13 threaded rod"
       }
     ],
+    "posts": 2,
     "rod": "1/2-13",
     "rod_d_in": 0.5,
     "thrust": "231 lb per foot of arch",
@@ -519,12 +1051,12 @@
       {
         "formula": null,
         "inputs": {
-          "because": "\"generally adequate\" for a studio sprung arch"
+          "because": "107 ft³ outside: Olsen's bolted fast-fire frame; smaller kilns can use 3/16 in angle"
         },
         "name": "Smallest frame angle",
         "note": null,
-        "reference": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
-        "value": "L3×3×3/16"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.139 (the fast-fire kiln's bolted 2 × 2 × 3/16 in angle) and p.174 (an updraft 5 × 5 × 6 ft outside: corners 3 × 3 × ¼ in; smaller kilns 3/16 in)",
+        "value": "L2×2×3/16"
       },
       {
         "formula": "Σ density × thickness × mean arc, over the roof's layers",
@@ -554,7 +1086,7 @@
           "h": "3.75 in",
           "½θ": "30.0°"
         },
-        "name": "Thickest ring for the rise",
+        "name": "Thickest ring for HarbisonWalker's heated-arch method",
         "note": null,
         "reference": "HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
         "value": "3.66 in"
@@ -582,7 +1114,7 @@
         "value": "230.6 lb per foot of arch"
       },
       {
-        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
+        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the posts)",
         "inputs": {
           "L": "76.0 in",
           "M": "13,874 lb·in",
@@ -596,7 +1128,7 @@
       {
         "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
         "inputs": {
-          "load per rod": "730 lb",
+          "load on the busiest rod": "730 lb",
           "stress area": "0.1419 in²"
         },
         "name": "Tie rods, one at the front and one at the back",
@@ -609,122 +1141,368 @@
   "gas": {
     "burner_options": [
       {
-        "count": 2,
-        "each": "361,667 BTU/hr",
+        "count": 1,
+        "each": "452,083 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "6.2 psi",
+        "pressure": "9.6 psi",
+        "total_cost": 395.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "226,042 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "6.3 psi",
+        "total_cost": 590.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "226,042 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "2.4 psi",
         "total_cost": 790.0,
         "type": "venturi"
       },
       {
         "count": 3,
-        "each": "241,111 BTU/hr",
+        "each": "150,694 BTU/hr",
+        "model": "GACO MR750",
+        "pressure": "7.7 psi",
+        "total_cost": 299.85,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "150,694 BTU/hr",
+        "model": "GACO MR100",
+        "pressure": "4.9 psi",
+        "total_cost": 479.84999999999997,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "150,694 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "7.4 psi",
+        "total_cost": 735.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "150,694 BTU/hr",
         "model": "Ransome B4",
-        "pressure": "7.1 psi",
+        "pressure": "2.8 psi",
         "total_cost": 885.0,
         "type": "venturi"
       },
       {
         "count": 3,
-        "each": "241,111 BTU/hr",
+        "each": "150,694 BTU/hr",
         "model": "Ransome B5",
-        "pressure": "2.8 psi",
+        "pressure": "1.1 psi",
         "total_cost": 1185.0,
-        "type": "venturi"
-      },
-      {
-        "count": 4,
-        "each": "180,833 BTU/hr",
-        "model": "GACO MR100",
-        "pressure": "7.0 psi",
-        "total_cost": 639.8,
-        "type": "venturi"
-      },
-      {
-        "count": 4,
-        "each": "180,833 BTU/hr",
-        "model": "Ransome B4",
-        "pressure": "4.1 psi",
-        "total_cost": 1180.0,
-        "type": "venturi"
-      },
-      {
-        "count": 4,
-        "each": "180,833 BTU/hr",
-        "model": "Ransome B5",
-        "pressure": "1.6 psi",
-        "total_cost": 1580.0,
-        "type": "venturi"
-      },
-      {
-        "count": 5,
-        "each": "144,667 BTU/hr",
-        "model": "GACO MR750",
-        "pressure": "7.1 psi",
-        "total_cost": 499.75,
-        "type": "venturi"
-      },
-      {
-        "count": 5,
-        "each": "144,667 BTU/hr",
-        "model": "GACO MR100",
-        "pressure": "4.5 psi",
-        "total_cost": 799.75,
         "type": "venturi"
       }
     ],
     "burners": {
-      "count": 2,
-      "each": "361,667 BTU/hr",
+      "count": 1,
+      "each": "452,083 BTU/hr",
       "model": "Ransome B5",
-      "pressure": "6.2 psi",
-      "total_cost": 790.0,
+      "pressure": "9.6 psi",
+      "total_cost": 395.0,
       "type": "venturi"
     },
-    "chimney_height": "14.1 ft (169 in) above the chamber floor",
+    "chimney_height": "4.4 ft (53 in) above the chamber floor",
+    "chimney_height_in": 52.75,
     "construction": "9 in insulating brick",
     "demand_range": "452,083–723,333 BTU/hr",
-    "design_input": "723,333 BTU/hr",
-    "design_input_btu_hr": 723333.3333333334,
+    "design_input": "452,083 BTU/hr",
+    "design_input_btu_hr": 452083.3333333334,
     "draft": [
-      "0.137 in. w.c. (34 Pa) with flue gas at 1000 °F",
-      "0.172 in. w.c. (43 Pa) with flue gas at top temperature"
+      "0.043 in. w.c. (11 Pa) with flue gas at 1000 °F",
+      "0.054 in. w.c. (13 Pa) with flue gas at top temperature"
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "The burners are sized to fire the kiln on their own, because the elements are switched off before the top of the firing.",
         "reference": null
       },
       {
-        "level": "error",
-        "message": "Even full, the propane supply gives only 668,000 BTU/hr (167,000 each) at 20 °F, short of the 723,333 BTU/hr the burners need. The kiln would stall before the top.",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber width",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "W",
+              "text": null,
+              "unit": "inch",
+              "value": 0.7111999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber depth",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 1.524
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber height, to the springline",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "H",
+              "text": null,
+              "unit": "inch",
+              "value": 1.1176
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the arch's rise",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "h_r",
+              "text": null,
+              "unit": "inch",
+              "value": 0.09525
+            },
+            {
+              "expr": "W*L*(H + 2/3*h_r)",
+              "formula": "W·L·(H + 2/3·h_r)",
+              "label": "ft³",
+              "meaning": "chamber volume, Ward's way",
+              "offset": 0.0,
+              "scale": 35.31466672148859,
+              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
+              "symbol": "V",
+              "text": null,
+              "unit": "ft**3",
+              "value": 1.2801574396799997
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/ft³/h",
+              "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+              "offset": 0.0,
+              "scale": 0.09662107767853079,
+              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+              "symbol": "b",
+              "text": null,
+              "unit": "british_thermal_unit / foot ** 3 / hour",
+              "value": 103497.08614585242
+            },
+            {
+              "expr": "b*V",
+              "formula": "b·V",
+              "label": "Btu/h",
+              "meaning": "design burner input",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "D",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 132492.5648148148
+            },
+            {
+              "expr": "D",
+              "formula": "D",
+              "label": "Btu/h",
+              "meaning": "what the burners draw at full fire",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "P",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 132492.5648148148
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the coldest air it fires in",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design",
+              "symbol": "t",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₁",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₁",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₂",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 277.59444444444443
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₂",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 18023.873333333333
+            },
+            {
+              "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+              "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "a straight line between the table's two nearest rows",
+              "symbol": "c",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "cylinders, joined in parallel",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the design",
+              "symbol": "n",
+              "text": null,
+              "unit": "",
+              "value": 4.0
+            },
+            {
+              "expr": "n*c",
+              "formula": "n·c",
+              "label": "Btu/h",
+              "meaning": "what the supply gives",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+              "symbol": "C",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 50759.91644444445
+            }
+          ],
+          "id": "gas.supply-low",
+          "label": null,
+          "lever": {
+            "hi": 40.0,
+            "lo": 1.0,
+            "step": 1.0,
+            "symbol": "n"
+          },
+          "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "C",
+              "level": "warning",
+              "margin": "C = 173,200 Btu/h, 38.31 % of P = 452,083 Btu/h",
+              "op": ">=",
+              "right": "P"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when n ≥ 11",
+          "status": "warning",
+          "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+        },
+        "level": "warning",
+        "message": "The propane supply meets the 452,083 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       },
       {
-        "level": "info",
-        "message": "Full, this supply could keep up with a slow firing (452,083 BTU/hr, about 14–18 hours) at this temperature. Set firing_speed: slow to size for it.",
-        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]"
-      },
-      {
+        "check": null,
         "level": "info",
         "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
         "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
       },
       {
+        "check": null,
+        "level": "info",
+        "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+      },
+      {
+        "check": null,
         "level": "info",
         "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
         "reference": null
       }
     ],
-    "flue_area": "113 in²",
-    "propane_at_full_fire": "7.91 gal/hr",
+    "flue_area": "28 in²",
+    "flue_area_in2": 28.274333882308138,
+    "fuel": "propane",
+    "full_fire_btu_hr": 452083.3333333334,
+    "inlet_area_in2": 28.274333882308138,
+    "propane_at_full_fire": "4.94 gal/hr",
     "supply": [
       {
         "capacity": "668,000 BTU/hr (167,000 each)",
         "capacity_btu_hr": 668000.0,
         "case": "4 × 100 lb cylinders, full",
-        "meets_demand": false,
+        "meets_demand": true,
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
       },
       {
@@ -743,7 +1521,7 @@
       }
     ],
     "supply_temperature": "20 °F",
-    "tank_suggestion": "A 1000 gal tank, kept at least ⅓ full, supplies 1,031,230 BTU/hr at 20 °F",
+    "tank_suggestion": "A 325 gal tank, kept at least ⅓ full, supplies 467,670 BTU/hr at 20 °F",
     "ward_volume": "45.2 ft³",
     "working": [
       {
@@ -757,23 +1535,24 @@
       {
         "formula": null,
         "inputs": {
+          "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
           "construction": "9 in insulating brick"
         },
         "name": "Burner input per cubic foot",
-        "note": "The high end gives about a 6–7 hour firing, the low end 14–18 hours.",
-        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
       {
-        "formula": "high end × volume",
+        "formula": "low end × volume",
         "inputs": {
-          "firing speed": "fast"
+          "firing speed": "slow"
         },
         "name": "Design burner input",
         "note": null,
         "reference": null,
-        "value": "723,333 BTU/hr (212 kW)"
+        "value": "452,083 BTU/hr (132.5 kW)"
       },
       {
         "formula": null,
@@ -788,13 +1567,13 @@
       {
         "formula": null,
         "inputs": {
-          "cost": "$790.00",
-          "each": "361,667 BTU/hr"
+          "cost": "$395.00",
+          "each": "452,083 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × Ransome B5 at 6.2 psi"
+        "value": "1 × Ransome B5 at 9.6 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -802,7 +1581,27 @@
         "name": "Propane at full fire",
         "note": null,
         "reference": "combustion-and-masonry.md §1.1 [S1, S2]",
-        "value": "7.91 gal/hr (33.2 lb/hr)"
+        "value": "4.94 gal/hr (20.8 lb/hr)"
+      },
+      {
+        "formula": "(HHV − heat in the flue gas at T_top) ÷ HHV",
+        "inputs": {
+          "air": "λ = 0.90, a moderate reduction",
+          "flue gas": "2345 °F",
+          "fuel": "propane"
+        },
+        "name": "Available heat at the top temperature",
+        "note": null,
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "value": "0.316"
+      },
+      {
+        "formula": "η × burner input at full fire ≥ steady heat loss",
+        "inputs": {},
+        "name": "Burners against the heat lost at the top",
+        "note": null,
+        "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
+        "value": "142,982 BTU/hr kept against 48,648 BTU/hr lost"
       },
       {
         "formula": null,
@@ -810,7 +1609,7 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, full",
-        "note": "short of the design input",
+        "note": "meets the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "value": "668,000 BTU/hr (167,000 each)"
       },
@@ -820,7 +1619,7 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, half full",
-        "note": "short of the design input",
+        "note": "short of the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "value": "376,000 BTU/hr (94,000 each)"
       },
@@ -830,7 +1629,7 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi",
-        "note": "short of the design input",
+        "note": "short of the burners' draw",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "value": "173,200 BTU/hr (43,300 each)"
       },
@@ -840,46 +1639,50 @@
         "name": "Propane on hand",
         "note": null,
         "reference": null,
-        "value": "95 gal: 12.0 hours at full fire"
+        "value": "95 gal: 19.3 hours at full fire"
       },
       {
-        "formula": "2.5 in² per ft³ of chamber",
-        "inputs": {},
-        "name": "Exit flue area",
-        "note": "Ward's alternative: the same area as all the burner ports together. Size the damper to close it fully.",
-        "reference": "Olsen, 2.5 in² per ft³ (secondary); combustion-and-masonry.md §4.1 [S38, S39]",
-        "value": "113 in²"
-      },
-      {
-        "formula": "3 × inside height + ⅓ × horizontal run",
+        "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
-          "horizontal run": "77.0 in (chamber, flue wall and run to the chimney)",
-          "inside height": "47.8 in"
+          "Olsen's other methods": "113 in² (2½ in² per ft³), 65 in² (1 in² per 7000 BTU/hr)",
+          "burner ports together": "28 in²"
+        },
+        "name": "Exit flue, to start",
+        "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
+        "value": "28 in²"
+      },
+      {
+        "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
+        "inputs": {
+          "the kiln's top": "52.8 in"
         },
         "name": "Chimney height",
-        "note": null,
-        "reference": "Olsen, The Kiln Book, and Ward, 'Draft and Its Importance': 3 × inside height + ⅓ of the horizontal run; combustion-and-masonry.md §4.1 [S32, S37]",
-        "value": "14.1 ft (169 in) above the chamber floor"
+        "note": "With burners under gas pressure (or a blower) the gas drives the flow; the chimney and stack only need to carry the gases out above where people are.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack",
+        "value": "4.4 ft (53 in) above the chamber floor"
       },
       {
         "formula": null,
         "inputs": {
+          "air pressure": "101.3 kPa",
           "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.137 in. w.c. (34 Pa) with flue gas at 1000 °F"
+        "value": "0.043 in. w.c. (11 Pa) with flue gas at 1000 °F"
       },
       {
         "formula": null,
         "inputs": {
+          "air pressure": "101.3 kPa",
           "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.172 in. w.c. (43 Pa) with flue gas at top temperature"
+        "value": "0.054 in. w.c. (13 Pa) with flue gas at top temperature"
       }
     ]
   },
@@ -1071,31 +1874,37 @@
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
         "reference": null
@@ -1223,11 +2032,13 @@
     "element_power": "11.52 kW",
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; combustion-and-masonry.md §1.1"
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Cost per firing needs a firing schedule and the heat stored in the walls and ware; that comes with the firing simulation (plan milestone M6).",
         "reference": null
@@ -1426,7 +2237,7 @@
         },
         "name": "Propane, cost per useful kWh",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "$0.149 at 300 °F rising to $0.380 at 2300 °F"
       },
       {
@@ -1590,26 +2401,31 @@
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 2 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
         "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 60° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
         "reference": "kiln-hardware.md §5.2 [S20]"
       },
       {
-        "level": "warning",
-        "message": "HarbisonWalker: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, so the course under each skewback is one: have it checked, or lay that course another way.",
-        "reference": "kiln-hardware.md §4.1 [S20]"
+        "check": null,
+        "level": "info",
+        "message": "HarbisonWalker, for industrial furnaces: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, as in Olsen's insulating-brick kilns, whose featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where you can, lay the course under each skewback as headers.",
+        "reference": "kiln-hardware.md §4.1 [S20]; Olsen, The Kiln Book, 4th ed., p.176"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Castable: cure 16–24 h above 60 °F kept damp, never let it freeze, and dry it out slowly before the first firing (for Mizzou: 75 °F/h with a ½ h hold per inch at 250, 500 and 1000 °F). Follow the maker's sheet for your castable.",
         "reference": "combustion-and-masonry.md §6.2 [S54, S56]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
         "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"

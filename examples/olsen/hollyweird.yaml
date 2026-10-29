@@ -1,0 +1,89 @@
+# Olsen's Hollyweird Tube (Olsen, The Kiln Book, 4th ed., p.116–117, p.124, Figs 4-108 to 4-115):
+# a two-chamber wood kiln of the anagama type, built in 1985 at Olsen's home pottery: a Bizen-style
+# front chamber joined to a tube-style second chamber, each under a dome cast in insulating
+# castable, with a front firebox and a second, side-stoked firebox between the chambers. Fired
+# about twice a year for 25 years, over 1500 hours at top temperature (p.117).
+#
+# From the book: held at cone 11-plus, 35–40 h in the front chamber and 10–15 h in the back, in a
+# 60 h firing (p.117): cone 11 used. Hard firebrick for the walls (faint), flues and firebox;
+# insulating brick for the transition to "Thermal Ceramics K-26 IFB castable", cast as the two
+# dome-shaped chamber ceilings (p.116), which after 25 years had held up better than expected while
+# the hard brick slagged at the flues (p.117). Chambers 8 ft and 12 ft long (Fig 4-108), 10 ft the
+# mean; the plan runs 249 in from the first ware platform to the chimney, with a 13 in wall between
+# the chambers, a front firebox 36 in (faint) long over a dug-out ash pit, and a second firebox
+# grate 15 in long with a side door (Fig 4-110). The front ash pit is the walkway into the chamber;
+# grate bars ¾ in apart; one inlet flue 15 × 18 in; a 9 × 13½ in stoke hole in the door's bricking
+# (p.117). Chimney 15 × 24 in inside (Fig 4-110).
+# Assumed: the chambers' width and height aren't printed: 55 in wide and 48 in to the top of the
+# dome, from Olsen's two-chamber kiln (olsen-two-chamber, Fig 8-17), which shares this kiln's 8 ft
+# chamber, 55 in dimension, ¾ in grate bars and perforated 5 in air tube under the second grate,
+# and may be the same kiln; the book doesn't say. The castable: Kaolite 2600-LI, which Olsen lists
+# (p.28) and which is probably his "K-26 IFB castable", though no source confirms it
+# (masonry-materials.md §5.3). The domes 6 in thick, "best" for most castings (p.59), rising 2¾ in
+# per foot of the 55 in span, 12.6 in, the middle of his 2½–3 in/ft for domes (p.51); so the walls
+# stand 35.4 in to the springline. Walls and floor 9 in of medium-duty firebrick (Olsen's
+# intermediate duty, p.18), as the book gives no grade: the 13 in common wall is then 4½ in thicker than the others,
+# as Olsen builds a wall between two chambers (p.46). The domes are buttressed: Olsen buttresses a
+# cast dome's walls "extremely well" (p.59). The dug-out ash pit, walked through into the chamber,
+# puts the floor on the ground. Both fireboxes run across the 55 in chamber, their grates their
+# full size, the second's bars ¾ in apart as the first's.
+# Not modelled: the Bizen-style and tube-style chambers, as two of the mean size; the 12, 18 and
+# 6 in steps between the platforms; the insulating-brick transition under the domes; the three exit
+# flues from the front chamber across the second grate, and the 5 in air tube under it; the second
+# firebox's place between the chambers, entered at the front. The chimney's height isn't printed,
+# so the chimney isn't entered and the engine sizes it. The floor's loss into the ground.
+schema: 1
+name: Olsen's Hollyweird Tube
+units: us
+firing:
+  cone: "11"
+chamber:
+  width: 55 in
+  depth: 10 ft # the mean of the 8 ft and 12 ft chambers
+  height: 35.4 in # to the domes' springline: 48 in to the top, less the rise
+  chambers: 2
+  on_ground: true # the dug-out ash pit is the walkway into the chamber (p.117)
+roof:
+  type: dome
+  rise: 12.6 in
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+  roof:
+    - material: kaolite-2600-li # "Thermal Ceramics K-26 IFB castable" (p.116)
+      thickness: 6 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1 # the front firebox
+        position: front
+        width: 55 in
+        length: 36 in
+        grate:
+          width: 55 in
+          length: 36 in
+          gap: 0.75 in
+        inlet:
+          width: 15 in
+          height: 18 in
+        stoke_hole:
+          width: 9 in
+          height: 13.5 in
+      - count: 1 # the second firebox, side-stoked, between the chambers
+        position: front
+        width: 15 in
+        length: 55 in # across the chamber
+        grate:
+          width: 15 in
+          length: 55 in
+          gap: 0.75 in
+draft:
+  type: cross
+  flue_wall: back

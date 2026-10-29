@@ -1,0 +1,79 @@
+# Church kiln, Skælskør (Guldagergaard), Denmark, 1998 (Olsen, The Kiln Book, 4th ed., p.178–180,
+# p.182–183, Figs 7-2 to 7-10): Olsen's second multi-directional wood kiln, built at a workshop for
+# Nina Hole at the International Ceramic Center. Two cross-draft systems at right angles, an
+# anagama-style tube and a groundhog, share one fire zone; each firebox faces its own chimney.
+#
+# From the book: fire zone 7 ft (p.183); 3½–4½ ft to the ceiling's vertex (p.183), 4 ft used;
+# walls 9 in thick, "9 BRICKS TALL 28–30"" (Fig 7-9), read as the walls' height, 29 in used; the
+# smaller firebox 24 in wide, facing the groundhog chimney, the larger 36 in wide, facing the
+# single anagama chimney (p.182); that chimney 13½ × 13½ in (Fig 7-9); an 18 in step down into
+# walk-in channels "below ground" (Fig 7-9), so the floor is on the ground. From Olsen's drawing of
+# these kilns' firebox (Fig 7-3, p.179): a grate, 3–4 ft long, 3½ ft used; an ash pit 18 in deep
+# and 14 in (faint) wide.
+# Assumed: the roof isn't described: a cast dome, as on Olsen's other multi-directional kilns
+# (fireworks-edmonton, p.181; kanayama-multi, p.186–188), its rise the 19 in from the walls to the
+# vertex, 2.7 in per foot of span, inside his 2½–3 in/ft for domes (p.51). The dome 6 in of
+# Kast-O-Lite 26 LI Plus: he casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI
+# Plus"); "a 6in. thickness is best" (p.59), and his Kanayama dome is 5–6 in (kanayama-multi,
+# p.186–188). Walls and floor of K-26 insulating brick, the 2500–2600 °F brick he sets under a cast
+# dome (p.58). Grates the ash pit's 14 in wide and the firebox's length, their bars ¾ in apart,
+# as on his Kanayama kiln (p.188). Buttressed: Olsen buttresses a cast dome's walls "extremely
+# well" (p.59), with dirt, rocks and concrete on his Kanayama kiln (p.186). Cone 10, from the
+# Fireworks kiln, its sister (fireworks-edmonton, p.181: cone 10-plus; kanayama-multi, p.189:
+# cone 9/10).
+# Not modelled: the plan, two axes crossing in the fire zone, as a 7 × 7 ft box (Fig 7-2 calls the
+# 7 ft a diagonal); the anagama firebox in the front wall facing its chimney behind; the groundhog
+# firebox in the left wall, its three-flue chimney (which would face it in the right wall) left
+# out. The anagama chimney's height isn't printed, so the chimney isn't entered: the engine sizes
+# it, and its section comes out 13½ × 13½ in, the book's. The 12–15 in step up from the grate to
+# the ware floor; the floor's loss into the ground, which the engine doesn't work out.
+schema: 1
+name: Church multi-directional kiln, Skælskør
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 7 ft
+  depth: 7 ft
+  height: 29 in # nine bricks, 28–30 in, to the dome's springline
+  on_ground: true # walk-in channels below ground (Fig 7-9)
+roof:
+  type: dome
+  rise: 19 in # to the vertex, 4 ft up
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+  roof:
+    - material: kast-o-lite-26-li-plus
+      thickness: 6 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1 # the anagama firebox, the larger
+        position: front
+        width: 36 in
+        length: 42 in
+        grate:
+          width: 14 in
+          length: 42 in
+          gap: 0.75 in
+        ash_pit: 18 in
+      - count: 1 # the groundhog firebox
+        position: left
+        width: 24 in
+        length: 42 in
+        grate:
+          width: 14 in
+          length: 42 in
+          gap: 0.75 in
+        ash_pit: 18 in
+draft:
+  type: cross
+  flue_wall: back

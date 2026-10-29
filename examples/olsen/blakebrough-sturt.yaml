@@ -1,0 +1,58 @@
+# Les Blakebrough's kiln, Sturt Pottery, Mittagong, Australia (Olsen, The Kiln Book, 4th ed.,
+# p.205, p.208): a wood-fired chamber kiln. Its first chamber has its own firebox, a channel
+# across the chamber stoked through a hole in the side; an oil-drip system also fires it (p.208).
+#
+# From the book: the first chamber 6 ft tall, 45 in and 6 ft across, arched (Fig 8-15); its
+# firebox a channel across the full width of the "6 ft chamber" (p.205), 9 in wide and 6 ft long
+# (Fig 8-15), with grate bars or long soaps wedged along the wall and floor on 9 in centres and the
+# ash dropping to the channel's bottom (p.205): a channel in a floor built on the ground.
+# Assumed: one chamber, the first; the book doesn't say how many there are. The text puts the
+# firebox across the "6 ft chamber", so the 6 ft is the width, side to side, and the 45 in the
+# depth, along the draft. The 6 ft height is to the crown. The arch spans the 6 ft width and rises
+# 30 in, 5 in per foot, the middle of the 4–6 in/ft Olsen uses on chamber kilns of 4–8 ft span
+# (p.296); so the springline is at 42 in. The book names no brick: 9 in of 2600 °F insulating
+# brick, Olsen's choice for a cone 10 wood kiln's hot face (p.25–26: his anagama's K-26 resisted
+# wood-ash slag better than hard brick of the same rating), the thickness inside his 9–10 in for
+# climbing kilns (p.99–100); the floor and arch the same (engine default). Cone 10, the hottest
+# chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93): the book gives no cone for
+# this kiln. The channel's grate is the channel itself, 9 in × 6 ft. No chimney or exit flue is
+# given, so the engine sizes them, and the steel that holds the arch: the book shows no buttress.
+# Not modelled: the other chambers and any main firebox; the oil-drip system, six drip channels
+# (p.208), since a design here burns one fuel in its fireboxes; the channel's 12 in height, the
+# 9 × 4½ in inlet flues, whose count isn't given, and the side stoke hole. The floor's loss into
+# the ground isn't worked out by the engine.
+schema: 1
+name: Les Blakebrough's chamber kiln, Sturt Pottery
+units: us
+firing:
+  cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 6 ft # the "6 ft chamber" the firebox crosses (p.205)
+  depth: 45 in
+  height: 42 in # to the springline: 6 ft to the crown, less the rise
+  on_ground: true # the firebox is a channel in its floor (p.205)
+roof:
+  type: sprung_arch
+  rise: 30 in # 5 in per foot of the 6 ft span (p.296)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26 # brick not named: Olsen's wood-kiln hot face (p.26)
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 9 in
+        length: 6 ft
+        grate:
+          width: 9 in
+          length: 6 ft
+draft:
+  type: cross
+  flue_wall: back

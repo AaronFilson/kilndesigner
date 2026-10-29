@@ -49,9 +49,9 @@ def test_ct_is_held_at_the_ends_of_its_table() -> None:
 
 def test_an_unknown_material_names_the_ones_there_are() -> None:
     with pytest.raises(UnknownEntryError) as missing:
-        material("ifb-k26")
+        material("ifb-k28")
     known = ", ".join(sorted(materials()))
-    assert str(missing.value) == f"no material 'ifb-k26'; the library has: {known}"
+    assert str(missing.value) == f"no material 'ifb-k28'; the library has: {known}"
     assert isinstance(missing.value, KeyError)
     assert "ifb-jm26" in known
 

@@ -16,6 +16,7 @@ const DOWNLOADS: [string, string][] = [
   ["sections.dxf", "Sections (DXF)"],
   ["kiln.step", "3D model (STEP)"],
   ["kiln.glb", "3D model (glTF)"],
+  ["checks.xlsx", "Warnings' working (spreadsheet)"],
   ["report.json", "Report (JSON)"],
 ];
 

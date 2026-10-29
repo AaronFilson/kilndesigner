@@ -68,10 +68,11 @@ def test_castables_are_measured_from_the_lining() -> None:
 
 
 def test_findings_are_listed_once_each_errors_first() -> None:
-    # One burner can't fire this kiln, and four cylinders can't keep up on a cold day
+    # One small burner can't hold this kiln at the top, and four cylinders can't keep up on a
+    # cold day
     kiln = _variant(
         "gas-crossdraft",
-        ("      wall: front\n", "      wall: front\n      count: 1\n"),
+        ("      wall: front\n", "      wall: front\n      model: Ransome B1\n      count: 1\n"),
         ("coldest_ambient: 20 degF", "coldest_ambient: 0 degF"),
     )
     report = design_report(kiln)
@@ -80,7 +81,7 @@ def test_findings_are_listed_once_each_errors_first() -> None:
     keys = [(f.level, f.message) for f in report.findings]
     assert len(keys) == len(set(keys))
     assert report.errors == [f for f in report.findings if f.level == "error"]
-    assert any("burners chosen can't deliver" in f.message for f in report.errors)
+    assert any("can't reach its top temperature" in f.message for f in report.errors)
 
 
 def test_a_shape_without_a_masonry_plan_still_gets_a_report(

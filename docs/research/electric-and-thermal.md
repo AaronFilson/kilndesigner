@@ -145,6 +145,13 @@ Kiln practice (secondary sources):
 
 ### 1.6 Surface load and element geometry (Kanthal)
 
+**Olsen disagrees with the 17.5 W/in² below** (4th ed., Verified):
+normal electric kilns 5–9 W/in² (p.254); for cone 10, 6.4–9 W/in² (p.257); his worked 26 kW
+example comes out at 7.4 W/in² (p.259). That is about half of Krueger's figure. Lower loads give
+a cooler wire and longer element life. Power density 1.0–1.2 W/in³ (1.5–2.07 kW/ft³, p.256)
+agrees with §7. Coil OD 5–6 × the wire, pitch 2 × the wire, groove 1.25 × the coil OD (p.247,
+p.259–260) agree with the rules below.
+
 General rules (verified, [S13]):
 
 - Surface load p = P / A, where A is the wire surface area. Units are W/cm² or W/in².
@@ -400,6 +407,25 @@ Disagreements:
   0.486/1.04/1.74 at 500/1000/1500/1800 °F [S40].
 - Foundry Service's Cerablanket page gives 2.05 (8 pcf) and 2.45 (6 pcf) at 1800 °F, and
   1.06 (6 pcf) at 1000 °F [S39].
+
+**Cerachem blanket, Morgan data sheet BL.03, 1 January 2025 (verified, read in the PDF, [S101])**
+
+Alumina-silica-zirconia (ZrO₂ 13–17 %). Classification temperature 1430 °C (2600 °F); continuous
+use temperature 1315 °C (2400 °F). Densities 64, 96, 128 and 160 kg/m³ (4, 6, 8, 10 pcf). k by
+ASTM C201, W/(m·K):
+
+| Mean temp | 6 pcf (96 kg/m³) | 8 pcf (128 kg/m³) |
+|---|---|---|
+| 200 °C | 0.07 | 0.05 |
+| 400 °C | 0.10 | 0.08 |
+| 600 °C | 0.16 | 0.14 |
+| 800 °C | 0.24 | 0.19 |
+| 1000 °C | 0.36 | 0.27 |
+| 1200 °C | 0.51 | 0.36 |
+
+The same sheet gives Cerablanket (alumina-silica): classification 1260 °C (2300 °F), continuous use
+1180 °C (2150 °F); 8 pcf 0.05/0.08/0.13/0.19/0.27 W/(m·K) at 200–1000 °C. Olsen's hot face for
+fibre above 2200 °F is 2600 °F, 8 lb blanket (4th ed. p.64–65), which is a Cerachem-class blanket.
 
 **Cerawool blanket, Morgan (excerpt, ASTM C201, [S41])**
 
@@ -962,6 +988,7 @@ which are listed above.
 - [S77] Orton, Pyrometric cones FAQ. https://www.ortonceramic.com/pyrometric-cones-faq
 - [S78] Orton, °F cone chart 022–14 (PDF). https://www.ortonceramic.com/files/2676/File/Orton-Cone-Chart-F-022-14.pdf
 - [S100] T. Crnko, "Overcurrent protection, part 2", IAEI Magazine, May/June 2007 (2005 NEC). https://iaeimagazine.org/features/overcurrent-protection-part-2
+- [S101] Morgan Advanced Materials – Thermal Ceramics, "Cerablanket and Cerachem Blankets" product data sheet, code BL.03, 1 January 2025 (read 2026-10-29). https://www.morganthermalceramics.com/media/3993/cerablanket_cerchem-blankets_eng.pdf
 - [S79] Aperam Alloys Rescal, Resistohm 145 data sheet, April 2012 (PDF, read). https://www.aperam.com/sites/default/files/documents/datasheet_RESISTOHM_145.pdf
 - [S80] JLC Electromet, FeCrAl data sheet, May 2016 (PDF, read). https://www.jlcelectromet.com/downloads/20.data.sheet.FeCrAl.pdf
 - [S81] NiWire, Nichrome 80 data sheet (search extract). https://www.mikrocontroller.net/attachment/659182/Nichrome_80.pdf
@@ -975,7 +1002,7 @@ which are listed above.
 - [S89] Mike Holt forum, NEC 210.20(A) clarification. https://forums.mikeholt.com/threads/nec-210-20-a-clarification.2555041/post-2638656
 - [S90] Austin Gallery, Kiln electrical requirements. https://www.austingallery.org/blog/kiln-electrical-requirements
 - [S91] BNZ 23 insulating firebrick listing (ASTM C182, search extract). https://ibspot.com/products/bnz-materials-9-x-4-5-x-2-5-2300-f-insulating-firebrick-12ct-box
-- [S92] Plibrico fireclay brick sheet via Forno Bravo (search extract). https://community.fornobravo.com/filedata/fetch?id=284408
+- [S92] Plibrico fireclay brick sheet via Forno Bravo (search extract). https://community.fornobravo.com/filedata/fetch?id=284408 — **Misattributed** (masonry-materials.md §6, 2026-10-29): the file at this address is a Plibrico mortar sheet with no conductivity; the 8.2–9.5 Btu·in figures are Alsey's fireclay brick sheets, masonry-materials.md [M9] [M10].
 - [S93] CNBM, Fibra cerámica data sheet (search extract). https://safe-energy.cl/pdf/CNBM/Fibra_Ceramica.pdf
 - [S94] Distribution International, Unifrax Durablanket S 8 pcf. https://shop.distributioninternational.com/refractories/ceramic-fiber/ceramic-fiber-blankets/cfbt8104dsu
 - [S95] EngineersEdge emissivity table. https://engineersedge.com/heat_transfer/emissivity.htm ; Optris emissivity table: https://optris.com/us/technology/emissivity-table/

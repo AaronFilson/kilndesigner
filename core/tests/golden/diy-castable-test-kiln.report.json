@@ -2,11 +2,13 @@
   "bom": {
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
         "reference": null
       },
       {
+        "check": null,
         "level": "info",
         "message": "No price found for: Greenstripe fireclay, Raw kyanite (Virginia Kyanite), Dextrin, Newspaper pulp, steel.",
         "reference": null
@@ -113,10 +115,10 @@
         "unit_price": null
       },
       {
-        "buy": "598 bricks",
-        "cost": 3259.1,
+        "buy": "180 bricks",
+        "cost": 981.0,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "598 straights (with 5 % for cuts)",
+        "needed": "180 straights (with 5 % for cuts)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -150,48 +152,201 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 5337.1
+    "total": 3059.0
   },
   "castables": [
     {
       "batches": 18,
       "findings": [
         {
+          "check": null,
           "level": "info",
           "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
           "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
         },
         {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Greenstripe fireclay",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Raw kyanite (Virginia Kyanite)",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Dextrin",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "°F",
+                "meaning": "the kiln's top temperature",
+                "offset": -459.67,
+                "scale": 1.8000000000000114,
+                "source": "the design's cone or top temperature",
+                "symbol": "T_top",
+                "text": null,
+                "unit": "degree_Fahrenheit",
+                "value": 1558.15
+              }
+            ],
+            "id": "castable.service-limit",
+            "label": null,
+            "lever": null,
+            "reference": "castables.md §4.1",
+            "requirements": [],
+            "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): how hot it may run"
+          },
           "level": "warning",
           "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
           "reference": "castables.md §4.1"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
           "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
           "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Dextrin: its density comes from a search excerpt; check it.",
           "reference": "castables.md §1, Thermo/VWR specification [S14]"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
           "reference": "castables.md §7"
         },
         {
+          "check": null,
           "level": "info",
           "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
           "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
         },
         {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "castable layer 1",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "the design: the lining",
+                "symbol": "t_1",
+                "text": null,
+                "unit": "inch",
+                "value": 0.0508
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "castable layer 2",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "the design: the lining",
+                "symbol": "t_2",
+                "text": null,
+                "unit": "inch",
+                "value": 0.2286
+              },
+              {
+                "expr": "t_1 + t_2",
+                "formula": "t_1 + t_2",
+                "label": "in",
+                "meaning": "castable in the wall, all its layers",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": null,
+                "symbol": "t_all",
+                "text": null,
+                "unit": "in",
+                "value": 0.2794
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "the thickest single layer, which sets the schedule",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "castables-minerals.md §5",
+                "symbol": "t_s",
+                "text": null,
+                "unit": "inch",
+                "value": 0.2286
+              }
+            ],
+            "id": "castable.layers",
+            "label": null,
+            "lever": null,
+            "reference": "castables-minerals.md §5",
+            "requirements": [],
+            "rule": "The schedule is set by the thickest single layer, as HarbisonWalker does; no maker gives holds for layers cast wet together, so each must dry before the next is cast.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Castable cast in layers in the left wall"
+          },
           "level": "warning",
           "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
           "reference": "castables-minerals.md §5"
@@ -360,26 +515,110 @@
         "dry_mass_kg": 22.679618500000004,
         "findings": [
           {
+            "check": null,
             "level": "info",
             "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
           },
           {
+            "check": {
+              "cells": [
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Greenstripe fireclay",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Raw kyanite (Virginia Kyanite)",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Dextrin",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "°F",
+                  "meaning": "the kiln's top temperature",
+                  "offset": -459.67,
+                  "scale": 1.8000000000000114,
+                  "source": "the design's cone or top temperature",
+                  "symbol": "T_top",
+                  "text": null,
+                  "unit": "degree_Fahrenheit",
+                  "value": 1558.15
+                }
+              ],
+              "id": "castable.service-limit",
+              "label": null,
+              "lever": null,
+              "reference": "castables.md §4.1",
+              "requirements": [],
+              "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+              "rule_holds": false,
+              "rule_level": "warning",
+              "solve": null,
+              "status": "warning",
+              "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): how hot it may run"
+            },
             "level": "warning",
             "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
             "reference": "castables.md §4.1"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
             "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
             "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Dextrin: its density comes from a search excerpt; check it.",
             "reference": "castables.md §1, Thermo/VWR specification [S14]"
@@ -545,46 +784,213 @@
       "batches": 71,
       "findings": [
         {
+          "check": null,
           "level": "info",
           "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
           "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
         },
         {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Greenstripe fireclay",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Raw kyanite (Virginia Kyanite)",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Dextrin",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "ingredient, no service limit sourced",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "castables.md, ingredients.yaml",
+                "symbol": "",
+                "text": "Newspaper pulp",
+                "unit": "",
+                "value": null
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "°F",
+                "meaning": "the kiln's top temperature",
+                "offset": -459.67,
+                "scale": 1.8000000000000114,
+                "source": "the design's cone or top temperature",
+                "symbol": "T_top",
+                "text": null,
+                "unit": "degree_Fahrenheit",
+                "value": 1558.15
+              }
+            ],
+            "id": "castable.service-limit",
+            "label": null,
+            "lever": null,
+            "reference": "castables.md §4.1",
+            "requirements": [],
+            "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): how hot it may run"
+          },
           "level": "warning",
           "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
           "reference": "castables.md §4.1"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
           "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
           "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Dextrin: its density comes from a search excerpt; check it.",
           "reference": "castables.md §1, Thermo/VWR specification [S14]"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
           "reference": "castables.md §1, cellulose [S12]"
         },
         {
+          "check": null,
           "level": "info",
           "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
           "reference": "castables.md §7"
         },
         {
+          "check": null,
           "level": "info",
           "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
           "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
         },
         {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "castable layer 1",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "the design: the lining",
+                "symbol": "t_1",
+                "text": null,
+                "unit": "inch",
+                "value": 0.0508
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "castable layer 2",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "the design: the lining",
+                "symbol": "t_2",
+                "text": null,
+                "unit": "inch",
+                "value": 0.2286
+              },
+              {
+                "expr": "t_1 + t_2",
+                "formula": "t_1 + t_2",
+                "label": "in",
+                "meaning": "castable in the wall, all its layers",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": null,
+                "symbol": "t_all",
+                "text": null,
+                "unit": "in",
+                "value": 0.2794
+              },
+              {
+                "expr": null,
+                "formula": null,
+                "label": "in",
+                "meaning": "the thickest single layer, which sets the schedule",
+                "offset": 0.0,
+                "scale": 39.37007874015748,
+                "source": "castables-minerals.md §5",
+                "symbol": "t_s",
+                "text": null,
+                "unit": "inch",
+                "value": 0.2286
+              }
+            ],
+            "id": "castable.layers",
+            "label": null,
+            "lever": null,
+            "reference": "castables-minerals.md §5",
+            "requirements": [],
+            "rule": "The schedule is set by the thickest single layer, as HarbisonWalker does; no maker gives holds for layers cast wet together, so each must dry before the next is cast.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Castable cast in layers in the left wall"
+          },
           "level": "warning",
           "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
           "reference": "castables-minerals.md §5"
@@ -767,31 +1173,129 @@
         "dry_mass_kg": 22.793016592500003,
         "findings": [
           {
+            "check": null,
             "level": "info",
             "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
           },
           {
+            "check": {
+              "cells": [
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Greenstripe fireclay",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Raw kyanite (Virginia Kyanite)",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Dextrin",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "ingredient, no service limit sourced",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "castables.md, ingredients.yaml",
+                  "symbol": "",
+                  "text": "Newspaper pulp",
+                  "unit": "",
+                  "value": null
+                },
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "°F",
+                  "meaning": "the kiln's top temperature",
+                  "offset": -459.67,
+                  "scale": 1.8000000000000114,
+                  "source": "the design's cone or top temperature",
+                  "symbol": "T_top",
+                  "text": null,
+                  "unit": "degree_Fahrenheit",
+                  "value": 1558.15
+                }
+              ],
+              "id": "castable.service-limit",
+              "label": null,
+              "lever": null,
+              "reference": "castables.md §4.1",
+              "requirements": [],
+              "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+              "rule_holds": false,
+              "rule_level": "warning",
+              "solve": null,
+              "status": "warning",
+              "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): how hot it may run"
+            },
             "level": "warning",
             "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
             "reference": "castables.md §4.1"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
             "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
             "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Dextrin: its density comes from a search excerpt; check it.",
             "reference": "castables.md §1, Thermo/VWR specification [S14]"
           },
           {
+            "check": null,
             "level": "info",
             "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
             "reference": "castables.md §1, cellulose [S12]"
@@ -967,142 +1471,821 @@
   "engine_version": "0.1.0",
   "findings": [
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber width",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "W",
+            "text": null,
+            "unit": "inch",
+            "value": 0.7111999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber depth",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 1.524
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "chamber height, to the springline",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "H",
+            "text": null,
+            "unit": "inch",
+            "value": 1.143
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the arch's rise",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "h_r",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": "W*L*(H + 2/3*h_r)",
+            "formula": "W·L·(H + 2/3·h_r)",
+            "label": "ft³",
+            "meaning": "chamber volume, Ward's way",
+            "offset": 0.0,
+            "scale": 35.31466672148859,
+            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
+            "symbol": "V",
+            "text": null,
+            "unit": "ft**3",
+            "value": 1.2939225734399997
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/ft³/h",
+            "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+            "offset": 0.0,
+            "scale": 0.09662107767853079,
+            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+            "symbol": "b",
+            "text": null,
+            "unit": "british_thermal_unit / foot ** 3 / hour",
+            "value": 103497.08614585242
+          },
+          {
+            "expr": "b*V",
+            "formula": "b·V",
+            "label": "Btu/h",
+            "meaning": "design burner input",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "D",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 133917.2160493827
+          },
+          {
+            "expr": "D",
+            "formula": "D",
+            "label": "Btu/h",
+            "meaning": "what the burners draw at full fire",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "P",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 133917.2160493827
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the coldest air it fires in",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design",
+            "symbol": "t",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₁",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₁",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₂",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 277.59444444444443
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₂",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 18023.873333333333
+          },
+          {
+            "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+            "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "a straight line between the table's two nearest rows",
+            "symbol": "c",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "cylinders, joined in parallel",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design",
+            "symbol": "n",
+            "text": null,
+            "unit": "",
+            "value": 4.0
+          },
+          {
+            "expr": "n*c",
+            "formula": "n·c",
+            "label": "Btu/h",
+            "meaning": "what the supply gives",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+            "symbol": "C",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 50759.91644444445
+          }
+        ],
+        "id": "gas.supply-low",
+        "label": "W1",
+        "lever": {
+          "hi": 40.0,
+          "lo": 1.0,
+          "step": 1.0,
+          "symbol": "n"
+        },
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "C",
+            "level": "warning",
+            "margin": "C = 173,200 Btu/h, 37.9 % of P = 456,944 Btu/h",
+            "op": ">=",
+            "right": "P"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when n ≥ 11",
+        "status": "warning",
+        "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+      },
       "level": "warning",
-      "message": "The propane supply meets the 456,944 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+      "message": "The propane supply meets the 456,944 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
       "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
     },
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "span, inside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber's width",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 0.7111999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "rise",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof's rise",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": "h/S",
+            "formula": "h/S",
+            "label": "in/ft",
+            "meaning": "rise per foot of span",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": null,
+            "symbol": "d",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.10714285714285714
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in/ft",
+            "meaning": "least rise for a sprung arch",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span",
+            "symbol": "d_min",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.125
+          }
+        ],
+        "id": "frame.rise",
+        "label": "W2",
+        "lever": {
+          "hi": 0.35559999999999997,
+          "lo": 0.00254,
+          "step": null,
+          "symbol": "h"
+        },
+        "reference": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "d",
+            "level": "warning",
+            "margin": "d = 1.286 in/ft, 85.71 % of d_min = 1.5 in/ft",
+            "op": ">=",
+            "right": "d_min"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when h ≥ 3.5 in",
+        "status": "warning",
+        "title": "The arch's rise for its span"
+      },
+      "level": "warning",
+      "message": "The arch rises 1.29 in per foot of span, less than Olsen's 1½ in/ft, what a featheredge skewback gives: less 'can result in structural difficulty'. On this span that is a rise of 3.50 in.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Greenstripe fireclay",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Raw kyanite (Virginia Kyanite)",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Dextrin",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's cone or top temperature",
+            "symbol": "T_top",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 1558.15
+          }
+        ],
+        "id": "castable.service-limit",
+        "label": "W3",
+        "lever": null,
+        "reference": "castables.md §4.1",
+        "requirements": [],
+        "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): how hot it may run"
+      },
       "level": "warning",
       "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
       "reference": "castables.md §4.1"
     },
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "castable layer 1",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the lining",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0508
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "castable layer 2",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the lining",
+            "symbol": "t_2",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": "t_1 + t_2",
+            "formula": "t_1 + t_2",
+            "label": "in",
+            "meaning": "castable in the wall, all its layers",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "t_all",
+            "text": null,
+            "unit": "in",
+            "value": 0.2794
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the thickest single layer, which sets the schedule",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "castables-minerals.md §5",
+            "symbol": "t_s",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          }
+        ],
+        "id": "castable.layers",
+        "label": "W4",
+        "lever": null,
+        "reference": "castables-minerals.md §5",
+        "requirements": [],
+        "rule": "The schedule is set by the thickest single layer, as HarbisonWalker does; no maker gives holds for layers cast wet together, so each must dry before the next is cast.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "Castable cast in layers in the left wall"
+      },
       "level": "warning",
       "message": "The left wall has 11.0 in of castable in layers. The schedule is set by the thickest single layer, as HarbisonWalker does, but no maker gives holds for layers cast wet together. Let each layer dry before the next, or hold longer.",
       "reference": "castables-minerals.md §5"
     },
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Greenstripe fireclay",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Raw kyanite (Virginia Kyanite)",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Dextrin",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ingredient, no service limit sourced",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "castables.md, ingredients.yaml",
+            "symbol": "",
+            "text": "Newspaper pulp",
+            "unit": "",
+            "value": null
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's cone or top temperature",
+            "symbol": "T_top",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 1558.15
+          }
+        ],
+        "id": "castable.service-limit-2",
+        "label": "W5",
+        "lever": null,
+        "reference": "castables.md §4.1",
+        "requirements": [],
+        "rule": "A castable needs a sourced service limit above the kiln's top temperature before it can be trusted at the hot face; none of this mix's ingredients has one.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): how hot it may run"
+      },
       "level": "warning",
       "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no source gives a service limit for this mix (Greenstripe's PCE, for one, is not sourced). Fire test pieces past the kiln's top temperature before trusting it at the hot face.",
       "reference": "castables.md §4.1"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
       "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
     },
     {
+      "check": null,
+      "level": "info",
+      "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+    },
+    {
+      "check": null,
       "level": "info",
       "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
       "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
       "reference": "kiln-hardware.md §6.1 [S4]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Side-mounted burners need a bag wall so the flames don't hit the ware: hard brick, first course solid in front of the burners.",
       "reference": "kiln-hardware.md §1.3 [S4]"
     },
     {
+      "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
       "reference": "kiln-hardware.md §2 [S4] [S13]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
       "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"): Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS. (secondary).",
       "reference": "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Greenstripe fireclay: Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer, with no temperature given; its shrinkage is not sourced. (secondary).",
       "reference": "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Dextrin: its density comes from a search excerpt; check it.",
       "reference": "castables.md §1, Thermo/VWR specification [S14]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
       "reference": "castables.md §7"
     },
     {
+      "check": null,
       "level": "info",
       "message": "First firing: 75 °F/h with a 4.5 h hold (½ h per inch of the 9.0 in layer) at 250, 500 and 1000 °F, about 44 h in all. This is Mizzou's schedule; no source gives one for a burnout mix.",
       "reference": "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
       "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Newspaper pulp: Taken as amorphous cellulose. Newsprint's ash is not sourced. (excerpt).",
       "reference": "castables.md §1, cellulose [S12]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): the organics burn out as smoke, CO and CO₂ through the first firing. Fire it outdoors or with the flue wide open, and keep the elements out of the smoke if you can.",
       "reference": "castables.md §7"
     },
     {
+      "check": null,
       "level": "info",
       "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 66° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
       "reference": "kiln-hardware.md §5.2 [S20]"
     },
     {
+      "check": null,
       "level": "info",
       "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
       "reference": null
     },
     {
+      "check": null,
       "level": "info",
       "message": "No price found for: Greenstripe fireclay, Raw kyanite (Virginia Kyanite), Dextrin, Newspaper pulp, steel.",
       "reference": null
     }
   ],
+  "fire": null,
   "frame": {
     "angle": "L4×4×5/16",
     "angle_leg_in": 4.0,
     "angle_t_in": 0.3125,
     "findings": [
       {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "span, inside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber's width",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 0.7111999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "rise",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof's rise",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": "h/S",
+              "formula": "h/S",
+              "label": "in/ft",
+              "meaning": "rise per foot of span",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": null,
+              "symbol": "d",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.10714285714285714
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in/ft",
+              "meaning": "least rise for a sprung arch",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span",
+              "symbol": "d_min",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.125
+            }
+          ],
+          "id": "frame.rise",
+          "label": null,
+          "lever": {
+            "hi": 0.35559999999999997,
+            "lo": 0.00254,
+            "step": null,
+            "symbol": "h"
+          },
+          "reference": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "d",
+              "level": "warning",
+              "margin": "d = 1.286 in/ft, 85.71 % of d_min = 1.5 in/ft",
+              "op": ">=",
+              "right": "d_min"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when h ≥ 3.5 in",
+          "status": "warning",
+          "title": "The arch's rise for its span"
+        },
+        "level": "warning",
+        "message": "The arch rises 1.29 in per foot of span, less than Olsen's 1½ in/ft, what a featheredge skewback gives: less 'can result in structural difficulty'. On this span that is a rise of 3.50 in.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.51: about 1½ in/ft at least, what a featheredge skewback gives; 3 in/ft 'generally' the most, but he has built 6 in/ft and there is 'no hard-and-fast rule'; p.296: 4–6 in/ft on chamber kilns of 4–8 ft span"
+      },
+      {
+        "check": null,
         "level": "info",
         "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
@@ -1153,6 +2336,7 @@
         "steel": "1/2-13 threaded rod"
       }
     ],
+    "posts": 2,
     "rod": "1/2-13",
     "rod_d_in": 0.5,
     "thrust": "177 lb per foot of arch",
@@ -1160,12 +2344,12 @@
       {
         "formula": null,
         "inputs": {
-          "because": "\"generally adequate\" for a studio sprung arch"
+          "because": "150 ft³ outside: Olsen's corner posts for a 5 × 5 × 6 ft kiln, 'larger (stronger), but not smaller'"
         },
         "name": "Smallest frame angle",
         "note": null,
-        "reference": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
-        "value": "L3×3×3/16"
+        "reference": "Olsen, The Kiln Book, 4th ed., p.139 (the fast-fire kiln's bolted 2 × 2 × 3/16 in angle) and p.174 (an updraft 5 × 5 × 6 ft outside: corners 3 × 3 × ¼ in; smaller kilns 3/16 in)",
+        "value": "L3×3×1/4"
       },
       {
         "formula": "Σ density × thickness × mean arc, over the roof's layers",
@@ -1196,7 +2380,7 @@
           "h": "3.00 in",
           "½θ": "24.2°"
         },
-        "name": "Thickest ring for the rise",
+        "name": "Thickest ring for HarbisonWalker's heated-arch method",
         "note": null,
         "reference": "HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
         "value": "2.65 in"
@@ -1224,7 +2408,7 @@
         "value": "176.5 lb per foot of arch"
       },
       {
-        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the corner posts)",
+        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the posts)",
         "inputs": {
           "L": "82.0 in",
           "M": "12,365 lb·in",
@@ -1238,7 +2422,7 @@
       {
         "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
         "inputs": {
-          "load per rod": "603 lb",
+          "load on the busiest rod": "603 lb",
           "stress area": "0.1419 in²"
         },
         "name": "Tie rods, one at the front and one at the back",
@@ -1323,33 +2507,283 @@
       "total_cost": 395.0,
       "type": "venturi"
     },
-    "chimney_height": "14.2 ft (171 in) above the chamber floor",
+    "chimney_height": "4.7 ft (56 in) above the chamber floor",
+    "chimney_height_in": 56.0,
     "construction": "9 in insulating brick",
     "demand_range": "456,944–731,111 BTU/hr",
     "design_input": "456,944 BTU/hr",
     "design_input_btu_hr": 456944.44444444444,
     "draft": [
-      "0.139 in. w.c. (35 Pa) with flue gas at 1000 °F",
-      "0.174 in. w.c. (43 Pa) with flue gas at top temperature"
+      "0.045 in. w.c. (11 Pa) with flue gas at 1000 °F",
+      "0.057 in. w.c. (14 Pa) with flue gas at top temperature"
     ],
     "findings": [
       {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber width",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "W",
+              "text": null,
+              "unit": "inch",
+              "value": 0.7111999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber depth",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 1.524
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "chamber height, to the springline",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "H",
+              "text": null,
+              "unit": "inch",
+              "value": 1.143
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the arch's rise",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "h_r",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": "W*L*(H + 2/3*h_r)",
+              "formula": "W·L·(H + 2/3·h_r)",
+              "label": "ft³",
+              "meaning": "chamber volume, Ward's way",
+              "offset": 0.0,
+              "scale": 35.31466672148859,
+              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
+              "symbol": "V",
+              "text": null,
+              "unit": "ft**3",
+              "value": 1.2939225734399997
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/ft³/h",
+              "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+              "offset": 0.0,
+              "scale": 0.09662107767853079,
+              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+              "symbol": "b",
+              "text": null,
+              "unit": "british_thermal_unit / foot ** 3 / hour",
+              "value": 103497.08614585242
+            },
+            {
+              "expr": "b*V",
+              "formula": "b·V",
+              "label": "Btu/h",
+              "meaning": "design burner input",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "D",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 133917.2160493827
+            },
+            {
+              "expr": "D",
+              "formula": "D",
+              "label": "Btu/h",
+              "meaning": "what the burners draw at full fire",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "P",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 133917.2160493827
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the coldest air it fires in",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design",
+              "symbol": "t",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₁",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₁",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₂",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 277.59444444444443
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₂",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 18023.873333333333
+            },
+            {
+              "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+              "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "a straight line between the table's two nearest rows",
+              "symbol": "c",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "cylinders, joined in parallel",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the design",
+              "symbol": "n",
+              "text": null,
+              "unit": "",
+              "value": 4.0
+            },
+            {
+              "expr": "n*c",
+              "formula": "n·c",
+              "label": "Btu/h",
+              "meaning": "what the supply gives",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+              "symbol": "C",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 50759.91644444445
+            }
+          ],
+          "id": "gas.supply-low",
+          "label": null,
+          "lever": {
+            "hi": 40.0,
+            "lo": 1.0,
+            "step": 1.0,
+            "symbol": "n"
+          },
+          "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "C",
+              "level": "warning",
+              "margin": "C = 173,200 Btu/h, 37.9 % of P = 456,944 Btu/h",
+              "op": ">=",
+              "right": "P"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when n ≥ 11",
+          "status": "warning",
+          "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+        },
         "level": "warning",
-        "message": "The propane supply meets the 456,944 BTU/hr design input when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "message": "The propane supply meets the 456,944 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
         "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
       },
       {
+        "check": null,
+        "level": "info",
+        "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+      },
+      {
+        "check": null,
         "level": "info",
         "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
         "reference": null
       }
     ],
-    "flue_area": "114 in²",
+    "flue_area": "28 in²",
+    "flue_area_in2": 28.274333882308138,
+    "fuel": "propane",
+    "full_fire_btu_hr": 456944.44444444444,
+    "inlet_area_in2": 28.274333882308138,
     "propane_at_full_fire": "4.99 gal/hr",
     "supply": [
       {
@@ -1389,12 +2823,13 @@
       {
         "formula": null,
         "inputs": {
+          "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
           "construction": "9 in insulating brick"
         },
         "name": "Burner input per cubic foot",
-        "note": "The high end gives about a 6–7 hour firing, the low end 14–18 hours.",
-        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
       {
@@ -1437,12 +2872,32 @@
         "value": "4.99 gal/hr (21.0 lb/hr)"
       },
       {
+        "formula": "(HHV − heat in the flue gas at T_top) ÷ HHV",
+        "inputs": {
+          "air": "λ = 0.90, a moderate reduction",
+          "flue gas": "2345 °F",
+          "fuel": "propane"
+        },
+        "name": "Available heat at the top temperature",
+        "note": null,
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "value": "0.316"
+      },
+      {
+        "formula": "η × burner input at full fire ≥ steady heat loss",
+        "inputs": {},
+        "name": "Burners against the heat lost at the top",
+        "note": null,
+        "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
+        "value": "144,520 BTU/hr kept against 28,841 BTU/hr lost"
+      },
+      {
         "formula": null,
         "inputs": {
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, full",
-        "note": "meets the design input",
+        "note": "meets the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "value": "668,000 BTU/hr (167,000 each)"
       },
@@ -1452,7 +2907,7 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, half full",
-        "note": "short of the design input",
+        "note": "short of the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "value": "376,000 BTU/hr (94,000 each)"
       },
@@ -1462,7 +2917,7 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi",
-        "note": "short of the design input",
+        "note": "short of the burners' draw",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "value": "173,200 BTU/hr (43,300 each)"
       },
@@ -1475,43 +2930,47 @@
         "value": "95 gal: 19.1 hours at full fire"
       },
       {
-        "formula": "2.5 in² per ft³ of chamber",
-        "inputs": {},
-        "name": "Exit flue area",
-        "note": "Ward's alternative: the same area as all the burner ports together. Size the damper to close it fully.",
-        "reference": "Olsen, 2.5 in² per ft³ (secondary); combustion-and-masonry.md §4.1 [S38, S39]",
-        "value": "114 in²"
+        "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
+        "inputs": {
+          "Olsen's other methods": "114 in² (2½ in² per ft³), 65 in² (1 in² per 7000 BTU/hr)",
+          "burner ports together": "28 in²"
+        },
+        "name": "Exit flue, to start",
+        "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
+        "value": "28 in²"
       },
       {
-        "formula": "3 × inside height + ⅓ × horizontal run",
+        "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
         "inputs": {
-          "horizontal run": "80.0 in (chamber, flue wall and run to the chimney)",
-          "inside height": "48.0 in"
+          "the kiln's top": "56.0 in"
         },
         "name": "Chimney height",
-        "note": null,
-        "reference": "Olsen, The Kiln Book, and Ward, 'Draft and Its Importance': 3 × inside height + ⅓ of the horizontal run; combustion-and-masonry.md §4.1 [S32, S37]",
-        "value": "14.2 ft (171 in) above the chamber floor"
+        "note": "With burners under gas pressure (or a blower) the gas drives the flow; the chimney and stack only need to carry the gases out above where people are.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack",
+        "value": "4.7 ft (56 in) above the chamber floor"
       },
       {
         "formula": null,
         "inputs": {
+          "air pressure": "101.3 kPa",
           "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.139 in. w.c. (35 Pa) with flue gas at 1000 °F"
+        "value": "0.045 in. w.c. (11 Pa) with flue gas at 1000 °F"
       },
       {
         "formula": null,
         "inputs": {
+          "air pressure": "101.3 kPa",
           "outside air": "50 °F"
         },
         "name": "Draft at the chimney's base",
         "note": null,
         "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
-        "value": "0.174 in. w.c. (43 Pa) with flue gas at top temperature"
+        "value": "0.057 in. w.c. (14 Pa) with flue gas at top temperature"
       }
     ]
   },
@@ -1679,16 +3138,19 @@
     ],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
+        "check": null,
         "level": "info",
         "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
         "reference": null
@@ -1814,6 +3276,7 @@
     "cut_list": [],
     "findings": [
       {
+        "check": null,
         "level": "info",
         "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 66° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
         "reference": "kiln-hardware.md §5.2 [S20]"

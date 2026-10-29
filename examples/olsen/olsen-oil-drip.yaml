@@ -1,0 +1,49 @@
+# Olsen's gravity-drip oil kiln (Olsen, The Kiln Book, 4th ed., p.207–209): a 45–60 ft³ kiln
+# fired to cone 10 on #2 diesel dripped onto stacks of iron plates in three channel ports, fed by
+# gravity from a tank 10 ft above them. The book doesn't say which kiln it is.
+#
+# From the book: 45–60 ft³ with three channel ports (p.208); three plates in each, nine in all
+# (p.207); the firebox inside the chamber, like the side-stoking channel of a climbing kiln, at
+# least 9 in from the wall to the bag wall, the length of the chamber and up the wall (p.208);
+# #2 diesel, about 60–75 US gal to Seger cone 10 (p.208).
+# Assumed: the chamber's sizes aren't printed: a 45 in cube, by Olsen's Principle 1, the cube
+# (p.74–75), in whole 9 in bricks (p.81), with the arch on top of it, as he puts it for an
+# updraft (the draft isn't given): 57 ft³ in all, inside the 45–60 ft³. The firebox channel is
+# 9 in wide, the least he gives, along the left wall. The walls: 4½ in of K-26 backed by 2½ in
+# of K-23, Olsen's 7 in insulating-brick wall (p.39, p.176); 26 is his grade for cone 10 (p.26).
+# The roof: a No. 1 arch of 4½ in insulating brick on featheredge skewbacks, 1½ in per foot of
+# span, as on Olsen's fast-fire kiln (p.139–141), which he says can also be fired with drip plates
+# (p.142); here of K-26, like the walls. The floor, the door, the spy holes and the air: engine
+# defaults. The cone is Orton 10: the engine has no Seger cones.
+# Not modelled: its draft, flues and chimney, which the book doesn't give (the engine puts a flue
+# in the roof); each drip unit's flow, not printed, so the oil at full fire isn't worked out; the
+# plates, 9 × 5 in, 3 in apart, overlapping 2 in and sloped about 2 in 9 (p.207).
+schema: 1
+name: Olsen gravity-drip oil kiln
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 45 in
+  depth: 45 in
+  height: 45 in # to the springline: the arch on top of the cube
+roof:
+  type: sprung_arch
+  rise: 5.625 in # 1½ in per foot of span: a No. 1 featheredge arch
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: oil
+    oil_burners: 3 # drip units, one in each channel port
+    fireboxes:
+      - position: left # the channel inside the chamber, along its length
+        width: 9 in
+        length: 45 in

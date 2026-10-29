@@ -32,6 +32,12 @@ import numpy as np
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.castable_checks import (
+    burnout_heat,
+    cast_in_layers,
+    dryout_reach,
+    no_service_limit,
+)
 from kilndesigner.library import ConductivityData, Material, material
 from kilndesigner.model import CastableMix, Kiln
 from kilndesigner.units import Q_, parse_quantity, si
@@ -243,7 +249,6 @@ def _density(mix: CastableMix, part_index: int) -> tuple[float, float]:
 
 
 def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
-    del kiln
     lib = ingredients()
     for p in mix.ingredients:
         if p.ingredient not in lib:
@@ -424,15 +429,22 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
             )
         )
     else:
+        from kilndesigner.heatloss import top_temperature
+
+        check = no_service_limit(
+            mix.name,
+            [lib[p.ingredient].name for p in mix.ingredients],
+            si(top_temperature(kiln)[0], "degF"),
+            f"{SOURCE} §4.1",
+        )
         findings.append(
-            Finding(
-                level="warning",
+            Finding.failed(
+                check.check(),
                 message=(
                     f"{mix.name}: no source gives a service limit for this mix (Greenstripe's PCE, "
                     "for one, is not sourced). Fire test pieces past the kiln's top temperature "
                     "before trusting it at the hot face."
                 ),
-                reference=f"{SOURCE} §4.1",
             )
         )
     for p in mix.ingredients:
@@ -609,7 +621,7 @@ def castable_reports(
     lib = ingredients()
     all_roles = {lib[p.ingredient].role for mix in kiln.castables or [] for p in mix.ingredients}
     kiln_thickest = 0.0
-    stacked: list[tuple[str, float]] = []
+    stacked: list[tuple[str, list[float]]] = []
     for face in loss.faces:
         cast = [
             si(parse_quantity(layer.thickness), "m")
@@ -618,7 +630,7 @@ def castable_reports(
         ]
         kiln_thickest = max([kiln_thickest, *cast])
         if len(cast) > 1:
-            stacked.append((face.face, sum(cast)))
+            stacked.append((face.face, cast))
     for mix in kiln.castables or []:
         a = mix_analysis(kiln, mix)
         m = mix_material(kiln, mix)
@@ -665,17 +677,21 @@ def castable_reports(
         schedule, hours, more = _schedule(kiln, kiln_thickest if thickest else 0.0, all_roles)
         findings += more
         if stacked and volume:
-            face, total = max(stacked, key=lambda s: s[1])
+            face, cast = max(stacked, key=lambda s: sum(s[1]))
+            total = sum(cast)
+            sheet = cast_in_layers(
+                face, [t / 0.0254 for t in cast], kiln_thickest / 0.0254, "castables-minerals.md §5"
+            )
+            sheet.agrees("t_all", Q_(total, "m"))
             findings.append(
-                Finding(
-                    level="warning",
+                Finding.failed(
+                    sheet.check(),
                     message=(
                         f"The {face} wall has {total / 0.0254:.1f} in of castable in layers. The "
                         "schedule is set by the thickest single layer, as HarbisonWalker does, "
                         "but no maker gives holds for layers cast wet together. Let each layer "
                         "dry before the next, or hold longer."
                     ),
-                    reference="castables-minerals.md §5",
                 )
             )
         reports.append(
@@ -847,10 +863,22 @@ def _first_firing(
                     }
                 }
             )
-            if ratio > 1:
+            sheet = burnout_heat(
+                a.name,
+                a.organic_heat_j,
+                batches * a.cast_volume_m3,
+                a.cast_volume_m3,
+                BURNOUT,
+                DRYOUT_RAMP_F,
+                heat_watts,
+                (f"{SOURCE} §7 [S51] [S54]", BURNOUT_SOURCE, DRYOUT_SOURCE),
+            )
+            sheet.agrees("Q", Q_(heat, "J"))
+            sheet.agrees("P_b", Q_(rate, "W"))
+            if (check := sheet.check()).status != "pass":
                 findings.append(
-                    Finding(
-                        level="warning",
+                    Finding.failed(
+                        check,
                         message=(
                             f"{a.name}: burning out its organics releases about "
                             f"{show(Q_(rate, 'W'), 'kW', 3)} through the burnout window, "
@@ -900,16 +928,15 @@ def _schedule(
     inches = thickest / 0.0254
     if not thickest:
         return [], None, findings
-    if inches > DRYOUT_MAX_IN:
+    if (check := dryout_reach(inches, DRYOUT_MAX_IN, DRYOUT_SOURCE).check()).status != "pass":
         findings.append(
-            Finding(
-                level="error",
+            Finding.failed(
+                check,
                 message=(
                     f"The thickest castable layer is {inches:.1f} in. The only sourced "
                     f"dry-out schedule covers a layer up to {DRYOUT_MAX_IN:g} in, so none is "
                     "given. Cast it thinner, or in layers fired one at a time."
                 ),
-                reference=DRYOUT_SOURCE,
             )
         )
         return [], None, findings

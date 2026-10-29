@@ -62,7 +62,9 @@ def test_build_writes_the_report_without_a_model(tmp_path: Path) -> None:
     assert result.exit_code == 0, result.output
     assert "Heat loss at top" in result.output
     report = json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))
-    assert report["electric"]["elements"]["count"] >= 3
+    elements = report["electric"]["elements"]
+    assert elements["count"] >= 1
+    assert elements["groove_rows"] >= 3  # each element may run through several grooves
 
 
 def test_compare_shows_each_design() -> None:
@@ -160,7 +162,8 @@ def test_build_of_a_gas_kiln_shows_no_electric_lines(tmp_path: Path) -> None:
     assert lines[3].startswith("  Heat loss at top: ")
     assert lines[4].startswith("  Materials:        $")  # straight on from the heat loss
     assert "Installed power" not in result.stdout
-    assert lines[-1] == f"Wrote {tmp_path / 'report.json'}"  # no model, plans or drawings
+    # No model, plans or drawings; the workbook of the warnings' sheets
+    assert lines[-1] == f"Wrote {tmp_path / 'report.json'}, {tmp_path / 'checks.xlsx'}"
     assert json.loads((tmp_path / "report.json").read_text(encoding="utf-8"))["electric"] is None
 
 
@@ -175,7 +178,7 @@ def test_build_exits_1_when_the_design_has_errors(tmp_path: Path) -> None:
     assert result.exit_code == 1
     assert "  Installed power:  " in result.stdout
     assert "Elements:" not in result.stdout
-    assert "  [error] No standard wire gauge gives elements that fit" in result.stdout
+    assert "  [E1 error] No standard wire gauge gives elements that fit" in result.stdout
     assert (out / "report.json").is_file()  # the report is still written, to see why
 
 

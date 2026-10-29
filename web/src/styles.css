@@ -555,6 +555,131 @@ select {
   text-transform: capitalize;
 }
 
+.findings .why {
+  white-space: nowrap;
+}
+
+/* A check's sheet: the formulas and numbers behind a warning or an error */
+.sheet {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.92em;
+}
+
+.sheet-head {
+  margin: 0 0 0.5rem;
+}
+
+.sheet-status {
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--info);
+}
+
+.sheet-status.warning {
+  background: var(--warning);
+}
+
+.sheet-status.error {
+  background: var(--error);
+}
+
+.sheet-scroll {
+  overflow-x: auto;
+}
+
+.sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet th,
+.sheet td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.sheet thead th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.sheet tbody th {
+  font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.sheet td.value {
+  white-space: nowrap;
+}
+
+.sheet td.source {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.sheet-input input {
+  width: 7rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--warning);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--warning) 12%, var(--surface));
+  color: var(--text);
+  font: inherit;
+  text-align: right;
+}
+
+.sheet-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.sheet-requirements li {
+  margin: 0.2rem 0;
+  padding: 0.15rem 0.5rem;
+  border-left: 3px solid var(--info);
+}
+
+.sheet-requirements li.warning {
+  border-color: var(--warning);
+}
+
+.sheet-requirements li.error {
+  border-color: var(--error);
+}
+
+.sheet-solve {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+.sheet-help {
+  margin: 0.25rem 0;
+}
+
+button.link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 /* The design as choices */
 .tabs.compact {
   margin-bottom: 0;

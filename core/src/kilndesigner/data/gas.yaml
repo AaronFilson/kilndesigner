@@ -10,20 +10,39 @@ ward_btu_per_ft3_hr:
     insulating_brick: [[6000, 10000], [8000, 13000], [10000, 16000]]
     ceramic_fibre: [[4000, 6000], [6000, 8000], [7000, 10000]]
 
+# Olsen's Rule 1, BTU per ft³ of kiln per hour at peak (4th ed. p.226): insulating brick about
+# 10,000, with 7,000 the least (p.227–228); dense firebrick 16,000 minimum, 19,000 maximum. He
+# calls most gas kilns "completely overpowered": he fired a 36 ft³ dense cross-draft on 6,000 in
+# 12–15 hours, and a 36 ft³ IFB updraft "fires easily" in 8 hours on 10,000 (p.226).
+olsen_btu_per_ft3_hr:
+  source: "Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)"
+  insulating_brick: [7000, 10000]
+  hard_brick: [16000, 19000]
+
+# Natural gas, as the orifice tables Olsen prints take it (p.230): 1000 BTU/ft³, SG 0.64.
+natural_gas:
+  source: "Olsen, The Kiln Book, 4th ed., p.230; combustion-and-masonry.md §1.1a"
+  btu_per_ft3: 1000
+  specific_gravity: 0.64
+
 # Burner ratings, BTU/hr on propane by supply pressure in psi (11 in. w.c. = 0.397 psi),
 # with prices checked 2026-10-21 (§3.2 [S27], §3.3 [S22]). curve_from_psi is the lowest
 # pressure whose rating lies on the 5–20 psi ratings' √pressure curve, so the same orifice
 # (derived, §3.2): GACO's 11 in. w.c. ratings are about twice it, another orifice.
+# natural_gas: the burner's rating on natural gas at a low-pressure line, as Olsen gives it
+# (p.222: MR-750 and MR-100, 75,000 and 100,000 BTU/hr at 8 in. w.c.). Through one orifice the
+# output grows with √pressure (p.216).
 venturi_burners:
   source: "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]"
+  natural_gas_source: "Olsen, The Kiln Book, 4th ed., p.222 (ratings), p.216 (output ∝ √pressure)"
   models:
     Ransome B1: {curve_from_psi: 0.397, price: 165.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [5900, 9700, 13900, 21600, 30700, 43000]}
     Ransome B2: {curve_from_psi: 0.397, price: 219.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [9000, 14800, 20900, 33200, 46700, 66400]}
     Ransome B3: {curve_from_psi: 0.397, price: 245.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [34200, 55300, 77500, 123000, 175900, 246000]}
     Ransome B4: {curve_from_psi: 0.397, price: 295.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [55300, 89800, 126700, 200500, 286600, 403400]}
     Ransome B5: {curve_from_psi: 0.397, price: 395.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [89800, 145200, 205400, 324700, 462400, 649400]}
-    GACO MR750: {curve_from_psi: 2, price: 99.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [72000, 76840, 121570, 172000, 210500, 243150]}
-    GACO MR100: {curve_from_psi: 2, price: 159.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [94000, 96600, 152830, 216300, 264650, 305660]}
+    GACO MR750: {curve_from_psi: 2, price: 99.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [72000, 76840, 121570, 172000, 210500, 243150], natural_gas: {in_wc: 8, btu_hr: 75000}}
+    GACO MR100: {curve_from_psi: 2, price: 159.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [94000, 96600, 152830, 216300, 264650, 305660], natural_gas: {in_wc: 8, btu_hr: 100000}}
 power_burners:
   source: "Ward Burner Systems power burners, rated at 11 in. w.c. propane; combustion-and-masonry.md §3.3 [S22]"
   models:

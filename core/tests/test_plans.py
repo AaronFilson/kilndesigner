@@ -191,15 +191,15 @@ def test_a_hybrids_plans_have_the_burners_and_the_hand_over(
 
 
 def test_a_gas_kiln_without_burners_chimney_or_tank() -> None:
-    # One burner can't fire it, an up-draft has no chimney sized here, and at 0 °F even a
-    # 1000 gal tank can't keep up
+    # No library burner is rated for natural gas at 2 psi, an up-draft has no chimney sized here,
+    # and a line needs no tank
     kiln = _variant(
         "gas-crossdraft",
         ("depth: 48 in", "depth: 60 in"),
         ("height: 40 in", "height: 44 in"),
-        ("      wall: front\n", "      wall: front\n      count: 1\n"),
+        ("  gas:\n", "  gas:\n    fuel: natural_gas\n"),
+        ("type: cylinders\n      count: 4", "type: line\n      pressure: 2 psi"),
         ("  type: cross\n", "  type: up\n"),
-        ("coldest_ambient: 20 degF", "coldest_ambient: 0 degF"),
     )
     report = design_report(kiln)
     g = report.gas
@@ -213,7 +213,7 @@ def test_a_gas_kiln_without_burners_chimney_or_tank() -> None:
         "Chamber volume, Ward's way",
         "Burner input, Ward's range",
         "Design burner input",
-        "Propane at full fire",
+        "Natural gas at full fire",
         "Exit flue area",
     ]
     assert data["elements"] is None

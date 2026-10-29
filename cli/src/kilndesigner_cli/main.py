@@ -78,7 +78,11 @@ def summary(report: Report) -> str:
             lines.append(f"  Surface load:     {el.surface_load}; coil pitch {el.pitch}")
     if report.bom is not None:
         lines.append(f"  Materials:        ${report.bom.total:,.0f} (priced items)")
-    lines.extend(f"  [{f.level}] {f.message}" for f in report.findings)
+    # A warning or an error is marked as its sheet is in checks.xlsx and the plans: [W1 warning]
+    lines.extend(
+        f"  [{f.check.label + ' ' if f.check and f.check.label else ''}{f.level}] {f.message}"
+        for f in report.findings
+    )
     return "\n".join(lines)
 
 

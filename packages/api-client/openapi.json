@@ -911,6 +911,213 @@
         ],
         "title": "CastableReport"
       },
+      "Cell": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "meaning": {
+            "type": "string",
+            "title": "Meaning"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "default": ""
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "default": ""
+          },
+          "scale": {
+            "type": "number",
+            "title": "Scale",
+            "default": 1.0
+          },
+          "offset": {
+            "type": "number",
+            "title": "Offset",
+            "default": 0.0
+          },
+          "expr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expr"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "meaning"
+        ],
+        "title": "Cell",
+        "description": "One row: an input (no ``expr``) or a formula over the rows above. A fact that isn't a number\nhas ``text`` and no ``value``."
+      },
+      "Check": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "type": "array",
+            "title": "Cells"
+          },
+          "requirements": {
+            "items": {
+              "$ref": "#/components/schemas/Requirement"
+            },
+            "type": "array",
+            "title": "Requirements"
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          },
+          "rule_holds": {
+            "type": "boolean",
+            "title": "Rule Holds",
+            "default": true
+          },
+          "rule_level": {
+            "type": "string",
+            "enum": [
+              "warning",
+              "error"
+            ],
+            "title": "Rule Level",
+            "default": "error"
+          },
+          "lever": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Lever"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warning",
+              "error"
+            ],
+            "title": "Status"
+          },
+          "solve": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solve"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "cells",
+          "requirements",
+          "status"
+        ],
+        "title": "Check",
+        "description": "Why a finding was raised: its sheet, the requirements, and what would change the result."
+      },
       "CheckedDesign": {
         "properties": {
           "document": {
@@ -1352,6 +1559,16 @@
               }
             ],
             "title": "Reference"
+          },
+          "check": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Check"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -1360,7 +1577,144 @@
           "message"
         ],
         "title": "Finding",
-        "description": "Something the builder must know: a limit exceeded, an assumption, a safety note."
+        "description": "Something the builder must know: a limit exceeded, an assumption, a safety note. A warning\nor an error carries the check that raised it: its formulas, inputs and sources (ADR 0013)."
+      },
+      "FireDesign": {
+        "properties": {
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
+          "fireboxes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fireboxes"
+          },
+          "grate_area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grate Area"
+          },
+          "grate_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grate Area In2"
+          },
+          "chimney_height": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height"
+          },
+          "chimney_height_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height In"
+          },
+          "chimney_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Range"
+          },
+          "chimney_area_in2": {
+            "type": "number",
+            "title": "Chimney Area In2"
+          },
+          "flue_area": {
+            "type": "string",
+            "title": "Flue Area"
+          },
+          "flue_area_in2": {
+            "type": "number",
+            "title": "Flue Area In2"
+          },
+          "inlet_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inlet Area In2"
+          },
+          "full_fire_btu_hr": {
+            "type": "number",
+            "title": "Full Fire Btu Hr"
+          },
+          "draft": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Draft"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fuel",
+          "fireboxes",
+          "grate_area",
+          "grate_area_in2",
+          "chimney_height",
+          "chimney_height_in",
+          "chimney_range",
+          "chimney_area_in2",
+          "flue_area",
+          "flue_area_in2",
+          "inlet_area_in2",
+          "full_fire_btu_hr",
+          "draft",
+          "working",
+          "findings"
+        ],
+        "title": "FireDesign"
       },
       "FrameDesign": {
         "properties": {
@@ -1433,6 +1787,11 @@
             },
             "type": "array",
             "title": "Findings"
+          },
+          "posts": {
+            "type": "integer",
+            "title": "Posts",
+            "default": 2
           }
         },
         "type": "object",
@@ -1452,6 +1811,10 @@
       },
       "GasDesign": {
         "properties": {
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
           "construction": {
             "type": "string",
             "title": "Construction"
@@ -1471,6 +1834,10 @@
           "design_input_btu_hr": {
             "type": "number",
             "title": "Design Input Btu Hr"
+          },
+          "full_fire_btu_hr": {
+            "type": "number",
+            "title": "Full Fire Btu Hr"
           },
           "propane_at_full_fire": {
             "type": "string",
@@ -1526,9 +1893,35 @@
             ],
             "title": "Chimney Height"
           },
+          "chimney_height_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height In"
+          },
           "flue_area": {
             "type": "string",
             "title": "Flue Area"
+          },
+          "flue_area_in2": {
+            "type": "number",
+            "title": "Flue Area In2"
+          },
+          "inlet_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inlet Area In2"
           },
           "draft": {
             "items": {
@@ -1554,11 +1947,13 @@
         },
         "type": "object",
         "required": [
+          "fuel",
           "construction",
           "ward_volume",
           "demand_range",
           "design_input",
           "design_input_btu_hr",
+          "full_fire_btu_hr",
           "propane_at_full_fire",
           "burners",
           "burner_options",
@@ -1566,7 +1961,10 @@
           "supply",
           "tank_suggestion",
           "chimney_height",
+          "chimney_height_in",
           "flue_area",
+          "flue_area_in2",
+          "inlet_area_in2",
           "draft",
           "working",
           "findings"
@@ -1828,6 +2226,41 @@
           "notes"
         ],
         "title": "LayerUse"
+      },
+      "Lever": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "lo": {
+            "type": "number",
+            "title": "Lo"
+          },
+          "hi": {
+            "type": "number",
+            "title": "Hi"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "lo",
+          "hi"
+        ],
+        "title": "Lever",
+        "description": "The input the builder controls, and the range (SI) to look for a change of state in."
       },
       "Library": {
         "properties": {
@@ -2316,6 +2749,16 @@
               }
             ]
           },
+          "fire": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FireDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
           "hybrid": {
             "anyOf": [
               {
@@ -2380,6 +2823,54 @@
           "findings"
         ],
         "title": "Report"
+      },
+      "Requirement": {
+        "properties": {
+          "left": {
+            "type": "string",
+            "title": "Left"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "<=",
+              "<",
+              ">=",
+              ">"
+            ],
+            "title": "Op"
+          },
+          "right": {
+            "type": "string",
+            "title": "Right"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "warning",
+              "error"
+            ],
+            "title": "Level"
+          },
+          "holds": {
+            "type": "boolean",
+            "title": "Holds"
+          },
+          "margin": {
+            "type": "string",
+            "title": "Margin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "left",
+          "op",
+          "right",
+          "level",
+          "holds",
+          "margin"
+        ],
+        "title": "Requirement"
       },
       "Segment": {
         "properties": {

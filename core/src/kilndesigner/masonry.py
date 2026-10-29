@@ -30,6 +30,7 @@ from pydantic import BaseModel, ConfigDict
 from kilndesigner.castable import resolve_material
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
+from kilndesigner.materials_checks import whole_bricks
 from kilndesigner.model import CatenaryArch, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
@@ -45,9 +46,10 @@ TOL = 0.01  # mm
 THICKNESS_TOL = 1.0  # mm
 
 type Laying = Literal["stretcher", "on_edge", "header", "flat", "soldier"]
-BRICK_KINDS = {"insulating_firebrick", "dense_firebrick"}
+BRICK_KINDS = {"insulating_firebrick", "dense_firebrick", "building_brick"}
 SHEET_KINDS = {"fibre_blanket", "fibre_board", "backup_insulation"}
 CAST_KINDS = {"insulating_castable", "dense_castable"}
+BULK_KINDS = CAST_KINDS | {"stone"}  # counted by weight from their volume
 
 
 @dataclass(frozen=True)
@@ -258,8 +260,12 @@ def _not_buildable(part: Part, us: bool) -> Finding:
     thick = length_text(part.thickness, us)
     below, above = buildable_near(part.thickness)
     choices = " or ".join(length_text(t, us) for t in (below, above) if t is not None)
-    return Finding(
-        level="warning",
+    name = f"{layer_name(part)}, {material(part.material).name}"
+    sheet = whole_bricks(name, part.thickness, below, above, THICKNESS_TOL, us, BRICK_SOURCE)
+    nearest = min(abs(t - part.thickness) for t in (below, above) if t is not None)
+    sheet.agrees("Δ", Q_(nearest, "mm"))
+    return Finding.failed(
+        sheet.check(),
         message=(
             f"{layer_name(part)} is {thick} of {material(part.material).name}. Whole "
             "9 × 4½ × 2½ in bricks make layers 2½, 4½ or 9 in thick, or any sum of those (7 in is "
@@ -455,7 +461,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 arch_lines.append(
                     f"{layer_name(part)}: about {count} {bricks} by volume, cut to {cut}"
                 )
-            elif m.kind in CAST_KINDS:
+            elif m.kind in BULK_KINDS:
                 cast_volume[m.id] += part.volume
             elif m.kind in SHEET_KINDS:
                 sheet_area[m.id] += part.area
@@ -503,7 +509,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             sheet_area_thickness[m.id] += part.volume
             if not part.cap:
                 sheet_thickness.setdefault(m.id, set()).add(round(part.thickness, 2))
-        elif m.kind in CAST_KINDS:
+        elif m.kind in BULK_KINDS:
             cast_volume[m.id] += part.volume
 
     quantities: list[Quantity] = []
@@ -574,14 +580,15 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         if "stretcher" in under_skewbacks:
             findings.append(
                 Finding(
-                    level="warning",
+                    level="info",
                     message=(
-                        'HarbisonWalker: "A stretcher course should never be used immediately '
-                        'below the skewback." Brick in these side walls is laid as stretchers, '
-                        "so the course under each skewback is one: have it checked, or lay "
-                        "that course another way."
+                        'HarbisonWalker, for industrial furnaces: "A stretcher course should never '
+                        'be used immediately below the skewback." Brick in these side walls is '
+                        "laid as stretchers, as in Olsen's insulating-brick kilns, whose "
+                        "featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where "
+                        "you can, lay the course under each skewback as headers."
                     ),
-                    reference="kiln-hardware.md §4.1 [S20]",
+                    reference="kiln-hardware.md §4.1 [S20]; Olsen, The Kiln Book, 4th ed., p.176",
                 )
             )
     if any(kiln.castable(mid) is None for mid in cast_volume):
@@ -629,6 +636,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 detail=(
                     f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} placed, "
                     f"at the dried density, plus {WASTE:.0%}"
+                    if m.kind in CAST_KINDS
+                    else f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} "
+                    f"laid, at its density, plus {WASTE:.0%}"
                 ),
                 priced_amount=si(mass, "lb") * (1 + WASTE),
             )

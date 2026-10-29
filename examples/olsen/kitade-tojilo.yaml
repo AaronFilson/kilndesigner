@@ -1,0 +1,67 @@
+# Kitade Tojilo chamber kiln, Kutani, Japan (Olsen, The Kiln Book, 4th ed., p.202–203, Fig 8-11):
+# a wood chamber kiln on a slope with a "modern chamber-kiln firebox", side-stoked, burning long
+# slabs on a grate the full width of the chamber.
+#
+# From the book: the chamber 4 ft wide, 5 ft tall and 8 ft deep, arched; "slope 33%",
+# atan(0.33) = 18.3°, so the floor is on the ground (Fig 8-11). The firebox 15 in wide inside, its
+# grate across the chamber's full width (p.202); the ash pit 24 in below the grate; fireclay grate
+# bars at 6 in; a 9 × 7 in stoke hole (Fig 8-11).
+# Assumed: one chamber, the one drawn; the book doesn't say how many there are. The 5 ft is to the
+# crown, and the arch spans the 4 ft width. It rises 24 in: Olsen uses 4–6 in per foot of span on
+# chamber kilns of 4–8 ft (p.296), and the top of that range, a semicircle, is nearest the tall
+# arches of Japanese chamber kilns (bidai, Fig 4-36). So the springline is at 36 in. The book
+# names no brick: Japanese chamber kilns are built of local firebrick (bidai, p.94–95), so
+# medium-duty firebrick (Olsen's intermediate duty, p.18). Walls 9½ in, inside Olsen's 9–10 in for
+# climbing kilns (p.99–100), and a 9 in arch, as the Bidai kiln (Fig 4-36); the floor as the
+# walls (engine default). Cone 10, the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto,
+# Fig 4-35, p.93): the book gives no cone for this kiln. The 6 in between the grate bars is taken
+# as their clear gap. No chimney or exit flue is given, so the engine sizes them, and the steel
+# that holds the arch: the book shows no earth or masonry holding it.
+# Not modelled: the other chambers. The firebox's roof slopes at 30° up to the chamber, 42 in
+# above the ash pit's bottom, with a 9 × 12 in flue inlet 12 in above the grate (Fig 8-11); the
+# inlets aren't counted, so they are left out, as are the two 12 × 18 in air holes in the
+# firebox's front. The floor's loss into the ground isn't worked out by the engine.
+schema: 1
+name: Kitade Tojilo chamber kiln, Kutani
+units: us
+firing:
+  cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 4 ft
+  depth: 8 ft
+  height: 36 in # to the springline: 5 ft to the crown, less the rise
+  slope: 18.3 degree # "slope 33%" (Fig 8-11)
+  on_ground: true # on its slope (Fig 8-11)
+roof:
+  type: sprung_arch
+  rise: 24 in # 6 in per foot of the 4 ft span (p.296)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # brick not named
+      thickness: 9.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in # as the Bidai kiln's arch
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 15 in
+        length: 4 ft # the chamber's full width (p.202)
+        grate:
+          width: 15 in
+          length: 4 ft
+          gap: 6 in # bars at 6 in (Fig 8-11)
+        ash_pit: 24 in
+        stoke_hole:
+          width: 9 in
+          height: 7 in
+draft:
+  type: cross
+  flue_wall: back

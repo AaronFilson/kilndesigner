@@ -61,6 +61,7 @@ const report: Report = {
     members: [],
     working: [],
     findings: [],
+    posts: 2,
   },
   castables: [],
   masonry: null,

@@ -57,6 +57,18 @@ Many primary PDFs (the PERC pocket guide, the RegO L-545 and Emerson LP-10 handb
 | CO₂ per gallon | 12.68 lb/gal (5.75 kg/gal) | EIA, released 2024-09-18 | [S7] |
 | CO₂ per gallon | ≈ 12.57 lb/gal | 4.20 lb × (3 × 44.01 ÷ 44.10) **(derived)**. The small gap from EIA is probably the density basis. | |
 
+### 1.1a Natural gas
+
+| Property | Value | Conditions | Source |
+|---|---|---|---|
+| Heating value, the orifice tables' basis | 1000 BTU/ft³, specific gravity 0.64 | Ward's tables as Olsen prints them | Olsen, 4th ed. p.230 |
+| Methane, enthalpy of combustion | −890.7 ± 0.4 kJ/mol (Pittam and Pilcher, 1972) | gas, 25 °C | [S87] |
+| Methane, molar mass | 16.0425 g/mol | | [S87] |
+| Methane HHV, mass basis | 55.52 MJ/kg | 890.7 ÷ 16.0425 **(derived)** | [S87] |
+
+- For available heat the engine takes natural gas as methane, its main part (Cantera has no
+  "natural gas"). Ethane and heavier gases in a real supply raise its heating value a little.
+
 ### 1.2 Vapor pressure against temperature (psig)
 
 NIST gives values for pure propane. I converted them from psia by subtracting 14.696, interpolating linearly between NIST rows **(derived)** [S6].
@@ -214,6 +226,10 @@ Ward's tank guidance for soft-brick stoneware kilns [S20]:
 
 ### 3.1 Ward Burner BTU per cubic foot of kiln per hour
 
+Olsen, 4th ed. p.226 (read from the book): an IFB kiln needs about
+10,000 BTU per ft³ per hour at peak; dense firebrick 16,000–19,000. He calls most gas kilns
+overpowered. That agrees with the low end of Ward's table below.
+
 Ward Data Guide [S28]. The page calls these "a guide, not a guarantee".
 
 | Wall construction | Cone 06 | Cone 6 | Cone 10 |
@@ -354,6 +370,7 @@ Check against the NFPA 54-2006 Table F.1 values given in the Fisher reamer manua
 | Too small a flue | back-pressure, safety-valve shutdowns, burned thermocouples, stalling | [S32] |
 | Burner port taper | 15° preferred but not necessary | [S40] |
 | Grate area against chimney (wood, Olsen) | grate about 10 × the chimney cross-section | (secondary) [S38] [S41] |
+| **Olsen, read from the book** | Chimney height: p.80 (Principle 5) and p.130, measured inside the kiln. Exit flue: three methods, p.236 (total inlet area; 2½ in² per ft³; 1 in² per 7000 BTU/hr), he uses the first and third. Natural draft: inlet = exit = chimney section, p.78. Chimney ¼–⅕ of the chamber's diameter, p.80. Forced draft about 25 % shorter, p.79 and p.130–131. Grate 10 × the chimney, p.76 (he now uses about 7:1, p.77) | Olsen 4th ed. (Verified) |
 | Consistent ratios? | A builder comparing Nils Lou and other books found "no consistent ratios" | [S37] |
 
 Not found:
@@ -396,6 +413,21 @@ Worked example for the PNW kiln **(derived)**: a 12 ft (3.66 m) stack, 20 °F ou
 - ΔP = 0.0342 × 101,325 × 3.66 × (1/266.5 − 1/810.9) ≈ 32 Pa ≈ 0.128 in. w.c.
 - The US form gives 7.63 × 12 × (1/479.7 − 1/1459.7) = 0.128 in. w.c.
 - No source gave a worked kiln example.
+
+### 4.3 Air at altitude (checked 2026-10-29)
+
+The air's pressure and density at the site set the draft (a in §4.2) and how much a burner gives.
+NASA Glenn's "Earth Atmosphere Model – Metric Units", troposphere, from the surface to 11,000 m
+[S88] (Verified, read on the page):
+
+- T = 15.04 − 0.00649·h, with T in °C and h in m.
+- p = 101.29·[(T + 273.1)/288.08]^5.256, with p in kPa.
+- ρ = p / [0.2869·(T + 273.1)], with ρ in kg/m³.
+
+At 5000 ft (1524 m) this gives p = 84.4 kPa and ρ/ρ₀ = 0.862; √(ρ/ρ₀) = 0.928, which is Ward's
+burner factor of 0.9279 printed in Olsen (4th ed. p.230). At 10,000 ft (3048 m), p = 69.8 kPa and
+√(ρ/ρ₀) = 0.860, against Ward's 0.8579 (p.232), within 0.2 % **(derived)**. The engine uses this model for the draft's a and for
+burner output at altitude (`gas.py`, altitude_factor).
 
 ---
 
@@ -733,6 +765,8 @@ This uses the plan's inputs: 35 ft³, cone 10, IFB walls, four 100 lb cylinders,
 - [S83] CAD forum, "inlet height vs chimney height" (Olsen: downdraft inlet area = outlet area, secondary). https://community.ceramicartsdaily.org/topic/4294-inlet-height-vs-chimney-height/
 - [S84] CAD forum, "metal frame for sprung arch kiln" (Olsen arch rise 1½–3 in./ft, secondary). https://community.ceramicartsdaily.org/topic/15978-metal-frame-for-sprung-arch-kiln/
 - [S85] Laguna LE-2040 gas kiln listing (54.1 ft³, 541,000 BTU/hr max, cone 10 ≈ 10,000 BTU/ft³/hr derived). https://www.theceramicshop.com/product/39374/laguna-model-le-2040-gas-kiln/ ; NM Clay 11.67 ft³ cone 10 kiln, 280,000 BTU/hr (≈ 24,000 BTU/ft³/hr derived). https://nmclay.com/ok2831gas-kiln-28-25-x-31-5-gas (via search summary)
+- [S87] NIST Chemistry WebBook, methane, gas-phase thermochemistry: ΔcH°gas −890.7 ± 0.4 kJ/mol (Pittam and Pilcher, 1972), molar mass 16.0425 g/mol. https://webbook.nist.gov/cgi/cbook.cgi?ID=C74828&Mask=1 (read 2026-10-29)
+- [S88] NASA Glenn Research Center, "Earth Atmosphere Model – Metric Units" (troposphere: T, p and ρ against altitude; last updated 13 May 2021). https://www.grc.nasa.gov/www/k-12/airplane/atmosmet.html (read 2026-10-29)
 - [S86] Reach.dog / High Temp Tools, Kast-O-Lite 30 (90 lb/ft³, 3,000 °F, k = 4.54 BTU·in/hr·ft²·°F at 2,000 °F); Distribution International, Kast-O-Lite 30 LI G Plus (1.44–1.6 g/cc). https://acceptance.reach.dog/shop/hightemptools/products/kast-o-lite-30-5 ; https://shop.distributioninternational.com/refractories/refractories-castable/recakl30lip55h (via search summary)
 
 ---

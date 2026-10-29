@@ -6,6 +6,9 @@ The material already in `kiln-hardware.md`, `combustion-and-masonry.md` and
 **Verified** means the text was read on the page. **Excerpt** means only a search-result snippet
 or summary was seen. **Not found** means no source turned up.
 
+**Superseded 2026-10-28:** the user's copy of the 4th edition was read page by page. It answers the frame-size (p.174), expansion (p.51–53) and chimney and
+flue (p.80, p.236) questions, and confirms the 4th edition has no springs.
+
 ## 1. Springs on tie rods
 
 | Item | Finding | Status | Source |

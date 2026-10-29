@@ -20,9 +20,11 @@ from kilndesigner.castable import (
     conductivity_law,
     mix_material,
 )
+from kilndesigner.castable_checks import dryout_reach
 from kilndesigner.heatloss import HeatLoss, heat_loss
 from kilndesigner.model import CastableMix, Kiln
 from kilndesigner.report import design_report
+from kilndesigner.sheet import number
 from kilndesigner.units import Q_, parse_quantity, si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
@@ -395,6 +397,13 @@ def test_organics_that_never_reach_240_c_never_burn_out(
     assert left_use.notes[0].startswith("The organics are gone from the hottest")
 
 
+def test_a_layer_past_the_schedules_reach_says_how_thin_it_must_be() -> None:
+    check = dryout_reach(10.5, 9.0, "Mizzou").check()
+    assert check.status == "error"
+    assert check.requirements[0].margin == "t = 10.5 in, 116.7 % of t_max = 9 in"
+    assert check.solve == "Passes when t ≤ 9 in"
+
+
 def test_burning_out_more_than_the_kilns_own_heat_is_a_warning(
     starch_kiln: tuple[Kiln, HeatLoss, float],
 ) -> None:
@@ -412,6 +421,11 @@ def test_burning_out_more_than_the_kilns_own_heat_is_a_warning(
     [warning] = [f for f in report.findings if "can run away" in f.message]
     assert warning.level == "warning"
     assert f"about 14.7 kW through the burnout window, {rate / 11_520:.1f} times" in warning.message
+    # Its sheet: the climb slow enough that the burnout is no more than the kiln's own heat
+    check = warning.check
+    assert check is not None
+    assert check.id == "castable.burnout"
+    assert check.solve == f"Passes when r ≤ {number(75 * 11_520 / rate)} Δ°F/h"
     # Unfoamed, so the check on each batch is the weight of a level US quart (0.946353 L)
     volume = (20 / 2700 + 5 / 2940 + 10 / 1500 + 10 / 1000) * LB  # m³ per batch
     quart_lb = 45 * LB / volume * 0.946353e-3 / LB

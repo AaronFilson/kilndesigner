@@ -19,13 +19,16 @@ from __future__ import annotations
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.combustion import (
+    OXIDATION_O2,
     PROPANE_HHV_BTU_PER_GAL,
+    REDUCTION_AIR,
     air_ratio_for_flue_oxygen,
     available_heat_fraction,
 )
 from kilndesigner.combustion import (
     SOURCE as COMBUSTION_SOURCE,
 )
+from kilndesigner.gas_checks import elements_in_reduction
 from kilndesigner.heatloss import heat_loss, top_temperature
 from kilndesigner.library import alloy
 from kilndesigner.model import Kiln
@@ -39,8 +42,7 @@ REDUCTION_SOURCE = (
     "Fire in oxidation to about 900 °C before reducing (Finkelnburg, Ceramics Monthly 2022); "
     "combustion-and-masonry.md §8 [S66]"
 )
-OXIDATION_O2 = 0.03  # oxidation means more than 3% excess oxygen (Frenzel) [S69]
-REDUCTION_AIR = 0.9  # a moderate reduction, λ = 0.9 (combustion-and-masonry.md §8, derived)
+WIRE_IN_REDUCTION = "electric-and-thermal.md §1.4, §1.5 [S9]"
 
 
 class CostPoint(BaseModel):
@@ -219,24 +221,28 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
             reference=REDUCTION_SOURCE if gas.reduction else None,
         )
     )
-    on_past = electric.off_above is not None and si(electric.off_above, "K") > si(
-        REDUCTION_START, "K"
-    )
-    if gas.reduction and on_past:
-        assert electric.off_above is not None
+    if gas.reduction and electric.off_above is not None:
         wire = alloy(electric.alloy)
-        findings.append(
-            Finding(
-                level="warning",
-                message=(
-                    f"The elements stay on to {show(electric.off_above, unit)}, past the start of "
-                    "reduction. Reduction attacks the alumina layer that protects the wire; "
-                    f"Kanthal allows {wire.name} only {show(wire.max_reducing_temperature, unit)} "
-                    "in CO- and H₂-rich gas."
-                ),
-                reference="electric-and-thermal.md §1.4, §1.5 [S9]",
+        off = elements_in_reduction(
+            electric.off_above,
+            REDUCTION_START,
+            wire.name,
+            wire.max_reducing_temperature,
+            (REDUCTION_SOURCE, WIRE_IN_REDUCTION),
+        ).check()
+        if off.status != "pass":
+            findings.append(
+                Finding.failed(
+                    off,
+                    message=(
+                        f"The elements stay on to {show(electric.off_above, unit)}, past the start "
+                        "of reduction. Reduction attacks the alumina layer that protects the wire; "
+                        f"Kanthal allows {wire.name} only "
+                        f"{show(wire.max_reducing_temperature, unit)} in CO- and H₂-rich gas."
+                    ),
+                    reference=WIRE_IN_REDUCTION,
+                )
             )
-        )
     if first.propane_per_kwh > e_price:
         findings.append(
             Finding(

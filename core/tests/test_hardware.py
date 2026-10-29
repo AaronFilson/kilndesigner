@@ -51,14 +51,16 @@ def test_the_gas_kiln_has_its_burners_flue_chimney_and_spy_holes() -> None:
     assert {f"port/burner-{i + 1}" for i in range(gas.burners.count)} <= names
     assert {"port/flue", "port/damper", "port/spy-1", "port/spy-2", "port/spy-3"} <= names
     assert len([p for p in hw.pieces if p.name.startswith("burner/")]) == gas.burners.count
-    # The chimney's inside is at least the flue's area (Rhodes) and it reaches the height found
+    # The chimney's inside is at least the flue's area (Rhodes) and it reaches the height found:
+    # with gas under pressure, the kiln's top (Olsen p.151)
     stack = next(p for p in hw.pieces if p.name == "chimney/stack")
     top = max(hi[2] for _, hi in stack.boxes) / MM
-    assert top == pytest.approx(float(gas.chimney_height.split("(")[1].split()[0]))
+    assert gas.chimney_height_in is not None
+    assert top == pytest.approx(gas.chimney_height_in)
     xs = sorted({v for lo, hi in stack.boxes for v in (lo[0], hi[0])})
     ys = sorted({v for lo, hi in stack.boxes for v in (lo[1], hi[1])})
     inside = (xs[-2] - xs[1]) * (ys[-2] - ys[1]) / MM**2
-    assert inside >= float(gas.flue_area.split()[0])
+    assert inside >= gas.flue_area_in2
     assert hw.chimney_bricks > 0
 
 
@@ -194,14 +196,22 @@ def test_a_count_and_places_must_agree() -> None:
 
 
 def test_burner_ports_can_be_raised_and_sized() -> None:
-    hw, _, _ = _gas(heat__gas__burners={"up": "10 in", "port": {"diameter": "5 in"}})
+    b4 = {"model": "Ransome B4", "count": 2}
+    hw, _, _ = _gas(heat__gas__burners={**b4, "up": "10 in", "port": {"diameter": "5 in"}})
     assert [s[2:] for s in _spots(hw, "burner")] == [(10, 5, 5), (10, 5, 5)]
     assert not [f for f in hw.findings if f.level != "info" and "port" in f.message]
-    # A Ransome B4's head is 3¾ in: a 4 in port is under Ward's inch, a 3 in one too small
-    hw, _, _ = _gas(heat__gas__burners={"port": {"diameter": "4 in"}})
-    assert any(f.level == "warning" and "Ward's inch" in f.message for f in hw.findings)
-    hw, _, _ = _gas(heat__gas__burners={"port": {"width": "3 in", "height": "6 in"}})
+    # A Ransome B4's head is 3¾ in: a 4 in port is under Ward's inch, which Olsen builds with
+    # the tip set back (p.173, a note); a 3 in one is too small for the head
+    hw, _, _ = _gas(heat__gas__burners={**b4, "port": {"diameter": "4 in"}})
+    [note] = [f for f in hw.findings if "Ward's inch" in f.message]
+    assert note.level == "info"
+    assert "Olsen builds them so" in note.message
+    hw, _, _ = _gas(heat__gas__burners={**b4, "port": {"width": "3 in", "height": "6 in"}})
     assert any("won't sit within a port 3 in across" in m for m in _errors(hw))
+    [error] = [f for f in hw.findings if f.level == "error" and "won't sit" in f.message]
+    assert error.check is not None
+    assert [r.holds for r in error.check.requirements] == [False]
+    assert error.check.solve == "Passes when w ≥ 3.75 in"  # the head
 
 
 def test_a_port_that_doesnt_fit_its_wall_is_refused_and_not_cut() -> None:
@@ -210,7 +220,7 @@ def test_a_port_that_doesnt_fit_its_wall_is_refused_and_not_cut() -> None:
         {"wall": "front", "across": "-3 in", "up": "2 in"},  # its bottom is below the floor
         {"wall": "front", "across": "0 in", "up": "45 in"},  # above the arch at the front
     ]
-    hw, _, _ = _gas(heat__gas__burners={"places": places})
+    hw, _, _ = _gas(heat__gas__burners={"model": "Ransome B4", "places": places})  # 4¾ in ports
     errors = _errors(hw)
     assert len(errors) == 3
     assert "past the side of the front wall" in errors[0]
@@ -226,9 +236,10 @@ def test_ports_that_overlap_are_refused() -> None:
         {"wall": "back", "across": "0 in", "up": "6 in"},
     ]
     hw, _, _ = _gas(heat__gas__burners={"places": places})
-    # The burners are cut first, then the flue, which would cut through burner port 2
+    # The burners are cut first, then the flue, which would cut through burner port 2. The flue
+    # is as large as the burner ports together (Olsen p.151), in whole half-bricks (p.81)
     assert [m for m in _errors(hw) if "overlaps" in m] == [
-        "Flue port (11.25 × 7.5 in, 0 in across and 3.75 in up the back wall) overlaps burner "
+        "Flue port (4.5 × 7.5 in, 0 in across and 3.75 in up the back wall) overlaps burner "
         "port 2, so it isn't cut. Move it or make it smaller."
     ]
     assert [o.name for o in hw.openings if o.name == "port/flue"] == []
@@ -261,12 +272,16 @@ def test_the_flue_can_be_sized_and_moved_and_the_chimney_follows() -> None:
     xs = [v for lo, hi in stack.boxes for v in (lo[0], hi[0])]
     # On the back wall, to the right facing it from outside is towards -x
     assert (min(xs) + max(xs)) / 2 == pytest.approx(-4 * MM)
-    assert not any("flue port is" in f.message for f in hw.findings)  # 90 in², over the 83
-    hw, _, _ = _gas(draft={"type": "cross", "flue_port": {"width": "6 in", "height": "7.5 in"}})
-    assert any(
-        f.level == "warning" and "The flue port is 45 in², under the 83 in²" in f.message
-        for f in hw.findings
-    )
+    assert not any("flue port is" in f.message for f in hw.findings)
+    # Smaller than all three of Olsen's starting sizes (p.236): a warning
+    hw, _, report = _gas(draft={"type": "cross", "flue_port": {"width": "2 in", "height": "2 in"}})
+    [small] = [f for f in hw.findings if f.check and f.check.id == "hardware.flue"]
+    assert small.level == "warning"
+    assert "The flue port is 4 in², under even the smallest of Olsen's three" in small.message
+    assert report.gas is not None
+    assert small.check is not None
+    cells = {c.symbol: c for c in small.check.cells}
+    assert cells["A_least"].formula == "min(A_1, A_2, A_3)"
 
 
 def test_the_layout_has_every_wall_and_every_port_asked_for() -> None:
@@ -336,11 +351,13 @@ def test_burners_with_no_sourced_port_size_are_cut_to_the_size_given() -> None:
 
 
 def test_burners_that_cant_fire_the_kiln_get_no_ports() -> None:
-    """One GACO MR750 can't deliver the cross-draft's design input within 10 psi."""
-    hw, _, report = _gas(heat__gas__burners={"model": "GACO MR750", "count": 1})
+    """No library burner is rated for natural gas at 2 psi, so none is chosen or drawn."""
+    hw, _, report = _gas(
+        heat__gas__fuel="natural_gas", heat__gas__supply={"type": "line", "pressure": "2 psi"}
+    )
     assert report.gas is not None
     assert report.gas.burners is None
-    assert any("The burners chosen can't deliver" in f.message for f in report.gas.findings)
+    assert any(f.message.startswith("No set of up to 40") for f in report.gas.findings)
     assert _spots(hw, "burner") == []
     assert not any(p.name.startswith("burner/") for p in hw.pieces)
     assert not any("bag wall" in f.message for f in hw.findings)
@@ -393,7 +410,7 @@ def test_an_up_draft_flue_is_a_square_in_the_roof_with_no_chimney(
     assert report.gas.chimney_height is None
     [flue] = [o for o in hw.openings if o.name == "port/flue"]
     (x0, y0, z0), (x1, y1, _) = flue.box
-    side = math.sqrt(float(report.gas.flue_area.split()[0])) * MM  # Ward's area, square
+    side = math.sqrt(report.gas.flue_area_in2) * MM  # Olsen's starting area, square
     assert (x1 - x0, y1 - y0) == pytest.approx((side, side))
     assert ((x0 + x1) / 2, (y0 + y1) / 2) == pytest.approx((0, 0), abs=1e-9)  # mid-roof
     assert z0 == pytest.approx((40 - 1) * MM)  # from an inch below the springline, up
@@ -403,34 +420,36 @@ def test_an_up_draft_flue_is_a_square_in_the_roof_with_no_chimney(
     assert hw.chimney_bricks == 0
 
 
-def test_an_up_draft_flue_can_be_round_and_is_checked_against_wards_area() -> None:
+def test_an_up_draft_flue_can_be_round_and_is_checked_against_olsens_sizes() -> None:
     hw, _, _ = _gas(draft={"type": "up", "flue_port": {"diameter": "10 in"}})
     [flue] = [o for o in hw.openings if o.name == "port/flue"]
     (x0, y0, _), (x1, y1, _) = flue.box
     assert (flue.round_axis, x1 - x0, y1 - y0) == pytest.approx((2, 10 * MM, 10 * MM))
-    # π × 5² = 78.5 in², under the 2.5 in² per ft³ of the 33 ft³ chamber
-    assert any(
-        f.level == "warning" and "The flue port is 79 in², under the 83 in²" in f.message
-        for f in hw.findings
-    )
+    # π × 5² = 78.5 in², over the burner ports' area: no warning
+    assert not [f for f in hw.findings if f.check and f.check.id == "hardware.flue"]
+    hw, _, _ = _gas(draft={"type": "up", "flue_port": {"diameter": "2 in"}})
+    assert [f.level for f in hw.findings if f.check and f.check.id == "hardware.flue"] == [
+        "warning"
+    ]
 
 
 def test_a_flue_too_wide_for_a_narrow_wall_is_made_taller() -> None:
-    """A kiln 12 in wide with its flue in the back wall: three 2½ in courses would make the flue
-    wider than the 10 in the wall leaves, so it goes up a course at a time until it fits."""
+    """A kiln 12 in wide with its flue in the back wall and six burners: three 2½ in courses
+    would make the flue wider than the 10 in the wall leaves, so it goes up a course at a time
+    until it fits; its width is whole half-bricks, or what the wall leaves."""
     hw, _, report = _gas(
         chamber={"width": "12 in", "depth": "100 in", "height": "48 in"},
-        heat__gas__burners={"wall": "left"},
+        heat__gas__burners={"wall": "left", "model": "Ransome B5", "count": 6},  # 6 in ports
     )
     assert report.gas is not None
-    area = float(report.gas.flue_area.split()[0])
+    area = report.gas.flue_area_in2
     courses = next(n for n in range(3, 9) if area / (2.5 * n) <= 12 - 2)
     assert courses > 3
     [(wall, across, up, width, height)] = _spots(hw, "flue")
     assert (wall, across) == ("back", 0)
     assert height == pytest.approx(courses * 2.5)
     assert up == pytest.approx(height / 2)  # at the foot of the wall
-    assert width == pytest.approx(math.ceil(area / height * 4) / 4)  # to the next ¼ in
+    assert width == pytest.approx(min(4.5 * math.ceil(area / height / 4.5), 10))
     assert width * height >= area
     assert not _errors(hw)
 

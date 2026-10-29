@@ -139,6 +139,40 @@ The §3 bound needs only geometry and density. An elastic formula would need hot
 - Insulation load on top (castable layer) changes M_P; the formula can include it as added
   weight, but nothing checks that.
 
+## 8. Past the method: the steel at 5.34 × the cold thrust (2026-10-29)
+
+Olsen's built kilns (*The Kiln Book*, 4th ed.) lie past §7's range, many of them where the method
+has no answer at all:
+
+- the fast-fire kiln: a No. 1 arch, 4½ in of IFB over 27 in at 1½ in per foot of span (p.139–140);
+- his kits: No. 1 arches of 4½ in IFB on featheredge skewbacks (p.171, p.176);
+- his chamber kilns: 4–6 in/ft (p.296).
+
+At 27 in and 1½ in/ft the rise is 3.375 in. The ring's 4½ in is past the thickest the method
+takes, (h − S/48) ÷ cos ½θ = 3.19 in. The hot lever, R − (R + T)·cos φ, is negative, so the
+maximum-thrust state can't form. HarbisonWalker's table marks such arches "stress excessive".
+Yet the kilns stand, in light bolted frames that give (2 × 2 × 3/16 in angle on the fast-fire
+kiln, p.139; Fig. 5-36).
+
+Reading (**derived**): a maximum-thrust state needs the abutments to hold their span while the
+arch grows. With T past the hot lever, no hinge pattern can lift the crown, so a rigid frame
+would see an unbounded thrust. A real studio frame is not rigid: the angle bends, the rods
+stretch and the soft brick crushes at the contact, and these limit the thrust. No source gives
+the stiffnesses needed to work that out.
+
+**The engine's rule.** Where the method gives no finite factor, or one past 5.34, the hot thrust
+is taken as 5.34 × the cold thrust. That is the largest factor HarbisonWalker prints before
+"stress excessive". The finding is a note, not a warning. Checks, **derived**:
+
+- **Fast-fire kiln.** The cold thrust is about 30 lb per foot, so 5.34 × gives 160 lb per foot.
+  Over the 36 in between the corner posts that needs Sx ≥ 0.18 in³ at 12,000 psi: an
+  L2×2×3/16 (0.188 in³), the angle Olsen used (test: `test_frame.py`, Olsen's fast-fire arch).
+- **Updraft 5 × 5 × 6 ft outside** (p.174): HarbisonWalker's method applies (lever ≥ S/48), and
+  the frame sized from it is at least Olsen's 3 × 3 × ¼ in corner angle.
+
+**Status:** an engineering rule, sourced at both ends (HarbisonWalker's largest printed factor;
+Olsen's built frame), not a theory of hot arches in flexible frames. It is recorded in ADR 0014.
+
 ## Ask the user (Olsen, *The Kiln Book*)
 
 - Olsen p.__ (arches): does he give a heated-thrust multiplier or describe hinging at the faces

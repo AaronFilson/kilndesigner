@@ -1,0 +1,55 @@
+# Olsen's 36 cu ft dense-brick cross-draft (Olsen, The Kiln Book, 4th ed., p.226): his evidence
+# that most gas kilns are overpowered. He fired it on six small 36,000 BTU/hr venturi burners in
+# about 12–15 hours.
+#
+# From the book: 36 cu ft; dense brick; gas; cross-draft; six small venturi air-mixer burners at
+# 36,000 BTU/hr each; fired in about 12–15 h (p.226).
+# Why the dense brick is backed: bare dense brick can't reach cone 10 on this input. Through 9 in
+# of bare super-duty brick (KX-99) the lining loses about 208,000 BTU/hr at cone 10, and the six burners leave only
+# about 63,000 BTU/hr in the kiln: at 2345 °F about 71 % of their heat leaves with the flue gas.
+# Olsen fired the kiln (p.226), so its dense brick must have been backed with insulation.
+# Assumed: the chamber isn't dimensioned. It is a cube of 36 cu ft (Principle 1, p.74–75), 39.6 in
+# a side to the springline. Walls, roof and floor alike: a 4½ in hot face of dense brick backed by
+# 4½ in of K-23 insulating brick, as Olsen backs his hot faces, a hot-face course and a back-up
+# course (p.176; Fig 2-32, p.52). 9 in in all, his least for a wall over 3 ft high (p.41). The
+# dense brick is medium-duty firebrick (Olsen's intermediate duty, p.18). A sprung arch, as his
+# Bowen Mountain cross-draft has (bowen-mountain, p.127): its ring that 4½ in of brick, rising 1½ in
+# per foot of span on a featheredge skewback, his commonest arch for small kilns (p.25, p.51), the
+# K-23 laid over it. Burners in the front wall and the flue at the back (engine default). Natural
+# gas on an 8 in. w.c. line, the meter's normal pressure (p.227). Cone 10: Rule 1 and its
+# dense-brick figure are for Olsen's high fire (p.226). The ports, flue and chimney: engine default.
+# Not modelled: what the backing really was; the book says only "dense brick".
+schema: 1
+name: Olsen's 36 cu ft dense cross-draft
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 39.6 in
+  depth: 39.6 in
+  height: 39.6 in
+roof:
+  type: sprung_arch
+  rise: 4.96 in # 1½ in per foot of span: a featheredge skewback (p.25)
+loading:
+  type: door
+  face: front
+lining:
+  walls: # the roof and floor as the walls
+    - material: firebrick-medium-duty-smithfield
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      rating: 36000 BTU/hr
+      count: 6
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: cross
+  flue_wall: back

@@ -28,6 +28,7 @@ dev = [
     "ht>=1.2",
     "httpx>=0.28",
     "pytest-cov>=7",
+    "formulas[excel]>=1.2",
 ]
 
 [tool.pytest.ini_options]

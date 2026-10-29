@@ -16,6 +16,7 @@ dependencies = [
     "build123d>=0.10",
     "typst>=0.13",
     "cantera>=3.2",
+    "xlsxwriter>=3.2",
 ]
 
 [build-system]

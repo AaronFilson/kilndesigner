@@ -1,0 +1,70 @@
+# Olsen's Bowen Mountain salt kiln, Col Levy's studio, Australia (Olsen, The Kiln Book, 4th ed.,
+# p.127–128): a revised Chappell design, a cross-draft salt kiln with a firebox across the front
+# behind a bag wall, exit flues into a collection box, and the chimney. It is drawn for gas, oil
+# drip or wood (p.127); this file is the gas version, the one whose burners the book names.
+#
+# From the book: the chamber 5 ft long and 3 ft wide inside, 36 in from floor to crown; "9" WALLS"
+# (Fig 4-153); for gas, "2 GAS BURNERS PER FLUE", "MR 750 BURNERS", each pair in an IFB block with
+# two "2½" HOLES", three flues drawn across the front (?); the chimney 13½ × 13½ in at the base,
+# tapering to 9 × 9 in at the top, "CHIMNEY HEIGHT MIN 10' MAX 12'", behind a flue collection box
+# 9 in wide (Fig 4-153); salting from cone 9–10 (p.128).
+# Assumed: six burners, two in each of the three flues. Cone 10, the top of 9–10. The chimney
+# 11 ft, the middle of 10–12 ft. A 9 in arch, as the walls, on standard 9 in side and end skews,
+# which give 2.302 in of rise per foot of span (p.25, p.296): a 6.9 in rise, so the springline is
+# at 29.1 in. The book names no brick: for salt Olsen says high-alumina brick is best (p.126),
+# and Kähler's salt kiln used high-alumina insulating brick (p.136); JM 28 is 67 % alumina by
+# Olsen's Table 1-4 (p.27), so ifb-jm28 for the walls, arch and floor (engine default). The gas
+# is propane at 11 in. w.c. at the burners, with a high-pressure regulator at the tank (p.215,
+# p.227); the book doesn't say which gas this kiln burned. The exit flues aren't counted, so the
+# engine sizes the exit flue, and the steel that braces the arch (the drawing shows bracing on
+# its front).
+# Not modelled: the arch comes down at the back to 18 in (?) above the floor (Fig 4-153); the
+# engine's arch is level, so the chamber is a little larger here. The door, about 24 in, is in a
+# side wall; a sprung arch here springs from the side walls, so the door is put in the front wall,
+# where the burners fire through its bricking. The firebox and bag wall, 12 in (?) below the
+# floor, the four salt holes and the salt itself are left out.
+schema: 1
+name: Bowen Mountain salt kiln, gas
+units: us
+firing:
+  cone: "10" # salting starts at cone 9–10 (p.128)
+chamber:
+  width: 3 ft
+  depth: 5 ft
+  height: 29.1 in # to the springline: 36 in to the crown, less the rise
+roof:
+  type: sprung_arch
+  rise: 6.9 in # 2.302 in per foot of the 3 ft span: standard 9 in skews (p.25)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-jm28 # brick not named: high-alumina for salt (p.126, p.136)
+      thickness: 9 in
+heat:
+  gas:
+    fuel: propane
+    burners:
+      type: venturi
+      model: GACO MR750
+      count: 6 # two per flue, three flues (?)
+      wall: front
+      port:
+        diameter: 2.5 in # the IFB block's "2½" HOLES"
+    supply:
+      type: line
+      pressure: 11 inch_H2O # propane at the burners (p.215, p.227)
+draft:
+  type: cross
+  flue_wall: back
+  run_to_chimney: 9 in # the flue collection box
+  chimney:
+    height: 11 ft # 10–12 ft
+    inside:
+      width: 13.5 in
+      depth: 13.5 in
+    top:
+      width: 9 in
+      depth: 9 in
