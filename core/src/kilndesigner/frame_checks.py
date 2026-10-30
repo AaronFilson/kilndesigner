@@ -71,7 +71,9 @@ CAPPED = (
 )
 
 
-def _thrust(s: Sheet, n: int, thick: str = "t", capped: float | None = None) -> None:
+def _thrust(
+    s: Sheet, n: int, thick: str = "t", capped: float | None = None, cold: bool = False
+) -> None:
     """The arch's weight W, its cold thrust H_c, the heated factor f and the hot thrust H, from
     its ``n`` layers' thicknesses (``t_1``…, or a dome slice's ``τ_1``…) and the cells T, φ, r.
     ``capped``: the factor to use where HarbisonWalker's method has no finite answer."""
@@ -100,6 +102,8 @@ def _thrust(s: Sheet, n: int, thick: str = "t", capped: float | None = None) -> 
         "lbf/ft",
         source="three-hinged circular arch: moments about a springing",
     )
+    if cold:
+        return
     if capped is not None:
         s.given(
             "f", "hot thrust ÷ cold thrust: the most HarbisonWalker prints", capped, source=CAPPED
@@ -152,6 +156,40 @@ def skewback_on_wall(a: ArchInputs, wall: float) -> Sheet:
     s.let("x_w", "the side wall's outside, out from the centre line", "S/2 + t_w", "in")
     s.require("x_c", "<=", "x_w")
     s.lever("t_w", Q_(1, "in"), Q_(60, "in"))
+    return s
+
+
+THRUST_THROUGH_STEEL = (
+    'HarbisonWalker: "When the skewback is carried on a channel or angle, the line of thrust '
+    'should pass through, or slightly above, the corner of the supporting steel"; '
+    "kiln-hardware.md §4.1 [S20]"
+)
+
+
+def thrust_through_steel(a: ArchInputs, wall: float, leg: float, t: float) -> Sheet:
+    """The line of thrust from the ring's outer corner at the skewback, carried out through the
+    skewback and wall at the slope of the springing's reaction (W/2 down, H_c out), against the
+    buttress angle whose corner sits at the ring's outer corner's height on the wall's outside
+    (review S5). Cold thrust: the steepest line, the worst case."""
+    s = Sheet("frame.thrust-steel", "The line of thrust meets the buttress angle",
+              reference=THRUST_THROUGH_STEEL)  # fmt: skip
+    _arch(s, a, weights=True)
+    _thrust(s, len(a.layers), cold=True)
+    s.given("t_w", "the thicker side wall", Q_(wall, "in"), source=f"{DESIGN}: the walls' layers")
+    s.let("x_c", "the ring's outer corner, out from the centre line", "(r + T)*sin(φ)", "in")
+    s.let("x_w", "the side wall's outside, out from the centre line", "S/2 + t_w", "in")
+    s.let(
+        "δ",
+        "how far the line drops from the ring's corner to the wall's outside",
+        "W/(2*H_c)*(x_w - x_c)",
+        "in",
+        source="the reaction at a springing: W/2 down and H_c out",
+    )
+    s.given("L", "the angle's upright leg", Q_(leg, "in"), source="the angle chosen")
+    s.given("t_a", "the angle's thickness", Q_(t, "in"), source="the angle chosen")
+    s.let("δ_max", "the upright leg below the angle's corner", "L - t_a", "in")
+    s.require("δ", "<=", "δ_max", level="warning")
+    s.lever("t_w", Q_(0.5, "in"), Q_(60, "in"))
     return s
 
 
@@ -505,24 +543,422 @@ def dome_checked_range(dm: DomeInputs, at: float, ts_max: float, source: str) ->
     return s
 
 
-def dome_steel(dm: DomeInputs, at: float, along: float, source: str) -> Sheet:
-    s = Sheet("frame.dome-steel", "What the dome's steel must hold", reference=source)
+@dataclass(frozen=True)
+class HotSteel:
+    """The frame steel's temperature and AISC 360-16 Table A-4.2.1's factors at it, with the
+    steel's room-temperature properties (steel-design.md §S2–S3)."""
+
+    temperature: float  # °F, the bearing wall's outside face, steady at the top temperature
+    ky: float  # Fy(T)/Fy, interpolated in the table
+    ke: float  # E(T)/E, interpolated in the table
+    fy: float  # psi, room temperature
+    e: float  # psi, room temperature
+    omega: float  # ASD safety factor for bending
+    source: str  # AISC 360-16 §F1, §F10, App. 4
+    where: str  # how the temperature was found
+
+
+@dataclass(frozen=True)
+class AngleSection:
+    name: str
+    leg: float  # in
+    t: float  # in
+    sx: float  # in³, geometric axis
+    source: str
+
+
+def _aisc_angle_moment(s: Sheet, a: AngleSection, hot: HotSteel) -> None:
+    """AISC 360-16 §F10, an equal-leg angle bent about a geometric axis with no lateral-torsional
+    restraint along its bay (L_b, a cell above), toe in compression, Cb = 1: the allowable
+    moment M_a = M_n/Ω_b, with Fy and E reduced to the steel's temperature (Appendix 4)."""
+    s.given("b", f"{a.name}'s leg", Q_(a.leg, "in"), source=a.source)
+    s.given("t_a", f"{a.name}'s thickness", Q_(a.t, "in"), source=a.source)
+    s.given(
+        "S_x", f"{a.name}'s section modulus, geometric axis", Q_(a.sx, "in**3"), source=a.source
+    )
+    s.given("T_s", "the steel's temperature", Q_(hot.temperature, "degF"), "degF", source=hot.where)
+    s.given("F_y0", "A36 yield stress, cold", Q_(hot.fy, "psi"), source=hot.source)
+    s.given("E_0", "steel's modulus, cold", Q_(hot.e, "psi"), source=hot.source)
+    s.given("k_y", "Fy(T)/Fy at T_s", hot.ky, source=f"{hot.source}: Table A-4.2.1, interpolated")
+    s.given("k_E", "E(T)/E at T_s", hot.ke, source=f"{hot.source}: Table A-4.2.1, interpolated")
+    s.let("F_y", "yield stress, hot", "k_y*F_y0", "psi")
+    s.let("E", "modulus, hot", "k_E*E_0", "psi")
+    s.let("M_y", "yield moment: 0.80 × the geometric one (F10)", "0.8*F_y*S_x", "lbf*in")
+    s.let(
+        "M_cr",
+        "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
+        "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
+        "lbf*in",
+        source=hot.source,
+    )
+    ratio = s.env["M_y"] / s.env["M_cr"]
+    if ratio <= 1:
+        s.let(
+            "M_ltb",
+            "lateral-torsional buckling strength (F10-2)",
+            "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
+            "lbf*in",
+            source=hot.source,
+        )
+    else:
+        s.let(
+            "M_ltb",
+            "lateral-torsional buckling strength (F10-3)",
+            "(0.92 - 0.17*M_cr/M_y)*M_cr",
+            "lbf*in",
+            source=hot.source,
+        )
+    s.let("λ", "leg slenderness", "b/t_a")
+    s.let("λ_p", "compact limit (Table B4.1b, case 12)", "0.54*sqrt(E/F_y)")
+    s.let("λ_r", "noncompact limit", "0.91*sqrt(E/F_y)")
+    s.let("S_c", "section modulus to the toe: 0.80 S_x (F10)", "0.8*S_x", "in**3")
+    lam, lp, lr = s.env["λ"], s.env["λ_p"], s.env["λ_r"]
+    if lam <= lp:
+        s.let("M_lb", "leg local buckling: a compact leg, none (yielding governs)", "1.5*M_y",
+              "lbf*in", source=hot.source)  # fmt: skip
+    elif lam <= lr:
+        s.let("M_lb", "leg local buckling, noncompact leg (F10-6)",
+              "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))", "lbf*in", source=hot.source)  # fmt: skip
+    else:
+        s.let("M_lb", "leg local buckling, slender leg (F10-7, F10-8)", "0.71*E/λ^2*S_c",
+              "lbf*in", source=hot.source)  # fmt: skip
+    s.let("M_n", "nominal moment: the least of F10-1, LTB and leg buckling",
+          "min(1.5*M_y, M_ltb, M_lb)", "lbf*in", source=hot.source)  # fmt: skip
+    s.given("Ω_b", "ASD safety factor for bending (F1)", hot.omega, source=hot.source)
+    s.let("M_a", "allowable moment, hot", "M_n/Ω_b", "lbf*in", source=hot.source)
+
+
+def dome_buttress(
+    dm: DomeInputs,
+    at: float,
+    bay: float,
+    a: AngleSection,
+    hot: HotSteel,
+    limit: float,
+    stress_source: str,
+) -> Sheet:
+    """The angle along the top of each wall the dome's slices bear on, bending between posts
+    under the most thrust any slice gives, hot: AISC 360-16 F10 with the steel's properties at
+    its temperature, and HarbisonWalker's 12,000 psi for bindings that may run hot."""
+    s = Sheet(
+        "frame.dome-buttress",
+        f"Buttress angle along the dome's bearing walls, {a.name}, hot",
+        reference=f"{hot.source}; {stress_source}; steel-design.md §S4",
+    )
     _slice(s, dm, at, weights=True)
     _thrust(s, len(dm.layers), "τ")
     s.given(
-        "F",
-        "the hot thrust along each wall",
-        Q_(along, "lbf"),
-        source="each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
+        "ℓ",
+        "the bay: the buttress between posts",
+        Q_(bay, "in"),
+        source=f"{DESIGN}: the bearing wall's outside length, and the posts along it",
     )
     s.let(
-        "F_tie", "each tie: one across the door's head, one across the wall opposite", "F/2", "lbf"
+        "M",
+        "bending moment, a simple beam between posts, the peak thrust all along",
+        "H*ℓ^2/8",
+        "lbf*in",
+        source="statics; the slices' peak thrust taken over the whole bay (cautious)",
     )
-    s.rule(
-        "No source sizes the steel for a dome: have it designed for H and F_tie.",
-        holds=False,
-        level="warning",
+    # F10's Lb is the bay
+    s.let("L_b", "unbraced length, AISC L_b", "ℓ", "in")
+    _aisc_angle_moment(s, a, hot)
+    s.require("M", "<=", "M_a")
+    s.let("σ_b", "bending stress", "M/S_x", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress_source)
+    s.require("σ_b", "<=", "σ_allow")
+    s.lever("S_x", Q_(0.05, "in**3"), Q_(10, "in**3"))
+    return s
+
+
+def dome_rod(
+    dm: DomeInputs,
+    at: float,
+    bay: float,
+    share: float,
+    rod: tuple[str, float],
+    limit: float,
+    sources: tuple[str, str],
+) -> Sheet:
+    name, area = rod
+    rods, stress = sources
+    s = Sheet(
+        "frame.dome-rod",
+        f"Ties across the dome's bearing walls, {name} rod, hot",
+        reference=f"{rods}; {stress}; domes-over-doors.md §D4.1 step 4",
     )
+    _slice(s, dm, at, weights=True)
+    _thrust(s, len(dm.layers), "τ")
+    s.given("ℓ", "the bay between posts", Q_(bay, "in"), source=DESIGN)
+    s.given(
+        "m",
+        "the bays the busiest rod ties",
+        share,
+        source="statics: ½ for the corner posts alone (the door's head and the back)",
+    )
+    s.let("P", "load on the busiest rod, hot", "H*ℓ*m", "lbf")
+    s.given("A_s", f"{name} rod's tensile stress area", Q_(area, "in**2"), source=rods)
+    s.let("σ", "stress in each rod", "P/A_s", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress)
+    s.require("σ", "<=", "σ_allow")
+    s.lever("A_s", Q_(0.01, "in**2"), Q_(2, "in**2"))
+    return s
+
+
+@dataclass(frozen=True)
+class LintelInputs:
+    """A steel lintel over a door in part of a wall (steel-design.md §S5): the opening, the wall's
+    layers over it, and the roof's edge load on it."""
+
+    clear: float  # in, the opening's width
+    bearing: float  # in, at each end
+    above: float  # in, the wall over the opening, at its highest
+    layers: tuple[Layer, ...]  # the wall's
+    edge: float  # lb/ft, the roof's vertical load on the wall over the opening
+    edge_source: str
+    longest: float  # in, the longest span checked
+    longest_source: str
+
+
+BIA_LINTEL = "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]"
+LINTEL_BEARING = "TMS 402-16 §5.2.1.3, at least 4 in; door-headers.md §D1.5 [H6]"
+
+
+def door_lintel(
+    li: LintelInputs, a: AngleSection, ix: float, hot: HotSteel, limit: float, stress_source: str
+) -> Sheet:
+    """A steel angle over a door in part of a wall, carrying everything above the opening with no
+    arching (BIA TN 31B) and the roof's edge on it, checked hot by AISC 360-16 F10 as the dome's
+    buttress is; its deflection by BIA's L/600 and 0.3 in, × 1.56 for an angle free to twist (AISC
+    Commentary F10). The bearing of its ends on refractory brick is not checked: no allowable
+    stress is found (door-openings.md)."""
+    s = Sheet(
+        "frame.door-lintel",
+        f"Steel lintel over the door, {a.name}, hot",
+        reference=f"{BIA_LINTEL}; {hot.source}; steel-design.md §S5",
+    )
+    s.given("L_c", "the opening's width", Q_(li.clear, "in"), source=f"{DESIGN}: the door")
+    s.given("L_max", "the widest opening a steel angle lintel spans", Q_(li.longest, "in"),
+            source=li.longest_source)  # fmt: skip
+    s.require("L_c", "<=", "L_max")
+    s.given("b_e", "bearing at each end", Q_(li.bearing, "in"), source=LINTEL_BEARING)
+    s.let("L", "span, centre to centre of the bearings", "L_c + b_e", "in", source=BIA_LINTEL)
+    s.given("h_a", "the wall over the opening, at its highest", Q_(li.above, "in"),
+            source=f"{DESIGN}: the wall's inside top less the door's top")  # fmt: skip
+    for i, x in enumerate(li.layers, 1):
+        s.given(f"t_{i}", f"layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"ρ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    total = " + ".join(f"ρ_{i}*t_{i}" for i in range(1, len(li.layers) + 1))
+    s.let("w_m", "the wall over the opening, all of it, per foot", f"({total})*h_a", "lbf/ft",
+          source=f"{BIA_LINTEL}: with no arching, the full weight above the opening")  # fmt: skip
+    s.given("V", "the roof's edge load on the wall over the opening", Q_(li.edge, "lbf/ft"),
+            source=li.edge_source)  # fmt: skip
+    s.let("w", "load on the lintel", "w_m + V", "lbf/ft")
+    s.let("M", "bending moment, a simple beam", "w*L^2/8", "lbf*in", source=BIA_LINTEL)
+    s.let("L_b", "unbraced length, AISC L_b: the span", "L", "in")
+    _aisc_angle_moment(s, a, hot)
+    s.require("M", "<=", "M_a")
+    s.let("σ_b", "bending stress", "M/S_x", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress_source)
+    s.require("σ_b", "<=", "σ_allow")
+    s.given("I_x", f"{a.name}'s moment of inertia, geometric axis", Q_(ix, "in**4"),
+            source=a.source)  # fmt: skip
+    s.let("Δ", "deflection, hot, the angle free to twist", "1.56*5*w*L^4/(384*E*I_x)", "in",
+          source=f"{BIA_LINTEL}: 5wL⁴/384EI; AISC 360-16 Commentary F10, × 1.56")  # fmt: skip
+    s.let("Δ_600", "BIA's limit: the clear span over 600", "L_c/600", "in", source=BIA_LINTEL)
+    s.given("Δ_max", "BIA's limit, at most", Q_(0.3, "in"), source=BIA_LINTEL)
+    s.require("Δ", "<=", "Δ_600")
+    s.require("Δ", "<=", "Δ_max")
+    s.let("R", "each end's reaction on the brick", "w*L/2", "lbf",
+          source="statics; its bearing stress is not checked: no allowable stress for refractory "
+          "brick is found (door-openings.md)")  # fmt: skip
+    s.lever("S_x", Q_(0.05, "in**3"), Q_(10, "in**3"))
+    return s
+
+
+# ---- An arched door head and its jambs (Heyman; door.py) ---------------------------------------
+
+
+@dataclass(frozen=True)
+class DoorArchInputs:
+    """A semicircular ring arch over a door in part of a wall, on brick jambs."""
+
+    span: float  # in, the door's width
+    ring: float  # in, the ring's depth, radially
+    layers: tuple[Layer, ...]  # the wall's, through its thickness
+    above: float  # in, the wall over the springline at the door's crown
+    edge: float  # lb/ft, the roof's vertical load on the wall over the door
+    edge_source: str
+    ring_source: str
+    springing: float  # in, the springline over the jambs' base
+    jamb: float  # in, the narrower jamb, along the wall, to the next opening or the wall's end
+    jamb_source: str
+    least: float  # lbf, the minimum thrust: a line of thrust from the crown's top
+    most: float  # lbf, the maximum thrust: a line of thrust from the crown's soffit
+    cross: float = 0.0  # in, the cross wall bonded into the jamb's far end (0: none, a door)
+    cross_q: float = 0.0  # psi, that wall's weight per square inch of its face
+
+
+ARCH_STATICS = (
+    "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies "
+    "within it, the line found need not be the actual one; domes-over-doors.md §D3, "
+    "arch-thrust-theory.md §2"
+)
+MINIMUM_THRUST = (
+    "the minimum thrust, the line of thrust from the crown's extrados touching the intrados: 'an "
+    "arch on spreading supports will act in a state of minimum thrust' (Heyman, The Stone "
+    "Skeleton; arch-thrust-theory.md §2 [A1], [A3]), the least it pushes on its neighbours "
+    "(domes-over-doors.md §D3 [D7])"
+)
+NO_TENSION = (
+    "the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 "
+    "[D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress"
+)
+
+
+BONDED = (
+    "a design rule, not a sourced one (door-headers.md §D9): 'resistance to horizontal thrust ... "
+    "is provided by the adjacent mass of masonry' (BIA TN 31A §D3.5), and a cross wall bonded "
+    "into the jamb's end is part of it; only a length of it equal to the jamb wall's thickness "
+    "is counted, its weight at the cross wall's middle, so the rest of the return is spare"
+)
+
+
+def _door_arch(s: Sheet, da: DoorArchInputs, *, loads: bool = True) -> None:
+    """The arch's size, and with ``loads`` the wall's weight on half of it, its least thrust H and
+    where the line of thrust crosses the springing, x_p in from the door's edge."""
+    s.given("S", "the door's width", Q_(da.span, "in"), source=f"{DESIGN}: the door")
+    s.given("d", "the ring's depth", Q_(da.ring, "in"), source=da.ring_source)
+    s.let("r", "the arch's inside radius: a semicircle", "S/2", "in")
+    s.let("R_o", "the ring's outside radius", "r + d", "in")
+    if not loads:
+        return
+    for i, x in enumerate(da.layers, 1):
+        s.given(f"t_{i}", f"layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"ρ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    n = len(da.layers)
+    s.let("b", "the wall's thickness", " + ".join(f"t_{i}" for i in range(1, n + 1)), "in")
+    s.let("q", "the wall's weight per square inch of its face",
+          " + ".join(f"ρ_{i}*t_{i}" for i in range(1, n + 1)), "psi")  # fmt: skip
+    s.given("Z", "the wall over the springline at the door's crown", Q_(da.above, "in"),
+            source=f"{DESIGN}: the wall's inside top over the door's middle")  # fmt: skip
+    s.given("V", "the roof's vertical load on the wall over the door", Q_(da.edge, "lbf/ft"),
+            source=da.edge_source)  # fmt: skip
+    s.let("W_r", "half the ring's weight", "q*pi/4*(R_o^2 - r^2)", "lbf",
+          source="a quarter annulus")  # fmt: skip
+    s.let("x_r", "its centroid, out from the door's middle",
+          "4*(R_o^3 - r^3)/(3*pi*(R_o^2 - r^2))", "in", source="a quarter annulus")  # fmt: skip
+    s.let("W_s", "the wall over half the ring, all of it", "q*(R_o*Z - pi*R_o^2/4)", "lbf",
+          source="the whole wall above the soffit taken to bear on the arch, 'certainly on the "
+          "safe side' (BIA TN 31A; door-headers.md §D3.6)")  # fmt: skip
+    s.let("x_s", "its centroid, out from the door's middle",
+          "(R_o^2*Z/2 - R_o^3/3)/(R_o*Z - pi*R_o^2/4)", "in",
+          source="a rectangle R_o by Z less a quarter disc")  # fmt: skip
+    s.let("W_v", "the roof's load over half the ring", "V*R_o", "lbf")
+    s.let("N", "each springing's vertical load", "W_r + W_s + W_v", "lbf")
+    s.given("H", "thrust: the least the arch pushes on each jamb", Q_(da.least, "lbf"),
+            source=f"{MINIMUM_THRUST}; the engine's search over radial joints every ½° "
+            "(door.py: door_thrusts)")  # fmt: skip
+    s.let("x_p", "where the line of thrust crosses the springing, in from the door's edge",
+          "(H*R_o + W_r*x_r + W_s*x_s + W_v*R_o/2)/N - r", "in",
+          source="moments of half the arch about the crown's top")  # fmt: skip
+
+
+def door_arch_ring(da: DoorArchInputs, eta: float, safety: float, source: str) -> Sheet:
+    """The ring against the thinnest semicircle that holds a line of thrust (Couplet–Heyman),
+    with Heyman's geometric factor of safety; and, under the wall's load, the least thrust no more
+    than the most, so a line of thrust fits in the ring. Geometry: no range of T/S limits it."""
+    s = Sheet("frame.door-arch", "The door's arch: a line of thrust fits in its ring",
+              reference=f"{ARCH_STATICS}; {source}")  # fmt: skip
+    _door_arch(s, da)
+    s.require("Z", ">=", "R_o")
+    s.given("η", "the thinnest semicircle that stands, as t/r", eta,
+            source=f"{source}: Heyman's table at a half-angle of 90°")  # fmt: skip
+    s.let("k", "how many times the thinnest that stands", "d/(r + d/2)/η",
+          source="Heyman's geometric factor of safety, under its own weight")  # fmt: skip
+    s.given("k_min", "Heyman's factor of safety", safety, source=source)
+    s.require("k", ">=", "k_min")
+    s.given("H_max", "the most the arch can push: the line from the crown's soffit",
+            Q_(da.most, "lbf"),
+            source="Heyman's maximum thrust, hinges at the intrados at the crown and the extrados "
+            "lower down (arch-thrust-theory.md §2 [A2]); the engine's search")  # fmt: skip
+    s.require("H", "<=", "H_max")
+    s.lever("d", Q_(0.5, "in"), Q_(24, "in"))
+    return s
+
+
+def _jamb_base(s: Sheet, da: DoorArchInputs) -> None:
+    s.given("h_s", "the springline over the jamb's base", Q_(da.springing, "in"),
+            source=f"{DESIGN}: the door's sill and height, less its radius")  # fmt: skip
+    s.given("e", "the jamb's width along the wall", Q_(da.jamb, "in"), source=da.jamb_source)
+    s.let("G_1", "the jamb under the springline", "q*e*h_s", "lbf")
+    s.let("G_2", "the wall over the springline on the jamb, beside the ring",
+          "q*max(e - d, 0*d)*Z", "lbf")  # fmt: skip
+    s.given("b_c", "the cross wall bonded into the jamb's far end, its thickness",
+            Q_(da.cross, "in"), source=f"{DESIGN}: the wall at the corner; 0 where the jamb "
+            "ends at another door")  # fmt: skip
+    s.given("q_c", "the cross wall's weight per square inch of its face", Q_(da.cross_q, "psi"),
+            source="its lining's layers and densities")  # fmt: skip
+    s.let("G_3", "the cross wall bonded in: one wall's thickness b of it, the jamb's full height",
+          "q_c*b*(h_s + Z)", "lbf",
+          source=BONDED)  # fmt: skip
+    s.let("ΣV", "the vertical load on the jamb's base", "N + G_1 + G_2 + G_3", "lbf")
+    s.let("x_R", "where the resultant meets the base, in from the door's edge",
+          "(N*x_p + G_1*e/2 + G_2*(d + e)/2 + G_3*(e - b_c/2) + H*h_s)/ΣV", "in",
+          source="moments about the door's edge at the base: the thrust carries the resultant "
+          "away from the door")  # fmt: skip
+
+
+def door_jamb(da: DoorArchInputs) -> Sheet:
+    """The jamb as a buttress: the arch's least thrust and its load, with the jamb's own weight,
+    the wall over it and a cross wall bonded into its far end, give a resultant at the jamb's base
+    that must lie within it (the safe theorem), and in its middle third for no tension."""
+    s = Sheet("frame.door-jamb", "The door's jamb holds the arch's thrust",
+              reference=f"{ARCH_STATICS}; {MINIMUM_THRUST}; {NO_TENSION}")  # fmt: skip
+    _door_arch(s, da)
+    _jamb_base(s, da)
+    s.require("x_R", "<=", "e")
+    s.let("x_0", "the door's edge", "0*e", "in")
+    s.require("x_R", ">=", "x_0")
+    s.let("x_3", "the far edge of the base's middle third", "2*e/3", "in", source=NO_TENSION)
+    s.require("x_R", "<=", "x_3", level="warning")
+    s.lever("e", Q_(2, "in"), Q_(240, "in"))
+    return s
+
+
+def door_slide(da: DoorArchInputs, mu: float, source: str) -> Sheet:
+    """Sliding at the springing: the arch's least thrust over its vertical load there must not
+    pass the friction between brick units (BIA: stable if the resultant's angle to the joint's
+    normal is under the angle of friction). The jamb's base carries more weight for the same
+    thrust, so the springing's level joint governs."""
+    s = Sheet("frame.door-slide", "The door's arch doesn't slide at its springing",
+              reference=f"{source}; {MINIMUM_THRUST}")  # fmt: skip
+    _door_arch(s, da)
+    s.let("μ_need", "the friction the springing's level joint needs", "H/N",
+          source="the resultant's angle to the joint's normal: tan⁻¹(H/N)")  # fmt: skip
+    s.given("μ", "friction between brick masonry units", mu, source=source)
+    s.require("μ_need", "<=", "μ")
+    return s
+
+
+def steel_heat(hot: HotSteel, table_top: float, service: float, service_source: str) -> Sheet:
+    """The frame steel's temperature against the sourced range: AISC's table of E(T) ends at
+    1,400 °F (past it nothing sourced gives the steel's stiffness: refuse), and Giles keeps carbon
+    steel at or under 600 °F in continuous service (AISC's table is for fire, a short event)."""
+    s = Sheet(
+        "frame.steel-heat",
+        "The frame steel's temperature against its sourced range",
+        reference=f"{hot.source}; {service_source}; steel-design.md §S3",
+    )
+    s.given("T_s", "the steel's temperature", Q_(hot.temperature, "degF"), "degF", source=hot.where)
+    s.given("T_table", "hottest in AISC Table A-4.2.1's E(T) column", Q_(table_top, "degF"), "degF",
+            source=hot.source)  # fmt: skip
+    s.given("T_service", "hottest for carbon steel held hot (Giles)", Q_(service, "degF"), "degF",
+            source=service_source)  # fmt: skip
+    s.require("T_s", "<=", "T_table")
+    s.require("T_s", "<=", "T_service", level="warning")
     return s
 
 
@@ -721,20 +1157,23 @@ def flat_rods(
 
 
 __all__ = [
+    "AngleSection",
     "ArchInputs",
     "CatenaryLayer",
     "DomeInputs",
+    "HotSteel",
     "Layer",
     "Springs",
     "buttress_bending",
     "catenary_feet",
     "checked_range",
+    "dome_buttress",
     "dome_checked_range",
     "dome_factor",
     "dome_heated",
     "dome_hot_line",
     "dome_rise",
-    "dome_steel",
+    "dome_rod",
     "dome_thickest",
     "flat_friction",
     "flat_ifb_top",
@@ -746,4 +1185,6 @@ __all__ = [
     "rise_rule",
     "rod_stress",
     "skewback_on_wall",
+    "steel_heat",
+    "thrust_through_steel",
 ]

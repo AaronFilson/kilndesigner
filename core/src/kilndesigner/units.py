@@ -81,23 +81,30 @@ _DIMENSION_NAMES = {
     "[mass] / [time] ** 2": "spring rate (force per length)",
     "[]": "angle",
     "[length] ** 3 / [time]": "flow (volume per time)",
+    "[temperature] / [time]": "heating rate (temperature per time)",
+    "[time]": "time",
+    "[length] ** 2 / [time] ** 2 / [temperature]": "specific heat",
 }
 
 
 class QuantityField:
     """Pydantic metadata for a quantity of one dimension, read from and written as text."""
 
-    def __init__(self, dimension: str, example: str) -> None:
+    def __init__(self, dimension: str, example: str, name: str | None = None) -> None:
         self.dimension = dimension
         self.example = example
+        self.name = name or _DIMENSION_NAMES[dimension]
 
     def validate(self, value: Any) -> Quantity:
         if isinstance(value, pint.Quantity):
             if not value.check(self.dimension):
-                raise UnitError(f"{value} is not a {_DIMENSION_NAMES[self.dimension]}")
+                raise UnitError(f"{value} is not a {self.name}")
             return value
         if isinstance(value, str):
-            return parse_quantity(value, self.dimension)
+            quantity = parse_quantity(value)
+            if not quantity.check(self.dimension):
+                raise UnitError(f"{value!r} is not a {self.name}")
+            return quantity
         if isinstance(value, int | float):
             raise UnitError(f"{value} has no unit; write it as, for example, '{self.example}'")
         raise UnitError(f"{value!r} is not a quantity")
@@ -113,10 +120,9 @@ class QuantityField:
     def __get_pydantic_json_schema__(
         self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
     ) -> JsonSchemaValue:
-        name = _DIMENSION_NAMES[self.dimension]
         return {
             "type": "string",
-            "description": f"A {name} with a unit, for example '{self.example}'",
+            "description": f"A {self.name} with a unit, for example '{self.example}'",
             "examples": [self.example],
         }
 
@@ -135,4 +141,10 @@ Density = Annotated[pint.Quantity, QuantityField("[mass] / [length] ** 3", "2.6 
 MassPrice = Annotated[pint.Quantity, QuantityField("[currency] / [mass]", "1.02 USD/lb")]
 SpringRate = Annotated[pint.Quantity, QuantityField("[mass] / [time] ** 2", "283 lbf/in")]
 Angle = Annotated[pint.Quantity, QuantityField("[]", "20 degree")]
+Share = Annotated[pint.Quantity, QuantityField("[]", "5 percent", "share (a percentage)")]
 Flow = Annotated[pint.Quantity, QuantityField("[length] ** 3 / [time]", "2 gallon/hour")]
+Rate = Annotated[pint.Quantity, QuantityField("[temperature] / [time]", "200 delta_degF/hour")]
+Duration = Annotated[pint.Quantity, QuantityField("[time]", "30 minute")]
+SpecificHeat = Annotated[
+    pint.Quantity, QuantityField("[length] ** 2 / [time] ** 2 / [temperature]", "1.0 kJ/(kg*K)")
+]

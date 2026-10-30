@@ -17,6 +17,9 @@ dependencies = [
     "typst>=0.13",
     "cantera>=3.2",
     "xlsxwriter>=3.2",
+    # Firing simulation results: Parquet files, queried with DuckDB (ADR 0007)
+    "pyarrow>=21",
+    "duckdb>=1.4",
 ]
 
 [build-system]

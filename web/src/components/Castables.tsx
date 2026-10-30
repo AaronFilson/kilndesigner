@@ -52,7 +52,7 @@ function Mix({ c }: { c: CastableReport }) {
             ["Conductivity (estimated)", m.conductivity.join("; ")],
             ["Service limit", m.service_limit ?? "not sourced: test it"],
             ["Placed in the lining", c.placed],
-            ["Batches to mix", c.batches > 0 ? `${c.batches}, with 10 % to spare` : null],
+            ["Batches to mix", c.batches > 0 ? `${c.batches}, with ${c.allowance} to spare` : null],
           ] as [string, string | null | undefined][]
         )
           .filter((row): row is [string, string] => row[1] != null)

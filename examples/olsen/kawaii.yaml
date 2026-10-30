@@ -22,11 +22,14 @@
 # engine sizes it. The arches are held by masonry (buttressed): each chamber's arch spans front to
 # back and throws its thrust onto the common wall, with bracing only on the dogi and the front
 # chamber (p.95, p.97).
-# Not modelled: the engine's arch spans the width, so it is laid across the 84 in with the same
-# springline and crown; held by masonry, it gets no steel. The front bracing isn't sized. The
-# doors are in a side wall, a stoke hole in each one's
-# bricking (Fig 4-46); a sprung arch here springs from the side walls, so the door is put in the
-# front wall. The flues, 7 × 10 in between chambers and 9 × 10 in out of the last (p.97,
+# The doors, one per chamber in a side wall (Figs 4-45, 4-46), have no printed size (p.97, its
+# text and photos checked on the page image 2026-10-30): each is
+# taken as the Bidai kiln's, 20 in wide at the chamber's front (Fig 4-36), and as tall as the
+# engine lays a door in a side wall, to the springline, 44 in. What spans their heads isn't
+# visible in the photos: they are arched, as the doors of Olsen's other built kilns are
+# (door-openings.md).
+# Not modelled: held by masonry, the arches get no steel. The front bracing isn't sized. The stoke
+# hole in each door's bricking (Fig 4-46) is left out. The flues, 7 × 10 in between chambers and 9 × 10 in out of the last (p.97,
 # Fig 4-48), aren't counted in the book, so the exit flue is the engine's. The floor's loss into
 # the ground (the engine doesn't work it out), the earth-mix plaster outside and the firebox's
 # side stoke holes are left out.
@@ -48,8 +51,13 @@ roof:
   buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
 loading:
   type: door
-  face: front
+  face: right # a side wall (Figs 4-45, 4-46); which side isn't said: the Bidai kiln's
   door: bricked
+  opening:
+    width: 20 in # not printed: the Bidai kiln's (Fig 4-36), its floor plan "almost exactly" this
+    height: 44 in # not printed: to the springline, as tall as the engine lays a side door
+    across: -13.5 in # at each chamber's front, as the Bidai kiln's (Fig 4-36)
+    each_chamber: true # a doorway per chamber (Figs 4-45, 4-46)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield # local firebrick, grade not given

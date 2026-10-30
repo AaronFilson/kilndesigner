@@ -15,7 +15,10 @@ from kilndesigner.build import DRAWINGS, build_design
 from kilndesigner.castable import CastableError
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
-from kilndesigner.units import UnitError
+from kilndesigner.results import write_run
+from kilndesigner.simulation import FiringResult, SimulationError, switch_over_chart
+from kilndesigner.simulation import simulate as simulate_firing
+from kilndesigner.units import UnitError, parse_quantity, si
 
 app = typer.Typer(no_args_is_help=True, help="Design kilns from YAML design files.")
 
@@ -33,7 +36,7 @@ for stream in (sys.stdout, sys.stderr):
 def _load(path: Path) -> Kiln:
     try:
         return load_design(path)
-    except (ValidationError, UnitError) as e:
+    except ValidationError as e:  # pydantic wraps a UnitError in this too
         typer.echo(f"{path}: the design is not valid\n{e}", err=True)
         raise typer.Exit(code=2) from e
 
@@ -150,6 +153,75 @@ def compare(
     for label in labels:
         cells = (r.get(label, "—").ljust(w) for (_, r), w in zip(columns, widths, strict=True))
         typer.echo(label.ljust(width) + "".join(cells))
+
+
+def firing_summary(result: FiringResult) -> str:
+    lines = [
+        f"{result.name}: simulated firing",
+        f"  Heat:             {result.heat}",
+        f"  Firing time:      {result.duration}"
+        + ("" if result.completed else " (stopped before the schedule's end)"),
+        f"  Reached:          {result.reached_c:.0f} °C of {result.target_c:.0f} °C",
+        f"  Schedule kept:    {'yes' if result.held else 'no: the heat falls behind'}",
+        f"  Heat put in:      {result.energy_kwh:.1f} kWh "
+        f"(walls {result.walls_kwh:.1f}, ware {result.ware_kwh:.1f}; shell lost "
+        f"{result.shell_kwh:.1f})",
+    ]
+    if result.electricity_kwh:
+        lines.append(f"  Electricity:      {result.electricity_kwh:.1f} kWh")
+    if result.fuel_kwh:
+        gallons = f" ({result.propane_gallons:.1f} gal propane)" if result.propane_gallons else ""
+        lines.append(f"  Fuel burned:      {result.fuel_kwh:.1f} kWh{gallons}")
+    if result.cost is not None:
+        lines.append(f"  Cost:             {result.cost}")
+    lines.extend(f"  [{f.level}] {f.message}" for f in result.findings)
+    return "\n".join(lines)
+
+
+@app.command()
+def simulate(
+    design: DesignPath,
+    out: Annotated[Path, typer.Option(help="Folder for the results")] = Path("out/firing"),
+    switch_over: Annotated[
+        str | None,
+        typer.Option(help="A hybrid's hand-over to the burners, for example '1650 degF'"),
+    ] = None,
+    chart: Annotated[
+        bool, typer.Option(help="Also chart a hybrid's cost and time against its hand-over")
+    ] = False,
+) -> None:
+    """Simulate a firing along the design's schedule; write Parquet results (ADR 0007)."""
+    kiln = _load(design)
+    try:
+        switch_c = si(parse_quantity(switch_over, "[temperature]"), "degC") if switch_over else None
+        run = simulate_firing(kiln, switch_over_c=switch_c)
+        written = write_run(run, out, run_id=design.stem)
+        if chart:
+            c = switch_over_chart(kiln)
+            path = out / "switchover.json"
+            path.write_text(c.model_dump_json(indent=2), encoding="utf-8")
+            written.append(path)
+    except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
+        typer.echo(f"{design}: {e}", err=True)
+        raise typer.Exit(code=2) from e
+    typer.echo(firing_summary(run.result))
+    if chart:
+        typer.echo("  Hand-over   time     cost")
+        for p in c.points:  # pyright: ignore[reportPossiblyUnboundVariable]
+            typer.echo(
+                f"  {p.switch_over_f:6.0f} °F  {p.duration_h:5.1f} h  ${p.cost_usd:,.2f}"
+                + ("" if p.completed else "  (stalls)")
+                + (
+                    f"  (elements stall; burners from {p.handed_over_c * 1.8 + 32:.0f} °F)"
+                    if p.elements_stalled and p.handed_over_c is not None
+                    else ""
+                )
+            )
+        for s in c.working[1:]:  # pyright: ignore[reportPossiblyUnboundVariable]
+            typer.echo(f"  {s.name}: {s.value}")
+        for f in c.findings:  # pyright: ignore[reportPossiblyUnboundVariable]
+            typer.echo(f"  [{f.level}] {f.message}")
+    typer.echo("Wrote " + ", ".join(str(p) for p in written))
 
 
 @app.command()

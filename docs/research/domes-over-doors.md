@@ -401,6 +401,10 @@ Thrust and steel:
 - Band or ring sizes (section, spacing, tension) for domed kilns. Sources say only "iron bands",
   "one steel band", "a steel ring or several rounds of fencing wire", or bonts "about twelve
   inches apart".
+- Update 2026-10-30: the engine now sizes the dome's steel itself from the sliced thrust of
+  §D4 (angle along each bearing wall checked by AISC 360-16 F10 at the steel's temperature, rods
+  across the door's head and the back): `steel-design.md` §S4. That is a derived method from
+  sourced steel rules, not a maker's band size, which is still not found.
 
 ---
 

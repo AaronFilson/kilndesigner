@@ -135,7 +135,7 @@ def test_castables_are_bought_by_the_pound_only_for_mixes_the_lining_uses() -> N
     kiln = Kiln.model_validate(data)
     mix = kiln.castable("foamed-mulcoa")
     assert mix is not None
-    placed = 2 * analyse_mix(kiln, mix).cast_volume_m3  # 2 batches, 3 with 10 % for waste
+    placed = 2 * analyse_mix(kiln, mix).cast_volume_m3  # 2 batches, 3 with 5 % for waste
     reports = castable_reports(kiln, heat_loss(kiln), None, {"foamed-mulcoa": placed})
     bom = bill_of_materials(kiln, NO_MASONRY, None, castables=reports)
     assert [(line.item, line.buy, line.cost) for line in bom.lines] == [

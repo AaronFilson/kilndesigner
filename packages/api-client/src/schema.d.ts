@@ -216,6 +216,107 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/simulations/{key}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Simulation */
+        get: operations["get_simulation_api_simulations__key__get"];
+        put?: never;
+        /**
+         * Start Simulation
+         * @description Simulate a firing of a design version, by its build key. A finished run is returned.
+         */
+        post: operations["start_simulation_api_simulations__key__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/simulations/{key}/result": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Simulation Result
+         * @description The firing's summary, with its working and findings (every step's point is included).
+         */
+        get: operations["simulation_result_api_simulations__key__result_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/simulations/{key}/series": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Simulation Series
+         * @description The firing through time, read from Parquet with DuckDB, thinned to ``max_points``.
+         */
+        get: operations["simulation_series_api_simulations__key__series_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/simulations/{key}/heatmap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Simulation Heatmap
+         * @description Each wall's temperatures through its thickness and through time, for the 3D heatmap.
+         */
+        get: operations["simulation_heatmap_api_simulations__key__heatmap_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/simulations/{key}/switchover": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Simulation Switchover
+         * @description A hybrid's firing time and cost against its hand-over temperature.
+         */
+        get: operations["simulation_switchover_api_simulations__key__switchover_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/builds/{key}/files/{name}": {
         parameters: {
             query?: never;
@@ -333,6 +434,9 @@ export interface components {
             placed: string;
             /** Batches */
             batches: number;
+            /** Allowance */
+            allowance: string;
+            allowance_step: components["schemas"]["Step"];
             /** Totals */
             totals: components["schemas"]["IngredientTotal"][];
             /** Layers */
@@ -584,6 +688,22 @@ export interface components {
         };
         /** @enum {string} */
         Face: "left" | "right" | "back" | "front" | "floor" | "roof";
+        /**
+         * FaceProfile
+         * @description Where a face's cells sit, for the Parquet file and the heatmap.
+         */
+        FaceProfile: {
+            /** Face */
+            face: string;
+            /** Depths M */
+            depths_m: number[];
+            /** Layers */
+            layers: string[];
+            /** Inside Area M2 */
+            inside_area_m2: number;
+            /** Outside Area M2 */
+            outside_area_m2: number;
+        };
         /** FaceResult */
         FaceResult: {
             face: components["schemas"]["Face"];
@@ -643,6 +763,92 @@ export interface components {
             full_fire_btu_hr: number;
             /** Draft */
             draft: string[];
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+        };
+        /**
+         * FiringPoint
+         * @description The firing at one moment. Powers are averages over the step before it, in kW.
+         */
+        FiringPoint: {
+            /** Time H */
+            time_h: number;
+            /** Chamber C */
+            chamber_c: number;
+            /** Setpoint C */
+            setpoint_c: number;
+            /** Heat Kw */
+            heat_kw: number;
+            /** Available Kw */
+            available_kw: number;
+            /** Electric Kw */
+            electric_kw: number;
+            /** Fuel Kw */
+            fuel_kw: number;
+            /** Walls Kw */
+            walls_kw: number;
+            /** Ware Kw */
+            ware_kw: number;
+            /** Shell Kw */
+            shell_kw: number;
+            /** Energy Kwh */
+            energy_kwh: number;
+            /** Electricity Kwh */
+            electricity_kwh: number;
+            /** Fuel Kwh */
+            fuel_kwh: number;
+            /** Cost Usd */
+            cost_usd: number | null;
+            /** Hottest Shell C */
+            hottest_shell_c: number;
+        };
+        /**
+         * FiringResult
+         * @description The summary of one simulated firing, with its working.
+         */
+        FiringResult: {
+            /** Name */
+            name: string;
+            /** Heat */
+            heat: string;
+            /** Switch Over C */
+            switch_over_c: number | null;
+            /** Reached C */
+            reached_c: number;
+            /** Target C */
+            target_c: number;
+            /** Duration H */
+            duration_h: number;
+            /** Duration */
+            duration: string;
+            /** Held */
+            held: boolean;
+            /** Completed */
+            completed: boolean;
+            /** Electricity Kwh */
+            electricity_kwh: number;
+            /** Fuel Kwh */
+            fuel_kwh: number;
+            /** Propane Gallons */
+            propane_gallons: number | null;
+            /** Energy Kwh */
+            energy_kwh: number;
+            /** Walls Kwh */
+            walls_kwh: number;
+            /** Ware Kwh */
+            ware_kwh: number;
+            /** Shell Kwh */
+            shell_kwh: number;
+            /** Cost Usd */
+            cost_usd: number | null;
+            /** Cost */
+            cost: string | null;
+            /** Points */
+            points: components["schemas"]["FiringPoint"][];
+            /** Faces */
+            faces: components["schemas"]["FaceProfile"][];
             /** Working */
             working: components["schemas"]["Step"][];
             /** Findings */
@@ -880,6 +1086,11 @@ export interface components {
             cut_list: components["schemas"]["CutLine"][];
             /** Findings */
             findings: components["schemas"]["Finding"][];
+            /**
+             * Working
+             * @default []
+             */
+            working: components["schemas"]["Step"][];
         };
         /**
          * Member
@@ -1033,6 +1244,28 @@ export interface components {
             /** Why */
             why: string;
         };
+        /**
+         * Simulation
+         * @description A simulated firing's status. When done, its results are under /simulations/{key}/…
+         */
+        Simulation: {
+            /** Key */
+            key: string;
+            status: components["schemas"]["BuildStatus"];
+            /** Summary */
+            summary: {
+                [key: string]: unknown;
+            } | null;
+            /** Error */
+            error: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Finished At */
+            finished_at: string | null;
+        };
         /** Step */
         Step: {
             /** Name */
@@ -1062,6 +1295,48 @@ export interface components {
             meets_demand: boolean;
             /** Source */
             source: string;
+        };
+        /**
+         * SwitchOverChart
+         * @description A hybrid's firing time and cost against where it hands over from elements to burners.
+         */
+        SwitchOverChart: {
+            /** Points */
+            points: components["schemas"]["SwitchPoint"][];
+            /** Cheapest C */
+            cheapest_c: number;
+            /** Fastest C */
+            fastest_c: number;
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+        };
+        /** SwitchPoint */
+        SwitchPoint: {
+            /** Switch Over C */
+            switch_over_c: number;
+            /** Switch Over F */
+            switch_over_f: number;
+            /** Duration H */
+            duration_h: number;
+            /** Cost Usd */
+            cost_usd: number;
+            /** Electricity Kwh */
+            electricity_kwh: number;
+            /** Propane Gallons */
+            propane_gallons: number;
+            /** Held */
+            held: boolean;
+            /** Completed */
+            completed: boolean;
+            /** Handed Over C */
+            handed_over_c?: number | null;
+            /**
+             * Elements Stalled
+             * @default false
+             */
+            elements_stalled: boolean;
         };
         /**
          * Template
@@ -1112,6 +1387,26 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * WallHeatmap
+         * @description Each face's temperatures through time: temperatures[t][face][node], °C.
+         */
+        WallHeatmap: {
+            /** Times H */
+            times_h: number[];
+            /** Walls */
+            walls: string[];
+            /** Depths M */
+            depths_m: number[][];
+            /** Layers */
+            layers: string[][];
+            /** Temperatures */
+            temperatures: number[][][];
+            /** Min C */
+            min_c: number;
+            /** Max C */
+            max_c: number;
         };
     };
     responses: never;
@@ -1544,6 +1839,196 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Report"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    get_simulation_api_simulations__key__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Simulation"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    start_simulation_api_simulations__key__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Simulation"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    simulation_result_api_simulations__key__result_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FiringResult"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    simulation_series_api_simulations__key__series_get: {
+        parameters: {
+            query?: {
+                max_points?: number;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FiringPoint"][];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    simulation_heatmap_api_simulations__key__heatmap_get: {
+        parameters: {
+            query?: {
+                max_times?: number;
+            };
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["WallHeatmap"];
+                };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    simulation_switchover_api_simulations__key__switchover_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SwitchOverChart"];
                 };
             };
             /** @description The design is not valid */

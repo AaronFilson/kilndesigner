@@ -7,6 +7,7 @@ import { fileUrl, hasReport, useBuild, useLayout, useReport, useStartBuild } fro
 import type { KilnDocument } from "../design";
 import { Castables } from "./Castables";
 import { Drawings } from "./Drawings";
+import { FiringPanel } from "./FiringPanel";
 import { KilnViewer } from "./KilnViewer";
 import { Materials } from "./Materials";
 import { ReportView } from "./ReportView";
@@ -20,7 +21,7 @@ const DOWNLOADS: [string, string][] = [
   ["report.json", "Report (JSON)"],
 ];
 
-type Tab = "model" | "drawings" | "materials" | "castables" | "report";
+type Tab = "model" | "drawings" | "materials" | "castables" | "firing" | "report";
 
 /** "Report", or "Report (1 error, 5 warnings)". */
 export function reportTabLabel(report: Report | undefined): string {
@@ -33,6 +34,8 @@ export function reportTabLabel(report: Report | undefined): string {
   const shown = parts.filter(([n]) => n > 0).map(([n, what]) => `${n} ${what}${n === 1 ? "" : "s"}`);
   return shown.length ? `Report (${shown.join(", ")})` : "Report";
 }
+
+const needsReport = (tab: Tab) => tab !== "model" && tab !== "drawings" && tab !== "firing";
 
 /** The design being edited, and a way to change it from the model (a port moved). */
 interface Editing {
@@ -49,6 +52,7 @@ function Built({ build, draft, onEdit }: { build: Build } & Editing) {
     ["drawings", "Drawings"],
     ["materials", "Materials"],
     ...(report.data?.castables.length ? [["castables", "Castables"] as [Tab, string]] : []),
+    ["firing", "Firing"],
     ["report", reportTabLabel(report.data)],
   ];
   const downloads = DOWNLOADS.filter(([file]) => build.files.includes(file));
@@ -82,11 +86,10 @@ function Built({ build, draft, onEdit }: { build: Build } & Editing) {
             <p className="muted">This build has no 3D model.</p>
           ))}
         {tab === "drawings" && <Drawings build={build} />}
+        {tab === "firing" && <FiringPanel simKey={build.key} />}
         {/* A query that isn't run counts as pending, so a build without a report says so */}
-        {tab !== "model" && tab !== "drawings" && !hasReport(build) && (
-          <p className="muted">This build has no report.</p>
-        )}
-        {tab !== "model" && tab !== "drawings" && hasReport(build) && report.isPending && (
+        {needsReport(tab) && !hasReport(build) && <p className="muted">This build has no report.</p>}
+        {needsReport(tab) && hasReport(build) && report.isPending && (
           <p className="muted">Loading the report…</p>
         )}
         {tab === "materials" && report.data && <Materials report={report.data} />}

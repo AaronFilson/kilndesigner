@@ -525,6 +525,271 @@
         }
       }
     },
+    "/api/simulations/{key}": {
+      "post": {
+        "summary": "Start Simulation",
+        "description": "Simulate a firing of a design version, by its build key. A finished run is returned.",
+        "operationId": "start_simulation_api_simulations__key__post",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Simulation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Simulation",
+        "operationId": "get_simulation_api_simulations__key__get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Simulation"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/simulations/{key}/result": {
+      "get": {
+        "summary": "Simulation Result",
+        "description": "The firing's summary, with its working and findings (every step's point is included).",
+        "operationId": "simulation_result_api_simulations__key__result_get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FiringResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/simulations/{key}/series": {
+      "get": {
+        "summary": "Simulation Series",
+        "description": "The firing through time, read from Parquet with DuckDB, thinned to ``max_points``.",
+        "operationId": "simulation_series_api_simulations__key__series_get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          },
+          {
+            "name": "max_points",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 20000,
+              "minimum": 2,
+              "default": 500,
+              "title": "Max Points"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FiringPoint"
+                  },
+                  "title": "Response Simulation Series Api Simulations  Key  Series Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/simulations/{key}/heatmap": {
+      "get": {
+        "summary": "Simulation Heatmap",
+        "description": "Each wall's temperatures through its thickness and through time, for the 3D heatmap.",
+        "operationId": "simulation_heatmap_api_simulations__key__heatmap_get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          },
+          {
+            "name": "max_times",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 2000,
+              "minimum": 2,
+              "default": 200,
+              "title": "Max Times"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WallHeatmap"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/simulations/{key}/switchover": {
+      "get": {
+        "summary": "Simulation Switchover",
+        "description": "A hybrid's firing time and cost against its hand-over temperature.",
+        "operationId": "simulation_switchover_api_simulations__key__switchover_get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwitchOverChart"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/builds/{key}/files/{name}": {
       "get": {
         "summary": "Build File",
@@ -842,6 +1107,13 @@
             "type": "integer",
             "title": "Batches"
           },
+          "allowance": {
+            "type": "string",
+            "title": "Allowance"
+          },
+          "allowance_step": {
+            "$ref": "#/components/schemas/Step"
+          },
           "totals": {
             "items": {
               "$ref": "#/components/schemas/IngredientTotal"
@@ -901,6 +1173,8 @@
           "mix",
           "placed",
           "batches",
+          "allowance",
+          "allowance_step",
           "totals",
           "layers",
           "first_firing",
@@ -1494,6 +1768,46 @@
           "roof"
         ]
       },
+      "FaceProfile": {
+        "properties": {
+          "face": {
+            "type": "string",
+            "title": "Face"
+          },
+          "depths_m": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Depths M"
+          },
+          "layers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "inside_area_m2": {
+            "type": "number",
+            "title": "Inside Area M2"
+          },
+          "outside_area_m2": {
+            "type": "number",
+            "title": "Outside Area M2"
+          }
+        },
+        "type": "object",
+        "required": [
+          "face",
+          "depths_m",
+          "layers",
+          "inside_area_m2",
+          "outside_area_m2"
+        ],
+        "title": "FaceProfile",
+        "description": "Where a face's cells sit, for the Parquet file and the heatmap."
+      },
       "FaceResult": {
         "properties": {
           "face": {
@@ -1715,6 +2029,256 @@
           "findings"
         ],
         "title": "FireDesign"
+      },
+      "FiringPoint": {
+        "properties": {
+          "time_h": {
+            "type": "number",
+            "title": "Time H"
+          },
+          "chamber_c": {
+            "type": "number",
+            "title": "Chamber C"
+          },
+          "setpoint_c": {
+            "type": "number",
+            "title": "Setpoint C"
+          },
+          "heat_kw": {
+            "type": "number",
+            "title": "Heat Kw"
+          },
+          "available_kw": {
+            "type": "number",
+            "title": "Available Kw"
+          },
+          "electric_kw": {
+            "type": "number",
+            "title": "Electric Kw"
+          },
+          "fuel_kw": {
+            "type": "number",
+            "title": "Fuel Kw"
+          },
+          "walls_kw": {
+            "type": "number",
+            "title": "Walls Kw"
+          },
+          "ware_kw": {
+            "type": "number",
+            "title": "Ware Kw"
+          },
+          "shell_kw": {
+            "type": "number",
+            "title": "Shell Kw"
+          },
+          "energy_kwh": {
+            "type": "number",
+            "title": "Energy Kwh"
+          },
+          "electricity_kwh": {
+            "type": "number",
+            "title": "Electricity Kwh"
+          },
+          "fuel_kwh": {
+            "type": "number",
+            "title": "Fuel Kwh"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "hottest_shell_c": {
+            "type": "number",
+            "title": "Hottest Shell C"
+          }
+        },
+        "type": "object",
+        "required": [
+          "time_h",
+          "chamber_c",
+          "setpoint_c",
+          "heat_kw",
+          "available_kw",
+          "electric_kw",
+          "fuel_kw",
+          "walls_kw",
+          "ware_kw",
+          "shell_kw",
+          "energy_kwh",
+          "electricity_kwh",
+          "fuel_kwh",
+          "cost_usd",
+          "hottest_shell_c"
+        ],
+        "title": "FiringPoint",
+        "description": "The firing at one moment. Powers are averages over the step before it, in kW."
+      },
+      "FiringResult": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "heat": {
+            "type": "string",
+            "title": "Heat"
+          },
+          "switch_over_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Switch Over C"
+          },
+          "reached_c": {
+            "type": "number",
+            "title": "Reached C"
+          },
+          "target_c": {
+            "type": "number",
+            "title": "Target C"
+          },
+          "duration_h": {
+            "type": "number",
+            "title": "Duration H"
+          },
+          "duration": {
+            "type": "string",
+            "title": "Duration"
+          },
+          "held": {
+            "type": "boolean",
+            "title": "Held"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          },
+          "electricity_kwh": {
+            "type": "number",
+            "title": "Electricity Kwh"
+          },
+          "fuel_kwh": {
+            "type": "number",
+            "title": "Fuel Kwh"
+          },
+          "propane_gallons": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Propane Gallons"
+          },
+          "energy_kwh": {
+            "type": "number",
+            "title": "Energy Kwh"
+          },
+          "walls_kwh": {
+            "type": "number",
+            "title": "Walls Kwh"
+          },
+          "ware_kwh": {
+            "type": "number",
+            "title": "Ware Kwh"
+          },
+          "shell_kwh": {
+            "type": "number",
+            "title": "Shell Kwh"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/FiringPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "faces": {
+            "items": {
+              "$ref": "#/components/schemas/FaceProfile"
+            },
+            "type": "array",
+            "title": "Faces"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "heat",
+          "switch_over_c",
+          "reached_c",
+          "target_c",
+          "duration_h",
+          "duration",
+          "held",
+          "completed",
+          "electricity_kwh",
+          "fuel_kwh",
+          "propane_gallons",
+          "energy_kwh",
+          "walls_kwh",
+          "ware_kwh",
+          "shell_kwh",
+          "cost_usd",
+          "cost",
+          "points",
+          "faces",
+          "working",
+          "findings"
+        ],
+        "title": "FiringResult",
+        "description": "The summary of one simulated firing, with its working."
       },
       "FrameDesign": {
         "properties": {
@@ -2430,6 +2994,14 @@
             },
             "type": "array",
             "title": "Findings"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working",
+            "default": []
           }
         },
         "type": "object",
@@ -2907,6 +3479,68 @@
         ],
         "title": "Segment"
       },
+      "Simulation": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BuildStatus"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Summary"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "status",
+          "summary",
+          "error",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "Simulation",
+        "description": "A simulated firing's status. When done, its results are under /simulations/{key}/…"
+      },
       "Step": {
         "properties": {
           "name": {
@@ -2997,6 +3631,113 @@
           "source"
         ],
         "title": "SupplyCase"
+      },
+      "SwitchOverChart": {
+        "properties": {
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/SwitchPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "cheapest_c": {
+            "type": "number",
+            "title": "Cheapest C"
+          },
+          "fastest_c": {
+            "type": "number",
+            "title": "Fastest C"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "points",
+          "cheapest_c",
+          "fastest_c",
+          "working",
+          "findings"
+        ],
+        "title": "SwitchOverChart",
+        "description": "A hybrid's firing time and cost against where it hands over from elements to burners."
+      },
+      "SwitchPoint": {
+        "properties": {
+          "switch_over_c": {
+            "type": "number",
+            "title": "Switch Over C"
+          },
+          "switch_over_f": {
+            "type": "number",
+            "title": "Switch Over F"
+          },
+          "duration_h": {
+            "type": "number",
+            "title": "Duration H"
+          },
+          "cost_usd": {
+            "type": "number",
+            "title": "Cost Usd"
+          },
+          "electricity_kwh": {
+            "type": "number",
+            "title": "Electricity Kwh"
+          },
+          "propane_gallons": {
+            "type": "number",
+            "title": "Propane Gallons"
+          },
+          "held": {
+            "type": "boolean",
+            "title": "Held"
+          },
+          "completed": {
+            "type": "boolean",
+            "title": "Completed"
+          },
+          "handed_over_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Handed Over C"
+          },
+          "elements_stalled": {
+            "type": "boolean",
+            "title": "Elements Stalled",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "switch_over_c",
+          "switch_over_f",
+          "duration_h",
+          "cost_usd",
+          "electricity_kwh",
+          "propane_gallons",
+          "held",
+          "completed"
+        ],
+        "title": "SwitchPoint"
       },
       "Template": {
         "properties": {
@@ -3096,6 +3837,77 @@
           "created_at"
         ],
         "title": "VersionSummary"
+      },
+      "WallHeatmap": {
+        "properties": {
+          "times_h": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Times H"
+          },
+          "walls": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Walls"
+          },
+          "depths_m": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Depths M"
+          },
+          "layers": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "temperatures": {
+            "items": {
+              "items": {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              "type": "array"
+            },
+            "type": "array",
+            "title": "Temperatures"
+          },
+          "min_c": {
+            "type": "number",
+            "title": "Min C"
+          },
+          "max_c": {
+            "type": "number",
+            "title": "Max C"
+          }
+        },
+        "type": "object",
+        "required": [
+          "times_h",
+          "walls",
+          "depths_m",
+          "layers",
+          "temperatures",
+          "min_c",
+          "max_c"
+        ],
+        "title": "WallHeatmap",
+        "description": "Each face's temperatures through time: temperatures[t][face][node], °C."
       }
     }
   }

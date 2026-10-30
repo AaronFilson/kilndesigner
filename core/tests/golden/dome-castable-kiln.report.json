@@ -16,19 +16,19 @@
     ],
     "lines": [
       {
-        "buy": "441 bricks",
-        "cost": 3161.97,
+        "buy": "420 bricks",
+        "cost": 3011.4,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "441 bricks (300 whole, 100 cut into 124 pieces; 400 in the kiln plus 10% for breakage)",
+        "needed": "420 bricks (300 whole, 100 cut into 124 pieces; 400 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
       },
       {
-        "buy": "262 bricks",
-        "cost": 1634.88,
+        "buy": "250 bricks",
+        "cost": 1560.0,
         "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "needed": "262 bricks (190 whole, 48 cut into 70 pieces; 238 in the kiln plus 10% for breakage)",
+        "needed": "250 bricks (190 whole, 48 cut into 70 pieces; 238 in the kiln plus 5 % for breakage)",
         "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
         "source": "combustion-and-masonry.md §9 [S71]",
         "unit_price": "$6.24"
@@ -37,41 +37,68 @@
         "buy": "2 rolls",
         "cost": 300.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "needed": "72.9 ft² (1 in, 2 in thick; area plus 10% for trimming)",
+        "needed": "66.3 ft² (1 in, 2 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$150.00"
       },
       {
-        "buy": "8 bags",
-        "cost": 921.68,
+        "buy": "7 bags",
+        "cost": 806.4699999999999,
         "item": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "needed": "428 lb (3.97 ft³ placed, at the dried density, plus 10%)",
+        "needed": "383 lb (3.97 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 5 %)",
         "priced_as": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
         "source": "combustion-and-masonry.md §9 [S51]",
         "unit_price": "$115.21"
       },
       {
-        "buy": "1 burners",
-        "cost": 295.0,
+        "buy": "2 burners",
+        "cost": 590.0,
         "item": "Ransome B4 burner",
-        "needed": "1 burners at 8.5 psi, 263,917 BTU/hr each",
+        "needed": "2 burners at 2.2 psi, 131,958 BTU/hr each",
         "priced_as": "Ransome B4, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
         "unit_price": "$295.00"
       },
       {
-        "buy": "127 bricks",
-        "cost": 692.15,
+        "buy": "159 bricks",
+        "cost": 866.5500000000001,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "127 straights (with 5 % for cuts)",
+        "needed": "159 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
+      },
+      {
+        "buy": "37 ft",
+        "cost": null,
+        "item": "L4×4×1/4",
+        "needed": "33.3 ft (corner posts, buttresses along the dome's bearing walls, ring angles across the door's head and the back)",
+        "priced_as": null,
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "unit_price": null
+      },
+      {
+        "buy": "21 ft",
+        "cost": null,
+        "item": "¼ × 2 in flat bar",
+        "needed": "19.0 ft (bottom cross-members, front and back, bottom cross-members, sides)",
+        "priced_as": null,
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "unit_price": null
+      },
+      {
+        "buy": "11 ft",
+        "cost": null,
+        "item": "1/2-13 threaded rod",
+        "needed": "9.7 ft (tie rods)",
+        "priced_as": null,
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "unit_price": null
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 7005.68
+    "total": 7134.42
   },
   "castables": [],
   "chamber_volume": "26.4 ft³",
@@ -852,6 +879,72 @@
       "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
     },
     {
+      "check": null,
+      "level": "info",
+      "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
+      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 230.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]; castables.md §14"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The tool chose the fewest burners that carry the input (2 × Ransome B4). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+      "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+      "reference": null
+    },
+    {
       "check": {
         "cells": [
           {
@@ -1156,105 +1249,790 @@
           {
             "expr": null,
             "formula": null,
-            "label": "lbf",
-            "meaning": "the hot thrust along each wall",
+            "label": "in",
+            "meaning": "the bay: the buttress between posts",
             "offset": 0.0,
-            "scale": 0.22480894309971053,
-            "source": "each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
-            "symbol": "F",
+            "scale": 39.37007874015748,
+            "source": "the design: the bearing wall's outside length, and the posts along it",
+            "symbol": "ℓ",
             "text": null,
-            "unit": "force_pound",
-            "value": 5426.264389292251
+            "unit": "inch",
+            "value": 1.3208
           },
           {
-            "expr": "F/2",
-            "formula": "F/2",
+            "expr": "H*ℓ^2/8",
+            "formula": "H·ℓ²/8",
+            "label": "lbf⋅in",
+            "meaning": "bending moment, a simple beam between posts, the peak thrust all along",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "statics; the slices' peak thrust taken over the whole bay (cautious)",
+            "symbol": "M",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 1389.416651689604
+          },
+          {
+            "expr": "ℓ",
+            "formula": "ℓ",
+            "label": "in",
+            "meaning": "unbraced length, AISC L_b",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "L_b",
+            "text": null,
+            "unit": "in",
+            "value": 1.3208
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "L4×4×1/4's leg",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+            "symbol": "b",
+            "text": null,
+            "unit": "inch",
+            "value": 0.1016
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "L4×4×1/4's thickness",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+            "symbol": "t_a",
+            "text": null,
+            "unit": "inch",
+            "value": 0.00635
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in³",
+            "meaning": "L4×4×1/4's section modulus, geometric axis",
+            "offset": 0.0,
+            "scale": 61023.74409473229,
+            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+            "symbol": "S_x",
+            "text": null,
+            "unit": "inch ** 3",
+            "value": 1.6878675919999997e-05
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the steel's temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6)",
+            "symbol": "T_s",
+            "text": null,
+            "unit": "degF",
+            "value": 353.0254815344626
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "psi",
+            "meaning": "A36 yield stress, cold",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "F_y0",
+            "text": null,
+            "unit": "pound_force_per_square_inch",
+            "value": 248211262.55406108
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "psi",
+            "meaning": "steel's modulus, cold",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "E_0",
+            "text": null,
+            "unit": "pound_force_per_square_inch",
+            "value": 199947961501.88254
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "Fy(T)/Fy at T_s",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
+            "symbol": "k_y",
+            "text": null,
+            "unit": "",
+            "value": 1.0
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "E(T)/E at T_s",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
+            "symbol": "k_E",
+            "text": null,
+            "unit": "",
+            "value": 1.0
+          },
+          {
+            "expr": "k_y*F_y0",
+            "formula": "k_y·F_y0",
+            "label": "psi",
+            "meaning": "yield stress, hot",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": null,
+            "symbol": "F_y",
+            "text": null,
+            "unit": "psi",
+            "value": 248211262.55406108
+          },
+          {
+            "expr": "k_E*E_0",
+            "formula": "k_E·E_0",
+            "label": "psi",
+            "meaning": "modulus, hot",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": null,
+            "symbol": "E",
+            "text": null,
+            "unit": "psi",
+            "value": 199947961501.88254
+          },
+          {
+            "expr": "0.8*F_y*S_x",
+            "formula": "0.8·F_y·S_x",
+            "label": "lbf⋅in",
+            "meaning": "yield moment: 0.80 × the geometric one (F10)",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": null,
+            "symbol": "M_y",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 3351.5819682752226
+          },
+          {
+            "expr": "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
+            "formula": "0.58·E·b⁴·t_a/L_b²·(√(1 + 0.88·(L_b·t_a/b²)²) − 1)",
+            "label": "lbf⋅in",
+            "meaning": "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "M_cr",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 11575.75356479708
+          },
+          {
+            "expr": "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
+            "formula": "min((1.92 − 1.17·√(M_y/M_cr))·M_y, 1.5·M_y)",
+            "label": "lbf⋅in",
+            "meaning": "lateral-torsional buckling strength (F10-2)",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "M_ltb",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 4325.020189773676
+          },
+          {
+            "expr": "b/t_a",
+            "formula": "b/t_a",
+            "label": "",
+            "meaning": "leg slenderness",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": null,
+            "symbol": "λ",
+            "text": null,
+            "unit": "",
+            "value": 16.0
+          },
+          {
+            "expr": "0.54*sqrt(E/F_y)",
+            "formula": "0.54·√(E/F_y)",
+            "label": "",
+            "meaning": "compact limit (Table B4.1b, case 12)",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": null,
+            "symbol": "λ_p",
+            "text": null,
+            "unit": "",
+            "value": 15.326447729333763
+          },
+          {
+            "expr": "0.91*sqrt(E/F_y)",
+            "formula": "0.91·√(E/F_y)",
+            "label": "",
+            "meaning": "noncompact limit",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": null,
+            "symbol": "λ_r",
+            "text": null,
+            "unit": "",
+            "value": 25.827902654988378
+          },
+          {
+            "expr": "0.8*S_x",
+            "formula": "0.8·S_x",
+            "label": "in³",
+            "meaning": "section modulus to the toe: 0.80 S_x (F10)",
+            "offset": 0.0,
+            "scale": 61023.74409473229,
+            "source": null,
+            "symbol": "S_c",
+            "text": null,
+            "unit": "in**3",
+            "value": 1.3502940735999998e-05
+          },
+          {
+            "expr": "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))",
+            "formula": "F_y·S_c·(2.43 − 1.72·λ·√(F_y/E))",
+            "label": "lbf⋅in",
+            "meaning": "leg local buckling, noncompact leg (F10-6)",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "M_lb",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 4894.58988930187
+          },
+          {
+            "expr": "min(1.5*M_y, M_ltb, M_lb)",
+            "formula": "min(1.5·M_y, M_ltb, M_lb)",
+            "label": "lbf⋅in",
+            "meaning": "nominal moment: the least of F10-1, LTB and leg buckling",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "M_n",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 4325.020189773676
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "ASD safety factor for bending (F1)",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "Ω_b",
+            "text": null,
+            "unit": "",
+            "value": 1.67
+          },
+          {
+            "expr": "M_n/Ω_b",
+            "formula": "M_n/Ω_b",
+            "label": "lbf⋅in",
+            "meaning": "allowable moment, hot",
+            "offset": 0.0,
+            "scale": 8.850745791327187,
+            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+            "symbol": "M_a",
+            "text": null,
+            "unit": "lbf*in",
+            "value": 2589.832448966273
+          },
+          {
+            "expr": "M/S_x",
+            "formula": "M/S_x",
+            "label": "psi",
+            "meaning": "bending stress",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": null,
+            "symbol": "σ_b",
+            "text": null,
+            "unit": "psi",
+            "value": 82317870.09093805
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "psi",
+            "meaning": "allowed in steel that may run hot",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+            "symbol": "σ_allow",
+            "text": null,
+            "unit": "pound_force_per_square_inch",
+            "value": 82737087.51802036
+          }
+        ],
+        "id": "frame.dome-buttress",
+        "label": null,
+        "lever": {
+          "hi": 0.00016387063999999995,
+          "lo": 8.193531999999998e-07,
+          "step": null,
+          "symbol": "S_x"
+        },
+        "reference": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; steel-design.md §S4",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "M",
+            "level": "error",
+            "margin": "M = 12,297 lbf⋅in, 53.65 % of M_a = 22,922 lbf⋅in",
+            "op": "<=",
+            "right": "M_a"
+          },
+          {
+            "holds": true,
+            "left": "σ_b",
+            "level": "error",
+            "margin": "σ_b = 11,939 psi, 99.49 % of σ_allow = 12,000 psi",
+            "op": "<=",
+            "right": "σ_allow"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes while S_x ≥ 1.025 in³",
+        "status": "pass",
+        "title": "Buttress angle along the dome's bearing walls, L4×4×1/4, hot"
+      },
+      "level": "info",
+      "message": "The dome needs a frame: L4×4×1/4 angle along the tops of the left and right walls and round the springline, 4 posts, and 2 1/2-13 tie rods (946 lb on the busiest), the steel at about 176 °F. Fit it before the form comes out.",
+      "reference": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the slices' span: the walls either side of the door",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber and the door's wall",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 0.762
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the length of the walls the slices span",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 0.9144
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the dome's rise at its centre",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "this slice, in from the middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the slice that decides the check, of 21 from the middle to the end wall",
+            "symbol": "y",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0
+          },
+          {
+            "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+            "formula": "((S² + L²)/4 + h²)/(2·h)",
+            "label": "in",
+            "meaning": "the dome's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+            "symbol": "R",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "sqrt(R^2 - y^2)",
+            "formula": "√(R² − y²)",
+            "label": "in",
+            "meaning": "the slice's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "asin(S/(2*r))",
+            "formula": "asin(S/(2·r))",
+            "label": "°",
+            "meaning": "half the slice's angle",
+            "offset": 0.0,
+            "scale": 57.29577951308232,
+            "source": "a circular arch of radius r over the span S",
+            "symbol": "φ",
+            "text": null,
+            "unit": "degree",
+            "value": 0.4429110440736389
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 15394.571456932132
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_2",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0508
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_2",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 1256.69971076997
+          },
+          {
+            "expr": "sqrt((R + t_1)^2 - y^2) - r",
+            "formula": "√((R + t_1)² − y²) − r",
+            "label": "in",
+            "meaning": "layer 1, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_1",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+            "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+            "label": "in",
+            "meaning": "layer 2, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_2",
+            "text": null,
+            "unit": "in",
+            "value": 0.050799999999999956
+          },
+          {
+            "expr": "τ_1",
+            "formula": "τ_1",
+            "label": "in",
+            "meaning": "the ring, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "T",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+            "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 1's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_1",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 963.3756422998787
+          },
+          {
+            "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+            "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 2's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_2",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 56.019606820904244
+          },
+          {
+            "expr": "w_1 + w_2",
+            "formula": "w_1 + w_2",
+            "label": "lbf/ft",
+            "meaning": "the arch's weight per foot",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+            "symbol": "W",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1019.3952491207829
+          },
+          {
+            "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+            "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+            "label": "lbf/ft",
+            "meaning": "thrust, cold",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "three-hinged circular arch: moments about a springing",
+            "symbol": "H_c",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1113.0413438387639
+          },
+          {
+            "expr": "r + T",
+            "formula": "r + T",
+            "label": "in",
+            "meaning": "radius of the ring's outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_o",
+            "text": null,
+            "unit": "in",
+            "value": 0.9652000000000001
+          },
+          {
+            "expr": "r + T/2",
+            "formula": "r + T/2",
+            "label": "in",
+            "meaning": "radius of the ring's middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_m",
+            "text": null,
+            "unit": "in",
+            "value": 0.9271
+          },
+          {
+            "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+            "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+            "label": "in",
+            "meaning": "half-ring's centroid, in from the crown",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "x_bar",
+            "text": null,
+            "unit": "in",
+            "value": 0.2020906576117934
+          },
+          {
+            "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+            "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+            "label": "",
+            "meaning": "hot thrust ÷ cold thrust",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 5.724493537912173
+          },
+          {
+            "expr": "f*H_c",
+            "formula": "f·H_c",
+            "label": "lbf/ft",
+            "meaning": "thrust, hot, in a rigid frame",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "H",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 6371.597980234085
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the bay between posts",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "ℓ",
+            "text": null,
+            "unit": "inch",
+            "value": 1.3208
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the bays the busiest rod ties",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "statics: ½ for the corner posts alone (the door's head and the back)",
+            "symbol": "m",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": "H*ℓ*m",
+            "formula": "H·ℓ·m",
             "label": "lbf",
-            "meaning": "each tie: one across the door's head, one across the wall opposite",
+            "meaning": "load on the busiest rod, hot",
             "offset": 0.0,
             "scale": 0.22480894309971053,
             "source": null,
-            "symbol": "F_tie",
+            "symbol": "P",
             "text": null,
             "unit": "lbf",
-            "value": 2713.1321946461253
+            "value": 4207.803306146589
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in²",
+            "meaning": "1/2-13 rod's tensile stress area",
+            "offset": 0.0,
+            "scale": 1550.0031000062002,
+            "source": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]",
+            "symbol": "A_s",
+            "text": null,
+            "unit": "inch ** 2",
+            "value": 9.1548204e-05
+          },
+          {
+            "expr": "P/A_s",
+            "formula": "P/A_s",
+            "label": "psi",
+            "meaning": "stress in each rod",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": null,
+            "symbol": "σ",
+            "text": null,
+            "unit": "psi",
+            "value": 45962707.32025054
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "psi",
+            "meaning": "allowed in steel that may run hot",
+            "offset": 0.0,
+            "scale": 0.0001450377377302092,
+            "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+            "symbol": "σ_allow",
+            "text": null,
+            "unit": "pound_force_per_square_inch",
+            "value": 82737087.51802036
           }
         ],
-        "id": "frame.dome-steel",
-        "label": "W4",
-        "lever": null,
-        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)",
-        "requirements": [],
-        "rule": "No source sizes the steel for a dome: have it designed for H and F_tie.",
-        "rule_holds": false,
-        "rule_level": "warning",
-        "solve": null,
-        "status": "warning",
-        "title": "What the dome's steel must hold"
+        "id": "frame.dome-rod",
+        "label": null,
+        "lever": {
+          "hi": 0.00129032,
+          "lo": 6.4516e-06,
+          "step": null,
+          "symbol": "A_s"
+        },
+        "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; domes-over-doors.md §D4.1 step 4",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "σ",
+            "level": "error",
+            "margin": "σ = 6,666 psi, 55.55 % of σ_allow = 12,000 psi",
+            "op": "<=",
+            "right": "σ_allow"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes while A_s ≥ 0.07883 in²",
+        "status": "pass",
+        "title": "Ties across the dome's bearing walls, 1/2-13 rod, hot"
       },
-      "level": "warning",
-      "message": "The dome pushes out on the left and right walls with up to 437 lb per foot hot, 1220 lb along each, and a tie across the door's head and one across the wall opposite take 610 lb each. No source sizes the steel for a dome, so none is drawn: have it designed for these.",
-      "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)"
-    },
-    {
-      "check": null,
       "level": "info",
-      "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
-      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 232.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 172.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
-      "reference": null
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
-      "reference": null
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
-      "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
-      "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
-    },
-    {
-      "check": null,
-      "level": "info",
-      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
-      "reference": null
+      "message": "The end pair of 1/2-13 rods ties across the door's head and the back wall, 946 lb on the busiest, hot.",
+      "reference": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)"
     },
     {
       "check": null,
@@ -1271,7 +2049,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 7.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
@@ -1295,8 +2073,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
     },
     {
       "check": null,
@@ -1313,9 +2091,9 @@
   ],
   "fire": null,
   "frame": {
-    "angle": null,
-    "angle_leg_in": 0.0,
-    "angle_t_in": 0.0,
+    "angle": "L4×4×1/4",
+    "angle_leg_in": 4.0,
+    "angle_t_in": 0.25,
     "findings": [
       {
         "check": {
@@ -2205,52 +2983,840 @@
             {
               "expr": null,
               "formula": null,
-              "label": "lbf",
-              "meaning": "the hot thrust along each wall",
+              "label": "in",
+              "meaning": "the bay: the buttress between posts",
               "offset": 0.0,
-              "scale": 0.22480894309971053,
-              "source": "each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
-              "symbol": "F",
+              "scale": 39.37007874015748,
+              "source": "the design: the bearing wall's outside length, and the posts along it",
+              "symbol": "ℓ",
               "text": null,
-              "unit": "force_pound",
-              "value": 5426.264389292251
+              "unit": "inch",
+              "value": 1.3208
             },
             {
-              "expr": "F/2",
-              "formula": "F/2",
+              "expr": "H*ℓ^2/8",
+              "formula": "H·ℓ²/8",
+              "label": "lbf⋅in",
+              "meaning": "bending moment, a simple beam between posts, the peak thrust all along",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "statics; the slices' peak thrust taken over the whole bay (cautious)",
+              "symbol": "M",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 1389.416651689604
+            },
+            {
+              "expr": "ℓ",
+              "formula": "ℓ",
+              "label": "in",
+              "meaning": "unbraced length, AISC L_b",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "L_b",
+              "text": null,
+              "unit": "in",
+              "value": 1.3208
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "L4×4×1/4's leg",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+              "symbol": "b",
+              "text": null,
+              "unit": "inch",
+              "value": 0.1016
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "L4×4×1/4's thickness",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+              "symbol": "t_a",
+              "text": null,
+              "unit": "inch",
+              "value": 0.00635
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in³",
+              "meaning": "L4×4×1/4's section modulus, geometric axis",
+              "offset": 0.0,
+              "scale": 61023.74409473229,
+              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
+              "symbol": "S_x",
+              "text": null,
+              "unit": "inch ** 3",
+              "value": 1.6878675919999997e-05
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the steel's temperature",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6)",
+              "symbol": "T_s",
+              "text": null,
+              "unit": "degF",
+              "value": 353.0254815344626
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "psi",
+              "meaning": "A36 yield stress, cold",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "F_y0",
+              "text": null,
+              "unit": "pound_force_per_square_inch",
+              "value": 248211262.55406108
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "psi",
+              "meaning": "steel's modulus, cold",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "E_0",
+              "text": null,
+              "unit": "pound_force_per_square_inch",
+              "value": 199947961501.88254
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "Fy(T)/Fy at T_s",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
+              "symbol": "k_y",
+              "text": null,
+              "unit": "",
+              "value": 1.0
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "E(T)/E at T_s",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
+              "symbol": "k_E",
+              "text": null,
+              "unit": "",
+              "value": 1.0
+            },
+            {
+              "expr": "k_y*F_y0",
+              "formula": "k_y·F_y0",
+              "label": "psi",
+              "meaning": "yield stress, hot",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": null,
+              "symbol": "F_y",
+              "text": null,
+              "unit": "psi",
+              "value": 248211262.55406108
+            },
+            {
+              "expr": "k_E*E_0",
+              "formula": "k_E·E_0",
+              "label": "psi",
+              "meaning": "modulus, hot",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": null,
+              "symbol": "E",
+              "text": null,
+              "unit": "psi",
+              "value": 199947961501.88254
+            },
+            {
+              "expr": "0.8*F_y*S_x",
+              "formula": "0.8·F_y·S_x",
+              "label": "lbf⋅in",
+              "meaning": "yield moment: 0.80 × the geometric one (F10)",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": null,
+              "symbol": "M_y",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 3351.5819682752226
+            },
+            {
+              "expr": "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
+              "formula": "0.58·E·b⁴·t_a/L_b²·(√(1 + 0.88·(L_b·t_a/b²)²) − 1)",
+              "label": "lbf⋅in",
+              "meaning": "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "M_cr",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 11575.75356479708
+            },
+            {
+              "expr": "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
+              "formula": "min((1.92 − 1.17·√(M_y/M_cr))·M_y, 1.5·M_y)",
+              "label": "lbf⋅in",
+              "meaning": "lateral-torsional buckling strength (F10-2)",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "M_ltb",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 4325.020189773676
+            },
+            {
+              "expr": "b/t_a",
+              "formula": "b/t_a",
+              "label": "",
+              "meaning": "leg slenderness",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": null,
+              "symbol": "λ",
+              "text": null,
+              "unit": "",
+              "value": 16.0
+            },
+            {
+              "expr": "0.54*sqrt(E/F_y)",
+              "formula": "0.54·√(E/F_y)",
+              "label": "",
+              "meaning": "compact limit (Table B4.1b, case 12)",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": null,
+              "symbol": "λ_p",
+              "text": null,
+              "unit": "",
+              "value": 15.326447729333763
+            },
+            {
+              "expr": "0.91*sqrt(E/F_y)",
+              "formula": "0.91·√(E/F_y)",
+              "label": "",
+              "meaning": "noncompact limit",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": null,
+              "symbol": "λ_r",
+              "text": null,
+              "unit": "",
+              "value": 25.827902654988378
+            },
+            {
+              "expr": "0.8*S_x",
+              "formula": "0.8·S_x",
+              "label": "in³",
+              "meaning": "section modulus to the toe: 0.80 S_x (F10)",
+              "offset": 0.0,
+              "scale": 61023.74409473229,
+              "source": null,
+              "symbol": "S_c",
+              "text": null,
+              "unit": "in**3",
+              "value": 1.3502940735999998e-05
+            },
+            {
+              "expr": "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))",
+              "formula": "F_y·S_c·(2.43 − 1.72·λ·√(F_y/E))",
+              "label": "lbf⋅in",
+              "meaning": "leg local buckling, noncompact leg (F10-6)",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "M_lb",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 4894.58988930187
+            },
+            {
+              "expr": "min(1.5*M_y, M_ltb, M_lb)",
+              "formula": "min(1.5·M_y, M_ltb, M_lb)",
+              "label": "lbf⋅in",
+              "meaning": "nominal moment: the least of F10-1, LTB and leg buckling",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "M_n",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 4325.020189773676
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "ASD safety factor for bending (F1)",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "Ω_b",
+              "text": null,
+              "unit": "",
+              "value": 1.67
+            },
+            {
+              "expr": "M_n/Ω_b",
+              "formula": "M_n/Ω_b",
+              "label": "lbf⋅in",
+              "meaning": "allowable moment, hot",
+              "offset": 0.0,
+              "scale": 8.850745791327187,
+              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+              "symbol": "M_a",
+              "text": null,
+              "unit": "lbf*in",
+              "value": 2589.832448966273
+            },
+            {
+              "expr": "M/S_x",
+              "formula": "M/S_x",
+              "label": "psi",
+              "meaning": "bending stress",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": null,
+              "symbol": "σ_b",
+              "text": null,
+              "unit": "psi",
+              "value": 82317870.09093805
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "psi",
+              "meaning": "allowed in steel that may run hot",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+              "symbol": "σ_allow",
+              "text": null,
+              "unit": "pound_force_per_square_inch",
+              "value": 82737087.51802036
+            }
+          ],
+          "id": "frame.dome-buttress",
+          "label": null,
+          "lever": {
+            "hi": 0.00016387063999999995,
+            "lo": 8.193531999999998e-07,
+            "step": null,
+            "symbol": "S_x"
+          },
+          "reference": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; steel-design.md §S4",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "M",
+              "level": "error",
+              "margin": "M = 12,297 lbf⋅in, 53.65 % of M_a = 22,922 lbf⋅in",
+              "op": "<=",
+              "right": "M_a"
+            },
+            {
+              "holds": true,
+              "left": "σ_b",
+              "level": "error",
+              "margin": "σ_b = 11,939 psi, 99.49 % of σ_allow = 12,000 psi",
+              "op": "<=",
+              "right": "σ_allow"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes while S_x ≥ 1.025 in³",
+          "status": "pass",
+          "title": "Buttress angle along the dome's bearing walls, L4×4×1/4, hot"
+        },
+        "level": "info",
+        "message": "The dome needs a frame: L4×4×1/4 angle along the tops of the left and right walls and round the springline, 4 posts, and 2 1/2-13 tie rods (946 lb on the busiest), the steel at about 176 °F. Fit it before the form comes out.",
+        "reference": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the slices' span: the walls either side of the door",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber and the door's wall",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 0.762
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the length of the walls the slices span",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 0.9144
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the dome's rise at its centre",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "this slice, in from the middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the slice that decides the check, of 21 from the middle to the end wall",
+              "symbol": "y",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0
+            },
+            {
+              "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+              "formula": "((S² + L²)/4 + h²)/(2·h)",
+              "label": "in",
+              "meaning": "the dome's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+              "symbol": "R",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "sqrt(R^2 - y^2)",
+              "formula": "√(R² − y²)",
+              "label": "in",
+              "meaning": "the slice's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "asin(S/(2*r))",
+              "formula": "asin(S/(2·r))",
+              "label": "°",
+              "meaning": "half the slice's angle",
+              "offset": 0.0,
+              "scale": 57.29577951308232,
+              "source": "a circular arch of radius r over the span S",
+              "symbol": "φ",
+              "text": null,
+              "unit": "degree",
+              "value": 0.4429110440736389
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 15394.571456932132
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_2",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0508
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_2",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 1256.69971076997
+            },
+            {
+              "expr": "sqrt((R + t_1)^2 - y^2) - r",
+              "formula": "√((R + t_1)² − y²) − r",
+              "label": "in",
+              "meaning": "layer 1, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_1",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+              "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+              "label": "in",
+              "meaning": "layer 2, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_2",
+              "text": null,
+              "unit": "in",
+              "value": 0.050799999999999956
+            },
+            {
+              "expr": "τ_1",
+              "formula": "τ_1",
+              "label": "in",
+              "meaning": "the ring, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "T",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+              "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 1's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_1",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 963.3756422998787
+            },
+            {
+              "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+              "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 2's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_2",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 56.019606820904244
+            },
+            {
+              "expr": "w_1 + w_2",
+              "formula": "w_1 + w_2",
+              "label": "lbf/ft",
+              "meaning": "the arch's weight per foot",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+              "symbol": "W",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1019.3952491207829
+            },
+            {
+              "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+              "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+              "label": "lbf/ft",
+              "meaning": "thrust, cold",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "three-hinged circular arch: moments about a springing",
+              "symbol": "H_c",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1113.0413438387639
+            },
+            {
+              "expr": "r + T",
+              "formula": "r + T",
+              "label": "in",
+              "meaning": "radius of the ring's outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_o",
+              "text": null,
+              "unit": "in",
+              "value": 0.9652000000000001
+            },
+            {
+              "expr": "r + T/2",
+              "formula": "r + T/2",
+              "label": "in",
+              "meaning": "radius of the ring's middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_m",
+              "text": null,
+              "unit": "in",
+              "value": 0.9271
+            },
+            {
+              "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+              "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+              "label": "in",
+              "meaning": "half-ring's centroid, in from the crown",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "x_bar",
+              "text": null,
+              "unit": "in",
+              "value": 0.2020906576117934
+            },
+            {
+              "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+              "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+              "label": "",
+              "meaning": "hot thrust ÷ cold thrust",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 5.724493537912173
+            },
+            {
+              "expr": "f*H_c",
+              "formula": "f·H_c",
+              "label": "lbf/ft",
+              "meaning": "thrust, hot, in a rigid frame",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "H",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 6371.597980234085
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the bay between posts",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "ℓ",
+              "text": null,
+              "unit": "inch",
+              "value": 1.3208
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the bays the busiest rod ties",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "statics: ½ for the corner posts alone (the door's head and the back)",
+              "symbol": "m",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": "H*ℓ*m",
+              "formula": "H·ℓ·m",
               "label": "lbf",
-              "meaning": "each tie: one across the door's head, one across the wall opposite",
+              "meaning": "load on the busiest rod, hot",
               "offset": 0.0,
               "scale": 0.22480894309971053,
               "source": null,
-              "symbol": "F_tie",
+              "symbol": "P",
               "text": null,
               "unit": "lbf",
-              "value": 2713.1321946461253
+              "value": 4207.803306146589
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in²",
+              "meaning": "1/2-13 rod's tensile stress area",
+              "offset": 0.0,
+              "scale": 1550.0031000062002,
+              "source": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]",
+              "symbol": "A_s",
+              "text": null,
+              "unit": "inch ** 2",
+              "value": 9.1548204e-05
+            },
+            {
+              "expr": "P/A_s",
+              "formula": "P/A_s",
+              "label": "psi",
+              "meaning": "stress in each rod",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": null,
+              "symbol": "σ",
+              "text": null,
+              "unit": "psi",
+              "value": 45962707.32025054
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "psi",
+              "meaning": "allowed in steel that may run hot",
+              "offset": 0.0,
+              "scale": 0.0001450377377302092,
+              "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+              "symbol": "σ_allow",
+              "text": null,
+              "unit": "pound_force_per_square_inch",
+              "value": 82737087.51802036
             }
           ],
-          "id": "frame.dome-steel",
+          "id": "frame.dome-rod",
           "label": null,
-          "lever": null,
-          "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)",
-          "requirements": [],
-          "rule": "No source sizes the steel for a dome: have it designed for H and F_tie.",
-          "rule_holds": false,
-          "rule_level": "warning",
-          "solve": null,
-          "status": "warning",
-          "title": "What the dome's steel must hold"
+          "lever": {
+            "hi": 0.00129032,
+            "lo": 6.4516e-06,
+            "step": null,
+            "symbol": "A_s"
+          },
+          "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; domes-over-doors.md §D4.1 step 4",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "σ",
+              "level": "error",
+              "margin": "σ = 6,666 psi, 55.55 % of σ_allow = 12,000 psi",
+              "op": "<=",
+              "right": "σ_allow"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes while A_s ≥ 0.07883 in²",
+          "status": "pass",
+          "title": "Ties across the dome's bearing walls, 1/2-13 rod, hot"
         },
-        "level": "warning",
-        "message": "The dome pushes out on the left and right walls with up to 437 lb per foot hot, 1220 lb along each, and a tie across the door's head and one across the wall opposite take 610 lb each. No source sizes the steel for a dome, so none is drawn: have it designed for these.",
-        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)"
+        "level": "info",
+        "message": "The end pair of 1/2-13 rods ties across the door's head and the back wall, 946 lb on the busiest, hot.",
+        "reference": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)"
       }
     ],
-    "kind": "no frame",
-    "members": [],
+    "kind": "dome frame",
+    "members": [
+      {
+        "count": 4,
+        "length_in": 43.0,
+        "part": "corner posts",
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "steel": "L4×4×1/4"
+      },
+      {
+        "count": 2,
+        "length_in": 60.0,
+        "part": "buttresses along the dome's bearing walls",
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "steel": "L4×4×1/4"
+      },
+      {
+        "count": 2,
+        "length_in": 54.0,
+        "part": "ring angles across the door's head and the back",
+        "source": "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "steel": "L4×4×1/4"
+      },
+      {
+        "count": 2,
+        "length_in": 54.0,
+        "part": "bottom cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 60.0,
+        "part": "bottom cross-members, sides",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 58.0,
+        "part": "tie rods",
+        "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "1/2-13 threaded rod"
+      }
+    ],
     "posts": 2,
-    "rod": null,
-    "rod_d_in": 0.0,
+    "rod": "1/2-13",
+    "rod_d_in": 0.5,
     "thrust": "437 lb per foot on the left and right walls, hot",
     "working": [
       {
@@ -2271,51 +3837,41 @@
         "note": "Each layer of the roof counts as weight; only the ring as thickness.",
         "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived); statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
         "value": "up to 437 lb per foot hot (76 cold); 1220 lb along each wall"
+      },
+      {
+        "formula": "the bearing walls' outside face; AISC Table A-4.2.1 interpolated",
+        "inputs": {},
+        "name": "Frame steel's temperature",
+        "note": null,
+        "reference": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6); AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
+        "value": "176 °F: Fy × 1.00, E × 1.00"
+      },
+      {
+        "formula": "M = H ℓ²/8 (the peak thrust all along a bay); M_a = M_n/Ω_b, M_n the least of 1.5M_y, lateral-torsional buckling (F10-2/3, M_cr from F10-5a) and leg local buckling (F10-6/7), Fy and E reduced to the steel's temperature; and M/S_x ≤ 12,000 psi",
+        "inputs": {
+          "H": "437 lb/ft",
+          "bay ℓ": "52.0 in",
+          "posts": "2"
+        },
+        "name": "Buttress angle along the bearing walls, hot",
+        "note": "Unbraced along the bay, toe in compression: the cautious case of F10; masonry against the angle would brace it.",
+        "reference": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)",
+        "value": "L4×4×1/4: M = 12,297 lb·in against AISC's 22,922 lb·in allowable at 176 °F; 11,939 psi"
+      },
+      {
+        "formula": "H × bay × share ÷ tensile stress area",
+        "inputs": {
+          "along each wall, hot": "1220 lb"
+        },
+        "name": "Tie rods across the bearing walls",
+        "note": "The end pair runs across the door's head and across the back wall. Under the sliced dome nothing bears on the door wall, so the angle across the door's head is a tie and a frame member, not a lintel.",
+        "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)",
+        "value": "1/2-13: 946 lb, 6,666 psi"
       }
     ]
   },
   "gas": {
     "burner_options": [
-      {
-        "count": 1,
-        "each": "263,917 BTU/hr",
-        "model": "Ransome B4",
-        "pressure": "8.5 psi",
-        "total_cost": 295.0,
-        "type": "venturi"
-      },
-      {
-        "count": 1,
-        "each": "263,917 BTU/hr",
-        "model": "Ransome B5",
-        "pressure": "3.3 psi",
-        "total_cost": 395.0,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "131,958 BTU/hr",
-        "model": "GACO MR750",
-        "pressure": "5.9 psi",
-        "total_cost": 199.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "131,958 BTU/hr",
-        "model": "GACO MR100",
-        "pressure": "3.7 psi",
-        "total_cost": 319.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "131,958 BTU/hr",
-        "model": "Ransome B3",
-        "pressure": "5.7 psi",
-        "total_cost": 490.0,
-        "type": "venturi"
-      },
       {
         "count": 2,
         "each": "131,958 BTU/hr",
@@ -2339,14 +3895,54 @@
         "pressure": "2.6 psi",
         "total_cost": 299.85,
         "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "87,972 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "2.6 psi",
+        "total_cost": 735.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "87,972 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "27 in. w.c.",
+        "total_cost": 885.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "65,979 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "1.4 psi",
+        "total_cost": 980.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "65,979 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "15 in. w.c.",
+        "total_cost": 1180.0,
+        "type": "venturi"
+      },
+      {
+        "count": 5,
+        "each": "52,783 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "25 in. w.c.",
+        "total_cost": 1225.0,
+        "type": "venturi"
       }
     ],
     "burners": {
-      "count": 1,
-      "each": "263,917 BTU/hr",
+      "count": 2,
+      "each": "131,958 BTU/hr",
       "model": "Ransome B4",
-      "pressure": "8.5 psi",
-      "total_cost": 295.0,
+      "pressure": "2.2 psi",
+      "total_cost": 590.0,
       "type": "venturi"
     },
     "chimney_height": "4.2 ft (50 in) above the chamber floor",
@@ -2360,6 +3956,12 @@
       "0.051 in. w.c. (13 Pa) with flue gas at top temperature"
     ],
     "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "The tool chose the fewest burners that carry the input (2 × Ransome B4). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+      },
       {
         "check": {
           "cells": [
@@ -2569,26 +4171,26 @@
         "reference": null
       }
     ],
-    "flue_area": "18 in²",
-    "flue_area_in2": 17.720546061654925,
+    "flue_area": "35 in²",
+    "flue_area_in2": 35.44109212330985,
     "fuel": "propane",
     "full_fire_btu_hr": 263916.8031621313,
-    "inlet_area_in2": 17.720546061654925,
+    "inlet_area_in2": 35.44109212330985,
     "propane_at_full_fire": "2.88 gal/hr",
     "supply": [
       {
-        "capacity": "668,000 BTU/hr (167,000 each)",
-        "capacity_btu_hr": 668000.0,
+        "capacity": "452,000 BTU/hr (113,000 each)",
+        "capacity_btu_hr": 452000.0,
         "case": "4 × 100 lb cylinders, full",
         "meets_demand": true,
-        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
-        "capacity": "376,000 BTU/hr (94,000 each)",
-        "capacity_btu_hr": 376000.0,
+        "capacity": "256,000 BTU/hr (64,000 each)",
+        "capacity_btu_hr": 256000.0,
         "case": "4 × 100 lb cylinders, half full",
-        "meets_demand": true,
-        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+        "meets_demand": false,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
         "capacity": "173,200 BTU/hr (43,300 each)",
@@ -2599,7 +4201,7 @@
       }
     ],
     "supply_temperature": "20 °F",
-    "tank_suggestion": "A 250 gal tank, kept at least ⅓ full, supplies 369,400 BTU/hr at 20 °F",
+    "tank_suggestion": "A 250 gal tank, kept at least ⅓ full, supplies 300,856 BTU/hr at 20 °F",
     "ward_volume": "26.4 ft³",
     "working": [
       {
@@ -2615,10 +4217,11 @@
         "inputs": {
           "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
-          "construction": "9 in insulating brick"
+          "construction": "9 in insulating brick",
+          "this kiln's walls": "4.5 in ifb-jm26 + 2.5 in ifb-k23 + 1 in kaowool-blanket-8pcf"
         },
         "name": "Burner input per cubic foot",
-        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours. The table's column is chosen by the hot face and assumes its construction; a thinner or thicker wall is checked by the energy balance at the top temperature (gas.top), from this kiln's own heat loss.",
         "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
@@ -2633,25 +4236,27 @@
         "value": "263,917 BTU/hr (77.35 kW)"
       },
       {
-        "formula": null,
+        "formula": "0.8 × min(20 psi, p_v − 20 psi)",
         "inputs": {
-          "burners limited to": "10 psi"
+          "burners limited to": "2.96 psi",
+          "coldest air": "20 °F",
+          "liquid under draw": "20 °F colder"
         },
         "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
+        "note": "The regulator needs its inlet 20 psi over its setting, and at full flow delivers 20 % under it; the burners' ratings go to 20 psi.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]; the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8; RegO 597F series data sheet: capacity rated with the inlet 20 psig above the set pressure and delivery 20 % below it; combustion-and-masonry.md §2.8 [S89]",
+        "value": "24 psig in the cylinder or tank, the liquid at 0 °F"
       },
       {
         "formula": null,
         "inputs": {
-          "cost": "$295.00",
-          "each": "263,917 BTU/hr"
+          "cost": "$590.00",
+          "each": "131,958 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "1 × Ransome B4 at 8.5 psi"
+        "value": "2 × Ransome B4 at 2.2 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -2670,7 +4275,7 @@
         },
         "name": "Available heat at the top temperature",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "0.316"
       },
       {
@@ -2679,7 +4284,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "83,470 BTU/hr kept against 34,774 BTU/hr lost"
+        "value": "83,522 BTU/hr kept against 34,953 BTU/hr lost"
       },
       {
         "formula": null,
@@ -2688,8 +4293,8 @@
         },
         "name": "Supply: 4 × 100 lb cylinders, full",
         "note": "meets the burners' draw",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-        "value": "668,000 BTU/hr (167,000 each)"
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "452,000 BTU/hr (113,000 each)"
       },
       {
         "formula": null,
@@ -2697,9 +4302,9 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, half full",
-        "note": "meets the burners' draw",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-        "value": "376,000 BTU/hr (94,000 each)"
+        "note": "short of the burners' draw",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "256,000 BTU/hr (64,000 each)"
       },
       {
         "formula": null,
@@ -2723,12 +4328,12 @@
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
           "Olsen's other methods": "66 in² (2½ in² per ft³), 38 in² (1 in² per 7000 BTU/hr)",
-          "burner ports together": "18 in²"
+          "burner ports together": "35 in²"
         },
         "name": "Exit flue, to start",
         "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
-        "value": "18 in²"
+        "value": "35 in²"
       },
       {
         "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
@@ -2769,185 +4374,185 @@
     "faces": [
       {
         "face": "left",
-        "heat_loss": "1596 W",
+        "heat_loss": "1607 W",
         "inside_area": "9.955 ft²",
         "layers": [
           {
-            "cold_side": "1487 °F",
-            "cold_side_k": 1081.3828570682138,
+            "cold_side": "1443 °F",
+            "cold_side_k": 1057.1409343732066,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.15,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "825.6 °F",
-            "cold_side_k": 714.0348121311312,
-            "hot_side": "1487 °F",
-            "hot_side_k": 1081.3828570682138,
+            "cold_side": "763.6 °F",
+            "cold_side_k": 679.570803209012,
+            "hot_side": "1443 °F",
+            "hot_side_k": 1057.1409343732066,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "175.1 °F",
-            "cold_side_k": 352.6407006070795,
-            "hot_side": "825.6 °F",
-            "hot_side_k": 714.0348121311312,
+            "cold_side": "175.8 °F",
+            "cold_side_k": 353.0254815344626,
+            "hot_side": "763.6 °F",
+            "hot_side_k": 679.570803209012,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "19.73 ft²",
-        "surface_temperature": "175.1 °F"
+        "surface_temperature": "175.8 °F"
       },
       {
         "face": "right",
-        "heat_loss": "1596 W",
+        "heat_loss": "1607 W",
         "inside_area": "9.955 ft²",
         "layers": [
           {
-            "cold_side": "1487 °F",
-            "cold_side_k": 1081.3828570682138,
+            "cold_side": "1443 °F",
+            "cold_side_k": 1057.1409343732066,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.15,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "825.6 °F",
-            "cold_side_k": 714.0348121311312,
-            "hot_side": "1487 °F",
-            "hot_side_k": 1081.3828570682138,
+            "cold_side": "763.6 °F",
+            "cold_side_k": 679.570803209012,
+            "hot_side": "1443 °F",
+            "hot_side_k": 1057.1409343732066,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "175.1 °F",
-            "cold_side_k": 352.6407006070795,
-            "hot_side": "825.6 °F",
-            "hot_side_k": 714.0348121311312,
+            "cold_side": "175.8 °F",
+            "cold_side_k": 353.0254815344626,
+            "hot_side": "763.6 °F",
+            "hot_side_k": 679.570803209012,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "19.73 ft²",
-        "surface_temperature": "175.1 °F"
+        "surface_temperature": "175.8 °F"
       },
       {
         "face": "back",
-        "heat_loss": "1348 W",
+        "heat_loss": "1359 W",
         "inside_area": "8.066 ft²",
         "layers": [
           {
-            "cold_side": "1469 °F",
-            "cold_side_k": 1071.6899266741048,
+            "cold_side": "1425 °F",
+            "cold_side_k": 1046.8696134293841,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999996,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "814.3 °F",
-            "cold_side_k": 707.7618728658977,
-            "hot_side": "1469 °F",
-            "hot_side_k": 1071.6899266741048,
+            "cold_side": "750.4 °F",
+            "cold_side_k": 672.2493371916673,
+            "hot_side": "1425 °F",
+            "hot_side_k": 1046.8696134293841,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "172.2 °F",
-            "cold_side_k": 351.0588105845875,
-            "hot_side": "814.3 °F",
-            "hot_side_k": 707.7618728658977,
+            "cold_side": "173 °F",
+            "cold_side_k": 351.47229368989747,
+            "hot_side": "750.4 °F",
+            "hot_side_k": 672.2493371916673,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "17.18 ft²",
-        "surface_temperature": "172.2 °F"
+        "surface_temperature": "173 °F"
       },
       {
         "face": "front",
-        "heat_loss": "1348 W",
+        "heat_loss": "1359 W",
         "inside_area": "8.066 ft²",
         "layers": [
           {
-            "cold_side": "1469 °F",
-            "cold_side_k": 1071.6899266741048,
+            "cold_side": "1425 °F",
+            "cold_side_k": 1046.8696134293841,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999996,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "814.3 °F",
-            "cold_side_k": 707.7618728658977,
-            "hot_side": "1469 °F",
-            "hot_side_k": 1071.6899266741048,
+            "cold_side": "750.4 °F",
+            "cold_side_k": 672.2493371916673,
+            "hot_side": "1425 °F",
+            "hot_side_k": 1046.8696134293841,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "172.2 °F",
-            "cold_side_k": 351.0588105845875,
-            "hot_side": "814.3 °F",
-            "hot_side_k": 707.7618728658977,
+            "cold_side": "173 °F",
+            "cold_side_k": 351.47229368989747,
+            "hot_side": "750.4 °F",
+            "hot_side_k": 672.2493371916673,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "17.18 ft²",
-        "surface_temperature": "172.2 °F"
+        "surface_temperature": "173 °F"
       },
       {
         "face": "floor",
-        "heat_loss": "1595 W",
+        "heat_loss": "1578 W",
         "inside_area": "7.5 ft²",
         "layers": [
           {
-            "cold_side": "1210 °F",
-            "cold_side_k": 927.4896041369019,
+            "cold_side": "1185 °F",
+            "cold_side_k": 913.4565203280529,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999992,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "232.2 °F",
-            "cold_side_k": 384.3448345247274,
-            "hot_side": "1210 °F",
-            "hot_side_k": 927.4896041369019,
+            "cold_side": "230.8 °F",
+            "cold_side_k": 383.5772067909341,
+            "hot_side": "1185 °F",
+            "hot_side_k": 913.4565203280529,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "15.28 ft²",
-        "surface_temperature": "232.2 °F"
+        "surface_temperature": "230.8 °F"
       },
       {
         "face": "roof",
-        "heat_loss": "2709 W",
+        "heat_loss": "2734 W",
         "inside_area": "8.174 ft²",
         "layers": [
           {
-            "cold_side": "1772 °F",
-            "cold_side_k": 1239.767181038909,
+            "cold_side": "1766 °F",
+            "cold_side_k": 1236.6450807003557,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999967,
             "material": "kast-o-lite-30-li-plus",
             "thickness": "3 in"
           },
           {
-            "cold_side": "264.4 °F",
-            "cold_side_k": 402.24601935708347,
-            "hot_side": "1772 °F",
-            "hot_side_k": 1239.767181038909,
+            "cold_side": "265.8 °F",
+            "cold_side_k": 403.0285458934047,
+            "hot_side": "1766 °F",
+            "hot_side_k": 1236.6450807003557,
             "material": "kaowool-blanket-8pcf",
             "thickness": "2 in"
           }
         ],
         "outside_area": "14.37 ft²",
-        "surface_temperature": "264.4 °F"
+        "surface_temperature": "265.8 °F"
       }
     ],
     "findings": [
@@ -2960,31 +4565,31 @@
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 232.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 230.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 172.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]; castables.md §14"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
@@ -2995,8 +4600,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "10.19 kW",
-    "total_watts": 10191.196940332033,
+    "total": "10.24 kW",
+    "total_watts": 10243.726131180716,
     "working": [
       {
         "formula": null,
@@ -3031,81 +4636,81 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "19.73 ft²",
-          "outside surface": "175.1 °F",
-          "surface coefficient h": "12.53 W/K/m²"
+          "outside surface": "175.8 °F",
+          "surface coefficient h": "12.55 W/K/m²"
         },
         "name": "Heat loss, left",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1596 W"
+        "value": "1607 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "19.73 ft²",
-          "outside surface": "175.1 °F",
-          "surface coefficient h": "12.53 W/K/m²"
+          "outside surface": "175.8 °F",
+          "surface coefficient h": "12.55 W/K/m²"
         },
         "name": "Heat loss, right",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1596 W"
+        "value": "1607 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "17.18 ft²",
-          "outside surface": "172.2 °F",
-          "surface coefficient h": "12.44 W/K/m²"
+          "outside surface": "173 °F",
+          "surface coefficient h": "12.46 W/K/m²"
         },
         "name": "Heat loss, back",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1348 W"
+        "value": "1359 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "17.18 ft²",
-          "outside surface": "172.2 °F",
-          "surface coefficient h": "12.44 W/K/m²"
+          "outside surface": "173 °F",
+          "surface coefficient h": "12.46 W/K/m²"
         },
         "name": "Heat loss, front",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1348 W"
+        "value": "1359 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "15.28 ft²",
-          "outside surface": "232.2 °F",
-          "surface coefficient h": "11.11 W/K/m²"
+          "outside surface": "230.8 °F",
+          "surface coefficient h": "11.07 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1595 W"
+        "value": "1578 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "14.37 ft²",
-          "outside surface": "264.4 °F",
-          "surface coefficient h": "17.04 W/K/m²"
+          "outside surface": "265.8 °F",
+          "surface coefficient h": "17.08 W/K/m²"
         },
         "name": "Heat loss, roof",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2709 W"
+        "value": "2734 W"
       },
       {
         "formula": "sum of the six faces",
         "inputs": {},
         "name": "Total heat loss at top temperature",
-        "note": null,
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "10.19 kW (3.48e+04 Btu/h)"
+        "value": "10.24 kW (3.5e+04 Btu/h)"
       }
     ]
   },
@@ -3224,46 +4829,78 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
       }
     ],
     "quantities": [
       {
-        "amount": 441.0,
-        "detail": "300 whole, 100 cut into 124 pieces; 400 in the kiln plus 10% for breakage",
+        "amount": 420.0,
+        "detail": "300 whole, 100 cut into 124 pieces; 400 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 441.0,
+        "priced_amount": 420.0,
         "unit": "bricks"
       },
       {
-        "amount": 262.0,
-        "detail": "190 whole, 48 cut into 70 pieces; 238 in the kiln plus 10% for breakage",
+        "amount": 250.0,
+        "detail": "190 whole, 48 cut into 70 pieces; 238 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-k23",
         "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "priced_amount": 262.0,
+        "priced_amount": 250.0,
         "unit": "bricks"
       },
       {
-        "amount": 72.9,
-        "detail": "1 in, 2 in thick; area plus 10% for trimming",
+        "amount": 66.3,
+        "detail": "1 in, 2 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-8pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "priced_amount": 92.94917506880493,
+        "priced_amount": 84.4992500625499,
         "unit": "ft²"
       },
       {
-        "amount": 428.0,
-        "detail": "3.97 ft³ placed, at the dried density, plus 10%",
+        "amount": 383.0,
+        "detail": "3.97 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 5 %",
         "kind": "insulating_castable",
         "material": "kast-o-lite-30-li-plus",
         "name": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "priced_amount": 427.5622546907947,
+        "priced_amount": 383.1402022553874,
         "unit": "lb"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "0 %"
+        },
+        "name": "Allowance over the count: blanket and board",
+        "note": "the default; set allowances.sheet in the design to change it",
+        "reference": "brick-waste.md §4: no source gives one",
+        "value": "0 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: castable",
+        "note": "the default; set allowances.castable in the design to change it",
+        "reference": "brick-waste.md §3, PCO Refractories, castable application instructions 1/2026, §5.3 [W2]",
+        "value": "5 %"
       }
     ]
   },

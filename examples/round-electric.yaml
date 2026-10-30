@@ -1,0 +1,49 @@
+# A round electric top-loader the size of Skutt's KM-1227-3 (electric-kiln-survey.md): 12 sides
+# of 3 in brick, 27 in deep, on a 240 V, 60 A circuit.
+#
+# From Skutt's KM-1227 sheet: 27 in deep, 28.00 in across; 1 phase, 240 V, 48 A, 11520 W; cone 8,
+# 2300 °F. From the user's log of it: 12 sides, 3 in brick, 4½ in courses, laid dry, stacked in
+# line. The diameter is 28.075 in, the mean of flats and corners that 12 whole 9 in bricks give
+# round the outside (rings.nominal_diameter; the sheet's 28.00 in is 0.07 in less).
+# Assumed: K23 insulating firebrick, L&L's for its 3 in walls (Skutt's grade isn't found); the
+# floor slab and lid of the same 3 in brick (no maker's slab or lid thickness is found); elements
+# in all four quarters of the ring, as a top-loader's go all the way round.
+# It loads from the top: the lid is the flat roof, a slab in a steel band carrying its hinge and a
+# handle (listed, not sized: no source gives them); the peepholes are in the front of the wall.
+schema: 1
+name: Round electric, 12 sides of 3 in brick
+units: us
+firing:
+  cone: "8"
+chamber:
+  shape: round
+  width: 28.075 in
+  depth: 28.075 in
+  height: 27 in
+  rings: cut
+roof:
+  type: flat
+loading:
+  type: lid
+lining:
+  walls:
+    - material: ifb-k23
+      thickness: 3 in
+  floor:
+    - material: ifb-k23
+      thickness: 3 in
+  roof:
+    - material: ifb-k23
+      thickness: 3 in
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A
+    alloy: kanthal-a1
+    walls: [left, right, back, front]
+    power: 11520 W
+site:
+  ambient: 70 degF
+  electricity_price: 0.12 USD/kWh

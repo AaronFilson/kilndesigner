@@ -30,6 +30,22 @@ class ConductivityData(_Entry):
         return Conductivity(tuple(temps), tuple(ks))
 
 
+class SpecificHeatData(_Entry):
+    """c_p at temperatures, held at the end values beyond them; with its own source."""
+
+    unit: str
+    temperature_unit: str
+    points: list[tuple[float, float]] = Field(min_length=1)
+    source: str
+    status: Literal["verified", "excerpt", "derived"]
+
+    def to_points(self) -> tuple[tuple[float, ...], tuple[float, ...]]:
+        """(kelvin, J/(kg·K)) pairs, as two tuples."""
+        temps = tuple(si(Q_(t, self.temperature_unit), "K") for t, _ in self.points)
+        values = tuple(si(Q_(c, self.unit), "J/(kg*K)") for _, c in self.points)
+        return temps, values
+
+
 class Material(_Entry):
     id: str
     name: str
@@ -49,6 +65,9 @@ class Material(_Entry):
     conductivity: ConductivityData
     source: str
     status: Literal["verified", "excerpt", "derived"]
+    specific_heat: SpecificHeatData | None = None  # None: no source gives one
+    # A castable's "material required" to place a unit volume, from its maker's sheet
+    material_required: str | None = None
 
     @property
     def max_service_temperature(self) -> Quantity | None:

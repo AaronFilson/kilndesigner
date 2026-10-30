@@ -1,0 +1,55 @@
+# Anagama dug into a clay hill (Olsen, The Kiln Book, 4th ed., p.83–84, Figs 4-2 to 4-5): the
+# original anagama, a cavity dug into a clay bank, widened, then tapered back into a chimney flue up
+# to the surface, its firebox, floor and walls shaped in the clay. A fire of rising intensity, kept
+# up for weeks, bisqued the walls into a monolith (p.83–84). A type, not one kiln.
+#
+# From the book (Fig 4-5): entrance and firebox 2 × 2 ft; chamber 3½ ft tall (the fraction faint),
+# 5¼ ft wide and 9–12 ft long, 10½ ft used; "slope angle 25" (degrees); walls "ground clay
+# bisque"; a chimney flue up the back to the hill's surface, its height not printed. Dug into the
+# hill: the earth holds the roof (buttressed) and the floor is on the ground.
+# Assumed: the walls, roof and floor are the clay bank fired in place. Unfired clay has no
+# conductivity data above room temperature, so the wall is taken as fired all through. The user's
+# direction: fired raw clay is likely between low- and medium-duty hard brick; masonry-materials.md
+# §4a found that its fired face conducts like a porous fireclay brick, so it is entered as Norton's
+# porous fireclay brick. But §4a.6's measured profile through a clay kiln wall shows that one
+# firing fires only a thin skin, about the inner 5 cm, so a wall fired all through is a
+# simplification. The modelled wall 9 in thick, at the 9–10 in of Olsen's climbing kilns' walls
+# (p.99–100). The tube's roof a half-circle on its width, as a groundhog's half-cylinder (p.112):
+# it springs 10½ in up and crowns at 3½ ft. Cone 10, from the anagama-style kiln built at
+# Höhr-Grenzhausen in 2003 (hohr-2003, p.122); §4a.7 puts such a clay's ceiling near cone 10–11.
+# The firebox the 2 × 2 ft as its width and length. The chimney, the exit flue and the door: engine
+# default.
+# Not modelled: the hill around the kiln. The walls and roof are counted as losing heat to the air
+# through 9 in of fired clay, not into the earth, and the floor's loss into the ground isn't worked
+# out. The tube's taper into the chimney flue. The fired clay has no service limit, so its
+# temperature isn't checked.
+schema: 1
+name: Anagama dug into a clay hill
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 63 in # 5¼ ft
+  depth: 126 in # 10½ ft, the middle of 9–12 ft
+  height: 10.5 in # to the springline; the half-circle crowns at 3½ ft
+  slope: 25 degree
+  on_ground: true # dug into a clay hill (p.83–84)
+roof:
+  type: sprung_arch
+  rise: 31.5 in
+  buttressed: true # the hill holds it
+lining:
+  walls:
+    - material: fireclay-brick-porous-norton # "ground clay bisque" (Fig 4-5), fired in place
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 2 ft
+        length: 2 ft
+draft:
+  type: cross
+  flue_wall: back

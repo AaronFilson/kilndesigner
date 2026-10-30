@@ -592,6 +592,10 @@ Worked examples (all derived):
   T/S 4–10 % only. Tie rods across door arches.
 - **Roof edge loads.** How a sail dome's edge load (vertical and thrust) is shared along each wall.
   How a flat roof bearing on four walls shares its load.
+- **Steel carrying it all (2026-10-30).** A steel lintel that carries everything above an
+  opening needs no refractory allowable stress except at its end bearings, which stay NOT FOUND;
+  the hot-steel method, and how Olsen's dome kilns span their doors (ring arches in buttressed
+  walls, no steel lintel), are in `steel-design.md`.
 - **Skewback over a door.** A sizing rule for a skewback beam spanning a door in a springing wall.
   HarbisonWalker gives only detailing.
 - **Car kilns.** Header construction for a studio car kiln: steel size, span, hung or arched.
@@ -604,6 +608,66 @@ Worked examples (all derived):
 - **Kiln books.** Olsen, Rhodes, Cardew (*Pioneer Pottery*) and Gregory (*Kiln Building*) were
   searched by snippet only. None gives a sizing rule for a door header. Cardew's snippets had nothing
   on door arches.
+- **Search of 29 October 2026, still NOT FOUND.** A web search for a refractory lintel's allowable
+  stress, a factor of safety on MOR or hot strength for an arch over an opening returned only
+  building-masonry guidance (CMHA TEK 17-01D and 17-02A, TMS's ASD course) and ISO 5014:2025, which
+  measures MOR at room temperature only. The makers' sheets already read (HWI, Morgan, [H17]–[H22])
+  give cold MOR and crushing strength and, for KX-99, a hot-load deformation without its load; none
+  gives a hot MOR or a design stress. So the engine keeps refusing a door below a roof with a lintel
+  or door arch that would have to carry it: there is nothing to check the design against. What
+  would unblock it: hot MOR (ASTM C583) on a maker's sheet for the materials a header is made of,
+  and a published factor of safety on it (the HWI *Modern Refractory Practice* [H9] is the likeliest
+  place; it is borrow-only and was not read).
+
+---
+
+## D9. The engine's statics for an arched door head and its jambs (2026-10-30, derived)
+
+HarbisonWalker's roof-arch method stays out of reach (§D3.7: a door arch's T/S is 15–45 %, its
+table 4–10 %), so the engine uses Heyman's limit analysis, which is geometry and statics alone
+and needs no checked range (`arch-thrust-theory.md` §2; `domes-over-doors.md` §D3). Every step
+is a formula sheet (`frame_checks.py`, `frame.door-arch`, `frame.door-jamb`,
+`frame.door-bearing-*`):
+
+1. **The ring.** A semicircle of inside radius r = S/2, laid as the roof's ring (Olsen, Rhodes,
+   §D4: "in the same way as the main arch"; a roof with no ring leaves the door unchecked). Its
+   depth d against the thinnest semicircle that holds a line of thrust under its own weight,
+   t/r_m = 0.10743 (Couplet–Heyman, `steel.yaml`), with Heyman's factor of about 2.
+2. **The load.** The whole wall over the soffit, up to the wall's inside top over the door's
+   middle, bears on the arch: BIA's "certainly on the safe side" (§D3.6); the roof's edge load
+   (§D7) on top. The ring must fit under the wall's top (Z ≥ R_o).
+3. **The thrusts.** Half the arch is cut into a grid; at each radial joint (every ½°) the load is
+   the ring nearer the crown and the wall standing on it, cut by a plumb line (a wall's head
+   joints are upright). The least thrust is the line from the crown's extrados touching the
+   intrados; the most, from the crown's intrados touching the extrados ([A1]–[A3]). A line fits
+   in the ring when least ≤ most.
+4. **The jamb.** A jamb that gives a little lets the arch settle to its least thrust ("an arch on
+   spreading supports will act in a state of minimum thrust", [A1]), so that is what it holds.
+   The jamb is its own strip of wall from the door's edge to the next door or the wall's outside
+   end. Where that end is the wall's corner, the cross wall bonded into it is part of BIA's
+   "adjacent mass of masonry" (§D3.5); the engine counts only a length of it equal to the jamb
+   wall's thickness b, the jamb's full height, its weight at the cross wall's middle (G₃ =
+   q_c·b·(h_s + Z) at e − b_c/2). That length is a cautious design rule, not a sourced one: a
+   corner bond laps the courses about one wall's thickness, and the rest of the return is spare.
+   A partition wall bonded in between two doors is not counted. With the springing's load where
+   the line crosses the springing, the jamb's weight under the springline and the wall over it
+   beside the ring, the resultant at the jamb's base must lie within it (error) and within its
+   middle third (warning: no tension, [D7], BIA TN 31A §D3.2).
+5. **Sliding** at the springing's level joint: H_min/N ≤ 0.60, BIA's friction between brick
+   masonry units (§D3.3), `frame.door-slide`; for IFB and refractory joints no friction is
+   sourced (refractory dry joints 0.50–0.60, Snippet: `refractory-bearing.md` §B4.1). **Not
+   checked:** the hot thrust of a door arch held rigidly (it rises toward the most; not sourced
+   as a number).
+6. **Bearing.** At the springing and the jamb's toe, the triangle of stress 2N/(3·b·a), a the
+   resultant's distance to the nearer edge, against the brick's sourced figure at its
+   temperature there (`refractory-bearing.md`).
+
+Olsen's built kilns with arched doors in `examples/olsen` (Bidai, Kawaii: doors per chamber in a
+side wall, 20 in wide, Fig 4-36) pass: their 9 in rings are 5.8 times the thinnest, the least
+thrust under the wall over them about 8 lb, the resultant 3.7–4.0 in into a 10 in end jamb with
+the end wall bonded in (2.8–3.2 in without it), and the springing needs friction 0.02 of BIA's
+0.60. Their bearing is 31–32 psi at the springing and 18 psi at the jamb's toe: shown, not
+checked (`refractory-bearing.md` §B4).
 
 ---
 

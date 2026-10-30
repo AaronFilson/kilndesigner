@@ -19,6 +19,7 @@ from kilndesigner.units import (
     Angle,
     Current,
     Density,
+    Duration,
     EnergyPrice,
     Flow,
     Length,
@@ -27,6 +28,9 @@ from kilndesigner.units import (
     Money,
     Power,
     Pressure,
+    Rate,
+    Share,
+    SpecificHeat,
     SpringRate,
     Temperature,
     Voltage,
@@ -51,6 +55,13 @@ class Layer(Spec):
 
     material: str = Field(description="A material id from the library, for example 'ifb-k26'")
     thickness: Length
+    specific_heat: SpecificHeat | None = Field(
+        default=None,
+        description=(
+            "The material's specific heat, from its maker's sheet, for the firing simulation of a "
+            "material the library has no sourced value for (castables, for one)"
+        ),
+    )
 
 
 class Lining(Spec):
@@ -106,11 +117,32 @@ class Chamber(Spec):
             "an anagama or a tunnel kiln, as an angle (a 20 % slope is atan 0.2 = 11.3 degree)"
         ),
     )
+    bend: Angle | None = Field(
+        default=None,
+        description=(
+            "How far the run turns in plan, from the firing end to the flue end, for a kiln built "
+            "round a hillside or a corner: a box chamber's centreline on a circular arc, turning "
+            "left as you look from the firing end. Only its drawing changes: a section swept "
+            "along an arc has the same inside area and volume as along a straight line of the "
+            "same length (Pappus's theorems), so the heat loss is worked out as for a straight run"
+        ),
+    )
     on_ground: bool = Field(
         default=False,
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
+        ),
+    )
+    rings: Literal["mortar", "cut", "featheredge", "arch"] | None = Field(
+        default=None,
+        description=(
+            "How a round wall's 4½ in brick rings are turned: 'mortar', straights with their "
+            "inside faces on the curve and the wedge-shaped joints behind filled with mortar "
+            "(Olsen, The Kiln Book, 4th ed., Fig. 2-13, p.45); 'cut', straights cut to the angle, "
+            "the norm in electric kilns; 'featheredge', straights with featheredges among them; "
+            "'arch', arch bricks, possible but not recommended (p.45). Left out: 'cut' for an "
+            "electric kiln, 'mortar' otherwise"
         ),
     )
 
@@ -128,6 +160,13 @@ class Chamber(Spec):
                 )
             if not 0 <= si(self.slope, "degree") < 60:
                 raise ValueError("a floor's slope must be from 0 to under 60 degrees")
+        if self.bend is not None:
+            if f"{self.bend.units}" not in ("degree", "radian"):
+                raise ValueError("give the bend as an angle, for example '45 degree'")
+            if not 0 <= si(self.bend, "degree") <= 180:
+                raise ValueError("a run's bend must be from 0 to 180 degrees")
+            if self.shape == "round" and si(self.bend, "degree") > 0:
+                raise ValueError("a round chamber has no run to bend")
         return self
 
     @property
@@ -172,6 +211,15 @@ class SprungArch(Spec):
         description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
     )
     buttressed: bool = Field(default=False, description=BUTTRESSED)
+    tube: bool = Field(
+        default=False,
+        description=(
+            "Chambers in a row under one vault: the arch spans the width and runs the whole "
+            "length, as a tube kiln's, 'an anagama extended' (Olsen, 4th ed. p.85), the walls "
+            "between the chambers standing under it. Left out, each chamber in a row has its own "
+            "arch spanning along the draft, as Olsen's climbing kilns' do (p.94–95)"
+        ),
+    )
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
@@ -221,14 +269,65 @@ type Roof = Annotated[
 type WallFace = Literal["left", "right", "back", "front"]
 
 
-class Loading(Spec):
-    """How ware goes in: through a door in one wall, or on a car that rolls out through it.
+class DoorOpening(Spec):
+    """A door in part of a wall, as Olsen's built kilns have them (door-openings.md): a doorway
+    with brick jambs and a semicircular arch over it, bricked up for each firing (the Tamba and
+    Kanayama kilns, Figs 4-11, 4-14, 4-15, 7-17, 7-18, 7-25) or closed by a swing door (Fig 5-42),
+    or a rectangular opening framed in angle iron, closed by a hinged door (Fig 6-69), its head a
+    steel lintel (steel-design.md §S5)."""
 
-    On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car.
+    width: Length = Field(description="The opening's width, inside the jambs")
+    height: Length = Field(
+        description="From the sill to the top of the opening: an arched head's crown"
+    )
+    across: Length = Field(
+        default_factory=lambda: Q_(0, "in"),
+        description=(
+            "From the middle of the wall to the door's centre: to your right, standing outside "
+            "and facing the wall, or to your left when negative"
+        ),
+    )
+    sill: Length = Field(
+        default_factory=lambda: Q_(0, "in"), description="From the chamber floor up to the sill"
+    )
+    head: Literal["arch", "lintel"] = Field(
+        default="arch",
+        description=(
+            "A semicircular brick arch on the jambs (Olsen Figs 4-15, 5-42, 7-18), or a steel "
+            "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5)"
+        ),
+    )
+    each_chamber: bool = Field(
+        default=False,
+        description=(
+            "Chambers in a row: the same door into each chamber, in the same side wall, as "
+            "climbing kilns have them (Olsen Figs 4-36, 4-45); 'across' is then from the middle "
+            "of each chamber's stretch of the wall"
+        ),
+    )
+
+
+class Loading(Spec):
+    """How ware goes in: through a door in one wall, on a car that rolls out through it, or from
+    the top under a hinged lid.
+
+    On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car. Left out,
+    ``opening`` makes the whole wall the door. A lid is a round electric kiln's flat roof, a slab
+    of mortared straights in a steel band that carries its hinge (electric-kiln-survey.md); its
+    walls are all wall, and ``face`` is then the wall the peepholes go in.
     """
 
-    type: Literal["door", "car"] = "door"
-    face: WallFace = Field(default="front", description="The wall with the door, or the car's end")
+    type: Literal["door", "car", "lid"] = Field(
+        default="door",
+        description=(
+            "Through a door in a wall, on a car, or from the top under a hinged lid (a round "
+            "electric kiln's flat roof)"
+        ),
+    )
+    face: WallFace = Field(
+        default="front",
+        description="The wall with the door, or the car's end; under a lid, the peepholes' wall",
+    )
     door: Literal["bricked", "hinged"] | None = Field(
         default=None,
         description=(
@@ -236,10 +335,32 @@ class Loading(Spec):
             "electric kiln, bricked on a gas one"
         ),
     )
+    opening: DoorOpening | None = Field(
+        default=None, description="A door in part of the wall. Left out: the whole wall is the door"
+    )
     car_hardware_cost: Money | None = Field(
         default=None,
         description="Wheels, rails, frame and seal for a car; no sourced prices exist for these",
     )
+
+
+class Ramp(Spec):
+    """One segment of a firing schedule: heat (or cool) at a rate to a temperature, then hold."""
+
+    to: Temperature
+    rate: Rate | None = Field(
+        default=None,
+        description="Per hour, for example '200 delta_degF/hour'. Left out: as fast as it can",
+    )
+    hold: Duration | None = Field(default=None, description="How long to hold at ``to``")
+
+    @model_validator(mode="after")
+    def _a_rate(self) -> Ramp:
+        if self.rate is not None and si(self.rate, "K/hour") <= 0:
+            raise ValueError("a ramp's rate must be more than zero; its `to` sets the direction")
+        if self.hold is not None and si(self.hold, "s") < 0:
+            raise ValueError("a hold can't be negative")
+        return self
 
 
 class Firing(Spec):
@@ -254,6 +375,17 @@ class Firing(Spec):
         ),
     )
     top_temperature: Temperature | None = None
+    schedule: list[Ramp] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The firing schedule, for the firing simulation. Left out: as fast as the heat allows "
+            "to 100 °C below the top, then the final rate to the top"
+        ),
+    )
+    ware: Mass | None = Field(
+        default=None, description="Ware and kiln furniture set in the kiln, for the simulation"
+    )
 
     @model_validator(mode="after")
     def _one_target(self) -> Firing:
@@ -403,7 +535,8 @@ class Burners(Spec):
 
 
 class SpyHoles(Spec):
-    """The spy holes, for watching the cones. Left out: three in the door."""
+    """The spy holes, for watching the cones. Left out: three in the door, or in a top-loader's
+    wall (loading.face)."""
 
     count: int | None = Field(default=None, ge=0, le=12, description="Three when left out")
     port: Port | None = Field(
@@ -504,7 +637,17 @@ class Firebox(Spec):
     grate: Grate | None = Field(
         default=None, description="Left out: the fuel burns on the firebox's floor"
     )
-    ash_pit: Length | None = Field(default=None, description="From the grate down")
+    ash_pit: Length | None = Field(
+        default=None,
+        description="From the grate down; left out with a grate, as deep as the firebox is tall "
+        "above it, Olsen's grate at the vertical midpoint (The Kiln Book, 4th ed., p.199–200)",
+    )
+    step: Length | None = Field(
+        default=None,
+        description="From the grate up to the chamber floor beside it. Left out, 0 in: the grate "
+        "level with the floor, the firebox part of the first chamber, as kilns fired for ash and "
+        "flashing are; Olsen's 9–12 in drops smouldering coals into the front stacking (p.188)",
+    )
     inlet: Port | None = Field(
         default=None, description="Each inlet flue from the firebox into the chamber"
     )
@@ -648,6 +791,39 @@ class Site(Spec):
     materials_budget: Money | None = None
 
 
+class Allowances(Spec):
+    """What is bought over the count in the kiln, for breakage, spills and mistakes. Left out, each
+    takes its sourced default (docs/research/brick-waste.md); give your own from experience."""
+
+    brick: Share | None = Field(
+        default=None,
+        description="Over the bricks counted, whole and cut. Left out: 5 % (BIA Technical Note 10)",
+    )
+    shaped: Share | None = Field(
+        default=None,
+        description="Over the arch and wedge bricks counted. Left out: 5 %, as for straights",
+    )
+    castable: Share | None = Field(
+        default=None,
+        description=(
+            "Over the castable a lining needs, bought or mixed. Left out: 5 % (PCO Refractories "
+            "application instructions, 10 % or more in hard conditions)"
+        ),
+    )
+    sheet: Share | None = Field(
+        default=None,
+        description="Over the blanket and board area. Left out: none, as no source gives one",
+    )
+
+    @model_validator(mode="after")
+    def _between_none_and_all(self) -> Allowances:
+        for name in ("brick", "shaped", "castable", "sheet"):
+            value = getattr(self, name)
+            if value is not None and not 0 <= si(value, "") < 1:
+                raise ValueError(f"the {name} allowance must be at least 0 % and under 100 %")
+        return self
+
+
 class MixPart(Spec):
     """One ingredient of a castable, by its mass in one batch."""
 
@@ -710,6 +886,9 @@ class Kiln(Spec):
     castables: list[CastableMix] | None = Field(
         default=None, min_length=1, description="Castables you mix yourself"
     )
+    allowances: Allowances = Field(
+        default_factory=Allowances, description="What to buy over the count, for waste"
+    )
 
     @model_validator(mode="after")
     def _mixes_named_once(self) -> Kiln:
@@ -729,8 +908,12 @@ class Kiln(Spec):
         if self.chamber.shape == "round":
             if isinstance(self.roof, SprungArch | CatenaryArch):
                 raise ValueError("a round chamber takes a dome or a flat roof, not an arch")
-            if self.heat.electric is not None:
-                raise ValueError("elements in a round kiln's curved walls aren't designed here")
+            if self.heat.electric is not None and self.chamber.rings not in (None, "cut"):
+                raise ValueError(
+                    "elements in a round kiln are designed only in a faceted wall, straights cut "
+                    "to the angle (chamber.rings: cut), as electric kilns are built; not in a "
+                    "curved one"
+                )
             if isinstance(self.roof, Dome):
                 rise, radius = si(self.roof.rise, "in"), si(self.chamber.width, "in") / 2
                 if not 0 < rise <= radius:
@@ -751,8 +934,25 @@ class Kiln(Spec):
                 raise ValueError(
                     f"the arch's ring can't be {self.roof.ring} layers: the roof has {layers}"
                 )
-            # The arch's skewbacks stand on the side walls, and a door or car is a whole wall
-            if self.loading.face in ("left", "right"):
+            # The arch's skewbacks stand on the side walls, and a door or car is a whole wall;
+            # chambers in a row under arches along the draft spring from their front and back
+            # walls instead, and take a door in part of a side wall, as climbing kilns do (Olsen
+            # Figs 4-36, 4-45; door-openings.md)
+            along = self.chamber.chambers > 1 and not self.roof.tube
+            if (
+                self.roof.tube
+                and self.loading.face in ("left", "right")
+                and self.loading.opening is not None
+            ):
+                raise ValueError(
+                    "a tube's doors are in its side, through the springing of its vault, which is "
+                    "turned as an arch over each (Tamba, Olsen Figs 4-11, 4-15): that isn't laid "
+                    "out here, and no source gives the vault's load on such a door. Put the door "
+                    "in the front or back wall"
+                )
+            if self.loading.face in ("left", "right") and not (
+                along and self.loading.opening is not None
+            ):
                 what = "the car" if self.loading.type == "car" else "the door"
                 raise ValueError(
                     f"a sprung arch springs from the left and right walls, so {what} can't be "
@@ -797,6 +997,137 @@ class Kiln(Spec):
                     )
         return self
 
+    @model_validator(mode="after")
+    def _a_lid_it_can_build(self) -> Kiln:
+        if self.loading.type != "lid":
+            return self
+        if (
+            self.chamber.shape != "round"
+            or self.heat.electric is None
+            or not isinstance(self.roof, FlatRoof)
+        ):
+            raise ValueError(
+                "a lid is laid out only on a round electric kiln with a flat roof, the lid, as "
+                "top-loaders are built (electric-kiln-survey.md): use a door, or make it round, "
+                "electric and flat-roofed"
+            )
+        if self.loading.opening is not None or self.lining.door is not None:
+            raise ValueError(
+                "a top-loader's lid is its roof, in the roof's layers, and its walls have no door: "
+                "leave out loading.opening and lining.door"
+            )
+        return self
+
+    @model_validator(mode="after")
+    def _an_opening_it_can_build(self) -> Kiln:
+        door = self.loading.opening
+        if door is None:
+            return self
+        face = self.loading.face
+        if self.loading.type == "car":
+            raise ValueError(
+                "a car's door is its whole end, which rolls out with it: leave out the opening"
+            )
+        if self.heat.electric is not None:
+            raise ValueError(
+                "an electric kiln's door here is its whole front, hinged in its case: leave out "
+                "the opening"
+            )
+        if self.lining.door is not None:
+            raise ValueError(
+                "a door in part of a wall is laid in the wall's own layers: leave out lining.door"
+            )
+        w, h = si(door.width, "in"), si(door.height, "in")
+        across, sill = si(door.across, "in"), si(door.sill, "in")
+        if w <= 0 or h <= 0 or sill < 0:
+            raise ValueError("a door's width and height must be more than 0, its sill not below 0")
+        if door.head == "arch" and h < w / 2:
+            raise ValueError(
+                f"an arched door's height takes its semicircular head, {w / 2:g} in: make it at "
+                "least that tall"
+            )
+        row = self.chamber.chambers > 1
+        if row and isinstance(self.roof, SprungArch) and not self.roof.tube:
+            if face in ("front", "back"):
+                raise ValueError(
+                    "each chamber's arch springs from the front and back walls, so a door in part "
+                    f"of the {face} wall would be under a springing: no source here allows it. Put "
+                    "it in a side wall, as climbing kilns do (Olsen Figs 4-36, 4-45), or leave out "
+                    "the opening, so the whole wall is the door"
+                )
+        elif row and face in ("left", "right"):
+            raise ValueError(
+                "a door in part of a side wall of chambers in a row is laid out only under arches "
+                "along the draft: put it in the front or back wall"
+            )
+        if door.each_chamber and not (row and face in ("left", "right")):
+            raise ValueError(
+                "a door in each chamber is for chambers in a row, in a side wall: leave out "
+                "each_chamber, or put the door in the left or right wall"
+            )
+        along = self.chamber.width if face in ("front", "back") else self.chamber.depth
+        half = si(along, "in") / 2
+        if row and face in ("left", "right"):
+            from kilndesigner.run_parts import run_layout
+
+            run = run_layout(self)
+            lo, hi = run.front(0) / 25.4, run.back(run.chambers - 1) / 25.4
+            half = (hi - lo) / 2
+            shift = across if face == "right" else -across
+            if door.each_chamber:
+                # Each chamber's own stretch of the wall, from its middle
+                for k in range(run.chambers):
+                    a, b = run.front(k) / 25.4, run.back(k) / 25.4
+                    u = (a + b) / 2 + shift
+                    if u - w / 2 < a - 1e-9 or u + w / 2 > b + 1e-9:
+                        raise ValueError(
+                            f"the door, {w:g} in wide and {across:g} in off the middle of chamber "
+                            f"{k + 1}, doesn't fit between its walls across the run, "
+                            f"{b - a:.1f} in apart: move it or make it narrower"
+                        )
+                half = math.inf
+            u = (lo + hi) / 2 + shift
+            if not door.each_chamber and not any(
+                run.front(k) / 25.4 - 1e-9 <= u - w / 2 and u + w / 2 <= run.back(k) / 25.4 + 1e-9
+                for k in range(run.chambers)
+            ):
+                raise ValueError(
+                    "a door in a side wall of chambers in a row must open into one chamber, "
+                    "between the walls across the run: move it along"
+                )
+        if abs(across) + w / 2 > half * (0.95 if self.chamber.shape == "round" else 1) + 1e-9:
+            raise ValueError(
+                f"the door, {w:g} in wide and {across:g} in off the middle, doesn't fit in the "
+                f"{face} wall, {2 * half:g} in long inside"
+            )
+        top = si(self.chamber.height, "in")
+        if isinstance(self.roof, CatenaryArch):
+            from kilndesigner.shape import CatenaryCurve
+
+            curve = CatenaryCurve(si(self.chamber.width, "in"), top)
+            top = min(curve.z(across - w / 2), curve.z(across + w / 2))
+        elif isinstance(self.roof, Dome) and self.chamber.shape != "round" and not row:
+            # A sail dome meets each wall in a curve that rises above the springline towards the
+            # wall's middle (geometry.inside_top): the door may reach up to it at both its jambs,
+            # as Calimpong's 37 in door does under walls of 35 in (Olsen Fig 4-140)
+            from kilndesigner.geometry import inside_top
+
+            top = min(inside_top(self, face, (across + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
+        if sill + h > top + 1e-9:
+            raise ValueError(
+                f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "
+                f"{top:.1f} in: lower it"
+            )
+        return self
+
+    @property
+    def door_wall(self) -> Face | None:
+        """The wall that is the door, when the whole wall is; None for a door in part of one, or
+        a top-loader, whose walls are all wall."""
+        if self.loading.opening is not None or self.loading.type == "lid":
+            return None
+        return self.door_face
+
     def castable(self, mix_id: str) -> CastableMix | None:
         return next((m for m in self.castables or [] if m.id == mix_id), None)
 
@@ -806,9 +1137,11 @@ class Kiln(Spec):
 
     @property
     def door_kind(self) -> Literal["bricked", "hinged"] | None:
-        """How the door is built, or None for a car kiln."""
+        """How the door is built, or None for a car kiln; a top-loader's lid is hinged."""
         if self.loading.type == "car":
             return None
+        if self.loading.type == "lid":
+            return "hinged"
         if self.loading.door is not None:
             return self.loading.door
         return "hinged" if self.heat.gas is None and self.heat.fire is None else "bricked"

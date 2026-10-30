@@ -17,8 +17,10 @@ def whole_bricks(
     tolerance_mm: float,
     us: bool,
     source: str,
+    sums: str = SUMS,
 ) -> Sheet:
-    """A brick layer's thickness against the nearest thicknesses whole bricks make."""
+    """A brick layer's thickness against the nearest thicknesses whole bricks make (``sums``
+    says which: straight walls, or a round wall's rings)."""
     unit = "in" if us else "mm"
     s = Sheet("masonry.thickness", f"{layer} in whole bricks", reference=source)
     s.given("T", f"{layer}'s thickness", Q_(thickness_mm, "mm"), unit=unit, source="the design")
@@ -28,7 +30,7 @@ def whole_bricks(
             "the next thickness whole bricks make, below",
             Q_(below_mm, "mm"),
             unit=unit,
-            source=SUMS,
+            source=sums,
         )
     s.given(
         "T_above",

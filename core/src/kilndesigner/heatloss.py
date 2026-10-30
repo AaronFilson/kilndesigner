@@ -302,6 +302,19 @@ def heat_loss(
                 f"{({3: 'three', 4: 'four', 5: 'five', 6: 'six'}).get(len(faces), len(faces))} "
                 "faces"
             ),
+            note=(
+                "Conduction through the lining only, in steady state: air leaking at the door and "
+                "spy holes, the flue gases and the heat stored in the walls and ware are not in "
+                "it. "
+                + (
+                    "The floor loses heat into the ground."
+                    if grounded
+                    else "The floor stands over its fireboxes and isn't counted."
+                    if over_fire
+                    else "The floor is taken as a hot plate facing down in open air, as on a "
+                    "stand; on a slab it would lose less."
+                )
+            ),
         )
     )
     if kiln.roof.type == "open":
@@ -371,7 +384,9 @@ def heat_loss(
                 level="info",
                 message=(
                     f"{m.name} runs {' and '.join(ends)}; past its data sheet's points the "
-                    "conductivity is carried on along the nearest pair of points."
+                    "conductivity is carried on along the nearest pair of points above the data, "
+                    "and held at the first point's value below it (no lower: more heat loss, the "
+                    "safe side)."
                 ),
                 reference=m.source,
             )

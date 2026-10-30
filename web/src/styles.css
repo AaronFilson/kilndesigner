@@ -942,3 +942,78 @@ table.plain .number {
 .layer-notes li {
   margin-bottom: 0.35rem;
 }
+
+/* The firing: summary, charts and the walls' heatmap */
+.firing-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.4rem 1rem;
+}
+
+.firing-summary dt {
+  font-size: 0.85em;
+  color: var(--muted, #777);
+}
+
+.firing-summary dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.chart {
+  margin: 1rem 0;
+}
+
+.chart svg {
+  width: 100%;
+  max-width: 40rem;
+  font-size: 10px;
+}
+
+.chart .grid {
+  stroke: var(--border);
+}
+
+.chart .marker {
+  stroke: currentColor;
+  stroke-dasharray: 2 3;
+}
+
+.chart text {
+  fill: currentColor;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.85em;
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.8em;
+  height: 0.8em;
+  border-radius: 2px;
+}
+
+.heatmap-canvas {
+  height: 26rem;
+}
+
+.scrubber input {
+  width: 100%;
+}
+
+.scale {
+  display: flex;
+}
+
+.scale span {
+  flex: 1;
+  padding: 0.2rem;
+  text-align: center;
+  font-size: 0.8em;
+}

@@ -23,24 +23,30 @@ from __future__ import annotations
 import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field, replace
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.allowance import allowance
+from kilndesigner.bend import bent, developed
+from kilndesigner.bend import note as bend_note
 from kilndesigner.castable import resolve_material
-from kilndesigner.geometry import Part, lining_parts
+from kilndesigner.firebox_parts import firebox_findings
+from kilndesigner.geometry import Part, in_a_row, lining_parts
 from kilndesigner.library import material
 from kilndesigner.materials_checks import whole_bricks
 from kilndesigner.model import CatenaryArch, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
-from kilndesigner.working import Finding, length_text
+from kilndesigner.working import Finding, Step, length_text, show
+
+if TYPE_CHECKING:
+    from kilndesigner.round_masonry import RingPlan
 
 IN = 25.4  # mm
 BRICK = (9 * IN, 4.5 * IN, 2.5 * IN)  # length, width, thickness (mm)
 BRICK_SOURCE = "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
 KERF = IN / 8  # an assumption: a saw cut takes about ⅛ in
-WASTE = 0.10  # an assumption: extra bought for breakage and mistakes, not from a source
 TOL = 0.01  # mm
 # A layer within 1 mm of a brick size is that size, so a metric design can say 114 mm for 4½ in.
 THICKNESS_TOL = 1.0  # mm
@@ -88,6 +94,8 @@ class LayerPlan:
     span: float  # mm across all courses (wall height, or floor depth)
     courses: list[Course] = field(default_factory=list[Course])
     within: tuple[int, int] = (1, 1)  # this wall of brick, of how many side by side in the layer
+    # A round kiln's floor or roof: the circle its rows are cut to, centred on the layer (mm)
+    circle: float | None = None
 
     @property
     def pieces(self) -> list[Piece]:
@@ -116,7 +124,7 @@ def layer_name(part: Part) -> str:
     return part.title
 
 
-def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
+def layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
     """For each brick size through a layer: (laying, unit along the run, course height)."""
     length, width, thick = BRICK
     if horizontal:
@@ -134,7 +142,7 @@ def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
 
 def _laying(thickness: float, horizontal: bool) -> tuple[Laying, float, float] | None:
     """How bricks are laid for one wall of brick: (laying, unit along the run, course height)."""
-    for size, laying in _layings(horizontal).items():
+    for size, laying in layings(horizontal).items():
         if abs(thickness - size) < THICKNESS_TOL:
             return laying
     return None
@@ -197,7 +205,9 @@ def _split(part: Part, sizes: list[float]) -> list[Part]:
     return pieces
 
 
-def _run(length: float, unit: float, stagger: bool, height: float, full_h: float) -> list[Piece]:
+def run_pieces(
+    length: float, unit: float, stagger: bool, height: float, full_h: float
+) -> list[Piece]:
     pieces: list[Piece] = []
     pos = 0.0
     if stagger:
@@ -235,7 +245,7 @@ def plan_layer(part: Part) -> LayerPlan | None:
     for i in range(n):
         offset = i * course_h
         height = min(course_h, span - offset)
-        pieces = _run(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
+        pieces = run_pieces(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
         plan.courses.append(Course(i + 1, offset, tuple(pieces)))
     return plan
 
@@ -249,8 +259,7 @@ def plan_layers(part: Part) -> list[LayerPlan] | None:
     plans: list[LayerPlan] = []
     for k, piece in enumerate(_split(part, sizes)):
         plan = plan_layer(piece)
-        if plan is None:  # every piece is one brick thick, so this can't happen
-            raise AssertionError(f"{part.name}: no laying for {piece.thickness:.1f} mm")
+        assert plan is not None, "every piece is one brick thick, so it can always be laid"
         plan.within = (k + 1, len(sizes))
         plans.append(plan)
     return plans
@@ -345,7 +354,7 @@ def arch_ring(part: Part) -> ArchRing | None:
         n_shaped = gain / (BRICK[2] - thin)
         n_straight = (inner_arc - n_shaped * thin) / BRICK[2]
         if n_straight >= -0.5:  # the gentlest taper that can turn the curve
-            rings = math.ceil(part.length_y / along - TOL / along)
+            rings = math.ceil(part.length_run / along - TOL / along)
             per_ring_shaped = math.ceil(n_shaped - 1e-9)
             per_ring = math.ceil((inner_arc + gain) / BRICK[2] - 1e-9)
             per_ring_straight = max(0, per_ring - per_ring_shaped)
@@ -423,15 +432,31 @@ class Masonry(BaseModel):
     quantities: list[Quantity]
     cut_list: list[CutLine]
     findings: list[Finding]
+    working: list[Step] = []
 
 
 @dataclass
 class MasonryPlan:
     layers: list[LayerPlan]
     result: Masonry
+    rings: list[RingPlan] = field(default_factory=list["RingPlan"])  # a round wall's rings
+
+    def course_plans(self) -> list[LayerPlan | RingPlan]:
+        """Every layer with a course plan, floor first, then the walls, then the roof."""
+        if not self.rings:
+            return list(self.layers)
+        own = [p for p in self.layers if not p.part.name.startswith("firebox-")]
+        fireboxes = [p for p in self.layers if p.part.name.startswith("firebox-")]
+        floor = [p for p in own if p.part.wall == "floor"]
+        rest = [p for p in own if p.part.wall != "floor"]
+        return [*floor, *self.rings, *rest, *fireboxes]
 
 
 def plan_masonry(kiln: Kiln) -> MasonryPlan:
+    if kiln.chamber.shape == "round":
+        from kilndesigner.round_masonry import plan_round_masonry
+
+        return plan_round_masonry(kiln)
     us = kiln.units == "us"
     findings: list[Finding] = []
     layers: list[LayerPlan] = []
@@ -446,13 +471,23 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     arch_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
-    for part in lining_parts(kiln):
+    row = in_a_row(kiln)
+    along = row and not (isinstance(kiln.roof, SprungArch) and kiln.roof.tube)
+    for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
+        if part.across and part.arch is not None and m.kind in BRICK_KINDS:
+            # An arch along the draft that stops short of its neighbour: in standard shapes
+            ring = arch_ring(part)
+            if ring is not None:
+                shapes[(m.id, ring.shape)] += ring.shaped
+                whole[m.id] += ring.straights
+                arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
+                continue
         if part.profile is not None or part.dome is not None:
             # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
             # closing it; a dome's layer or a wall's top under it. No standard shapes turn these
             # curves, so brick is counted by volume.
-            skewback = part.profile is not None and part.wall in ("left", "right")
+            skewback = part.is_skewback
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
@@ -494,7 +529,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 continue
             if len(plans) > 1:
                 side_by_side.append((part, plans))
-            if isinstance(kiln.roof, SprungArch) and part.wall in ("left", "right"):
+            springs = ("front", "back") if along else ("left", "right")
+            if isinstance(kiln.roof, SprungArch) and part.wall in springs:
                 under_skewbacks.extend(plan.laying for plan in plans)
             layers.extend(plans)
             for piece in (p for plan in plans for p in plan.pieces):
@@ -512,45 +548,10 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         elif m.kind in BULK_KINDS:
             cast_volume[m.id] += part.volume
 
-    quantities: list[Quantity] = []
-    cut_list: list[CutLine] = []
-    for mid in sorted(set(whole) | set(cuts)):
-        m = material(mid)
-        from_cuts = bricks_for_cuts(cuts.get(mid, []))
-        exact = whole[mid] + from_cuts
-        buy = math.ceil(exact * (1 + WASTE))
-        quantities.append(
-            Quantity(
-                material=mid,
-                name=m.name,
-                kind=m.kind,
-                amount=buy,
-                unit="bricks",
-                detail=(
-                    f"{whole[mid]} whole, {from_cuts} cut into {len(cuts.get(mid, []))} pieces; "
-                    f"{exact} in the kiln plus {WASTE:.0%} for breakage"
-                ),
-                priced_amount=buy,
-            )
-        )
-        counts = Counter(c.describe(us) for c in cuts.get(mid, []))
-        cut_list.extend(
-            CutLine(material=mid, cut=desc, count=n) for desc, n in sorted(counts.items())
-        )
-    for (mid, shape), count in sorted(shapes.items()):
-        m = material(mid)
-        buy = math.ceil(count * (1 + WASTE))
-        quantities.append(
-            Quantity(
-                material=mid,
-                name=f"{m.name}, {shape}",
-                kind=m.kind,
-                amount=buy,
-                unit="bricks",
-                detail=f"{count} in the arch plus {WASTE:.0%} for breakage",
-                priced_amount=buy,
-            )
-        )
+    quantities, cut_list, working = buy_quantities(
+        kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
+    )
+    brick = allowance(kiln, "brick")
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
     if arch_lines:
@@ -562,7 +563,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
     if isinstance(kiln.roof, SprungArch):
-        arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
+        span = kiln.chamber.depth if along else kiln.chamber.width
+        arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)
         findings.append(
             Finding(
@@ -572,18 +574,27 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                     "at the springline and counted by volume. The skewback's face must match the "
                     f"arch: {skew:.0f}° to the horizontal here, 90° less half the arch's central "
                     "angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at "
-                    "2.302 in/ft). The steel that takes the arch's thrust is in the frame."
+                    "2.302 in/ft). "
+                    + (
+                        "The arch's thrust is held by the kiln's masonry, as the design says."
+                        if kiln.roof.buttressed
+                        else "The end walls take the arches' thrust; no steel for them is sized "
+                        "(the frame's findings)."
+                        if along
+                        else "The steel that takes the arch's thrust is in the frame."
+                    )
                 ),
                 reference="kiln-hardware.md §5.2 [S20]",
             )
         )
         if "stretcher" in under_skewbacks:
+            these = "the walls the arches spring from" if along else "these side walls"
             findings.append(
                 Finding(
                     level="info",
                     message=(
                         'HarbisonWalker, for industrial furnaces: "A stretcher course should never '
-                        'be used immediately below the skewback." Brick in these side walls is '
+                        f'be used immediately below the skewback." Brick in {these} is '
                         "laid as stretchers, as in Olsen's insulating-brick kilns, whose "
                         "featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where "
                         "you can, lay the course under each skewback as headers."
@@ -603,6 +614,214 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference="combustion-and-masonry.md §6.2 [S54, S56]",
             )
         )
+    if layers:
+        corners = (
+            ""
+            if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
+            else " The side walls run through, past the end walls and the walls between "
+            "chambers, which fit between them."
+            if row
+            else " At the corners the side walls run through and the back and door fit between "
+            "them, layer by layer."
+        )
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
+                    f"cut, and {brick.text} extra for breakage. Each cut piece already takes its "
+                    "own brick in the count. The size is sourced; the saw cut is an assumption no "
+                    "source gives, so adjust it to your saw. "
+                    + (
+                        "The allowance is the design's own."
+                        if brick.from_design
+                        else 'The allowance is the masonry estimators\' "at least 5 percent" '
+                        "(BIA): set allowances.brick in the design from your own experience."
+                    )
+                    + corners
+                ),
+                reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
+            )
+        )
+    findings += firebox_findings(kiln) + port_findings(kiln)
+    if bent(kiln):
+        findings.append(Finding(level="info", message=bend_note(kiln), reference="bend.py"))
+    if row:
+        findings.append(_row_note(kiln, us))
+    elif kiln.chamber.slope is not None and si(kiln.chamber.slope, "degree") > 0:
+        slope = si(kiln.chamber.slope, "degree")
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The kiln is laid out along its {slope:.3g}° slope: the floor, walls and "
+                    "roof are built square to the sloping floor, every course following it, so "
+                    "the course plans are those of a level kiln of the same size. This is how "
+                    "the plans draw it; no source here sets how a sloping kiln's courses run, so "
+                    "level courses stepped up the slope are as good a choice, with more cutting "
+                    "at the top of each wall."
+                ),
+            )
+        )
+    return MasonryPlan(
+        layers,
+        Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working),
+    )
+
+
+def port_findings(kiln: Kiln) -> list[Finding]:
+    """What the brick count leaves in for the holes the burners and an updraft's flue need: they
+    are placed with the burners (hardware.py), after the masonry is counted."""
+    gas = kiln.heat.gas
+    through: list[str] = []
+    if gas is not None and gas.burners.wall == "floor":
+        through.append("the burner ports up through the floor")
+    burnt = gas is not None or kiln.heat.fire is not None
+    if burnt and (kiln.draft is None or kiln.draft.type == "up"):
+        through.append("the flue through the roof")
+    if not through:
+        return []
+    return [
+        Finding(
+            level="info",
+            message=(
+                " and ".join(through).capitalize()
+                + (" are" if len(through) > 1 or "ports" in through[0] else " is")
+                + " cut in the 3D model where the burners "
+                "and flue are placed; the brick count leaves those bricks in, to be cut on site, "
+                "as the side walls' ports are."
+            ),
+        )
+    ]
+
+
+def _row_note(kiln: Kiln, us: bool) -> Finding:
+    """How chambers in a row are laid out (run_parts.py), and what isn't."""
+    from kilndesigner.run_parts import run_layout
+
+    run = run_layout(kiln)
+    n = run.chambers
+    text = (
+        f"The {n} chambers stand in a row, each wall between them "
+        f"{length_text(run.between, us)} thick, as thick as the side walls. "
+    )
+    reference = "run_parts.py; Olsen, The Kiln Book, 4th ed."
+    if run.step > 1e-6:
+        slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
+        text += (
+            f"Each floor steps {length_text(run.step, us)} above the last: the pitch of a "
+            f"chamber and its wall, {length_text(run.pitch, us)}, times tan {slope:.3g}°, as "
+            "Olsen's climbing kilns step 12–15 in from chamber to chamber (p.97). Each chamber "
+            "is built level, in level courses. "
+        )
+        reference += ", p.97"
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.tube:
+        text += (
+            "The chambers stand in one tube: its arch spans the width and runs the whole length, "
+            "as a tube kiln's, 'an anagama extended' (p.85), its thrust on the side walls; the end "
+            "walls and the walls between chambers are filled up to it. "
+        )
+        reference += ", p.85"
+    elif isinstance(kiln.roof, SprungArch):
+        text += (
+            "Each chamber's arch spans along the draft, over its depth, and throws its thrust "
+            "onto the walls before and behind it, as in Olsen's climbing kilns (p.94–95). Where "
+            "an arch meets its neighbour over the wall they share, it is cut there and counted by "
+            "volume. "
+        )
+        reference += ", p.94–95; kiln-reference.md, Tube and climbing chamber kilns"
+    from kilndesigner.run_parts import FLUE_HEIGHT, flue_rows
+
+    rows = flue_rows(kiln)
+    if rows:
+        n = rows[0].count
+        short = [r.chamber for r in rows if r.top - r.bottom < FLUE_HEIGHT - 1e-6]
+        text += (
+            f"Each wall between chambers has {n} flue {'hole' if n == 1 else 'holes'} 4½ in "
+            "wide and 9 in tall at the higher chamber's floor, 9 in apart: Olsen's standard "
+            '4½ × 9 in flues for the Kyoto climbing kilns, "at 9 in" read as a 9 in separator '
+            "(p.96, p.45); the book doesn't say which way the 4½ in runs, so it is taken across. "
+            "They are cut from the brick count. "
+        )
+        if short:
+            text += (
+                "The flues out of chambers " + ", ".join(str(c) for c in short) + " stop at the "
+                "lower chamber's springline, under 9 in tall. "
+            )
+        text += (
+            "Lay them on a header course with the header over each one laid so it can be knocked "
+            "out if the flue proves too small, and size them against your firing: Olsen errs on "
+            "flues too large (p.45)."
+        )
+    else:
+        text += "No flue hole fits under the springlines, so the walls between are counted solid."
+    return Finding(level="info", message=text, reference=reference + ", p.45, p.96")
+
+
+def buy_quantities(
+    kiln: Kiln,
+    whole: Counter[str],
+    shapes: Counter[tuple[str, str]],
+    cuts: dict[str, list[Cut]],
+    sheet_area: dict[str, float],
+    sheet_area_thickness: dict[str, float],
+    sheet_thickness: dict[str, set[float]],
+    cast_volume: dict[str, float],
+    shapes_in: str = "the arch",
+) -> tuple[list[Quantity], list[CutLine], list[Step]]:
+    """What to buy: whole bricks and cuts, shapes (laid in ``shapes_in``), sheet by area,
+    castable by weight."""
+    us = kiln.units == "us"
+    quantities: list[Quantity] = []
+    cut_list: list[CutLine] = []
+    working: list[Step] = []
+    brick, shaped = allowance(kiln, "brick"), allowance(kiln, "shaped")
+    sheet, cast = allowance(kiln, "sheet"), allowance(kiln, "castable")
+    if whole or cuts:
+        working.append(brick.step())
+    if shapes:
+        working.append(shaped.step())
+    if sheet_area:
+        working.append(sheet.step())
+    if any(kiln.castable(mid) is None for mid in cast_volume):
+        working.append(cast.step())
+    for mid in sorted(set(whole) | set(cuts)):
+        m = material(mid)
+        from_cuts = bricks_for_cuts(cuts.get(mid, []))
+        exact = whole[mid] + from_cuts
+        buy = brick.buy(exact)
+        quantities.append(
+            Quantity(
+                material=mid,
+                name=m.name,
+                kind=m.kind,
+                amount=buy,
+                unit="bricks",
+                detail=(
+                    f"{whole[mid]} whole, {from_cuts} cut into {len(cuts.get(mid, []))} pieces; "
+                    f"{exact} in the kiln plus {brick.text} for breakage"
+                ),
+                priced_amount=buy,
+            )
+        )
+        counts = Counter(c.describe(us) for c in cuts.get(mid, []))
+        cut_list.extend(
+            CutLine(material=mid, cut=desc, count=n) for desc, n in sorted(counts.items())
+        )
+    for (mid, shape), count in sorted(shapes.items()):
+        m = material(mid)
+        buy = shaped.buy(count)
+        quantities.append(
+            Quantity(
+                material=mid,
+                name=f"{m.name}, {shape}",
+                kind=m.kind,
+                amount=buy,
+                unit="bricks",
+                detail=f"{count} in {shapes_in} plus {shaped.text} for breakage",
+                priced_amount=buy,
+            )
+        )
     for mid, area_mm2 in sorted(sheet_area.items()):
         m = material(mid)
         area = Q_(area_mm2, "mm**2")
@@ -614,10 +833,15 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 material=mid,
                 name=m.name,
                 kind=m.kind,
-                amount=round(si(area, "ft**2" if us else "m**2") * (1 + WASTE), 1),
+                amount=round(si(area, "ft**2" if us else "m**2") * (1 + sheet.share), 1),
                 unit="ft²" if us else "m²",
-                detail=f"{thick} thick; area plus {WASTE:.0%} for trimming",
-                priced_amount=si(Q_(sheet_area_thickness[mid], "mm**3"), "ft**2*in") * (1 + WASTE),
+                detail=(
+                    f"{thick} thick; area plus {sheet.text} for trimming"
+                    if sheet.share
+                    else f"{thick} thick; the area, with nothing added for trimming"
+                ),
+                priced_amount=si(Q_(sheet_area_thickness[mid], "mm**3"), "ft**2*in")
+                * (1 + sheet.share),
             )
         )
     for mid, volume_mm3 in sorted(cast_volume.items()):
@@ -625,39 +849,31 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             continue  # your own mix: counted by batches and ingredients (castable.py)
         m = material(mid)
         volume = Q_(volume_mm3, "mm**3")
-        mass = volume * parse_quantity(m.density)
+        # A castable is bought by its maker's "material required" where the sheet gives one
+        # (review M8); else at its dried density
+        required = m.material_required if m.kind in CAST_KINDS else None
+        mass = volume * parse_quantity(required or m.density)
+        basis = (
+            f"at the maker's {show(parse_quantity(required), 'lb/ft**3' if us else 'kg/m**3')} "
+            "required to place it"
+            if required
+            else "at the dried density"
+        )
         quantities.append(
             Quantity(
                 material=mid,
                 name=m.name,
                 kind=m.kind,
-                amount=round(si(mass, "lb" if us else "kg") * (1 + WASTE), 0),
+                amount=round(si(mass, "lb" if us else "kg") * (1 + cast.share), 0),
                 unit="lb" if us else "kg",
                 detail=(
                     f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} placed, "
-                    f"at the dried density, plus {WASTE:.0%}"
+                    f"{basis}, plus {cast.text}"
                     if m.kind in CAST_KINDS
                     else f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} "
-                    f"laid, at its density, plus {WASTE:.0%}"
+                    f"laid, at its density, plus {cast.text}"
                 ),
-                priced_amount=si(mass, "lb") * (1 + WASTE),
+                priced_amount=si(mass, "lb") * (1 + cast.share),
             )
         )
-    if layers:
-        corners = (
-            ""
-            if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
-            else " At the corners the side walls run through and the back and door fit between "
-            "them, layer by layer."
-        )
-        findings.append(
-            Finding(
-                level="info",
-                message=(
-                    "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage.{corners}"
-                ),
-                reference=BRICK_SOURCE,
-            )
-        )
-    return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
+    return quantities, cut_list, working

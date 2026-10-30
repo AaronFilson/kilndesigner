@@ -8,14 +8,35 @@ export interface Layer {
   thickness: string;
 }
 
+/** A door in part of a wall (model.DoorOpening); left out, the whole wall is the door. */
+export interface DoorOpening {
+  width: string;
+  height: string;
+  across?: string;
+  sill?: string;
+  head?: "arch" | "lintel";
+  each_chamber?: boolean;
+}
+
 export interface KilnDocument {
   schema?: number;
   name: string;
   units?: "us" | "metric";
   firing: { cone?: string; final_rate?: 60 | 100 | 150 | 600; top_temperature?: string };
-  chamber: { width: string; depth: string; height: string };
+  chamber: {
+    shape?: "box" | "round";
+    width: string;
+    depth: string;
+    height: string;
+    chambers?: number;
+    slope?: string;
+    bend?: string;
+    on_ground?: boolean;
+    rings?: RingMethod;
+  };
   roof?:
     | { type: "flat" }
+    | { type: "open" }
     | {
         type: "sprung_arch";
         rise: string;
@@ -26,20 +47,23 @@ export interface KilnDocument {
     | { type: "catenary_arch" }
     | { type: "dome"; rise: string };
   loading?: {
-    type?: "door" | "car";
+    /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
+    type?: "door" | "car" | "lid";
     face?: WallFace;
     door?: "bricked" | "hinged";
+    opening?: DoorOpening;
     car_hardware_cost?: string;
   };
   lining: { walls: Layer[]; floor?: Layer[]; roof?: Layer[]; door?: Layer[] };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
-  heat: { electric?: Electric; gas?: Gas };
+  heat: { electric?: Electric; gas?: Gas; fire?: Fire };
   draft?: {
     type: "cross" | "down" | "up";
     flue_wall?: WallFace;
     run_to_chimney?: string;
     flue_port?: Port;
     flue_across?: string;
+    chimney?: Chimney;
   };
   spy_holes?: { count?: number; port?: Port; places?: Place[] };
   site?: {
@@ -51,6 +75,9 @@ export interface KilnDocument {
   };
   castables?: Castable[];
 }
+
+/** How a round wall's brick rings are turned (model.py Chamber.rings). */
+export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
 
 export interface MixPart {
   ingredient: string;
@@ -97,16 +124,59 @@ export interface Burners {
   type?: "venturi" | "power";
   count?: number;
   model?: string;
-  wall?: WallFace;
+  rating?: string;
+  wall?: WallFace | "floor";
   port?: Port;
   up?: string;
   places?: Place[];
 }
 
+/** A flue's or chimney's inside: round, by its diameter, or a rectangle. */
+export interface FlueSection {
+  diameter?: string;
+  width?: string;
+  depth?: string;
+}
+
+export interface Chimney {
+  /** Needed: the form leaves it blank for the builder to give. */
+  height?: string;
+  inside?: FlueSection;
+  top?: FlueSection;
+}
+
+export type FireboxPosition = "front" | "back" | "left" | "right" | "under";
+
+export interface Firebox {
+  count?: number;
+  position?: FireboxPosition;
+  width: string;
+  length: string;
+  height?: string;
+  grate?: { width: string; length: string; gap?: string };
+  ash_pit?: string;
+  step?: string;
+  inlet?: Port;
+  inlets?: number;
+  stoke_hole?: Port;
+}
+
+/** Wood, coal or oil burned in fireboxes (model.py Fire). */
+export interface Fire {
+  fuel?: "wood" | "coal" | "oil";
+  fireboxes: Firebox[];
+  forced?: boolean;
+  oil_burners?: number;
+  oil_rate?: string;
+}
+
 export interface Gas {
-  fuel?: "propane";
+  fuel?: "propane" | "natural_gas";
   burners?: Burners;
-  supply: { type: "cylinders"; count: number; size?: "100 lb" } | { type: "tank"; gallons: number };
+  supply:
+    | { type: "cylinders"; count: number; size?: "100 lb" }
+    | { type: "tank"; gallons: number }
+    | { type: "line"; pressure?: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
 }
@@ -178,10 +248,28 @@ export interface PortSpot {
   cut: boolean;
 }
 
+/** How a kiln drawn as shells (massing.py) lies: a round chamber, or a run of chambers that may
+ * climb and bend. The walls' frames are the first chamber's; the run moves them. In mm and
+ * degrees. */
+export interface RunInfo {
+  round: boolean;
+  radius: number | null;
+  chambers: number;
+  depth: number;
+  chamber_pitch: number;
+  slope: number;
+  bend: number;
+  length: number;
+  /** Chambers in a row laid out in brick (core run_parts.py) stand level, each floor this far
+   * above the last: the run steps up its slope rather than tilting. Absent for shells. */
+  step?: number;
+}
+
 export interface Layout {
   units: "us" | "metric";
   walls: Record<WallFace, WallFrame>;
   ports: PortSpot[];
+  run?: RunInfo;
 }
 
 /** The ports of one kind as places the design can hold, from where the build put them. */

@@ -4,30 +4,31 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import AsyncIterator
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from typing import Annotated, Any
 
 import yaml
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse
 from pydantic import ValidationError
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from kilndesigner import Kiln, dump_design, parse_design
+from kilndesigner import Kiln, dump_design, parse_design, results
 from kilndesigner.build import build_key, design_document
 from kilndesigner.castable import CastableError, ingredients, mix_analysis
 from kilndesigner.cones import cone_names, cone_rates
 from kilndesigner.gas import gas_data, named_model
 from kilndesigner.library import alloys, materials
 from kilndesigner.report import Report
+from kilndesigner.results import WallHeatmap, read_summary
+from kilndesigner.simulation import FiringPoint, FiringResult, SwitchOverChart
 from kilndesigner.templates import templates
-from kilndesigner.units import UnitError
 from kilndesigner_api import db, schemas
 from kilndesigner_api.jobs import JobRunner
 from kilndesigner_api.settings import Settings
-from kilndesigner_api.tasks import build_dir
+from kilndesigner_api.tasks import build_dir, simulation_dir
 
 router = APIRouter(
     prefix="/api",
@@ -53,9 +54,7 @@ def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
         raise InvalidDesignError([schemas.Problem(loc=[], msg=f"not valid YAML: {e}")]) from e
     except ValidationError as e:
         problems = [schemas.Problem(loc=list(p["loc"]), msg=p["msg"]) for p in e.errors()]
-        raise InvalidDesignError(problems) from e
-    except UnitError as e:
-        raise InvalidDesignError([schemas.Problem(loc=[], msg=str(e))]) from e
+        raise InvalidDesignError(problems) from e  # pydantic wraps a UnitError in this too
     problems: list[schemas.Problem] = []
     known = set(materials()) | {m.id for m in kiln.castables or []}
     for face in ("walls", "floor", "roof", "door"):
@@ -329,6 +328,89 @@ async def build_report(key: str, s: Session, settings: AppSettings) -> Report:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no report")
     path = build_dir(settings.data_dir, key) / "report.json"
     return Report.model_validate_json(path.read_bytes())
+
+
+async def _done_simulation(s: AsyncSession, settings: Settings, key: str) -> Path:
+    """The folder of a finished simulation, or 404."""
+    sim = await s.get(db.Simulation, key)
+    folder = simulation_dir(settings.data_dir, key)
+    if sim is None or sim.status != db.BuildStatus.done or not (folder / "firing.json").is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no finished simulation")
+    return folder
+
+
+@router.post("/simulations/{key}", status_code=status.HTTP_202_ACCEPTED)
+async def start_simulation(
+    key: str, s: Session, runner: Runner, settings: AppSettings
+) -> schemas.Simulation:
+    """Simulate a firing of a design version, by its build key. A finished run is returned."""
+    known = await s.scalar(
+        select(func.count()).select_from(db.DesignVersion).where(db.DesignVersion.build_key == key)
+    )
+    if not known:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no design version has this build key")
+    sim = await s.get(db.Simulation, key)
+    if sim is not None and sim.status == db.BuildStatus.done:
+        if (simulation_dir(settings.data_dir, key) / "firing.json").is_file():
+            return schemas.Simulation.model_validate(sim)
+        sim.status = db.BuildStatus.failed  # its files have gone: run it again
+    if sim is None:
+        sim = db.Simulation(key=key)
+        s.add(sim)
+    elif sim.status == db.BuildStatus.failed:
+        sim.status, sim.error, sim.finished_at = db.BuildStatus.queued, None, None
+    else:
+        return schemas.Simulation.model_validate(sim)
+    await s.commit()
+    await s.refresh(sim)
+    queued = schemas.Simulation.model_validate(sim)
+    await runner.submit_simulation(key)
+    return queued
+
+
+@router.get("/simulations/{key}")
+async def get_simulation(key: str, s: Session) -> schemas.Simulation:
+    sim = await s.get(db.Simulation, key)
+    if sim is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "not simulated")
+    return schemas.Simulation.model_validate(sim)
+
+
+@router.get("/simulations/{key}/result")
+async def simulation_result(key: str, s: Session, settings: AppSettings) -> FiringResult:
+    """The firing's summary, with its working and findings (every step's point is included)."""
+    return read_summary(await _done_simulation(s, settings, key))
+
+
+@router.get("/simulations/{key}/series")
+async def simulation_series(
+    key: str,
+    s: Session,
+    settings: AppSettings,
+    max_points: Annotated[int, Query(ge=2, le=20_000)] = 500,
+) -> list[FiringPoint]:
+    """The firing through time, read from Parquet with DuckDB, thinned to ``max_points``."""
+    return results.series(await _done_simulation(s, settings, key), max_points)
+
+
+@router.get("/simulations/{key}/heatmap")
+async def simulation_heatmap(
+    key: str,
+    s: Session,
+    settings: AppSettings,
+    max_times: Annotated[int, Query(ge=2, le=2_000)] = 200,
+) -> WallHeatmap:
+    """Each wall's temperatures through its thickness and through time, for the 3D heatmap."""
+    return results.heatmap(await _done_simulation(s, settings, key), max_times)
+
+
+@router.get("/simulations/{key}/switchover")
+async def simulation_switchover(key: str, s: Session, settings: AppSettings) -> SwitchOverChart:
+    """A hybrid's firing time and cost against its hand-over temperature."""
+    path = await _done_simulation(s, settings, key) / "switchover.json"
+    if not path.is_file():
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no switch-over chart for this kiln")
+    return SwitchOverChart.model_validate_json(path.read_bytes())
 
 
 @router.get("/builds/{key}/files/{name:path}", response_class=FileResponse)

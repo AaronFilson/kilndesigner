@@ -171,7 +171,7 @@ describe("DesignForm", () => {
   it("adds propane with a draft, and won't take away the only heat", () => {
     const last = form(electric);
     expect(screen.getByLabelText("Heat with electric elements")).toHaveProperty("disabled", true);
-    fireEvent.click(screen.getByLabelText("Fire with propane"));
+    fireEvent.click(screen.getByLabelText("Fire with gas"));
     expect(last()?.heat.gas?.supply).toEqual({ type: "cylinders", count: 4 });
     expect(last()?.draft).toEqual({ type: "cross", flue_wall: "back" });
   });
@@ -303,6 +303,67 @@ describe("DesignForm, loading", () => {
       door: "bricked",
       car_hardware_cost: "1500 USD",
     });
+  });
+
+  it("loads a round electric kiln from the top, under a hinged lid", () => {
+    const options = () =>
+      Array.from(field("Ware goes in through").querySelectorAll("option")).map((o) => o.value);
+    form(electric);
+    expect(options()).toEqual(["door", "car"]);
+    cleanup();
+    const round: KilnDocument = {
+      ...electric,
+      chamber: { ...electric.chamber, shape: "round", depth: electric.chamber.width },
+    };
+    const last = live(round);
+    expect(options()).toEqual(["door", "car", "lid"]);
+    set("Ware goes in through", "lid");
+    expect(last().loading).toEqual({ type: "lid" });
+    expect(screen.queryByLabelText("Door")).toBeNull();
+    expect(screen.getByText(/The walls have no door/)).toBeTruthy();
+    set("The peepholes' wall", "back");
+    expect(last().loading).toEqual({ type: "lid", face: "back" });
+  });
+
+  it("puts a door in part of a gas kiln's wall, and one into each chamber of a row", () => {
+    const gas: KilnDocument = {
+      ...electric,
+      heat: { gas: { supply: { type: "cylinders", count: 4 } } },
+    };
+    const last = live(gas);
+    expect(screen.queryByLabelText("Door width, inside the jambs")).toBeNull();
+    fireEvent.click(screen.getByLabelText(/The door is in part of the wall/));
+    expect(last().loading?.opening).toEqual({ width: "20 in", height: "36 in" });
+    set("Door width, inside the jambs", "24");
+    set("Door height, sill to the top of the opening", "30");
+    set("Door's centre off the wall's middle, to the right from outside", "-1");
+    set("Sill, above the floor", "2");
+    set("Door head", "lintel");
+    expect(last().loading?.opening).toEqual({
+      width: "24 in",
+      height: "30 in",
+      across: "-1 in",
+      sill: "2 in",
+      head: "lintel",
+    });
+    // A door in each chamber only for chambers in a row, in a side wall
+    expect(screen.queryByLabelText(/A door into each chamber/)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/The door is in part of the wall/));
+    expect(last().loading?.opening).toBeUndefined();
+    cleanup();
+    const row = live({
+      ...gas,
+      chamber: { ...gas.chamber, chambers: 3 },
+      loading: { face: "right", opening: { width: "20 in", height: "38 in" } },
+    });
+    fireEvent.click(screen.getByLabelText(/A door into each chamber/));
+    expect(row().loading?.opening?.each_chamber).toBe(true);
+    fireEvent.click(screen.getByLabelText(/A door into each chamber/));
+    expect(row().loading?.opening?.each_chamber).toBeUndefined();
+    cleanup();
+    // An electric kiln's door is its whole front
+    form(electric);
+    expect(screen.queryByLabelText(/The door is in part of the wall/)).toBeNull();
   });
 
   it("bricks up a gas kiln's door unless told otherwise", () => {
@@ -478,16 +539,16 @@ describe("DesignForm, electric elements", () => {
     expect(last().heat.electric?.off_above).toBe("1800 degF");
     fireEvent.click(screen.getByLabelText("Heat with electric elements"));
     expect(last().heat.electric).toBeUndefined();
-    expect(field("Fire with propane").disabled).toBe(true);
+    expect(field("Fire with gas").disabled).toBe(true);
     fireEvent.click(screen.getByLabelText("Heat with electric elements"));
     expect(last().heat.electric).toEqual({
       supply: { voltage: "240 V", phase: 1, breaker: "60 A" },
       alloy: "kanthal-a1",
       walls: ["left", "right", "back"],
     });
-    fireEvent.click(screen.getByLabelText("Fire with propane"));
+    fireEvent.click(screen.getByLabelText("Fire with gas"));
     expect(last().heat.gas).toBeUndefined();
-    fireEvent.click(screen.getByLabelText("Fire with propane"));
+    fireEvent.click(screen.getByLabelText("Fire with gas"));
     expect(last().heat.gas).toEqual({
       burners: { type: "venturi", wall: "front" },
       supply: { type: "cylinders", count: 4 },
@@ -768,5 +829,218 @@ describe("DesignForm, castables", () => {
     const density = screen.getByLabelText("Mix, ingredient 1 true density (from its sheet)");
     fireEvent.change(density, { target: { value: "2.9" } });
     expect(last()?.castables?.[0]?.ingredients[0]?.density).toBe("2.9 g/cm**3");
+  });
+});
+
+describe("shapes, fireboxes and chimneys", () => {
+  it("keeps every part of a design it doesn't touch: a climbing kiln with two kinds of firebox", () => {
+    const climbing: KilnDocument = {
+      ...electric,
+      chamber: {
+        width: "63 in",
+        depth: "41.33 in",
+        height: "57.3 in",
+        chambers: 10,
+        slope: "18.4 deg",
+        bend: "20 degree",
+        on_ground: true,
+      },
+      roof: { type: "sprung_arch", rise: "20.7 in" },
+      heat: {
+        fire: {
+          fuel: "wood",
+          fireboxes: [
+            { count: 10, position: "front", width: "9 in", length: "63 in" },
+            { position: "under", width: "1 ft", length: "2 ft", grate: { width: "1 ft", length: "2 ft" } },
+          ],
+        },
+        gas: { fuel: "natural_gas", supply: { type: "line", pressure: "8 inch_H2O" } },
+      },
+      draft: { type: "cross", flue_wall: "back", chimney: { height: "20 ft", inside: { width: "9 in", depth: "13.5 in" } } },
+    };
+    const last = live(climbing);
+    set("Name", "Renamed");
+    expect(last()).toEqual({ ...climbing, name: "Renamed" });
+  });
+
+  it("makes a round chamber, its depth following its diameter, and back to a box", () => {
+    const last = live(electric);
+    set("Chamber shape", "round");
+    expect(screen.queryByLabelText("Depth")).toBeNull();
+    set("Diameter", "30");
+    expect(last().chamber).toMatchObject({ shape: "round", width: "30 in", depth: "30 in" });
+    expect(screen.queryByRole("group", { name: "Chambers in a row" })).toBeNull();
+    set("Chamber shape", "box");
+    expect(last().chamber.shape).toBeUndefined();
+  });
+
+  it("turns a round chamber's rings a chosen way, only for round chambers", () => {
+    const last = live(electric);
+    expect(screen.queryByLabelText("Brick rings turned with")).toBeNull();
+    set("Chamber shape", "round");
+    // Left out, the engine cuts an electric kiln's rings and mortars the rest
+    expect(field("Brick rings turned with").value).toBe("");
+    set("Brick rings turned with", "featheredge");
+    expect(last().chamber.rings).toBe("featheredge");
+    set("Brick rings turned with", "");
+    expect(last().chamber.rings).toBeUndefined();
+    set("Brick rings turned with", "mortar");
+    set("Chamber shape", "box");
+    expect(last().chamber.rings).toBeUndefined();
+  });
+
+  it("adds and removes chambers in a row, with a slope and a floor on the ground", () => {
+    const last = live(electric);
+    expect(disabled("Remove a chamber")).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
+    fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
+    expect(last().chamber.chambers).toBe(3);
+    expect(screen.getByLabelText("Depth, of each chamber")).toBeTruthy();
+    fireEvent.click(screen.getByRole("button", { name: "Remove a chamber" }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove a chamber" }));
+    expect(last().chamber.chambers).toBeUndefined();
+    set("Floor's slope, firing end to flue end (blank: level)", "11.3");
+    expect(last().chamber.slope).toBe("11.3 degree");
+    set("The run curves to the left by, in plan (blank: straight)", "45");
+    expect(last().chamber.bend).toBe("45 degree");
+    set("Chamber shape", "round");
+    expect(last().chamber.bend).toBeUndefined();
+    expect(screen.queryByLabelText("The run curves to the left by, in plan (blank: straight)")).toBeNull();
+    set("Chamber shape", "box");
+    fireEvent.click(screen.getByLabelText("The floor is on the ground (not raised on a stand)"));
+    expect(last().chamber.on_ground).toBe(true);
+    fireEvent.click(screen.getByLabelText("The floor is on the ground (not raised on a stand)"));
+    expect(last().chamber.on_ground).toBeUndefined();
+  });
+
+  it("chooses an open top", () => {
+    const last = live(electric);
+    set("Roof", "open");
+    expect(last().roof).toEqual({ type: "open" });
+  });
+
+  it("fires with wood in two fireboxes, with grates, inlets and stoke holes, and gas besides", () => {
+    const last = live(electric);
+    fireEvent.click(screen.getByLabelText("Fire with wood, coal or oil in fireboxes"));
+    expect(last().heat.fire).toEqual({
+      fuel: "wood",
+      fireboxes: [{ position: "front", width: "22.5 in", length: "22.5 in" }],
+    });
+    expect(last().draft).toEqual({ type: "cross", flue_wall: "back" });
+    expect(disabled("Remove firebox 1")).toBe(true);
+    fireEvent.click(screen.getByRole("button", { name: "Add a firebox" }));
+    set("Firebox 2, position", "back");
+    set("Firebox 2, how many of this size", "2");
+    set("Firebox 2, width", "14");
+    set("Firebox 2, length", "30");
+    set("Firebox 2, height", "20");
+    fireEvent.click(screen.getByLabelText("Firebox 2 has a grate"));
+    set("Firebox 2, grate width", "12");
+    set("Firebox 2, grate length", "24");
+    set("Firebox 2, gap between bars", "1");
+    set("Firebox 2, ash pit depth", "9");
+    set("Firebox 2, step from the grate up to the chamber floor (blank: level)", "10");
+    set("Firebox 2, inlet flues into the chamber", "3");
+    set("Firebox 2, inlet flue size", "round");
+    set("Firebox 2, inlet flue size: diameter", "4");
+    set("Firebox 2, stoke hole size", "rect");
+    expect(last().heat.fire?.fireboxes[1]).toMatchObject({
+      position: "back",
+      count: 2,
+      width: "14 in",
+      length: "30 in",
+      height: "20 in",
+      grate: { width: "12 in", length: "24 in", gap: "1 in" },
+      ash_pit: "9 in",
+      step: "10 in",
+      inlets: 3,
+      inlet: { diameter: "4 in" },
+    });
+    set("Firebox 2, how many of this size", "1");
+    set("Firebox 2, inlet flues into the chamber", "1");
+    fireEvent.click(screen.getByLabelText("Firebox 2 has a grate"));
+    expect(last().heat.fire?.fireboxes[1]?.count).toBeUndefined();
+    expect(last().heat.fire?.fireboxes[1]?.grate).toBeUndefined();
+    expect(last().heat.fire?.fireboxes[1]?.step).toBeUndefined();
+    fireEvent.click(screen.getByRole("button", { name: "Remove firebox 1" }));
+    expect(last().heat.fire?.fireboxes).toHaveLength(1);
+    // The electric elements can go now the fire heats it; then the fire can't
+    fireEvent.click(screen.getByLabelText("Heat with electric elements"));
+    expect(last().heat.electric).toBeUndefined();
+    expect(field("Fire with wood, coal or oil in fireboxes").disabled).toBe(true);
+    fireEvent.click(screen.getByLabelText("Fire with gas"));
+    expect(last().heat.gas).toBeDefined();
+    fireEvent.click(screen.getByLabelText("Fire with wood, coal or oil in fireboxes"));
+    expect(last().heat.fire).toBeUndefined();
+  });
+
+  it("burns oil with its burners and rate, and drops them for wood; a blower forces it", () => {
+    const last = live({
+      ...electric,
+      heat: { fire: { fuel: "wood", fireboxes: [{ width: "1 ft", length: "2 ft" }] } },
+      draft: { type: "cross" },
+    });
+    set("Fuel", "oil");
+    set("Oil burners or drip units", "2");
+    set("Each oil burner's flow at full fire", "2");
+    expect(last().heat.fire).toMatchObject({ fuel: "oil", oil_burners: 2, oil_rate: "2 gallon/hour" });
+    set("Oil burners or drip units", "");
+    fireEvent.click(screen.getByLabelText("A blower drives the air (forced draft)"));
+    expect(last().heat.fire?.forced).toBe(true);
+    fireEvent.click(screen.getByLabelText("A blower drives the air (forced draft)"));
+    set("Fuel", "coal");
+    expect(last().heat.fire).toEqual({ fuel: "coal", fireboxes: [{ width: "1 ft", length: "2 ft" }] });
+  });
+
+  it("gives a chimney as built, round or rectangular, and lets the engine size it again", () => {
+    const last = live({
+      ...electric,
+      heat: { fire: { fireboxes: [{ width: "1 ft", length: "2 ft" }] } },
+      draft: { type: "down", flue_across: "3 in" },
+    });
+    fireEvent.click(screen.getByLabelText("Give the chimney as built (otherwise the engine sizes it)"));
+    // Nothing is assumed: the height is left for the builder to give
+    expect(last().draft?.chimney).toEqual({});
+    expect(field("Chimney height, from the chamber floor (needed)").value).toBe("");
+    set("Chimney height, from the chamber floor (needed)", "120");
+    set("Chimney inside", "round");
+    expect(field("Chimney inside diameter").value).toBe("");
+    set("Chimney inside diameter", "10");
+    expect(last().draft?.chimney).toEqual({ height: "120 in", inside: { diameter: "10 in" } });
+    set("Chimney inside", "rect");
+    expect(last().draft?.chimney?.inside).toEqual({ width: "10 in", depth: "10 in" });
+    set("Chimney inside width", "9");
+    set("Chimney inside depth", "13.5");
+    expect(last().draft?.chimney?.inside).toEqual({ width: "9 in", depth: "13.5 in" });
+    set("Chimney inside", "round");
+    expect(last().draft?.chimney?.inside).toEqual({ diameter: "9 in" });
+    set("Chimney inside", "auto");
+    set("Chimney inside", "rect");
+    expect(field("Chimney inside width").value).toBe("");
+    set("Chimney inside", "auto");
+    expect(last().draft?.chimney?.inside).toBeUndefined();
+    set("Draft", "up");
+    expect(last().draft?.flue_across).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Give the chimney as built (otherwise the engine sizes it)"));
+    expect(last().draft?.chimney).toBeUndefined();
+  });
+
+  it("fires natural gas from a line, propane from a line, and burners up through the floor", () => {
+    const last = live({
+      ...electric,
+      heat: { gas: { supply: { type: "cylinders", count: 4 } } },
+      draft: { type: "up" },
+    });
+    set("Gas", "natural_gas");
+    // The pressure is the supply's, so it's left for the builder to give
+    expect(last().heat.gas).toMatchObject({ fuel: "natural_gas", supply: { type: "line" } });
+    expect(screen.queryByLabelText("Propane supply")).toBeNull();
+    set("Gas pressure at the burners (needed: from the supply's regulator)", "7");
+    expect(last().heat.gas?.supply).toEqual({ type: "line", pressure: "7 inch_H2O" });
+    set("Gas", "propane");
+    set("Propane supply", "line");
+    expect(last().heat.gas?.supply).toEqual({ type: "line" });
+    set("Burners fire through", "floor");
+    expect(last().heat.gas?.burners?.wall).toBe("floor");
   });
 });

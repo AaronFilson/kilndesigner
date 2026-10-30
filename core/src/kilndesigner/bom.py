@@ -10,6 +10,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.allowance import allowance
 from kilndesigner.castable import CastableReport
 from kilndesigner.electric import ElectricDesign
 from kilndesigner.frame import FrameDesign
@@ -195,7 +196,10 @@ def bill_of_materials(
         lines.append(
             BomLine(
                 item="Chimney and flue duct: hard firebrick",
-                needed=f"{chimney_bricks} straights (with 5 % for cuts)",
+                needed=(
+                    f"{chimney_bricks} straights "
+                    f"(with {allowance(kiln, 'brick').text} for cuts and breakage)"
+                ),
                 buy=f"{chimney_bricks} bricks",
                 unit_price=None if unit_price is None else f"${unit_price:,.2f}",
                 cost=cost,
@@ -220,6 +224,22 @@ def bill_of_materials(
                 )
             )  # fmt: skip
         unpriced.append("steel")
+    if kiln.heat.fire is not None:
+        from kilndesigner.firebox_parts import GRATE_SOURCE, grates
+
+        bars = grates(kiln)
+        if bars:
+            feet = sum(g.bars * g.length for g in bars) / 304.8
+            lines.append(
+                BomLine(
+                    item="Grate bars: ¾ in round steel bar",
+                    needed=f"{feet:.1f} ft (" + "; ".join(f"{g.title}, {g.detail}" for g in bars)
+                    + ")",
+                    buy=f"{math.ceil(feet * 1.1):g} ft", unit_price=None, cost=None,
+                    priced_as=None, source=GRATE_SOURCE,
+                )
+            )  # fmt: skip
+            unpriced.append("steel")
     if kiln.loading.type == "car":
         cost = kiln.loading.car_hardware_cost
         lines.append(

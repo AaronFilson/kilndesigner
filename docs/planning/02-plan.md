@@ -180,6 +180,9 @@ kilndesigner/                 uv workspace
 | [0009](../adr/0009-physics-checked-against-published-references.md) | The physics is checked against published references, in CI |
 | [0010](../adr/0010-react-and-react-three-fiber.md) | The web app is React with React Three Fiber |
 | [0011](../adr/0011-hosted-on-one-ec2-instance.md) | The hosted app is the self-hosted compose file on one EC2 instance |
+| [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
+| [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
+| [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
 
 ## The engineering, by kiln type
 
@@ -241,7 +244,8 @@ references used. The plans print the working, so a builder can check it.
   tests passing (published worked examples, Hypothesis invariants, golden reports).
 - The first results for the author's kiln are in [docs/kilns](../kilns/pnw-hybrid-crossdraft.md).
 - Validation lives in pytest (`core/tests`) rather than marimo notebooks so far; ADR 0009's
-  notebooks are still to do, as readable companions to those tests.
+  notebooks are still to do, as readable companions to those tests. (Done 2026-10-29: see the
+  quality bar below.)
 - Not done in M3: skewbacks and the steel frame, a sourced car-hardware price, and the fuel and
   electricity used per firing (which needs M6).
 
@@ -259,6 +263,116 @@ references used. The plans print the working, so a builder can check it.
   Windows machine.
 - Performance on small machines: `docs/reviews/2026-10-28-performance-review.md`.
 
+### Status (2026-10-29)
+
+- **M4 is merged to `main`** (PR #1). Each of its five points has a Playwright test in
+  `web/e2e/designs.spec.ts`: the buildable model; drawings, course plans, bill and cut list in
+  the page; the views, cutaway and named parts; a design started from a kind of kiln and edited
+  with choices; and castables you mix, with the refusal outside the checked range.
+- Since 28 October: Olsen's *The Kiln Book* is the ground truth (ADR 0014,
+  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` and all build
+  with no error. Gas sizing follows his rules (Rule 1, the 1:1 flue, Rule 5 chimneys, natural
+  gas, altitude, no 60 ft³ limit), fireboxes for wood, coal and oil are in (`fire.py`), round,
+  sloped and chambered kilns compute, and floors on the ground lose heat to the soil. Every check
+  is an editable sheet of formulas (ADR 0013).
+- The research files once left on the Windows machine are now in the repo (`castables.md`,
+  `castables-minerals.md`, `thermal-properties.md`, `electrical-supply.md`,
+  `structure-and-draft.md`, `cones.md`), so the review work that waited on them is unblocked.
+- Carried over from M4 (the science review's backlog, see [10-28-26.md](10-28-26.md)):
+  - Fix 2 (organics burning off in dry-out) and Fix 4 (propane supply in the cold, regulator
+    droop);
+  - S5 (the buttress at the ring's outer corner), S14, and steel sized for domes;
+  - door headers: the method is in `door-headers.md`, refractory allowables aren't found;
+  - most of 3a, 3c and 3d, the dead code in 3f, and the validation notebooks (3e);
+  - the web form doesn't edit fireboxes, chimneys, round chambers, open tops or floors on the
+    ground (YAML does); chamber kilns' arches along the draft aren't drawn;
+  - Olsen's Table 1-12 wall: the engine's 445 BTU/ft²·h against his 360, recorded, not tested.
+
+### What's next
+
+The plan put M5 (hosted) after M4, but neither first user needs accounts yet, and what they do
+need is still open. In order:
+
+1. **Close the science backlog that's now unblocked:** Fix 4 first (the author's four 100 lb
+   cylinders on a 20 °F day is a stall-or-not answer they need), then Fix 2, then 3d. These are
+   correctness on numbers that are already shown to users.
+2. **The author's kiln, end to end.** Rebuild `pnw-hybrid-crossdraft` (dome, door, car) on the
+   Olsen-era engine and read its report against the book; settle the door header or move the
+   door, since it's the dome over a door that blocks it.
+3. **M6, firing simulation**, pulled ahead of M5: the switch-over chart and fuel and electricity
+   per firing (both M3 leftovers) need the transient model, and the 1D finite volume is half of
+   the thermal work already planned.
+4. **The client's kiln (M7)** is now cheaper than it was: fireboxes, natural draft and Rule 5
+   exist. It needs the client's answers (open question 3) before it can start; ask now.
+5. **M5, hosted**, once one of the two kilns has plans someone builds from.
+
+### Status (2026-10-29): M6
+
+- **M6 is built** (ADR 0015): a 1D finite-volume model of each face, fired along the design's
+  schedule (or full heat, then the cone's final rate), with the time, whether the heat keeps the
+  schedule, energy, electricity, propane and cost per firing (the M3 leftovers), and a hybrid's
+  cost and time against its switch-over temperature. Checked against the erf solution, the steady
+  solver and an energy-balance invariant. Results are Parquet, read with DuckDB;
+  `kilndesigner simulate`, `/api/simulations/{key}` on the worker, and a Firing tab with charts and
+  a shader heatmap with a scrubber (Playwright `firing.spec.ts`).
+- Gaps: the castables (and Cerachem) have no sourced specific heat, so the author's kiln asks for
+  its roof's `specific_heat` before it can be simulated; ware is lumped at fired clay's
+  room-temperature c_p; no radiation between faces or inside film; wood and oil wait for M7;
+  natural gas has no price field, so its cost isn't given.
+
+### Status (2026-10-30)
+
+On branch `m6`, merged (`a0d89fd` and the fireboxes merge after it), with the rest uncommitted at
+the time of writing; 1482 tests, coverage over 98 % in both Python and web. The round's notes and
+the next round are in [10-30-26.md](10-30-26.md).
+
+- **Waste allowances** come from sources (BIA 5 %, `brick-waste.md`), not a flat 10 %.
+  **Kast-O-Lite** is researched (`castables.md` §14).
+- **Steel for domes** is sized (AISC 360-16, hot; `steel-design.md`): an angle along each wall the
+  dome bears on, posts, tie rods and a ring, drawn and billed. The lintel for a door in part of a
+  wall is a written method only: the design can't yet describe such a door.
+- **Every kiln shape is laid in brick:** round kilns (rings, plans, a layer model), open tops,
+  chambers in a row (stepped on a slope, an arch over each along the draft), sloping single
+  chambers, bent runs, and fireboxes (against a wall, under the floor, troughs), with flues
+  between chambers, floor ports and roof flues cut in the model. Tamba and the tunnel are one
+  vault over the run, as Olsen draws them. Dimension text is sized to each view.
+- **Fireboxes give options, not rules:** a grate step and ash pit set by the design, with
+  Olsen's figures for each way of firing reported beside the numbers (heat, even burn, ash and
+  flashing); the only error is a firebox that doesn't reach the chamber floor.
+- **4½ in round rings** are the builder's choice: straights with mortar-filled wedge joints
+  (Olsen Fig. 2-13, the default), straights cut to the angle (the default for electric kilns,
+  whole bricks, faces 9 in outside, courses stacked in line, warned when a size needs a closer),
+  featheredges, or arch bricks. **Electric walls** of 2½ and 3 in brick are one cut ring in
+  4½ in courses, checked against five published kilns to 0.15 in
+  (`electric-kiln-survey.md`; a spec log artifact gathers more).
+
+### Status (2026-10-30, round 2)
+
+- **The web form** edits the ring method, firebox step and door openings.
+- **Round electric kilns** are N-sided polygons when built of whole cut bricks: elements in
+  grooves round the facets, polygon lids and floor slabs in steel bands, a round-electric template.
+- **Doors in part of a wall**, from Olsen's figures: steel lintels sized hot, arched heads and
+  jambs checked by thrust-line statics, Bidai and Kawaii with their side-wall doors as built.
+  Refractory bearing stress is researched but has no published allowable, so it is shown, not
+  checked.
+- 1531 tests, coverage over 98 % in Python and web, 22 Playwright specs against a rebuilt stack.
+
+### Status (2026-10-30, round 3)
+
+- **Bearing** of refractory still has no published allowable, so it is shown, not checked;
+  **sliding** at a door arch's springing is checked (BIA, μ ≥ 0.60).
+- **The author's kiln** is rebuilt on today's engine and its write-up is current
+  ([pnw-hybrid-crossdraft.md](../kilns/pnw-hybrid-crossdraft.md)); its open items need the author.
+- **Round electric kilns** load from a hinged lid, with grooves and polygon slabs in the model.
+- **Calimpong's teardrop** has its door as built and passes, after two engine fixes for doors
+  under domes.
+
+### What's next (2026-10-30)
+
+See [10-30-26.md](10-30-26.md): electric floors inside the walls, unclear figures settled by their
+metric values, the first steps of [complex curves](complex-curves.md), the author's answers, then
+M7.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
 the client's plans before the app exists.
@@ -269,6 +383,17 @@ the client's plans before the app exists.
   ([ADR 0009](../adr/0009-physics-checked-against-published-references.md)). Validation runs in CI
   with stated tolerances. The first references: Kanthal's worked element examples, Ward's BTU per
   cubic foot ranges, an ASTM C680 example, and the analytical solution for a heated slab.
+  - **Status (2026-10-29):** done for nine solvers in `notebooks/validation/` (marimo), each
+    run by `core/tests/test_validation_notebooks.py`, which fails if any figure leaves its stated
+    tolerance: wall (FOSSEE, CSJM), surface (Neutrium air; `ht` for the correlations and h_r),
+    elements (Kanthal, Olsen p.258–260, Kanthal's Ct tables, Krueger), transient wall (Holman's
+    erf), combustion (flame temperature, LHV, Ward's ranges), chimney draft (Olsen's Rule 5, Ward,
+    altitude, stack effect), arch thrust (HarbisonWalker's tables and 12 ft example, Pitelka's
+    arches), castable conductivity (three Morgan castables held out) and propane supply (D × L × K,
+    Ward's tanks, the cylinder tables, RegO). Not found to check against: an ASTM C680 worked
+    example, a published h_r or hot-face-down case with numbers, available heat at kiln flue
+    temperatures, a catenary's thrust, a three-phase element design, a BOM waste or curved-brick
+    cutting allowance.
 - **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
   + lost; a longer element at the same voltage never draws more power; brick counts cover the
   wall volume.

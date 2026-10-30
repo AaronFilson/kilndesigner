@@ -218,6 +218,42 @@ Ward's tank guidance for soft-brick stoneware kilns [S20]:
 | Ceramics Monthly kiln | 0–30 psi regulator and 0–15 psi gauge on MR-750 venturis | [S30] |
 | Regulator service life | 15 years (industry standard) | [S25] |
 
+### 2.8 Regulator droop and the liquid's cooling under draw (added 29 October 2026)
+
+RegO, *High Pressure Industrial / Commercial Pounds-to-Pounds Regulators, 597F Series*, catalogue
+page A32 (data sheet) [S89]. Verified (read from the PDF):
+
+| Part | Delivery range (psig) | Capacity at set pressure (psig) | Capacity, propane (BTU/hr) |
+|---|---|---|---|
+| 597FA | 1–15 | 10 | 1,750,000 |
+| 597FB | 10–30 | 20 | 3,000,000 |
+| 597FC | 20–45 | 30 | 3,500,000 |
+| 597FD | 40–100 | 40 | 4,500,000 |
+
+- "Set pressure established at 100 PSIG inlet and a flow of 250,000 BTU/hr."
+- "Capacity determined at actual delivery pressure 20% less than set pressure with inlet pressure
+  20 PSIG higher than the set pressure."
+- The sheet's curves show delivery falling with flow and falling further as the inlet drops
+  (597FB: set 20 psig, about 16 psig at 3,000,000 BTU/hr on a 50 psig inlet).
+
+The engine reads this as: the regulator needs the container **20 psig above** the set pressure, and
+at full flow the burners may see **20 % less** than the set pressure. Both are this one regulator
+family's rating basis, used as the margin for any adjustable pounds-to-pounds regulator; a
+regulator with its own published curve may do better. Neither Emerson/Fisher's droop for an
+equivalent nor the RegO LP-Gas Serviceman's Manual was read.
+
+**The liquid's cooling under draw.** The D × L × K rule (§2.3) assumes the liquid cools 20 °F
+below the air under continuous draw [S1]. The engine takes the same 20 °F for cylinders and tanks
+when it reads propane's vapour pressure (§1.2), and reads the 100 lb cylinder table (§2.1), which
+Propane Warehouse gives by liquid temperature [S1], at the air temperature less 20 °F.
+
+**The ⅓-full tank table (§2.4).** Its 0 °F column is D × L × 90 (e.g. 120 gal, 24 × 60 × 90 =
+129,600), the 50 %-full K (§2.3). At ⅓ full K is 70 + (33.3 − 30) × (80 − 70)/10 = 73.3 (linear
+between the 30 % and 40 % rows, **derived**), so the engine scales the table by 73.3 ÷ 90 = 0.815.
+
+- [S89] RegO, 597F Series data sheet, catalogue p. A32 (read 2026-10-29).
+  https://cdn.shopify.com/s/files/1/0029/6461/9313/files/252-RE597F.pdf
+
 - Pipe and hose sizing tables: **NOT FOUND** in a readable source. The NFPA 54 / IFGC propane sizing tables are the standard reference; use those.
 
 ---
@@ -479,10 +515,10 @@ Off-grid note: only natural-draft (venturi) burners work without power, and they
 
 | Product | Max service | Material per ft³ | Bulk density | Water | Thermal k (BTU·in/hr·ft²·°F) | Source |
 |---|---|---|---|---|---|---|
-| Kast-O-Lite 30 LI Plus (HWI, insulating) | 3,000 °F | 92 lb/ft³ | 98 lb/ft³ after 220 °F; 92 after 1,500 °F | 17.0 % of dry weight (≈ 9.4 lb per 55 lb bag) | 5.6 @400 °F, 4.2 @800, 4.1 @1200, 4.5 @1600, 4.9 @2000 | HWI data sheet, via search snippets [S50] |
+| Kast-O-Lite 30 LI Plus (HWI, insulating) | 3,000 °F | 92 lb/ft³ | 98 lb/ft³ after 220 °F; 92 after 1,500 °F | 17.0 % of dry weight (≈ 9.4 lb per 55 lb bag) | 5.6 @400 °F, 4.2 @800, 4.1 @1200, 4.5 @1600, 4.9 @2000 | HWI data sheet [S50]; since Verified on the 10/19 sheet (`door-headers.md` [H17], `flat-roofs.md` [F16]) |
 | Kast-O-Lite 30 LI Plus (retailer figures) | 3,000 °F | — | 90 lb/ft³ | 18 % by weight | — | [S51] [S52] |
 | Kast-O-Lite 26 LI Plus (HWI, insulating) | 2,600 °F | 86 lb/ft³ | 90–100 after 220 °F; 86–96 after 1,500 °F | not readable; one snippet showed 20.0 % (**unverified**) | 3.6 @400, 3.4 @800, 3.5 @1200, 3.7 @1600, 4.0 @2000 | data sheet copy on Yumpu [S53] |
-| Mizzou Castable Plus (HWI, dense) | 3,000 °F | NOT FOUND | 2.27 g/cc ≈ 142 lb/ft³ (**derived**, from a distributor snippet, unverified) | about 5 pints per 55 lb; never over 11.0 % | NOT FOUND | High Temp Tools FAQ via E. Lippert (secondary) [S54] [S55] |
+| Mizzou Castable Plus (HWI, dense) | 3,000 °F | 140 lb/ft³ (HWI 12/12) | 142 after 220 °F; 140 after 1,500 °F (HWI 12/12) | 9.0 % hand cast, 8.6 % vibrated (HWI 12/12); never over 11.0 % [S54] | 7.8 @400, 7.7 @800, 7.6 @1200, 7.5 @1600, 7.4 @2000, 7.4 @2400 (HWI 12/12) | HWI sheet 12/12, 5976 (`door-headers.md` [H18], Verified; reconciled 29 Oct 2026, review M15); High Temp Tools FAQ [S54] [S55] |
 
 Other Kast-O-Lite 30 LI Plus data [S50]:
 - Modulus of rupture: 600 psi after 220 °F, 300 after 1,500 °F, 300 after 2,000 °F, 900 after 2,500 °F, 800 after 2,910 °F.

@@ -19,3 +19,4 @@ Each one is written once; a later change gets a new record that replaces the old
 | [0012](0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb | proposed | 2026-10-21 |
 | [0013](0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit | proposed | 2026-10-28 |
 | [0014](0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault | proposed | 2026-10-29 |
+| [0015](0015-firing-simulation.md) | The firing simulation: implicit finite volumes per face, the chamber as one node | proposed | 2026-10-29 |

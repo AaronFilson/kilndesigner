@@ -14,9 +14,18 @@ from xml.sax.saxutils import escape
 
 import numpy as np
 
-from kilndesigner.geometry import COLOURS, Part, arch_outline, lining_parts
+from kilndesigner.geometry import (
+    COLOURS,
+    Part,
+    arch_outline,
+    lining_parts,
+    polygon_corners,
+    polygon_reach,
+)
 from kilndesigner.masonry import IN, LayerPlan
 from kilndesigner.model import CatenaryArch, Kiln
+from kilndesigner.rings import CLOSER, FAMILIES
+from kilndesigner.round_masonry import RingPlan
 from kilndesigner.shape import CatenaryCurve
 from kilndesigner.units import si
 
@@ -34,6 +43,7 @@ class Rect:
     fill: tuple[float, float, float]
     layer: str  # a part name or a label
     points: tuple[tuple[float, float], ...] = ()
+    holes: tuple[tuple[tuple[float, float], ...], ...] = ()  # outlines cut out of ``points``
 
 
 @dataclass(frozen=True)
@@ -82,11 +92,10 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
         points = tuple(arch_outline(p))
         xs, zs = [x for x, _ in points], [z for _, z in points]
         return Rect(min(xs), min(zs), max(xs) - min(xs), max(zs) - min(zs), fill, p.name, points)
-    if axis == 0:
-        bottom = p.lo[2] if p.cap else a.centre_z + a.radius
-        top = a.centre_z + a.radius + a.thickness
-        return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
-    return None
+    assert axis == 0, "arches are only cut across and along"
+    bottom = p.lo[2] if p.cap else a.centre_z + a.radius
+    top = a.centre_z + a.radius + a.thickness
+    return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
 
 
 def _crossings(
@@ -114,12 +123,12 @@ def _dome_cut(p: Part, axis: Axis, steps: int = 96) -> Rect | None:
         return None
     s = np.linspace(lo, hi, steps + 1)
     zero = np.zeros_like(s)
-    top = d.heights(s, zero, d.radius + d.thickness)
-    inside = d.heights(s, zero, d.radius)
+    x, y = (s, zero) if axis == 1 else (zero, s)
+    top = d.heights(x, y, d.radius + d.thickness)
+    inside = d.heights(x, y, d.radius)
     bottom = np.full_like(s, springline) if p.cap else np.maximum(inside, springline)
     keep = top > bottom + 1e-6
-    if not keep.any():
-        return None
+    assert keep.any(), "a dome layer always stands above its springline at the centre line"
     lower = [(float(a), float(b)) for a, b in zip(s[keep], bottom[keep], strict=True)]
     upper = [(float(a), float(b)) for a, b in zip(s[keep], top[keep], strict=True)]
     points = (*lower, *reversed(upper))
@@ -128,14 +137,82 @@ def _dome_cut(p: Part, axis: Axis, steps: int = 96) -> Rect | None:
     return Rect(min(us), min(vs), max(us) - min(us), max(vs) - min(vs), fill, p.name, points)
 
 
+def _circle(r: float, steps: int = 96) -> tuple[tuple[float, float], ...]:
+    return tuple(
+        (r * math.cos(2 * math.pi * k / steps), r * math.sin(2 * math.pi * k / steps))
+        for k in range(steps)
+    )
+
+
+type Outline = tuple[tuple[float, float], ...]
+
+
+def _bounded(
+    points: Outline, fill: tuple[float, float, float], name: str, holes: tuple[Outline, ...] = ()
+) -> Rect:
+    us, vs = [a for a, _ in points], [b for _, b in points]
+    return Rect(min(us), min(vs), max(us) - min(us), max(vs) - min(vs), fill, name, points, holes)
+
+
+def _revolved_cut(p: Part, axis: Axis, at: float) -> list[Rect]:
+    """A part turned about the z axis, cut through the axis (x = 0 or y = 0: its outline and its
+    mirror, joined where the outline runs along the axis) or across it (z = at: discs and rings,
+    seen from above)."""
+    assert p.revolve is not None
+    fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+    outline = p.revolve
+    sides = p.sides
+
+    def ring(r: float) -> Outline:
+        return _circle(r) if sides is None else tuple(polygon_corners(sides, r))
+
+    if axis == 2:
+        rects: list[Rect] = []
+        for a, b in _crossings(outline, 1, at):
+            hole = (ring(a),) if a > 1e-6 else ()
+            rects.append(_bounded(ring(b), fill, p.name, hole))
+        return rects
+    if abs(at) > 1e-6:
+        return []  # sections are only drawn through the middle
+    if sides is not None:
+        # A polygon cut through its centre: r out to the corners, scaled to its reach along the cut
+        reach = polygon_reach(sides, 0.0 if axis == 1 else math.pi / 2)
+        outline = tuple((r * reach, z) for r, z in outline)
+    n = len(outline)
+    on_axis = [
+        k for k in range(n) if abs(outline[k][0]) < 1e-6 and abs(outline[(k + 1) % n][0]) < 1e-6
+    ]
+    if on_axis:
+        # Start just after the edge along the axis and end at it, then add the mirror image
+        k = on_axis[0]
+        half = outline[k + 1 :] + outline[: k + 1]
+        joined = (*half, *((-r, z) for r, z in reversed(half)))
+        return [_bounded(joined, fill, p.name)]
+    mirror = tuple((-r, z) for r, z in reversed(outline))
+    return [_bounded(outline, fill, p.name), _bounded(mirror, fill, p.name)]
+
+
 def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rect]:
     rects: list[Rect] = []
     for p in parts:
         fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+        if p.revolve is not None:
+            rects += _revolved_cut(p, axis, at)
+            continue
         if p.dome is not None:
             if axis != 2 and abs(at) < 1e-6 and (rect := _dome_cut(p, axis)):
                 rects.append(rect)
             continue  # a dome is all above the springline, so the plan misses it
+        if p.profile is not None and p.across:
+            # A (y, z) outline run along x: whole along the kiln (x = at), else crossed
+            if axis == 0:
+                if p.lo[0] - 1e-6 <= at <= p.hi[0] + 1e-6:
+                    rects.append(_bounded(p.profile, fill, p.name))
+                continue
+            # Across (y = at: spans of z) or the plan (z = at: spans of y), both drawn from x
+            for a, b in _crossings(p.profile, 0 if axis == 1 else 1, at):
+                rects.append(Rect(p.lo[0], a, p.length_run, b - a, fill, p.name))
+            continue
         if p.profile is not None and axis == 1:
             if p.lo[1] - 1e-6 <= at <= p.hi[1] + 1e-6:
                 x0, z0, x1, z1 = p.lo[0], p.lo[2], p.hi[0], p.hi[2]
@@ -169,8 +246,22 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
 
 def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> list[View]:
     """Three sections through the middle: front (x–z), side (y–z) and plan (x–y)."""
+    from kilndesigner.bend import bent
+
+    views = _section_views(kiln, element_rows, coil_mm)
+    if bent(kiln):
+        for view in views:
+            view.title += ", the bend drawn straightened"
+    return views
+
+
+def _section_views(kiln: Kiln, element_rows: int, coil_mm: float) -> list[View]:
     us = kiln.units == "us"
     parts = lining_parts(kiln)
+    if kiln.chamber.shape == "round":
+        return _round_views(kiln, parts, us, element_rows, coil_mm)
+    if kiln.chamber.chambers > 1:
+        return _run_views(kiln, parts, us)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
     walls = kiln.heat.electric.walls if kiln.heat.electric else []
     rows = [h * (i + 0.5) / element_rows for i in range(element_rows)]
@@ -225,6 +316,110 @@ def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> li
             side.circles.append(Circle(d / 2, z, coil_mm / 2))
         if "front" in walls:
             side.circles.append(Circle(-d / 2, z, coil_mm / 2))
+    if any(p.tilt for p in parts):
+        _on_the_slope(kiln, parts, (front, side, plan), us)
+    return [front, side, plan]
+
+
+def _on_the_slope(kiln: Kiln, parts: list[Part], views: tuple[View, View, View], us: bool) -> None:
+    """A single chamber on a slope: the section along it drawn up the slope, the section across
+    it and the plan square to the floor, as the bricks are laid."""
+    front, side, plan = views
+    tilt = {p.name: p for p in parts}
+    turned: list[Rect] = []
+    for r in side.rects:
+        p = tilt[r.layer]
+        x1, y1 = r.x + r.w, r.y + r.h
+        corners = r.points or ((r.x, r.y), (x1, r.y), (x1, y1), (r.x, y1))
+        turned.append(_bounded(tuple(p.tilted(u, v) for u, v in corners), r.fill, r.layer))
+    side.rects = turned
+    slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
+    side.title = f"Section B–B: along the kiln, up its {slope:.3g}° slope, looking from the right"
+    front.title = "Section A–A: across the kiln, square to its sloping floor, looking at the back"
+    plan.title = "Section C–C: plan at mid-height, laid out along the slope"
+    x0, y0, x1, y1 = side.bounds()
+    h = y1 - y0
+    side.dims = [
+        Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside, level"),
+        Dimension(x1, y0, x1, y1, 0.06 * (x1 - x0), f"{length_text(h, us)} outside, rise included"),
+    ]
+    side.circles = []
+
+
+def _round_views(
+    kiln: Kiln, parts: list[Part], us: bool, element_rows: int = 0, coil_mm: float = 0.0
+) -> list[View]:
+    """A round chamber is the same through its axis whichever way it's cut: one section through
+    the axis, and the plan at mid-height. The element grooves are cut in the section where the
+    elements' quarters of the ring cross it (geometry.round_groove)."""
+    from kilndesigner.geometry import hot_face_reach
+
+    d, h = si(kiln.chamber.width, "mm"), si(kiln.chamber.height, "mm")
+    section = View("Section A–A: through the axis, looking at the back", _cut(parts, 1, 0.0, 0, 2),
+                   [], [])  # fmt: skip
+    plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
+    x0, y0, x1, y1 = section.bounds()
+    section.dims += [
+        Dimension(-d / 2, 0, d / 2, 0, -0.12 * h, f"{length_text(d, us)} across inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(-d / 2, 0, -d / 2, h, 0.3 * d, f"{length_text(h, us)} inside"),
+        Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    x0, y0, x1, _ = plan.bounds()
+    plan.dims += [
+        Dimension(-d / 2, 0, d / 2, 0, 0.0, f"{length_text(d, us)} across inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} across outside"),
+    ]
+    walls = kiln.heat.electric.walls if kiln.heat.electric else []
+    x = hot_face_reach(kiln, 0.0)  # the hot face where the cut crosses it
+    for i in range(element_rows):
+        z = h * (i + 0.5) / element_rows
+        for wall, sign in (("left", -1), ("right", 1)):
+            if wall in walls:
+                section.circles.append(Circle(sign * x, z, coil_mm / 2))
+    return [section, plan]
+
+
+def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
+    """Chambers in a row: across the first chamber, along the whole run (its steps up the slope
+    and every chamber's arch), and the plan of each chamber at its own mid-height."""
+    from kilndesigner.run_parts import run_layout
+
+    run = run_layout(kiln)
+    w, d, h, n = run.width, run.depth, run.height, run.chambers
+    front = View("Section A–A: across the first chamber, looking at the back",
+                 _cut(parts, 1, 0.0, 0, 2), [], [])  # fmt: skip
+    side = View("Section B–B: along the kiln, looking from the right", _cut(parts, 0, 0.0, 1, 2),
+                [], [])  # fmt: skip
+    if run.step > 1e-6:
+        rects: list[Rect] = []
+        for i in range(n):
+            mine = [p for p in parts if p.chamber == i + 1]
+            rects += _cut(mine, 2, run.floor(i) + h / 2, 0, 1)
+        plan = View("Section C–C: plan of each chamber at its mid-height", rects, [], [])
+    else:
+        plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
+    x0, y0, x1, y1 = front.bounds()
+    front.dims += [
+        Dimension(-w / 2, h, w / 2, h, -0.35 * h, f"{length_text(w, us)} inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(-w / 2, 0, -w / 2, h, 0.3 * w, f"{length_text(h, us)} inside"),
+        Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    x0, y0, x1, y1 = side.bounds()
+    side.dims += [
+        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, each chamber"),
+        Dimension(x0, y0, x1, y0, 0.25 * h, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(-d / 2, 0, -d / 2, h, -0.6 * d, f"{length_text(h, us)} to the springline"),
+        Dimension(x1, y0, x1, y1, 0.04 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    x0, y0, x1, y1 = plan.bounds()
+    start = -d / 2
+    plan.dims += [
+        Dimension(-w / 2, start, w / 2, start, -0.3 * d, f"{length_text(w, us)} inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
     return [front, side, plan]
 
 
@@ -232,12 +427,30 @@ def _hex(rgb: tuple[float, float, float]) -> str:
     return "#" + "".join(f"{round(c * 255):02x}" for c in rgb)
 
 
+def text_size(view: View) -> float:
+    """The dimension text's height for a view (mm, in the view's own units): a twentieth of the
+    view's longer side for a squarish view, as before; for a long one, a twentieth of three times
+    its shorter side, so the text stays in scale with the section it labels, but never under 1.5 %
+    of the longer side, so it still reads when the page fits the whole length."""
+    x0, y0, x1, y1 = view.bounds()
+    long, short = max(x1 - x0, y1 - y0), min(x1 - x0, y1 - y0)
+    return max(0.05 * min(long, 3 * short), 0.015 * long)
+
+
 def view_svg(view: View, font: float | None = None) -> str:
     """An SVG of a view, y up, with a margin for the dimensions."""
     x0, y0, x1, y1 = view.bounds()
     size = max(x1 - x0, y1 - y0)
-    font = font or size * 0.05
-    margin = size * 0.25
+    font = font or text_size(view)
+    # Room for every dimension line and its text, and a margin round it all
+    for dim in view.dims:
+        if abs(dim.y2 - dim.y1) < 1e-9:
+            line = dim.y1 - dim.offset
+            y0, y1 = min(y0, line - 1.5 * font), max(y1, line + 1.5 * font)
+        else:
+            line = dim.x1 + dim.offset
+            x0, x1 = min(x0, line - 1.5 * font), max(x1, line + 1.5 * font)
+    margin = max(2 * font, 0.05 * size)
     vx, vy = x0 - margin, -(y1 + margin)
     vw, vh = (x1 - x0) + 2 * margin, (y1 - y0) + 2 * margin
     stroke = size * 0.002
@@ -247,6 +460,13 @@ def view_svg(view: View, font: float | None = None) -> str:
     ]
     for r in view.rects:
         title = f"<title>{escape(r.layer)}</title>"
+        if r.holes:
+            path = " ".join(
+                "M " + " L ".join(f"{x:.2f},{-y:.2f}" for x, y in ring) + " Z"
+                for ring in (r.points, *r.holes)
+            )
+            out.append(f'<path d="{path}" fill-rule="evenodd" fill="{_hex(r.fill)}">{title}</path>')
+            continue
         if r.points:
             pts = " ".join(f"{x:.2f},{-y:.2f}" for x, y in r.points)
             out.append(f'<polygon points="{pts}" fill="{_hex(r.fill)}">{title}</polygon>')
@@ -321,12 +541,98 @@ def course_plan_svg(plan: LayerPlan, us: bool) -> str:
                 f'width="{piece.length:.2f}" height="{piece.height:.2f}" fill="{fill}"/>'
             )
     out.append("</g>")
+    if plan.circle is not None:  # a round kiln's floor or roof: the line its rows are cut to
+        c = plan.circle
+        out.append(
+            f'<circle cx="{run / 2:.2f}" cy="{-span / 2:.2f}" r="{c:.2f}" fill="none" '
+            f'stroke="#1a4f8b" stroke-width="{stroke * 2:.2f}" '
+            f'stroke-dasharray="{size * 0.01:.2f}"/>'
+        )
     for course in plan.courses:
         y = course.offset + course.pieces[0].height / 2 if course.pieces else course.offset
         out.append(
             f'<text x="{-font * 0.5:.2f}" y="{-y + font * 0.35:.2f}" font-size="{font:.2f}" '
             f'text-anchor="end" font-family="sans-serif" fill="#444">{course.index}</text>'
         )
+    out.append("</svg>")
+    return "\n".join(out)
+
+
+SHAPE_TONES = ("#9a6fb0", "#5f8fc4", "#5ba88a", "#d1a23f")
+"""Tapered shapes in a ring plan, tightest first; straights take the material's colour."""
+
+
+def ring_plan_svg(plan: RingPlan, us: bool) -> str:
+    """One ring of a round wall seen from above: every brick of an odd course and of an even one,
+    which starts half a brick round so that the joints don't line up; a cut ring's courses are
+    stacked in line, so it shows one. Each brick's thick end is
+    on the outside circle and its thin end on the inside, laid in turn round the ring."""
+    r_in, r_out = plan.inside_radius, plan.inside_radius + plan.depth
+    family = FAMILIES[plan.series]
+    thin = {t.name: t.thin * IN for t in family.tapers} | {family.straight: family.thick * IN}
+    tapers = [t.name for t in family.tapers]
+    if plan.ring.length is not None and plan.series in ("mortar", "cut", "cut2.5", "cut3"):
+        # The closer: a straight cut short, its inside face the chord it closes
+        thin[CLOSER] = plan.ring.length
+        tapers.append(CLOSER)
+    tone = {name: SHAPE_TONES[k % len(SHAPE_TONES)] for k, name in enumerate(tapers)}
+    tone[family.straight] = _hex(COLOURS.get(plan.part.kind, (0.85, 0.85, 0.85)))
+    order = plan.order()
+    inner_total = sum(thin[s] for s in order)
+    gap = r_out * 0.35  # between the two plans
+    size = 4 * r_out + gap
+    font = size * 0.02
+    stroke = size * 0.0008
+    legend = [(name, n) for name, n in plan.ring.counts if n]
+    vx, vy = -r_out - font, -(r_out + font * 3)
+    vw, vh = size + 2 * font, 2 * r_out + font * (7 + 1.6 * len(legend))
+    out = [
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vx:.2f} {vy:.2f} {vw:.2f} {vh:.2f}">',
+        f'<g stroke="#222" stroke-width="{stroke:.2f}">',
+    ]
+    # Cut rings stack course on course, facets in line, for a smooth wall (the user: in small
+    # kilns, electric especially, smooth walls matter more than staggered joints)
+    staggered = (("Odd courses", 0.0), ("Even courses", 0.5))
+    courses = (("Every course", 0.0),) if plan.series.startswith("cut") else staggered
+    for k, (label, shift) in enumerate(courses):
+        cx = k * (2 * r_out + gap)
+        step = 2 * math.pi / len(order)  # round the outside, every brick shows its thick end
+        inner = 0.0
+        for j, shape in enumerate(order):
+            a0, a1 = (j + shift) * step, (j + 1 + shift) * step
+            b0 = (inner + shift * thin[order[0]]) / inner_total * 2 * math.pi
+            inner += thin[shape]
+            b1 = (inner + shift * thin[order[0]]) / inner_total * 2 * math.pi
+            pts = [
+                (r_out * math.cos(a0), r_out * math.sin(a0)),
+                (r_out * math.cos(a1), r_out * math.sin(a1)),
+                (r_in * math.cos(b1), r_in * math.sin(b1)),
+                (r_in * math.cos(b0), r_in * math.sin(b0)),
+            ]
+            points = " ".join(f"{cx + x:.2f},{-y:.2f}" for x, y in pts)
+            out.append(f'<polygon points="{points}" fill="{tone[shape]}"/>')
+        out.append(
+            f'<text x="{cx:.2f}" y="{-(r_out + font):.2f}" font-size="{font:.2f}" '
+            f'text-anchor="middle" stroke="none" font-family="sans-serif" fill="#444">'
+            f"{label}</text>"
+        )
+    out.append("</g>")
+    y = r_out + font * 2.5
+    for name, n in legend:
+        out.append(
+            f'<rect x="{-r_out:.2f}" y="{y - font * 0.8:.2f}" width="{font:.2f}" '
+            f'height="{font:.2f}" fill="{tone[name]}" stroke="#222" stroke-width="{stroke:.2f}"/>'
+        )
+        out.append(
+            f'<text x="{-r_out + font * 1.5:.2f}" y="{y:.2f}" font-size="{font:.2f}" '
+            f'font-family="sans-serif" fill="#444">{escape(f"{n} {name}")}</text>'
+        )
+        y += font * 1.6
+    out.append(
+        f'<text x="{-r_out:.2f}" y="{y:.2f}" font-size="{font:.2f}" font-family="sans-serif" '
+        f'fill="#444">{escape(length_text(2 * r_in, us))} across inside, '
+        f"{escape(length_text(plan.depth, us))} through</text>"
+    )
     out.append("</svg>")
     return "\n".join(out)
 
@@ -342,6 +648,7 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
     offset = 0.0
     for view in views:
         x0, y0, x1, _ = view.bounds()
+        text = text_size(view)
         dx = offset - x0
         for r in view.rects:
             layer = r.layer.replace("/", "_")
@@ -350,9 +657,10 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
             pts = list(r.points) or [
                 (r.x, r.y), (r.x + r.w, r.y), (r.x + r.w, r.y + r.h), (r.x, r.y + r.h)
             ]  # fmt: skip
-            msp.add_lwpolyline(
-                [(x + dx, y) for x, y in pts], close=True, dxfattribs={"layer": layer}
-            )
+            for outline in (pts, *r.holes):
+                msp.add_lwpolyline(
+                    [(x + dx, y) for x, y in outline], close=True, dxfattribs={"layer": layer}
+                )
         for c in view.circles:
             msp.add_circle((c.x + dx, c.y), c.r, dxfattribs={"layer": "elements"})
         for dim in view.dims:
@@ -368,10 +676,11 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
                 p2=(dim.x2 + dx, dim.y2),
                 angle=0 if horizontal else 90,
                 text=dim.text,
+                override={"dimtxt": text, "dimasz": text * 0.6},
                 dxfattribs={"layer": "dimensions"},
             ).render()
-        msp.add_text(
-            view.title, height=(x1 - x0) * 0.03, dxfattribs={"layer": "titles"}
-        ).set_placement((offset, y0 - (x1 - x0) * 0.3))
+        msp.add_text(view.title, height=text, dxfattribs={"layer": "titles"}).set_placement(
+            (offset, y0 - 6 * text)
+        )
         offset += (x1 - x0) * 1.6
     doc.saveas(path)

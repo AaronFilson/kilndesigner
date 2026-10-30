@@ -1,15 +1,23 @@
 # Published conductivity of insulating firebricks: what the castable conductivity model is fitted
 # to and checked against. Mean temperatures, ASTM C182. Density kg/m³; points (°C, W/(m·K)).
 # Sources: docs/research/castables.md §6.3 (Morgan data sheets, 1 January 2025 [S49] [S50],
-# verified) and electric-and-thermal.md §4.1 (JM 23, JM 26 and K-23, [S29] [S31] there).
+# verified) and electric-and-thermal.md §4.1 (K-23 [S31] there; JM 23 and JM 26 from Morgan's JM
+# IFB series sheet of 1 January 2025, BR.05, verified, replacing the 2011 excerpt: review E3/M7).
 source: "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
 bricks:
-  JM 23: {density: 480, points: [[400, 0.12], [600, 0.14], [800, 0.17], [1000, 0.19]]}
+  JM 23: {density: 480, points: [[400, 0.14], [600, 0.16], [800, 0.17], [1000, 0.19]]}
   K-23: {density: 513, points: [[260.0, 0.1298], [540.0, 0.1702], [815.0, 0.2005], [1100.0, 0.2409]]}
   K-25: {density: 617, points: [[260, 0.15], [540, 0.18], [815, 0.20], [1100, 0.22]]}
   K-26: {density: 657, points: [[260, 0.20], [540, 0.23], [815, 0.26], [1100, 0.29], [1370, 0.31]]}
-  JM 26: {density: 800, points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33]]}
+  JM 26: {density: 800, points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33], [1100, 0.33]]}
   JM 28: {density: 890, points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36], [1100, 0.36]]}
   JM 26HD: {density: 920, points: [[400, 0.33], [600, 0.35], [800, 0.37], [1000, 0.39]]}
   JM 30: {density: 1020, points: [[400, 0.36], [600, 0.37], [800, 0.37], [1000, 0.38], [1100, 0.39], [1200, 0.39]]}
   JM 30HA: {density: 1250, points: [[400, 0.47], [600, 0.48], [800, 0.49], [1000, 0.50], [1100, 0.51]]}
+# Castables held out of the fit, to quote the law's error on a castable (science review M2), from
+# masonry-materials.md §5.1–5.2 (Morgan, 1 January 2025, verified). Fired densities: Firelite
+# 2600LI after 5 h at 815 °C; Kaolite 2600LI Pump at the low end of its fired range (1201–1442),
+# the only part inside the bricks' 480–1250 kg/m³.
+held_out:
+  Firelite 2600LI: {density: 1140, points: [[200, 0.38], [400, 0.38], [600, 0.38], [800, 0.39], [1000, 0.39]]}
+  Kaolite 2600LI: {density: 1201, points: [[260, 0.39], [538, 0.42], [816, 0.43], [1093, 0.46]]}

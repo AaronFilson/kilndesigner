@@ -270,6 +270,59 @@ def test_elements_in_one_wall_that_cant_take_thick_wire() -> None:
     assert "Elements in more walls would make room; otherwise, expect to replace" in thin
 
 
+def test_the_wall_loading_is_worked_and_checked_against_kanthal() -> None:
+    """Kanthal key data, spiral in grooves: at most 35 kW/m² of wall at 1000 °C [S14] (review
+    E5). The front-loader's 11.52 kW over its three element walls is well under; one wall with a
+    30 A circuit's power over half the area is checked the same way."""
+    design = design_elements(parse_design(FRONT))
+    step = next(s for s in design.working if s.name == "Wall loading")
+    kiln = parse_design(FRONT)
+    c = kiln.chamber
+    w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
+    area = 2 * d * h + w * h  # left, right, back
+    assert step.value == f"{design.installed_watts / area / 1000:.3g} kW/m²"
+    assert step.inputs["Kanthal's most, in grooves at 1000 °C"] == "35 kW/m²"
+    assert not [f for f in design.findings if f.check and f.check.id == "electric.wall-loading"]
+
+
+def test_a_wall_loaded_past_kanthals_figure_is_a_warning() -> None:
+    from kilndesigner.electric_checks import wall_loading
+    from kilndesigner.units import Q_
+
+    check = wall_loading(20_000, 0.5, Q_(35, "kW/m**2"), "Kanthal").check()
+    assert check.status == "warning"
+    assert check.requirements[0].margin == "w = 40 kW/m², 114.3 % of w_max = 35 kW/m²"
+
+
+def test_wire_under_kanthals_groove_range_is_a_warning() -> None:
+    """Kanthal gives 2.0–5.0 mm for coils in grooves [S14] (review E4); 0.81 mm (20 AWG) is
+    outside it."""
+    from kilndesigner.electric_checks import groove_wire
+    from kilndesigner.units import Q_
+
+    check = groove_wire(si(awg_diameter(20), "m"), Q_(2.0, "mm"), "Kanthal").check()
+    assert check.status == "warning"
+    assert check.solve == "Passes when d ≥ 2 mm"
+    assert groove_wire(2.1e-3, Q_(2.0, "mm"), "Kanthal").check().status == "pass"
+
+
+def test_the_coil_pitch_cites_the_groove_rule() -> None:
+    """Review E10: in grooves Kanthal's key data give a pitch of at least 2 d [S14]; the 4 d top
+    is Kanthal's general range [S13]."""
+    design = design_elements(parse_design(FRONT))
+    coil = next(s for s in design.working if s.name == "Coil")
+    assert coil.inputs["pitch range"].startswith("at least 2 d in grooves (Kanthal key data")
+
+
+def test_krueger_load_outside_its_alloy_or_temperature_is_noted() -> None:
+    """Review E5: Krueger's 17.5 W/in² is for A-1 at about 2300 °F; held to it at cone 10 the
+    elements get a note saying no source covers that load there."""
+    design = design_elements(parse_design(FRONT))
+    noted = [f for f in design.findings if "held only to Krueger's 17.5" in f.message]
+    loaded = [f for f in design.findings if f.check and f.check.id == "electric.surface-load"]
+    assert bool(noted) == bool(loaded)
+
+
 def test_too_little_power_for_the_loss_is_an_error() -> None:
     """2 kW can't hold a 7 ft³ kiln at cone 10, whose steady loss is several kW. (On a 20 A
     breaker: 2 kW draws 8.3 A, too little for the example's 60 A.)"""

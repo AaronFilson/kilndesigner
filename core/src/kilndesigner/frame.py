@@ -1,7 +1,8 @@
 """The steel that holds a kiln together: a frame for a sprung arch, or an electric kiln's case.
 
 A catenary needs no frame over it, but its feet push out (its thrust is worked out, but what holds
-the feet isn't sized); a dome's thrust has no source, so no steel is designed for it.
+the feet isn't sized). A sail dome over a door stands as arches spanning the walls either side, and
+an angle along each, tied by rods, holds its thrust, checked hot by AISC 360-16 (steel-design.md).
 
 A sprung arch pushes out on its skewbacks, and the frame must take that thrust: buttress angles
 along the top of the side walls, held at their ends by corner posts tied across the kiln by
@@ -27,20 +28,24 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.frame_checks import (
     CAPPED,
+    THRUST_THROUGH_STEEL,
+    AngleSection,
     ArchInputs,
     CatenaryLayer,
     DomeInputs,
+    HotSteel,
     Layer,
     Springs,
     buttress_bending,
     catenary_feet,
     checked_range,
+    dome_buttress,
     dome_checked_range,
     dome_factor,
     dome_heated,
     dome_hot_line,
     dome_rise,
-    dome_steel,
+    dome_rod,
     dome_thickest,
     flat_friction,
     flat_ifb_top,
@@ -52,9 +57,11 @@ from kilndesigner.frame_checks import (
     rise_rule,
     rod_stress,
     skewback_on_wall,
+    steel_heat,
+    thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.model import CatenaryArch, Dome, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step
@@ -94,6 +101,7 @@ class Angle:
     w: float  # lb/ft
     sx: float  # in³, about a geometric axis
     sz: float  # in³, about the minor principal axis
+    ix: float  # in⁴, about a geometric axis
 
 
 def angles() -> list[Angle]:
@@ -177,12 +185,15 @@ def outside(kiln: Kiln) -> Outside:
     )
 
 
-def skewback_top(kiln: Kiln) -> float:
-    """Height of the skewback's top above the chamber floor (in): the arch's outer corner."""
+def skewback_top(kiln: Kiln, *, whole_roof: bool = False) -> float:
+    """Height of the skewback's top above the chamber floor (in): the solid ring's outer corner,
+    where the buttress takes the thrust (review S5); insulation laid over the ring is only load.
+    ``whole_roof``: the outer corner of every roof layer, the kiln's outside at the springing."""
     assert isinstance(kiln.roof, SprungArch)
     w = si(kiln.chamber.width, "in")
     arch = Arch(w, si(kiln.roof.rise, "in"))
-    roof = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof"))
+    layers = kiln.lining.for_face("roof")
+    roof = sum(si(x.thickness, "in") for x in (layers if whole_roof else layers[: kiln.roof.ring]))
     centre = si(kiln.chamber.height, "in") + arch.rise - arch.radius
     return centre + (arch.radius + roof) * math.cos(arch.half_angle)
 
@@ -667,24 +678,253 @@ def _dome_frame(kiln: Kiln) -> FrameDesign:
             )
         )
     peak = slices[max(range(len(hot)), key=lambda i: hot[i][1])]
-    loads = dome_steel(dm, peak.at, total, DOME_SOURCE)
-    loads.agrees("H", Q_(peak_hot, "lbf/ft"))
-    loads.agrees("H_c", Q_(cold_thrust_factor(span, peak.rise) * peak.weight * 12, "lbf/ft"))
-    findings.append(
-        Finding.failed(
-            loads.check(),
-            message=(
-                f"The dome pushes out on {walls} with up to {peak_hot:.0f} lb per foot hot, "
-                f"{total:.0f} lb along each, and a tie across the door's head and one across the "
-                f"wall opposite take {total / 2:.0f} lb each. No source sizes the steel for a "
-                "dome, so none is drawn: have it designed for these."
+    return _dome_steel(kiln, dm, peak.at, peak_hot, total, walls, working, findings)
+
+
+HOT_STEEL_WHERE = (
+    "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature "
+    "(heatloss.py; electric-and-thermal.md §6)"
+)
+
+
+def hot_steel(kiln: Kiln, faces: tuple[str, ...]) -> HotSteel:
+    """The frame steel's temperature, the hottest outside face of ``faces`` from the engine's
+    own wall solve, and AISC Table A-4.2.1's factors at it (linear between rows)."""
+    from kilndesigner.heatloss import heat_loss
+
+    data = steel_data()["hot_steel"]
+    loss = heat_loss(kiln)
+    kelvin = max(f.layers[-1].cold_side_k for f in loss.faces if f.face in faces)
+    t = kelvin * 9 / 5 - 459.67
+    return HotSteel(
+        temperature=t,
+        ky=float(np.interp(t, data["ky_deg_f"], data["ky"])),
+        ke=float(np.interp(t, data["ke_deg_f"], data["ke"])),
+        fy=float(data["fy_psi"]),
+        e=float(data["e_psi"]),
+        omega=float(data["omega_b"]),
+        source=data["source"],
+        where=HOT_STEEL_WHERE,
+    )
+
+
+def angle_allowable(a: Angle, bay: float, hot: HotSteel) -> float:
+    """AISC 360-16 §F10 allowable moment (lb·in) of an equal-leg angle about a geometric axis, no
+    lateral-torsional restraint over ``bay`` (in), toe in compression, Cb = 1, at ``hot``'s
+    temperature: the same chain as frame_checks._aisc_angle_moment (steel-design.md §S4)."""
+    fy, e = hot.ky * hot.fy, hot.ke * hot.e
+    my = 0.8 * fy * a.sx
+    root_term = math.sqrt(1 + 0.88 * (bay * a.t / a.leg**2) ** 2) - 1
+    mcr = 0.58 * e * a.leg**4 * a.t / bay**2 * root_term
+    if my <= mcr:
+        ltb = min((1.92 - 1.17 * math.sqrt(my / mcr)) * my, 1.5 * my)
+    else:
+        ltb = (0.92 - 0.17 * mcr / my) * mcr
+    lam, root = a.leg / a.t, math.sqrt(e / fy)
+    sc = 0.8 * a.sx
+    if lam <= 0.54 * root:
+        leg = 1.5 * my
+    elif lam <= 0.91 * root:
+        leg = fy * sc * (2.43 - 1.72 * lam / root)
+    else:
+        leg = 0.71 * e / lam**2 * sc
+    return min(1.5 * my, ltb, leg) / hot.omega
+
+
+DOME_STEEL_SOURCE = "steel-design.md §S4–S5 (derived from AISC 360-16 and the sliced dome)"
+
+
+def _dome_steel(
+    kiln: Kiln,
+    dm: DomeInputs,
+    at: float,
+    peak_hot: float,
+    total: float,
+    walls: str,
+    working: list[Step],
+    findings: list[Finding],
+) -> FrameDesign:
+    """Steel for a sail dome over a whole-wall door: an angle along the top of each wall the
+    slices bear on, bending between posts under the slices' peak hot thrust; corner (and, if
+    needed, side) posts tied across by rods, the end pair across the door's head and the back
+    wall; a ring of the same angle round the springline (steel-design.md §S5)."""
+    data = steel_data()
+    limit = float(data["binding_stress_psi"])
+    o = outside(kiln)
+    across = kiln.door_face in ("front", "back")
+    bearing = ("left", "right") if across else ("front", "back")
+    along = o.depth if across else o.width
+    hot = hot_steel(kiln, bearing)
+    hs = data["hot_steel"]
+    heat = steel_heat(hot, hs["ke_deg_f"][-1], hs["service_deg_f"], hs["service_source"])
+    working.append(
+        Step(
+            name="Frame steel's temperature",
+            value=f"{hot.temperature:.0f} °F: Fy × {hot.ky:.2f}, E × {hot.ke:.2f}",
+            formula="the bearing walls' outside face; AISC Table A-4.2.1 interpolated",
+            reference=f"{HOT_STEEL_WHERE}; {hot.source}",
+        )
+    )
+    if (check := heat.check()).status == "error":
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"The dome's buttress steel would run at {hot.temperature:.0f} °F on the "
+                    f"outside of {walls}, past the {hs['ke_deg_f'][-1]} °F where AISC's table of "
+                    "hot steel's stiffness ends: nothing sourced sizes steel that hot. Insulate "
+                    "the walls more, so their outside runs cooler."
+                ),
+            )
+        )
+        return _unframed(working, findings)
+    if check.status == "warning":
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"The dome's buttress steel would run at {hot.temperature:.0f} °F, above the "
+                    f"{hs['service_deg_f']} °F Giles keeps carbon steel to in continuous service; "
+                    "AISC's reduced strength used here is for fire, a short event. More insulation "
+                    "would keep it cooler."
+                ),
+            )
+        )
+    # The smallest angle, as for an arch frame (Olsen p.139, p.174)
+    from kilndesigner.gas import kiln_top_in
+
+    outside_ft3 = o.width * o.depth * (o.bottom + kiln_top_in(kiln)) / 1728
+    floor = angle("L3×3×1/4") if outside_ft3 >= OLSEN_FRAME_FT3 else angle("L2×2×3/16")
+    w = peak_hot / 12  # lb per in
+    rods = data["rods"]["sizes"][1:]
+    posts = _posts_per_side(along, w, floor, limit, rods) if across else 2
+    bay = along / (posts - 1)
+    share = 0.5 if posts == 2 else 1.0
+    moment = w * bay**2 / 8
+    fits = [
+        a for a in angles()
+        if a.leg >= floor.leg and a.t >= floor.t and moment / a.sx <= limit
+        and moment <= angle_allowable(a, bay, hot)
+    ]  # fmt: skip
+    chosen = fits[0] if fits else max(angles(), key=lambda a: a.sx)
+    section = AngleSection(chosen.name, chosen.leg, chosen.t, chosen.sx, data["angles"]["source"])
+    bending = dome_buttress(dm, at, bay, section, hot, limit, data["binding_stress_source"])
+    bending.agrees("H", Q_(peak_hot, "lbf/ft"))
+    bending.agrees("M", Q_(moment, "lbf*in"))
+    bending.agrees("M_a", Q_(angle_allowable(chosen, bay, hot), "lbf*in"))
+    allowed = angle_allowable(chosen, bay, hot)
+    working.append(
+        Step(
+            name="Buttress angle along the bearing walls, hot",
+            value=(
+                f"{chosen.name}: M = {moment:,.0f} lb·in against AISC's {allowed:,.0f} lb·in "
+                f"allowable at {hot.temperature:.0f} °F; {moment / chosen.sx:,.0f} psi"
+            ),
+            formula=(
+                "M = H ℓ²/8 (the peak thrust all along a bay); M_a = M_n/Ω_b, M_n the least of "
+                "1.5M_y, lateral-torsional buckling (F10-2/3, M_cr from F10-5a) and leg local "
+                "buckling (F10-6/7), Fy and E reduced to the steel's temperature; and M/S_x ≤ "
+                "12,000 psi"
+            ),
+            inputs={"H": f"{peak_hot:.0f} lb/ft", "bay ℓ": f"{bay:.1f} in", "posts": str(posts)},
+            reference=f"{hot.source}; {data['binding_stress_source']}; {DOME_STEEL_SOURCE}",
+            note=(
+                "Unbraced along the bay, toe in compression: the cautious case of F10; masonry "
+                "against the angle would brace it."
             ),
         )
     )
+    if (check := bending.check()).status != "pass" or not fits:
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"No listed angle up to {chosen.name} carries the dome's {peak_hot:.0f} lb "
+                    f"per foot of hot thrust over {bay:.0f} in between posts at "
+                    f"{hot.temperature:.0f} °F. "
+                    + ("Raise the dome or lighten it." if across else
+                       "Put the door in the front or back wall, so posts can go along the sides.")
+                ),
+            )
+        )  # fmt: skip
+    per_rod = w * bay * share
+    rod = rods[-1]
+    for size in rods:
+        if per_rod / size["stress_area"] <= limit:
+            rod = size
+            break
+    tied = dome_rod(dm, at, bay, share, (rod["name"], rod["stress_area"]), limit,
+                    (data["rods"]["source"], data["binding_stress_source"]))  # fmt: skip
+    tied.agrees("P", Q_(per_rod, "lbf"))
+    if (check := tied.check()).status != "pass":
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"No rod up to {rod['name']} carries the dome's thrust: the busiest takes "
+                    f"{per_rod:,.0f} lb."
+                ),
+            )
+        )
+    working.append(
+        Step(
+            name="Tie rods across the bearing walls",
+            value=f"{rod['name']}: {per_rod:,.0f} lb, {per_rod / rod['stress_area']:,.0f} psi",
+            formula="H × bay × share ÷ tensile stress area",
+            inputs={"along each wall, hot": f"{total:.0f} lb"},
+            reference=f"{data['rods']['source']}; {data['binding_stress_source']}; {DOME_SOURCE}",
+            note=(
+                "The end pair runs across the door's head and across the back wall. Under the "
+                "sliced dome nothing bears on the door wall, so the angle across the door's head "
+                "is a tie and a frame member, not a lintel."
+            ),
+        )
+    )
+    leg = chosen.leg
+    members = [
+        Member(part="corner posts" if posts == 2 else "posts, at the corners and along the sides",
+               steel=chosen.name, count=2 * posts, length_in=o.bottom + o.wall_top,
+               source=DOME_STEEL_SOURCE),
+        Member(part="buttresses along the dome's bearing walls", steel=chosen.name, count=2,
+               length_in=along + 2 * leg, source=DOME_STEEL_SOURCE),
+        Member(part="ring angles across the door's head and the back", steel=chosen.name,
+               count=2, length_in=(o.width if across else o.depth) + 2 * leg,
+               source=DOME_STEEL_SOURCE),
+        *_ring_of(FLAT_BAR, "bottom cross-members", o, leg, PITELKA),
+        Member(part="tie rods", steel=f"{rod['name']} threaded rod", count=posts,
+               length_in=(o.width if across else o.depth) + 2 * leg + 4,
+               source=f"length: {MERRILL}"),
+    ]  # fmt: skip
+    if fits and bending.check().status == "pass":
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The dome needs a frame: {chosen.name} angle along the tops of {walls} and "
+                    f"round the springline, {2 * posts} posts, and {posts} {rod['name']} tie rods "
+                    f"({per_rod:,.0f} lb on the busiest), the steel at about "
+                    f"{hot.temperature:.0f} °F. Fit it before the form comes out."
+                ),
+                reference=DOME_STEEL_SOURCE,
+                check=bending.check(),
+            )
+        )
+    if tied.check().status == "pass":
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The end pair of {rod['name']} rods ties across the door's head and the back "
+                    f"wall, {per_rod:,.0f} lb on the busiest, hot."
+                ),
+                reference=DOME_STEEL_SOURCE,
+                check=tied.check(),
+            )
+        )
     return FrameDesign(
-        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
-        thrust=f"{peak_hot:.0f} lb per foot on {walls}, hot", members=[], working=working,
-        findings=findings,
+        kind="dome frame", angle=chosen.name, angle_leg_in=chosen.leg, angle_t_in=chosen.t,
+        rod=rod["name"], rod_d_in=rod["d"], thrust=f"{peak_hot:.0f} lb per foot on {walls}, hot",
+        members=members, working=working, findings=findings, posts=posts,
     )  # fmt: skip
 
 
@@ -702,7 +942,9 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
     thrust: str | None = None
     roof = kiln.roof
     if isinstance(roof, SprungArch) and kiln.chamber.shape == "box":
-        span = si(kiln.chamber.width, "in")
+        # Chambers in a row: each arch spans its chamber's depth, along the draft (run_parts.py)
+        along = kiln.chamber.chambers > 1 and not roof.tube
+        span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
         arch = Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
         cold = cold_thrust_factor(span, arch.rise) * load.weight
@@ -736,6 +978,63 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
     )  # fmt: skip
 
 
+ROW_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.94–95 (the arches throw their thrust onto the common wall), "
+    "p.97 (bracing a chamber kiln's firebox and front chamber 'is a must')"
+)
+
+
+def _row_arches(kiln: Kiln) -> FrameDesign:
+    """Chambers in a row, each under an arch spanning its depth along the draft (run_parts.py).
+    Each wall between chambers takes the thrust of the arches either side, which push against
+    each other (Olsen p.94–95); the front and back walls take one arch's thrust each, across the
+    kiln's width, and want bracing (p.97). No source here sizes that bracing, so the thrust is
+    worked out and no steel is sized."""
+    assert isinstance(kiln.roof, SprungArch)
+    depth, width = si(kiln.chamber.depth, "in"), si(kiln.chamber.width, "in")
+    arch = Arch(depth, si(kiln.roof.rise, "in"))
+    load = _arch_load(kiln, arch)
+    cold = cold_thrust_factor(depth, arch.rise) * load.weight
+    heated = heated_thrust_factor(depth, arch.rise, load.ring)
+    hot = min((heated if heated is not None else MAX_PRINTED_HEATED) * cold,
+              MAX_PRINTED_HEATED * cold)  # fmt: skip
+    whole = hot * width / 12
+    thrust = (
+        f"{hot:.0f} lb per foot of arch, hot ({cold:.0f} cold): {whole:,.0f} lb on each end wall"
+    )
+    working = [
+        Step(
+            name="Thrust on each end wall",
+            value=thrust,
+            formula=(
+                "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's width; "
+                "the arch spans one chamber's depth"
+            ),
+            inputs={"span": f"{depth:g} in", "rise": f"{arch.rise:g} in", "width": f"{width:g} in"},
+            reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}",
+        )
+    ]
+    findings = [
+        Finding(
+            level="info",
+            message=(
+                "Each chamber's arch spans its depth, along the draft, so its thrust falls on the "
+                "walls before and behind it, not on the side walls. The walls between chambers "
+                "take the arches either side, which push against each other (Olsen p.94–95); the "
+                f"front and back walls each take one arch's thrust, {whole:,.0f} lb hot across the "
+                "kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front "
+                "chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is "
+                "sized; or hold the ends with masonry (roof.buttressed)."
+            ),
+            reference=ROW_SOURCE,
+        )
+    ]
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=thrust, members=[], working=working, findings=findings,
+    )  # fmt: skip
+
+
 def _round_frame(kiln: Kiln) -> FrameDesign:
     """A round kiln: its wall is a ring, which holds any dome on it; makers band it with iron (the
     Breda bottle kiln, Olsen p.167; Sèvres, p.168–169). The band isn't sized here."""
@@ -749,13 +1048,95 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
     ]
+    if kiln.heat.electric is not None:
+        findings = [_electric_bands(kiln)]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=None, members=[], working=[], findings=findings,
     )  # fmt: skip
 
 
+SECTION_IN = 9.0
+"""A round electric kiln's section: two 4½ in courses (L&L e23T-3, "Three 9" high sections";
+electric-kiln-survey.md, verified)."""
+BANDS_SOURCE = (
+    "electric-kiln-survey.md: L&L e23T-3, 9 in sections; Skutt's lid, slab and body bands, the "
+    "bricks held by the band's tension, not cement (kiln parts listings, snippets)"
+)
+
+
+def _electric_bands(kiln: Kiln) -> Finding:
+    """A round electric kiln's steel bands, listed but not sized: one round each section, the
+    floor slab and the lid. No source gives a band's width, thickness or tension."""
+    height = si(kiln.chamber.height, "in")
+    sections = math.ceil(height / SECTION_IN - 1e-6)
+    lid = "the lid" if isinstance(kiln.roof, FlatRoof) else None
+    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section", "one round "
+             "the floor slab"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
+    return Finding(
+        level="info",
+        message=(
+            "A round electric kiln's bricks are held by steel bands, not mortar: "
+            + "; ".join(parts)
+            + ". Their width, thickness and tension aren't sized: no source found gives them, so "
+            "take them from the maker of the bands or a kiln of the same size."
+        ),
+        reference=BANDS_SOURCE,
+    )
+
+
+def round_door_bands(kiln: Kiln) -> Finding:
+    """A round kiln's bands where a door breaks its wall: each band at the door's height stops at
+    the jambs, and those above run over its head; listed, not sized (no source sizes a band)."""
+    door = kiln.loading.opening
+    assert door is not None, "only a door in part of the wall breaks the bands"
+    sill = si(door.sill, "in")
+    top = sill + si(door.height, "in")
+    dome = isinstance(kiln.roof, Dome)
+    return Finding(
+        level="info",
+        message=(
+            f"The door breaks the round wall's ring and the iron bands round it, from {sill:g} "
+            f"to {top:g} in up: a band there can't run round in one piece, so it ends at the "
+            "jambs, and the bands above run over the door's head"
+            + (
+                ", which can't hold the dome's thrust as a ring: the band over the door carries "
+                "it across"
+                if dome
+                else ""
+            )
+            + ". No source sizes a band or says how its ends are held at a jamb, so they aren't "
+            "sized."
+        ),
+        reference="steel-design.md §S5; Olsen, The Kiln Book, 4th ed., p.167–169 (iron bands)",
+    )
+
+
 def design_frame(kiln: Kiln) -> FrameDesign:
+    """The frame, and for a door in part of a wall, what spans the door (door.py)."""
+    from kilndesigner.door import door_head
+
+    frame = _design_frame(kiln)
+    head = door_head(kiln)
+    if head is None:
+        return frame
+    members = list(frame.members)
+    if head.lintel is not None:
+        members.append(
+            Member(part="door lintel", steel=head.lintel, count=1, length_in=head.length_in,
+                   source="steel-design.md §S5; door-openings.md")
+        )  # fmt: skip
+    findings = [*frame.findings, *head.findings]
+    if kiln.chamber.shape == "round":
+        findings.append(round_door_bands(kiln))
+    return frame.model_copy(
+        update={
+            "members": members, "working": [*frame.working, *head.working], "findings": findings,
+        }
+    )  # fmt: skip
+
+
+def _design_frame(kiln: Kiln) -> FrameDesign:
     o = outside(kiln)
     volume_ft3 = chamber_shape(kiln).volume / si(parse_quantity("1 ft**3"), "m**3")
     if kiln.roof.type == "open":
@@ -764,6 +1145,8 @@ def design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.chamber.chambers > 1 and not kiln.roof.tube:
+        return _row_arches(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)
     if isinstance(kiln.roof, Dome):
@@ -779,7 +1162,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
 
     # The smallest angle, from the builders who published theirs: Olsen's (p.139, p.174), and
     # Pitelka's for a hinged door
-    outside_ft3 = o.width * o.depth * (o.bottom + skewback_top(kiln)) / 1728
+    outside_ft3 = o.width * o.depth * (o.bottom + skewback_top(kiln, whole_roof=True)) / 1728
     if kiln.door_kind == "hinged":
         floor = angle("L3×3×1/4") if volume_ft3 <= 24 else angle("L4×4×1/4")
         why = f"hinged door, {volume_ft3:.0f} ft³ ({'≤' if volume_ft3 <= 24 else '>'} 24 ft³)"
@@ -1095,6 +1478,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
                     f"{posts} rods takes {per_rod:,.0f} lb, {per_rod / rod['stress_area']:,.0f} "
                     "psi, hot."
                 ),
+                reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
             )
         )
     working.append(
@@ -1122,6 +1506,26 @@ def design_frame(kiln: Kiln) -> FrameDesign:
 
     top = skewback_top(kiln)
     leg = chosen.leg
+    # HarbisonWalker: the line of thrust through, or slightly above, the steel's corner (S5).
+    # A note, not a warning: Olsen's built kilns (Kahler's salt kiln, his three-chamber kiln)
+    # stand with it lower, and ADR 0014 takes them as the reference.
+    sheet = thrust_through_steel(arch_in, max(o.left, o.right), chosen.leg, chosen.t)
+    if sheet.check().status != "pass":
+        drop, most = sheet.env["δ"] / 0.0254, sheet.env["δ_max"] / 0.0254
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The cold line of thrust drops {drop:.2f} in from the ring's corner to the "
+                    f"side wall's outside, past the {chosen.name} buttress's {most:.2f} in of "
+                    "upright leg: HarbisonWalker, for industrial furnaces, wants it through or "
+                    "just above the steel's corner. Olsen's built kilns stand with it lower, so "
+                    "this is a note; a longer-legged angle, thinner walls at the skewback or more "
+                    "rise would bring it up."
+                ),
+                reference=THRUST_THROUGH_STEEL,
+            )
+        )
     members = [
         Member(
             part="corner posts" if posts == 2 else "posts, at the corners and along the sides",

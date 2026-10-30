@@ -1,0 +1,56 @@
+# Olsen's "basic groundhog dimensions" (Olsen, The Kiln Book, 4th ed., p.111–112, Fig 4-85): the
+# groundhog type of the American South, a wood-fired cross-draft half-cylinder with a full-width
+# firebox at one end and a full-width chimney at the other. A type, not one kiln: each size is the
+# middle of the book's range, or follows from one.
+#
+# From the book: chamber 29–48 in high to the crown (38½ in used), 7–10 ft wide (8½ ft used) and
+# 12–24 ft long overall (18 ft used) (p.112); "a cylinder sliced lengthwise at or slightly off the
+# centre", the smaller part laid down: the arch springs from the floor and rises less than a
+# half-circle (p.112). A shallow firebox takes one third of the length and the ware platform two
+# thirds (p.112): a 6 ft firebox, inside the drawing's 4–6 ft (faint), and a 12 ft platform,
+# inside its 10–20 ft; firebox 5–10 ft wide, here the chamber's full width. Chimney 5–10 ft
+# (p.112; the drawing prints 5–12 ft): 7½ ft used. Shallow-firebox groundhogs load from the front
+# (p.112). Groundhogs are dug into the ground, an earth buttress with a dirt cover, or built on the
+# ground and braced with rock (p.112): the arch is buttressed and the floor is on the ground.
+# Assumed: walls, arch and floor 9 in of K-26 insulating brick: on the hot face of Olsen's anagama
+# it resisted wood-ash slag better than hard brick (p.26), at the 9–10 in of his climbing kilns'
+# walls (p.99–100). Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog
+# (gulgong-racer, p.119). The chimney's section and the exit flues aren't given (only "9–30 in
+# wide" inside): engine default. Spy holes: engine default, up the door's end wall under the arch.
+# Not modelled: the 12–15 in step up from the firebox to the ware platform; the six exit flues
+# drawn at the chimney wall; the floor's loss into the ground, which the engine doesn't work out.
+schema: 1
+name: Groundhog, Olsen's basic dimensions
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 102 in # 8½ ft
+  depth: 12 ft # the ware platform
+  height: 0 in # the arch springs from the floor
+  on_ground: true # dug in, or built on the ground (p.112)
+roof:
+  type: sprung_arch
+  rise: 38.5 in # to the crown; under the 51 in of a half-circle
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 102 in # full width
+        length: 6 ft
+draft:
+  type: cross
+  flue_wall: back
+  chimney:
+    height: 7.5 ft

@@ -228,8 +228,8 @@ These ratios are for pure CA reacting to completion. Real cements contain other 
 | ULC product sheet | 5.3–5.7 % and 4.0–4.7 % water by weight (two grades) | Excerpt (Scribd upload, unnamed maker) | [S40] |
 | Insulating castables, water | NOT FOUND | | |
 | Mizzou: "55 lbs. to 5 pints of water"; "Do not exceed 11.0 % water under any circumstances" | High Temp Tools FAQ, quoted on a blog | Verified (secondary) | [S41] |
-| Mizzou water, by weight | 5 US pints = 2.366 L ≈ 5.20 lb; 5.20 / 55 = 9.5 % of dry weight **(derived)** | | [S41] |
-| Mizzou Castable Plus | 2.27 g/cm³ bulk, 3000 °F rating, 60.6 % Al₂O₃, 32.6 % SiO₂, 2.6 % CaO | Excerpt (distributor; page 403) | [S42] |
+| Mizzou water, by weight | 5 US pints = 2.366 L ≈ 5.20 lb; 5.20 / 55 = 9.5 % of dry weight **(derived)**. **Superseded** by HWI's own sheet (12/12, 5976): 9.0 % for hand casting, 8.6 % for vibration casting (`door-headers.md` [H18], Verified). | | [S41] |
+| Mizzou Castable Plus | 2.27 g/cm³ bulk, 3000 °F rating, 60.6 % Al₂O₃, 32.6 % SiO₂, 2.6 % CaO | Excerpt (distributor; page 403). HWI's 12/12 sheet: bulk 142 lb/ft³ after 220 °F, 140 after 1,500 °F, "Material Required 140 lb/ft3", k 7.8–7.4 Btu·in/hr·ft²·°F from 400 to 2,400 °F ([H18], Verified) | [S42] |
 
 ---
 
@@ -552,15 +552,126 @@ as one source. Values the engine uses come first (`castable.py`, `data/ingredien
 | Dextrin 1.45, starch 1.5, cellulose 1.5 | 1–2 each [S13] [S13b] [S14] [S12] | No third found. |
 | Heat of combustion, starch 4.16 / cellulose 4.15 kcal/g (`HHV_*`) | [S51] (a review of ~100 values), [S52] 16.31 kJ/g cellulose, [S80] NBS 1950 bomb calorimetry (values not read), [S81] potato starch calorimetry (values not read) | Effectively 2 read. [S51] 17.4 kJ/g vs [S52] 16.31 kJ/g: **6 % apart**. A teaching page's 14.2 kJ/g [S82] uses glucose's enthalpy for cellulose and is not a measurement; ignore. |
 | Mizzou dry-out 75 °F/h, ½ h per inch, ≤ 9 in (`DRYOUT_*`) | [S41] only for Mizzou; AGC [S56] 50 °C/h, 1 h per 10 mm; an unnamed maker sheet [S83] 50 °C/h per 25 mm | **Disagree.** AGC's hold is 1 h per 10 mm ≈ 2.5 h per inch, five times the Mizzou ½ h per inch the engine uses. No HWI, Allied or Plibrico primary schedule found. |
-| Mizzou water 9.5 %, ≤ 11 % | 1 [S41] | No HWI sheet found. |
-| Mizzou Castable Plus 2.27 g/cm³ | 1 distributor [S42] | |
+| Mizzou water 9.0 % hand cast (8.6 % vibrated), ≤ 11 % | HWI 12/12 sheet [H18 in `door-headers.md`]; [S41] | Reconciled 29 Oct 2026 (review M15): HWI's sheet replaces the derived 9.5 %. |
+| Mizzou Castable Plus 142 / 140 lb/ft³ | HWI 12/12 sheet [H18]; distributor [S42] 2.27 g/cm³ (142 lb/ft³) | Agree. |
 | CAC hydrate densities, water ratios | excerpts [S38] only | |
 | ASTM C401 classes | 1 snippet [S39] | Paid standard. |
 | Conventional castable water 8–15 % | 1 [S40] | |
 | IFB conductivities (§6.3) | Morgan sheets [S49] [S50] | One maker's own data; primary but single. |
 | Burnout window 240–550 °C (`BURNOUT_*`) | [S54] (excerpt), [S53] cellulose 315–400 °C | 2, partly overlapping. |
-| `WASTE = 0.10` | none | Marked as an assumption in the code. |
+| ~~`WASTE = 0.10`~~ | replaced 29 Oct 2026 | Batches are now mixed with the castable allowance, 5 % by default (PCO, `brick-waste.md` §3 [W2]); the design can set `allowances.castable`. |
 | `GLUCAN_MOLAR_MASS = 0.16214` | none fetched | Standard stoichiometry (6×12.011 + 10×1.008 + 5×15.999 = 162.14) **(derived)**. |
+
+---
+
+## 14. Kast-O-Lite 30 LI Plus, full read (2026-10-29)
+
+HWI's current product page lists "KAST-O-LITE® 30 LI PLUS … a 3000°F, low iron, insulating
+castable" and links only its SDSs [S90]. The newest product data sheet found is 10/19: 5874,
+read here as text (PyMuPDF opens the owner-encrypted file) [S84]. It agrees with the values
+already in `combustion-and-masonry.md` §6.1, `door-headers.md` [H17] and `flat-roofs.md` [F16].
+
+### 14.1 Data sheet 10/19: 5874 [S84] (Verified)
+
+| Property | Value |
+|---|---|
+| Description | 3000 °F low-iron insulating castable; "High-alumina, high-temperature, lightweight castable" |
+| Chemistry, calcined basis | SiO₂ 35.3 %, Al₂O₃ 56.6 %, Fe₂O₃ 0.9 %, TiO₂ 1.3 %, CaO 5.0 %, MgO 0.3 %, Na₂O+K₂O 0.6 % |
+| Maximum service temperature | 3000 °F (1650 °C) |
+| Material required | 92 lb/ft³ (1.47 g/cm³) |
+| Bulk density | 98 lb/ft³ (1.57) after 220 °F; 92 (1.47) after 1500 °F |
+| Density as cast (wet) | **not given** |
+| Modulus of rupture, psi | 600 (220 °F), 300 (1500), 300 (2000), 900 (2500), 800 (2910 °F) |
+| Cold crushing strength, psi | 2,700 (220 °F), 2,300 (1500), 1,300 (2000), 2,000 (2500), 1,800 (2910 °F) |
+| Permanent linear change | none (220 °F); 0 to −0.3 % (1500); −0.2 % (2000); +2.0 % (2500); +1.0 % (2910 °F) |
+| Thermal conductivity, Btu·in/(hr·ft²·°F) (W/m·K) | 5.6 (0.81) at 400 °F; 4.2 (0.61) at 800; 4.1 (0.59) at 1200; 4.5 (0.65) at 1600; 4.9 (0.71) at 2000 °F |
+| Specific heat | **not given** |
+| Particle size | maximum 10 mesh (Tyler) |
+| Water, hand casting/pouring | 17.0 % by weight: 9.4 lb (1.1 gal, 4.2 L) per 55 lb bag; 170 lb per 1000 lb; 255 lb per 1500 lb |
+| Heat-up and dry-out | "See HWI Dryout Schedule 4—PLUS Rated Lightweight Castables and Gunning Castables" (§14.2) |
+| Installation | "See HWI Installation Guidelines IC-1—Insulating Castables—Standard" (§14.2) |
+| Shelf life | 365 days under proper storage |
+
+The material required, 92 lb/ft³, is 0.598 ft³ per 55 lb bag (**derived**), 1.67 bags per ft³.
+
+SDS 5874, version 04, revised 05-18-2021 [S85] (Verified): kyanite 20–40 %, aluminium oxide
+10–25 %, calcium aluminate cement 10–25 %, cristobalite 2.5–10 %, mullite 2.5–10 %, quartz
+2.5–10 %, amorphous silica 1–2.5 %. Signal word "Danger" (respirable crystalline silica). The SDS
+gives no specific heat.
+
+### 14.2 Installation and dry-out (HWI) (Verified)
+
+From IC-1, 8/23/16 [S86]:
+
+- Store dry, 60–80 °F; shelf life of insulating castables 6–12 months (the data sheet: 365 days).
+- Waterproof porous forms and backup; remove wood forms before dry-out.
+- Mix 1–3 minutes, never more than 3; add 70–80 % of the water first. Product, water 60–80 °F;
+  water drinkable, pH 6–7.5.
+- Mix the first batch at the sheet's water, then adjust; "Varying the amount of water more than 3%
+  above or below the target value … is not recommended".
+- Hand cast and rod, or vibrate without segregating; don't trowel or slick the surface.
+- Cure at 70–100 °F ideally; above 60 °F at least 24 h; below 60 °F longer, with heat up to
+  120 °F. Keep it covered and damp; don't let it freeze before a hard set (ring test with a bar).
+- Alkali hydrolysis: cast and cure above 70 °F, dry out soon after the 24 h cure with the hot face
+  at 500–750 °F so that at least 230 °F reaches part way in, keep it dry under plastic, no sealers.
+- Water leaves mostly through the cold face: against steel or other impermeable backing, use weep
+  holes or wicking.
+- Anchors: "When using metallic anchor systems, such as V-anchors, a coating on the tips is
+  suggested to allow for anchor expansion during heatup." No spacing or anchor type is given in
+  IC-1 or the data sheet (**NOT FOUND**).
+
+HWI Schedule 4, PLUS rated lightweight castables, one-sided dry-out, 12/17/13 [S87] (example: a
+9 in lining, about 49 h): cure at least 24 h at 70–100 °F; heat at 100 °F/h to 1200 °F; hold
+1 h per inch of thickness; cool to ambient at 100 °F/h, or heat on at 100 °F/h to service.
+Temperatures are of the gas at the lining (thermocouple ½ in off the face). Hold or drop the
+temperature while steam shows. Multi-layer linings and linings over 12 in: ask HWI. Later heat-ups
+can run at 100 °F/h.
+
+A retailer's instruction sheet for "Kast-O-Lite 30 LI Plus" (2020, unbranded, Shopify-hosted)
+[S89] gives 90 lb/ft³, 8.6 pints of water per 50 lb and "DO NOT exceed 11.0% water", and a
+100/100/75 °F/h forge schedule with ½ h/in holds at 250 and 500 °F. These figures are Mizzou's
+(§11 above), not HWI's for this product, whose sheet says 17.0 % water. **Not used.**
+
+### 14.3 Specific heat: a class value (derived)
+
+No HWI document found gives c_p for Kast-O-Lite 30 LI Plus (data sheet, SDS, IC-1, Schedule 4).
+The firing simulation needs one, so a **class value** is used and labelled as such in
+`materials.yaml` (status `derived`):
+
+The VDI Heat Atlas, 2nd ed., refractory table, as transcribed in the `ht` library
+(`masonry-materials.md` [M2]), at 400, 600, 800, 1000, 1200 °C, in J/(kg·K):
+
+| VDI class | Al₂O₃ class | 400 | 600 | 800 | 1000 | 1200 |
+|---|---|---|---|---|---|---|
+| High-duty fireclay | ≈ 40–45 % | 958 | 999 | 1024 | 1040 | 1058 |
+| **Sillimanite** (used) | Al₂SiO₅, 63 % | **978** | **1024** | **1052** | **1072** | **1093** |
+| Mullite | 72 % | 987 | 1035 | 1065 | 1087 | 1109 |
+| Lightweight L1540 | — | 979 | 1026 | 1054 | 1075 | 1096 |
+
+Why sillimanite: Kast-O-Lite's calcined analysis (56.6 % Al₂O₃, 35.3 % SiO₂) lies between
+high-duty fireclay and mullite, and its largest ingredient is kyanite, the same Al₂SiO₅ as
+sillimanite. Every row above is within 2 % of sillimanite's at each temperature, so the choice
+among them matters little. c_p is per unit mass, so porosity does not change it; the castable's
+own density (98 lb/ft³) is used for the heat stored. The 5 % of lime in the cement is not
+represented. This is **not HWI's value**; replace it if HWI supplies one.
+
+Below 400 °C the simulation holds the 400 °C value (978 J/(kg·K)). Refractories' c_p rises with
+temperature in every VDI row, so this overstates the heat stored in the early firing (the slow,
+costlier side). No source found gives a lower-temperature point for this class. Searched again
+2026-10-30 for a maker's figure for an alumina-silica insulating castable: Morgan's Firelite
+2600LI/2800LI sheets (https://morganthermalceramics.com/media/d3plff0a/firelite-2600li_eng.pdf)
+and Mathios's insulating castables table (https://refractories.mathios.com/insulating-castables/)
+show conductivity but no specific heat (Mathios read in full; the Firelite sheets only as
+search extracts) (**NOT FOUND**).
+
+### 14.4 Cerachem blanket specific heat (Verified)
+
+Morgan Thermal Ceramics, *North America Product Data Brochure* 2012, p.5, the blanket table
+[S88]: "Specific Heat, BTU/lb•°F @ 1800°F" is 0.26 for Kaowool, Kaowool RT, Cerafiber, Cerachem
+and Cerachrome, 0.25 for Saffil (none given for the Superwool grades). For Cerachem: 0.26
+Btu/(lb·°F) at 1800 °F = 1.09 kJ/(kg·K) at 982 °C (**derived**: × 4.1868). This is the maker's own
+figure, used for `cerachem-blanket-8pcf`. It also corroborates the distributors' 0.27 Btu/(lb·°F)
+for Kaowool (`thermal-properties.md` §1).
 
 ---
 
@@ -650,3 +761,10 @@ as one source. Values the engine uses come first (`castable.py`, `data/ingredien
 - [S81] J. Chem. Thermodyn. 2013, combustion of potato starch, via NIST TRC (search snippet; values not read). https://trc.nist.gov/ThermoML/10.1016/j.jct.2012.11.031.html
 - [S82] Polymer Science Learning Center, heat of combustion of cellulose, teaching calculation (search snippet). https://pslc.ws/fire/cellulos/combans1.htm
 - [S83] "Instructions for the use of Castables (Heat Resistant Concretes)", unnamed maker, forum-hosted (search snippet). https://community.fornobravo.com/filedata/fetch?id=426785
+- [S84] HarbisonWalker International, *KAST-O-LITE® 30 LI PLUS* Product Data 10/19: 5874 (owner-encrypted PDF, text read with PyMuPDF 2026-10-29). https://ssfbs.com/wp-content/uploads/2021/06/KAST-O-LITE_30_LI_PLUS.pdf
+- [S85] HarbisonWalker International, SDS KAST-O-LITE 30 LI PLUS (USA), 5874, version 04, revised 05-18-2021. https://thinkhwi.com/datasheets/11551/sds-resale/5874-KAST-O-LITE%2030%20LI%20PLUS_%28USA%29.PDF
+- [S86] HarbisonWalker International, *Installation Guidelines: Insulating Castables—Standard (IC-1)*, 8/23/16 (Refractory West copy). https://www.refwest.com/attachments/Installation%20IC1%20Insulating%20Castables--Standard.pdf
+- [S87] HarbisonWalker International, *Curing and Dryout General Guidelines, HWI Schedule 4—PLUS Rated Lightweight Castables and Gunning Castables*, 12/17/13 (Sealpro copy). http://www.sealproweb.com/sds/KAST-O-LITE_16_Plus_CuringGuidelines.pdf
+- [S88] Morgan Thermal Ceramics, *North America Product Data Brochure 2012: Insulating Our World*, p.5 (blanket table). https://advancedmaterialscience.com/wp-content/uploads/2021/01/morgan-products-sheet.pdf
+- [S89] "Kast-O-Lite 30 LI Plus Castable Instructions" (2020), retailer sheet, no maker named. https://cdn.shopify.com/s/files/1/1896/6099/files/Kast-O-Lite_Instructions_2020_Final.pdf
+- [S90] HarbisonWalker International, KAST-O-LITE® 30 LI PLUS product page, read 2026-10-29. https://thinkhwi.com/products/kast-o-lite-30-li-plus/

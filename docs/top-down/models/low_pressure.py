@@ -68,7 +68,9 @@ def main() -> None:
         out = [f"{orifice_cfh(d, ps) * m.HHV_FT3:6.0f}" for ps in (3, 7, 11)]
         print(f"{drill} ({d} in): BTU/hr at 3/7/11 in w.c. = {' / '.join(out)}")
 
-    ann = math.pi / 4 * (1.5**2 - 0.84**2) * 0.0254**2  # 1.5 in port around 1/2 in pipe
+    # Design B's 1-1/4 in port around 1/2 in pipe (0.84 in OD); it was 1.5 in, 45 % more gap than
+    # the design specifies (science review T3)
+    ann = math.pi / 4 * (1.25**2 - 0.84**2) * 0.0254**2
     gas_m3s = 12_000 / m.HHV_FT3 / 3600 * 0.0283168
     for s in (3, 8):
         air = 0.6 * math.sqrt(2 * s / m.RHO_A) * ann

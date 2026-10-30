@@ -19,15 +19,29 @@ def closed_form(a: float, b: float, t0: float, t1: float) -> float:
 
 
 def test_k_follows_the_data_sheet_between_its_points_and_carries_on_past_them() -> None:
-    """JM 26 (materials.yaml, Morgan JM sheet [S29]): 0.25, 0.27, 0.30, 0.33 W/(m·K) at 400, 600,
-    800 and 1000 °C. Between points k is linear; past the ends it follows the nearest pair."""
-    k = material("ifb-jm26").k
-    assert k.k(400 + C) == pytest.approx(0.25)
-    assert k.k(700 + C) == pytest.approx((0.27 + 0.30) / 2)
-    # 100 °C past the last point, along the 800–1000 °C slope of 0.03 per 200 °C
-    assert k.k(1100 + C) == pytest.approx(0.33 + 0.015)
-    # 100 °C below the first point, along the 400–600 °C slope of 0.02 per 200 °C
-    assert k.k(300 + C) == pytest.approx(0.25 - 0.01)
+    """JM 28 (materials.yaml, Morgan JM sheet, 2025): 0.30, 0.32, 0.34, 0.36, 0.36 W/(m·K) at 400,
+    600, 800, 1000 and 1100 °C. Between points k is linear; past the last it follows the last
+    pair; below the first it is held at the first point's k (science review E6/M9)."""
+    k = material("ifb-jm28").k
+    assert k.k(400 + C) == pytest.approx(0.30)
+    assert k.k(700 + C) == pytest.approx((0.32 + 0.34) / 2)
+    assert k.k(1100 + C) == pytest.approx(0.36)
+    # 100 °C past the last point, along the 1000–1100 °C slope (flat)
+    assert k.k(1200 + C) == pytest.approx(0.36)
+    # Below the first point: held at 0.30, not carried down the 400–600 °C slope to 0.29
+    assert k.k(300 + C) == pytest.approx(0.30)
+
+
+def test_fibre_below_its_first_point_is_no_less_conductive_than_there() -> None:
+    """Review E6: carried down linearly, Kaowool 8 pcf fell to 0.014 W/(m·K) at 40 °C, below
+    still air (about 0.026). Held at its first point it can't."""
+    k = material("kaowool-blanket-8pcf").k
+    first = k.values[0]
+    assert k.k(40 + C) == pytest.approx(first)
+    assert k.k(40 + C) > 0.026
+    # A k falling with temperature carries on up as it goes down (higher k: the safe side)
+    falling = Conductivity((500.0, 600.0), (0.2, 0.1))
+    assert falling.k(400.0) == pytest.approx(0.3)
 
 
 def test_the_integral_across_the_data_points_is_the_sum_of_trapezoids() -> None:
@@ -54,11 +68,11 @@ def test_integrating_downwards_gives_the_negative() -> None:
 
 
 def test_extrapolated_k_never_falls_to_zero() -> None:
-    """Far below a data sheet's points, a rising k extrapolates below zero; it is held at a small
-    positive floor (1e-3 W/(m·K)) so the solver never divides by zero."""
-    k = Conductivity((300.0, 400.0), (0.1, 0.2))  # k = 0.001·T − 0.2: zero at 200 K
+    """Far past a data sheet's last point, a falling k extrapolates below zero; it is held at a
+    small positive floor (1e-3 W/(m·K)) so the solver never divides by zero."""
+    k = Conductivity((300.0, 400.0), (0.2, 0.1))  # k = 0.5 − 0.001·T: zero at 500 K
     assert k.k(350.0) == pytest.approx(0.15)
-    assert k.k(0.0) == pytest.approx(1e-3)
+    assert k.k(1000.0) == pytest.approx(1e-3)
 
 
 def test_upper_temperature_inverts_the_integral() -> None:

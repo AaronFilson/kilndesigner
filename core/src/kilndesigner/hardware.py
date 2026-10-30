@@ -17,6 +17,7 @@ import math
 from dataclasses import dataclass, field
 from typing import Literal
 
+from kilndesigner.allowance import allowance
 from kilndesigner.fire import FireDesign
 from kilndesigner.frame import CASE_T, NO_FRAME, FrameDesign, outside, skewback_top
 from kilndesigner.gas import BURNER_PORTS, FLUE_SOURCE, SLIGHTLY_UNDER, GasDesign, kiln_top_in
@@ -387,10 +388,12 @@ def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
     for side, x, s in (("left", f.x0, -1), ("right", f.x1, 1)):
         flat = ((x - s * (leg - t), f.y0 - t, top), (x + s * t, f.y1 + t, top + t))
         upright = ((x, f.y0 - t, top + t - leg), (x + s * t, f.y1 + t, top + t))
-        title = "Buttress angle" if arch else "Roof angle"
+        dome = frame.kind == "dome frame"
+        title = "Buttress angle" if arch or dome else "Roof angle"
+        roof, where = ("dome", "springline") if dome else ("arch", "skewback")
         detail = (
-            f"{frame.angle}, takes the arch's thrust at the skewback ({frame.thrust}); {source}"
-            if arch and frame.thrust
+            f"{frame.angle}, takes the {roof}'s thrust at the {where} ({frame.thrust}); {source}"
+            if (arch or dome) and frame.thrust
             else f"{frame.angle}; {source}"
         )
         hw.pieces.append(
@@ -405,14 +408,20 @@ def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
     # Cross-members along the front and back, and the tie rods in front of them
     rod_r = frame.rod_d_in / 2
     for end, y, s in (("front", f.y0, -1), ("back", f.y1, 1)):
-        bar = ((f.x0 - t, y, top - 2 + t), (f.x1 + t, y + s * 0.25, top + t))
+        if frame.kind == "dome frame":  # a ring of angle round the springline
+            flat = ((f.x0 - t, y - s * (leg - t), top), (f.x1 + t, y + s * t, top + t))
+            upright = ((f.x0 - t, y, top + t - leg), (f.x1 + t, y + s * t, top + t))
+            boxes, what = (_mm(flat), _mm(upright)), f"{frame.angle} angle"
+        else:
+            bar = ((f.x0 - t, y, top - 2 + t), (f.x1 + t, y + s * 0.25, top + t))
+            boxes, what = (_mm(bar),), "¼ × 2 in flat bar"
         hw.pieces.append(
             Piece(
                 f"frame/{end}-top",
                 "steel",
                 f"Top cross-member, {end}",
-                f"¼ × 2 in flat bar; {source}",
-                boxes=(_mm(bar),),
+                f"{what}; {source}",
+                boxes=boxes,
             )
         )
         if frame.rod:
@@ -491,7 +500,36 @@ def _case(kiln: Kiln, f: Faces, hw: Hardware) -> None:
     )
 
 
+LID_SOURCE = (
+    "electric-kiln-survey.md (the lid's band carries the hinge, the user); electric-kiln-"
+    "hardware.md §1.1 [S8] [S1] (bands round the lid and floor slab), §7.1 [S16] (a lid "
+    "lifter), §8.4 (UL 499, Table 36.2: handles)"
+)
+
+
+def _lid(hw: Hardware) -> None:
+    """A top-loader's lid: the flat roof's slab in its steel band, which carries its hinge and a
+    handle to lift it by. Listed, not sized: no source gives the hinge's or handle's size."""
+    hw.findings.append(
+        Finding(
+            level="info",
+            message=(
+                "The kiln loads from the top: the lid is the flat roof's slab of mortared "
+                "straights in a steel band, and the band carries the lid's hinge on one side and a "
+                "handle opposite it to lift it by. The walls have no door. UL 499 holds a handle "
+                "grasped to lift to 55 °C if metal, 75 °C if not. The hinge and handle aren't "
+                "sized: no source found gives their size or steel, so take them from the maker of "
+                "the bands or a kiln of the same size."
+            ),
+            reference=LID_SOURCE,
+        )
+    )
+
+
 def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
+    if kiln.loading.type == "lid":
+        _lid(hw)
+        return
     face = kiln.door_face
     assert face not in ("floor", "roof")
     o = outside(kiln)
@@ -499,6 +537,31 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
     u0, u1 = f.span(face)
     if kiln.loading.type == "car":
         _car(kiln, frame, f, hw)
+        return
+    opening = kiln.loading.opening
+    if opening is not None:
+        # A door in part of the wall: its frame and hinges go round the opening, not the wall
+        from kilndesigner.door import door_hole
+
+        hole = door_hole(kiln)
+        assert hole is not None
+        axis = 0 if face in ("front", "back") else 1
+        u0, u1 = hole.lo[axis] / MM, hole.hi[axis] / MM
+        top = si(opening.sill, "in") + si(opening.height, "in")
+    if kiln.door_kind == "bricked" and opening is not None:
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The door is a {si(opening.width, 'in'):g} × {si(opening.height, 'in'):g} in "
+                    f"opening in the {face} wall"
+                    + (", one into each chamber" if opening.each_chamber else "")
+                    + ", bricked up dry for each firing in the wall's own layers, as Olsen's "
+                    "Tamba and Kanayama doors are (Figs 4-14, 7-18)."
+                ),
+                reference="door-openings.md; kiln-hardware.md §6.1 [S4]",
+            )
+        )
         return
     if kiln.door_kind == "bricked":
         hw.findings.append(
@@ -531,7 +594,7 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
         pin_source = "a ¾ in steel hinge rod (Paragon Dragon), electric-kiln-hardware.md §2.1 [S18]"
     else:
         leg, t = 4.0, 0.25  # ¼ × 4 × 4 angle at any kiln size (Pitelka [S13])
-        z0, z1 = f.bottom, top
+        z0, z1 = (f.bottom if opening is None else si(opening.sill, "in")), top
         sides = [
             f.box(face, (u0, u0 + leg), (z0, z1), (0, t)),
             f.box(face, (u1 - leg, u1), (z0, z1), (0, t)),
@@ -576,9 +639,10 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
                     ),
                 )
             )
-    height = top - f.bottom
+    bottom = f.bottom if opening is None else si(opening.sill, "in")
+    height = top - bottom
     for i, frac in enumerate((0.25, 0.75)):
-        z = f.bottom + frac * height
+        z = bottom + frac * height
         hinge = f.point(face, u0, z, depth + out)
         hw.pieces.append(
             Piece(
@@ -1064,7 +1128,8 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
             reference="kiln-hardware.md §3.2–3.3 [S4]",
         )
     )
-    hw.chimney_bricks = math.ceil(volume / math.prod(BRICK) * 1.05)
+    # Counted by volume, so it is a straight-run count; the brick allowance covers the cuts
+    hw.chimney_bricks = allowance(kiln, "brick").buy(volume / math.prod(BRICK))
 
 
 def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
@@ -1073,6 +1138,7 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     asked = kiln.spy_holes or SpyHoles()
     h = si(kiln.chamber.height, "in")
     word = "Peephole" if electric else "Spy hole"
+    lid = kiln.loading.type == "lid"
     if asked.port is not None:
         (sw, sh), is_round = asked.port.size_in(), asked.port.round
     elif electric:
@@ -1083,12 +1149,15 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     places: list[tuple[WallFace, float, float]]
     if asked.places is not None:
         places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
+    elif lid:
+        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n)]
     elif electric:
         places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
     else:
         # The bottom hole about 8 in up [S13]; the top one level with the bottom of the arch
-        # [S4], or a foot below a flat roof [S13]; all a few inches off centre, the top one to
-        # the other side, so they miss the shelf posts.
+        # [S4], or a foot below a flat roof, adapted from Pitelka's "about 1 ft below the inside
+        # peak of the arch" [S13] (review S14: no source gives it for a flat roof); all a few
+        # inches off centre, the top one to the other side, so they miss the shelf posts.
         top = h - COURSE if isinstance(kiln.roof, SprungArch | Dome) else h - 12
         if top < 2 * COURSE and isinstance(kiln.roof, SprungArch):
             # An arch springing at or near the floor, as a groundhog's (Olsen p.112): the door's
@@ -1102,13 +1171,22 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             p.up + p.height / 2 + COURSE for p in hw.ports if p.kind == "burner" and p.wall == face
         ]
         bottom = max([min(8.0, top / 3), *above])
+        middle = 0.0
+        if (door := kiln.loading.opening) is not None:
+            # In the door, where it is in part of the wall: a course inside its top and sill
+            sill = si(door.sill, "in")
+            top = min(top, sill + si(door.height, "in") - COURSE)
+            bottom = max(bottom, sill + COURSE)
+            from kilndesigner.door import door_across
+
+            middle = door_across(kiln)  # the first door's, when there's one per chamber
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]
             if n > 1
             else [(bottom + top) / 2] * n
         )
-        sides = [3.0 if n > 1 and i == n - 1 else -3.0 for i in range(n)]
+        sides = [middle + (3.0 if n > 1 and i == n - 1 else -3.0) for i in range(n)]
         places = [
             (face, Faces.u_of(face, u), z + sh / 2) for z, u in zip(bottoms, sides, strict=True)
         ]
@@ -1117,14 +1195,53 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             f"port/spy-{i + 1}", f"{word} {i + 1}", "spy", wall, across, up, sw, sh, is_round
         )
         f.place(kiln, hw, spot)
-    hw.findings.append(_spy_hole_note(kiln.spy_holes, n, (sw, sh, is_round), electric=electric))
+    hw.findings.append(
+        _spy_hole_note(
+            kiln.spy_holes, n, (sw, sh, is_round), electric=electric,
+            flat=kiln.roof.type == "flat", lid=lid,
+        )
+    )  # fmt: skip
+
+
+def lid_peephole_heights(height_in: float, n: int) -> list[float]:
+    """A top-loader's peepholes (in up from the floor): in the wall, each in the middle of a 9 in
+    section (frame.SECTION_IN), between its two courses' element grooves, as L&L drills a two-row
+    section square to the case (electric-kiln-hardware.md §4.1 [S8]); with more holes than
+    sections, spaced evenly."""
+    from kilndesigner.frame import SECTION_IN
+
+    sections = math.ceil(height_in / SECTION_IN - 1e-6)
+    if n > sections:
+        return [height_in * (i + 1) / (n + 1) for i in range(n)]
+    picks = [math.floor((i + 0.5) * sections / n) for i in range(n)]
+    return [(k * SECTION_IN + min((k + 1) * SECTION_IN, height_in)) / 2 for k in picks]
 
 
 def _spy_hole_note(
-    asked: SpyHoles | None, n: int, size: tuple[float, float, bool], *, electric: bool
+    asked: SpyHoles | None,
+    n: int,
+    size: tuple[float, float, bool],
+    *,
+    electric: bool,
+    flat: bool = False,
+    lid: bool = False,
 ) -> Finding:
     if n == 0:
         return Finding(level="info", message="No spy holes: the cones can't be watched.")
+    if lid and (asked is None or asked.places is None):
+        w, h, is_round = size
+        shown = f"{w:g} in round" if is_round else f"{w:g} × {h:g} in"
+        holes = f"{n} peephole{'' if n == 1 else 's'}, {shown},"
+        return Finding(
+            level="info",
+            message=(
+                f"{holes} through the wall, as the kiln has no door: each in the middle of a 9 in "
+                "section, between its two courses' element grooves, as L&L drills a two-row "
+                "section square to the case (more holes than sections are spaced evenly). No "
+                "maker gives their heights."
+            ),
+            reference="electric-kiln-hardware.md §4.1–4.2 [S3] [S6] [S8]",
+        )
     if asked is None and electric:
         return Finding(
             level="info",
@@ -1143,6 +1260,12 @@ def _spy_hole_note(
                 "floor (a course above any burner ports there), midway and near the top, a few "
                 "inches off centre so they miss the shelf posts. Cone packs in the top and bottom, "
                 "draw rings in the middle."
+                + (
+                    " Under a flat roof the top one is a foot down, as Pitelka puts it a foot "
+                    "below an arch's peak; no source gives it for a flat roof."
+                    if flat
+                    else ""
+                )
             ),
             reference="kiln-hardware.md §2 [S4] [S13]",
         )

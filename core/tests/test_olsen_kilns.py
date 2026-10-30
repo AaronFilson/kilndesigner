@@ -33,6 +33,16 @@ WARNED: dict[str, dict[str, str]] = {
         "beside it (p.126), so it is large for the salt kiln's firebox alone (its size not "
         "printed: 9 in assumed, as the two-chamber kiln's in the same drawing)",
     },
+    "breda-bottle": {
+        "masonry.thickness": "the book's 2 ft wall (p.166) isn't whole 9 and 4½ in rings, so the "
+        "round wall isn't counted in brick",
+    },
+    "kenzan-muffle": {
+        "masonry.thickness": "the 4 in wall, floor and roof as built aren't whole bricks",
+    },
+    "ninodaguia": {
+        "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
+    },
     "tobe": {
         "heatloss.rayleigh": "its roof, about 25 × 73 ft, is past the Rayleigh number its "
         "convection correlation is checked to (thermal-properties.md §5), so that face's loss is "

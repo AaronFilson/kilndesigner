@@ -200,9 +200,25 @@ def test_front_loader_quantities() -> None:
     by_material = {q.material: q for q in result.quantities}
     assert set(by_material) == {"ifb-jm26", "ifb-k23", "kaowool-blanket-8pcf"}
     jm26 = by_material["ifb-jm26"]
-    # Each brick is 101.25 in³; the JM 26 lining is about 22,000 in³, so 220+ bricks plus 10%.
+    # Each brick is 101.25 in³; the JM 26 lining is about 22,000 in³, so 220+ bricks plus 5 %.
     assert 230 < jm26.amount < 330
     assert by_material["kaowool-blanket-8pcf"].unit == "ft²"
+
+
+def test_a_castable_is_bought_by_its_makers_material_required() -> None:
+    """Review M8: Kast-O-Lite 30 LI Plus is 98 lb/ft³ dried but 92 lb/ft³ "required" to place
+    (HWI 10/19, flat-roofs.md [F16]): the bill counts 92, plus 5 % for waste (PCO, brick-waste.md
+    §3)."""
+    kiln = load_design(EXAMPLES / "gas-crossdraft.yaml")
+    result = plan_masonry(kiln).result
+    cast = [q for q in result.quantities if q.kind in ("insulating_castable", "dense_castable")]
+    assert cast
+    [q] = cast
+    assert q.material == "kast-o-lite-30-li-plus"
+    assert materials()[q.material].material_required == "92 lb/ft**3"
+    assert "at the maker's 92 lb/ft³ required to place it" in q.detail
+    placed_ft3 = float(q.detail.split()[0])
+    assert q.amount == pytest.approx(placed_ft3 * 92 * 1.05, rel=5e-3, abs=1)
 
 
 def test_brick_count_covers_the_volume() -> None:
@@ -328,12 +344,13 @@ def gas_crossdraft_with_a_brick_arch(thickness: str) -> Kiln:
 
 def test_a_brick_arch_is_bought_in_arch_bricks() -> None:
     """The 60° arch's rings: 13 No. 1 arches and 1 straight each (above). 64 in / 9 in is 7.1,
-    so 8 rings: 104 arch bricks, and 115 with 10 % for breakage."""
+    so 8 rings: 104 arch bricks, and 110 with 5 % for breakage (brick-waste.md §2)."""
     result = plan_masonry(gas_crossdraft_with_a_brick_arch("4.5 in")).result
     jm26 = "Morgan Thermal Ceramics JM 26 insulating firebrick"
     shaped = next(q for q in result.quantities if q.name == f"{jm26}, No. 1 arch")
-    assert (shaped.amount, shaped.unit, shaped.kind) == (115, "bricks", "insulating_firebrick")
-    assert shaped.detail == "104 in the arch plus 10% for breakage"
+    assert (shaped.amount, shaped.unit, shaped.kind) == (110, "bricks", "insulating_firebrick")
+    assert shaped.detail == "104 in the arch plus 5 % for breakage"
+    assert "Allowance over the count: arch and wedge bricks" in [s.name for s in result.working]
     arches = next(f for f in result.findings if f.message.startswith("Arch bricks"))
     assert (
         "Roof, layer 1 from the inside: 8 rings, each of 13 No. 1 arch bricks and 1 straight;"
@@ -346,7 +363,7 @@ def test_a_brick_arch_is_bought_in_arch_bricks() -> None:
     # 9 in deep: wedges, 4½ in along the kiln, so 64 / 4.5 = 14.2: 15 rings of 16
     result = plan_masonry(gas_crossdraft_with_a_brick_arch("9 in")).result
     wedges = next(q for q in result.quantities if q.name == f"{jm26}, No. 1 wedge")
-    assert wedges.amount == math.ceil(15 * 16 * 1.1)
+    assert wedges.amount == 252  # 240 × 1.05 exactly: no brick over
 
 
 def test_a_brick_arch_no_shape_fits_is_counted_by_volume() -> None:
