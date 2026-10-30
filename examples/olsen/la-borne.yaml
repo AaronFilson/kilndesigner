@@ -1,0 +1,61 @@
+# La Borne tunnel kilns, France (Olsen, The Kiln Book, 4th ed., p.109–111, Figs 4-78 to 4-80): long
+# wood-fired tunnel kilns on a slope, fired only from the firebox at the low end, the ware going in
+# and the gases going out through the back. Olsen's figure is blurred; the numbers below are the
+# ones that can be read.
+#
+# From the book: "1766 to 2825 cu. ft (50 to 80 cu. m)" (p.109); plan 10 ft wide at the bag wall,
+# 12 ft at the widest, 27 ft from the bag wall to the back; firebox 4 ft long (Fig 4-78); skewback
+# line "7'?" (Fig 4-78), 7 ft used for the springline; about 2372 °F (1300 °C) by the firebox,
+# 1200 °C in the middle, about 2012 °F (1100 °C) at the rear (p.111): 1300 °C used as the top. Ware
+# goes in through the back, and that entrance, bricked up, is the exit flue (p.109).
+# Assumed: the arch rises 3 in per foot of span, 33 in on the 11 ft width: "generally" the most for
+# a sprung arch (p.51), and Olsen would use "as great a rise as possible" (p.296). With the 7 ft
+# springline this gives 2650 ft³, inside the book's 1766–2825. Walls, arch and floor 9 in of K-26
+# insulating brick: on the hot face of Olsen's anagama it resisted wood-ash slag better than hard
+# brick (p.26); 9 in walls stand to 8 ft unsupported (p.41). What holds the arch isn't printed: it
+# is taken as held by masonry (buttressed), as early large kilns carried their roofs on walls 18 in
+# to 5 ft thick with no reinforcing (p.45), and a battered wall carries an arch without steel
+# (p.53). The floor is calcined dirt in tiers (p.110), on the ground, climbing "ABOUT 1:9" (Fig
+# 4-78, the digit read by the user): atan(1/9), 6.3°. The firebox the 10 ft width at the bag wall.
+# Chimneys: engine default.
+# Not modelled: the plan, wider in the middle, as a box of 11 ft, the mean of its two widths. The
+# grate (a bonded
+# brick arch with nine 5 × 5 × 5 × 7 in holes a row, or ring arches 4½ in apart: no size), the 2 ft
+# space between it and the bag wall, and the greenware checkerboard bag wall. The two chimneys
+# each side of the back door, built since the kilns' "rebirth" (p.110): no sizes. The fall in
+# temperature along the tunnel; the floor's tiers, and its loss into the ground, which the engine
+# doesn't work out.
+schema: 1
+name: La Borne tunnel kiln
+units: us
+firing:
+  top_temperature: 1300 degC
+chamber:
+  width: 11 ft # the mean of 10 ft at the bag wall and 12 ft at the widest
+  depth: 27 ft
+  height: 7 ft # the skewback line
+  slope: 6.34 degree # "ABOUT 1:9 SLOPE" (Fig 4-78)
+  on_ground: true # calcined dirt in tiers (p.110)
+roof:
+  type: sprung_arch
+  rise: 33 in
+  buttressed: true
+loading:
+  type: door
+  face: back
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 10 ft
+        length: 4 ft
+draft:
+  type: cross
+  flue_wall: back

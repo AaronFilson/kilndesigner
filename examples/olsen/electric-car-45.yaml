@@ -1,0 +1,48 @@
+# The widest electric car kiln Olsen knows (Olsen, The Kiln Book, 4th ed., p.244–245): 45 in wide,
+# 106 in long and 49 in high inside, about 135 cu ft, with elements in the sides.
+#
+# From the book: inside 45 in wide, 106 in long, 49 in high; a car kiln; elements in the sides
+# (p.244–245; "and floor" may follow, cut by the page curve).
+# Assumed: the power by Olsen's second method, 5–7 W per sq in of heated wall (p.256), at its low
+# end, 5: he says the lower values fall in the middle of the kilns on the market (p.256). The two
+# sides, 106 × 49 in each, take 51.9 kW. At his average of 6 the elements run past his 9 W per sq
+# in of wire. 240 V, as most kilns need 220–240 V (p.256–257), three-phase, as his Table 9-6's
+# 208/240 V three-phase kiln (p.257); the breaker is the next standard size over 125 % of the
+# 125 A it draws, 175 A (NEC, engine rule). Kanthal A-1 (engine default). Walls 7 in: 4½ in K-26,
+# the 2600 °F IFB that cone 10 elements need (p.246), backed by 2½ in K-23, Olsen's 7 in IFB wall
+# (p.39) and the backing course of his electric walls (p.248). The roof and the car's deck as the
+# walls (engine default). The roof isn't given. Olsen builds small electric kilns' roofs flat in
+# an angle-iron frame (p.248–249), but no source has a flat brick roof over 45 in (the longest is
+# Merrill's 36 in), so it is a sprung arch at Olsen's least rise, 1½ in per foot of span (p.51):
+# 5⅝ in. Cone 10, the cone of his element design example (p.258–260).
+# Not modelled: floor elements, if the cut word is "and floor": the engine puts elements in walls
+# only. The car's wheels and rails (no source sizes them).
+schema: 1
+name: Electric car kiln, 45 in wide
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 45 in
+  depth: 106 in
+  height: 49 in
+roof:
+  type: sprung_arch
+  rise: 5.625 in # 1½ in per foot of the 45 in span
+loading:
+  type: car
+  face: front
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 3
+      breaker: 175 A
+    power: 51.9 kW # 5 W per sq in of the two side walls (p.256)
+    walls: [left, right]

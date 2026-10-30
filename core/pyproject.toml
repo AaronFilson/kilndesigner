@@ -1,0 +1,24 @@
+[project]
+name = "kilndesigner"
+version = "0.1.0"
+description = "Design kilns: geometry, heat loss, elements, burners and plans from one design file."
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Aaron Filson" }]
+requires-python = ">=3.14"
+keywords = ["kiln", "ceramics", "pottery", "heat transfer", "cad"]
+dependencies = [
+    "pydantic>=2.12",
+    "pint>=0.25",
+    "numpy>=2.3",
+    "scipy>=1.16",
+    "pyyaml>=6.0",
+    "build123d>=0.10",
+    "typst>=0.13",
+    "cantera>=3.2",
+    "xlsxwriter>=3.2",
+]
+
+[build-system]
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"

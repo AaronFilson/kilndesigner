@@ -1,0 +1,55 @@
+# Olsen's three-chamber climbing kiln (Olsen, The Kiln Book, 4th ed., p.224): three gas-fired
+# chambers of 120 cu ft each, on six Eclipse compound injector burners.
+#
+# From the book: three chambers, each 120 cu ft (p.224); six Eclipse 2 in compound injectors,
+# model TR-80, about 214,200 BTU/hr each at 10 in. w.c. on a No. 18 orifice, 1,285,200 BTU/hr at
+# peak (p.224); compound injectors are for 1200–3300 BTU/cu ft gas, LP (p.224).
+# Assumed: the chambers aren't dimensioned. Each is a cube of 120 cu ft (Principle 1, p.74–75),
+# 59.2 in a side to the springline. The gas is propane, by the injectors' gas and the #18 orifice
+# at 10 in. w.c. (p.224), on a line at that pressure. Walls 9 in, Olsen's for climbing kilns
+# (p.99–100): 4½ in K-26 backed by 4½ in K-23, the grades of his IFB wall (p.39). The roof and
+# floor as the walls (engine default). A sprung arch rising 4 in per foot of span, the low end of
+# the 4–6 in he uses on chamber kilns of 4–8 ft span (p.296), its ring the 4½ in of K-26. The book
+# doesn't show what holds this kiln's arches, so a steel frame takes the thrust (engine default).
+# The floor climbs at 22°, the slope of Olsen's climbing kiln in Fig 3-15 (p.81). Burners in the
+# front wall, the flue at the back (engine default). Cone 10, the high fire of Olsen's gas rules
+# (Rule 1, p.226). The ports, flue and chimney: engine default.
+# Not modelled: the engine fires the three chambers together at the top temperature, as one long
+# chamber; a climbing kiln fires them in turn. Their arches span front to back between common
+# walls (p.46, p.95); here one arch spans the width over all three.
+schema: 1
+name: Olsen's three-chamber climbing kiln
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 59.2 in
+  depth: 59.2 in # each chamber
+  height: 59.2 in
+  chambers: 3
+  slope: 22 degree
+roof:
+  type: sprung_arch
+  rise: 19.7 in # 4 in per foot of span (p.296)
+loading:
+  type: door
+  face: front
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: propane
+    burners:
+      type: venturi
+      rating: 214200 BTU/hr
+      count: 6
+    supply:
+      type: line
+      pressure: 10 inch_H2O
+draft:
+  type: cross
+  flue_wall: back

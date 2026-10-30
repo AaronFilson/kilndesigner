@@ -1,0 +1,148 @@
+# What a builder's own castable is made of. Every value traces to docs/research/castables.md
+# (section and source tag given). "status" is how the value was read: "verified" from the source
+# page, "secondary" from a reference site or distributor passing it on, "excerpt" from a search
+# snippet only.
+#
+# role: what it does in the mix.
+#   aggregate  a fired grain that doesn't change on firing
+#   clay       loses its water of crystallisation (loi) and sinters
+#   cement     calcium aluminate cement: sets with water
+#   organic    burns out, leaving pores: (C6H10O5)n
+#   kyanite    expands when it turns to mullite
+#   quartz     free silica, with the 573 °C inversion
+#   lightweight a light grain with a low softening point
+# density: true (particle) density of the solid, used to turn a mass into a volume.
+# fired_density: the solid after firing, where it differs.
+# loi: share of the mass lost on firing (organics lose all of theirs).
+# limit: the hottest it may run, where a source gives one.
+
+- id: mulcoa-70
+  name: Mulcoa 70 calcined mullite grog (Clay Art Center's "CE70")
+  role: aggregate
+  density: 2.88 g/cm**3
+  loi: 0
+  note: >-
+    Packed grain bulk density, with 3.5 % apparent porosity; 87 % mullite, PCE 39, no reheat
+    change at 2800 °F (Digitalfire). CE70 is Mulcoa 70 by its SDS.
+  source: "castables.md §4.2, Digitalfire Mulcoa 70 [S31]; Imerys SDS via Clay Art Center [S57] [S58]"
+  status: secondary
+
+- id: molochite
+  name: Molochite calcined kaolin grog
+  role: aggregate
+  density: 2.70 g/cm**3
+  loi: 0
+  note: "Specific gravity 2.70, 10 vol % porosity; 55 % mullite (Digitalfire says 95 %+)."
+  source: "castables.md §4.3, Valentine Clays data sheet [S32]"
+  status: secondary
+
+- id: kyanite
+  name: Raw kyanite (Virginia Kyanite)
+  role: kyanite
+  density: 3.61 g/cm**3
+  fired_density: 3.03 g/cm**3
+  loi: 0
+  note: "Fired: mullite with amorphous silica, KMC's 3.03 g/cm³."
+  source: "castables.md §1, §2: webmineral kyanite [S1], KMC [S2], Virginia Kyanite sheet [S19]"
+  status: verified
+
+- id: greenstripe
+  name: Greenstripe fireclay
+  role: clay
+  density: 2.65 g/cm**3
+  fired_density: 2.6 g/cm**3
+  loi: 0.103
+  quartz: 10–20 %
+  note: >-
+    Relative density 2.65 from its SDS (80–100 % kaolin, 10–20 % quartz); fired, taken as
+    metakaolin's (2.5–2.7, excerpt). LOI 10.3 % (Digitalfire). PCE cone 31–32 per a retailer,
+    with no temperature given; its shrinkage is not sourced.
+  source: "castables.md §1 metakaolin [S8]; §4.1 [S28]; §13 Greenstripe SDS and Axner"
+  status: secondary
+
+- id: ciment-fondu
+  name: Ciment Fondu calcium aluminate cement (about 38 % alumina)
+  role: cement
+  density: 3.24 g/cm**3
+  loi: 0
+  limit: 1271 degC
+  limit_note: "PCE 8–9 on the neat paste, about 2320 °F; not for reducing atmospheres"
+  source: "castables.md §5.1, Kerneos Ciment Fondu sheet [S11]"
+  status: verified
+
+- id: lumnite-mg
+  name: Lumnite MG calcium aluminate cement (about 40 % alumina)
+  role: cement
+  density: 3.25 g/cm**3
+  loi: 0
+  limit: 1200 degC
+  limit_note: >-
+    Calucem's data sheet: "do not exceed 1200 °C (2200 °F)" (its web page says 1270 °C; the
+    lower is used)
+  note: "Specific gravity 3.2–3.3 on Calucem's 2014 data sheet; the middle is used."
+  source: "castables.md §13, Calucem Lumnite MG data sheet 09/2014"
+  status: verified
+
+- id: secar-71
+  name: Secar 71 calcium aluminate cement (about 70 % alumina)
+  role: cement
+  density: 2.94 g/cm**3
+  loi: 0
+  note: >-
+    Kerneos 2006 sheet: Al₂O₃ ≥ 68.5 %, specific gravity about 2.94 ("guidance only"), PCE cone
+    19–20 (about 2845 °F) on the neat paste. The maker gives no service limit for a castable.
+  source: "castables.md §13, Kerneos Secar 71 data sheet PDS-US-S71-8/06"
+  status: verified
+
+- id: dextrin
+  name: Dextrin
+  role: organic
+  density: 1.45 g/cm**3
+  loi: 1
+  source: "castables.md §1, Thermo/VWR specification [S14]"
+  status: excerpt
+
+- id: cornstarch
+  name: Corn starch
+  role: organic
+  density: 1.5 g/cm**3
+  loi: 1
+  note: "Starch granules equilibrated with air; maize by helium pycnometry 1.503 (excerpt)."
+  source: "castables.md §1, Dengate et al. 1978 [S13]"
+  status: verified
+
+- id: wood-flour
+  name: Wood flour or fine sawdust
+  role: organic
+  density: 1.50 g/cm**3
+  loi: 1
+  note: "Taken as amorphous cellulose; wood also holds lignin, which leaves more char."
+  source: "castables.md §1, cellulose [S12]"
+  status: excerpt
+
+- id: newsprint
+  name: Newspaper pulp
+  role: organic
+  density: 1.50 g/cm**3
+  loi: 1
+  note: "Taken as amorphous cellulose. Newsprint's ash is not sourced."
+  source: "castables.md §1, cellulose [S12]"
+  status: excerpt
+
+- id: silica-sand
+  name: Silica sand (quartz)
+  role: quartz
+  density: 2.62 g/cm**3
+  loi: 0
+  source: "castables.md §1, webmineral quartz [S6]"
+  status: verified
+
+- id: perlite
+  name: Expanded perlite
+  role: lightweight
+  loi: 0
+  limit: 871 degC
+  limit_note: "softens at 1600–2000 °F; the lower end is taken"
+  note: "The density of an expanded perlite grain is not sourced: give it in the mix."
+  source: "castables.md §9, Perlite Institute via Engineering Toolbox [S16]"
+  status: secondary

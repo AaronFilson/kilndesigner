@@ -1,0 +1,57 @@
+# Kannofen, Art Institute of Ceramics and Glass, Höhr-Grenzhausen (Olsen, The Kiln Book, 4th ed.,
+# p.161–164, Figs 6-36 to 6-46): a wood-fired salt-glaze tunnel kiln, fired by Arthur Müller in a
+# shed. Long planks burn in two fireboxes at one end; the flames run along the tunnel to exit flues
+# in the top and sides, an "updraught tunnel kiln".
+#
+# From the book (Fig 6-37, "all measurements metric"): four arch sections 1.5 m apart, width ×
+# height to the crown 1.05 × 1.82 m at the firebox end, 1.04 × 1.69, 1.07 × 1.56 and 1.05 × 1.43 m
+# at the far end; the floor steps up 15, 26 and 38 cm (the text: 15 in over 15 ft), so the crown
+# stays level; two fireboxes with grate bars, a brick wall between their ash pits; the door at the
+# far end ("BACK ENTRANCE"); salted through ports into the top exit flue; seven rows of exit flues
+# (p.164).
+# Assumed: the arch rises 3 in per foot of span, 26 cm on the 1.05 m width: "generally" the most for
+# a sprung arch (p.51), and Olsen would use "as great a rise as possible" (p.296). For a salt kiln
+# Olsen wants high-alumina brick (p.126), and the Kählers' salt kiln used high-alumina insulating
+# brick (kahler-salt, p.136): walls, arch and floor 9 in of JM-28 insulating brick, 67 % alumina by
+# Olsen's Table 1-4 (p.27); 9 in walls stand to 8 ft unsupported (p.41). Cone 10: Olsen salts at
+# the top temperature, cone 9–10 (p.128). The fireboxes' sizes aren't printed: side by side
+# across the 1.05 m firebox end, each half its width, and 4 ft (1.22 m) long, as La Borne's
+# (la-borne, Fig 4-78). What holds the arch isn't printed, so the engine sizes the steel, with
+# posts along the sides.
+# Not modelled: the level crown over the rising floor, as the mean height to the crown, 1.625 m,
+# with the roof following the floor; the 4.5 m and the mean width, 1.05 m, as a box. The grate bars
+# (not sized), the four 15 cm flue channels under the setter tiles, and the exit flues in rows
+# along the top and sides: the engine puts one flue in the roof. The book calls the firebox end
+# the "back" and the far end the "front or door end"; the drawing labels the far end "BACK
+# ENTRANCE" (flagged). Here the firebox is at the front and the door at the back.
+schema: 1
+name: Kannofen, Höhr-Grenzhausen
+units: metric
+firing:
+  cone: "10"
+chamber:
+  width: 1.05 m
+  depth: 4.5 m
+  height: 1.365 m # to the springline: 1.625 m to the crown, the mean of the four sections
+  slope: 4.83 degree # 38 cm over 4.5 m
+roof:
+  type: sprung_arch
+  rise: 0.26 m
+loading:
+  type: door
+  face: back
+  door: bricked
+lining:
+  walls:
+    - material: ifb-jm28
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 2
+        position: front
+        width: 0.525 m
+        length: 1.22 m
+draft:
+  type: up

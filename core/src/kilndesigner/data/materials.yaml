@@ -1,0 +1,281 @@
+# The materials library: refractories and insulation, with cited data.
+#
+# Every value traces to a file in docs/research/ (section and source tag given).
+# "status" is how the value was read: "verified" from the source page, "excerpt" from a
+# search-engine extract of a data sheet PDF that could not be opened (check before relying on it),
+# or "derived" by arithmetic on a source (a published equation evaluated at these points).
+#
+# conductivity: thermal conductivity k at the stated mean temperature (ASTM C182 / C201 / C417).
+# The engine uses these points as k(T), interpolated linearly, as ASTM C680 does with k(T) data.
+# max_service: the classification or use-limit temperature the maker states.
+
+- id: ifb-jm23
+  name: Morgan Thermal Ceramics JM 23 insulating firebrick
+  kind: insulating_firebrick
+  density: 480 kg/m**3
+  max_service: 1260 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[400, 0.12], [600, 0.14], [800, 0.17], [1000, 0.19]]
+  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+  status: excerpt
+
+- id: ifb-jm26
+  name: Morgan Thermal Ceramics JM 26 insulating firebrick
+  kind: insulating_firebrick
+  density: 800 kg/m**3
+  max_service: 1430 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33]]
+  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+  status: excerpt
+
+- id: ifb-jm28
+  name: Morgan Thermal Ceramics JM 28 insulating firebrick
+  kind: insulating_firebrick
+  density: 890 kg/m**3
+  max_service: 1540 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36]]
+  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+  status: excerpt
+
+- id: ifb-k23
+  name: Morgan Thermal Ceramics K-23 insulating firebrick
+  kind: insulating_firebrick
+  density: 513 kg/m**3
+  # The 2025 sheet gives a 2400 °F classification; the older K-23 sheet says 2300 °F. The lower is used.
+  max_service: 2300 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[500, 0.90], [1004, 1.18], [1499, 1.39], [2012, 1.67]]
+  source: "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+  status: excerpt
+
+- id: ifb-k25
+  name: Morgan Thermal Ceramics K-25 insulating firebrick
+  kind: insulating_firebrick
+  density: 617 kg/m**3
+  max_service: 1370 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[260, 0.15], [540, 0.18], [815, 0.20], [1100, 0.22]]
+  source: "castables.md §6.3, Morgan K series data sheet, 1 January 2025 [S49] [S50]"
+  status: verified
+
+- id: ifb-k26
+  name: Morgan Thermal Ceramics K-26 insulating firebrick
+  kind: insulating_firebrick
+  density: 657 kg/m**3
+  max_service: 1430 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[260, 0.20], [540, 0.23], [815, 0.26], [1100, 0.29], [1370, 0.31]]
+  source: "castables.md §6.3, Morgan K series data sheet, 1 January 2025 [S49] [S50]"
+  status: verified
+
+- id: ifb-jm30
+  name: Morgan Thermal Ceramics JM 30 insulating firebrick
+  kind: insulating_firebrick
+  density: 1020 kg/m**3
+  max_service: 1650 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[400, 0.36], [600, 0.37], [800, 0.37], [1000, 0.38], [1100, 0.39], [1200, 0.39]]
+  source: "castables.md §6.3, Morgan JM series data sheet, 1 January 2025 [S49] [S50]"
+  status: verified
+
+- id: hard-firebrick-kx99
+  name: HarbisonWalker KX-99 super-duty firebrick
+  kind: dense_firebrick
+  density: 142 lb/ft**3
+  max_service: 3200 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 9.7], [800, 9.8], [1200, 10.0], [1600, 10.3], [2000, 10.7]]
+  source: "electric-and-thermal.md §4.2, HWI KX-99 product data [S35]"
+  status: excerpt
+
+- id: firebrick-high-duty-jet-dp
+  name: Alsey Jet D.P. high-duty fireclay firebrick
+  kind: dense_firebrick
+  density: 133.7 lb/ft**3
+  max_service: 2850 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    # The same table as Alsey's medium-duty Smithfield: a typical curve, not a separate test.
+    points: [[400, 8.2], [800, 8.5], [1200, 9.0], [1600, 9.2], [2000, 9.5], [2400, 9.8]]
+  source: "masonry-materials.md §2.2, Alsey Jet D.P. sheet rev. 12 Apr 2013 [M10]"
+  status: verified
+
+- id: firebrick-medium-duty-smithfield
+  name: Alsey Smithfield medium-duty fireclay firebrick
+  kind: dense_firebrick
+  # ASTM C27 medium duty, PCE 29: Olsen's "intermediate-duty" brick (masonry-materials.md §2.1)
+  density: 130.2 lb/ft**3
+  max_service: 2700 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 8.2], [800, 8.5], [1200, 9.0], [1600, 9.2], [2000, 9.5], [2400, 9.8]]
+  source: "masonry-materials.md §2.2, Alsey Smithfield sheet rev. 13 Aug 2012 [M9]"
+  status: verified
+
+- id: fireclay-brick-porous-norton
+  name: Porous fireclay brick, 26.7 % porosity (Norton), as clay fired in place
+  kind: dense_firebrick
+  # The fired face of raw fireclay-and-sand walls conducts as a porous fireclay brick, between the
+  # low- and medium-duty grades (masonry-materials.md §4a). Norton prints no density: 1900 kg/m³
+  # is derived from the porosity and the solid density the makers' sheets imply (§4a.3). No
+  # source rates such a body: max_service is left out (Lincoln 60 bloats at cone 11, §4a.1).
+  density: 1900 kg/m**3
+  max_service: null
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 7.0], [800, 7.8], [1200, 8.7], [1600, 9.3], [2000, 10.2], [2400, 10.5]]
+  source: "masonry-materials.md §4a.3, Norton, Refractories (1942), Table 76, p.553 [M27]"
+  status: verified
+
+- id: building-brick-common
+  name: Common clay building brick (red brick)
+  kind: building_brick
+  # Olsen's weight for common brick, 100 lb/ft³ (4th ed. p.295); ASHRAE gives about 0.7 W/(m·K) at
+  # this density, as Lienhard's figure here (masonry-materials.md §1.1). No maker or standard rates
+  # building brick for kiln heat: max_service is left out.
+  density: 1600 kg/m**3
+  max_service: null
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[0, 0.7], [1000, 0.7]]
+  source: "masonry-materials.md §1.1, Lienhard, A Heat Transfer Textbook, 6th ed., Table A.2 [M1]"
+  status: verified
+
+- id: granite
+  name: Granite (rubble or fieldstone)
+  kind: stone
+  density: 2640 kg/m**3
+  max_service: null
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    # Seipold's mean curve for measured granites, fitted for 250–1000 K, evaluated here
+    points: [[0, 3.30], [100, 2.82], [200, 2.50], [300, 2.28], [400, 2.15], [500, 2.08],
+             [600, 2.09], [700, 2.16]]
+  source: "masonry-materials.md §3.1, Seipold, GFZ Potsdam STR01/13 (2001), p.92 [M14]"
+  status: derived
+
+- id: kaowool-blanket-8pcf
+  name: Morgan Kaowool ceramic fibre blanket, 8 pcf
+  kind: fibre_blanket
+  density: 8 pcf
+  # Rated 2300 °F; the continuous use limit is 2000 °F, which is used here.
+  max_service: 2000 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[500, 0.44], [1000, 0.87], [1500, 1.45], [1800, 1.83]]
+  source: "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+  status: verified
+
+- id: kaowool-blanket-6pcf
+  name: Morgan Kaowool ceramic fibre blanket, 6 pcf
+  kind: fibre_blanket
+  density: 6 pcf
+  max_service: 2000 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[500, 0.47], [1000, 1.01], [1500, 1.73], [1800, 2.19]]
+  source: "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+  status: verified
+
+- id: cerachem-blanket-8pcf
+  name: Morgan Cerachem ceramic fibre blanket, 8 pcf
+  kind: fibre_blanket
+  density: 128 kg/m**3
+  # Classified 2600 °F; the continuous use limit is 2400 °F, which is used here.
+  max_service: 1315 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[200, 0.05], [400, 0.08], [600, 0.14], [800, 0.19], [1000, 0.27], [1200, 0.36]]
+  source: "electric-and-thermal.md §4.3, Morgan Cerablanket and Cerachem data sheet BL.03 [S101]"
+  status: verified
+
+- id: kast-o-lite-26-li-plus
+  name: HarbisonWalker Kast-O-Lite 26 LI Plus insulating castable
+  kind: insulating_castable
+  # 90–100 lb/ft³ dried at 220 °F; the middle of the range.
+  density: 95 lb/ft**3
+  max_service: 2600 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 3.6], [800, 3.4], [1200, 3.5], [1600, 3.7], [2000, 4.0]]
+  source: "electric-and-thermal.md §4.5, HWI Kast-O-Lite 26 LI Plus data 1/09 [S44]"
+  status: excerpt
+
+- id: kast-o-lite-30-li-plus
+  name: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable
+  kind: insulating_castable
+  # 98 lb/ft³ dried at 220 °F; 92 lb/ft³ of material places one cubic foot.
+  density: 98 lb/ft**3
+  max_service: 3000 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 5.6], [800, 4.2], [1200, 4.1], [1600, 4.5], [2000, 4.9]]
+  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+  status: excerpt
+
+- id: kaolite-2600-li
+  name: Morgan Thermal Ceramics Kaolite 2600-LI insulating castable
+  kind: insulating_castable
+  # 1330–1570 kg/m³ dried 24 h at 105 °C; the middle of the range. Olsen's Table 1-5 gives 81 lb
+  # to cast a cubic foot, as Morgan's 37 kg does (masonry-materials.md §5.1)
+  density: 1450 kg/m**3
+  max_service: 1427 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[260, 0.39], [538, 0.42], [816, 0.43], [1093, 0.46]]
+  source: "masonry-materials.md §5.1, Morgan Kaolite 2600LI Pump sheet CA.89, 1 Jan 2025 [M20]"
+  status: verified
+
+- id: mizzou-castable-plus
+  name: HarbisonWalker Mizzou Castable Plus dense castable
+  kind: dense_castable
+  density: 145 lb/ft**3
+  max_service: 3000 degF
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 7.8], [2400, 7.4]]
+  source: "electric-and-thermal.md §4.5, HWI Mizzou Castable Plus data 1/05 [S46]"
+  status: excerpt
+
+- id: calcium-silicate-promasil-1100
+  name: Promat PROMASIL-1100 calcium silicate board
+  kind: backup_insulation
+  density: 285 kg/m**3
+  # One copy says 1100 °C, the US copy 1050 °C; the lower is used.
+  max_service: 1050 degC
+  conductivity:
+    unit: W/(m*K)
+    temperature_unit: degC
+    points: [[200, 0.085], [400, 0.105], [600, 0.145], [800, 0.185]]
+  source: "electric-and-thermal.md §4.6, Promat PROMASIL data sheets [S49]"
+  status: excerpt

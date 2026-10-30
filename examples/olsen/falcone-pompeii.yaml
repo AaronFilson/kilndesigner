@@ -1,0 +1,56 @@
+# Falcone's Pompeii updraft, Fornace Falcone, near Montecorvino Rovella, Italy (Olsen, The Kiln
+# Book, 4th ed., p.160–161): a wood-fired updraft of a Pompeii-era design, firing replica tiles
+# and bricks for restoring Pompeii. The ware chamber stands on ring arches over a firebox chamber
+# of the same plan, under a barrel vault with nine exit flues. About 40 hours a firing.
+#
+# From the book: the ware chamber 118 in (3 m) wide, 157 in (4 m) deep and 79 in (2 m) tall,
+# 848 ft³ (24 m³); the firebox chamber under it the same plan and 71 in (1.8 m) tall; usually fired
+# to 1760 °F (960 °C), at most 1922 °F (1050 °C); wood, long slats, no grates; a barrel vault
+# (Fig 6-32); modern firebrick inside, a façade of old tiles (p.161).
+# Assumed: firebrick with no grade: medium-duty firebrick
+# (Olsen's intermediate duty, p.18). The walls' thickness isn't given: 3 ft, as Miravet's (p.158), which the book calls the same kind of
+# kiln, "a Pompeii-era design like Miravet" (p.160). The walls hold the vault's thrust, as thick
+# walls did in old kilns with no steel (p.45, p.53); the book mentions no steel. The vault spans
+# the 118 in width. Its rise isn't printed: 2.302 in per foot of span, Olsen's standard rise for a
+# 9 in arch on standard skews (p.296–297), 22.6 in. It is 9 in thick, the thickest of his usual
+# arch thicknesses (4½, 6¾ and 9 in, p.296). The 79 in is taken to the springline: the printed
+# 848 ft³ is the 3 × 4 × 2 m box, without the vault. The floor's thickness isn't given: 13½ in,
+# as Miravet's floor over its sub-chamber (13–15 in, p.158). The door, spy holes and air: engine
+# defaults (a bricked door in the front wall, three spy holes, 70 °F).
+# Not modelled: the façade of old tiles outside the firebrick (no thickness given, and the
+# library has no tile); the floor's ring arches, 9 in apart, and the floor's loss, which goes into
+# the firebox chamber under it (the engine leaves it out); the nine exit flues, whose sizes
+# aren't given (the engine sizes one flue in the vault); the stoking port and its under-air.
+schema: 1
+name: Falcone Pompeii updraft
+units: us
+firing:
+  top_temperature: 1760 degF # usually; at most 1922 °F
+chamber:
+  width: 118 in
+  depth: 157 in
+  height: 79 in # to the vault's springline
+roof:
+  type: sprung_arch
+  rise: 22.6 in # 2.302 in per foot of the 118 in span
+  buttressed: true # the thick masonry walls hold the vault
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 36 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 13.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - position: under # the firebox chamber, the same plan as the ware chamber
+        width: 118 in
+        length: 157 in
+        height: 71 in
+draft:
+  type: up

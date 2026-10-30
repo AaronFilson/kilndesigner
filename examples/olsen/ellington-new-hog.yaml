@@ -1,0 +1,68 @@
+# Kim Ellington's "new hog" (Olsen, The Kiln Book, 4th ed., p.114–115, Figs 4-95 to 4-104): a
+# wood-fired, salt-glazed groundhog whose ware chamber tapers to the chimney, stoked from the front
+# and through side stoke holes, and salted at the back through the side stokes.
+#
+# From the book: 24 ft overall, firebox front to chimney; firebox 4 ft long and 10 ft wide; ware
+# chamber 10 ft wide, a straight 10 ft, then 8 ft tapering to 4 ft wide; "(3) INLET FLUE 13.5 X
+# 9"" (Fig 4-95). The firebox dug 3½ ft below the ware floor, a "moat" that a roller conveyor
+# bridges for loading (Figs 4-96, 4-97, 4-103, 4-104), so the floor is on the ground; chimney
+# 14 ft (Fig 4-96). Two stoke holes 13½ in wide × 16 in high, one each side of the central door in
+# the arched front (Fig 4-97).
+# Assumed: the crown, not printed in the straight section, is 38½ in, the middle of Olsen's
+# 29–48 in for groundhogs (groundhog-basic, p.112); Fig 4-96 prints 29 in at the chimney end. The
+# arch springs from the floor and rises less than a half-circle, as a groundhog's does (p.112),
+# and is buttressed: groundhogs are dug in under earth or braced with rock (p.112). For a salt
+# kiln Olsen wants high-alumina brick (p.126), and the Kählers' salt kiln used high-alumina
+# insulating brick (kahler-salt, p.136): walls, arch and floor 9 in of JM-28 insulating brick, 67 %
+# alumina by Olsen's Table 1-4 (p.27), at the 9–10 in of his climbing kilns' walls (p.99–100).
+# Cone 10: Olsen salts at the top temperature, cone 9–10 (p.128). The chimney's section and the
+# exit flues: engine default (the neck is about 3 ft wide (faint); the chimney label "4'5" 3'"
+# can't be read). Spy holes: engine default, up the door's end wall under the arch.
+# Not modelled: the tapering plan, as a box of the mean width over the 18 ft ware chamber,
+# (10 × 10 + 8 × 7) ÷ 18 = 8 ft 8 in; the firebox's depth below the ware floor; the side stoke
+# holes, two rows every 27 in; the air holes, 9 in high, under the stoke holes; only one stoke hole
+# per firebox can be entered. The plan's three 13½ × 9 in inlet flues are entered as flues from the
+# firebox into the chamber; they match the air holes' size and may be air inlets. The floor's loss
+# into the ground, which the engine doesn't work out.
+schema: 1
+name: Kim Ellington's new hog
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 104 in # the mean of 10 ft for 10 ft and 10 to 4 ft over 8 ft
+  depth: 18 ft
+  height: 0 in # the arch springs from the floor
+  on_ground: true # its firebox is dug 3½ ft below the ware floor (Fig 4-96)
+roof:
+  type: sprung_arch
+  rise: 38.5 in # to the crown; under the 52 in of a half-circle
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-jm28
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 10 ft
+        length: 4 ft
+        inlet:
+          width: 13.5 in
+          height: 9 in
+        inlets: 3
+        stoke_hole:
+          width: 13.5 in
+          height: 16 in
+draft:
+  type: cross
+  flue_wall: back
+  chimney:
+    height: 14 ft

@@ -1,0 +1,63 @@
+# A budget variant of pnw-hybrid-crossdraft.yaml: the K-23 backup brick and the 1 in blanket
+# become 3½ in of 6 pcf ceramic fibre blanket behind the hot-face brick (the wall stays 8 in), the
+# burners are sized for a slow firing, and the propane comes from a 500 gal tank.
+schema: 1
+name: PNW hybrid cross-draft, cone 10, budget lining
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28 in
+  depth: 60 in
+  height: 44 in
+roof:
+  type: sprung_arch
+  rise: 3.75 in
+loading:
+  type: door
+  face: front # an end wall: the arch springs from the sides
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: kaowool-blanket-6pcf
+      thickness: 3.5 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A
+    alloy: kanthal-apm
+    walls: [left]
+    off_above: 1650 degF
+  gas:
+    burners:
+      type: venturi
+      wall: front
+    supply:
+      type: tank
+      gallons: 500
+    reduction: true
+    firing_speed: slow
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  electricity_price: 0.12 USD/kWh
+  propane_price: 3.50 USD/gallon
+  materials_budget: 5000 USD

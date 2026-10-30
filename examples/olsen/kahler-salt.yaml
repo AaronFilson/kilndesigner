@@ -1,0 +1,75 @@
+# Nils and Herman Kähler's salt kiln, Næstved, Denmark (Olsen, The Kiln Book, 4th ed., p.136–137):
+# a 16 cu ft gas downdraft salt kiln of high-alumina insulating brick, side-fired by four forced-air
+# burners staggered so the flame rolls round the chamber.
+#
+# From the book: 16 cu ft of stacking (p.136); inside 30 in wide, 48 in from the floor to the arch
+# line (Figs 5-17, 5-18); 36 in deep, an uncertain reading (Fig 5-18); all walls 7½ in of
+# high-alumina insulating brick (p.136, drawing note); a sprung arch (drawing); four forced air/gas
+# burners, two in each side wall, one side's ports 18 and 39 in up, the other's 9 and 28 in (Figs
+# 5-17, 5-19; p.137); downdraft through the floor; chimney flue at most 9 × 7 in; chimney 10–12 ft
+# (drawings).
+# Assumed: the brick is Morgan JM 28, the library's high-alumina IFB: Olsen's Tables 1-4 and 1-4A
+# give JM-28 59–67 % alumina (p.27). The chimney is 11 ft, the middle of 10–12 ft, 9 × 7 in inside,
+# and the exit flue is the 9 × 7 in chimney flue. The arch: 4½ in of JM 28 at 1½ in per foot of
+# span, Olsen's commonest arch for small kilns (p.25, p.51). The floor as the walls (engine
+# default). Burner ports 4½ in wide by 5 in tall, Olsen's side port for one burner (p.173), in the
+# middle of each wall. Forced air/gas burners are the engine's power burners; their model and
+# rating: engine default. Propane from a 500 gal tank, Olsen's tank for a 24–40 cu ft kiln
+# (p.242): the library rates its power burners on propane. Cone 10: Olsen salts at cone 9–10
+# (p.128).
+# Not modelled: salt. The floor slab 4½ in clear of the walls and the collection channels under it
+# (the engine's downdraft leaves by one flue at the foot of the back wall). The chimney flue
+# through the crown (the engine puts the chimney behind the back wall). The K28 dense port blocks.
+schema: 1
+name: Kähler salt kiln, Næstved
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 30 in
+  depth: 36 in
+  height: 48 in # to the arch line
+roof:
+  type: sprung_arch
+  rise: 3.75 in # 1½ in per foot of span
+loading:
+  type: door
+  face: front
+lining:
+  walls:
+    - material: ifb-jm28
+      thickness: 7.5 in
+  roof:
+    - material: ifb-jm28
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: propane
+    burners:
+      type: power
+      port:
+        width: 4.5 in
+        height: 5 in
+      places:
+        - wall: left
+          up: 18 in
+        - wall: left
+          up: 39 in
+        - wall: right
+          up: 9 in
+        - wall: right
+          up: 28 in
+    supply:
+      type: tank
+      gallons: 500
+draft:
+  type: down
+  flue_wall: back
+  flue_port:
+    width: 9 in
+    height: 7 in
+  chimney:
+    height: 11 ft
+    inside:
+      width: 9 in
+      depth: 7 in

@@ -1,0 +1,12 @@
+[project]
+name = "kilndesigner-worker"
+version = "0.1.0"
+description = "The Kilndesigner worker: builds designs as arq jobs."
+license = "MIT"
+authors = [{ name = "Aaron Filson" }]
+requires-python = ">=3.14"
+dependencies = ["kilndesigner", "kilndesigner-api", "arq>=0.26"]
+
+[build-system]
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"

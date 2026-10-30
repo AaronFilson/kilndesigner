@@ -1,0 +1,108 @@
+[project]
+name = "kilndesigner-workspace"
+version = "0"
+description = "The Kilndesigner workspace: the engine, the CLI, the API and the worker."
+requires-python = ">=3.14"
+dependencies = ["kilndesigner", "kilndesigner-cli", "kilndesigner-api", "kilndesigner-worker"]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["core", "cli", "api", "worker"]
+
+[tool.uv.sources]
+kilndesigner = { workspace = true }
+kilndesigner-cli = { workspace = true }
+kilndesigner-api = { workspace = true }
+kilndesigner-worker = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "pytest>=9",
+    "hypothesis>=6.140",
+    "ruff>=0.14",
+    "pyright>=1.1.400",
+    "import-linter>=2.5",
+    # A second, independent implementation of the convection correlations, for the tests only
+    "ht>=1.2",
+    "httpx>=0.28",
+    "pytest-cov>=7",
+    "formulas[excel]>=1.2",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["core/tests", "cli/tests", "api/tests", "worker/tests"]
+addopts = "-ra --strict-markers --import-mode=importlib"
+markers = [
+    "geometry: builds OpenCascade geometry (slower)",
+    "db: needs Postgres (KILNDESIGNER_TEST_DATABASE_URL)",
+    "compose: needs a running `docker compose up` (KILNDESIGNER_COMPOSE_URL)",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["kilndesigner", "kilndesigner_cli", "kilndesigner_api", "kilndesigner_worker"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 98
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "N", "PT", "C4", "PIE", "RET"]
+isort.known-first-party = [
+    "kilndesigner",
+    "kilndesigner_cli",
+    "kilndesigner_api",
+    "kilndesigner_worker",
+]
+ignore = ["RUF001", "RUF002", "RUF003"]  # °, ×, ² and – are intended in docstrings and messages
+
+[tool.ruff.lint.per-file-ignores]
+# SVG markup reads better on one line than split across f-strings
+"core/src/kilndesigner/charts.py" = ["E501"]
+
+[tool.pyright]
+include = [
+    "conftest.py",
+    "core/src",
+    "cli/src",
+    "api/src",
+    "worker/src",
+    "core/tests",
+    "cli/tests",
+    "api/tests",
+    "worker/tests",
+]
+pythonVersion = "3.14"
+typeCheckingMode = "strict"
+venvPath = "."
+venv = ".venv"
+# Pint and build123d are only partly typed; their unknowns would drown the real errors.
+reportUnknownMemberType = false
+reportUnknownVariableType = false
+reportUnknownArgumentType = false
+reportMissingTypeStubs = false
+
+[tool.importlinter]
+root_packages = ["kilndesigner", "kilndesigner_cli", "kilndesigner_api", "kilndesigner_worker"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "The engine never imports a surface (ADR 0002)"
+type = "forbidden"
+source_modules = ["kilndesigner"]
+forbidden_modules = [
+    "kilndesigner_cli",
+    "kilndesigner_api",
+    "kilndesigner_worker",
+    "fastapi",
+    "sqlalchemy",
+    "arq",
+    "typer",
+]

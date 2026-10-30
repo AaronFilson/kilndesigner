@@ -1,0 +1,74 @@
+# Kei Fujiwara's Bizen kiln, Imbe, Okayama (Olsen, The Kiln Book, 4th ed., p.98–105): a wood
+# climbing kiln fired for exactly seven days: the fire mouth (dogi), a small "secret" chamber
+# (himitsu), a first chamber and a second, lower one (kedo), then a 25 ft chimney.
+#
+# From the book: the dogi 8 ft long and 10 ft wide inside (Fig 4-53); its fire-mouth hole 3½ ×
+# 2 ft when open (p.102); the first chamber 4 ft 6 in long and 5 ft tall, the kedo 2 ft 10 in long
+# and 4 ft tall (Fig 4-53, Fig 4-55); a 5 in rise per 12 in, atan(5/12) = 22.6°, built up the
+# slope, so the floor is on the ground (Fig 4-55, p.101); walls 10 to 13 in, tightly built,
+# overcoated with fireclay, straw and earth (p.100); the kedo's exit flues into a stack that runs
+# 3½ ft before rising into the round chimney, 25 ft tall (p.101, Fig 4-53).
+# Assumed: the dogi is the firebox, fired on its floor, and the two ware chambers are one size,
+# their mean: 44 in long and 54 in to the crown. Their width isn't printed (the plan marks the
+# first chamber as the widest part, and the kedo narrower): the dogi's 10 ft. The arch rises
+# 22 in: Olsen uses 4–6 in per foot of span on chamber kilns (p.296), and 6 in/ft on the 44 in
+# span along the draft is a semicircle. So the springline is at 32 in. Walls 11½ in, the middle of
+# 10–13 in. The book names no brick: Japanese chamber kilns are built of local firebrick (bidai,
+# p.94–95), so medium-duty firebrick (Olsen's intermediate duty, p.18); the floor as the walls
+# (engine default). A 9 in arch, as the Bidai kiln (bidai, Fig 4-36). Cone 10, the hottest
+# chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93): the book gives no cone for
+# this kiln (p.104: fire colour decides). The chimney's section isn't given, only its 10 in round
+# entry (p.101), so the engine sizes it. The arches are held by masonry (buttressed): in chamber
+# kilns each chamber's arch spans along the draft and throws its thrust onto the common wall and
+# on to the chimney (p.95, p.97); the book shows no steel on this kiln.
+# Not modelled: the dogi holds ware on three steps (p.102), and its own walls and roof aren't in
+# the heat loss; the himitsu, a 2 ft chamber in a 24 in flue, and its 3 × 6 in and 6 × 9 in flues
+# (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given. The engine's arch spans
+# the width, so it is laid across the 10 ft with the same springline and crown; held by masonry,
+# it gets no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
+# (p.101); here the rise is counted over the two chambers only. The floor's loss into the ground
+# isn't worked out by the engine.
+schema: 1
+name: Kei Fujiwara's Bizen kiln, Imbe
+units: us
+firing:
+  cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 10 ft # the dogi's width (Fig 4-53)
+  depth: 44 in # the mean of 4 ft 6 in and 2 ft 10 in
+  height: 32 in # to the springline: 54 in to the crown, less the rise
+  chambers: 2
+  slope: 22.6 degree # 5 in rise per 12 in
+  on_ground: true # built up the slope (p.101)
+roof:
+  type: sprung_arch
+  rise: 22 in # 6 in per foot of the 44 in span (p.296)
+  buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # brick not named
+      thickness: 11.5 in # 10–13 in (p.100)
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in # as the Bidai kiln's arch
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1 # the dogi, the fire mouth
+        position: front
+        width: 10 ft
+        length: 8 ft
+        stoke_hole:
+          width: 42 in # 3½ ft
+          height: 24 in # 2 ft
+draft:
+  type: cross
+  flue_wall: back
+  run_to_chimney: 42 in # the flue stack, 3½ ft (p.101)
+  chimney:
+    height: 25 ft # p.101

@@ -1,0 +1,26 @@
+[project]
+name = "kilndesigner-api"
+version = "0.1.0"
+description = "The Kilndesigner web API: designs, versions and builds."
+license = "MIT"
+authors = [{ name = "Aaron Filson" }]
+requires-python = ">=3.14"
+dependencies = [
+    "kilndesigner",
+    "fastapi>=0.120",
+    "uvicorn[standard]>=0.38",
+    "sqlalchemy[asyncio]>=2.0.44",
+    "asyncpg>=0.30",
+    "alembic>=1.17",
+    "arq>=0.26",
+    "pydantic-settings>=2.11",
+]
+
+[project.scripts]
+kilndesigner-api = "kilndesigner_api.main:run"
+kilndesigner-migrate = "kilndesigner_api.migrate:main"
+kilndesigner-openapi = "kilndesigner_api.openapi:main"
+
+[build-system]
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"

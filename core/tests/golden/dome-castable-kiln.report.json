@@ -1,0 +1,3271 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "No price found for: steel.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "441 bricks",
+        "cost": 3161.97,
+        "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "needed": "441 bricks (300 whole, 100 cut into 124 pieces; 400 in the kiln plus 10% for breakage)",
+        "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$7.17"
+      },
+      {
+        "buy": "262 bricks",
+        "cost": 1634.88,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "needed": "262 bricks (190 whole, 48 cut into 70 pieces; 238 in the kiln plus 10% for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "2 rolls",
+        "cost": 300.0,
+        "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "needed": "72.9 ft² (1 in, 2 in thick; area plus 10% for trimming)",
+        "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S73]",
+        "unit_price": "$150.00"
+      },
+      {
+        "buy": "8 bags",
+        "cost": 921.68,
+        "item": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+        "needed": "428 lb (3.97 ft³ placed, at the dried density, plus 10%)",
+        "priced_as": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
+        "source": "combustion-and-masonry.md §9 [S51]",
+        "unit_price": "$115.21"
+      },
+      {
+        "buy": "1 burners",
+        "cost": 295.0,
+        "item": "Ransome B4 burner",
+        "needed": "1 burners at 8.5 psi, 263,917 BTU/hr each",
+        "priced_as": "Ransome B4, Ward Burner Systems",
+        "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
+        "unit_price": "$295.00"
+      },
+      {
+        "buy": "127 bricks",
+        "cost": 692.15,
+        "item": "Chimney and flue duct: hard firebrick",
+        "needed": "127 straights (with 5 % for cuts)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 7005.68
+  },
+  "castables": [],
+  "chamber_volume": "26.4 ft³",
+  "electric": null,
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "ft³",
+            "meaning": "chamber volume, Ward's way",
+            "offset": 0.0,
+            "scale": 35.31466672148859,
+            "source": "worked out exactly: Ward gives no formula for a dome kiln",
+            "symbol": "V",
+            "text": null,
+            "unit": "foot ** 3",
+            "value": 0.747329162819313
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/ft³/h",
+            "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+            "offset": 0.0,
+            "scale": 0.09662107767853079,
+            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+            "symbol": "b",
+            "text": null,
+            "unit": "british_thermal_unit / foot ** 3 / hour",
+            "value": 103497.08614585242
+          },
+          {
+            "expr": "b*V",
+            "formula": "b·V",
+            "label": "Btu/h",
+            "meaning": "design burner input",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "D",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 77346.3907436182
+          },
+          {
+            "expr": "D",
+            "formula": "D",
+            "label": "Btu/h",
+            "meaning": "what the burners draw at full fire",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": null,
+            "symbol": "P",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 77346.3907436182
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the coldest air it fires in",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design",
+            "symbol": "t",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₁",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 266.48333333333335
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₁",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the table's row",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "t₂",
+            "text": null,
+            "unit": "degree_Fahrenheit",
+            "value": 277.59444444444443
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes in that row",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+            "symbol": "c₂",
+            "text": null,
+            "unit": "british_thermal_unit / hour",
+            "value": 18023.873333333333
+          },
+          {
+            "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+            "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+            "label": "Btu/h",
+            "meaning": "what one cylinder vaporizes",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "a straight line between the table's two nearest rows",
+            "symbol": "c",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 12689.979111111112
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "cylinders, joined in parallel",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design",
+            "symbol": "n",
+            "text": null,
+            "unit": "",
+            "value": 4.0
+          },
+          {
+            "expr": "n*c",
+            "formula": "n·c",
+            "label": "Btu/h",
+            "meaning": "what the supply gives",
+            "offset": 0.0,
+            "scale": 3.412141156488376,
+            "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+            "symbol": "C",
+            "text": null,
+            "unit": "BTU/hr",
+            "value": 50759.91644444445
+          }
+        ],
+        "id": "gas.supply-low",
+        "label": "W1",
+        "lever": {
+          "hi": 40.0,
+          "lo": 1.0,
+          "step": 1.0,
+          "symbol": "n"
+        },
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "C",
+            "level": "warning",
+            "margin": "C = 173,200 Btu/h, 65.63 % of P = 263,917 Btu/h",
+            "op": ">=",
+            "right": "P"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when n ≥ 7",
+        "status": "warning",
+        "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+      },
+      "level": "warning",
+      "message": "The propane supply meets the 263,917 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+      "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the slices' span: the walls either side of the door",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber and the door's wall",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 0.762
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the length of the walls the slices span",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 0.9144
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the dome's rise at its centre",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "this slice, in from the middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the slice that decides the check, of 21 from the middle to the end wall",
+            "symbol": "y",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0
+          },
+          {
+            "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+            "formula": "((S² + L²)/4 + h²)/(2·h)",
+            "label": "in",
+            "meaning": "the dome's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+            "symbol": "R",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "sqrt(R^2 - y^2)",
+            "formula": "√(R² − y²)",
+            "label": "in",
+            "meaning": "the slice's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "asin(S/(2*r))",
+            "formula": "asin(S/(2·r))",
+            "label": "°",
+            "meaning": "half the slice's angle",
+            "offset": 0.0,
+            "scale": 57.29577951308232,
+            "source": "a circular arch of radius r over the span S",
+            "symbol": "φ",
+            "text": null,
+            "unit": "degree",
+            "value": 0.4429110440736389
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 15394.571456932132
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_2",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0508
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_2",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 1256.69971076997
+          },
+          {
+            "expr": "sqrt((R + t_1)^2 - y^2) - r",
+            "formula": "√((R + t_1)² − y²) − r",
+            "label": "in",
+            "meaning": "layer 1, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_1",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+            "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+            "label": "in",
+            "meaning": "layer 2, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_2",
+            "text": null,
+            "unit": "in",
+            "value": 0.050799999999999956
+          },
+          {
+            "expr": "τ_1",
+            "formula": "τ_1",
+            "label": "in",
+            "meaning": "the ring, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "T",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+            "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 1's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_1",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 963.3756422998787
+          },
+          {
+            "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+            "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 2's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_2",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 56.019606820904244
+          },
+          {
+            "expr": "w_1 + w_2",
+            "formula": "w_1 + w_2",
+            "label": "lbf/ft",
+            "meaning": "the arch's weight per foot",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+            "symbol": "W",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1019.3952491207829
+          },
+          {
+            "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+            "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+            "label": "lbf/ft",
+            "meaning": "thrust, cold",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "three-hinged circular arch: moments about a springing",
+            "symbol": "H_c",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1113.0413438387639
+          },
+          {
+            "expr": "r + T",
+            "formula": "r + T",
+            "label": "in",
+            "meaning": "radius of the ring's outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_o",
+            "text": null,
+            "unit": "in",
+            "value": 0.9652000000000001
+          },
+          {
+            "expr": "r + T/2",
+            "formula": "r + T/2",
+            "label": "in",
+            "meaning": "radius of the ring's middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_m",
+            "text": null,
+            "unit": "in",
+            "value": 0.9271
+          },
+          {
+            "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+            "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+            "label": "in",
+            "meaning": "half-ring's centroid, in from the crown",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "x_bar",
+            "text": null,
+            "unit": "in",
+            "value": 0.2020906576117934
+          },
+          {
+            "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+            "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+            "label": "",
+            "meaning": "hot thrust ÷ cold thrust",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 5.724493537912173
+          },
+          {
+            "expr": "f*H_c",
+            "formula": "f·H_c",
+            "label": "lbf/ft",
+            "meaning": "thrust, hot, in a rigid frame",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "H",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 6371.597980234085
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the largest factor HarbisonWalker prints",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+            "symbol": "f_max",
+            "text": null,
+            "unit": "",
+            "value": 5.34
+          },
+          {
+            "expr": "(r + T)*cos(φ)",
+            "formula": "(r + T)·cos(φ)",
+            "label": "in",
+            "meaning": "height of the skewback's hinge, from the centre",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "y_P",
+            "text": null,
+            "unit": "in",
+            "value": 0.8720658278841485
+          }
+        ],
+        "id": "frame.dome-heated-factor",
+        "label": "W2",
+        "lever": {
+          "hi": 0.5945458842787829,
+          "lo": 0.0127,
+          "step": null,
+          "symbol": "h"
+        },
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "f",
+            "level": "warning",
+            "margin": "f = 5.724, 107.2 % of f_max = 5.34",
+            "op": "<=",
+            "right": "f_max"
+          },
+          {
+            "holds": true,
+            "left": "y_P",
+            "level": "error",
+            "margin": "y_P = 34.33 in, 98.1 % of r = 35 in",
+            "op": "<",
+            "right": "r"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when h ≥ 9.168 in",
+        "status": "warning",
+        "title": "The dome's hot thrust against what HarbisonWalker prints"
+      },
+      "level": "warning",
+      "message": "Hot, the dome's slices push 5.7 times their cold thrust, more than the 5.34 times HarbisonWalker prints before it marks the stress excessive. A higher dome pushes less.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the slices' span: the walls either side of the door",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber and the door's wall",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 0.762
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the length of the walls the slices span",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 0.9144
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the dome's rise at its centre",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "this slice, in from the middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the slice that decides the check, of 21 from the middle to the end wall",
+            "symbol": "y",
+            "text": null,
+            "unit": "inch",
+            "value": 0.4572
+          },
+          {
+            "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+            "formula": "((S² + L²)/4 + h²)/(2·h)",
+            "label": "in",
+            "meaning": "the dome's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+            "symbol": "R",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "sqrt(R^2 - y^2)",
+            "formula": "√(R² − y²)",
+            "label": "in",
+            "meaning": "the slice's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r",
+            "text": null,
+            "unit": "in",
+            "value": 0.7624232158060247
+          },
+          {
+            "expr": "asin(S/(2*r))",
+            "formula": "asin(S/(2·r))",
+            "label": "°",
+            "meaning": "half the slice's angle",
+            "offset": 0.0,
+            "scale": 57.29577951308232,
+            "source": "a circular arch of radius r over the span S",
+            "symbol": "φ",
+            "text": null,
+            "unit": "degree",
+            "value": 0.5232783221319754
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_2",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0508
+          },
+          {
+            "expr": "sqrt((R + t_1)^2 - y^2) - r",
+            "formula": "√((R + t_1)² − y²) − r",
+            "label": "in",
+            "meaning": "layer 1, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_1",
+            "text": null,
+            "unit": "in",
+            "value": 0.08762337115259611
+          },
+          {
+            "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+            "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+            "label": "in",
+            "meaning": "layer 2, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_2",
+            "text": null,
+            "unit": "in",
+            "value": 0.057270424895560224
+          },
+          {
+            "expr": "τ_1",
+            "formula": "τ_1",
+            "label": "in",
+            "meaning": "the ring, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "T",
+            "text": null,
+            "unit": "in",
+            "value": 0.08762337115259611
+          },
+          {
+            "expr": "T/S",
+            "formula": "T/S",
+            "label": "%",
+            "meaning": "ring thickness ÷ span",
+            "offset": 0.0,
+            "scale": 100.0,
+            "source": null,
+            "symbol": "TS",
+            "text": null,
+            "unit": "percent",
+            "value": 0.11499130072519174
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "%",
+            "meaning": "thickest in the checked table",
+            "offset": 0.0,
+            "scale": 100.0,
+            "source": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+            "symbol": "TS_max",
+            "text": null,
+            "unit": "percent",
+            "value": 0.1
+          }
+        ],
+        "id": "frame.dome-checked-range",
+        "label": "W3",
+        "lever": {
+          "hi": 0.6095999999999999,
+          "lo": 0.00254,
+          "step": null,
+          "symbol": "t_1"
+        },
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "TS",
+            "level": "warning",
+            "margin": "TS = 11.5 %, 115 % of TS_max = 10 %",
+            "op": "<=",
+            "right": "TS_max"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when t_1 ≤ 2.605 in",
+        "status": "warning",
+        "title": "The dome's slices inside the table the statics were checked against"
+      },
+      "level": "warning",
+      "message": "The dome's slices reach T/S 11.5 %, past the 10 % of HarbisonWalker's heated-arch table, so their hot thrust is worked out from statics past what's been checked.",
+      "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the slices' span: the walls either side of the door",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber and the door's wall",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 0.762
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the length of the walls the slices span",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber",
+            "symbol": "L",
+            "text": null,
+            "unit": "inch",
+            "value": 0.9144
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the dome's rise at its centre",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "this slice, in from the middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the slice that decides the check, of 21 from the middle to the end wall",
+            "symbol": "y",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0
+          },
+          {
+            "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+            "formula": "((S² + L²)/4 + h²)/(2·h)",
+            "label": "in",
+            "meaning": "the dome's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+            "symbol": "R",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "sqrt(R^2 - y^2)",
+            "formula": "√(R² − y²)",
+            "label": "in",
+            "meaning": "the slice's inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r",
+            "text": null,
+            "unit": "in",
+            "value": 0.889
+          },
+          {
+            "expr": "asin(S/(2*r))",
+            "formula": "asin(S/(2·r))",
+            "label": "°",
+            "meaning": "half the slice's angle",
+            "offset": 0.0,
+            "scale": 57.29577951308232,
+            "source": "a circular arch of radius r over the span S",
+            "symbol": "φ",
+            "text": null,
+            "unit": "degree",
+            "value": 0.4429110440736389
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.07619999999999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 15394.571456932132
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_2",
+            "text": null,
+            "unit": "inch",
+            "value": 0.0508
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_2",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 1256.69971076997
+          },
+          {
+            "expr": "sqrt((R + t_1)^2 - y^2) - r",
+            "formula": "√((R + t_1)² − y²) − r",
+            "label": "in",
+            "meaning": "layer 1, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_1",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+            "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+            "label": "in",
+            "meaning": "layer 2, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the shell cut by the slice's plane",
+            "symbol": "τ_2",
+            "text": null,
+            "unit": "in",
+            "value": 0.050799999999999956
+          },
+          {
+            "expr": "τ_1",
+            "formula": "τ_1",
+            "label": "in",
+            "meaning": "the ring, thick in the slice's plane",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "T",
+            "text": null,
+            "unit": "in",
+            "value": 0.07620000000000005
+          },
+          {
+            "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+            "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 1's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_1",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 963.3756422998787
+          },
+          {
+            "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+            "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 2's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_2",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 56.019606820904244
+          },
+          {
+            "expr": "w_1 + w_2",
+            "formula": "w_1 + w_2",
+            "label": "lbf/ft",
+            "meaning": "the arch's weight per foot",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+            "symbol": "W",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1019.3952491207829
+          },
+          {
+            "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+            "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+            "label": "lbf/ft",
+            "meaning": "thrust, cold",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "three-hinged circular arch: moments about a springing",
+            "symbol": "H_c",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 1113.0413438387639
+          },
+          {
+            "expr": "r + T",
+            "formula": "r + T",
+            "label": "in",
+            "meaning": "radius of the ring's outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_o",
+            "text": null,
+            "unit": "in",
+            "value": 0.9652000000000001
+          },
+          {
+            "expr": "r + T/2",
+            "formula": "r + T/2",
+            "label": "in",
+            "meaning": "radius of the ring's middle",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r_m",
+            "text": null,
+            "unit": "in",
+            "value": 0.9271
+          },
+          {
+            "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+            "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+            "label": "in",
+            "meaning": "half-ring's centroid, in from the crown",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "x_bar",
+            "text": null,
+            "unit": "in",
+            "value": 0.2020906576117934
+          },
+          {
+            "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+            "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+            "label": "",
+            "meaning": "hot thrust ÷ cold thrust",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 5.724493537912173
+          },
+          {
+            "expr": "f*H_c",
+            "formula": "f·H_c",
+            "label": "lbf/ft",
+            "meaning": "thrust, hot, in a rigid frame",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+            "symbol": "H",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 6371.597980234085
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf",
+            "meaning": "the hot thrust along each wall",
+            "offset": 0.0,
+            "scale": 0.22480894309971053,
+            "source": "each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
+            "symbol": "F",
+            "text": null,
+            "unit": "force_pound",
+            "value": 5426.264389292251
+          },
+          {
+            "expr": "F/2",
+            "formula": "F/2",
+            "label": "lbf",
+            "meaning": "each tie: one across the door's head, one across the wall opposite",
+            "offset": 0.0,
+            "scale": 0.22480894309971053,
+            "source": null,
+            "symbol": "F_tie",
+            "text": null,
+            "unit": "lbf",
+            "value": 2713.1321946461253
+          }
+        ],
+        "id": "frame.dome-steel",
+        "label": "W4",
+        "lever": null,
+        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)",
+        "requirements": [],
+        "rule": "No source sizes the steel for a dome: have it designed for H and F_tie.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "What the dome's steel must hold"
+      },
+      "level": "warning",
+      "message": "The dome pushes out on the left and right walls with up to 437 lb per foot hot, 1220 lb along each, and a tie across the door's head and one across the wall opposite take 610 lb each. No source sizes the steel for a dome, so none is drawn: have it designed for these.",
+      "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
+      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 232.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 172.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+      "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "reference": "kiln-hardware.md §6.1 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Side-mounted burners need a bag wall so the flames don't hit the ware: hard brick, first course solid in front of the burners.",
+      "reference": "kiln-hardware.md §1.3 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Damper: a kiln shelf in a slot 7.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "reference": "kiln-hardware.md §3.2–3.3 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "4 spy holes, 2 in round, up the door, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "reference": "kiln-hardware.md §2 [S4] [S13]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Arch bricks: Left wall, layer 1 from the inside, above the springline: about 5 bricks by volume, cut to the curve; Right wall, layer 1 from the inside, above the springline: about 5 bricks by volume, cut to the curve; Back wall, layer 1 from the inside, above the springline: about 2 bricks by volume, cut to the curve; Door, layer 1 from the inside, above the springline: about 2 bricks by volume, cut to the curve; Left wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Right wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Back wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Door, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve.",
+      "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Castable: cure 16–24 h above 60 °F kept damp, never let it freeze, and dry it out slowly before the first firing (for Mizzou: 75 °F/h with a ½ h hold per inch at 250, 500 and 1000 °F). Follow the maker's sheet for your castable.",
+      "reference": "combustion-and-masonry.md §6.2 [S54, S56]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "No price found for: steel.",
+      "reference": null
+    }
+  ],
+  "fire": null,
+  "frame": {
+    "angle": null,
+    "angle_leg_in": 0.0,
+    "angle_t_in": 0.0,
+    "findings": [
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the slices' span: the walls either side of the door",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber and the door's wall",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 0.762
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the length of the walls the slices span",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 0.9144
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the dome's rise at its centre",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "this slice, in from the middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the slice that decides the check, of 21 from the middle to the end wall",
+              "symbol": "y",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0
+            },
+            {
+              "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+              "formula": "((S² + L²)/4 + h²)/(2·h)",
+              "label": "in",
+              "meaning": "the dome's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+              "symbol": "R",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "sqrt(R^2 - y^2)",
+              "formula": "√(R² − y²)",
+              "label": "in",
+              "meaning": "the slice's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "asin(S/(2*r))",
+              "formula": "asin(S/(2·r))",
+              "label": "°",
+              "meaning": "half the slice's angle",
+              "offset": 0.0,
+              "scale": 57.29577951308232,
+              "source": "a circular arch of radius r over the span S",
+              "symbol": "φ",
+              "text": null,
+              "unit": "degree",
+              "value": 0.4429110440736389
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 15394.571456932132
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_2",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0508
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_2",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 1256.69971076997
+            },
+            {
+              "expr": "sqrt((R + t_1)^2 - y^2) - r",
+              "formula": "√((R + t_1)² − y²) − r",
+              "label": "in",
+              "meaning": "layer 1, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_1",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+              "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+              "label": "in",
+              "meaning": "layer 2, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_2",
+              "text": null,
+              "unit": "in",
+              "value": 0.050799999999999956
+            },
+            {
+              "expr": "τ_1",
+              "formula": "τ_1",
+              "label": "in",
+              "meaning": "the ring, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "T",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+              "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 1's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_1",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 963.3756422998787
+            },
+            {
+              "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+              "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 2's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_2",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 56.019606820904244
+            },
+            {
+              "expr": "w_1 + w_2",
+              "formula": "w_1 + w_2",
+              "label": "lbf/ft",
+              "meaning": "the arch's weight per foot",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+              "symbol": "W",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1019.3952491207829
+            },
+            {
+              "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+              "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+              "label": "lbf/ft",
+              "meaning": "thrust, cold",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "three-hinged circular arch: moments about a springing",
+              "symbol": "H_c",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1113.0413438387639
+            },
+            {
+              "expr": "r + T",
+              "formula": "r + T",
+              "label": "in",
+              "meaning": "radius of the ring's outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_o",
+              "text": null,
+              "unit": "in",
+              "value": 0.9652000000000001
+            },
+            {
+              "expr": "r + T/2",
+              "formula": "r + T/2",
+              "label": "in",
+              "meaning": "radius of the ring's middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_m",
+              "text": null,
+              "unit": "in",
+              "value": 0.9271
+            },
+            {
+              "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+              "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+              "label": "in",
+              "meaning": "half-ring's centroid, in from the crown",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "x_bar",
+              "text": null,
+              "unit": "in",
+              "value": 0.2020906576117934
+            },
+            {
+              "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+              "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+              "label": "",
+              "meaning": "hot thrust ÷ cold thrust",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 5.724493537912173
+            },
+            {
+              "expr": "f*H_c",
+              "formula": "f·H_c",
+              "label": "lbf/ft",
+              "meaning": "thrust, hot, in a rigid frame",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "H",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 6371.597980234085
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the largest factor HarbisonWalker prints",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+              "symbol": "f_max",
+              "text": null,
+              "unit": "",
+              "value": 5.34
+            },
+            {
+              "expr": "(r + T)*cos(φ)",
+              "formula": "(r + T)·cos(φ)",
+              "label": "in",
+              "meaning": "height of the skewback's hinge, from the centre",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "y_P",
+              "text": null,
+              "unit": "in",
+              "value": 0.8720658278841485
+            }
+          ],
+          "id": "frame.dome-heated-factor",
+          "label": null,
+          "lever": {
+            "hi": 0.5945458842787829,
+            "lo": 0.0127,
+            "step": null,
+            "symbol": "h"
+          },
+          "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "f",
+              "level": "warning",
+              "margin": "f = 5.724, 107.2 % of f_max = 5.34",
+              "op": "<=",
+              "right": "f_max"
+            },
+            {
+              "holds": true,
+              "left": "y_P",
+              "level": "error",
+              "margin": "y_P = 34.33 in, 98.1 % of r = 35 in",
+              "op": "<",
+              "right": "r"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when h ≥ 9.168 in",
+          "status": "warning",
+          "title": "The dome's hot thrust against what HarbisonWalker prints"
+        },
+        "level": "warning",
+        "message": "Hot, the dome's slices push 5.7 times their cold thrust, more than the 5.34 times HarbisonWalker prints before it marks the stress excessive. A higher dome pushes less.",
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the slices' span: the walls either side of the door",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber and the door's wall",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 0.762
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the length of the walls the slices span",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 0.9144
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the dome's rise at its centre",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "this slice, in from the middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the slice that decides the check, of 21 from the middle to the end wall",
+              "symbol": "y",
+              "text": null,
+              "unit": "inch",
+              "value": 0.4572
+            },
+            {
+              "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+              "formula": "((S² + L²)/4 + h²)/(2·h)",
+              "label": "in",
+              "meaning": "the dome's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+              "symbol": "R",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "sqrt(R^2 - y^2)",
+              "formula": "√(R² − y²)",
+              "label": "in",
+              "meaning": "the slice's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r",
+              "text": null,
+              "unit": "in",
+              "value": 0.7624232158060247
+            },
+            {
+              "expr": "asin(S/(2*r))",
+              "formula": "asin(S/(2·r))",
+              "label": "°",
+              "meaning": "half the slice's angle",
+              "offset": 0.0,
+              "scale": 57.29577951308232,
+              "source": "a circular arch of radius r over the span S",
+              "symbol": "φ",
+              "text": null,
+              "unit": "degree",
+              "value": 0.5232783221319754
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_2",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0508
+            },
+            {
+              "expr": "sqrt((R + t_1)^2 - y^2) - r",
+              "formula": "√((R + t_1)² − y²) − r",
+              "label": "in",
+              "meaning": "layer 1, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_1",
+              "text": null,
+              "unit": "in",
+              "value": 0.08762337115259611
+            },
+            {
+              "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+              "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+              "label": "in",
+              "meaning": "layer 2, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_2",
+              "text": null,
+              "unit": "in",
+              "value": 0.057270424895560224
+            },
+            {
+              "expr": "τ_1",
+              "formula": "τ_1",
+              "label": "in",
+              "meaning": "the ring, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "T",
+              "text": null,
+              "unit": "in",
+              "value": 0.08762337115259611
+            },
+            {
+              "expr": "T/S",
+              "formula": "T/S",
+              "label": "%",
+              "meaning": "ring thickness ÷ span",
+              "offset": 0.0,
+              "scale": 100.0,
+              "source": null,
+              "symbol": "TS",
+              "text": null,
+              "unit": "percent",
+              "value": 0.11499130072519174
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "%",
+              "meaning": "thickest in the checked table",
+              "offset": 0.0,
+              "scale": 100.0,
+              "source": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+              "symbol": "TS_max",
+              "text": null,
+              "unit": "percent",
+              "value": 0.1
+            }
+          ],
+          "id": "frame.dome-checked-range",
+          "label": null,
+          "lever": {
+            "hi": 0.6095999999999999,
+            "lo": 0.00254,
+            "step": null,
+            "symbol": "t_1"
+          },
+          "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "TS",
+              "level": "warning",
+              "margin": "TS = 11.5 %, 115 % of TS_max = 10 %",
+              "op": "<=",
+              "right": "TS_max"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when t_1 ≤ 2.605 in",
+          "status": "warning",
+          "title": "The dome's slices inside the table the statics were checked against"
+        },
+        "level": "warning",
+        "message": "The dome's slices reach T/S 11.5 %, past the 10 % of HarbisonWalker's heated-arch table, so their hot thrust is worked out from statics past what's been checked.",
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the slices' span: the walls either side of the door",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber and the door's wall",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 0.762
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the length of the walls the slices span",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber",
+              "symbol": "L",
+              "text": null,
+              "unit": "inch",
+              "value": 0.9144
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the dome's rise at its centre",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "this slice, in from the middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the slice that decides the check, of 21 from the middle to the end wall",
+              "symbol": "y",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0
+            },
+            {
+              "expr": "((S^2 + L^2)/4 + h^2)/(2*h)",
+              "formula": "((S² + L²)/4 + h²)/(2·h)",
+              "label": "in",
+              "meaning": "the dome's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "a sphere through the chamber's four top corners; combustion-and-masonry.md §6.7",
+              "symbol": "R",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "sqrt(R^2 - y^2)",
+              "formula": "√(R² − y²)",
+              "label": "in",
+              "meaning": "the slice's inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r",
+              "text": null,
+              "unit": "in",
+              "value": 0.889
+            },
+            {
+              "expr": "asin(S/(2*r))",
+              "formula": "asin(S/(2·r))",
+              "label": "°",
+              "meaning": "half the slice's angle",
+              "offset": 0.0,
+              "scale": 57.29577951308232,
+              "source": "a circular arch of radius r over the span S",
+              "symbol": "φ",
+              "text": null,
+              "unit": "degree",
+              "value": 0.4429110440736389
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 1, HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.07619999999999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 15394.571456932132
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 8 pcf",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_2",
+              "text": null,
+              "unit": "inch",
+              "value": 0.0508
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Kaowool ceramic fibre blanket, 8 pcf, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_2",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 1256.69971076997
+            },
+            {
+              "expr": "sqrt((R + t_1)^2 - y^2) - r",
+              "formula": "√((R + t_1)² − y²) − r",
+              "label": "in",
+              "meaning": "layer 1, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_1",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "sqrt((R + t_1 + t_2)^2 - y^2) - sqrt((R + t_1)^2 - y^2)",
+              "formula": "√((R + t_1 + t_2)² − y²) − √((R + t_1)² − y²)",
+              "label": "in",
+              "meaning": "layer 2, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the shell cut by the slice's plane",
+              "symbol": "τ_2",
+              "text": null,
+              "unit": "in",
+              "value": 0.050799999999999956
+            },
+            {
+              "expr": "τ_1",
+              "formula": "τ_1",
+              "label": "in",
+              "meaning": "the ring, thick in the slice's plane",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "T",
+              "text": null,
+              "unit": "in",
+              "value": 0.07620000000000005
+            },
+            {
+              "expr": "ρ_1*τ_1*2*φ*(r + τ_1/2)",
+              "formula": "ρ_1·τ_1·2·φ·(r + τ_1/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 1's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_1",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 963.3756422998787
+            },
+            {
+              "expr": "ρ_2*τ_2*2*φ*(r + τ_1 + τ_2/2)",
+              "formula": "ρ_2·τ_2·2·φ·(r + τ_1 + τ_2/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 2's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_2",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 56.019606820904244
+            },
+            {
+              "expr": "w_1 + w_2",
+              "formula": "w_1 + w_2",
+              "label": "lbf/ft",
+              "meaning": "the arch's weight per foot",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+              "symbol": "W",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1019.3952491207829
+            },
+            {
+              "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+              "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+              "label": "lbf/ft",
+              "meaning": "thrust, cold",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "three-hinged circular arch: moments about a springing",
+              "symbol": "H_c",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 1113.0413438387639
+            },
+            {
+              "expr": "r + T",
+              "formula": "r + T",
+              "label": "in",
+              "meaning": "radius of the ring's outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_o",
+              "text": null,
+              "unit": "in",
+              "value": 0.9652000000000001
+            },
+            {
+              "expr": "r + T/2",
+              "formula": "r + T/2",
+              "label": "in",
+              "meaning": "radius of the ring's middle",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r_m",
+              "text": null,
+              "unit": "in",
+              "value": 0.9271
+            },
+            {
+              "expr": "2/3*(r_o^3 - r^3)/(r_o^2 - r^2)*(1 - cos(φ))/φ",
+              "formula": "2/3·(r_o³ − r³)/(r_o² − r²)·(1 − cos(φ))/φ",
+              "label": "in",
+              "meaning": "half-ring's centroid, in from the crown",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "x_bar",
+              "text": null,
+              "unit": "in",
+              "value": 0.2020906576117934
+            },
+            {
+              "expr": "((r_o*sin(φ) - x_bar)/(r - r_o*cos(φ)))/((r_m*sin(φ) - x_bar)/(r_m*(1 - cos(φ))))",
+              "formula": "(r_o·sin(φ) − x_bar)/(r − r_o·cos(φ))/((r_m·sin(φ) − x_bar)/(r_m·(1 − cos(φ))))",
+              "label": "",
+              "meaning": "hot thrust ÷ cold thrust",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 5.724493537912173
+            },
+            {
+              "expr": "f*H_c",
+              "formula": "f·H_c",
+              "label": "lbf/ft",
+              "meaning": "thrust, hot, in a rigid frame",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "Heyman, maximum thrust: hinges at the intrados at the crown, the extrados at the skewback",
+              "symbol": "H",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 6371.597980234085
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf",
+              "meaning": "the hot thrust along each wall",
+              "offset": 0.0,
+              "scale": 0.22480894309971053,
+              "source": "each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
+              "symbol": "F",
+              "text": null,
+              "unit": "force_pound",
+              "value": 5426.264389292251
+            },
+            {
+              "expr": "F/2",
+              "formula": "F/2",
+              "label": "lbf",
+              "meaning": "each tie: one across the door's head, one across the wall opposite",
+              "offset": 0.0,
+              "scale": 0.22480894309971053,
+              "source": null,
+              "symbol": "F_tie",
+              "text": null,
+              "unit": "lbf",
+              "value": 2713.1321946461253
+            }
+          ],
+          "id": "frame.dome-steel",
+          "label": null,
+          "lever": null,
+          "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)",
+          "requirements": [],
+          "rule": "No source sizes the steel for a dome: have it designed for H and F_tie.",
+          "rule_holds": false,
+          "rule_level": "warning",
+          "solve": null,
+          "status": "warning",
+          "title": "What the dome's steel must hold"
+        },
+        "level": "warning",
+        "message": "The dome pushes out on the left and right walls with up to 437 lb per foot hot, 1220 lb along each, and a tie across the door's head and one across the wall opposite take 610 lb each. No source sizes the steel for a dome, so none is drawn: have it designed for these.",
+        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived)"
+      }
+    ],
+    "kind": "no frame",
+    "members": [],
+    "posts": 2,
+    "rod": null,
+    "rod_d_in": 0.0,
+    "thrust": "437 lb per foot on the left and right walls, hot",
+    "working": [
+      {
+        "formula": "each slice a circular arch: ρ = √(R² − y²), sin α = ½S/ρ, its own rise ρ(1 − cos α); factor = (t/r) ÷ the thinnest t/r that stands; HarbisonWalker: t ≤ (h − S/48) ÷ cos α",
+        "inputs": {
+          "at the end wall": "3.45 in thick, 30.0° each side, rising 4.02 in (1.61 in/ft); factor 71; HarbisonWalker allows 3.92 in",
+          "in the middle": "3.00 in thick, 25.4° each side, rising 3.38 in (1.35 in/ft); factor 103; HarbisonWalker allows 3.05 in"
+        },
+        "name": "Dome, as arches parallel to the door wall",
+        "note": "Applying HarbisonWalker's rules for sprung arches to a dome's slices is an assumption (domes-over-doors.md §D8). The door wall and the wall opposite carry nothing.",
+        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived); Couplet–Heyman minimum thickness, Rizzi et al. 2010; domes-over-doors.md §D3 [D5]; HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "21 slices spanning the left and right walls, 30 in apart"
+      },
+      {
+        "formula": "H = W·(sin α − (1 − cos α)/α) / (2(1 − cos α)) for each slice, W its weight; × the heated factor",
+        "inputs": {},
+        "name": "Thrust on the left and right walls",
+        "note": "Each layer of the roof counts as weight; only the ring as thickness.",
+        "reference": "Heyman's half dome sliced into parallel arches, the safe theorem; domes-over-doors.md §D3–D4 [D3] [D4] (derived); statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]",
+        "value": "up to 437 lb per foot hot (76 cold); 1220 lb along each wall"
+      }
+    ]
+  },
+  "gas": {
+    "burner_options": [
+      {
+        "count": 1,
+        "each": "263,917 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "8.5 psi",
+        "total_cost": 295.0,
+        "type": "venturi"
+      },
+      {
+        "count": 1,
+        "each": "263,917 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "3.3 psi",
+        "total_cost": 395.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "131,958 BTU/hr",
+        "model": "GACO MR750",
+        "pressure": "5.9 psi",
+        "total_cost": 199.9,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "131,958 BTU/hr",
+        "model": "GACO MR100",
+        "pressure": "3.7 psi",
+        "total_cost": 319.9,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "131,958 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "5.7 psi",
+        "total_cost": 490.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "131,958 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "2.2 psi",
+        "total_cost": 590.0,
+        "type": "venturi"
+      },
+      {
+        "count": 2,
+        "each": "131,958 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "23 in. w.c.",
+        "total_cost": 790.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "87,972 BTU/hr",
+        "model": "GACO MR750",
+        "pressure": "2.6 psi",
+        "total_cost": 299.85,
+        "type": "venturi"
+      }
+    ],
+    "burners": {
+      "count": 1,
+      "each": "263,917 BTU/hr",
+      "model": "Ransome B4",
+      "pressure": "8.5 psi",
+      "total_cost": 295.0,
+      "type": "venturi"
+    },
+    "chimney_height": "4.2 ft (50 in) above the chamber floor",
+    "chimney_height_in": 50.0,
+    "construction": "9 in insulating brick",
+    "demand_range": "263,917–422,267 BTU/hr",
+    "design_input": "263,917 BTU/hr",
+    "design_input_btu_hr": 263916.8031621313,
+    "draft": [
+      "0.041 in. w.c. (10 Pa) with flue gas at 1000 °F",
+      "0.051 in. w.c. (13 Pa) with flue gas at top temperature"
+    ],
+    "findings": [
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "ft³",
+              "meaning": "chamber volume, Ward's way",
+              "offset": 0.0,
+              "scale": 35.31466672148859,
+              "source": "worked out exactly: Ward gives no formula for a dome kiln",
+              "symbol": "V",
+              "text": null,
+              "unit": "foot ** 3",
+              "value": 0.747329162819313
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/ft³/h",
+              "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
+              "offset": 0.0,
+              "scale": 0.09662107767853079,
+              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
+              "symbol": "b",
+              "text": null,
+              "unit": "british_thermal_unit / foot ** 3 / hour",
+              "value": 103497.08614585242
+            },
+            {
+              "expr": "b*V",
+              "formula": "b·V",
+              "label": "Btu/h",
+              "meaning": "design burner input",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "D",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 77346.3907436182
+            },
+            {
+              "expr": "D",
+              "formula": "D",
+              "label": "Btu/h",
+              "meaning": "what the burners draw at full fire",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": null,
+              "symbol": "P",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 77346.3907436182
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the coldest air it fires in",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design",
+              "symbol": "t",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₁",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 266.48333333333335
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₁",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the table's row",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "t₂",
+              "text": null,
+              "unit": "degree_Fahrenheit",
+              "value": 277.59444444444443
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes in that row",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+              "symbol": "c₂",
+              "text": null,
+              "unit": "british_thermal_unit / hour",
+              "value": 18023.873333333333
+            },
+            {
+              "expr": "c₁ + (c₂ - c₁)*(t - t₁)/(t₂ - t₁)",
+              "formula": "c₁ + (c₂ − c₁)·(t − t₁)/(t₂ − t₁)",
+              "label": "Btu/h",
+              "meaning": "what one cylinder vaporizes",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "a straight line between the table's two nearest rows",
+              "symbol": "c",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 12689.979111111112
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "cylinders, joined in parallel",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the design",
+              "symbol": "n",
+              "text": null,
+              "unit": "",
+              "value": 4.0
+            },
+            {
+              "expr": "n*c",
+              "formula": "n·c",
+              "label": "Btu/h",
+              "meaning": "what the supply gives",
+              "offset": 0.0,
+              "scale": 3.412141156488376,
+              "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
+              "symbol": "C",
+              "text": null,
+              "unit": "BTU/hr",
+              "value": 50759.91644444445
+            }
+          ],
+          "id": "gas.supply-low",
+          "label": null,
+          "lever": {
+            "hi": 40.0,
+            "lo": 1.0,
+            "step": 1.0,
+            "symbol": "n"
+          },
+          "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "C",
+              "level": "warning",
+              "margin": "C = 173,200 Btu/h, 65.63 % of P = 263,917 Btu/h",
+              "op": ">=",
+              "right": "P"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when n ≥ 7",
+          "status": "warning",
+          "title": "Propane supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi"
+        },
+        "level": "warning",
+        "message": "The propane supply meets the 263,917 BTU/hr the burners draw when full but not in the conservative case (4 × 100 lb cylinders, ¼ full, keeping 10 psi: 173,200 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+        "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Gas piping, regulators, safety valves and the installation must be done or checked by a licensed gas fitter to your local code (NFPA 54 and 58 in the US).",
+        "reference": null
+      }
+    ],
+    "flue_area": "18 in²",
+    "flue_area_in2": 17.720546061654925,
+    "fuel": "propane",
+    "full_fire_btu_hr": 263916.8031621313,
+    "inlet_area_in2": 17.720546061654925,
+    "propane_at_full_fire": "2.88 gal/hr",
+    "supply": [
+      {
+        "capacity": "668,000 BTU/hr (167,000 each)",
+        "capacity_btu_hr": 668000.0,
+        "case": "4 × 100 lb cylinders, full",
+        "meets_demand": true,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+      },
+      {
+        "capacity": "376,000 BTU/hr (94,000 each)",
+        "capacity_btu_hr": 376000.0,
+        "case": "4 × 100 lb cylinders, half full",
+        "meets_demand": true,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+      },
+      {
+        "capacity": "173,200 BTU/hr (43,300 each)",
+        "capacity_btu_hr": 173200.0,
+        "case": "4 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "meets_demand": false,
+        "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+      }
+    ],
+    "supply_temperature": "20 °F",
+    "tank_suggestion": "A 250 gal tank, kept at least ⅓ full, supplies 369,400 BTU/hr at 20 °F",
+    "ward_volume": "26.4 ft³",
+    "working": [
+      {
+        "formula": "W × L × H, plus the space under the dome worked out exactly: Ward gives no formula for a dome",
+        "inputs": {},
+        "name": "Chamber volume, Ward's way",
+        "note": null,
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]",
+        "value": "26.4 ft³"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
+          "cone column": "10",
+          "construction": "9 in insulating brick"
+        },
+        "name": "Burner input per cubic foot",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
+        "value": "10,000–16,000 BTU/ft³/hr"
+      },
+      {
+        "formula": "low end × volume",
+        "inputs": {
+          "firing speed": "slow"
+        },
+        "name": "Design burner input",
+        "note": null,
+        "reference": null,
+        "value": "263,917 BTU/hr (77.35 kW)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "burners limited to": "10 psi"
+        },
+        "name": "Propane pressure available",
+        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
+        "value": "41 psig in the cylinder or tank at 20 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "cost": "$295.00",
+          "each": "263,917 BTU/hr"
+        },
+        "name": "Burners",
+        "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
+        "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
+        "value": "1 × Ransome B4 at 8.5 psi"
+      },
+      {
+        "formula": "BTU/hr ÷ 91,502 BTU/gal",
+        "inputs": {},
+        "name": "Propane at full fire",
+        "note": null,
+        "reference": "combustion-and-masonry.md §1.1 [S1, S2]",
+        "value": "2.88 gal/hr (12.1 lb/hr)"
+      },
+      {
+        "formula": "(HHV − heat in the flue gas at T_top) ÷ HHV",
+        "inputs": {
+          "air": "λ = 0.90, a moderate reduction",
+          "flue gas": "2345 °F",
+          "fuel": "propane"
+        },
+        "name": "Available heat at the top temperature",
+        "note": null,
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "value": "0.316"
+      },
+      {
+        "formula": "η × burner input at full fire ≥ steady heat loss",
+        "inputs": {},
+        "name": "Burners against the heat lost at the top",
+        "note": null,
+        "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
+        "value": "83,470 BTU/hr kept against 34,774 BTU/hr lost"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, full",
+        "note": "meets the burners' draw",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
+        "value": "668,000 BTU/hr (167,000 each)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, half full",
+        "note": "meets the burners' draw",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
+        "value": "376,000 BTU/hr (94,000 each)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "note": "short of the burners' draw",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "value": "173,200 BTU/hr (43,300 each)"
+      },
+      {
+        "formula": "cylinders × 100 lb ÷ 4.20 lb/gal",
+        "inputs": {},
+        "name": "Propane on hand",
+        "note": null,
+        "reference": null,
+        "value": "95 gal: 33.0 hours at full fire"
+      },
+      {
+        "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
+        "inputs": {
+          "Olsen's other methods": "66 in² (2½ in² per ft³), 38 in² (1 in² per 7000 BTU/hr)",
+          "burner ports together": "18 in²"
+        },
+        "name": "Exit flue, to start",
+        "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
+        "value": "18 in²"
+      },
+      {
+        "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
+        "inputs": {
+          "the kiln's top": "50.0 in"
+        },
+        "name": "Chimney height",
+        "note": "With burners under gas pressure (or a blower) the gas drives the flow; the chimney and stack only need to carry the gases out above where people are.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack",
+        "value": "4.2 ft (50 in) above the chamber floor"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "50 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.041 in. w.c. (10 Pa) with flue gas at 1000 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "50 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.051 in. w.c. (13 Pa) with flue gas at top temperature"
+      }
+    ]
+  },
+  "heat_loss": {
+    "ambient": "50 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "1596 W",
+        "inside_area": "9.955 ft²",
+        "layers": [
+          {
+            "cold_side": "1487 °F",
+            "cold_side_k": 1081.3828570682138,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.15,
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "825.6 °F",
+            "cold_side_k": 714.0348121311312,
+            "hot_side": "1487 °F",
+            "hot_side_k": 1081.3828570682138,
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          },
+          {
+            "cold_side": "175.1 °F",
+            "cold_side_k": 352.6407006070795,
+            "hot_side": "825.6 °F",
+            "hot_side_k": 714.0348121311312,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "19.73 ft²",
+        "surface_temperature": "175.1 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "1596 W",
+        "inside_area": "9.955 ft²",
+        "layers": [
+          {
+            "cold_side": "1487 °F",
+            "cold_side_k": 1081.3828570682138,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.15,
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "825.6 °F",
+            "cold_side_k": 714.0348121311312,
+            "hot_side": "1487 °F",
+            "hot_side_k": 1081.3828570682138,
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          },
+          {
+            "cold_side": "175.1 °F",
+            "cold_side_k": 352.6407006070795,
+            "hot_side": "825.6 °F",
+            "hot_side_k": 714.0348121311312,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "19.73 ft²",
+        "surface_temperature": "175.1 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "1348 W",
+        "inside_area": "8.066 ft²",
+        "layers": [
+          {
+            "cold_side": "1469 °F",
+            "cold_side_k": 1071.6899266741048,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999996,
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "814.3 °F",
+            "cold_side_k": 707.7618728658977,
+            "hot_side": "1469 °F",
+            "hot_side_k": 1071.6899266741048,
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          },
+          {
+            "cold_side": "172.2 °F",
+            "cold_side_k": 351.0588105845875,
+            "hot_side": "814.3 °F",
+            "hot_side_k": 707.7618728658977,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "17.18 ft²",
+        "surface_temperature": "172.2 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "1348 W",
+        "inside_area": "8.066 ft²",
+        "layers": [
+          {
+            "cold_side": "1469 °F",
+            "cold_side_k": 1071.6899266741048,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999996,
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "814.3 °F",
+            "cold_side_k": 707.7618728658977,
+            "hot_side": "1469 °F",
+            "hot_side_k": 1071.6899266741048,
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          },
+          {
+            "cold_side": "172.2 °F",
+            "cold_side_k": 351.0588105845875,
+            "hot_side": "814.3 °F",
+            "hot_side_k": 707.7618728658977,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "1 in"
+          }
+        ],
+        "outside_area": "17.18 ft²",
+        "surface_temperature": "172.2 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "1595 W",
+        "inside_area": "7.5 ft²",
+        "layers": [
+          {
+            "cold_side": "1210 °F",
+            "cold_side_k": 927.4896041369019,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999992,
+            "material": "ifb-jm26",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "232.2 °F",
+            "cold_side_k": 384.3448345247274,
+            "hot_side": "1210 °F",
+            "hot_side_k": 927.4896041369019,
+            "material": "ifb-k23",
+            "thickness": "2.5 in"
+          }
+        ],
+        "outside_area": "15.28 ft²",
+        "surface_temperature": "232.2 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "2709 W",
+        "inside_area": "8.174 ft²",
+        "layers": [
+          {
+            "cold_side": "1772 °F",
+            "cold_side_k": 1239.767181038909,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999967,
+            "material": "kast-o-lite-30-li-plus",
+            "thickness": "3 in"
+          },
+          {
+            "cold_side": "264.4 °F",
+            "cold_side_k": 402.24601935708347,
+            "hot_side": "1772 °F",
+            "hot_side_k": 1239.767181038909,
+            "material": "kaowool-blanket-8pcf",
+            "thickness": "2 in"
+          }
+        ],
+        "outside_area": "14.37 ft²",
+        "surface_temperature": "264.4 °F"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
+        "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 232.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 172.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2345 °F",
+    "total": "10.19 kW",
+    "total_watts": 10191.196940332033,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "10",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
+        "value": "1285 °C (2345 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "50 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "painted"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.95"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "19.73 ft²",
+          "outside surface": "175.1 °F",
+          "surface coefficient h": "12.53 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1596 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "19.73 ft²",
+          "outside surface": "175.1 °F",
+          "surface coefficient h": "12.53 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1596 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "17.18 ft²",
+          "outside surface": "172.2 °F",
+          "surface coefficient h": "12.44 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1348 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "17.18 ft²",
+          "outside surface": "172.2 °F",
+          "surface coefficient h": "12.44 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1348 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "15.28 ft²",
+          "outside surface": "232.2 °F",
+          "surface coefficient h": "11.11 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1595 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "14.37 ft²",
+          "outside surface": "264.4 °F",
+          "surface coefficient h": "17.04 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "2709 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": null,
+        "reference": null,
+        "value": "10.19 kW (3.48e+04 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 10,
+        "cut": "cut to 1 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 1 in long, ripped to 2 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 3 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 3 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 52,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 10,
+        "cut": "cut to 5.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 7.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 16,
+        "cut": "ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 5,
+        "cut": "ripped to 2 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 8,
+        "cut": "cut to 0.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "cut to 1 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 8,
+        "cut": "cut to 3 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 21,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 2.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 8,
+        "cut": "cut to 5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 5,
+        "cut": "cut to 5.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 5.5 in long, ripped to 2.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 8,
+        "cut": "cut to 7.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 4,
+        "cut": "ripped to 2.5 in",
+        "material": "ifb-k23"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Arch bricks: Left wall, layer 1 from the inside, above the springline: about 5 bricks by volume, cut to the curve; Right wall, layer 1 from the inside, above the springline: about 5 bricks by volume, cut to the curve; Back wall, layer 1 from the inside, above the springline: about 2 bricks by volume, cut to the curve; Door, layer 1 from the inside, above the springline: about 2 bricks by volume, cut to the curve; Left wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Right wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Back wall, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve; Door, layer 2 from the inside, above the springline: about 1 brick by volume, cut to the curve.",
+        "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Castable: cure 16–24 h above 60 °F kept damp, never let it freeze, and dry it out slowly before the first firing (for Mizzou: 75 °F/h with a ½ h hold per inch at 250, 500 and 1000 °F). Follow the maker's sheet for your castable.",
+        "reference": "combustion-and-masonry.md §6.2 [S54, S56]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 441.0,
+        "detail": "300 whole, 100 cut into 124 pieces; 400 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-jm26",
+        "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "priced_amount": 441.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 262.0,
+        "detail": "190 whole, 48 cut into 70 pieces; 238 in the kiln plus 10% for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "priced_amount": 262.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 72.9,
+        "detail": "1 in, 2 in thick; area plus 10% for trimming",
+        "kind": "fibre_blanket",
+        "material": "kaowool-blanket-8pcf",
+        "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
+        "priced_amount": 92.94917506880493,
+        "unit": "ft²"
+      },
+      {
+        "amount": 428.0,
+        "detail": "3.97 ft³ placed, at the dried density, plus 10%",
+        "kind": "insulating_castable",
+        "material": "kast-o-lite-30-li-plus",
+        "name": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
+        "priced_amount": 427.5622546907947,
+        "unit": "lb"
+      }
+    ]
+  },
+  "name": "Dome down-draft, cone 10"
+}

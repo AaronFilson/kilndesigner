@@ -1,0 +1,13 @@
+{
+  "name": "kilndesigner-web-workspace",
+  "private": true,
+  "workspaces": ["packages/api-client", "web"],
+  "scripts": {
+    "generate": "npm run generate --workspace @kilndesigner/api-client",
+    "dev": "npm run dev --workspace @kilndesigner/web",
+    "build": "npm run build --workspaces --if-present",
+    "check": "npm run check --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "e2e": "npm run e2e --workspace @kilndesigner/web"
+  }
+}

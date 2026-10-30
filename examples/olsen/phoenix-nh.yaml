@@ -1,0 +1,81 @@
+# Phoenix workshop kiln, New Hampshire, 1978 (Olsen, The Kiln Book, 4th ed., p.147, Fig 5-67):
+# "a 40 cubic foot variation" of George Wright's Phoenix kiln, fired with wood: a Roman-arched
+# firebox under the chamber floor, and a chamber above it drawn over and down to the chimney.
+#
+# From the book: only the 40 ft³ and the layout of Fig 5-67: one firebox under the floor, arched,
+# with grate bars; one inlet flue rising at the front of the chamber; the draft over and down to an
+# exit flue at floor level at the back; the chimney sharing the chamber's back wall (p.147). No
+# part of it is dimensioned.
+# Assumed, everything else, by Olsen's rules. A cube with the arch inside it, as Olsen sets a
+# downdraft (Principle 1, p.74–75): 41.6 in wide, deep and to the crown gives 40 ft³. It is built
+# as his fast-fire kiln, of which the Phoenix is a variant (p.146–147): walls one 4½ in IFB thick
+# (p.140), in K-26, the IFB Olsen calls excellent for cone 10 (p.26; the fast-fire's 2300 °F brick
+# is for cone 6, p.25), and a No. 1 arch on featheredge skewbacks, 1½ in per foot of span (p.140),
+# so the arch rises 5.2 in from a 36.4 in springline; a bricked door in the front wall (p.141);
+# cone 10 (p.139). The floor over the firebox is 4½ in of super-duty brick, as fast-fire.yaml
+# takes it: it roofs the firebox, and Olsen keeps low- and intermediate-duty brick out of
+# fireboxes (p.18).
+# The chimney 9 × 9 in: ¼ to ⅕ of the chamber's width, and "seldom under" 9 × 9 in (Rule 6,
+# p.79–80); 18 ft tall, 3 × the chamber's and firebox's heights, as Olsen sizes the fast-fire's
+# (p.140). The firebox floor at least 10 × the chimney's section plus 20 %, 972 in² (p.140): 27 in
+# wide, rounded up to a brick size (p.77), along the 41.6 in depth. Its grate two fast-fire grates
+# side by side, 24 × 24 in with ¾ in gaps (p.204), 7 × the chimney (p.77); 15 in above the grate
+# and 15 in below, the middle of the 12–18 in Olsen gives for 30–100 ft³ kilns (p.199). The inlet
+# flue 4½ in × the firebox's width (p.141); the exit flue the fast-fire's 9 × 7½ in (Fig 5-35).
+# Not modelled: the firebox's Roman arch, the flexboard behind the walls (p.140) and the frame,
+# which the engine sizes.
+schema: 1
+name: Phoenix workshop kiln, New Hampshire, 1978
+units: us
+firing:
+  cone: "10" # as the fast-fire kiln (p.139)
+chamber:
+  width: 41.6 in # a 40 ft³ cube (Principle 1, p.74–75)
+  depth: 41.6 in
+  height: 36.4 in # to the springline: 41.6 in to the crown, less the rise
+roof:
+  type: sprung_arch
+  rise: 5.2 in # 1½ in per foot of span: a No. 1 featheredge arch (p.140)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26 # Olsen's IFB for cone 10 (p.26)
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99 # it roofs the firebox (p.18), as fast-fire.yaml
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: under
+        width: 27 in # 972 in² of floor (p.140), rounded up to bricks (p.77)
+        length: 41.6 in # along the chamber's depth
+        height: 15 in # above the grate (p.199)
+        grate:
+          width: 24 in # two 12 × 24 in fast-fire grates (p.204)
+          length: 24 in
+          gap: 0.75 in
+        ash_pit: 15 in # below the grate (p.199)
+        inlet:
+          width: 27 in # 4½ in × the firebox's width (p.141)
+          height: 4.5 in
+draft:
+  type: down
+  flue_wall: back
+  run_to_chimney: 0 in # the chimney shares the back wall (Fig 5-67)
+  flue_port:
+    width: 9 in # the fast-fire's exit flue (Fig 5-35)
+    height: 7.5 in
+  chimney:
+    height: 18 ft # 3 × (chamber + firebox) (p.140)
+    inside:
+      width: 9 in # Rule 6 (p.79–80)
+      depth: 9 in

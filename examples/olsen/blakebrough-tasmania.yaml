@@ -1,0 +1,81 @@
+# Les Blakebrough's fibre envelope kiln, Tasmanian School of Art, Hobart (Olsen, The Kiln Book, 4th
+# ed., p.148–150): a 40 cu ft gas downdraft. A fibre box with a flat fibre roof runs on a track
+# over a fixed brick hearth and seals against the back wall and chimney. Olsen's model true
+# downdraft (p.150).
+#
+# From the book: 40 cu ft of stacking; inside 42 in wide, 54 in long, about 52 in high (p.148);
+# fibre walls and a suspended flat fibre roof; the hearth of 2600 IFB (p.148); four venturi compound
+# injector burners, each with its own safety and ignition system; burner ports 4½ × 6 in, two in the
+# back wall, with opposing ports, firing down 9 in channels beside the shelves (p.149, Fig 5-70);
+# true downdraft through floor flues into a 9 × 6 in chimney flue and a 9 × 9 in chimney
+# (p.148, Fig 5-72).
+# Assumed: the fibre is 8 in of folded blanket, 12 in compressed to 8 in, as the Tasmanian School of
+# Art's folded-fibre kiln on p.69, probably this one. The blanket is Morgan's Cerachem, 8 pcf: for
+# fibre above 2200 °F Olsen puts a 2600 °F, 8 lb blanket on the hot face (p.64–65), and Cerachem is
+# the library's 2600 °F blanket. The roof as the walls (engine default). The hearth floor is 4½ in of K-26, a 2600 IFB
+# (p.173: floors are 4½–5 in). The four burners are two in the back wall and two opposite them in
+# the front, each at a 9 in channel's middle, one course up (engine default height). Propane: Olsen
+# says compound injectors are for 1200–3300 BTU/cu ft gas (p.224). A 500 gal tank, his tank for a
+# 24–40 cu ft kiln (p.242). The burner model: engine default. The chimney as tall as the kiln, as
+# Olsen takes it with burners (p.151). The exit flue is the 9 × 6 in chimney flue. Cone 10, as
+# Olsen fired his own fibre kiln (olsen-fiber-p62, p.62).
+# Not modelled: the moving box is taken as a car, the hearth and back wall riding on it, as the real
+# hearth and back wall are one part and the box the other. The bottom 15 in of the walls, 9 in of
+# 2600 IFB (p.148, Fig 5-72), is taken as fibre. The eight floor exit flues and the flue channels
+# under the hearth: the engine's downdraft leaves by one flue at the foot of the back wall.
+schema: 1
+name: Blakebrough's fibre envelope kiln, Hobart
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 42 in
+  depth: 54 in
+  height: 52 in
+roof:
+  type: flat
+loading:
+  type: car
+  face: back
+lining:
+  walls:
+    - material: cerachem-blanket-8pcf
+      thickness: 8 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: propane
+    burners:
+      type: venturi
+      port:
+        width: 4.5 in
+        height: 6 in
+      places:
+        - wall: back
+          across: -16.5 in
+          up: 5.5 in
+        - wall: back
+          across: 16.5 in
+          up: 5.5 in
+        - wall: front
+          across: -16.5 in
+          up: 5.5 in
+        - wall: front
+          across: 16.5 in
+          up: 5.5 in
+    supply:
+      type: tank
+      gallons: 500
+draft:
+  type: down
+  flue_wall: back
+  flue_port:
+    width: 9 in
+    height: 6 in
+  chimney:
+    height: 60 in
+    inside:
+      width: 9 in
+      depth: 9 in

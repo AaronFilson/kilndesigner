@@ -1,0 +1,50 @@
+# The umbrella kiln at Moveros, Spain (Olsen, The Kiln Book, 4th ed., p.153–154): a round folk
+# updraft of granite rubble, fired with heather and brushwood, and still fired in the mid-1970s.
+# The pots stand on an "umbrella" floor over the firebox, piled to the top, with shards over them.
+#
+# From the book: chamber about 5 ft (150 cm) across (text; 5 ft across the top, Fig 6-3) and 4 ft
+# tall, the pots never past its top (Fig 6-3); the firebox 3½–4 ft (Fig 6-3), under the umbrella
+# floor of spokes on a central trunk (p.154); the firebox mouth 27 in high and 22 in (?) wide
+# (Fig 6-3; the 22 could read 28); walls of granite rocks mortared together, 18–24 in thick (21 in
+# used, the middle), plastered with clay inside; no roof built, shards stacked over the pots;
+# heather and brushwood (all p.153–154).
+# Assumed: the temperature isn't given (it is fired until flames come out of the top, p.154):
+# 1760 °F, the usual top of Falcone's wood updraft, the only low-fire updraft whose temperature
+# the book prints (p.160). The firebox's plan isn't printed: the floor covers it, so it is taken as
+# the chamber's 5 ft each way; Niñodaguia's firebox and chamber are about equal in width too
+# (p.156–157). Its height is taken as 4 ft, as tall as the chamber, as Niñodaguia's are about
+# equal in height (p.156–157). The floor isn't described: engine default (the walls' layers); its
+# loss goes into the firebox under it and isn't counted. The door and air: engine defaults.
+# Not modelled: the clay plaster inside (no thickness given, and the library has no raw clay); the
+# wall is taken as solid granite, without its mortar and voids; the umbrella floor's spokes and
+# trunk, and the shards in its gaps; the step drawn between the firebox and the chamber (Fig 6-3);
+# the open top's loss (the engine leaves it out).
+schema: 1
+name: Moveros umbrella kiln
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  shape: round
+  width: 60 in
+  depth: 60 in
+  height: 48 in
+roof:
+  type: open # shards stacked over the pots
+lining:
+  walls:
+    - material: granite
+      thickness: 21 in # granite rocks mortared together, 18–24 in
+heat:
+  fire:
+    fuel: wood # heather and brushwood
+    fireboxes:
+      - position: under # under the umbrella floor
+        width: 60 in
+        length: 60 in
+        height: 48 in # 3½–4 ft
+        stoke_hole: # the firebox mouth
+          width: 22 in # (?)
+          height: 27 in
+draft:
+  type: up

@@ -1,0 +1,66 @@
+# Mr Bae's Korean gilgama, Silla Dynasty type (Olsen, The Kiln Book, 4th ed., p.107–108, Figs 4-67
+# to 4-74): a wood-fired climbing tube kiln built for an NCECA conference by Mr Bae, a third-
+# generation Onggi potter. Bricked up in a teardrop form butting into the back wall; slab wood
+# burns on the floor of a combustion area with no grate; fired to temperature, then sealed tight
+# for black ware.
+#
+# From the book: 16 ft long along the base; "4'" (faint) of combustion area at the front, so 12 ft
+# of chamber; 4½ ft (faint) to the tallest point (Fig 4-67); "NO GRATES"; slab wood 3–5 ft long;
+# an 18 in step up from the combustion area, then the floor slopes up (p.108). Slope: the text
+# says "A 20% slope was used, which is standard for most kilns of this style" (p.108), the drawing
+# "20° SLOPE" (flagged): 20 %, 11.3°, is used. Two exit flues 4½ × 9 in in the back wall (p.108);
+# chimney 8 ft high to the ground line, damper on top (Fig 4-67). The kiln is drawn on the ground,
+# its floor climbing the slope (Fig 4-67), and sealed for black ware with dirt over the door and
+# flues (p.108): the floor is on the ground.
+# Assumed: the width isn't printed (the drawing's "4'" and "6'" marks can't be placed): 5¼ ft, the
+# width of the anagama dug into a clay hill that Olsen draws (anagama-hole, Fig 4-5). The roof a
+# half-circle on that width, as a groundhog's half-cylinder (p.112): it springs 22½ in up and
+# crowns at 4½ ft.
+# Walls, arch and floor 9 in of K-26 insulating brick: on the hot face of Olsen's anagama it
+# resisted wood-ash slag better than hard brick (p.26), at the 9–10 in of his climbing kilns' walls
+# (p.99–100). What holds the arch isn't printed: it is taken as buttressed, as the book's tube
+# kilns are dug into a bank or the ground (anagama-hole, p.83–84; tamba, p.85; groundhogs,
+# p.112), and a battered wall carries an arch without steel (p.53). The combustion area the
+# chamber's width. Cone 10, from the anagama-style kiln built at Höhr-Grenzhausen in 2003
+# (hohr-2003, p.122). The door: engine default.
+# Not modelled: the teardrop plan, as a box 5¼ ft wide, that width taken as its mean, and 12 ft
+# long; the 18 in step. The engine takes one exit flue, so one of the two 4½ × 9 in flues is
+# entered (a brick on end, 9 in high). The chimney is entered at the printed 8 ft; the engine
+# measures a climbing kiln's chimney from the floor at the firing end, so its top is understated
+# by the floor's rise to it, about 32 in. Its section isn't printed: engine default. The sealing
+# for black ware. The floor's loss into the ground, which the engine doesn't work out.
+schema: 1
+name: Mr Bae's gilgama
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 63 in # 5¼ ft
+  depth: 12 ft
+  height: 22.5 in # to the springline; the half-circle crowns at 4½ ft
+  slope: 11.3 degree # 20 %
+  on_ground: true # drawn on the ground up the slope (Fig 4-67)
+roof:
+  type: sprung_arch
+  rise: 31.5 in
+  buttressed: true
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 63 in
+        length: 4 ft
+draft:
+  type: cross
+  flue_wall: back
+  flue_port:
+    width: 4.5 in
+    height: 9 in
+  chimney:
+    height: 8 ft

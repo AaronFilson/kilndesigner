@@ -1,0 +1,60 @@
+# Jun Kaneko's car kiln (Olsen, The Kiln Book, 4th ed., p.170–172): a 500 cu ft gas updraft car
+# kiln, a cube, with 32 atmospheric burners round the floor. It fires extremely slowly, a long
+# soaking rise over several days.
+#
+# From the book: 500 cu ft (p.170); inside 8 ft wide, 9 ft deep, 8 ft tall, on a cart 7 ft wide
+# (p.171); updraft, cube shape; 32 atmospheric burners, ten on each side and six at each end, in a
+# 9 in combustion width (p.172); a car kiln, its door hung from an overhead I-beam (Fig 6-64).
+# Assumed: 8 ft is taken to the springline. 8 × 9 × 8 ft is 576 cu ft, so the 500 is stacking
+# space. The burners are MR-100s, the larger of the two burners of Olsen's own updraft kits
+# (olsen-kit-24, p.222), rated 100,000 BTU/hr at 8 in. w.c. on natural gas: his Rule 1 asks about
+# 156,000 BTU/hr of each of the 32 (10,000 BTU/cu ft/hr, p.226). Natural gas on an 8 in. w.c.
+# line, the meter's normal pressure (p.227). Insulating brick, as Olsen's gas updrafts are: walls
+# 7 in, 4½ in K-26 backed by 2½ in K-23, his 7 in IFB wall (p.39, p.176). A 4½ in deck of K-26
+# (p.173: floors are 4½–5 in). A sprung arch: in an updraft the arch goes on top of the cube
+# (p.74–75), and he bets on an arch over a flat roof (p.177). It rises 1¾ in per foot of span, the
+# least for wide spans (p.296); its ring is 9 in of K-26 (4½, 6¾ or 9 in by brick and span,
+# p.296). Cone 10, the high fire Olsen's updraft rules are for: he checks the flue at about cone 8
+# (p.173). The exit flue: engine default.
+# Not modelled: the door on its I-beam is taken as the car's end wall. The burners' ports are the
+# engine's for an MR-100. The car's wheels and rails (no source sizes them).
+schema: 1
+name: Jun Kaneko's car kiln
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 8 ft
+  depth: 9 ft
+  height: 8 ft # taken to the springline
+roof:
+  type: sprung_arch
+  rise: 14 in # 1¾ in per foot of span, the least for a wide span (p.296)
+loading:
+  type: car
+  face: front
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      model: GACO MR100
+      count: 32
+      wall: floor
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: up

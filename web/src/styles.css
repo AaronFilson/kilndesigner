@@ -1,0 +1,944 @@
+/* The theme is light, dark, or as the system says (no data-theme); the accent is named for a
+   glaze (data-accent), with a shade for each theme. theme.ts sets both on the root element. */
+:root {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --text: #1f1b16;
+  --muted: #6b635a;
+  --border: #e3ddd4;
+  --accent-light: #b4532a;
+  --accent-dark: #e07a4b;
+  --accent: var(--accent-light);
+  --accent-text: #ffffff;
+  --error: #b42318;
+  --warning: #9a6700;
+  --info: #2f6f9f;
+  --viewer: #efeae3;
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.5;
+}
+
+:root[data-accent="shino"] {
+  --accent-light: #a45a14;
+  --accent-dark: #f0a95a;
+}
+
+:root[data-accent="celadon"] {
+  --accent-light: #2f7a68;
+  --accent-dark: #7fc4ae;
+}
+
+:root[data-accent="cobalt"] {
+  --accent-light: #2c58a6;
+  --accent-dark: #8aaef0;
+}
+
+:root[data-accent="tenmoku"] {
+  --accent-light: #7a4a1e;
+  --accent-dark: #d9a066;
+}
+
+:root[data-accent="copper"] {
+  --accent-light: #a3263c;
+  --accent-dark: #f08a99;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #171411;
+    --surface: #211d19;
+    --text: #f1ece6;
+    --muted: #a39a90;
+    --border: #3a342e;
+    --accent: var(--accent-dark);
+    --accent-text: #171411;
+    --error: #f97066;
+    --warning: #f0b429;
+    --info: #7cb8e4;
+    --viewer: #2a2520;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #171411;
+  --surface: #211d19;
+  --text: #f1ece6;
+  --muted: #a39a90;
+  --border: #3a342e;
+  --accent: var(--accent-dark);
+  --accent-text: #171411;
+  --error: #f97066;
+  --warning: #f0b429;
+  --info: #7cb8e4;
+  --viewer: #2a2520;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+}
+
+code {
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.9em;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.brand {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.appearance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-left: auto;
+  font-size: 0.85em;
+}
+
+.appearance label {
+  color: var(--muted);
+}
+
+.appearance select {
+  margin-right: 0.4rem;
+  padding: 0.2rem 0.3rem;
+}
+
+.page {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.page-header h1 {
+  margin: 0 auto 0 0;
+  font-size: 1.5rem;
+}
+
+button,
+.button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button.secondary,
+.button.secondary {
+  background: transparent;
+  color: var(--accent);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+select {
+  font: inherit;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.error {
+  color: var(--error);
+}
+
+.design-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.design-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.design-list li:first-child {
+  border-top: none;
+}
+
+.design-list time {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.toolbar > .muted {
+  margin-right: auto;
+}
+
+.yaml-editor {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.9rem;
+}
+
+.yaml-editor .cm-editor {
+  min-height: 60vh;
+}
+
+.problems {
+  margin: 0 0 0.75rem;
+  padding: 0.75rem 0.75rem 0.75rem 2rem;
+  border: 1px solid var(--error);
+  border-radius: 8px;
+  color: var(--error);
+}
+
+.viewer {
+  position: relative;
+  height: 520px;
+  border-radius: 8px;
+  background: var(--viewer);
+  overflow: hidden;
+}
+
+.viewer-tools {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  max-width: calc(100% - 14rem); /* clear of the legend */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.viewer-tools button {
+  padding: 0.25rem 0.6rem;
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+.viewer-tools button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.viewer-info {
+  position: absolute;
+  left: 0.5rem;
+  right: 0.5rem;
+  bottom: 0.5rem;
+  margin: 0;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font-size: 0.85em;
+}
+
+.viewer-message {
+  margin: 0;
+  padding: 1rem;
+}
+
+.viewer-tools select {
+  padding: 0.2rem 0.3rem;
+  font-size: 0.85em;
+}
+
+.viewer-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85em;
+  cursor: pointer;
+}
+
+.viewer-check input {
+  margin: 0;
+}
+
+.viewer-legend {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  font-size: 0.8em;
+}
+
+.viewer-legend ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.viewer-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Each swatch is a colour picker: click it to choose the material's colour */
+.viewer-legend .swatch {
+  width: 0.9rem;
+  height: 0.9rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: none;
+  cursor: pointer;
+}
+
+.viewer-legend .swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.viewer-legend .swatch::-webkit-color-swatch {
+  border: none;
+}
+
+.viewer-legend .swatch::-moz-color-swatch {
+  border: none;
+}
+
+.viewer-legend button {
+  margin-top: 0.3rem;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.95em;
+}
+
+.downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 1rem 0 0;
+  font-size: 0.9em;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tab {
+  border: 1px solid transparent;
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  background: transparent;
+  color: var(--muted);
+}
+
+.tab.active {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text);
+  margin-bottom: -1px;
+}
+
+.drawing {
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #ffffff; /* drawings are drawn on white, in both themes */
+  color: #1f1b16;
+}
+
+.drawing img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.drawing figcaption {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+}
+
+.drawing figcaption .muted {
+  color: #6b635a;
+}
+
+.course-plans {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.75rem;
+}
+
+.materials table {
+  width: 100%;
+  margin-bottom: 1rem;
+  border-collapse: collapse;
+  background: var(--surface);
+  font-size: 0.9em;
+}
+
+.materials caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 0.25rem 0 0.5rem;
+}
+
+.materials th,
+.materials td {
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.materials tbody th {
+  font-weight: normal;
+}
+
+.materials .number {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.materials tfoot th,
+.materials tfoot td {
+  font-weight: 600;
+  border-bottom: none;
+}
+
+.report section {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.report h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.rows {
+  margin: 0;
+}
+
+.rows div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.2rem 0;
+}
+
+.rows dt {
+  color: var(--muted);
+}
+
+.rows dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.working {
+  margin-top: 0.5rem;
+  font-size: 0.9em;
+}
+
+.working li {
+  margin: 0.25rem 0;
+}
+
+.working code,
+.working cite,
+.findings cite {
+  display: block;
+  color: var(--muted);
+  font-style: normal;
+}
+
+.findings {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem;
+}
+
+.findings li {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-left: 4px solid var(--info);
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.findings li.warning {
+  border-color: var(--warning);
+}
+
+.findings li.error {
+  border-color: var(--error);
+}
+
+.findings .level {
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.findings .why {
+  white-space: nowrap;
+}
+
+/* A check's sheet: the formulas and numbers behind a warning or an error */
+.sheet {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.92em;
+}
+
+.sheet-head {
+  margin: 0 0 0.5rem;
+}
+
+.sheet-status {
+  margin-left: 0.5rem;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--info);
+}
+
+.sheet-status.warning {
+  background: var(--warning);
+}
+
+.sheet-status.error {
+  background: var(--error);
+}
+
+.sheet-scroll {
+  overflow-x: auto;
+}
+
+.sheet table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.sheet th,
+.sheet td {
+  padding: 0.25rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.sheet thead th {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.sheet tbody th {
+  font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.sheet td.value {
+  white-space: nowrap;
+}
+
+.sheet td.source {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.sheet-input input {
+  width: 7rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--warning);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--warning) 12%, var(--surface));
+  color: var(--text);
+  font: inherit;
+  text-align: right;
+}
+
+.sheet-requirements {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.sheet-requirements li {
+  margin: 0.2rem 0;
+  padding: 0.15rem 0.5rem;
+  border-left: 3px solid var(--info);
+}
+
+.sheet-requirements li.warning {
+  border-color: var(--warning);
+}
+
+.sheet-requirements li.error {
+  border-color: var(--error);
+}
+
+.sheet-solve {
+  margin: 0.5rem 0;
+  font-weight: 600;
+}
+
+.sheet-help {
+  margin: 0.25rem 0;
+}
+
+button.link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* The design as choices */
+.tabs.compact {
+  margin-bottom: 0;
+  margin-right: auto;
+}
+
+.design-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.form-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0;
+  padding: 0.75rem 1rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+/* A section's heading is its card's title: inside the card (a floated legend isn't drawn on the
+   border) and plainly bigger than the subheadings within it */
+.form-section legend {
+  float: left;
+  grid-column: 1 / -1;
+  padding: 0;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.field {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.9em;
+}
+
+.field > span:first-child,
+.field > label {
+  color: var(--muted);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  padding: 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.quantity {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.quantity input {
+  flex: 1;
+}
+
+.quantity select {
+  width: auto;
+}
+
+.quantity .unit {
+  align-self: center;
+  color: var(--muted);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9em;
+}
+
+.checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.form-section > .check,
+.form-section > div:not(.field),
+.layers {
+  grid-column: 1 / -1;
+}
+
+/* A group of choices within a section: burner ports, the flue, spy holes */
+.subgroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Small capitals in the muted colour, so a subheading never reads as a section's */
+.subgroup h3 {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.places {
+  grid-column: 1 / -1;
+}
+
+.places ol {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.places li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.places button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85em;
+}
+
+.layers ol {
+  margin: 0 0 0.5rem;
+  padding-left: 1.25rem;
+}
+
+.layers li {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.layer-tools {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.layer-tools button,
+.layers > button {
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85em;
+}
+
+.kiln-types {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: none;
+}
+
+.kiln-types legend {
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: 0.75rem;
+}
+
+.card {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.card span {
+  color: var(--muted);
+  font-size: 0.9em;
+}
+
+.card.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.section-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.castable {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr));
+  gap: 0.5rem 1rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.castable .ingredients {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-left: 1.25rem;
+}
+
+.castable .ingredients li {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 0.5rem;
+  align-items: end;
+  margin-bottom: 0.5rem;
+}
+
+.castable-report {
+  margin-bottom: 1.5rem;
+}
+
+.castable-report h4 {
+  margin: 1rem 0 0.4rem;
+}
+
+table.plain {
+  width: 100%;
+  margin: 0.5rem 0;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+table.plain caption {
+  text-align: left;
+  font-weight: 600;
+}
+
+table.plain th,
+table.plain td {
+  padding: 0.3rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+
+table.plain .number {
+  text-align: right;
+}
+
+.steps li,
+.layer-notes li {
+  margin-bottom: 0.35rem;
+}

@@ -1,0 +1,80 @@
+# Fireworks kiln, Edmonton, Alberta, 1998 (Olsen, The Kiln Book, 4th ed., p.178–181, p.183, Figs
+# 7-2 to 7-7): Olsen's first multi-directional wood kiln, built by 40 workshop participants. Two
+# cross-draft systems at right angles, an anagama-style tube and a groundhog, share one fire zone
+# under a dome; each firebox faces its own chimney across the zone and is also a door.
+#
+# From the book: fire zone "approximately 9ft (274cm) in both directions" (p.183); 3½–4½ ft to the
+# ceiling's vertex (p.183), 4 ft used; cone 10-plus (p.181), cone 10 used; a single tall chimney and
+# a three-flue groundhog chimney; the dome covered in stones or shards (Fig 7-7). From Olsen's
+# drawing of these kilns' firebox (Fig 7-3, p.179): a grate, 3–4 ft long, 3½ ft used; an ash pit
+# 18 in deep and 14 in (faint) wide.
+# Assumed: the fireboxes' widths from the Church kiln, its sister: 36 in for the anagama firebox,
+# 24 in for the groundhog's (church-skaelskor, p.182); grates the ash pit's 14 in wide and the
+# firebox's length, their bars ¾ in apart, as on his Kanayama kiln (p.188). Walls and floor 9 in
+# of K-26 insulating brick: the walls of Olsen's multi-directional kilns are 9 in
+# (church-skaelskor, Fig 7-9; kanayama-multi, p.186), in the 2500–2600 °F brick he sets under a
+# cast dome (p.58). The dome cast 6 in thick in Kast-O-Lite 26 LI Plus: he casts domes in
+# insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"); "a 6in. thickness is best"
+# (p.59), and his Kanayama dome is 5–6 in (kanayama-multi, p.186–188). Its rise, 2¾ in per foot
+# of the 9 ft span, 24¾ in: the middle of his 2½–3 in/ft for domes (p.51); so the walls stand
+# 23¼ in to the springline. Buttressed: Olsen buttresses a cast dome's walls "extremely well"
+# (p.59), with dirt, rocks and concrete on his Kanayama kiln (p.186). The floor is on the ground:
+# the shared firebox drawing puts a walk-in ash pit 18 in deep below the grate (Fig 7-3), the
+# Church kiln's channels are "below ground" (church-skaelskor, Fig 7-9) and the Kanayama kiln's
+# fireboxes are dug down (kanayama-multi, p.183–185). Chimneys: not sized in the book, so the
+# engine sizes the one it models.
+# Not modelled: the plan, two axes crossing in the fire zone, as a 9 × 9 ft box (Fig 7-2 calls the
+# 9 ft a diagonal; the text says "in both directions"); the anagama firebox in the front wall
+# facing the chimney behind; the groundhog firebox in the left wall, its three-flue chimney (which
+# would face it in the right wall) left out; the 12–15 in step up from the grate to the ware floor;
+# the floor's loss into the ground, which the engine doesn't work out.
+schema: 1
+name: Fireworks multi-directional kiln, Edmonton
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 9 ft
+  depth: 9 ft
+  height: 23.25 in # to the dome's springline: 4 ft to the vertex less the rise
+  on_ground: true # fireboxes dug down, ash pits walked into (Fig 7-3)
+roof:
+  type: dome
+  rise: 24.75 in
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+  roof:
+    - material: kast-o-lite-26-li-plus
+      thickness: 6 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1 # the anagama firebox, the larger
+        position: front
+        width: 36 in
+        length: 42 in
+        grate:
+          width: 14 in
+          length: 42 in
+          gap: 0.75 in
+        ash_pit: 18 in
+      - count: 1 # the groundhog firebox
+        position: left
+        width: 24 in
+        length: 42 in
+        grate:
+          width: 14 in
+          length: 42 in
+          gap: 0.75 in
+        ash_pit: 18 in
+draft:
+  type: cross
+  flue_wall: back

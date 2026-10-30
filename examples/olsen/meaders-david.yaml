@@ -1,0 +1,66 @@
+# David Meaders's groundhog (Olsen, The Kiln Book, 4th ed., p.115, Figs 4-105 to 4-107): a small
+# wood-fired groundhog adapted from his grandfather Cheever Meaders's design: a half-cylinder
+# chamber with a full-width firebox at the front and the chimney at the back.
+#
+# From the book: ware chamber 5 ft wide and 6 ft long (the "6'", drawn along the side from the bag
+# wall to the back, is read as the length: uncertain); 30 in from the floor to the crown, which on
+# a 5 ft span is a half-circle springing from the floor, "a cylinder sliced lengthwise at the
+# centre" (p.112); firebox 4 ft long, front arch to the bag wall; door in the front arch; inlet
+# flue 9 × 4½ in, exit flue 7½ (faint) × 4½ in; chimney 8 ft tall, "9" INSIDE" (Fig 4-105).
+# Assumed: the firebox is the chamber's full width, as in every groundhog (p.112). The chimney too:
+# a groundhog's chimney runs the kiln's width (p.111–112, Fig 4-85, 9–30 in deep inside), so the
+# "9" INSIDE" is its depth: 60 × 9 in. Read as 9 × 9 in, the firebox floor would be 36 times its
+# section, far outside the 4–10 times of Olsen's wood kilns (p.76–77). The flues as a
+# brick on end, 4½ in wide and 9 or 7½ in high (Olsen's standard flue, p.81); their counts aren't
+# printed, so one inlet flue and one exit flue are entered. Walls, arch and floor 9 in of K-26
+# insulating brick: on the hot face of Olsen's anagama it resisted wood-ash slag better than hard
+# brick (p.26), at the 9–10 in of his climbing kilns' walls (p.99–100). The arch is buttressed:
+# groundhogs are dug in under earth or braced with rock (p.112), so the floor is on the ground.
+# Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
+# p.119). Spy holes: engine default, up the door's end wall under the arch.
+# Not modelled: the 18 in (faint) bag wall. No grate or ash pit is printed: the wood burns on the
+# firebox floor.
+schema: 1
+name: David Meaders's groundhog
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 5 ft
+  depth: 6 ft
+  height: 0 in # the arch springs from the floor
+  on_ground: true # dug in (p.112)
+roof:
+  type: sprung_arch
+  rise: 30 in # a half-circle on the 5 ft span: 30 in to the crown
+  buttressed: true
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 5 ft
+        length: 4 ft
+        inlet:
+          width: 4.5 in
+          height: 9 in
+draft:
+  type: cross
+  flue_wall: back
+  flue_port:
+    width: 4.5 in
+    height: 7.5 in
+  chimney:
+    height: 8 ft
+    inside:
+      width: 5 ft # a groundhog's chimney runs the kiln's width (p.111–112)
+      depth: 9 in # "9" INSIDE" (Fig 4-105)

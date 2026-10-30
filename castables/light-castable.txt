@@ -1,0 +1,295 @@
+"
+I have thought about using perlite in a castable mix. Since I already have a kiln, can I make a similar light and porous material even cheaper? I have access to cheap silica sand and was thinking about a drip process into water to make a foamy granulated product.
+May 5, 2026
+Making your own lightweight aggregate from silica sand is technically possible but more complex than a simple water-drip process. Standard silica sand does not "pop" like perlite; instead, it tends to flux into a solid green glass when heated too high, which can actually degrade the performance of a refractory.
+To achieve a foamy, lightweight material similar to perlite using your kiln and silica sand, consider these more effective DIY methods:
+
+1. Burn-Out Method (Most Reliable)
+
+Instead of trying to "expand" the sand, create porosity by mixing it with a filler that burns away in the kiln.
+• Process: Mix your silica sand with a binder (like fireclay or sodium silicate) and polystyrene beads or sawdust.
+• Result: As the kiln heats up, the beads or sawdust burn out, leaving behind a "honeycomb" or foamy structure of hardened silica/clay.
+• Pro Tip: Using polystyrene beads allows you to mold the exact shape you need before firing.
+
+2. Silica Foam Casting
+
+You can create a foamy slurry that hardens into a lightweight tile or block.
+• Slurry Mix: Combine silica sand, a binder (like egg whites or sucrose for structure), and a foaming agent.
+• Heating: Once cast and dried, fire it in your kiln to sinter the particles into a rigid, porous foam.
+
+3. Fused Silica Caution
+
+While "fused silica" is used in high-end refractories, making it at home is difficult. It requires melting high-purity quartz sand at 1800–2000°C in electric arc ovens followed by rapid cooling to prevent crystallization. Most hobbyist kilns cannot reach these temperatures.
+
+Cost-Effective Alternatives
+
+If the DIY manufacturing proves too labor-intensive, these alternatives utilize your existing materials cheaply:
+• Crushed Insulating Firebrick: If you have old or broken kiln bricks, crush them into "grog." This is a dimensionally stable, porous aggregate that can replace sand and perlite in a castable mix.
+• Pumice: If you can source it locally, pumice is naturally expanded volcanic stone. It is often cheaper than perlite because it doesn't require industrial heating to "pop".
+“Perlite has a melting temp under 1,000f and mixing it will degrade any refractory you mix it with.”
+2 years ago
+I Forge Iron
+“Once heated above a certain temperature the perlite fluxes the silica sand into a foamy green glass material so it's no good for temperatures much higher than say brass.”
+2 years ago
+The Home Foundry
+Are you planning to use this castable for a furnace liner or for kiln furniture, and what is the maximum temperature you need it to withstand?
+• 
+Facebook
+What material can be used to make crackable rocks with a hammer ...
+What is the ideal mix ratio for a castable refractory? ... The ideal mix ratio for a castable refractory is 70% fireclay or kaolin...
+• 
+The Home Foundry
+Molded Ceramic Fiber - The Home Foundry
+Another thought, make a fairly dilute low viscosity ceramic slip coating and mix in with Polystyrene beads. Mold it, dry it, and f...
+• 
+The Home Foundry
+DIY Castable Refractory Mixtures - The Home Foundry
+Hi Val, Tried the Backyard Metal Casting DIY refractory of fireclay, cement, perlite, silica sand etc.. Once heated above a certai...
+Show all
+
+You said: Peak temp would be 2400, but this is for a backup insulation idea, so would be at 2100F max. I am thinking that for cheapness I might try getting regular sawdust and processing it into wood flour. Advice on doing that?
+
+Peak temp would be 2400, but this is for a backup insulation idea, so would be at 2100F max. I am thinking that for cheapness I might try getting regular sawdust and processing it into wood flour. Advice on doing that?
+May 5, 2026
+Processing sawdust into "wood flour" for a burnout refractory mix is a proven way to create lightweight, insulating materials. Since you are targeting 2100°F–2400°F, using fine wood particles will create a "microporous" structure that is more stable and better at insulating than the large, irregular voids left by raw sawdust.
+
+1. Processing Sawdust into Wood Flour
+
+To get a consistent burnout and avoid structural cracking, you want a fine, powdery consistency (roughly 40 to 100 mesh).
+• Drying is Mandatory: Wet wood won't pulverize; it will just clump. Dry your sawdust in your kiln at a low temperature (below 250°F) or in the sun until it is bone-dry and brittle.
+• Mechanical Reduction:
+	• Hammer Mill (Best): If you have a large amount, a small electric hammer mill is the standard tool for turning shavings into flour.
+	• Blender/Food Processor (DIY): For smaller batches, a high-speed blender (like a Vitamix or Ninja) works surprisingly well for "fluffing" dry sawdust into flour.
+	• Sieving: Use a fine window screen or a kitchen sieve to separate the fine flour from the remaining "chunks." The chunks can lead to localized weak spots or "bloating" in your refractory.
+
+2. The Burnout Process (Critical Safety)
+
+Burning out wood flour inside an electric kiln is effective but requires caution to protect your equipment.
+• Atmosphere and Venting: As the wood flour carbonizes and burns, it releases gases and consumes oxygen. Ensure aggressive ventilation to the outside to prevent carbon monoxide buildup and to ensure the wood burns completely rather than just turning into soot/char.
+• Element Protection: Burning organics can produce corrosive fumes that attack electric heating elements. Try to fire your burnout pieces in a covered sagger (a ceramic container) or keep them away from direct contact with the elements.
+• Firing Schedule: Rise very slowly between 400°F and 1000°F. This is the range where the wood actually combusts. If you go too fast, the escaping gases can "bloat" or explode the castable before it fully sets.
+
+3. Mix Advice for 2400°F
+
+• Binder Selection: Since you are hitting 2400°F, do not use Portland cement; it fails above 1100°F. You must use Calcium Aluminate Cement (like Ciment Fondu) or a high-quality fireclay binder.
+• The "Flour" Ratio: A common starting point is 1 part binder to 2–3 parts silica sand, then add wood flour by volume (usually 10–30% of the total mix).
+• Shrinkage: Wood flour adds significantly to drying and firing shrinkage. Expect your pieces to shrink more than a standard dense castable.
+Proactive Follow-up: Do you have a downdraft vent on your kiln, or will you be firing this in an outdoor/well-ventilated space to handle the smoke from the burnout?
+• 
+PubMed Central (PMC) (.gov)
+Comparative Study of the Properties of Wood Flour and Wood Pellets Manufactured from ...
+Thus, this study focuses on exploring the utilization of mill residues from four wood species in Maine to produce raw materials fo...
+• 
+Aardvark Clay
+Avoiding Carbon Burnout Problems - Aardvark Clay
+Incomplete Burn Out. Incomplete burn out can result in. several firing problems including: 1. Bloating of the ware. If the tempera...
+• 
+USDA (.gov)
+WOOD FLOUR - Forest Products Laboratory
+Wood flour, in general, is neither a uniform nor a standardized product. Variation in resin content occurs within a species and th...
+Show all
+
+You said: How much is a hammer mill that would work?
+
+How much is a hammer mill that would work?
+May 5, 2026
+The price of a hammer mill depends largely on whether you need a compact "household" model for small batches or a commercial unit for high-volume wood flour production.
+
+Entry-Level & Household Models ($300 – $1,200)
+
+For DIY refractory projects, these smaller electric units are the most cost-effective. They are often marketed for "household" or "small farm" use and can process roughly 60–120 kg/h of dry material.
+• Bench-top or Small Desktop Mills: Basic 110V electric models often range from $300 to $700. A typical 1500W automatic pulverizer used for herbs and grains, which can handle small batches of dry sawdust, costs approximately $615 on eBay.
+• Small Workshop Mills: Compact units like the Household Hammer Mill CF158 are designed for home use and low initial investment. Other electric models in this tier with around 5.5 HP motors typically fall between $800 and $1,200.
+
+Mid-Range & Agricultural Models ($1,200 – $6,000)
+
+These units offer better build quality, multiple screen sizes for finer control over wood flour mesh, and higher-power motors (up to 10 HP).
+• Standard Agricultural Processing: Durable builds with basic screens typically cost $1,200 to $2,500. For example, the Electric Hammer Mill MKHM158B is a 1.5 kW biomass grinder priced around $1,440.
+• Higher Capacity/Specialized: Commercial-grade grinders for biochar and industrial hemp can cost roughly $5,960 at Pleasant Hill Grain.
+
+Commercial & Industrial Models ($9,000 – $30,000+)
+
+If you require precision wood flour at a massive scale, prices jump significantly for larger motors (30–100 HP) and integrated air-conveyor systems.
+• 3HP–30HP Commercial Units: Smaller industrial units from manufacturers like Colorado Mill Equipment range from $9,000 for a 3HP model to $11,500 for a 30HP model.
+• Heavy Industrial Systems: Large-scale machines, such as those used in pellet plants, can exceed $30,000.
+Scoping Recommendation: Since your goal is to make wood flour for a "backup" insulation idea, a small desktop pulverizer ($300–$650) or a used 1.5 kW agricultural hammer mill ($800–$1,500) is likely the best balance of cost and capability for your needs.
+Would you like to know more about the specific screen mesh sizes needed to get a fine enough "flour" for your refractory mix?
+• 
+Flat Die Pellet Mill
+Wood Hammer Mill. Wood Crusher. Sawdust Making Machines
+Household Hammer Mill CF158 The small capacity of 60-120kg/h makes this CF158 wood hammer mill most suitable for home use or small...
+• 
+Alibaba.com
+Small Hammer Mill Price - Wholesale & Factory Costs - Alibaba.com
+* certified. Portable Mini Diesel Engine Hammer Mill. $1,000-1,460. Min. order: 1 set. 3 yrs·CN. * Best Price Small Hammer Milling...
+• 
+Flat Die Pellet Mill
+Household Hammer Mill CF158
+Machines look all the same outside. So the quality will be more or less similar. Please change your views right now. Wood hammer m...
+Show all
+
+You said: sure, you said 40-100 before
+
+sure, you said 40-100 before
+May 5, 2026
+Using wood flour within the 40–100 mesh range is standard for creating the "micropores" needed in a lightweight refractory mix. The mesh size you choose directly impacts how the castable behaves during drying and its final insulating strength.
+
+Breaking Down the Sizes
+
+• 40 Mesh (Approx. 0.4 mm): This is considered "coarse" wood flour. It is much easier and faster to sift. It creates larger voids that provide better thermal insulation but can make the castable more prone to "spalling" (cracking) if the wood particles aren't evenly distributed.
+• 60–80 Mesh (Approx. 0.25–0.18 mm): This is the "sweet spot" for most DIY and commercial applications. It is fine enough to produce a smooth, consistent finish and a more uniform "honeycomb" structure after burnout.
+• 100 Mesh (Approx. 0.15 mm): This is very fine "dust." While it creates extremely uniform porosity, it can be difficult to sift at home because it tends to clog screens and create significant dust. In plastic composites, 100 mesh particles have a lower aspect ratio (more spherical), which helps with mixing but can increase the viscosity of your slurry.
+
+Practical Advice for Your Mix
+
+• Consistency is Key: Using a mix of sizes (e.g., passing everything through 40 mesh but keeping the fines) often works better than a perfectly uniform size, as it allows smaller particles to fill the gaps between larger ones, improving the raw strength of the castable before it is fired.
+• Sifting Tools: You can buy inexpensive stainless steel sifter sets on Amazon or eBay that include both 40 and 60 mesh screens. For a 2100°F backup insulation, a 40 or 50 mesh sifter is usually sufficient and much faster to work with than finer options.
+• Safety Note: Finer wood flour (80+ mesh) is highly combustible when airborne. If you are milling this yourself, ensure your hammer mill is well-sealed and you are wearing a dust mask.
+Proactive Follow-up: Would you like a recommended ratio of wood flour to sand/binder to ensure the mix stays strong enough to support itself during the burnout?
+• 
+USDA (.gov)
+Wood Flour Chapter 15
+Fig. ... tionally [7]. Most commercially manufactured wood flours used as fillers in thermo plastics are less than 425 µm (40 US s...
+• 
+USDA (.gov)
+Effect of Particle Size on Properties of Wood-Flour Reinforced Polypropylene ...
+134 · Stark and Berger. flow index, heat deflection temperature, and notched impact energy increased with increasing particle size...
+• 
+USDA (.gov)
+Wood Flour - Forest Products Laboratory
+Introduction. The term “wood flour” is somewhat ambiguous. Reineke [1] states that the termwood flour “is applied somewhat loosely...
+Show all
+
+You said: I want to get more info on a hammer mill that would be good for processing 2 or 3 yards of sawdust.
+
+I want to get more info on a hammer mill that would be good for processing 2 or 3 yards of sawdust.
+May 5, 2026
+To process 2 to 3 cubic yards of sawdust into wood flour (roughly 400–600 lbs depending on moisture and pack), a compact, mid-range electric hammer mill is your most balanced option. This volume is too high for small kitchen-style pulverizers but doesn't require massive industrial systems.
+
+Recommended Hammer Mill Tiers
+
+For this specific volume, you should look for a machine with at least 3 to 7.5 HP (2.2 – 5.5 kW).
+• Compact Workshop Models ($1,200 – $2,000): These are often marketed as "biomass shredders" or "feed grinders."
+	• The Electric Hammer Mill MKHM158B (approx. $1,445) is a common 3HP model that can handle dry sawdust at a rate suitable for processing several yards over a few hours.
+	• Models like the Meelko Hammer Mill 158 (approx. $1,995) often include a blower and cyclone, which is critical for collecting fine wood flour without creating a massive dust hazard in your workspace.
+• Small Industrial Units ($5,000 – $9,000): If you plan on doing this regularly or want faster throughput, these units offer higher durability and precision.
+	• The MKHM420C (approx. $5,000) is a heavier 22 kW unit designed for consistent biomass grinding.
+	• Premium "made in USA" models like the CME 3HP Hammermill cost around $9,000 and are built for specialized fine-grinding applications with easy-access screens for changing mesh sizes.
+
+Key Specs for 2-3 Yards
+
+• Throughput: A 3HP unit typically processes 100–300 lbs per hour. To do 3 yards (roughly 600 lbs), you’d be looking at 2–6 hours of run time, depending on how fine the screen is.
+• Collection System: Crucial. 100-mesh wood flour is extremely light and stays airborne easily. Look for a mill that includes a cyclone separator or a blower system to keep the dust contained.
+• Screen Selection: Most mills come with 3mm to 6mm screens. For 40–100 mesh wood flour, you will likely need to purchase a specialized fine-mesh screen (usually 0.5mm to 1mm) separately or ensure the mill supports "micronizing".
+
+Where to Buy
+
+• Direct Importers/Specialists: Sites like USA Pellet Mill or Pleasant Hill Grain specialize in this scale of equipment.
+• Marketplaces: eBay often has "in-stock" USA units for faster shipping on standard 3HP models.
+Proactive Follow-up: Do you have a 220V single-phase or three-phase power supply available in your shop for these larger motors?
+Try without personalization
+• 
+Alibaba.com
+Sawdust And Wood Flour Mill(999+) - Alibaba.com
+Table_title: Wood Moisture Content Requirements Table_content: header: | Specification | Typical Range | Impact on Operation | row...
+• 
+eBay
+Hammer Mill Feed Grinder - 3hp 220v 1ph Electric Powered! USA In-stock w/Support
+$1,995.00. As low as $123.51/mo with. Free shipping. Or free local pickup from Chippewa Falls, Wisconsin, United States 54729. New...
+• 
+Alibaba.com
+In Stock Hammer Mill for Making Flour Natural Stone Grinding - Alibaba.com
+Key Factors to Consider When Choosing a Hammer Mill * Capacity Requirements. Small-scale operations: Startups, home-based bakeries...
+Show all
+
+You said: I do not need to process that yardage all at once. Find info on smaller models that can do 3 yards in a week.
+
+I do not need to process that yardage all at once. Find info on smaller models that can do 3 yards in a week.
+May 5, 2026
+To process 3 cubic yards of dry sawdust over a week, you need a machine that can handle roughly 1,650 to 1,800 lbs of material. This breaks down to about 250 lbs per day or roughly 40–50 lbs per hour for a typical 5-hour daily session.
+Small, sub-2HP "household" or "laboratory" mills are ideal for this pace, offering manageable dust control and lower power requirements.
+
+Recommended "Small Scale" Hammer Mills
+
+• Benchtop/Continuous Feed Pulverizers ($300 – $600)
+	• Capacity: These "pilot-scale" units typically process 22–110 lbs per hour depending on the desired fineness.
+	• Pros: Most run on standard 110V/120V household power. They often include interchangeable screens for 60–180 mesh output, perfect for fine wood flour.
+	• Example: The DF-15 Pulverizer or similar continuous-feed models can easily tackle 250 lbs in a standard afternoon work session.
+• 1.5 HP to 2 HP Workshop Mills ($600 – $1,200)
+	• Capacity: These mid-tier hobbyist mills process roughly 110–220 lbs per hour.
+	• Pros: Higher durability than benchtop models; designed for consistent use in "homestead" or small farm applications.
+	• Example: Units found on Alibaba or eBay labeled as "Hand Hammer Mills" or "Mini Wood Crushers" often fall in this price and power bracket.
+• Laboratory-Scale Professional Mills ($2,000+ New)
+	• Capacity: Precision-engineered for uniform particle size at lower volumes.
+	• Pros: Heavy-duty construction and high-efficiency.
+	• Example: The Schutte Hammermill W-Series (Laboratory Scale) features a 2 HP motor and is specifically built for wood grinding with multiple available screen sizes.
+
+Processing Workflow for 3 Yards/Week
+
+To keep the workload manageable and the dust levels down in your shop:
+1. Daily Batching: Plan to mill approximately 8–10 cubic feet (roughly 1/3 of a yard) each day.
+2. Screen Sizing: Use a 0.5mm to 1.0mm screen in the mill to hit the 40–100 mesh range you need for the refractory.
+3. Dust Collection: Even smaller mills generate significant airborne wood flour. Ensure the model you choose has a cloth collection bag or can be easily vented into a standard shop-vac with a HEPA filter.
+Proactive Follow-up: Would you like me to find specific product links for benchtop pulverizers that include the fine-mesh screens needed for wood flour?
+Try without personalization
+• 
+Answers.com
+How much does one cubic yard of sawdust weight? - Answers.com
+How much does one cubic yard of sawdust weight? ... If from dried wood, approximately 550 to 600lbs. If from undried hardwoods, ap...
+• 
+Facebook
+Pulverizer machine/grinding machine (1.5hp electric motor) CASH ON DELIVERY ...
+Features: Precision, small size, light weight, high efficiency, no dust,clean, simple operation, beautiful shape, both power and s...
+• 
+Facebook
+HAMMER MILL/PULVERIZER/CORN MILL capacity:20-50kgperhour - Facebook
+PTPA ⚙️YN SHEET METAL WORK⚙️ ⚙️ REPAIR SERVICES⚙️ ✅Are you looking for High Quality Machine✅️ HAMMER MILL/PULVERIZER/CORN MILL ✅ca...
+Show all
+
+You said: I have plenty of power in the shop. I have a shop vac. Go forth and get a top 5 list of durable hammer mills under $800. Bonus points for wood processing and interchangeable screens.
+
+I have plenty of power in the shop. I have a shop vac. Go forth and get a top 5 list of durable hammer mills under $800. Bonus points for wood processing and interchangeable screens.
+May 5, 2026
+For processing 3 yards of sawdust into wood flour over a week, you need a continuous-feed hammer mill. Since you have a shop vac, you can easily manage the dust from these smaller units.
+Here are the top 5 durable hammer mills under $800, prioritized for wood processing and screen versatility:
+
+1. CGOLDENWALL / Moongiantgo DF-15 ($500–$650)
+
+The industry standard for small-scale "fine" grinding. It is specifically cited as being capable of pulverizing tough medicinal wood barks into fine powder.
+• Performance: Process roughly 33 lbs per hour, which easily meets your target of 40–50 lbs per day.
+• Screens: Includes 6 interchangeable sieve meshes (60 to 180 mesh) for precision wood flour.
+• Bonus: Continuous feeding via a top hopper means you don't have to stop to refill.
+• Where to find: Widely available at Amazon and eBay.
+
+2. Bravo Feed Grinder ($350–$450)
+
+A rugged, portable option from Premier 1 Supplies designed for homestead use. It is lightweight (30 lbs) but built for daily processing.
+• Performance: Can process up to 100+ lbs per hour depending on the material and screen.
+• Screens: Typically comes with screens for grain, but 1mm and 2.5mm sieves are available separately to produce the coarse wood flour needed for refractories.
+• Bonus: Runs on standard 110V power and is built to be "bulletproof" for farm use.
+• Where to find: Available at Premier 1 Supplies.
+
+3. Ercolino Feed Grinder ($550–$650)
+
+The "big brother" to the Bravo, this unit is more robust and designed for higher throughput without the footprint of an industrial mill.
+• Performance: Offers significantly higher durability for processing several yards of material back-to-back.
+• Screens: Features interchangeable screens to adjust from coarse to fine.
+• Bonus: Highly recommended by users for its durability and consistent performance in dry grinding.
+• Where to find: Premier 1 Supplies.
+
+4. Techton-Gda Water-Cooled Hammer Mill ($650–$750)
+
+This unit is designed for continuous commercial use and features a water-cooling jacket to prevent the motor from overheating during long sessions.
+• Performance: Designed for high-speed impact milling with a tungsten-steel welded hammer for extreme wear resistance against abrasive wood fibers.
+• Screens: Uses a replaceable screen system and blows fine powder directly into a collection bag (which you can adapt to your shop vac).
+• Bonus: The water-cooling system allows for longer run times, making it the best choice if you decide to push through all 3 yards in a single weekend.
+• Where to find: Often found on Amazon.
+
+5. CF158 Electric Wood Hammer Mill ($600–$800)
+
+This is a small agricultural-style mill specifically marketed for sawdust and biomass processing.
+• Performance: Capacity of 60–120 kg/h (approx. 130–260 lbs/hr), which is the fastest on this list.
+• Screens: Features a large screen area (360x160mm) for efficient sifting of wood flour.
+• Bonus: Available in single-phase 220v, which will take advantage of the high-power supply in your shop for better torque during heavy wood-grinding.
+• Where to find: Available through specialized biomass equipment sites like Biomass Pellet Machines.
+"

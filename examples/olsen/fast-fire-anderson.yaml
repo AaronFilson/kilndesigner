@@ -1,0 +1,75 @@
+# Fast-fire kiln at the Anderson Ranch, Aspen, Colorado, 1977 (Olsen, The Kiln Book, 4th ed.,
+# p.141–142): "an 18 cu. ft" Olsen fast-fire wood downdraft, built at a summer workshop. Its first
+# firing went to cone 10 down everywhere in about 10 hours (Table 5-2).
+#
+# From the book: 18 ft³, insulating brick and a bricked-up door (Fig 5-41, p.141); cone 10
+# (Table 5-2, p.142).
+# Assumed: the rest is Olsen's fast-fire design, which the caption names (examples/olsen/
+# fast-fire.yaml; p.139–143, p.204): 27 in wide and 36 in to the springline; 4½ in 2300 °F IFB
+# walls and arch, a No. 1 arch on featheredge skewbacks (1½ in per foot of span); two 13½ ×
+# 40½ in fireboxes under the floor, five courses (12½ in), 6 in above and 6½ in below 12 × 24 in
+# grates with ¾ in gaps; 4½ × 13½ in inlet flues; a 9 × 7½ in exit flue; a 9 × 9 in chimney 14 ft
+# tall, tied to the back wall. The depth isn't printed: 30 in gives the printed 18 ft³ with the
+# arch. The floor is 4½ in of super-duty hard brick, as in fast-fire.yaml: it roofs the fireboxes
+# (p.18). Aspen is 8600 ft (p.82, read by the user; cut off in the scan), so the engine raises the
+# chimney's least by 30 % (p.81). Olsen's high-altitude version of this kiln adds a sixth firebox
+# course, a 13½ × 7½ in exit flue and a 13½ × 13½ in chimney (Fig 5-36, 5-37, 5-39); the book
+# doesn't say this one had them, so the sea-level sizes are used.
+schema: 1
+name: Fast-fire wood kiln, Anderson Ranch, 1977
+units: us
+firing:
+  cone: "10" # "cone 10 down everywhere" (Table 5-2)
+chamber:
+  width: 27 in
+  depth: 30 in # not printed: gives the 18 ft³ of Fig 5-41
+  height: 36 in
+roof:
+  type: sprung_arch
+  rise: 3.375 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k23 # 2300 °F IFB, as the fast-fire design (p.140)
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k23
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 2
+        position: under
+        width: 13.5 in
+        length: 40.5 in
+        height: 6 in # above the grate: five courses, 12½ in, less the 6½ in below it
+        grate:
+          width: 12 in
+          length: 24 in
+          gap: 0.75 in
+        ash_pit: 6.5 in # the grate 6–7 in up (p.199)
+        inlet:
+          width: 13.5 in
+          height: 4.5 in
+draft:
+  type: down
+  flue_wall: back
+  run_to_chimney: 0 in # the kiln's back wall is tied to the chimney
+  flue_port:
+    width: 9 in
+    height: 7.5 in
+  chimney:
+    height: 14 ft
+    inside:
+      width: 9 in
+      depth: 9 in
+site:
+  ambient: 70 degF
+  elevation: 8600 ft # Aspen (p.82)

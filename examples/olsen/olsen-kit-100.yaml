@@ -1,0 +1,67 @@
+# Olsen 100 cu ft kit (Olsen, The Kiln Book, 4th ed., p.169–174): the biggest gas updraft kit the
+# book gives flues for, insulating brick, burners in the floor.
+#
+# From the book: 100 cu ft; inlet flues 100 sq in; exit flue at least 120 sq in, up to 140 sq in
+# (p.174); IFB 2500/2600 laid in air-set mortar (p.32); updraft, forced draft by gas pressure
+# (p.170); MR-750 and MR-100 burners, 75,000 and 100,000 BTU/hr at 8 in. w.c. (p.222); no fibre
+# (p.175).
+# Assumed: the chamber isn't dimensioned. It is a cube of 100 cu ft (Principle 1, p.74–75; p.170),
+# 55.7 in a side to the springline. Twenty MR-750s: 100 sq in of inlet in 2½ in ports, the Olsen
+# 24 kit's (olsen-kit-24, p.174: 50 sq in for ten burners); 100 sq in ÷ 4.9 sq in is 20, the most
+# Olsen puts on one manifold (p.235). They fall 10.2 in apart round the floor, inside Olsen's
+# 9–12 in (p.171). MR-750s are the smaller of the kits' burners (p.222: updrafts use more, smaller
+# burners). The exit flue at the book's 120 sq in minimum: flues in an arch are started small
+# (p.173–174); square, 11 in a side. Walls 7 in: a 4½ in course of 2600 IFB backed by a 2½ in
+# rowlock of 2500 IFB, the kits' grades (p.32) in Olsen's 7 in IFB wall (p.176). A No. 1 arch of
+# 4½ in 2600 IFB at 1½ in per foot of span, on featheredge skewbacks (p.171, p.176). A 4½ in floor
+# of 2600 IFB (p.173: floors are 4½–5 in). A hinged door (p.175–176). Natural gas on an 8 in. w.c.
+# line, the meter's normal pressure (p.227), at which p.222 rates the burners. Cone 10: 2600 IFB is
+# "excellent for cone 10" (p.25–27).
+# Not modelled: the arch's insulating cover. Olsen covers the arch with a blanket or a vermiculite
+# mix (p.176), but his kits use no fibre (p.175) and the library has no vermiculite mix.
+schema: 1
+name: Olsen 100 cu ft kit
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 55.7 in
+  depth: 55.7 in
+  height: 55.7 in
+roof:
+  type: sprung_arch
+  rise: 6.97 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: hinged
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k25
+      thickness: 2.5 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      model: GACO MR750
+      count: 20
+      wall: floor
+      port:
+        diameter: 2.5 in
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: up
+  flue_port:
+    width: 11 in
+    height: 11 in

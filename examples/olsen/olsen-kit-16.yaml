@@ -1,0 +1,68 @@
+# Olsen 16 kit, Bob and Sandy Kinzie's (Olsen, The Kiln Book, 4th ed., p.169–173): a 16 cu ft
+# gas updraft kit, insulating brick, burners in the floor, 25 % taller than wide. It "fires quite
+# evenly" (p.170).
+#
+# From the book: 16 cu ft, height 25 % greater than width (p.170, p.173); IFB 2500/2600 laid in
+# air-set mortar (p.32); updraft, forced draft by gas pressure (p.170); exit flue 40½ sq in to
+# start (p.173); MR-750 and MR-100 burners, 75,000 and 100,000 BTU/hr at 8 in. w.c. (p.222); no
+# fibre (p.175).
+# Assumed: the chamber isn't dimensioned. It holds 16 cu ft with the width equal to the depth and
+# the height 1¼ times the width (p.170): 28.1 × 28.1 × 35.1 in to the springline. Eight MR-750s:
+# the inlet equal to the exit flue, "more than adequate" up to 40 cu ft (p.173), in 2½ in ports,
+# the Olsen 24 kit's (olsen-kit-24, p.174: 50 sq in for ten burners); 40½ sq in ÷ 4.9 sq in is 8.
+# They fall 11.8 in apart round the floor, inside Olsen's 9–12 in (p.171). MR-750s are the smaller
+# of the kits' burners (p.222: updrafts use more, smaller burners). Walls 7 in: a 4½ in course of
+# 2600 IFB backed by a 2½ in rowlock of 2500 IFB, the kits' grades (p.32) in Olsen's 7 in IFB wall
+# (p.176). A No. 1 arch of 4½ in 2600 IFB at 1½ in per foot of span, on featheredge skewbacks
+# (p.171, p.176). A 4½ in floor of 2600 IFB (p.173: floors are 4½–5 in). A hinged door
+# (p.175–176). Natural gas on an 8 in. w.c. line, the meter's normal pressure (p.227), at which
+# p.222 rates the burners. Cone 10: 2600 IFB is "excellent for cone 10" (p.25–27). The exit flue is
+# one brick on end, 9 × 4½ in, the standard flue (p.81), which is the book's 40½ sq in.
+# Not modelled: the arch's insulating cover. Olsen covers the arch with a blanket or a vermiculite
+# mix (p.176), but his kits use no fibre (p.175) and the library has no vermiculite mix.
+schema: 1
+name: Olsen 16 kit
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 28.1 in
+  depth: 28.1 in
+  height: 35.1 in # 1¼ × the width (p.170)
+roof:
+  type: sprung_arch
+  rise: 3.52 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: hinged
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k25
+      thickness: 2.5 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      model: GACO MR750
+      count: 8
+      wall: floor
+      port:
+        diameter: 2.5 in
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: up
+  flue_port:
+    width: 9 in
+    height: 4.5 in

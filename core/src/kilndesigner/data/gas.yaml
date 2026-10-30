@@ -1,0 +1,96 @@
+# Gas kiln reference data. Every table traces to docs/research/combustion-and-masonry.md.
+
+# Ward Burner Systems Data Guide: BTU per cubic foot of kiln per hour (§3.1, [S28]).
+# The high end of each range gives about a 6–7 hour firing; the low end about 14–18 hours.
+ward_btu_per_ft3_hr:
+  source: "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]"
+  columns: ["06", "6", "10"]
+  walls:
+    hard_brick: [[12000, 17000], [14000, 18500], [16000, 20000]]
+    insulating_brick: [[6000, 10000], [8000, 13000], [10000, 16000]]
+    ceramic_fibre: [[4000, 6000], [6000, 8000], [7000, 10000]]
+
+# Olsen's Rule 1, BTU per ft³ of kiln per hour at peak (4th ed. p.226): insulating brick about
+# 10,000, with 7,000 the least (p.227–228); dense firebrick 16,000 minimum, 19,000 maximum. He
+# calls most gas kilns "completely overpowered": he fired a 36 ft³ dense cross-draft on 6,000 in
+# 12–15 hours, and a 36 ft³ IFB updraft "fires easily" in 8 hours on 10,000 (p.226).
+olsen_btu_per_ft3_hr:
+  source: "Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)"
+  insulating_brick: [7000, 10000]
+  hard_brick: [16000, 19000]
+
+# Natural gas, as the orifice tables Olsen prints take it (p.230): 1000 BTU/ft³, SG 0.64.
+natural_gas:
+  source: "Olsen, The Kiln Book, 4th ed., p.230; combustion-and-masonry.md §1.1a"
+  btu_per_ft3: 1000
+  specific_gravity: 0.64
+
+# Burner ratings, BTU/hr on propane by supply pressure in psi (11 in. w.c. = 0.397 psi),
+# with prices checked 2026-10-21 (§3.2 [S27], §3.3 [S22]). curve_from_psi is the lowest
+# pressure whose rating lies on the 5–20 psi ratings' √pressure curve, so the same orifice
+# (derived, §3.2): GACO's 11 in. w.c. ratings are about twice it, another orifice.
+# natural_gas: the burner's rating on natural gas at a low-pressure line, as Olsen gives it
+# (p.222: MR-750 and MR-100, 75,000 and 100,000 BTU/hr at 8 in. w.c.). Through one orifice the
+# output grows with √pressure (p.216).
+venturi_burners:
+  source: "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]"
+  natural_gas_source: "Olsen, The Kiln Book, 4th ed., p.222 (ratings), p.216 (output ∝ √pressure)"
+  models:
+    Ransome B1: {curve_from_psi: 0.397, price: 165.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [5900, 9700, 13900, 21600, 30700, 43000]}
+    Ransome B2: {curve_from_psi: 0.397, price: 219.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [9000, 14800, 20900, 33200, 46700, 66400]}
+    Ransome B3: {curve_from_psi: 0.397, price: 245.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [34200, 55300, 77500, 123000, 175900, 246000]}
+    Ransome B4: {curve_from_psi: 0.397, price: 295.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [55300, 89800, 126700, 200500, 286600, 403400]}
+    Ransome B5: {curve_from_psi: 0.397, price: 395.00, psi: [0.397, 1, 2, 5, 10, 20], btu_hr: [89800, 145200, 205400, 324700, 462400, 649400]}
+    GACO MR750: {curve_from_psi: 2, price: 99.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [72000, 76840, 121570, 172000, 210500, 243150], natural_gas: {in_wc: 8, btu_hr: 75000}}
+    GACO MR100: {curve_from_psi: 2, price: 159.95, psi: [0.397, 2, 5, 10, 15, 20], btu_hr: [94000, 96600, 152830, 216300, 264650, 305660], natural_gas: {in_wc: 8, btu_hr: 100000}}
+power_burners:
+  source: "Ward Burner Systems power burners, rated at 11 in. w.c. propane; combustion-and-masonry.md §3.3 [S22]"
+  models:
+    MB200: {price: 1229, btu_hr: 270000}
+    MB300: {price: 1229, btu_hr: 395000}
+    MB400: {price: 1229, btu_hr: 475000}
+    MB500: {price: 1389, btu_hr: 595000}
+    MB600: {price: 1389, btu_hr: 695000}
+    MB700: {price: 1389, btu_hr: 795000}
+
+# 100 lb cylinder, maximum continuous draw (BTU/hr) by pounds left and air temperature
+# (Flame Engineering; §2.1 [S3]). The basis (lowest cylinder pressure) is not stated.
+cylinder_100lb_optimistic:
+  source: "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+  temps_f: [0, 20, 40, 60, 70]
+  rows:
+    100: [113000, 167000, 214000, 277000, 300000]
+    90: [104000, 152000, 200000, 247000, 277000]
+    80: [94000, 137000, 180000, 214000, 236000]
+    70: [83000, 122000, 160000, 199000, 214000]
+    60: [75000, 109000, 140000, 176000, 192000]
+    50: [64000, 94000, 125000, 154000, 167000]
+    40: [55000, 79000, 105000, 131000, 141000]
+    30: [45000, 66000, 85000, 107000, 118000]
+    20: [36000, 51000, 68000, 83000, 92000]
+    10: [28000, 38000, 49000, 60000, 66000]
+
+# Vertical 100 lb cylinder, 25% full, cylinder kept at or above 10 psi (§2.2 [S10, S11]).
+cylinder_100lb_conservative:
+  source: "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
+  temps_f: [0, 20, 40, 60]
+  btu_hr: [25000, 43300, 61500, 79700]
+
+# ASME tanks, 1/3 full, "maximum continuous BTU/hr", a conservative generalization (§2.4 [S13],
+# secondary).
+tanks_one_third_full:
+  source: "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13]"
+  temps_f: [0, 20, 40, 60, 70]
+  gallons:
+    120: [129600, 188640, 247680, 308160, 338400]
+    150: [146880, 213790, 280700, 349200, 383520]
+    250: [253800, 369400, 485000, 603480, 662700]
+    325: [321300, 467670, 614000, 763900, 838900]
+    500: [396270, 567700, 757300, 942240, 1034700]
+    1000: [708480, 1031230, 1353980, 1684600, 1849900]
+
+# Pure propane vapour pressure, psig (NIST, §1.2 [S6]).
+vapour_pressure:
+  source: "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]"
+  temps_f: [-20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+  psig: [10.7, 16.7, 23.7, 31.8, 41.1, 51.8, 63.9, 77.6, 93.0, 110.2, 129.3, 150.5, 173.9]

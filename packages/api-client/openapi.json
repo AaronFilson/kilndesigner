@@ -1,0 +1,3102 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Kilndesigner",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_api_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "type": "object",
+                  "title": "Response Health Api Health Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schema": {
+      "get": {
+        "summary": "Design Schema",
+        "description": "The design file's JSON Schema: the generated forms are built from it.",
+        "operationId": "design_schema_api_schema_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Design Schema Api Schema Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/templates": {
+      "get": {
+        "summary": "List Templates",
+        "description": "The kinds of kiln a design can start from, each a complete design.",
+        "operationId": "list_templates_api_templates_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Template"
+                  },
+                  "type": "array",
+                  "title": "Response List Templates Api Templates Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/library": {
+      "get": {
+        "summary": "Library",
+        "description": "What the forms offer: the materials library, alloys, cones and burners.",
+        "operationId": "library_api_library_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Library"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs/check": {
+      "post": {
+        "summary": "Check Design",
+        "description": "Check a design without saving it, and return it as both a document and YAML: the form and\nthe YAML tab trade the design through here.",
+        "operationId": "check_design_api_designs_check_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckedDesign"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs": {
+      "get": {
+        "summary": "List Designs",
+        "operationId": "list_designs_api_designs_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/DesignSummary"
+                  },
+                  "type": "array",
+                  "title": "Response List Designs Api Designs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create Design",
+        "operationId": "create_design_api_designs_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Design"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs/{design_id}": {
+      "get": {
+        "summary": "Get Design",
+        "operationId": "get_design_api_designs__design_id__get",
+        "parameters": [
+          {
+            "name": "design_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Design Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Design"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Design",
+        "operationId": "delete_design_api_designs__design_id__delete",
+        "parameters": [
+          {
+            "name": "design_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Design Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs/{design_id}/versions": {
+      "post": {
+        "summary": "Save Version",
+        "description": "Save a new version. Saving the latest version again, unchanged, adds nothing.",
+        "operationId": "save_version_api_designs__design_id__versions_post",
+        "parameters": [
+          {
+            "name": "design_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Design Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DesignInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Design"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/designs/{design_id}/versions/{number}": {
+      "get": {
+        "summary": "Get Version",
+        "operationId": "get_version_api_designs__design_id__versions__number__get",
+        "parameters": [
+          {
+            "name": "design_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Design Id"
+            }
+          },
+          {
+            "name": "number",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Version"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builds/{key}": {
+      "post": {
+        "summary": "Start Build",
+        "description": "Build a design version by its build key. A build already made is returned as it is.",
+        "operationId": "start_build_api_builds__key__post",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get Build",
+        "operationId": "get_build_api_builds__key__get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Build"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builds/{key}/report": {
+      "get": {
+        "summary": "Build Report",
+        "description": "The build's report, with its working and findings.",
+        "operationId": "build_report_api_builds__key__report_get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Report"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/builds/{key}/files/{name}": {
+      "get": {
+        "summary": "Build File",
+        "description": "A file the build wrote, by its path in the build: ``plans.pdf``, ``drawings/view-1.svg``.\nOnly the paths the build recorded can be fetched.",
+        "operationId": "build_file_api_builds__key__files__name__get",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BatchLine": {
+        "properties": {
+          "ingredient": {
+            "type": "string",
+            "title": "Ingredient"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "mass": {
+            "type": "string",
+            "title": "Mass"
+          },
+          "share": {
+            "type": "string",
+            "title": "Share"
+          },
+          "volume": {
+            "type": "string",
+            "title": "Volume"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingredient",
+          "name",
+          "mass",
+          "share",
+          "volume",
+          "source"
+        ],
+        "title": "BatchLine"
+      },
+      "Bom": {
+        "properties": {
+          "lines": {
+            "items": {
+              "$ref": "#/components/schemas/BomLine"
+            },
+            "type": "array",
+            "title": "Lines"
+          },
+          "total": {
+            "type": "number",
+            "title": "Total"
+          },
+          "prices_checked": {
+            "type": "string",
+            "title": "Prices Checked"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lines",
+          "total",
+          "prices_checked",
+          "findings"
+        ],
+        "title": "Bom"
+      },
+      "BomLine": {
+        "properties": {
+          "item": {
+            "type": "string",
+            "title": "Item"
+          },
+          "needed": {
+            "type": "string",
+            "title": "Needed"
+          },
+          "buy": {
+            "type": "string",
+            "title": "Buy"
+          },
+          "unit_price": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit Price"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "priced_as": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Priced As"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item",
+          "needed",
+          "buy",
+          "unit_price",
+          "cost",
+          "priced_as",
+          "source"
+        ],
+        "title": "BomLine"
+      },
+      "Build": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BuildStatus"
+          },
+          "files": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Files"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "status",
+          "files",
+          "notes",
+          "error",
+          "created_at",
+          "finished_at"
+        ],
+        "title": "Build"
+      },
+      "BuildStatus": {
+        "type": "string",
+        "enum": [
+          "queued",
+          "running",
+          "done",
+          "failed"
+        ],
+        "title": "BuildStatus"
+      },
+      "BurnerOption": {
+        "properties": {
+          "model": {
+            "type": "string",
+            "title": "Model"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "venturi",
+              "power"
+            ],
+            "title": "Type"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "pressure": {
+            "type": "string",
+            "title": "Pressure"
+          },
+          "each": {
+            "type": "string",
+            "title": "Each"
+          },
+          "total_cost": {
+            "type": "number",
+            "title": "Total Cost"
+          }
+        },
+        "type": "object",
+        "required": [
+          "model",
+          "type",
+          "count",
+          "pressure",
+          "each",
+          "total_cost"
+        ],
+        "title": "BurnerOption"
+      },
+      "CastableReport": {
+        "properties": {
+          "mix": {
+            "$ref": "#/components/schemas/MixAnalysis"
+          },
+          "placed": {
+            "type": "string",
+            "title": "Placed"
+          },
+          "batches": {
+            "type": "integer",
+            "title": "Batches"
+          },
+          "totals": {
+            "items": {
+              "$ref": "#/components/schemas/IngredientTotal"
+            },
+            "type": "array",
+            "title": "Totals"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/LayerUse"
+            },
+            "type": "array",
+            "title": "Layers"
+          },
+          "first_firing": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "First Firing"
+          },
+          "schedule": {
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            },
+            "type": "array",
+            "title": "Schedule"
+          },
+          "schedule_hours": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Schedule Hours"
+          },
+          "steps": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Steps"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mix",
+          "placed",
+          "batches",
+          "totals",
+          "layers",
+          "first_firing",
+          "schedule",
+          "schedule_hours",
+          "steps",
+          "findings"
+        ],
+        "title": "CastableReport"
+      },
+      "Cell": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "meaning": {
+            "type": "string",
+            "title": "Meaning"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value"
+          },
+          "text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Text"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit",
+            "default": ""
+          },
+          "label": {
+            "type": "string",
+            "title": "Label",
+            "default": ""
+          },
+          "scale": {
+            "type": "number",
+            "title": "Scale",
+            "default": 1.0
+          },
+          "offset": {
+            "type": "number",
+            "title": "Offset",
+            "default": 0.0
+          },
+          "expr": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expr"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "meaning"
+        ],
+        "title": "Cell",
+        "description": "One row: an input (no ``expr``) or a formula over the rows above. A fact that isn't a number\nhas ``text`` and no ``value``."
+      },
+      "Check": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "cells": {
+            "items": {
+              "$ref": "#/components/schemas/Cell"
+            },
+            "type": "array",
+            "title": "Cells"
+          },
+          "requirements": {
+            "items": {
+              "$ref": "#/components/schemas/Requirement"
+            },
+            "type": "array",
+            "title": "Requirements"
+          },
+          "rule": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rule"
+          },
+          "rule_holds": {
+            "type": "boolean",
+            "title": "Rule Holds",
+            "default": true
+          },
+          "rule_level": {
+            "type": "string",
+            "enum": [
+              "warning",
+              "error"
+            ],
+            "title": "Rule Level",
+            "default": "error"
+          },
+          "lever": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Lever"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pass",
+              "warning",
+              "error"
+            ],
+            "title": "Status"
+          },
+          "solve": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Solve"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "cells",
+          "requirements",
+          "status"
+        ],
+        "title": "Check",
+        "description": "Why a finding was raised: its sheet, the requirements, and what would change the result."
+      },
+      "CheckedDesign": {
+        "properties": {
+          "document": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Document"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "document",
+          "source"
+        ],
+        "title": "CheckedDesign",
+        "description": "A valid design, both ways: the JSON document the forms edit and the YAML the tab shows."
+      },
+      "CostPoint": {
+        "properties": {
+          "temperature_f": {
+            "type": "number",
+            "title": "Temperature F"
+          },
+          "temperature_c": {
+            "type": "number",
+            "title": "Temperature C"
+          },
+          "electric_per_kwh": {
+            "type": "number",
+            "title": "Electric Per Kwh"
+          },
+          "propane_per_kwh": {
+            "type": "number",
+            "title": "Propane Per Kwh"
+          },
+          "propane_reducing_per_kwh": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Propane Reducing Per Kwh"
+          },
+          "element_surplus_kw": {
+            "type": "number",
+            "title": "Element Surplus Kw"
+          }
+        },
+        "type": "object",
+        "required": [
+          "temperature_f",
+          "temperature_c",
+          "electric_per_kwh",
+          "propane_per_kwh",
+          "propane_reducing_per_kwh",
+          "element_surplus_kw"
+        ],
+        "title": "CostPoint"
+      },
+      "CutLine": {
+        "properties": {
+          "material": {
+            "type": "string",
+            "title": "Material"
+          },
+          "cut": {
+            "type": "string",
+            "title": "Cut"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "material",
+          "cut",
+          "count"
+        ],
+        "title": "CutLine"
+      },
+      "Design": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "versions": {
+            "items": {
+              "$ref": "#/components/schemas/VersionSummary"
+            },
+            "type": "array",
+            "title": "Versions"
+          },
+          "latest": {
+            "$ref": "#/components/schemas/Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at",
+          "versions",
+          "latest"
+        ],
+        "title": "Design"
+      },
+      "DesignInput": {
+        "properties": {
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "document": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document"
+          }
+        },
+        "type": "object",
+        "title": "DesignInput",
+        "description": "A design to save: as YAML (the file, or the YAML tab) or as a JSON document (the forms)."
+      },
+      "DesignSummary": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DesignSummary"
+      },
+      "ElectricDesign": {
+        "properties": {
+          "alloy": {
+            "type": "string",
+            "title": "Alloy"
+          },
+          "supply": {
+            "type": "string",
+            "title": "Supply"
+          },
+          "continuous_current_limit": {
+            "type": "string",
+            "title": "Continuous Current Limit"
+          },
+          "installed_power": {
+            "type": "string",
+            "title": "Installed Power"
+          },
+          "installed_watts": {
+            "type": "number",
+            "title": "Installed Watts"
+          },
+          "line_current": {
+            "type": "string",
+            "title": "Line Current"
+          },
+          "elements": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ElementResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "power_per_volume": {
+            "type": "string",
+            "title": "Power Per Volume"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "alloy",
+          "supply",
+          "continuous_current_limit",
+          "installed_power",
+          "installed_watts",
+          "line_current",
+          "elements",
+          "power_per_volume",
+          "working",
+          "findings"
+        ],
+        "title": "ElectricDesign"
+      },
+      "ElementResult": {
+        "properties": {
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "wiring": {
+            "type": "string",
+            "title": "Wiring"
+          },
+          "gauge": {
+            "type": "string",
+            "title": "Gauge"
+          },
+          "wire_diameter": {
+            "type": "string",
+            "title": "Wire Diameter"
+          },
+          "length_each": {
+            "type": "string",
+            "title": "Length Each"
+          },
+          "cold_resistance_each": {
+            "type": "string",
+            "title": "Cold Resistance Each"
+          },
+          "hot_resistance_each": {
+            "type": "string",
+            "title": "Hot Resistance Each"
+          },
+          "power_each": {
+            "type": "string",
+            "title": "Power Each"
+          },
+          "current_each": {
+            "type": "string",
+            "title": "Current Each"
+          },
+          "surface_load": {
+            "type": "string",
+            "title": "Surface Load"
+          },
+          "coil_outside_diameter": {
+            "type": "string",
+            "title": "Coil Outside Diameter"
+          },
+          "coil_outside_diameter_mm": {
+            "type": "number",
+            "title": "Coil Outside Diameter Mm"
+          },
+          "turns_each": {
+            "type": "string",
+            "title": "Turns Each"
+          },
+          "close_wound_length_each": {
+            "type": "string",
+            "title": "Close Wound Length Each"
+          },
+          "stretched_length_each": {
+            "type": "string",
+            "title": "Stretched Length Each"
+          },
+          "pitch": {
+            "type": "string",
+            "title": "Pitch"
+          },
+          "groove_rows": {
+            "type": "integer",
+            "title": "Groove Rows"
+          },
+          "groove_length_each": {
+            "type": "string",
+            "title": "Groove Length Each"
+          },
+          "wire_mass_total": {
+            "type": "string",
+            "title": "Wire Mass Total"
+          }
+        },
+        "type": "object",
+        "required": [
+          "count",
+          "wiring",
+          "gauge",
+          "wire_diameter",
+          "length_each",
+          "cold_resistance_each",
+          "hot_resistance_each",
+          "power_each",
+          "current_each",
+          "surface_load",
+          "coil_outside_diameter",
+          "coil_outside_diameter_mm",
+          "turns_each",
+          "close_wound_length_each",
+          "stretched_length_each",
+          "pitch",
+          "groove_rows",
+          "groove_length_each",
+          "wire_mass_total"
+        ],
+        "title": "ElementResult"
+      },
+      "Face": {
+        "type": "string",
+        "enum": [
+          "left",
+          "right",
+          "back",
+          "front",
+          "floor",
+          "roof"
+        ]
+      },
+      "FaceResult": {
+        "properties": {
+          "face": {
+            "$ref": "#/components/schemas/Face"
+          },
+          "inside_area": {
+            "type": "string",
+            "title": "Inside Area"
+          },
+          "outside_area": {
+            "type": "string",
+            "title": "Outside Area"
+          },
+          "heat_loss": {
+            "type": "string",
+            "title": "Heat Loss"
+          },
+          "surface_temperature": {
+            "type": "string",
+            "title": "Surface Temperature"
+          },
+          "layers": {
+            "items": {
+              "$ref": "#/components/schemas/LayerResult"
+            },
+            "type": "array",
+            "title": "Layers"
+          }
+        },
+        "type": "object",
+        "required": [
+          "face",
+          "inside_area",
+          "outside_area",
+          "heat_loss",
+          "surface_temperature",
+          "layers"
+        ],
+        "title": "FaceResult"
+      },
+      "Finding": {
+        "properties": {
+          "level": {
+            "type": "string",
+            "enum": [
+              "info",
+              "warning",
+              "error"
+            ],
+            "title": "Level"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "check": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Check"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "level",
+          "message"
+        ],
+        "title": "Finding",
+        "description": "Something the builder must know: a limit exceeded, an assumption, a safety note. A warning\nor an error carries the check that raised it: its formulas, inputs and sources (ADR 0013)."
+      },
+      "FireDesign": {
+        "properties": {
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
+          "fireboxes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Fireboxes"
+          },
+          "grate_area": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grate Area"
+          },
+          "grate_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Grate Area In2"
+          },
+          "chimney_height": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height"
+          },
+          "chimney_height_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height In"
+          },
+          "chimney_range": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Range"
+          },
+          "chimney_area_in2": {
+            "type": "number",
+            "title": "Chimney Area In2"
+          },
+          "flue_area": {
+            "type": "string",
+            "title": "Flue Area"
+          },
+          "flue_area_in2": {
+            "type": "number",
+            "title": "Flue Area In2"
+          },
+          "inlet_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inlet Area In2"
+          },
+          "full_fire_btu_hr": {
+            "type": "number",
+            "title": "Full Fire Btu Hr"
+          },
+          "draft": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Draft"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fuel",
+          "fireboxes",
+          "grate_area",
+          "grate_area_in2",
+          "chimney_height",
+          "chimney_height_in",
+          "chimney_range",
+          "chimney_area_in2",
+          "flue_area",
+          "flue_area_in2",
+          "inlet_area_in2",
+          "full_fire_btu_hr",
+          "draft",
+          "working",
+          "findings"
+        ],
+        "title": "FireDesign"
+      },
+      "FrameDesign": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "angle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Angle"
+          },
+          "angle_leg_in": {
+            "type": "number",
+            "title": "Angle Leg In"
+          },
+          "angle_t_in": {
+            "type": "number",
+            "title": "Angle T In"
+          },
+          "rod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rod"
+          },
+          "rod_d_in": {
+            "type": "number",
+            "title": "Rod D In"
+          },
+          "thrust": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thrust"
+          },
+          "members": {
+            "items": {
+              "$ref": "#/components/schemas/Member"
+            },
+            "type": "array",
+            "title": "Members"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          },
+          "posts": {
+            "type": "integer",
+            "title": "Posts",
+            "default": 2
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "angle",
+          "angle_leg_in",
+          "angle_t_in",
+          "rod",
+          "rod_d_in",
+          "thrust",
+          "members",
+          "working",
+          "findings"
+        ],
+        "title": "FrameDesign"
+      },
+      "GasDesign": {
+        "properties": {
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
+          "construction": {
+            "type": "string",
+            "title": "Construction"
+          },
+          "ward_volume": {
+            "type": "string",
+            "title": "Ward Volume"
+          },
+          "demand_range": {
+            "type": "string",
+            "title": "Demand Range"
+          },
+          "design_input": {
+            "type": "string",
+            "title": "Design Input"
+          },
+          "design_input_btu_hr": {
+            "type": "number",
+            "title": "Design Input Btu Hr"
+          },
+          "full_fire_btu_hr": {
+            "type": "number",
+            "title": "Full Fire Btu Hr"
+          },
+          "propane_at_full_fire": {
+            "type": "string",
+            "title": "Propane At Full Fire"
+          },
+          "burners": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/BurnerOption"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "burner_options": {
+            "items": {
+              "$ref": "#/components/schemas/BurnerOption"
+            },
+            "type": "array",
+            "title": "Burner Options"
+          },
+          "supply_temperature": {
+            "type": "string",
+            "title": "Supply Temperature"
+          },
+          "supply": {
+            "items": {
+              "$ref": "#/components/schemas/SupplyCase"
+            },
+            "type": "array",
+            "title": "Supply"
+          },
+          "tank_suggestion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tank Suggestion"
+          },
+          "chimney_height": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height"
+          },
+          "chimney_height_in": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height In"
+          },
+          "flue_area": {
+            "type": "string",
+            "title": "Flue Area"
+          },
+          "flue_area_in2": {
+            "type": "number",
+            "title": "Flue Area In2"
+          },
+          "inlet_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inlet Area In2"
+          },
+          "draft": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Draft"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "fuel",
+          "construction",
+          "ward_volume",
+          "demand_range",
+          "design_input",
+          "design_input_btu_hr",
+          "full_fire_btu_hr",
+          "propane_at_full_fire",
+          "burners",
+          "burner_options",
+          "supply_temperature",
+          "supply",
+          "tank_suggestion",
+          "chimney_height",
+          "chimney_height_in",
+          "flue_area",
+          "flue_area_in2",
+          "inlet_area_in2",
+          "draft",
+          "working",
+          "findings"
+        ],
+        "title": "GasDesign"
+      },
+      "HeatLoss": {
+        "properties": {
+          "top_temperature": {
+            "type": "string",
+            "title": "Top Temperature"
+          },
+          "ambient": {
+            "type": "string",
+            "title": "Ambient"
+          },
+          "total": {
+            "type": "string",
+            "title": "Total"
+          },
+          "total_watts": {
+            "type": "number",
+            "title": "Total Watts"
+          },
+          "faces": {
+            "items": {
+              "$ref": "#/components/schemas/FaceResult"
+            },
+            "type": "array",
+            "title": "Faces"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "top_temperature",
+          "ambient",
+          "total",
+          "total_watts",
+          "faces",
+          "working",
+          "findings"
+        ],
+        "title": "HeatLoss"
+      },
+      "HybridAnalysis": {
+        "properties": {
+          "element_power": {
+            "type": "string",
+            "title": "Element Power"
+          },
+          "electric_ceiling": {
+            "type": "string",
+            "title": "Electric Ceiling"
+          },
+          "electric_ceiling_c": {
+            "type": "number",
+            "title": "Electric Ceiling C"
+          },
+          "cost_crossover": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Crossover"
+          },
+          "switch_over": {
+            "type": "string",
+            "title": "Switch Over"
+          },
+          "switch_over_c": {
+            "type": "number",
+            "title": "Switch Over C"
+          },
+          "switch_over_reason": {
+            "type": "string",
+            "title": "Switch Over Reason"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/CostPoint"
+            },
+            "type": "array",
+            "title": "Points"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "element_power",
+          "electric_ceiling",
+          "electric_ceiling_c",
+          "cost_crossover",
+          "switch_over",
+          "switch_over_c",
+          "switch_over_reason",
+          "points",
+          "working",
+          "findings"
+        ],
+        "title": "HybridAnalysis"
+      },
+      "IngredientTotal": {
+        "properties": {
+          "ingredient": {
+            "type": "string",
+            "title": "Ingredient"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "amount": {
+            "type": "string",
+            "title": "Amount"
+          },
+          "amount_lb": {
+            "type": "number",
+            "title": "Amount Lb"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          }
+        },
+        "type": "object",
+        "required": [
+          "ingredient",
+          "name",
+          "amount",
+          "amount_lb",
+          "cost"
+        ],
+        "title": "IngredientTotal"
+      },
+      "InvalidDesign": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "InvalidDesign"
+      },
+      "LayerResult": {
+        "properties": {
+          "material": {
+            "type": "string",
+            "title": "Material"
+          },
+          "thickness": {
+            "type": "string",
+            "title": "Thickness"
+          },
+          "hot_side": {
+            "type": "string",
+            "title": "Hot Side"
+          },
+          "cold_side": {
+            "type": "string",
+            "title": "Cold Side"
+          },
+          "hot_side_k": {
+            "type": "number",
+            "title": "Hot Side K"
+          },
+          "cold_side_k": {
+            "type": "number",
+            "title": "Cold Side K"
+          }
+        },
+        "type": "object",
+        "required": [
+          "material",
+          "thickness",
+          "hot_side",
+          "cold_side",
+          "hot_side_k",
+          "cold_side_k"
+        ],
+        "title": "LayerResult"
+      },
+      "LayerUse": {
+        "properties": {
+          "face": {
+            "type": "string",
+            "title": "Face"
+          },
+          "thickness": {
+            "type": "string",
+            "title": "Thickness"
+          },
+          "hot_side": {
+            "type": "string",
+            "title": "Hot Side"
+          },
+          "cold_side": {
+            "type": "string",
+            "title": "Cold Side"
+          },
+          "notes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "face",
+          "thickness",
+          "hot_side",
+          "cold_side",
+          "notes"
+        ],
+        "title": "LayerUse"
+      },
+      "Lever": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "lo": {
+            "type": "number",
+            "title": "Lo"
+          },
+          "hi": {
+            "type": "number",
+            "title": "Hi"
+          },
+          "step": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Step"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "lo",
+          "hi"
+        ],
+        "title": "Lever",
+        "description": "The input the builder controls, and the range (SI) to look for a change of state in."
+      },
+      "Library": {
+        "properties": {
+          "materials": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryMaterial"
+            },
+            "type": "array",
+            "title": "Materials"
+          },
+          "ingredients": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryIngredient"
+            },
+            "type": "array",
+            "title": "Ingredients"
+          },
+          "alloys": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntry"
+            },
+            "type": "array",
+            "title": "Alloys"
+          },
+          "cones": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Cones"
+          },
+          "cone_rates": {
+            "additionalProperties": {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            "type": "object",
+            "title": "Cone Rates"
+          },
+          "burners": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntry"
+            },
+            "type": "array",
+            "title": "Burners"
+          }
+        },
+        "type": "object",
+        "required": [
+          "materials",
+          "ingredients",
+          "alloys",
+          "cones",
+          "cone_rates",
+          "burners"
+        ],
+        "title": "Library",
+        "description": "What a design can choose from: materials, element alloys, cones, burners and what a\ncastable can be mixed from."
+      },
+      "LibraryEntry": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name"
+        ],
+        "title": "LibraryEntry"
+      },
+      "LibraryIngredient": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "type": "string",
+            "title": "Role"
+          },
+          "needs_density": {
+            "type": "boolean",
+            "title": "Needs Density"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "role",
+          "needs_density"
+        ],
+        "title": "LibraryIngredient"
+      },
+      "LibraryMaterial": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "max_service": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Service"
+          },
+          "density": {
+            "type": "string",
+            "title": "Density"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "max_service",
+          "density"
+        ],
+        "title": "LibraryMaterial"
+      },
+      "Masonry": {
+        "properties": {
+          "quantities": {
+            "items": {
+              "$ref": "#/components/schemas/Quantity"
+            },
+            "type": "array",
+            "title": "Quantities"
+          },
+          "cut_list": {
+            "items": {
+              "$ref": "#/components/schemas/CutLine"
+            },
+            "type": "array",
+            "title": "Cut List"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quantities",
+          "cut_list",
+          "findings"
+        ],
+        "title": "Masonry"
+      },
+      "Member": {
+        "properties": {
+          "part": {
+            "type": "string",
+            "title": "Part"
+          },
+          "steel": {
+            "type": "string",
+            "title": "Steel"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          },
+          "length_in": {
+            "type": "number",
+            "title": "Length In"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "part",
+          "steel",
+          "count",
+          "length_in"
+        ],
+        "title": "Member",
+        "description": "A run of steel the frame needs: what it is, how many and how long."
+      },
+      "MixAnalysis": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "batch": {
+            "items": {
+              "$ref": "#/components/schemas/BatchLine"
+            },
+            "type": "array",
+            "title": "Batch"
+          },
+          "dry_mass": {
+            "type": "string",
+            "title": "Dry Mass"
+          },
+          "water": {
+            "type": "string",
+            "title": "Water"
+          },
+          "water_share": {
+            "type": "string",
+            "title": "Water Share"
+          },
+          "foam": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Foam"
+          },
+          "cast_volume": {
+            "type": "string",
+            "title": "Cast Volume"
+          },
+          "wet_density": {
+            "type": "string",
+            "title": "Wet Density"
+          },
+          "quart_weighs": {
+            "type": "string",
+            "title": "Quart Weighs"
+          },
+          "dried_density": {
+            "type": "string",
+            "title": "Dried Density"
+          },
+          "fired_density": {
+            "type": "string",
+            "title": "Fired Density"
+          },
+          "porosity": {
+            "type": "string",
+            "title": "Porosity"
+          },
+          "conductivity": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Conductivity"
+          },
+          "service_limit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Service Limit"
+          },
+          "sets": {
+            "type": "string",
+            "title": "Sets"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          },
+          "cast_volume_m3": {
+            "type": "number",
+            "title": "Cast Volume M3"
+          },
+          "dry_mass_kg": {
+            "type": "number",
+            "title": "Dry Mass Kg"
+          },
+          "water_kg": {
+            "type": "number",
+            "title": "Water Kg"
+          },
+          "fired_density_kg_m3": {
+            "type": "number",
+            "title": "Fired Density Kg M3"
+          },
+          "organic_kg": {
+            "type": "number",
+            "title": "Organic Kg"
+          },
+          "organic_heat_j": {
+            "type": "number",
+            "title": "Organic Heat J"
+          },
+          "cement_kg": {
+            "type": "number",
+            "title": "Cement Kg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "batch",
+          "dry_mass",
+          "water",
+          "water_share",
+          "foam",
+          "cast_volume",
+          "wet_density",
+          "quart_weighs",
+          "dried_density",
+          "fired_density",
+          "porosity",
+          "conductivity",
+          "service_limit",
+          "sets",
+          "working",
+          "findings",
+          "cast_volume_m3",
+          "dry_mass_kg",
+          "water_kg",
+          "fired_density_kg_m3",
+          "organic_kg",
+          "organic_heat_j",
+          "cement_kg"
+        ],
+        "title": "MixAnalysis",
+        "description": "A mix worked out: per batch, as cast, dried and fired."
+      },
+      "Problem": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Loc"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Msg"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg"
+        ],
+        "title": "Problem",
+        "description": "One reason a design is not valid, with where it is in the document."
+      },
+      "Quantity": {
+        "properties": {
+          "material": {
+            "type": "string",
+            "title": "Material"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "kind": {
+            "type": "string",
+            "title": "Kind"
+          },
+          "amount": {
+            "type": "number",
+            "title": "Amount"
+          },
+          "unit": {
+            "type": "string",
+            "title": "Unit"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "priced_amount": {
+            "type": "number",
+            "title": "Priced Amount"
+          }
+        },
+        "type": "object",
+        "required": [
+          "material",
+          "name",
+          "kind",
+          "amount",
+          "unit",
+          "detail",
+          "priced_amount"
+        ],
+        "title": "Quantity"
+      },
+      "Report": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "engine_version": {
+            "type": "string",
+            "title": "Engine Version"
+          },
+          "chamber_volume": {
+            "type": "string",
+            "title": "Chamber Volume"
+          },
+          "heat_loss": {
+            "$ref": "#/components/schemas/HeatLoss"
+          },
+          "electric": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ElectricDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gas": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GasDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fire": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FireDesign"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hybrid": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HybridAnalysis"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "frame": {
+            "$ref": "#/components/schemas/FrameDesign"
+          },
+          "castables": {
+            "items": {
+              "$ref": "#/components/schemas/CastableReport"
+            },
+            "type": "array",
+            "title": "Castables"
+          },
+          "masonry": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Masonry"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "bom": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Bom"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "engine_version",
+          "chamber_volume",
+          "heat_loss",
+          "electric",
+          "gas",
+          "hybrid",
+          "frame",
+          "castables",
+          "masonry",
+          "bom",
+          "findings"
+        ],
+        "title": "Report"
+      },
+      "Requirement": {
+        "properties": {
+          "left": {
+            "type": "string",
+            "title": "Left"
+          },
+          "op": {
+            "type": "string",
+            "enum": [
+              "<=",
+              "<",
+              ">=",
+              ">"
+            ],
+            "title": "Op"
+          },
+          "right": {
+            "type": "string",
+            "title": "Right"
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "warning",
+              "error"
+            ],
+            "title": "Level"
+          },
+          "holds": {
+            "type": "boolean",
+            "title": "Holds"
+          },
+          "margin": {
+            "type": "string",
+            "title": "Margin"
+          }
+        },
+        "type": "object",
+        "required": [
+          "left",
+          "op",
+          "right",
+          "level",
+          "holds",
+          "margin"
+        ],
+        "title": "Requirement"
+      },
+      "Segment": {
+        "properties": {
+          "to": {
+            "type": "string",
+            "title": "To"
+          },
+          "rate": {
+            "type": "string",
+            "title": "Rate"
+          },
+          "hold": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hold"
+          },
+          "why": {
+            "type": "string",
+            "title": "Why"
+          }
+        },
+        "type": "object",
+        "required": [
+          "to",
+          "rate",
+          "hold",
+          "why"
+        ],
+        "title": "Segment"
+      },
+      "Step": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "value": {
+            "type": "string",
+            "title": "Value"
+          },
+          "formula": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Formula"
+          },
+          "inputs": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Inputs"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "note": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "value"
+        ],
+        "title": "Step"
+      },
+      "SupplyCase": {
+        "properties": {
+          "case": {
+            "type": "string",
+            "title": "Case"
+          },
+          "capacity": {
+            "type": "string",
+            "title": "Capacity"
+          },
+          "capacity_btu_hr": {
+            "type": "number",
+            "title": "Capacity Btu Hr"
+          },
+          "meets_demand": {
+            "type": "boolean",
+            "title": "Meets Demand"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "case",
+          "capacity",
+          "capacity_btu_hr",
+          "meets_demand",
+          "source"
+        ],
+        "title": "SupplyCase"
+      },
+      "Template": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
+          "document": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Document"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "description",
+          "document",
+          "source"
+        ],
+        "title": "Template",
+        "description": "A kind of kiln to start a design from."
+      },
+      "Version": {
+        "properties": {
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "build_key": {
+            "type": "string",
+            "title": "Build Key"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "schema_version": {
+            "type": "integer",
+            "title": "Schema Version"
+          },
+          "document": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Document"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "number",
+          "build_key",
+          "created_at",
+          "schema_version",
+          "document",
+          "source"
+        ],
+        "title": "Version"
+      },
+      "VersionSummary": {
+        "properties": {
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "build_key": {
+            "type": "string",
+            "title": "Build Key"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "number",
+          "build_key",
+          "created_at"
+        ],
+        "title": "VersionSummary"
+      }
+    }
+  }
+}

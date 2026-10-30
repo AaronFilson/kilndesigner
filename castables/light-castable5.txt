@@ -1,0 +1,84 @@
+Evaluate this diy castable plan, and see if I can get a hydrating (or other chemical process) set to the castable without raising the cost more than 10%
+
+I’ll pull the castable formula out of that saved page and check it against your kiln notes.
+
+Read 2 files, read memory, ran 4 commands
+I also need to keep the very high working temp so Portland cement is out
+
+Comparing sodium silicate and phosphate bonding options for fluxing risks
+Noted: Portland is out. Calcium aluminate cement is the main candidate, so I’ll check current prices for it and the kyanite now.
+
+Searched the web, read 5 pages, ran a command
+The plan has problems I’d fix whatever you decide, and the fix you asked about works. You can add a calcium aluminate cement set (the hydraulic, high-temperature type, not Portland) and stay under +10%, mostly because two ingredients in the current recipe aren’t earning their cost.
+
+What’s wrong with the plan as written
+The kyanite won’t do much. It only starts turning into mullite (the step that makes it expand) around 2010°F, and it needs roughly 2370–2640°F to finish. The plan’s 2100°F, one-hour firing barely starts it. In the 9" backup, most of the wall never gets that hot, so the 10% kyanite there just costs about $5 a batch. The “zero shrink” claim doesn’t hold up.
+The backup will have a weak middle. Dextrin burns out around 600–900°F, and Greenstripe doesn’t sinter (fuse hard) until about 1800°F or more. Most of a 9" wall sits between those temperatures for its whole life. That zone ends up as dried clay with no binder, which crumbles. This is the strongest reason to add a set.
+10% dextrin is about 5× a normal binder dose. It stays water-soluble and absorbs moisture, it tends to move toward the drying surface (hard skin, soft core), and the outer backup never gets hot enough to burn it off.
+The 2" hot face has to stand alone while it’s unfired. A 48"-tall wall of foamed raw clay held up only by dextrin, fired with nothing behind it, has a real chance of slumping or collapsing.
+The backup’s inner face runs hot. Using the thread’s own numbers, the joint between the layers sits around 2150°F. That’s fine chemically, since it’s the same fireclay, but the hot side of a foamed clay body will keep shrinking with repeated firings.
+Smaller errors:
+The thread calls CE70 a “mullite grog,” but earlier in the same thread it called CE70 a stoneware grog and said not to use it.
+It says insulating brick is “fired under extreme pressure.” It isn’t; it’s made by burnout or foaming.
+It prices CE70 at both $32 and $51 a bag.
+The R-values and densities are estimates, not measurements.
+Why calcium aluminate cement
+Portland cement: out, as you said.
+Sodium silicate: cheap, but the sodium acts as a strong flux at 2400°F and adds to the sodium from salt firing later.
+Phosphoric acid / phosphate bond: strong at high temperature, but at 3–5% it busts the 10% budget, it’s unpleasant to handle, and it needs heat to set.
+Colloidal silica: too expensive.
+Calcium aluminate cement: this is what MIZZOU itself uses. Ordinary fireclay castables carry 15–25% of it and are still rated 2500–2600°F, so 6–10% in your mix is well inside normal practice.
+Proposed changes (per 50 lb dry batch)
+Hot face now	Hot face with set	Backup now	Backup with set
+CE70 grog	26	28	15	16
+Greenstripe	15	18	25	28
+Kyanite	4	0	5	0
+Dextrin	5	1	5	1
+Cement	—	3 Secar 71 (6%)	—	5 of a ~50% alumina grade, Secar 51 / Lumnite class (10%)
+Newspaper	—	—	0.25	0.25
+Cost	$39.82	$42.72 (+7.3%)	$32.80	$32.18 (−1.9%)
+Whole kiln: about $2,226 before and $2,223 after, so it comes out even. That’s about 11 hot-face batches and 55 backup batches.
+Prices I assumed:
+CE70 at $51 and Greenstripe at $16 per 50 lb, from the thread.
+Kyanite at about $1.00/lb. A Canadian supplier lists it at CDN$45 for 50 lb.
+Secar 71 at $2.50/lb and the 50% grade at $1.20/lb. I couldn’t find a firm US retail price for either.
+Break-even prices: the hot face stays under +10% as long as Secar 71 costs $2.86/lb or less, and the backup as long as the 50% cement costs $1.98/lb or less.
+Hot-face cement choice: avoid the iron-rich Ciment Fondu type there, because it’s marginal at 2400°F. A 50% grade would also be fine and cheaper, but Secar 71 gives you headroom for salt firing later.
+What changes in the process
+Water: with dextrin cut from 10% to 2%, the mix gets much thinner, so less water reaches the same thick “peanut butter” consistency. Start around 10 lb per 50 lb batch (20%) and adjust. Less water also means a stronger cement set.
+Dextrin: sugars slow down this cement, and home-roasted dextrin contains some. Make a cup-sized test first. If it isn’t hard in 24 hours, drop the dextrin to zero. A pinch of lithium carbonate (about 0.03%, a potter’s material) speeds the set if you need it.
+Curing: keep it damp under plastic for 24 hours at roughly 60–80°F. Don’t use heat lamps until after that; the cement needs the water.
+Simpler build: the hot face sets in about a day and won’t dissolve. You can pour it, cure it, wet its back, and pour the backup in lifts a day apart. You no longer need the stand-alone pre-fire or the waterproofing step.
+First firing: use a normal castable dry-out. Hold a long time near 220°F, then go about 50°F/hr through 400–1100°F.
+Before committing to 60-plus batches, cast three test bricks (about 2×4×8") of each mix. Check that they set in 24 hours, weigh them for density, fire one to 2100°F and one to 2400°F, and measure the shrinkage and strength. These are reasonable starting recipes, but nobody has measured them.
+
+Sources:
+
+Digitalfire – Kyanite
+Kyanite Mining – Virginia Kyanite spec sheet
+PSH – Kyanite grog 35 mesh, 50 lb
+Imerys – SECAR range
+FBM – Lumnite MG calcium aluminate cement, 94 lb
+The Secar 71 has to price out for that to work, find me sources
+
+I’ll look for US sellers that list Secar 71 (or an equivalent 70%-alumina cement) with prices, starting near Clay Art Center in Tacoma.
+
+Read 16 pages, searched the web, ran a command
+I found one US retail listing that fits: High Temp Inc. sells a high-purity white calcium aluminate cement for about $3.00/lb in a 55 lb bag. That’s a little over the $2.86/lb break-even, so it puts the hot face at about +11%. Cutting the cement from 3 lb to 2.75 lb per batch brings it back under the cap.
+
+Where to buy
+Source	Product	Price	Notes
+High Temp Inc.	“High purity, white” calcium aluminate cement, 5 / 10 / 20 / 55 lb	$25–$165 across the sizes, so about $3.00/lb if $165 is the 55 lb bag	Phone 503-737-0345 (an Oregon area code), with will-call pickup. The page doesn’t say “Secar 71” or give the alumina %. Call and ask for the grade (you want about 70% alumina) and the 55 lb price.
+KT Refractories CA70, 25 kg (Amazon)	70% alumina grade, equivalent to Secar 71	Couldn’t load the price	Worth checking. Shipping is usually included on Amazon.
+Redox	Lists Secar 71 by name	Quote only	An industrial distributor, so likely a full-bag or pallet minimum.
+Premium Surplus	Real Secar 71, surplus	Sold out	Worth a call; they sometimes get it in again.
+A cheap option for the backup, with a correction to what I said last time: Lumnite MG is about 40% alumina (not ~50%) and is rated for castables up to about 2320°F (Calucem). Your backup’s hottest face should stay around 2150°F, so it works there, but it’s not for the hot face. It’s $49.55 per 50 lb at Stone Tooling (about $0.99/lb plus shipping), and FBM carries 94 lb bags (you need to log in to see the price). Calucem also makes Lumnite Refcon, a better middle grade (55% alumina, under 2% iron, rated to about 2820°F). I couldn’t find a retail price for it.
+
+Revised costs (per 50 lb batch)
+Hot face with 3 lb cement at $3.00/lb: $44.22, which is +11.0%.
+Hot face with 2.75 lb cement (5.5%) at $3.00/lb: $43.55, which is +9.4%. The recipe becomes CE70 28 lb, Greenstripe 18.25 lb, cement 2.75 lb, dextrin 1 lb.
+Backup with 5 lb Lumnite MG at $0.99/lb: $31.13, which is −5.1%.
+Whole kiln: about $2,226 before and $2,174 after. The cheaper backup more than covers the more expensive hot face.
+None of these numbers include shipping or tax.
+
+Separately, High Temp’s eBay store lists Mizzou Plus at $83.05 per 55 lb, about $9 a bag less than the $92.50 at Clay Art Center, in case you still use some real MIZZOU.

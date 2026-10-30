@@ -1,0 +1,52 @@
+# Mansimran Singh's low-fire glaze kiln, New Delhi (Olsen, The Kiln Book, 4th ed., p.155–156): a
+# round wood-fired updraft, "a Muslim design dating from antiquity", built by Singh's father for
+# Delhi Blue tiles and low-fire glazed pottery. Shards and saggar pieces cover the setting.
+#
+# From the book: chamber 5 ft across inside (Fig 6-12, plan); the setting 5 ft high (Fig 6-12,
+# section); the firebox 4 ft long under the domed floor, 2 ft 6 in from the floor dome down to
+# the pit floor (?) (Fig 6-12); six rectangular inlet flues through the floor, one marked 4 × 4 in
+# (Fig 6-12); wood, hardwood logs 2–6 in across, burned in the firebox and its coals shoved into a
+# pit under the chamber (p.155); shards and saggar pieces piled over the setting for a roof.
+# Assumed: the temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft, the only
+# low-fire updraft whose temperature the book prints (p.160). The firebox's width isn't given:
+# 24 in, the "2'" marked at its entry (Fig 6-12) and the width of the fireboxes of Singh's coal
+# kiln (singh-coal, p.134). All six inlet flues are taken as 4 × 4 in, like the one marked. The
+# walls aren't described: 9 in, which Olsen says stands to 8 ft unsupported (p.41), of hard brick
+# (his fast-fire wood kiln "can be built of IFB or hard brick", p.142); medium-duty
+# firebrick (Olsen's intermediate duty, p.18). The floor is 9 in, as the floor of Singh's
+# coal kiln (p.134). The door and air: engine defaults.
+# Not modelled: the central round flue (its size is cut off at the page edge); the side opening
+# (unreadable); the domed floor, taken as flat; the open top's loss (the engine leaves it out).
+schema: 1
+name: Singh's low-fire glaze kiln, New Delhi
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  shape: round
+  width: 60 in
+  depth: 60 in
+  height: 60 in # the setting's height
+roof:
+  type: open # shards and saggar pieces over the setting
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - position: under
+        width: 24 in
+        length: 48 in
+        height: 30 in # from the floor dome down to the pit floor (?)
+        inlet:
+          width: 4 in
+          height: 4 in
+        inlets: 6
+draft:
+  type: up

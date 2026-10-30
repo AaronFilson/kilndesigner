@@ -1,0 +1,67 @@
+# The Breda bottle kiln, Segra Pottery, Breda, near Barcelona, Spain (Olsen, The Kiln Book, 4th
+# ed., p.166–168): a round wood-fired updraft under a bottle chimney, built in August 1979 by the
+# local clay supplier for earthenware with lead glazes. About 10 hours a firing (p.168).
+#
+# From the book: the chamber 15 ft across and 7 ft high, its wall 2 ft thick with metal banding,
+# under a dome with chimney holes; the bottle chimney 25 ft high and 12 ft across at its base
+# (Fig 6-50), with 9 in walls (Fig 6-53); the firebox 3 ft from the grate to the floor dome, the
+# ash pit under the grate 2 ft wide and 3½ ft deep (Fig 6-50); grate bars 1 in apart, running 8 ft
+# into the firebox (Fig 6-51); wood, chestnut slats 3 ft long (p.166).
+# Assumed: the temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft, the
+# only low-fire updraft whose temperature the book prints (p.160). The brick isn't named:
+# refractory brick, which Böttger brought to the bottle kiln (p.166); medium-duty
+# firebrick (Olsen's intermediate duty, p.18). The 7 ft is taken to the springline. The dome's
+# rise isn't printed: 3 in per foot, the top of Olsen's 2½–3 in/ft for domes (p.51), 45 in. It is
+# 9 in thick, the thickest of his usual arch thicknesses (4½, 6¾ and 9 in, p.296). The grate, and
+# the firebox at the grate, are taken as 24 in wide, the width of the ash pit under them
+# (derived). The bottle's 12 ft is used as its inside at the base (the figure doesn't say inside
+# or out), and its 25 ft as its height above the chamber floor. The floor's thickness isn't
+# given: 13½ in, as the Miravet kiln's floor over its fire (13–15 in, p.158), a Catalan updraft
+# too. The door and air: engine defaults (a bricked door, 70 °F).
+# Not modelled: the domed floor, taken as flat; its loss goes into the firebox under it (the
+# engine leaves it out); the 2 ft bag wall inside the perimeter inlet flues; the inlet flues,
+# 4½ × 4½ in, whose count isn't printed; the 8 centre and 21 perimeter exit flues in the dome
+# (4½ × 5 in, with damper blocks); the bottle's top (not printed, so none is given); its door and
+# the iron bands.
+schema: 1
+name: Breda bottle kiln, Segra Pottery
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  shape: round
+  width: 180 in
+  depth: 180 in
+  height: 84 in # 7 ft, taken to the springline
+roof:
+  type: dome
+  rise: 45 in # 3 in per foot of the 15 ft span
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 24 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 13.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - position: under
+        width: 24 in # the ash pit's width
+        length: 96 in # the grate runs 8 ft into the firebox
+        height: 36 in # from the grate to the floor dome
+        grate:
+          width: 24 in
+          length: 96 in
+          gap: 1 in
+        ash_pit: 42 in
+draft:
+  type: up
+  chimney: # the bottle
+    height: 25 ft
+    inside:
+      diameter: 144 in # "12' across at its base"

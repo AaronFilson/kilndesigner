@@ -1,0 +1,65 @@
+# The Miravet kiln, Catalonia, Spain (Olsen, The Kiln Book, 4th ed., p.157–160): a medieval wood
+# updraft, and a new one built to the old design. Three equal cubes (p.158): a domed chamber, a
+# sub-chamber under it that holds the inlet flues and more pots, and a firebox in front, fire
+# chamber and ash pit in one. The new kiln fired in 28 to 32 hours (p.159–160).
+#
+# From the book (Fig 6-19 unless noted): chamber 8 × 8 ft inside, 6 ft up to where the dome starts
+# (?) and 9 ft to its crown, so a 3 ft rise (derived); walls 3–4 ft thick, partly buried (3 ft
+# used); floor 13–15 in thick at the centre (13½ in used: whole bricks); 35 floor flues, all 6 × 6
+# in; a 15 in main flue in the dome and four 5 in corner flues; the firebox mouth 27 in high and
+# 18 in wide; no grates (p.158); wood.
+# Assumed: the firebox's plan isn't printed: 8 × 8 ft, as the other two of the three equal cubes
+# (p.158). The temperature isn't given: 1760 °F, the usual top of Falcone's kiln, "a Pompeii-era
+# design like Miravet" (p.160). The brick isn't named: firebrick, as inside Falcone's (p.161);
+# medium-duty firebrick (Olsen's intermediate duty, p.18). The dome is 9 in
+# thick, the thickest of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296). The thick,
+# partly buried walls hold the dome's thrust, as the thick walls of early domed kilns did with no
+# steel (p.45). The floor is built on the ground (on_ground): the kiln is partly buried, and the
+# chamber stands on the sub-chamber (Fig 6-19, p.158), with no air under it. The door, spy holes
+# and air: engine defaults (a bricked door in the front wall, three spy holes, 70 °F).
+# Not modelled: the sub-chamber and its pots (the engine has one chamber); the floor's loss, into
+# the hot sub-chamber under it; the buried part of the walls; the four corner flues (only the main
+# flue is given). The floor flues are given as the firebox's inlets, though the gases reach them
+# through the sub-chamber.
+schema: 1
+name: Miravet medieval kiln
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  width: 96 in
+  depth: 96 in
+  height: 72 in # up to where the dome starts (?)
+  on_ground: true # partly buried, the chamber on the sub-chamber (Fig 6-19)
+roof:
+  type: dome
+  rise: 36 in # 9 ft to the crown
+  buttressed: true # walls 3–4 ft thick, partly buried
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 36 in
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 13.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - position: front
+        width: 96 in
+        length: 96 in
+        inlet: # the floor flues
+          width: 6 in
+          height: 6 in
+        inlets: 35
+        stoke_hole: # the firebox mouth
+          width: 18 in
+          height: 27 in
+draft:
+  type: up
+  flue_port: # the dome's main flue
+    diameter: 15 in

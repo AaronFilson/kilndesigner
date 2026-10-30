@@ -1,0 +1,74 @@
+# Takichi Kawaii's kiln, outside Kyoto, 1984 (Olsen, The Kiln Book, 4th ed., p.96–97, p.200): a
+# Kyoto-style wood climbing kiln of four chambers, built in spring 1984. Its floor plan is
+# "almost exactly" the Bidai kiln's (p.97), and its firebox is the Bidai kiln's (p.200).
+#
+# From the book: four chambers, each 7 ft wide, 4 ft deep and 5 ft 8 in tall (p.97); a step of
+# 12 to 15 in between chambers (p.97; the metric is misprinted), so the floors step up the ground;
+# a firebox (dogi) 5 ft tall with grate bars 18 to 24 in long spanning the ash pit onto the
+# firebox mound (p.97); tatami-mat bricks in the arches; bracing on the dogi and the front chamber
+# against the thrust, "a must" on such kilns (p.97).
+# Assumed: the 5 ft 8 in is to the crown. The arch rises 24 in: Olsen uses 4–6 in per foot of
+# span on chamber kilns of 4–8 ft (p.296), and the top of that range on the 4 ft span is nearest
+# the tall pointed arches of the Kyoto kilns (Bidai's rise 21–27 in on 36–46 in, Fig 4-36). So
+# the springline is at 44 in. The slope, 13.2°, is the middle step, 13½ in, over one chamber and
+# one wall, 57½ in. Walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), and a 9 in
+# arch, as the Bidai kiln (bidai, Fig 4-36). The book names no brick but the tatami-mat arch
+# bricks: Kyoto kilns are built of local firebrick of no stated grade (bidai, p.94–95), so
+# medium-duty firebrick (Olsen's intermediate duty, p.18); the floor as the walls (engine
+# default). Cone 10, the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93):
+# the book gives no cone for this kiln. The firebox is the Bidai kiln's (bidai, Fig 4-36,
+# Fig 8-7): 46 in long, a 14 in grate zone over a 14 in ash pit, here with 21 in bars, the middle
+# of 18–24 in; it is taken as wide as the chamber it feeds, 84 in. No chimney is given, so the
+# engine sizes it. The arches are held by masonry (buttressed): each chamber's arch spans front to
+# back and throws its thrust onto the common wall, with bracing only on the dogi and the front
+# chamber (p.95, p.97).
+# Not modelled: the engine's arch spans the width, so it is laid across the 84 in with the same
+# springline and crown; held by masonry, it gets no steel. The front bracing isn't sized. The
+# doors are in a side wall, a stoke hole in each one's
+# bricking (Fig 4-46); a sprung arch here springs from the side walls, so the door is put in the
+# front wall. The flues, 7 × 10 in between chambers and 9 × 10 in out of the last (p.97,
+# Fig 4-48), aren't counted in the book, so the exit flue is the engine's. The floor's loss into
+# the ground (the engine doesn't work it out), the earth-mix plaster outside and the firebox's
+# side stoke holes are left out.
+schema: 1
+name: Takichi Kawaii's climbing kiln, 1984
+units: us
+firing:
+  cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
+chamber:
+  width: 84 in # 7 ft
+  depth: 48 in # 4 ft
+  height: 44 in # to the springline: 5 ft 8 in to the crown, less the rise
+  chambers: 4
+  slope: 13.2 degree # a 13½ in step per 57½ in of chamber and wall
+  on_ground: true # the floors step up the ground (p.97)
+roof:
+  type: sprung_arch
+  rise: 24 in # 6 in per foot of the 4 ft span (p.296)
+  buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield # local firebrick, grade not given
+      thickness: 9.5 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in # as the Bidai kiln's arch
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 84 in # not printed: the chamber it feeds
+        length: 46 in # the Bidai kiln's (Fig 4-36)
+        grate:
+          width: 14 in # the Bidai kiln's grate zone (Fig 8-7)
+          length: 21 in # bars 18–24 in long (p.97)
+        ash_pit: 14 in # the Bidai kiln's (Fig 8-7)
+draft:
+  type: cross
+  flue_wall: back

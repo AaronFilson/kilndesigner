@@ -1,0 +1,57 @@
+# Resistance-wire alloys for elements, from the Kanthal data sheets.
+# Every value traces to docs/research/electric-and-thermal.md §1.1, §1.2 and §1.4.
+# ct: the temperature factor, R_T = Ct · R20 (Ct = 1.00 at 20 °C by definition).
+
+- id: kanthal-a1
+  name: Kanthal A-1
+  resistivity_20c: 1.45 ohm*mm**2/m
+  density: 7.10 g/cm**3
+  max_temperature_air: 1400 degC
+  max_temperature_endothermic_gas: 1050 degC
+  ct: [[20, 1.00], [100, 1.00], [200, 1.00], [300, 1.00], [400, 1.00], [500, 1.01], [600, 1.02],
+       [700, 1.02], [800, 1.03], [900, 1.03], [1000, 1.04], [1100, 1.04], [1200, 1.04],
+       [1300, 1.04], [1400, 1.05]]
+  source: "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal A-1 data sheet [S1], atmospheres [S9]"
+
+- id: kanthal-apm
+  name: Kanthal APM
+  resistivity_20c: 1.45 ohm*mm**2/m
+  density: 7.10 g/cm**3
+  max_temperature_air: 1425 degC
+  max_temperature_endothermic_gas: 1050 degC
+  ct: [[20, 1.00], [100, 1.00], [200, 1.00], [300, 1.00], [400, 1.00], [500, 1.01], [600, 1.02],
+       [700, 1.02], [800, 1.03], [900, 1.03], [1000, 1.04], [1100, 1.04], [1200, 1.04],
+       [1300, 1.04], [1400, 1.05]]
+  source: "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal APM data sheet [S2], atmospheres [S9]"
+
+- id: kanthal-af
+  name: Kanthal AF
+  resistivity_20c: 1.39 ohm*mm**2/m
+  density: 7.15 g/cm**3
+  max_temperature_air: 1300 degC
+  max_temperature_endothermic_gas: 1050 degC
+  ct: [[20, 1.00], [100, 1.00], [200, 1.01], [300, 1.01], [400, 1.02], [500, 1.03], [600, 1.04],
+       [700, 1.04], [800, 1.05], [900, 1.05], [1000, 1.06], [1100, 1.06], [1200, 1.06],
+       [1300, 1.06]]
+  source: "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal AF data sheet [S3], atmospheres [S9]"
+
+- id: kanthal-d
+  name: Kanthal D
+  resistivity_20c: 1.35 ohm*mm**2/m
+  density: 7.25 g/cm**3
+  max_temperature_air: 1300 degC
+  max_temperature_endothermic_gas: 1000 degC
+  ct: [[20, 1.00], [100, 1.00], [200, 1.01], [300, 1.01], [400, 1.02], [500, 1.03], [600, 1.04],
+       [700, 1.05], [800, 1.06], [900, 1.07], [1000, 1.07], [1100, 1.07], [1200, 1.08],
+       [1300, 1.08]]
+  source: "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal D data sheet [S4], atmospheres [S9]"
+
+- id: nikrothal-80
+  name: Nikrothal 80 (NiCr 80/20)
+  resistivity_20c: 1.09 ohm*mm**2/m
+  density: 8.30 g/cm**3
+  max_temperature_air: 1200 degC
+  max_temperature_endothermic_gas: 1100 degC
+  ct: [[20, 1.00], [100, 1.01], [200, 1.02], [300, 1.03], [400, 1.04], [500, 1.05], [600, 1.04],
+       [700, 1.04], [800, 1.04], [900, 1.04], [1000, 1.05], [1100, 1.06], [1200, 1.07]]
+  source: "electric-and-thermal.md §1.1, §1.2, §1.4: Nikrothal 80 data sheet [S5], atmospheres [S9]"

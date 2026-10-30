@@ -1,0 +1,58 @@
+# Updraft test kiln 4 (Olsen, The Kiln Book, 4th ed., p.74): test kiln 3 widened to 4 × 4 ft, a gas
+# updraft with floor burners behind Design Principle 1. Stacked 4 × 4 × 5 ft, it "evened out
+# perfectly".
+#
+# From the book: stacking space 4 × 4 × 5 ft; burners in the floor; updraft (p.74).
+# Assumed: the chamber adds Olsen's 4½ in combustion space round the setting for floor burners
+# (p.76, p.171): 57 × 57 in, 60 in to the springline. Eighteen MR-750s, the burners of Olsen's own
+# updraft kits (olsen-kit-24, p.222), 11.7 in apart round the floor (p.171: 9–12 in apart), in
+# 2½ in ports, a trifle over the 2½ in tip (p.173). Natural gas on an 8 in. w.c. line, the meter's
+# normal pressure (p.227), at which p.222 rates the burners. Walls 7 in: 4½ in K-26 backed by 2½ in
+# K-23, Olsen's 7 in IFB wall (p.39, p.176). A No. 1 arch of 4½ in K-26 at 1½ in per foot of span,
+# on top of the cube (p.74–75, p.171, p.176). A 4½ in floor of K-26 (p.173: floors are 4½–5 in).
+# A hinged door (p.175–176). Cone 10, the high fire Olsen's updraft rules are for: he checks the
+# flue at about cone 8 (p.173). The exit flue: engine default.
+# Not modelled: how evenly it fires top to bottom, which is what the test showed.
+schema: 1
+name: Updraft test kiln 4, 4 × 4 × 5 ft stacking
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 57 in # 4 ft, plus 4½ in each side
+  depth: 57 in
+  height: 60 in
+roof:
+  type: sprung_arch
+  rise: 7.13 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: hinged
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      model: GACO MR750
+      count: 18
+      wall: floor
+      port:
+        diameter: 2.5 in
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: up
