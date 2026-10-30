@@ -1,0 +1,860 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "No price found for: steel.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "137 bricks",
+        "cost": 854.88,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "needed": "137 bricks (110 whole, 20 cut into 26 pieces; 130 in the kiln plus 5 % for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "10 lb",
+        "cost": 556.5,
+        "item": "Kanthal A-1 wire",
+        "needed": "6 elements of 9 AWG, 47.87 ft each (9.09 lb)",
+        "priced_as": "Kanthal A-1 wire (price derived from 16 AWG; 12–14 AWG prices not found), TEMCo Industrial",
+        "source": "combustion-and-masonry.md §9 [S77] (derived: $17.50 per 50 ft at 159 ft/lb)",
+        "unit_price": "$55.65/lb"
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 1411.38
+  },
+  "castables": [],
+  "chamber_volume": "9.56 ft³",
+  "electric": {
+    "alloy": "Kanthal A-1",
+    "continuous_current_limit": "48 A",
+    "elements": {
+      "close_wound_length_each": "40.64 in",
+      "coil_outside_diameter": "0.629 in",
+      "coil_outside_diameter_mm": 15.983,
+      "cold_resistance_each": "3.19 Ω",
+      "count": 6,
+      "current_each": "24 A",
+      "gauge": "9 AWG",
+      "groove_length_each": "88.71 in",
+      "groove_rows": 6,
+      "hot_resistance_each": "3.333 Ω",
+      "length_each": "47.87 ft",
+      "pitch": "0.25 in (2.18 × wire diameter)",
+      "power_each": "1920 W",
+      "stretched_length_each": "88.71 in",
+      "surface_load": "9.3 W/in²",
+      "turns_each": "355.2",
+      "wire_diameter": "0.114 in",
+      "wire_mass_total": "9.09 lb",
+      "wiring": "2 string(s) of 3 in series"
+    },
+    "findings": [
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "W",
+              "meaning": "power of each element",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the installed power ÷ the elements",
+              "symbol": "P_e",
+              "text": null,
+              "unit": "watt",
+              "value": 1920.0
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "mm",
+              "meaning": "the wire's diameter",
+              "offset": 0.0,
+              "scale": 1000.0,
+              "source": "the wire chosen: the coolest that fits the grooves (ASTM B258)",
+              "symbol": "d",
+              "text": null,
+              "unit": "mm",
+              "value": 0.002906
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "ft",
+              "meaning": "wire in each element",
+              "offset": 0.0,
+              "scale": 3.2808398950131235,
+              "source": "working: Wire length per element",
+              "symbol": "L",
+              "text": null,
+              "unit": "ft",
+              "value": 14.592077082870285
+            },
+            {
+              "expr": "P_e/(pi*d*L)",
+              "formula": "P_e/(π·d·L)",
+              "label": "W/in²",
+              "meaning": "surface load",
+              "offset": 0.0,
+              "scale": 0.00064516,
+              "source": "watts ÷ the wire's surface",
+              "symbol": "p",
+              "text": null,
+              "unit": "W/in**2",
+              "value": 14412.477121153617
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "W/in²",
+              "meaning": "Olsen's most for cone 10",
+              "offset": 0.0,
+              "scale": 0.00064516,
+              "source": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+              "symbol": "p_max",
+              "text": null,
+              "unit": "W/in**2",
+              "value": 13950.027900055802
+            }
+          ],
+          "id": "electric.surface-load",
+          "label": null,
+          "lever": {
+            "hi": 20000.0,
+            "lo": 10.0,
+            "step": null,
+            "symbol": "P_e"
+          },
+          "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "p",
+              "level": "warning",
+              "margin": "p = 9.298 W/in², 103.3 % of p_max = 9 W/in²",
+              "op": "<=",
+              "right": "p_max"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when P_e ≤ 1,858 W",
+          "status": "warning",
+          "title": "The elements' surface load"
+        },
+        "level": "warning",
+        "message": "No wire that fits the grooves runs at Olsen's 9 W/in² or less: the coolest is 9.3 W/in². The elements will wear out sooner. Elements in more walls, or less power, would bring it down.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.7 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
+        "reference": "electrical-supply.md §1 [E1–E3], §3"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The tool chose 6 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right, back and front walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
+        "reference": null
+      }
+    ],
+    "installed_power": "11.52 kW",
+    "installed_watts": 11520.0,
+    "line_current": "48 A",
+    "power_per_volume": "1205 W/ft³",
+    "supply": "240 V, 1-phase, 60 A breaker",
+    "working": [
+      {
+        "formula": "0.8 × breaker rating (the breaker is 125% of a continuous load)",
+        "inputs": {
+          "breaker": "60 A"
+        },
+        "name": "Continuous current limit",
+        "note": null,
+        "reference": "NEC 210.20(A) continuous loads at 125%, as applied by L&L; electric-and-thermal.md §3 [S25]",
+        "value": "48 A"
+      },
+      {
+        "formula": "P = V·I",
+        "inputs": {
+          "current": "48 A",
+          "voltage": "240 V"
+        },
+        "name": "Power the circuit can supply",
+        "note": null,
+        "reference": null,
+        "value": "11.52 kW"
+      },
+      {
+        "formula": "20 A up to 13.3 A; above that, 150 % of the kiln's current, or the next standard size up",
+        "inputs": {
+          "kiln's current": "48 A"
+        },
+        "name": "Largest breaker allowed",
+        "note": null,
+        "reference": "NEC 422.11(E), a single non-motor appliance, as reported; standard sizes 240.6(A); electric-and-thermal.md §3 [S23, S79]",
+        "value": "80 A"
+      },
+      {
+        "formula": "ρ_T = ρ20 · Ct",
+        "inputs": {
+          "Ct": "1.04",
+          "wire temperature": "2460 °F",
+          "ρ20": "1.45 mm²⋅Ω/m"
+        },
+        "name": "Wire resistivity when hot",
+        "note": "The wire is assumed to run 100 °C above the kiln; Ct changes little there.",
+        "reference": "electric-and-thermal.md §1.1, §1.2, §1.4: Kanthal A-1 data sheet [S1], atmospheres [S9]",
+        "value": "1.515 mm²⋅Ω/m"
+      },
+      {
+        "formula": "2·N·a·tan(π/N)/4 per quarter, a = D/(1 + 1/cos(π/N))",
+        "inputs": {
+          "N, facets": "12",
+          "course height": "4.5 in",
+          "courses": "6",
+          "element walls (quarters of the ring)": "left, right, back, front"
+        },
+        "name": "Groove round the ring, per element course",
+        "note": "Each groove runs round the flats of its course, the coil bending at each corner. No source gives a groove pitch, a groove depth, or how tight a coil may bend at a facet's corner: one groove per course is the engine's limit, from the bricks' size.",
+        "reference": "a faceted ring, one brick per facet per course, 4½ in courses (electric-kiln-survey.md, Skutt KM-1227-3, L&L e23T-3)",
+        "value": "7.392 ft"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "elements": "6",
+          "in series per string": "3"
+        },
+        "name": "Power and voltage per element",
+        "note": null,
+        "reference": null,
+        "value": "1920 W at 80 V"
+      },
+      {
+        "formula": "d³ = 4·ρ_T·P² / (π²·U²·p)",
+        "inputs": {
+          "p (limit)": "17.5 W/in²"
+        },
+        "name": "Smallest wire for the surface-load limit",
+        "note": null,
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]",
+        "value": "2.35 mm"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Wire chosen",
+        "note": "The fewest elements that work, then the thickest standard gauge (ASTM B258) for them: at or above the smallest diameter, with a coil that fits the groove at a pitch of 2–4 wire diameters. Thicker wire lasts longer (Kanthal).",
+        "reference": "electric-and-thermal.md §1.6 [S9, S13]",
+        "value": "9 AWG, 2.91 mm"
+      },
+      {
+        "formula": "L = U²/P · (πd²/4) / ρ_T",
+        "inputs": {
+          "P, each element": "1920 W",
+          "U, each element": "80 V",
+          "d": "2.91 mm"
+        },
+        "name": "Wire length per element",
+        "note": null,
+        "reference": "Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md §1.6 [S13]",
+        "value": "47.87 ft"
+      },
+      {
+        "formula": "p = P / (π·d·L)",
+        "inputs": {},
+        "name": "Surface load",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "value": "9.3 W/in²"
+      },
+      {
+        "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
+        "inputs": {
+          "D/d": "5.5",
+          "pitch range": "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
+        },
+        "name": "Coil",
+        "note": null,
+        "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
+        "value": "355 turns, 0.629 in outside, pitch 2.18 d"
+      },
+      {
+        "formula": "installed power ÷ inside area of the element walls",
+        "inputs": {
+          "Kanthal's most, in grooves at 1000 °C": "35 kW/m²",
+          "element walls": "left, right, back, front",
+          "their area": "16.6 ft²"
+        },
+        "name": "Wall loading",
+        "note": "Kanthal gives no figure above 1000 °C, where it can only be lower; and the floor and roof carry no elements here.",
+        "reference": "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]",
+        "value": "7.46 kW/m²"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Installed power per unit of chamber volume",
+        "note": "For comparison, 7 cu ft cone 10 kilns from L&L and Skutt have about 1650–1720 W/ft³ (electric-and-thermal.md §7 [S73, S74]).",
+        "reference": null,
+        "value": "1205 W/ft³"
+      },
+      {
+        "formula": "P_installed / Q_loss",
+        "inputs": {},
+        "name": "Installed power over steady loss at top temperature",
+        "note": "Power above the loss is what heats the ware and walls near the top.",
+        "reference": null,
+        "value": "1.5"
+      }
+    ]
+  },
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "W",
+            "meaning": "power of each element",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the installed power ÷ the elements",
+            "symbol": "P_e",
+            "text": null,
+            "unit": "watt",
+            "value": 1920.0
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "mm",
+            "meaning": "the wire's diameter",
+            "offset": 0.0,
+            "scale": 1000.0,
+            "source": "the wire chosen: the coolest that fits the grooves (ASTM B258)",
+            "symbol": "d",
+            "text": null,
+            "unit": "mm",
+            "value": 0.002906
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "ft",
+            "meaning": "wire in each element",
+            "offset": 0.0,
+            "scale": 3.2808398950131235,
+            "source": "working: Wire length per element",
+            "symbol": "L",
+            "text": null,
+            "unit": "ft",
+            "value": 14.592077082870285
+          },
+          {
+            "expr": "P_e/(pi*d*L)",
+            "formula": "P_e/(π·d·L)",
+            "label": "W/in²",
+            "meaning": "surface load",
+            "offset": 0.0,
+            "scale": 0.00064516,
+            "source": "watts ÷ the wire's surface",
+            "symbol": "p",
+            "text": null,
+            "unit": "W/in**2",
+            "value": 14412.477121153617
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "W/in²",
+            "meaning": "Olsen's most for cone 10",
+            "offset": 0.0,
+            "scale": 0.00064516,
+            "source": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+            "symbol": "p_max",
+            "text": null,
+            "unit": "W/in**2",
+            "value": 13950.027900055802
+          }
+        ],
+        "id": "electric.surface-load",
+        "label": "W1",
+        "lever": {
+          "hi": 20000.0,
+          "lo": 10.0,
+          "step": null,
+          "symbol": "P_e"
+        },
+        "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "p",
+            "level": "warning",
+            "margin": "p = 9.298 W/in², 103.3 % of p_max = 9 W/in²",
+            "op": "<=",
+            "right": "p_max"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when P_e ≤ 1,858 W",
+        "status": "warning",
+        "title": "The elements' surface load"
+      },
+      "level": "warning",
+      "message": "No wire that fits the grooves runs at Olsen's 9 W/in² or less: the coolest is 9.3 W/in². The elements will wear out sooner. Elements in more walls, or less power, would bring it down.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.254 and p.257: 5–9 W/in² for normal electric kilns, 6.4–9 for cone 10; Kanthal's A-1 chart, p.253"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 309.1 °F (data from 500 °F) and up to 2280 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.7 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
+      "reference": "electrical-supply.md §1 [E1–E3], §3"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The tool chose 6 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right, back and front walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
+      "reference": "electric-and-thermal.md §1.6 [S9, S13]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Electrical work must follow your local code and be checked by a licensed electrician. These results are engineering guidance, not an approved design.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "A round electric kiln's bricks are held by steel bands, not mortar: 3 round the wall, one round each 9 in section; one round the floor slab; one round the lid. Their width, thickness and tension aren't sized: no source found gives them, so take them from the maker of the bands or a kiln of the same size.",
+      "reference": "electric-kiln-survey.md: L&L e23T-3, 9 in sections; Skutt's lid, slab and body bands, the bricks held by the band's tension, not cement (kiln parts listings, snippets)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Three 1 in peepholes are cut through the door. Their heights are not sourced; they are spaced evenly.",
+      "reference": "electric-kiln-hardware.md §4 [S3] [S6]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle; Roof, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.21, p.45, p.303–305 (kiln-reference.md, Brick sizes and shapes; Walls, bonds and openings; Tables A-4 to A-7); Olsen, The Kiln Book, 4th ed., p.45, Fig. 2-13: straights on the curve, their joints opening toward the outside; HarbisonWalker featheredge, 9 × 4½ × (2½ − ⅛) in (kiln-hardware.md §5.1 [S20]); straights with featheredges, and straights cut to the angle, the norm in electric kilns (the user, a kiln builder, 2026-10-30); 9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "No price found for: steel.",
+      "reference": null
+    }
+  ],
+  "fire": null,
+  "frame": {
+    "angle": null,
+    "angle_leg_in": 0.0,
+    "angle_t_in": 0.0,
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "A round electric kiln's bricks are held by steel bands, not mortar: 3 round the wall, one round each 9 in section; one round the floor slab; one round the lid. Their width, thickness and tension aren't sized: no source found gives them, so take them from the maker of the bands or a kiln of the same size.",
+        "reference": "electric-kiln-survey.md: L&L e23T-3, 9 in sections; Skutt's lid, slab and body bands, the bricks held by the band's tension, not cement (kiln parts listings, snippets)"
+      }
+    ],
+    "kind": "no frame",
+    "members": [],
+    "posts": 2,
+    "rod": null,
+    "rod_d_in": 0.0,
+    "thrust": null,
+    "working": []
+  },
+  "gas": null,
+  "heat_loss": {
+    "ambient": "70 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "1273 W",
+        "inside_area": "4.158 ft²",
+        "layers": [
+          {
+            "cold_side": "325.5 °F",
+            "cold_side_k": 436.233322391916,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.1500000000003,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.187 ft²",
+        "surface_temperature": "325.5 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "1273 W",
+        "inside_area": "4.158 ft²",
+        "layers": [
+          {
+            "cold_side": "325.5 °F",
+            "cold_side_k": 436.233322391916,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.1500000000003,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.187 ft²",
+        "surface_temperature": "325.5 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "1273 W",
+        "inside_area": "4.158 ft²",
+        "layers": [
+          {
+            "cold_side": "325.5 °F",
+            "cold_side_k": 436.233322391916,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.1500000000003,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.187 ft²",
+        "surface_temperature": "325.5 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "1273 W",
+        "inside_area": "4.158 ft²",
+        "layers": [
+          {
+            "cold_side": "325.5 °F",
+            "cold_side_k": 436.233322391916,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.1500000000003,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.187 ft²",
+        "surface_temperature": "325.5 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "1281 W",
+        "inside_area": "4.249 ft²",
+        "layers": [
+          {
+            "cold_side": "364.2 °F",
+            "cold_side_k": 457.72112870723305,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.1500000001472,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.298 ft²",
+        "surface_temperature": "364.2 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "1306 W",
+        "inside_area": "4.249 ft²",
+        "layers": [
+          {
+            "cold_side": "309.1 °F",
+            "cold_side_k": 427.0884897655098,
+            "hot_side": "2280 °F",
+            "hot_side_k": 1522.15,
+            "material": "ifb-k23",
+            "thickness": "3 in"
+          }
+        ],
+        "outside_area": "6.298 ft²",
+        "surface_temperature": "309.1 °F"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 309.1 °F (data from 500 °F) and up to 2280 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2280 °F",
+    "total": "7.68 kW",
+    "total_watts": 7680.209187330405,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "8",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
+        "value": "1249 °C (2280 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "70 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "oxidised_steel"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.79"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.187 ft²",
+          "outside surface": "325.5 °F",
+          "surface coefficient h": "15.6 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1273 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.187 ft²",
+          "outside surface": "325.5 °F",
+          "surface coefficient h": "15.6 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1273 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.187 ft²",
+          "outside surface": "325.5 °F",
+          "surface coefficient h": "15.6 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1273 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.187 ft²",
+          "outside surface": "325.5 °F",
+          "surface coefficient h": "15.6 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1273 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.298 ft²",
+          "outside surface": "364.2 °F",
+          "surface coefficient h": "13.39 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1281 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "6.298 ft²",
+          "outside surface": "309.1 °F",
+          "surface coefficient h": "16.81 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1306 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
+        "reference": null,
+        "value": "7.68 kW (2.62e+04 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 2,
+        "cut": "cut to 1.74 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 1.97 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 3.27 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 4.5 in long, ripped to 3.27 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 5.34 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 6.81 in long, ripped to 3.27 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 6.89 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 7.75 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 7.96 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "ripped to 3.27 in",
+        "material": "ifb-k23"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle; Roof, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.21, p.45, p.303–305 (kiln-reference.md, Brick sizes and shapes; Walls, bonds and openings; Tables A-4 to A-7); Olsen, The Kiln Book, 4th ed., p.45, Fig. 2-13: straights on the curve, their joints opening toward the outside; HarbisonWalker featheredge, 9 × 4½ × (2½ − ⅛) in (kiln-hardware.md §5.1 [S20]); straights with featheredges, and straights cut to the angle, the norm in electric kilns (the user, a kiln builder, 2026-10-30); 9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 137.0,
+        "detail": "110 whole, 20 cut into 26 pieces; 130 in the kiln plus 5 % for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "priced_amount": 137.0,
+        "unit": "bricks"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      }
+    ]
+  },
+  "name": "Round electric, 12 sides of 3 in brick"
+}

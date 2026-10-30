@@ -47,6 +47,12 @@ TEMPLATES: tuple[tuple[str, str, str], ...] = (
     ("catenary-gas", "Catenary arch, gas", "An arch that springs from the floor, fired with gas."),
     ("dome-castable", "Dome down-draft", "A cast dome on four walls, a gas down-draft."),
     ("castable-test", "Castable test kiln", "A small gas kiln lined with a castable you mix."),
+    (
+        "round-electric",
+        "Round electric",
+        "A top-loader of 12 facets of 3 in brick cut to the angle, elements in grooves round the "
+        "ring (the size of Skutt's KM-1227-3).",
+    ),
     ("electric-car", "Electric car kiln", "Elements in a sprung-arch kiln loaded on a car."),
     ("gas-updraft", "Gas updraft", "Burners up through the floor, the flue in the roof."),
     (

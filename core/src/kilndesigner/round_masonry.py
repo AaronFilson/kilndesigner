@@ -61,12 +61,13 @@ from kilndesigner.rings import (
     Series,
     cut_bricks,
     cut_diameter,
+    inside_apothem,
     ring,
     ring_method,
     ring_series,
     wall_rings,
 )
-from kilndesigner.shape import RoundDome
+from kilndesigner.shape import RoundDome, facets
 from kilndesigner.sheet import Sheet
 from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, length_text
@@ -195,11 +196,18 @@ def _disc_rows(radius: float, thickness: float, part: Part) -> list[LayerPlan] |
     cut to the circle: one plan for each wall of brick in the layer, from the inside out. None if
     whole bricks don't make the thickness."""
     sizes = brick_sizes(thickness)
+    three = abs(thickness - 3 * IN) < 1.0  # a slab of 3 in series straights, 9 × 4½ × 3 in, flat
+    if three:
+        sizes = [thickness]
     if sizes is None:
         return None
     plans: list[LayerPlan] = []
     for k, size in enumerate(sizes):
-        kind, unit, width = next(v for s, v in layings(True).items() if abs(s - size) < 1.0)
+        kind, unit, width = (
+            ("flat", 9 * IN, 4.5 * IN)
+            if three
+            else next(v for s, v in layings(True).items() if abs(s - size) < 1.0)
+        )
         plan = LayerPlan(part, kind, 2 * radius, 2 * radius, within=(k + 1, len(sizes)),
                          circle=radius)  # fmt: skip
         rows = math.ceil(2 * radius / width - TOL / width)
@@ -302,8 +310,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             findings.append(Finding.failed(check, (
                 f"Round wall: a {length_text(2 * r, us)} ring of straights cut to the angle "
                 f"takes {cut_bricks(2 * r, depth):.2f} full 9 in bricks round, more than 1/16 in "
-                f"from "
-                f"whole bricks, so it is laid with the fewest, {n}, and a closer cut to "
+                f"from whole bricks, so it is laid with the fewest, {n}, and a closer cut to "
                 f"{length_text(one.length or 0.0, us)}: allowed, but not usual. Cut rings are "
                 "built in whole bricks, as electric kilns are sized 6, 8, 10, 12 bricks round: "
                 f"for no closer make this ring {near} across inside.")))  # fmt: skip
@@ -366,6 +373,11 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             cast_volume[m.id] += math.pi * ((r + th) ** 2 - r * r) * height
         r += th
     outside = inside + sum(si(x.thickness, "mm") for x in kiln.lining.walls)
+    sides = facets(kiln)
+    if sides is not None:
+        # A faceted wall's slabs reach its outside corners: the circle through them
+        thick = sum(si(x.thickness, "mm") for x in kiln.lining.walls)
+        outside = (inside_apothem(2 * inside, sides) + thick) / math.cos(math.pi / sides)
 
     def disc(face: str, radius: float) -> None:
         for i, layer in enumerate(kiln.lining.for_face(face)):  # type: ignore[arg-type]

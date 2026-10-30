@@ -61,7 +61,7 @@ from kilndesigner.frame_checks import (
     thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.model import CatenaryArch, Dome, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step
@@ -1047,10 +1047,41 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
     ]
+    if kiln.heat.electric is not None:
+        findings = [_electric_bands(kiln)]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=None, members=[], working=[], findings=findings,
     )  # fmt: skip
+
+
+SECTION_IN = 9.0
+"""A round electric kiln's section: two 4½ in courses (L&L e23T-3, "Three 9" high sections";
+electric-kiln-survey.md, verified)."""
+BANDS_SOURCE = (
+    "electric-kiln-survey.md: L&L e23T-3, 9 in sections; Skutt's lid, slab and body bands, the "
+    "bricks held by the band's tension, not cement (kiln parts listings, snippets)"
+)
+
+
+def _electric_bands(kiln: Kiln) -> Finding:
+    """A round electric kiln's steel bands, listed but not sized: one round each section, the
+    floor slab and the lid. No source gives a band's width, thickness or tension."""
+    height = si(kiln.chamber.height, "in")
+    sections = math.ceil(height / SECTION_IN - 1e-6)
+    lid = "the lid" if isinstance(kiln.roof, FlatRoof) else None
+    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section", "one round "
+             "the floor slab"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
+    return Finding(
+        level="info",
+        message=(
+            "A round electric kiln's bricks are held by steel bands, not mortar: "
+            + "; ".join(parts)
+            + ". Their width, thickness and tension aren't sized: no source found gives them, so "
+            "take them from the maker of the bands or a kiln of the same size."
+        ),
+        reference=BANDS_SOURCE,
+    )
 
 
 def design_frame(kiln: Kiln) -> FrameDesign:

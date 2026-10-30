@@ -18,7 +18,9 @@ from itertools import pairwise
 import numpy as np
 from scipy.optimize import brentq
 
+from kilndesigner.library import materials
 from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch
+from kilndesigner.rings import IN, cut_facets, inside_apothem, ring_method
 from kilndesigner.thermal.surface import Orientation
 from kilndesigner.units import si
 
@@ -249,6 +251,9 @@ class ChamberShape:
     round: bool = False
     """A cylinder of diameter ``width``."""
     round_dome: RoundDome | None = None
+    sides: int | None = None
+    """A round chamber walled with one ring of straights cut to the angle: its facets. The wall
+    is then a regular polygon whose flats and corners average ``width`` (rings.inside_apothem)."""
     open_top: bool = False
     """No built roof (shards over the setting): no roof face."""
     chambers: int = 1
@@ -264,7 +269,7 @@ class ChamberShape:
             return self.width * self.depth * self.height + n * self.dome.volume
         if self.round:
             cap = self.round_dome.volume if self.round_dome is not None else 0.0
-            return math.pi / 4 * self.width**2 * self.height + cap
+            return self._plan_area(0.0) * self.height + cap
         if self.catenary is not None:
             return self.catenary.area * self.depth
         if self.dome is not None:
@@ -357,18 +362,34 @@ class ChamberShape:
             FaceShape("roof", "facing_up", domes(0.0), w, d, grows=domes),
         ]
 
+    def perimeter(self, t: float = 0.0) -> float:
+        """A round chamber's wall round, ``t`` out from the inside face: a circle's, or the
+        polygon's of a faceted wall, its flats 2·(a + t)·tan(π/N) each."""
+        if self.sides is None:
+            return math.pi * (self.width + 2 * t)
+        n = self.sides
+        return 2 * n * (inside_apothem(self.width, n) + t) * math.tan(math.pi / n)
+
+    def _plan_area(self, t: float) -> float:
+        """A round chamber's area in plan, ``t`` out from the inside face: πr², or N·a²·tan(π/N)."""
+        if self.sides is None:
+            return math.pi / 4 * (self.width + 2 * t) ** 2
+        n = self.sides
+        return n * (inside_apothem(self.width, n) + t) ** 2 * math.tan(math.pi / n)
+
     def _round_faces(self) -> list[FaceShape]:
-        """A cylinder: its wall as four quarters (so a door can be one of them), the floor a disc,
-        and a dome's cap or a flat disc over it. Each grows with the lining like a box's faces."""
+        """A cylinder, or a faceted ring's prism: its wall as four quarters (so a door can be one
+        of them), the floor a disc or polygon, and a dome's cap or a flat lid over it. Each grows
+        with the lining like a box's faces; a faceted wall's flats and corners both count."""
         dia, h = self.width, self.height
 
         def quarter(t: float) -> float:
-            return math.pi * (dia + 2 * t) / 4 * (h + 2 * t)
+            return self.perimeter(t) / 4 * (h + 2 * t)
 
         def disc(t: float) -> float:
-            return math.pi / 4 * (dia + 2 * t) ** 2
+            return self._plan_area(t)
 
-        arc = math.pi * dia / 4
+        arc = self.perimeter() / 4
         walls = [
             FaceShape(face, "vertical", arc * h, arc, h, grows=quarter)
             for face in ("left", "right", "back", "front")
@@ -406,7 +427,9 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
     open_top = isinstance(kiln.roof, OpenTop)
     if c.shape == "round":
         dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None
-        return ChamberShape(w, w, h, None, round=True, round_dome=dome, open_top=open_top)
+        return ChamberShape(
+            w, w, h, None, round=True, round_dome=dome, open_top=open_top, sides=facets(kiln)
+        )
     if open_top:
         return ChamberShape(w, d, h, None, open_top=True)
     n = c.chambers
@@ -422,3 +445,22 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
     if isinstance(kiln.roof, Dome):
         return ChamberShape(w, d, h, None, dome=SailDome(w, d, si(kiln.roof.rise, "m")))
     return ChamberShape(w, d, h, None)
+
+
+BRICK = {"insulating_firebrick", "dense_firebrick", "building_brick"}
+
+
+def facets(kiln: Kiln) -> int | None:
+    """The facets of a round chamber whose hot face is one ring of brick cut to the angle, whole
+    bricks round (rings.py): 2½, 3 or 4½ in through. None for any other wall, taken as a circle."""
+    c = kiln.chamber
+    if c.shape != "round" or ring_method(c.rings, kiln.heat.electric is not None) != "cut":
+        return None
+    hot = kiln.lining.walls[0]
+    found = materials().get(hot.material)
+    if found is None or found.kind not in BRICK:
+        return None
+    t = si(hot.thickness, "mm")
+    if not any(abs(t - x * IN) < 1.0 for x in (2.5, 3.0, 4.5)):
+        return None
+    return cut_facets(si(c.width, "mm"), t)

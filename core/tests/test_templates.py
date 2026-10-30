@@ -17,6 +17,7 @@ FROM_EXAMPLE = {
     "catenary-gas": "catenary-gas-kiln.yaml",
     "dome-castable": "dome-castable-kiln.yaml",
     "castable-test": "diy-castable-test-kiln.yaml",
+    "round-electric": "round-electric.yaml",
     "electric-car": "olsen/electric-car-45.yaml",
     "gas-updraft": "olsen/updraft-test-1.yaml",
     "gas-chambers": "olsen/olsen-three-chamber.yaml",
