@@ -8,7 +8,7 @@ from arq.connections import RedisSettings
 
 from kilndesigner_api import db
 from kilndesigner_api.settings import Settings, get_settings
-from kilndesigner_api.tasks import run_build
+from kilndesigner_api.tasks import run_build, run_simulation
 
 
 async def startup(ctx: dict[str, Any]) -> None:
@@ -25,8 +25,12 @@ async def build(ctx: dict[str, Any], key: str) -> None:
     await run_build(ctx["sessions"], ctx["settings"].data_dir, key)
 
 
+async def simulate(ctx: dict[str, Any], key: str) -> None:
+    await run_simulation(ctx["sessions"], ctx["settings"].data_dir, key)
+
+
 class WorkerSettings:
-    functions: ClassVar = [build]
+    functions: ClassVar = [build, simulate]
     on_startup = startup
     on_shutdown = shutdown
     redis_settings = RedisSettings.from_dsn(get_settings().redis_url)

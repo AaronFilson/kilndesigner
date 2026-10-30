@@ -75,6 +75,19 @@ class Build(BaseModel):
     finished_at: datetime | None
 
 
+class Simulation(BaseModel):
+    """A simulated firing's status. When done, its results are under /simulations/{key}/…"""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    key: str
+    status: BuildStatus
+    summary: dict[str, Any] | None
+    error: str | None
+    created_at: datetime
+    finished_at: datetime | None
+
+
 class CheckedDesign(BaseModel):
     """A valid design, both ways: the JSON document the forms edit and the YAML the tab shows."""
 

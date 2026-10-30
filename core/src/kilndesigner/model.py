@@ -19,6 +19,7 @@ from kilndesigner.units import (
     Angle,
     Current,
     Density,
+    Duration,
     EnergyPrice,
     Flow,
     Length,
@@ -27,6 +28,8 @@ from kilndesigner.units import (
     Money,
     Power,
     Pressure,
+    Rate,
+    SpecificHeat,
     SpringRate,
     Temperature,
     Voltage,
@@ -51,6 +54,13 @@ class Layer(Spec):
 
     material: str = Field(description="A material id from the library, for example 'ifb-k26'")
     thickness: Length
+    specific_heat: SpecificHeat | None = Field(
+        default=None,
+        description=(
+            "The material's specific heat, from its maker's sheet, for the firing simulation of a "
+            "material the library has no sourced value for (castables, for one)"
+        ),
+    )
 
 
 class Lining(Spec):
@@ -242,6 +252,25 @@ class Loading(Spec):
     )
 
 
+class Ramp(Spec):
+    """One segment of a firing schedule: heat (or cool) at a rate to a temperature, then hold."""
+
+    to: Temperature
+    rate: Rate | None = Field(
+        default=None,
+        description="Per hour, for example '200 delta_degF/hour'. Left out: as fast as it can",
+    )
+    hold: Duration | None = Field(default=None, description="How long to hold at ``to``")
+
+    @model_validator(mode="after")
+    def _a_rate(self) -> Ramp:
+        if self.rate is not None and si(self.rate, "K/hour") <= 0:
+            raise ValueError("a ramp's rate must be more than zero; its `to` sets the direction")
+        if self.hold is not None and si(self.hold, "s") < 0:
+            raise ValueError("a hold can't be negative")
+        return self
+
+
 class Firing(Spec):
     """The hottest the kiln must reach: a cone, a temperature, or both (the temperature wins)."""
 
@@ -254,6 +283,17 @@ class Firing(Spec):
         ),
     )
     top_temperature: Temperature | None = None
+    schedule: list[Ramp] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The firing schedule, for the firing simulation. Left out: as fast as the heat allows "
+            "to 100 °C below the top, then the final rate to the top"
+        ),
+    )
+    ware: Mass | None = Field(
+        default=None, description="Ware and kiln furniture set in the kiln, for the simulation"
+    )
 
     @model_validator(mode="after")
     def _one_target(self) -> Firing:

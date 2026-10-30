@@ -20,6 +20,12 @@ export type Step = Schemas["Step"];
 export type Template = Schemas["Template"];
 export type Library = Schemas["Library"];
 export type CheckedDesign = Schemas["CheckedDesign"];
+export type Simulation = Schemas["Simulation"];
+export type FiringResult = Schemas["FiringResult"];
+export type FiringPoint = Schemas["FiringPoint"];
+export type WallHeatmap = Schemas["WallHeatmap"];
+export type SwitchOverChart = Schemas["SwitchOverChart"];
+export type SwitchPoint = Schemas["SwitchPoint"];
 
 export function createClient(baseUrl = "") {
   return createFetchClient<paths>({ baseUrl });

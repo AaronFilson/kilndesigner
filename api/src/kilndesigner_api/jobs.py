@@ -3,18 +3,21 @@
 from __future__ import annotations
 
 import asyncio
+from collections.abc import Coroutine
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 from arq import ArqRedis, create_pool
 from arq.connections import RedisSettings
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from kilndesigner_api.tasks import run_build
+from kilndesigner_api.tasks import run_build, run_simulation
 
 
 class JobRunner(Protocol):
     async def submit_build(self, key: str) -> None: ...
+
+    async def submit_simulation(self, key: str) -> None: ...
 
     async def close(self) -> None: ...
 
@@ -33,6 +36,9 @@ class ArqRunner:
         # The job id makes a repeated request for the same build a no-op while it is queued.
         await self._pool.enqueue_job("build", key, _job_id=f"build:{key}")
 
+    async def submit_simulation(self, key: str) -> None:
+        await self._pool.enqueue_job("simulate", key, _job_id=f"simulate:{key}")
+
     async def close(self) -> None:
         await self._pool.aclose()
 
@@ -45,7 +51,13 @@ class InlineRunner:
         self._tasks: set[asyncio.Task[None]] = set()
 
     async def submit_build(self, key: str) -> None:
-        task = asyncio.create_task(run_build(self._sessions, self._data_dir, key))
+        self._start(run_build(self._sessions, self._data_dir, key))
+
+    async def submit_simulation(self, key: str) -> None:
+        self._start(run_simulation(self._sessions, self._data_dir, key))
+
+    def _start(self, job: Coroutine[Any, Any, None]) -> None:
+        task = asyncio.create_task(job)
         self._tasks.add(task)
         task.add_done_callback(self._tasks.discard)
 

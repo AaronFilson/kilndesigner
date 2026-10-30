@@ -305,6 +305,20 @@ need is still open. In order:
    exist. It needs the client's answers (open question 3) before it can start; ask now.
 5. **M5, hosted**, once one of the two kilns has plans someone builds from.
 
+### Status (2026-10-29): M6
+
+- **M6 is built** (ADR 0015): a 1D finite-volume model of each face, fired along the design's
+  schedule (or full heat, then the cone's final rate), with the time, whether the heat keeps the
+  schedule, energy, electricity, propane and cost per firing (the M3 leftovers), and a hybrid's
+  cost and time against its switch-over temperature. Checked against the erf solution, the steady
+  solver and an energy-balance invariant. Results are Parquet, read with DuckDB;
+  `kilndesigner simulate`, `/api/simulations/{key}` on the worker, and a Firing tab with charts and
+  a shader heatmap with a scrubber (Playwright `firing.spec.ts`).
+- Gaps: the castables (and Cerachem) have no sourced specific heat, so the author's kiln asks for
+  its roof's `specific_heat` before it can be simulated; ware is lumped at fired clay's
+  room-temperature c_p; no radiation between faces or inside film; wood and oil wait for M7;
+  natural gas has no price field, so its cost isn't given.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
 the client's plans before the app exists.

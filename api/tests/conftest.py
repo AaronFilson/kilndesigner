@@ -23,7 +23,7 @@ async def sessions(database_url: str) -> AsyncIterator[async_sessionmaker[AsyncS
     """Sessions on a test database emptied once per test, before any fixture adds rows."""
     engine = db.make_engine(database_url)
     async with engine.begin() as conn:
-        await conn.execute(text("TRUNCATE design, design_version, build CASCADE"))
+        await conn.execute(text("TRUNCATE design, design_version, build, simulation CASCADE"))
     yield db.make_sessions(engine)
     await engine.dispose()
 
