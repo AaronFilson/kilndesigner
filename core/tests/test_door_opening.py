@@ -222,6 +222,35 @@ def test_a_door_lining_or_electric_kiln_is_refused() -> None:
         _kiln("electric-front-loader.yaml", LINTEL)
 
 
+def test_a_hybrids_door_takes_burner_ports_through_its_bricks() -> None:
+    # The author's kiln: a 24 × 40 in door in the front wall, eight burner ports in the door
+    kiln = parse_design((EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8"))
+    assert kiln.loading.opening is not None
+    assert kiln.heat.electric is not None
+    assert [p for p in lining_parts(kiln) if p.name.startswith("door/")]
+    from kilndesigner.gas import design_gas
+
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    assert not hw.refused
+    burners = [p for p in hw.ports if p.kind == "burner"]
+    assert len(burners) == 8
+    hole = door_hole(kiln)
+    assert hole is not None
+    for p in burners:
+        # Each port lies inside the door, so it is cut through the door's bricks
+        assert p.wall == "front"
+        assert hole.lo[0] / 25.4 <= p.across - p.width / 2
+        assert p.across + p.width / 2 <= hole.hi[0] / 25.4
+        assert p.up + p.height / 2 <= 40
+    # Elements can't share the door's wall: their grooves run its whole length
+    with pytest.raises(ValidationError, match="grooves run the whole front wall"):
+        _kiln("pnw-hybrid-crossdraft.yaml", {},
+              heat={**yaml.safe_load((EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(
+                  encoding="utf-8"))["heat"], "electric": {
+                  "supply": {"voltage": "240 V", "breaker": "60 A"},
+                  "alloy": "kanthal-apm", "walls": ["front"]}})  # fmt: skip
+
+
 def test_climbing_kilns_take_doors_in_their_side_walls() -> None:
     door = {"width": "20 in", "height": "36 in"}
     side: dict[str, Any] = {"face": "left", "opening": door}

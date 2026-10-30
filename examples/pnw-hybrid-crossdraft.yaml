@@ -6,6 +6,11 @@ name: PNW hybrid cross-draft, cone 10, bricked door
 units: us
 firing:
   cone: "10"
+  # An ESTIMATE of the kiln furniture in a full stack, for the simulation (pnw-hybrid-crossdraft.md):
+  # four 12 × 24 × 1 in mullite shelves a layer (24 in across, 12 in along; 4 in in front, 1 in
+  # between and at the back: Olsen p.142, p.151) at 20.5 lb each (Olsen p.33–35), four layers
+  # (an assumption, not sourced). The ware itself and the posts have no sourced mass: left out.
+  ware: 328 lb
 chamber:
   width: 28 in
   depth: 60 in # along the draft, from the burners to the flue
@@ -16,6 +21,11 @@ roof:
 loading:
   type: door
   face: front # an end wall: the arch springs from the sides
+  opening: # the author's door (docs/kilns/pnw-hybrid-crossdraft.md, 2026-10-30)
+    width: 24 in
+    height: 40 in
+    sill: 0 in # at floor level
+    head: lintel
 lining:
   walls:
     - material: ifb-jm26
@@ -44,14 +54,28 @@ heat:
       breaker: 60 A # 48 A continuous
     alloy: kanthal-apm
     walls: [left]
+    # The hand-over at the start of shino reduction, cone 012–010 (about 1580–1680 °F, Orton,
+    # cones.yaml): set by the glaze, not by the cheapest point on the cost chart
     off_above: 1650 degF
   gas:
     burners:
       type: venturi
-      wall: front
+      count: 8 # the author's: slow flame movement at high volume
+      wall: front # through the bricked door, from a removable welded-steel rack
+      places: # two rows of four, inside the 24 in door; the rows three courses apart
+        - {wall: front, across: -9 in, up: 4.625 in}
+        - {wall: front, across: -3 in, up: 4.625 in}
+        - {wall: front, across: 3 in, up: 4.625 in}
+        - {wall: front, across: 9 in, up: 4.625 in}
+        - {wall: front, across: -9 in, up: 12.125 in}
+        - {wall: front, across: -3 in, up: 12.125 in}
+        - {wall: front, across: 3 in, up: 12.125 in}
+        - {wall: front, across: 9 in, up: 12.125 in}
     supply:
       type: cylinders
-      count: 4
+      # The author's choice, more 100 lb cylinders: 11 meets the burners' draw at 20 °F even ¼
+      # full keeping 10 psi (5 would do full, 8 half full)
+      count: 11
     reduction: true
 draft:
   type: cross
