@@ -889,6 +889,21 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.rings).toBeUndefined();
   });
 
+  it("puts a round electric kiln's floor inside its walls, only for round electric kilns", () => {
+    const label = "The floor slab sits inside the wall's lowest course, the walls running to the bottom (Paragon), not under the walls (Skutt)";
+    const last = live(electric);
+    expect(screen.queryByLabelText(label)).toBeNull();
+    set("Chamber shape", "round");
+    fireEvent.click(screen.getByLabelText(label));
+    expect(last().chamber.floor_inside).toBe(true);
+    fireEvent.click(screen.getByLabelText(label));
+    expect(last().chamber.floor_inside).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(label));
+    set("Chamber shape", "box");
+    expect(last().chamber.floor_inside).toBeUndefined();
+    expect(screen.queryByLabelText(label)).toBeNull();
+  });
+
   it("adds and removes chambers in a row, with a slope and a floor on the ground", () => {
     const last = live(electric);
     expect(disabled("Remove a chamber")).toBe(true);

@@ -1168,7 +1168,7 @@ export function DesignForm({
               ["chamber"],
               v === "round"
                 ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
-                : { ...doc.chamber, shape: undefined, rings: undefined },
+                : { ...doc.chamber, shape: undefined, rings: undefined, floor_inside: undefined },
             )
           }
         />
@@ -1273,6 +1273,17 @@ export function DesignForm({
           />
           The floor is on the ground (not raised on a stand)
         </label>
+        {round && electric && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={doc.chamber.floor_inside ?? false}
+              onChange={(e) => change(["chamber", "floor_inside"], e.target.checked || undefined)}
+            />
+            {"The floor slab sits inside the wall's lowest course, the walls running to the " +
+              "bottom (Paragon), not under the walls (Skutt)"}
+          </label>
+        )}
         <Choice
           label="Roof"
           value={roof.type}

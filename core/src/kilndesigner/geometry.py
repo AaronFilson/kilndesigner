@@ -29,6 +29,7 @@ import numpy as np
 
 from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, OpenTop, SprungArch
 from kilndesigner.outline import Revolved, shell_profile
+from kilndesigner.rings import FLOOR_COURSE_IN, IN
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome
 from kilndesigner.units import si
 from kilndesigner.working import length_text
@@ -606,15 +607,20 @@ def _round_parts(kiln: Kiln) -> list[Part]:
 
     flat = True
     cum = 0.0
+    # A floor inside the walls (Paragon's) is the inside outline, in the wall's lowest course,
+    # the wall running a course below the inside floor; else it runs under the walls (Skutt's)
+    inside = kiln.chamber.floor_inside
+    floor_reach = radius * corner if inside else outside
+    foot = -FLOOR_COURSE_IN * IN if inside else 0.0
     for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
         z0, z1 = -cum - th, -cum
-        add(f"floor/{i + 1}-{mat}", mat, [(0.0, z0), (outside, z0), (outside, z1), (0.0, z1)],
-            th, "floor")  # fmt: skip
+        add(f"floor/{i + 1}-{mat}", mat,
+            [(0.0, z0), (floor_reach, z0), (floor_reach, z1), (0.0, z1)], th, "floor")  # fmt: skip
         cum += th
     r = radius
     for i, (mat, th) in enumerate(walls):
         r0, r1 = r * corner, (r + th) * corner
-        add(f"wall/{i + 1}-{mat}", mat, [(r0, 0.0), (r1, 0.0), (r1, h), (r0, h)], th, None)
+        add(f"wall/{i + 1}-{mat}", mat, [(r0, foot), (r1, foot), (r1, h), (r0, h)], th, None)
         r += th
     roof = kiln.roof
     cum = 0.0

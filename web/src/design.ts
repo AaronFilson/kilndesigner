@@ -32,6 +32,7 @@ export interface KilnDocument {
     slope?: string;
     bend?: string;
     on_ground?: boolean;
+    floor_inside?: boolean;
     rings?: RingMethod;
   };
   roof?:

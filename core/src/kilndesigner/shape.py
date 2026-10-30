@@ -256,6 +256,9 @@ class ChamberShape:
     is then a regular polygon whose flats and corners average ``width`` (rings.inside_apothem)."""
     open_top: bool = False
     """No built roof (shards over the setting): no roof face."""
+    floor_inside: bool = False
+    """A round kiln's floor slab inside the wall's lowest course (model.Chamber.floor_inside):
+    the slab is the inside outline all through, not spreading out under the walls."""
     chambers: int = 1
     """Chambers in a row along ``depth``: an arch or dome over each, spanning along the draft
     (run_parts.py); ``arch`` and ``dome`` are then one chamber's."""
@@ -389,12 +392,16 @@ class ChamberShape:
         def disc(t: float) -> float:
             return self._plan_area(t)
 
+        def slab(t: float) -> float:  # inside the walls: the slab keeps the inside outline
+            return self._plan_area(0.0)
+
         arc = self.perimeter() / 4
         walls = [
             FaceShape(face, "vertical", arc * h, arc, h, grows=quarter)
             for face in ("left", "right", "back", "front")
         ]
-        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=disc)
+        under = slab if self.floor_inside else disc
+        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=under)
         dome = self.round_dome
         roof = (
             FaceShape("roof", "facing_up", dome.area(), dia, dia, grows=dome.area)
@@ -428,8 +435,9 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
     if c.shape == "round":
         dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None
         return ChamberShape(
-            w, w, h, None, round=True, round_dome=dome, open_top=open_top, sides=facets(kiln)
-        )
+            w, w, h, None, round=True, round_dome=dome, open_top=open_top, sides=facets(kiln),
+            floor_inside=c.floor_inside,
+        )  # fmt: skip
     if open_top:
         return ChamberShape(w, d, h, None, open_top=True)
     n = c.chambers

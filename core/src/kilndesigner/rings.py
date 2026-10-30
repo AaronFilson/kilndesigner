@@ -144,6 +144,25 @@ FAMILIES: dict[Series, Family] = {
 }  # fmt: skip
 CLOSER = "closer, a straight cut short"
 
+FLOOR_COURSE_IN = 4.5
+"""An electric kiln's wall course (in): a floor slab inside the walls sits in the lowest one."""
+FLOOR_INSIDE_SOURCE = (
+    "electric-kiln-survey.md: Paragon TnF-27-3, 27 in of wall, 22¼ in deep (dealer snippet); "
+    "the user (2026-10-30): 27 − 4½ = 22½ in, the floor slab inside the lowest course, while "
+    "Skutt's KM-1227-3 has its floor under the walls"
+)
+
+
+def floor_inside_depth(wall_in: float) -> float:
+    """The inside depth (in) of a round electric kiln ``wall_in`` tall whose floor slab sits
+    inside the wall's lowest 4½ in course: the wall less that course (the user, 2026-10-30)."""
+    return wall_in - FLOOR_COURSE_IN
+
+
+def wall_height(inside_in: float, floor_inside: bool) -> float:
+    """The wall's height (in) for an inside height: one course more when the floor is inside."""
+    return inside_in + (FLOOR_COURSE_IN if floor_inside else 0.0)
+
 
 class RingError(ValueError):
     """The circle is tighter than the tightest shape turns on its own."""

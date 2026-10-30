@@ -14,6 +14,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kilndesigner import cones
+from kilndesigner.rings import FLOOR_COURSE_IN
 from kilndesigner.units import (
     Q_,
     Angle,
@@ -132,6 +133,16 @@ class Chamber(Spec):
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
+        ),
+    )
+    floor_inside: bool = Field(
+        default=False,
+        description=(
+            "A round electric kiln's floor slab sits inside the wall's lowest 4½ in course, the "
+            "walls running to the bottom (Paragon's TnF-27-3: 27 in of wall, 22¼ in inside), "
+            "rather than under the walls (Skutt's KM-1227-3: 27 in of wall and inside). The "
+            "height is still the inside height: the wall is one course taller, and that course "
+            "carries no elements"
         ),
     )
     rings: Literal["mortar", "cut", "featheredge", "arch"] | None = Field(
@@ -897,6 +908,26 @@ class Kiln(Spec):
             raise ValueError("each castable needs its own id")
         return self
 
+    def _floor_fits_inside(self) -> None:
+        """A floor slab inside the walls: only in a round wall of 2½ or 3 in brick cut to the
+        angle, laid in 4½ in courses, as electric kilns are (electric-kiln-survey.md), and no
+        thicker than the course it sits in."""
+        c = self.chamber
+        cut = c.rings == "cut" or (c.rings is None and self.heat.electric is not None)
+        hot = si(self.lining.walls[0].thickness, "in")
+        if c.shape != "round" or not cut or not any(abs(hot - t) < 0.04 for t in (2.5, 3.0)):
+            raise ValueError(
+                "a floor inside the walls (chamber.floor_inside) is for a round wall of 2½ or 3 "
+                "in brick cut to the angle, in 4½ in courses, as electric kilns are built "
+                "(Paragon's TnF-27-3): no source shows it in another wall"
+            )
+        floor = sum(si(x.thickness, "in") for x in self.lining.for_face("floor"))
+        if floor > FLOOR_COURSE_IN + 1e-6:
+            raise ValueError(
+                f"a floor inside the walls sits in their lowest {FLOOR_COURSE_IN:g} in course, so "
+                f"it can be at most {FLOOR_COURSE_IN:g} in thick; this one is {floor:g} in"
+            )
+
     @model_validator(mode="after")
     def _a_roof_it_can_build(self) -> Kiln:
         powered = self.heat.gas is not None or self.heat.electric is not None
@@ -905,6 +936,8 @@ class Kiln(Spec):
                 "an open top's heat loss isn't worked out, so burners or elements can't be sized "
                 "for it: fire it with wood, coal or oil, or give it a roof"
             )
+        if self.chamber.floor_inside:
+            self._floor_fits_inside()
         if self.chamber.shape == "round":
             if isinstance(self.roof, SprungArch | CatenaryArch):
                 raise ValueError("a round chamber takes a dome or a flat roof, not an arch")

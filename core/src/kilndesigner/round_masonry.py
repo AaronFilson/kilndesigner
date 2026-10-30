@@ -53,6 +53,7 @@ from kilndesigner.rings import (
     CUT_SLACK,
     FAMILIES,
     FEATHEREDGE_SOURCE,
+    FLOOR_COURSE_IN,
     IN,
     MORTAR_SOURCE,
     SOURCE,
@@ -255,7 +256,8 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     us = kiln.units == "us"
     c = kiln.chamber
     inside = si(c.width, "mm") / 2
-    height = si(c.height, "mm")
+    # The wall's height: a floor inside the walls sits in an extra course at their foot
+    height = si(c.height, "mm") + (FLOOR_COURSE_IN * IN if c.floor_inside else 0.0)
     method = ring_method(c.rings, kiln.heat.electric is not None)
     findings: list[Finding] = []
     whole: Counter[str] = Counter()
@@ -433,13 +435,27 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                         f"{length_text(2 * radius, us)} across its corners, {n_whole} whole and "
                         f"{len(pieces) - n_whole} cut to the kiln's profile, a steel band round it"
                         + (" carrying the lid's hinge" if lid else ", not hinged")
+                        + (
+                            ", inside the wall's lowest course"
+                            if not lid and c.floor_inside
+                            else ""
+                        )
                     )
             elif m.kind in SHEET_KINDS:
                 sheet(m.id, area, th)
             elif m.kind in BULK_KINDS:
                 cast_volume[m.id] += area * th
 
-    disc("floor", outside)
+    if c.floor_inside:
+        # Inside the wall's lowest course: the slab is the inside outline, out to its corners
+        corner = (
+            inside
+            if sides is None
+            else inside_apothem(2 * inside, sides) / math.cos(math.pi / sides)
+        )
+        disc("floor", corner)
+    else:
+        disc("floor", outside)
     roof = kiln.roof
     if isinstance(roof, FlatRoof):
         disc("roof", outside)
