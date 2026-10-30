@@ -655,6 +655,15 @@ among them matters little. c_p is per unit mass, so porosity does not change it;
 own density (98 lb/ft³) is used for the heat stored. The 5 % of lime in the cement is not
 represented. This is **not HWI's value**; replace it if HWI supplies one.
 
+Below 400 °C the simulation holds the 400 °C value (978 J/(kg·K)). Refractories' c_p rises with
+temperature in every VDI row, so this overstates the heat stored in the early firing (the slow,
+costlier side). No source found gives a lower-temperature point for this class. Searched again
+2026-10-30 for a maker's figure for an alumina-silica insulating castable: Morgan's Firelite
+2600LI/2800LI sheets (https://morganthermalceramics.com/media/d3plff0a/firelite-2600li_eng.pdf)
+and Mathios's insulating castables table (https://refractories.mathios.com/insulating-castables/)
+show conductivity but no specific heat (Mathios read in full; the Firelite sheets only as
+search extracts) (**NOT FOUND**).
+
 ### 14.4 Cerachem blanket specific heat (Verified)
 
 Morgan Thermal Ceramics, *North America Product Data Brochure* 2012, p.5, the blanket table
