@@ -29,6 +29,7 @@ from kilndesigner.units import (
     Power,
     Pressure,
     Rate,
+    Share,
     SpecificHeat,
     SpringRate,
     Temperature,
@@ -705,6 +706,39 @@ class Site(Spec):
     materials_budget: Money | None = None
 
 
+class Allowances(Spec):
+    """What is bought over the count in the kiln, for breakage, spills and mistakes. Left out, each
+    takes its sourced default (docs/research/brick-waste.md); give your own from experience."""
+
+    brick: Share | None = Field(
+        default=None,
+        description="Over the bricks counted, whole and cut. Left out: 5 % (BIA Technical Note 10)",
+    )
+    shaped: Share | None = Field(
+        default=None,
+        description="Over the arch and wedge bricks counted. Left out: 5 %, as for straights",
+    )
+    castable: Share | None = Field(
+        default=None,
+        description=(
+            "Over the castable a lining needs, bought or mixed. Left out: 5 % (PCO Refractories "
+            "application instructions, 10 % or more in hard conditions)"
+        ),
+    )
+    sheet: Share | None = Field(
+        default=None,
+        description="Over the blanket and board area. Left out: none, as no source gives one",
+    )
+
+    @model_validator(mode="after")
+    def _between_none_and_all(self) -> Allowances:
+        for name in ("brick", "shaped", "castable", "sheet"):
+            value = getattr(self, name)
+            if value is not None and not 0 <= si(value, "") < 1:
+                raise ValueError(f"the {name} allowance must be at least 0 % and under 100 %")
+        return self
+
+
 class MixPart(Spec):
     """One ingredient of a castable, by its mass in one batch."""
 
@@ -766,6 +800,9 @@ class Kiln(Spec):
     site: Site = Field(default_factory=Site)
     castables: list[CastableMix] | None = Field(
         default=None, min_length=1, description="Castables you mix yourself"
+    )
+    allowances: Allowances = Field(
+        default_factory=Allowances, description="What to buy over the count, for waste"
     )
 
     @model_validator(mode="after")

@@ -16,19 +16,19 @@
     ],
     "lines": [
       {
-        "buy": "280 bricks",
-        "cost": 2007.6,
+        "buy": "267 bricks",
+        "cost": 1914.3899999999999,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "280 bricks (168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage)",
+        "needed": "267 bricks (168 whole, 86 cut into 98 pieces; 254 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
       },
       {
-        "buy": "37 bricks",
-        "cost": 230.88,
+        "buy": "35 bricks",
+        "cost": 218.4,
         "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "needed": "37 bricks (21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage)",
+        "needed": "35 bricks (21 whole, 12 cut into 15 pieces; 33 in the kiln plus 5 % for breakage)",
         "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
         "source": "combustion-and-masonry.md §9 [S71]",
         "unit_price": "$6.24"
@@ -37,7 +37,7 @@
         "buy": "1 roll",
         "cost": 150.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "needed": "32.4 ft² (1 in thick; area plus 10% for trimming)",
+        "needed": "29.5 ft² (1 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$150.00"
@@ -80,7 +80,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 2944.98
+    "total": 2839.29
   },
   "castables": [],
   "chamber_volume": "7.03 ft³",
@@ -554,8 +554,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
     },
     {
       "check": null,
@@ -1037,37 +1037,59 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
       }
     ],
     "quantities": [
       {
-        "amount": 280.0,
-        "detail": "168 whole, 86 cut into 98 pieces; 254 in the kiln plus 10% for breakage",
+        "amount": 267.0,
+        "detail": "168 whole, 86 cut into 98 pieces; 254 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 280.0,
+        "priced_amount": 267.0,
         "unit": "bricks"
       },
       {
-        "amount": 37.0,
-        "detail": "21 whole, 12 cut into 15 pieces; 33 in the kiln plus 10% for breakage",
+        "amount": 35.0,
+        "detail": "21 whole, 12 cut into 15 pieces; 33 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-k23",
         "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "priced_amount": 37.0,
+        "priced_amount": 35.0,
         "unit": "bricks"
       },
       {
-        "amount": 32.4,
-        "detail": "1 in thick; area plus 10% for trimming",
+        "amount": 29.5,
+        "detail": "1 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-8pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "priced_amount": 32.40607638888886,
+        "priced_amount": 29.46006944444442,
         "unit": "ft²"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "0 %"
+        },
+        "name": "Allowance over the count: blanket and board",
+        "note": "the default; set allowances.sheet in the design to change it",
+        "reference": "brick-waste.md §4: no source gives one",
+        "value": "0 %"
       }
     ]
   },

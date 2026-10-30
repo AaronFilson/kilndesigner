@@ -342,6 +342,7 @@ const castable = {
   },
   placed: "the walls' hot face",
   batches: 3,
+  allowance: "5 %",
   totals: [],
   layers: [
     {
@@ -387,7 +388,7 @@ describe("Castables", () => {
     expect(row("Foam", mix)).toBe("50 %");
     expect(row("Conductivity (estimated)", mix)).toBe("0.25 W/m·K at 500 °C; 0.31 W/m·K at 1000 °C");
     expect(row("Service limit", mix)).toBe("not sourced: test it");
-    expect(row("Batches to mix", mix)).toBe("3, with 10 % to spare");
+    expect(row("Batches to mix", mix)).toBe("3, with 5 % to spare");
     expect(within(mix).getAllByRole("listitem").map((li) => li.textContent)).toContain(
       "Mix in the water, then the foam.",
     );

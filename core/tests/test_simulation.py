@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from kilndesigner import Kiln, load_design
+from kilndesigner import Kiln, load_design, parse_design
 from kilndesigner.library import materials
 from kilndesigner.model import Ramp
 from kilndesigner.results import heatmap, read_summary, series, write_run
@@ -153,9 +153,18 @@ def test_a_firing_that_runs_too_long(electric: Kiln, monkeypatch: pytest.MonkeyP
 
 
 def test_a_castable_without_a_sourced_specific_heat_is_refused() -> None:
-    kiln = load_design(EXAMPLES / "pnw-hybrid-crossdraft.yaml")
-    with pytest.raises(SimulationError, match="Kast-O-Lite 30 LI Plus"):
+    # Kast-O-Lite 26 LI Plus has no specific heat in the library (Kast-O-Lite 30 has a class value)
+    source = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")
+    kiln = parse_design(source.replace("kast-o-lite-30-li-plus", "kast-o-lite-26-li-plus"))
+    with pytest.raises(SimulationError, match="Kast-O-Lite 26 LI Plus"):
         simulate(kiln)
+
+
+def test_the_pnw_kiln_simulates_on_its_castables_class_value() -> None:
+    """Kast-O-Lite 30's c_p is a class value (castables.md §14.3), said so in the findings."""
+    r = simulate(load_design(EXAMPLES / "pnw-hybrid-crossdraft.yaml"), dt=600, record=False).result
+    assert r.completed
+    assert any("a class value" in f.message for f in r.findings)
 
 
 def test_wood_firing_waits_for_m7() -> None:
@@ -304,8 +313,14 @@ def test_every_library_material_with_a_specific_heat_cites_it() -> None:
     for m in with_cp:
         assert m.specific_heat is not None
         assert ".md" in m.specific_heat.source
-    # None for the castables: no source gives one (thermal-properties.md §1, Not found)
-    assert materials()["kast-o-lite-30-li-plus"].specific_heat is None
+    # Kast-O-Lite 30: a class value, labelled as one (castables.md §14.3); Cerachem: Morgan's own
+    kol = materials()["kast-o-lite-30-li-plus"].specific_heat
+    assert kol is not None
+    assert kol.status == "derived"
+    assert "class value" in kol.source
+    assert materials()["cerachem-blanket-8pcf"].specific_heat is not None
+    # None for the other castables: no source gives one (thermal-properties.md §1, Not found)
+    assert materials()["kast-o-lite-26-li-plus"].specific_heat is None
 
 
 def test_results_round_trip_through_parquet(electric: Kiln, tmp_path: Path) -> None:

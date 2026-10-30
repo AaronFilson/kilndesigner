@@ -16,37 +16,37 @@
     ],
     "lines": [
       {
-        "buy": "80 bricks",
-        "cost": 436.0,
+        "buy": "76 bricks",
+        "cost": 414.2,
         "item": "HarbisonWalker KX-99 super-duty firebrick",
-        "needed": "80 bricks (60 whole, 12 cut into 18 pieces; 72 in the kiln plus 10% for breakage)",
+        "needed": "76 bricks (60 whole, 12 cut into 18 pieces; 72 in the kiln plus 5 % for breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
       },
       {
-        "buy": "448 bricks",
-        "cost": 3212.16,
+        "buy": "428 bricks",
+        "cost": 3068.7599999999998,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "448 bricks (407 whole, 0 cut into 0 pieces; 407 in the kiln plus 10% for breakage)",
+        "needed": "428 bricks (407 whole, 0 cut into 0 pieces; 407 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
       },
       {
-        "buy": "285 bricks",
-        "cost": 1778.4,
+        "buy": "272 bricks",
+        "cost": 1697.28,
         "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "needed": "285 bricks (231 whole, 28 cut into 38 pieces; 259 in the kiln plus 10% for breakage)",
+        "needed": "272 bricks (231 whole, 28 cut into 38 pieces; 259 in the kiln plus 5 % for breakage)",
         "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
         "source": "combustion-and-masonry.md §9 [S71]",
         "unit_price": "$6.24"
       },
       {
-        "buy": "3 rolls",
-        "cost": 450.0,
+        "buy": "2 rolls",
+        "cost": 300.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "needed": "52.4 ft² (2 in thick; area plus 10% for trimming)",
+        "needed": "47.6 ft² (2 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$150.00"
@@ -64,14 +64,14 @@
         "buy": "168 bricks",
         "cost": 915.6,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "168 straights (with 5 % for cuts)",
+        "needed": "168 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 7382.16
+    "total": 6985.84
   },
   "castables": [],
   "chamber_volume": "29.2 ft³",
@@ -602,8 +602,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
     },
     {
       "check": null,
@@ -1705,46 +1705,68 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
       }
     ],
     "quantities": [
       {
-        "amount": 80.0,
-        "detail": "60 whole, 12 cut into 18 pieces; 72 in the kiln plus 10% for breakage",
+        "amount": 76.0,
+        "detail": "60 whole, 12 cut into 18 pieces; 72 in the kiln plus 5 % for breakage",
         "kind": "dense_firebrick",
         "material": "hard-firebrick-kx99",
         "name": "HarbisonWalker KX-99 super-duty firebrick",
-        "priced_amount": 80.0,
+        "priced_amount": 76.0,
         "unit": "bricks"
       },
       {
-        "amount": 448.0,
-        "detail": "407 whole, 0 cut into 0 pieces; 407 in the kiln plus 10% for breakage",
+        "amount": 428.0,
+        "detail": "407 whole, 0 cut into 0 pieces; 407 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 448.0,
+        "priced_amount": 428.0,
         "unit": "bricks"
       },
       {
-        "amount": 285.0,
-        "detail": "231 whole, 28 cut into 38 pieces; 259 in the kiln plus 10% for breakage",
+        "amount": 272.0,
+        "detail": "231 whole, 28 cut into 38 pieces; 259 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-k23",
         "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "priced_amount": 285.0,
+        "priced_amount": 272.0,
         "unit": "bricks"
       },
       {
-        "amount": 52.4,
-        "detail": "2 in thick; area plus 10% for trimming",
+        "amount": 47.6,
+        "detail": "2 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-8pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "priced_amount": 104.71609749367508,
+        "priced_amount": 95.19645226697727,
         "unit": "ft²"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "0 %"
+        },
+        "name": "Allowance over the count: blanket and board",
+        "note": "the default; set allowances.sheet in the design to change it",
+        "reference": "brick-waste.md §4: no source gives one",
+        "value": "0 %"
       }
     ]
   },

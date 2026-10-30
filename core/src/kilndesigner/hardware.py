@@ -17,6 +17,7 @@ import math
 from dataclasses import dataclass, field
 from typing import Literal
 
+from kilndesigner.allowance import allowance
 from kilndesigner.fire import FireDesign
 from kilndesigner.frame import CASE_T, NO_FRAME, FrameDesign, outside, skewback_top
 from kilndesigner.gas import BURNER_PORTS, FLUE_SOURCE, SLIGHTLY_UNDER, GasDesign, kiln_top_in
@@ -1064,7 +1065,8 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
             reference="kiln-hardware.md §3.2–3.3 [S4]",
         )
     )
-    hw.chimney_bricks = math.ceil(volume / math.prod(BRICK) * 1.05)
+    # Counted by volume, so it is a straight-run count; the brick allowance covers the cuts
+    hw.chimney_bricks = allowance(kiln, "brick").buy(volume / math.prod(BRICK))
 
 
 def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:

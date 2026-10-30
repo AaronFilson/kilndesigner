@@ -732,8 +732,9 @@ def _data_findings(kiln: Kiln, faces: Sequence[_Face]) -> list[Finding]:
             Finding(
                 level="info",
                 message=(
-                    "Specific heats come from one generic source each, not the makers' sheets, and "
-                    "are held at their end values outside their temperatures: "
+                    "Specific heats come from one source each, most of them generic or a class "
+                    "value rather than the maker's sheet, and are held at their end values outside "
+                    "their temperatures: "
                     + "; ".join(f"{k}: {v}" for k, v in sorted(sources.items()))
                 ),
             )

@@ -434,6 +434,9 @@ export interface components {
             placed: string;
             /** Batches */
             batches: number;
+            /** Allowance */
+            allowance: string;
+            allowance_step: components["schemas"]["Step"];
             /** Totals */
             totals: components["schemas"]["IngredientTotal"][];
             /** Layers */
@@ -1083,6 +1086,11 @@ export interface components {
             cut_list: components["schemas"]["CutLine"][];
             /** Findings */
             findings: components["schemas"]["Finding"][];
+            /**
+             * Working
+             * @default []
+             */
+            working: components["schemas"]["Step"][];
         };
         /**
          * Member

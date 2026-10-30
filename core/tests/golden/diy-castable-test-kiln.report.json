@@ -19,7 +19,7 @@
         "buy": "1 roll",
         "cost": 150.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "needed": "21.8 ft² (2 in thick; area plus 10% for trimming)",
+        "needed": "19.8 ft² (2 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$150.00"
@@ -34,82 +34,82 @@
         "unit_price": "$395.00"
       },
       {
-        "buy": "469 lb",
-        "cost": 468.00000000000006,
+        "buy": "443 lb",
+        "cost": 442.00000000000006,
         "item": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
-        "needed": "468 lb for 18 batches",
+        "needed": "442 lb for 17 batches",
         "priced_as": "your price, in the design",
         "source": "the design file",
         "unit_price": "$1.00/lb"
       },
       {
-        "buy": "271 lb",
+        "buy": "256 lb",
         "cost": null,
         "item": "Greenstripe fireclay, for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
-        "needed": "270 lb for 18 batches",
+        "needed": "255 lb for 17 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "72 lb",
+        "buy": "68 lb",
         "cost": null,
         "item": "Raw kyanite (Virginia Kyanite), for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
-        "needed": "72 lb for 18 batches",
+        "needed": "68 lb for 17 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "90 lb",
+        "buy": "85 lb",
         "cost": null,
         "item": "Dextrin, for Foamed grog and fireclay hot face (the notes' \"K26 type\")",
-        "needed": "90 lb for 18 batches",
+        "needed": "85 lb for 17 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "1066 lb",
-        "cost": 1065.0000000000002,
+        "buy": "1021 lb",
+        "cost": 1020.0000000000001,
         "item": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
-        "needed": "1,065 lb for 71 batches",
+        "needed": "1,020 lb for 68 batches",
         "priced_as": "your price, in the design",
         "source": "the design file",
         "unit_price": "$1.00/lb"
       },
       {
-        "buy": "1775 lb",
+        "buy": "1701 lb",
         "cost": null,
         "item": "Greenstripe fireclay, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
-        "needed": "1,775 lb for 71 batches",
+        "needed": "1,700 lb for 68 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "356 lb",
+        "buy": "340 lb",
         "cost": null,
         "item": "Raw kyanite (Virginia Kyanite), for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
-        "needed": "355 lb for 71 batches",
+        "needed": "340 lb for 68 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "356 lb",
+        "buy": "340 lb",
         "cost": null,
         "item": "Dextrin, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
-        "needed": "355 lb for 71 batches",
+        "needed": "340 lb for 68 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
       },
       {
-        "buy": "18 lb",
+        "buy": "17 lb",
         "cost": null,
         "item": "Newspaper pulp, for Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
-        "needed": "17.8 lb for 71 batches",
+        "needed": "17 lb for 68 batches",
         "priced_as": null,
         "source": null,
         "unit_price": null
@@ -118,7 +118,7 @@
         "buy": "218 bricks",
         "cost": 1188.1000000000001,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "218 straights (with 5 % for cuts)",
+        "needed": "218 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -152,11 +152,22 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 3661.1000000000004
+    "total": 3590.1000000000004
   },
   "castables": [
     {
-      "batches": 18,
+      "allowance": "5 %",
+      "allowance_step": {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: castable",
+        "note": "the default; set allowances.castable in the design to change it",
+        "reference": "brick-waste.md §3, PCO Refractories, castable application instructions 1/2026, §5.3 [W2]",
+        "value": "5 %"
+      },
+      "batches": 17,
       "findings": [
         {
           "check": {
@@ -1006,7 +1017,7 @@
       "schedule": [],
       "schedule_hours": null,
       "steps": [
-        "Weigh one batch: 26 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 15 lb Greenstripe fireclay, 4 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, and 12 lb of water (24.0 % of the dry mix). 18 batches cover the lining with 10 % to spare.",
+        "Weigh one batch: 26 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 15 lb Greenstripe fireclay, 4 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, and 12 lb of water (24.0 % of the dry mix). 17 batches cover the lining with 5 % to spare.",
         "Mix the dry ingredients first, then add the water and mix to an even paste.",
         "Fold in foam until the mix is 55 % of the cast volume air: a level US quart of it then weighs 1.86 lb (845 g). Weigh a quart from each batch and add foam or mix to correct it.",
         "Cast it, and from the same batch cast test pieces to fire and measure.",
@@ -1016,29 +1027,29 @@
       ],
       "totals": [
         {
-          "amount": "468 lb",
-          "amount_lb": 468.00000000000006,
-          "cost": 468.00000000000006,
+          "amount": "442 lb",
+          "amount_lb": 442.00000000000006,
+          "cost": 442.00000000000006,
           "ingredient": "mulcoa-70",
           "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")"
         },
         {
-          "amount": "270 lb",
-          "amount_lb": 270.00000000000006,
+          "amount": "255 lb",
+          "amount_lb": 255.00000000000003,
           "cost": null,
           "ingredient": "greenstripe",
           "name": "Greenstripe fireclay"
         },
         {
-          "amount": "72 lb",
-          "amount_lb": 72.0,
+          "amount": "68 lb",
+          "amount_lb": 68.0,
           "cost": null,
           "ingredient": "kyanite",
           "name": "Raw kyanite (Virginia Kyanite)"
         },
         {
-          "amount": "90 lb",
-          "amount_lb": 90.0,
+          "amount": "85 lb",
+          "amount_lb": 85.0,
           "cost": null,
           "ingredient": "dextrin",
           "name": "Dextrin"
@@ -1046,7 +1057,18 @@
       ]
     },
     {
-      "batches": 71,
+      "allowance": "5 %",
+      "allowance_step": {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: castable",
+        "note": "the default; set allowances.castable in the design to change it",
+        "reference": "brick-waste.md §3, PCO Refractories, castable application instructions 1/2026, §5.3 [W2]",
+        "value": "5 %"
+      },
+      "batches": 68,
       "findings": [
         {
           "check": {
@@ -1721,7 +1743,7 @@
       "schedule": [],
       "schedule_hours": null,
       "steps": [
-        "Weigh one batch: 15 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 25 lb Greenstripe fireclay, 5 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, 0.25 lb Newspaper pulp, and 14.5 lb of water (28.9 % of the dry mix). 71 batches cover the lining with 10 % to spare.",
+        "Weigh one batch: 15 lb Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\"), 25 lb Greenstripe fireclay, 5 lb Raw kyanite (Virginia Kyanite), 5 lb Dextrin, 0.25 lb Newspaper pulp, and 14.5 lb of water (28.9 % of the dry mix). 68 batches cover the lining with 5 % to spare.",
         "Mix the dry ingredients first, then add the water and mix to an even paste.",
         "Fold in foam until the mix is 60 % of the cast volume air: a level US quart of it then weighs 1.58 lb (718 g). Weigh a quart from each batch and add foam or mix to correct it.",
         "Cast it, and from the same batch cast test pieces to fire and measure.",
@@ -1731,36 +1753,36 @@
       ],
       "totals": [
         {
-          "amount": "1,065 lb",
-          "amount_lb": 1065.0000000000002,
-          "cost": 1065.0000000000002,
+          "amount": "1,020 lb",
+          "amount_lb": 1020.0000000000001,
+          "cost": 1020.0000000000001,
           "ingredient": "mulcoa-70",
           "name": "Mulcoa 70 calcined mullite grog (Clay Art Center's \"CE70\")"
         },
         {
-          "amount": "1,775 lb",
-          "amount_lb": 1775.0,
+          "amount": "1,700 lb",
+          "amount_lb": 1700.0000000000002,
           "cost": null,
           "ingredient": "greenstripe",
           "name": "Greenstripe fireclay"
         },
         {
-          "amount": "355 lb",
-          "amount_lb": 355.00000000000006,
+          "amount": "340 lb",
+          "amount_lb": 340.0,
           "cost": null,
           "ingredient": "kyanite",
           "name": "Raw kyanite (Virginia Kyanite)"
         },
         {
-          "amount": "355 lb",
-          "amount_lb": 355.00000000000006,
+          "amount": "340 lb",
+          "amount_lb": 340.0,
           "cost": null,
           "ingredient": "dextrin",
           "name": "Dextrin"
         },
         {
-          "amount": "17.8 lb",
-          "amount_lb": 17.75,
+          "amount": "17 lb",
+          "amount_lb": 17.0,
           "cost": null,
           "ingredient": "newsprint",
           "name": "Newspaper pulp"
@@ -3941,13 +3963,25 @@
     ],
     "quantities": [
       {
-        "amount": 21.8,
-        "detail": "2 in thick; area plus 10% for trimming",
+        "amount": 19.8,
+        "detail": "2 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-8pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "priced_amount": 43.546600075952384,
+        "priced_amount": 39.5878182508658,
         "unit": "ft²"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "0 %"
+        },
+        "name": "Allowance over the count: blanket and board",
+        "note": "the default; set allowances.sheet in the design to change it",
+        "reference": "brick-waste.md §4: no source gives one",
+        "value": "0 %"
       }
     ]
   },

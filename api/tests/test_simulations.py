@@ -62,7 +62,9 @@ async def test_a_firing_is_simulated_and_its_results_read_back(
 async def test_a_simulation_the_engine_refuses_fails_with_why(
     client: httpx.AsyncClient, runner: InlineRunner
 ) -> None:
+    # Kast-O-Lite 26 has no specific heat in the library (Kast-O-Lite 30 has a class value)
     source = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")
+    source = source.replace("kast-o-lite-30-li-plus", "kast-o-lite-26-li-plus")
     key = await _key(client, source)
     await client.post(f"/api/simulations/{key}")
     await runner.wait()
