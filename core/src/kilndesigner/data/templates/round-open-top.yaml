@@ -1,0 +1,51 @@
+# The Niñodaguia kiln, northwest Spain (Olsen, The Kiln Book, 4th ed., p.156–157): the round
+# wood-fired updraft of a commercial pottery, holding 2000 to 3000 small pots or about 1000 large
+# ones, set 8 or 9 high on setter tiles with shards over the top for a roof.
+#
+# From the book: chamber 7 ft across and 3½ ft tall, its walls 15½ in thick and "9 rows of
+# bricks up" (Fig 6-14); the firebox 3 ft high under the floor (Fig 6-14), firebox and chamber
+# about equal in height and width (text); the firebox mouth 27 in high and 18 in wide
+# (Fig 6-14); the floor a shallow dome of common bricks, 9 × 4½ × 2½ in, in circular soldier
+# courses; shards over the setting for a roof; pine (all p.156–157).
+# Assumed: the temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft, the only
+# low-fire updraft whose temperature the book prints (p.160). The walls are brick (Fig 6-14); the
+# only brick the book names for this kiln is the floor's common brick, so the walls are taken as
+# common brick too: building-brick-common. The floor is 9 in thick, a 9 in brick on end in a
+# soldier course (derived); its loss goes into the firebox under it and isn't counted. The
+# firebox's plan isn't printed: the chamber's 7 ft each way, as the text says they are about equal
+# in width. The door and air: engine defaults.
+# Not modelled: the floor's dome shape, its 12 in keystone, and its inlet flues, 1½ in holes
+# through the floor bricks, whose count isn't given; the 18 in drawn beside the firebox and the
+# ledge for the dome's first bricks (Fig 6-14); the open top's loss (the engine leaves it out).
+schema: 1
+name: Niñodaguia kiln
+units: us
+firing:
+  top_temperature: 1760 degF
+chamber:
+  shape: round
+  width: 84 in
+  depth: 84 in
+  height: 42 in
+roof:
+  type: open # shards over the setting
+lining:
+  walls:
+    - material: building-brick-common
+      thickness: 15.5 in
+  floor:
+    - material: building-brick-common
+      thickness: 9 in # common bricks on end, in soldier courses
+heat:
+  fire:
+    fuel: wood # pine
+    fireboxes:
+      - position: under
+        width: 84 in
+        length: 84 in
+        height: 36 in
+        stoke_hole: # the firebox mouth
+          width: 18 in
+          height: 27 in
+draft:
+  type: up

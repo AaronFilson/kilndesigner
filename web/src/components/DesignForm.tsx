@@ -7,6 +7,9 @@ import {
   type Burners,
   type Castable,
   type Electric,
+  type Fire,
+  type Firebox,
+  type FireboxPosition,
   fromMm,
   type Gas,
   joinQuantity,
@@ -552,7 +555,7 @@ function Places({
   );
 }
 
-const SIDES: (WallFace | undefined)[] = ["left", "right"];
+const SIDES: (WallFace | "floor" | undefined)[] = ["left", "right"];
 
 /** A catenary is its own side walls: the door goes to the front, the burners there too, and the
  * flue to the back. Ports placed one by one are left where they are, for the check to point out. */
@@ -646,7 +649,7 @@ function Ports({
           )}
         </div>
       )}
-      {gas && draft && (
+      {(gas || doc.heat.fire) && draft && (
         <div className="subgroup" role="group" aria-label="Exit flue">
           <h3>Exit flue</h3>
           <PortSize
@@ -718,6 +721,347 @@ function Ports({
   );
 }
 
+const POSITIONS: [FireboxPosition, string][] = [
+  ...faceOptions,
+  ["under", "Under the floor"],
+];
+
+/** A new firebox starts as wide as the chamber and as long as it is deep: no rule of thumb is
+ * assumed, so the engine's checks say what to change. */
+function freshFirebox(doc: KilnDocument, last: Firebox | undefined): Firebox {
+  return last ? { ...last } : { position: "front", width: doc.chamber.width, length: doc.chamber.depth };
+}
+
+function FireSection({
+  doc,
+  disabled,
+  onChange,
+}: {
+  doc: KilnDocument;
+  disabled: boolean;
+  onChange: (document: KilnDocument) => void;
+}) {
+  const fire = doc.heat.fire;
+  const set = (next: Fire) => onChange(setIn(doc, ["heat", "fire"], next));
+  const setBox = (i: number, box: Firebox) =>
+    fire && set({ ...fire, fireboxes: fire.fireboxes.map((b, j) => (j === i ? box : b)) });
+  return (
+    <Section title="Fireboxes (wood, coal or oil)">
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={fire !== undefined}
+          disabled={disabled}
+          onChange={(e) => {
+            let next = setIn(
+              doc,
+              ["heat", "fire"],
+              e.target.checked ? { fuel: "wood", fireboxes: [freshFirebox(doc, undefined)] } : undefined,
+            );
+            if (e.target.checked && !doc.draft) next = setIn(next, ["draft"], { type: "cross", flue_wall: "back" });
+            onChange(next);
+          }}
+        />
+        Fire with wood, coal or oil in fireboxes
+      </label>
+      {fire && (
+        <>
+          <Choice
+            label="Fuel"
+            value={fire.fuel ?? "wood"}
+            options={[
+              ["wood", "Wood"],
+              ["coal", "Coal"],
+              ["oil", "Oil"],
+            ]}
+            onChange={(v) =>
+              set(
+                v === "oil"
+                  ? { ...fire, fuel: v }
+                  : { ...fire, fuel: v, oil_burners: undefined, oil_rate: undefined },
+              )
+            }
+          />
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={fire.forced ?? false}
+              onChange={(e) => set({ ...fire, forced: e.target.checked || undefined })}
+            />
+            A blower drives the air (forced draft)
+          </label>
+          {fire.fuel === "oil" && (
+            <>
+              <Field label="Oil burners or drip units">
+                <input
+                  type="number"
+                  min={1}
+                  value={fire.oil_burners ?? ""}
+                  onChange={(e) =>
+                    set({ ...fire, oil_burners: e.target.value ? Number(e.target.value) : undefined })
+                  }
+                />
+              </Field>
+              <Quantity
+                label="Each oil burner's flow at full fire"
+                value={fire.oil_rate}
+                units={["gallon/hour", "L/h"]}
+                onChange={(v) => set({ ...fire, oil_rate: v })}
+              />
+            </>
+          )}
+          <ol className="fireboxes">
+            {fire.fireboxes.map((box, i) => {
+              const name = `Firebox ${i + 1}`;
+              return (
+                <li key={i} role="group" aria-label={name}>
+                  <Choice
+                    label={`${name}, position`}
+                    value={box.position ?? "front"}
+                    options={POSITIONS}
+                    onChange={(position) => setBox(i, { ...box, position })}
+                  />
+                  <Field label={`${name}, how many of this size`}>
+                    <input
+                      type="number"
+                      min={1}
+                      value={box.count ?? 1}
+                      onChange={(e) =>
+                        setBox(i, { ...box, count: Number(e.target.value) > 1 ? Number(e.target.value) : undefined })
+                      }
+                    />
+                  </Field>
+                  <Quantity
+                    label={`${name}, width`}
+                    value={box.width}
+                    units={LENGTH}
+                    onChange={(v) => setBox(i, { ...box, width: v ?? "" })}
+                  />
+                  <Quantity
+                    label={`${name}, length`}
+                    value={box.length}
+                    units={LENGTH}
+                    onChange={(v) => setBox(i, { ...box, length: v ?? "" })}
+                  />
+                  <Quantity
+                    label={`${name}, height`}
+                    value={box.height}
+                    units={LENGTH}
+                    onChange={(v) => setBox(i, { ...box, height: v })}
+                  />
+                  <label className="check">
+                    <input
+                      type="checkbox"
+                      checked={box.grate !== undefined}
+                      onChange={(e) =>
+                        setBox(i, {
+                          ...box,
+                          grate: e.target.checked ? { width: box.width, length: box.length } : undefined,
+                          ash_pit: e.target.checked ? box.ash_pit : undefined,
+                        })
+                      }
+                    />
+                    {name} has a grate
+                  </label>
+                  {box.grate && (
+                    <>
+                      <Quantity
+                        label={`${name}, grate width`}
+                        value={box.grate.width}
+                        units={LENGTH}
+                        onChange={(v) => setBox(i, { ...box, grate: { ...box.grate!, width: v ?? "" } })}
+                      />
+                      <Quantity
+                        label={`${name}, grate length`}
+                        value={box.grate.length}
+                        units={LENGTH}
+                        onChange={(v) => setBox(i, { ...box, grate: { ...box.grate!, length: v ?? "" } })}
+                      />
+                      <Quantity
+                        label={`${name}, gap between bars`}
+                        value={box.grate.gap}
+                        units={LENGTH}
+                        onChange={(v) => setBox(i, { ...box, grate: { ...box.grate!, gap: v } })}
+                      />
+                      <Quantity
+                        label={`${name}, ash pit depth`}
+                        value={box.ash_pit}
+                        units={LENGTH}
+                        onChange={(v) => setBox(i, { ...box, ash_pit: v })}
+                      />
+                    </>
+                  )}
+                  <Field label={`${name}, inlet flues into the chamber`}>
+                    <input
+                      type="number"
+                      min={1}
+                      value={box.inlets ?? 1}
+                      onChange={(e) =>
+                        setBox(i, { ...box, inlets: Number(e.target.value) > 1 ? Number(e.target.value) : undefined })
+                      }
+                    />
+                  </Field>
+                  <PortSize
+                    label={`${name}, inlet flue size`}
+                    port={box.inlet}
+                    auto="Not given"
+                    seed={undefined}
+                    onChange={(inlet) => setBox(i, { ...box, inlet })}
+                  />
+                  <PortSize
+                    label={`${name}, stoke hole size`}
+                    port={box.stoke_hole}
+                    auto="Not given"
+                    seed={undefined}
+                    onChange={(stoke_hole) => setBox(i, { ...box, stoke_hole })}
+                  />
+                  <button
+                    type="button"
+                    className="secondary"
+                    aria-label={`Remove firebox ${i + 1}`}
+                    disabled={fire.fireboxes.length === 1}
+                    onClick={() => set({ ...fire, fireboxes: fire.fireboxes.filter((_, j) => j !== i) })}
+                  >
+                    Remove
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+          <button
+            type="button"
+            className="secondary"
+            onClick={() =>
+              set({ ...fire, fireboxes: [...fire.fireboxes, freshFirebox(doc, fire.fireboxes.at(-1))] })
+            }
+          >
+            Add a firebox
+          </button>
+        </>
+      )}
+    </Section>
+  );
+}
+
+function DraftSection({
+  doc,
+  onChange,
+}: {
+  doc: KilnDocument;
+  onChange: (document: KilnDocument) => void;
+}) {
+  const change: Change = (path, value) => onChange(setIn(doc, path, value));
+  const draft = doc.draft;
+  const chimney = draft?.chimney;
+  const inside = chimney?.inside;
+  const [picked, setPicked] = useState<"round" | "rect">("round");
+  const insideShape =
+    inside === undefined
+      ? "auto"
+      : inside.width !== undefined || inside.depth !== undefined
+        ? "rect"
+        : inside.diameter !== undefined
+          ? "round"
+          : picked;
+  return (
+    <Section title="Draft and chimney">
+      <Choice
+        label="Draft"
+        value={draft?.type ?? "cross"}
+        options={[
+          ["cross", "Cross-draft"],
+          ["down", "Down-draft"],
+          ["up", "Up-draft"],
+        ]}
+        onChange={(v) =>
+          change(["draft"], v === "up" ? { ...draft, type: v, flue_across: undefined } : { ...draft, type: v })
+        }
+      />
+      {draft?.type !== "up" && (
+        <>
+          <Choice
+            label="Flue wall"
+            value={draft?.flue_wall ?? "back"}
+            options={faceOptions}
+            onChange={(v) => change(["draft", "flue_wall"], v)}
+          />
+          <Quantity
+            label="Flue wall to chimney"
+            value={draft?.run_to_chimney ?? "9 in"}
+            units={LENGTH}
+            onChange={(v) => change(["draft", "run_to_chimney"], v)}
+          />
+        </>
+      )}
+      <label className="check">
+        <input
+          type="checkbox"
+          checked={chimney !== undefined}
+          onChange={(e) =>
+            change(["draft", "chimney"], e.target.checked ? {} : undefined)
+          }
+        />
+        Give the chimney as built (otherwise the engine sizes it)
+      </label>
+      {chimney && (
+        <>
+          <Quantity
+            label="Chimney height, from the chamber floor (needed)"
+            value={chimney.height}
+            units={LENGTH}
+            onChange={(v) => change(["draft", "chimney", "height"], v)}
+          />
+          <Choice
+            label="Chimney inside"
+            value={insideShape}
+            options={[
+              ["auto", "The size the engine works out"],
+              ["round", "Round"],
+              ["rect", "Rectangular"],
+            ]}
+            onChange={(v) => {
+              if (v !== "auto") setPicked(v);
+              const side = inside?.diameter ?? inside?.width;
+              change(
+                ["draft", "chimney", "inside"],
+                v === "auto"
+                  ? undefined
+                  : v === "round"
+                    ? { diameter: side }
+                    : { width: side, depth: inside?.depth ?? side },
+              );
+            }}
+          />
+          {insideShape === "round" && (
+            <Quantity
+              label="Chimney inside diameter"
+              value={inside?.diameter}
+              units={LENGTH}
+              onChange={(v) => change(["draft", "chimney", "inside"], { diameter: v })}
+            />
+          )}
+          {insideShape === "rect" && inside && (
+            <>
+              <Quantity
+                label="Chimney inside width"
+                value={inside.width}
+                units={LENGTH}
+                onChange={(v) => change(["draft", "chimney", "inside", "width"], v)}
+              />
+              <Quantity
+                label="Chimney inside depth"
+                value={inside.depth}
+                units={LENGTH}
+                onChange={(v) => change(["draft", "chimney", "inside", "depth"], v)}
+              />
+            </>
+          )}
+        </>
+      )}
+    </Section>
+  );
+}
+
 const DEFAULT_ELECTRIC: Electric = {
   supply: { voltage: "240 V", phase: 1, breaker: "60 A" },
   alloy: "kanthal-a1",
@@ -746,7 +1090,12 @@ export function DesignForm({
   const loading = doc.loading ?? {};
   const electric = doc.heat.electric;
   const gas = doc.heat.gas;
+  const fire = doc.heat.fire;
   const mixes = (doc.castables ?? []).map((c) => ({ id: c.id, name: c.name }));
+  const round = doc.chamber.shape === "round";
+  const chambers = doc.chamber.chambers ?? 1;
+  // The last heat source left can't be turned off: a kiln needs one
+  const sources = [electric, gas, fire].filter((h) => h !== undefined).length;
 
   return (
     <form className="design-form" aria-label="Design" onSubmit={(e) => e.preventDefault()}>
@@ -796,13 +1145,33 @@ export function DesignForm({
       </Section>
 
       <Section title="Chamber (inside)">
-        {(["width", "depth", "height"] as const).map((k) => (
+        <Choice
+          label="Chamber shape"
+          value={round ? "round" : "box"}
+          options={[
+            ["box", "A box"],
+            ["round", "Round (a bottle or folk kiln)"],
+          ]}
+          onChange={(v) =>
+            change(
+              ["chamber"],
+              v === "round"
+                ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
+                : { ...doc.chamber, shape: undefined },
+            )
+          }
+        />
+        {(round ? (["width", "height"] as const) : (["width", "depth", "height"] as const)).map((k) => (
           <Quantity
             key={k}
             label={
               {
-                width: roof.type === "catenary_arch" ? "Width, at the floor" : "Width",
-                depth: "Depth",
+                width: round
+                  ? "Diameter"
+                  : roof.type === "catenary_arch"
+                    ? "Width, at the floor"
+                    : "Width",
+                depth: chambers > 1 ? "Depth, of each chamber" : "Depth",
                 height:
                   roof.type === "catenary_arch"
                     ? "Height, to the crown"
@@ -813,9 +1182,63 @@ export function DesignForm({
             }
             value={doc.chamber[k]}
             units={LENGTH}
-            onChange={(v) => change(["chamber", k], v)}
+            onChange={(v) =>
+              change(["chamber"], {
+                ...doc.chamber,
+                [k]: v,
+                // A round chamber's depth is its diameter too
+                ...(round && k === "width" ? { depth: v } : {}),
+              })
+            }
           />
         ))}
+        {!round && (
+          <div className="field" role="group" aria-label="Chambers in a row">
+            <span>Chambers in a row, front to back (a climbing or tandem kiln)</span>
+            <span className="layer-tools">
+              <button
+                type="button"
+                className="secondary"
+                aria-label="Remove a chamber"
+                disabled={chambers === 1}
+                onClick={() => change(["chamber", "chambers"], chambers - 1 > 1 ? chambers - 1 : undefined)}
+              >
+                −
+              </button>
+              <output aria-label="Chambers">{chambers}</output>
+              <button
+                type="button"
+                className="secondary"
+                aria-label="Add a chamber"
+                onClick={() => change(["chamber", "chambers"], chambers + 1)}
+              >
+                +
+              </button>
+            </span>
+          </div>
+        )}
+        <Quantity
+          label="Floor's slope, firing end to flue end (blank: level)"
+          value={doc.chamber.slope}
+          units={["degree"]}
+          onChange={(v) => change(["chamber", "slope"], v)}
+        />
+        {!round && (
+          <Quantity
+            label="The run curves to the left by, in plan (blank: straight)"
+            value={doc.chamber.bend}
+            units={["degree"]}
+            onChange={(v) => change(["chamber", "bend"], v)}
+          />
+        )}
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={doc.chamber.on_ground ?? false}
+            onChange={(e) => change(["chamber", "on_ground"], e.target.checked || undefined)}
+          />
+          The floor is on the ground (not raised on a stand)
+        </label>
         <Choice
           label="Roof"
           value={roof.type}
@@ -824,6 +1247,7 @@ export function DesignForm({
             ["sprung_arch", "Sprung arch"],
             ["catenary_arch", "Catenary arch, from the floor"],
             ["dome", "Dome"],
+            ["open", "Open top, covered with shards each firing"],
           ]}
           onChange={(v) => {
             // A rise carries over between a sprung arch and a dome
@@ -831,7 +1255,7 @@ export function DesignForm({
             let next = setIn(
               doc,
               ["roof"],
-              v === "flat" || v === "catenary_arch" ? { type: v } : { type: v, rise },
+              v === "flat" || v === "catenary_arch" || v === "open" ? { type: v } : { type: v, rise },
             );
             if (v === "catenary_arch") next = offTheSides(next);
             onChange(next);
@@ -982,7 +1406,7 @@ export function DesignForm({
           <input
             type="checkbox"
             checked={electric !== undefined}
-            disabled={electric !== undefined && gas === undefined}
+            disabled={electric !== undefined && sources === 1}
             onChange={(e) =>
               change(["heat", "electric"], e.target.checked ? DEFAULT_ELECTRIC : undefined)
             }
@@ -1059,7 +1483,7 @@ export function DesignForm({
           <input
             type="checkbox"
             checked={gas !== undefined}
-            disabled={gas !== undefined && electric === undefined}
+            disabled={gas !== undefined && sources === 1}
             onChange={(e) => {
               let next = setIn(doc, ["heat", "gas"], e.target.checked ? DEFAULT_GAS : undefined);
               if (e.target.checked && !doc.draft) {
@@ -1068,10 +1492,26 @@ export function DesignForm({
               onChange(next);
             }}
           />
-          Fire with propane
+          Fire with gas
         </label>
         {gas && (
           <>
+            <Choice
+              label="Gas"
+              value={gas.fuel ?? "propane"}
+              options={[
+                ["propane", "Propane"],
+                ["natural_gas", "Natural gas, from a line"],
+              ]}
+              onChange={(v) =>
+                change(
+                  ["heat", "gas"],
+                  v === "natural_gas"
+                    ? { ...gas, fuel: v, supply: { type: "line" } }
+                    : { ...gas, fuel: undefined, supply: { type: "cylinders", count: 4 } },
+                )
+              }
+            />
             <Choice
               label="Burner type"
               value={gas.burners?.type ?? "venturi"}
@@ -1117,26 +1557,40 @@ export function DesignForm({
                 <Choice
                   label="Burners fire through"
                   value={gas.burners?.wall ?? "front"}
-                  options={faceOptions}
+                  options={[...faceOptions, ["floor", "The floor (an updraft)"]]}
                   onChange={(v) => change(["heat", "gas", "burners", "wall"], v)}
                 />
               </>
             )}
-            <Choice
-              label="Propane supply"
-              value={gas.supply.type}
-              options={[
-                ["cylinders", "100 lb cylinders"],
-                ["tank", "A tank"],
-              ]}
-              onChange={(v) =>
-                change(
-                  ["heat", "gas", "supply"],
-                  v === "tank" ? { type: "tank", gallons: 250 } : { type: "cylinders", count: 4 },
-                )
-              }
-            />
-            {gas.supply.type === "cylinders" ? (
+            {gas.fuel !== "natural_gas" && (
+              <Choice
+                label="Propane supply"
+                value={gas.supply.type}
+                options={[
+                  ["cylinders", "100 lb cylinders"],
+                  ["tank", "A tank"],
+                  ["line", "A line from a large tank"],
+                ]}
+                onChange={(v) =>
+                  change(
+                    ["heat", "gas", "supply"],
+                    v === "tank"
+                      ? { type: "tank", gallons: 250 }
+                      : v === "line"
+                        ? { type: "line" }
+                        : { type: "cylinders", count: 4 },
+                  )
+                }
+              />
+            )}
+            {gas.supply.type === "line" ? (
+              <Quantity
+                label="Gas pressure at the burners (needed: from the supply's regulator)"
+                value={gas.supply.pressure}
+                units={["inch_H2O", "psi"]}
+                onChange={(v) => change(["heat", "gas", "supply", "pressure"], v)}
+              />
+            ) : gas.supply.type === "cylinders" ? (
               <Field label="Cylinders">
                 <input
                   type="number"
@@ -1172,35 +1626,17 @@ export function DesignForm({
               ]}
               onChange={(v) => change(["heat", "gas", "firing_speed"], v)}
             />
-            <Choice
-              label="Draft"
-              value={doc.draft?.type ?? "cross"}
-              options={[
-                ["cross", "Cross-draft"],
-                ["down", "Down-draft"],
-                ["up", "Up-draft"],
-              ]}
-              onChange={(v) => change(["draft", "type"], v)}
-            />
-            {doc.draft?.type !== "up" && (
-              <>
-                <Choice
-                  label="Flue wall"
-                  value={doc.draft?.flue_wall ?? "back"}
-                  options={faceOptions}
-                  onChange={(v) => change(["draft", "flue_wall"], v)}
-                />
-                <Quantity
-                  label="Flue wall to chimney"
-                  value={doc.draft?.run_to_chimney ?? "9 in"}
-                  units={LENGTH}
-                  onChange={(v) => change(["draft", "run_to_chimney"], v)}
-                />
-              </>
-            )}
           </>
         )}
       </Section>
+
+      <FireSection
+        doc={doc}
+        disabled={fire !== undefined && sources === 1}
+        onChange={onChange}
+      />
+
+      {(gas || fire) && <DraftSection doc={doc} onChange={onChange} />}
 
       <Ports doc={doc} layout={layout} onChange={onChange} />
 

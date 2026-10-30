@@ -1,0 +1,59 @@
+# A cone 10 down-draft with a cast dome: a sphere through the chamber's top corners, cast in
+# insulating castable over blanket, on insulating firebrick walls. Burners in the left wall, four
+# round spy holes, the flue and chimney at the back.
+schema: 1
+name: Dome down-draft, cone 10
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 30 in
+  depth: 36 in
+  height: 36 in # to the springline; the dome rises above it
+roof:
+  type: dome
+  rise: 9 in # at the centre: the least that carries the dome over the front door is 8.9 in
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 1 in
+  floor:
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  gas:
+    burners:
+      type: venturi
+      wall: left
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+draft:
+  type: down
+  flue_wall: back
+spy_holes:
+  count: 4
+  port:
+    diameter: 2 in
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  propane_price: 3.50 USD/gallon

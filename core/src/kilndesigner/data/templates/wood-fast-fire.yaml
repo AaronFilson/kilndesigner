@@ -1,0 +1,71 @@
+# Olsen's fast-fire wood kiln (Olsen, The Kiln Book, 4th ed., p.139–143, p.204): a small
+# downdraft with two fireboxes under the floor in an "S", firing to cone 10 in 3½ hours on less
+# than a quarter of a cord. Built and fired at many workshops.
+#
+# From the book: chamber 27 in wide, 36–40 in to the springline (36 used); 4½ in 2300 °F IFB walls
+# and arch, a No. 1 arch on featheredge skewbacks (1½ in per foot of span); fireboxes 13½ × 40½ in
+# and five courses tall, 12½ in, a sixth added only for high altitude (Fig 5-39, as the user reads
+# it; the text says "6 bricks tall", p.140); the grate 6–7 in up, as p.199 gives for the 12½ in
+# firebox of a 12–16 ft³ fast-fire kiln (6½ in of ash pit, 6 in above); grates 12–13 × 24–27 in,
+# bars ¾ in apart; inlet flues 4½ × 13½ in; exit flue 9 × 7½ in at the back at floor level;
+# chimney 9 × 9 in, 14 ft, tied to the back wall.
+# Assumed: the chamber's depth, not printed: 27 in gives about 15½ ft³, inside the book's
+# 12–16 ft³. The floor (shelves over the fireboxes) is taken as 4½ in of super-duty hard brick: it
+# roofs the fireboxes, where Olsen keeps low- and intermediate-duty brick out (p.18).
+schema: 1
+name: Olsen fast-fire wood kiln
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 27 in
+  depth: 27 in
+  height: 36 in
+roof:
+  type: sprung_arch
+  rise: 3.375 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k23 # "2300° IFB walls and arch"
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k23
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 2
+        position: under
+        width: 13.5 in
+        length: 40.5 in
+        height: 6 in # above the grate: five courses, 12½ in, less the 6½ in below it
+        grate:
+          width: 12 in
+          length: 24 in
+          gap: 0.75 in
+        ash_pit: 6.5 in # the grate 6–7 in up (p.199)
+        inlet:
+          width: 13.5 in
+          height: 4.5 in
+draft:
+  type: down
+  flue_wall: back
+  run_to_chimney: 0 in # the kiln's back wall is tied to the chimney
+  flue_port:
+    width: 9 in
+    height: 7.5 in
+  chimney:
+    height: 14 ft
+    inside:
+      width: 9 in
+      depth: 9 in
+site:
+  ambient: 70 degF

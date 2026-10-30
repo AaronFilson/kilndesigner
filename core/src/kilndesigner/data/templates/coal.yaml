@@ -1,0 +1,86 @@
+# Mr Kato's coal downdraft, Kato pottery, Tajimi, Japan (Olsen, The Kiln Book, 4th ed., p.131–132,
+# p.207): a "Downdraft Tajimi-style kiln" with two side fireboxes, fired with coal to 2372 °F
+# (1300 °C) in very heavy reduction, and later converted to oil burners.
+#
+# From the book: the chamber 6 ft 6 in wide and 6 ft 6 in from the floor to the crown (Fig 5-4);
+# "approximately 250cu. ft (7cu. m)", fired "in over 50 hours to 2372F" (p.131, the hours read by
+# the user); walls 10 in (?) at the door end, the door in an end wall (Fig 5-4); two fireboxes, one
+# each side, 2 ft 6 in wide at the outer mouth, each grate drawn 30 × 22 in, "5 sq ft" (Fig 8-18);
+# twelve 6 × 6 in floor exit flues (p.131); a round chimney 3 ft across inside at the base, 20 ft
+# tall, tapering to 15½ in (?) (Fig 5-4); coal; 2372 °F (p.131).
+# Assumed: the length isn't printed (the user: it would be added up from the plan's parts): 75 in
+# makes the chamber the printed 7 m³ with the arch below. The arch's rise and thickness aren't
+# printed (it is drawn thick): 9 in, the thickest
+# of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296), at 2.302 in per foot of span, his
+# standard rise for a 9 in arch on standard skews (p.296–297): 15 in, so the springline is 63 in
+# up. The side walls' thickness isn't printed, but the book calls the walls very thick (p.131):
+# 18 in, the least of the 18–22 in walls that carried the roofs of early domed and downdraft kilns
+# with no steel (p.45). They hold the arch's thrust here too (buttressed); the book doesn't say
+# whether the kiln has steel. The brick isn't named: dense brick (the book: very thick walls, slow
+# to fire and cool, p.131); medium-duty firebrick
+# (Olsen's intermediate duty, p.18). The floor is 9 in, as in Olsen's redesign of this kiln (Fig 5-5). It is built
+# on the ground (on_ground): the exit flues drop through it into flue channels 18 in deep, and
+# the firebox floors are below ground (Fig 5-4). Each firebox's length from its mouth isn't
+# printed: its grate's 22 in. The chimney stands at the back, opposite the door, its run from the
+# kiln an engine default (9 in). The spy holes and the air: engine defaults.
+# Not modelled: the back wall, by the chimney, is marked 10 in (?) too (Fig 5-4), but the engine
+# gives it the side walls' 18 in; the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
+# 8 in apart; the flue channels under the floor and the collection box, and the floor's loss into
+# them and the ground; the 20 in connection to the chimney and its damper; the inlet flues from
+# the fireboxes, about 500 in² in all (p.131), whose sizes aren't printed.
+schema: 1
+name: Kato coal downdraft, Tajimi
+units: us
+firing:
+  top_temperature: 2372 degF
+chamber:
+  width: 78 in
+  depth: 75 in # not printed: the printed 7 m³ (p.131)
+  height: 63 in # to the springline: 6 ft 6 in to the crown, less the 15 in rise
+  on_ground: true # over flue channels 18 in deep; the firebox floors below ground (Fig 5-4)
+roof:
+  type: sprung_arch
+  rise: 15 in # 2.302 in per foot of the 78 in span
+  buttressed: true # the very thick walls hold it
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 18 in
+  door:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 10 in # "10"" (?) at the door end
+  floor:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+  roof:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 9 in
+heat:
+  fire:
+    fuel: coal
+    fireboxes:
+      - position: left
+        width: 30 in
+        length: 22 in
+        grate:
+          width: 30 in
+          length: 22 in
+      - position: right
+        width: 30 in
+        length: 22 in
+        grate:
+          width: 30 in
+          length: 22 in
+draft:
+  type: down
+  flue_wall: back
+  chimney:
+    height: 20 ft
+    inside:
+      diameter: 36 in
+    top:
+      diameter: 15.5 in # "15½" (?)

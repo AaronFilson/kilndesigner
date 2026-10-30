@@ -1,0 +1,81 @@
+# Olsen's two-chamber wood kiln, side-stoked (Olsen, The Kiln Book, 4th ed., p.202–203, p.206,
+# Fig 8-17): two chambers in a row, each with its own firebox. The first chamber's firebox is
+# stoked from the side, so one person can tend it and stoke the first chamber from one spot.
+#
+# From the book: the first chamber 55 in wide, 48 in tall and 8 ft long (Fig 8-17); a 9 in wall
+# between the chambers and a 15 × 20 in flue hole into the second, the second firebox's grate at
+# half its height (Fig 8-17). The first chamber's firebox 18 in below its floor, with a fast-fire
+# style metal grate 9 in tall and a 15 in deep ash pit (p.202). The second chamber's firebox
+# 14 in wide, with a 15 in ash pit sunk under its inlet flue, grate bars ¾ in apart and a 7 × 7 in
+# stoke hole (p.206, Fig 8-17). With its fireboxes and ash pits below the floor, the floor is
+# built on the ground.
+# Assumed: both chambers are the first one's size, the only one printed. The 48 in is to the
+# crown. The arch spans the 55 in width and rises 22.9 in, 5 in per foot, the middle of the
+# 4–6 in/ft Olsen uses on chamber kilns of 4–8 ft span (p.296); so the springline is at 25.1 in.
+# The book names no brick: 9 in of 2600 °F insulating brick, Olsen's choice for a cone 10 wood
+# kiln's hot face (p.25–26: his anagama's K-26 resisted wood-ash slag better than hard brick of
+# the same rating), the thickness of the wall between the chambers; the floor and arch the same
+# (engine default). Cone 11, as Olsen's Hollyweird tube, which shares this kiln's 8 ft chamber,
+# 55 in dimension, ¾ in grate bars and 5 in air tube and may be the same kiln (hollyweird,
+# p.116–117: held at cone 11-plus). Both fireboxes run across the 55 in chamber, 14 in wide (the
+# second's width, the only one printed), with grates their full size; the first's grate bars ¾ in
+# apart, as the fast-fire grate it copies (p.204). No chimney or exit flue is given, so the engine
+# sizes them, and the steel that holds the arch: the book shows no buttress. The ring arch of
+# Olsen's chamber kiln, which may be this one, opened almost ½ in in firing, and "a steel tie
+# might have helped" (olsen-chamber-p23, p.47).
+# Not modelled: the 5 in perforated air tube under the second grate (p.206); the first firebox's
+# depth below the floor and its air along the front wall (p.202); the floor's loss into the
+# ground, which the engine doesn't work out.
+schema: 1
+name: Olsen's two-chamber wood kiln
+units: us
+firing:
+  cone: "11" # Hollyweird's cone 11-plus (p.117)
+chamber:
+  width: 55 in
+  depth: 8 ft
+  height: 25.1 in # to the springline: 48 in to the crown, less the rise
+  chambers: 2
+  on_ground: true # its fireboxes and ash pits sit below the floor (p.202, p.206)
+roof:
+  type: sprung_arch
+  rise: 22.9 in # 5 in per foot of the 55 in span (p.296)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k26 # brick not named: Olsen's wood-kiln hot face (p.26)
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1 # the first chamber's, side-stoked (p.202)
+        position: front
+        width: 14 in # the second firebox's width
+        length: 55 in # across the chamber
+        grate:
+          width: 14 in
+          length: 55 in
+          gap: 0.75 in # as the fast-fire grate (p.204)
+        ash_pit: 15 in
+      - count: 1 # the second chamber's (p.206)
+        position: front
+        width: 14 in
+        length: 55 in # across the chamber
+        grate:
+          width: 14 in
+          length: 55 in
+          gap: 0.75 in
+        ash_pit: 15 in
+        inlet:
+          width: 15 in
+          height: 20 in
+        stoke_hole:
+          width: 7 in
+          height: 7 in
+draft:
+  type: cross
+  flue_wall: back

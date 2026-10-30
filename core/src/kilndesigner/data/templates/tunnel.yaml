@@ -1,0 +1,60 @@
+# Tamba tube kilns, Tachikui, Japan (Olsen, The Kiln Book, 4th ed., p.85–88, p.210, Figs 4-6 to
+# 4-20A): 23 climbing tube kilns built by Korean potters in the Kamakura period, "an anagama
+# extended to approximately 120 ft", half above ground. A firebox (dogi) is stoked for about 36
+# hours, then the tube is side-stoked chamber by chamber. Few of its sizes are printed: most of
+# this design is assumed, as said below.
+#
+# From the book: about 120 ft (36.5 m) long (p.85; Fig 4-7 prints 120–150, flagged), in 6–8 door
+# segments (Fig 4-7), each taken as a chamber, 7 used; firebox 6 ft deep and 5 ft across at the
+# entrance flues (p.86); four arched firebox flues 9 × 18 in (Fig 4-13), taken as 9 in wide and
+# 18 in high; the first chamber 3½ ft (faint) tall (Fig 4-16), used as the tube's height to the
+# crown. The end chamber has open "chimney" holes and no stack (Figs 4-18, 4-19).
+# Assumed: the tube's width isn't printed: 5 ft, the firebox's width where it meets the tube
+# (p.86); the anagama dug into a clay hill that Olsen draws is 5¼ ft (anagama-hole, Fig 4-5). The
+# roof a half-circle on that width, as a groundhog's half-cylinder (p.112): it springs 12 in up.
+# Walls, arch and floor 9 in of K-26 insulating brick: on the hot face of Olsen's anagama it
+# resisted wood-ash slag better than hard brick (p.26), at the 9–10 in of his climbing kilns' walls
+# (p.99–100). The arch is buttressed and the floor is on the ground: the kilns are built half
+# above ground, so half below it (p.85). No temperature is printed (the first stoke holes reach
+# about 1832 °F before side stoking, p.86): cone 10, from the anagama-style kiln built at
+# Höhr-Grenzhausen in 2003 (hohr-2003, p.122).
+# Not modelled: the slope, which isn't printed, so the tube is level; the side doors (arched,
+# bricked up for each firing), as the engine's door in the front wall; the side stoke holes; the
+# flue holes between the chambers (20 × 12 and 24 × 12 in, Fig 4-12). The end chamber's open holes
+# are the only chimney: with no stack entered, the engine sizes one by Rule 5. The oil burners
+# most of the kilns now fire their fireboxes with (p.86, p.210). The floor's loss into the ground,
+# which the engine doesn't work out.
+schema: 1
+name: Tamba tube kiln, Tachikui
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 5 ft
+  depth: 205.7 in # 120 ft ÷ 7
+  height: 12 in # to the springline; the half-circle crowns at 3½ ft
+  chambers: 7
+  on_ground: true # half above ground (p.85)
+roof:
+  type: sprung_arch
+  rise: 30 in
+  buttressed: true
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 9 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: front
+        width: 5 ft
+        length: 6 ft
+        inlet:
+          width: 9 in
+          height: 18 in
+        inlets: 4
+draft:
+  type: cross
+  flue_wall: back

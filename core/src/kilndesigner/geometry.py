@@ -227,20 +227,23 @@ class GeometryNotSupportedError(NotImplementedError):
 
 
 def not_drawn(kiln: Kiln) -> str | None:
-    """Why the lining, the 3D model and the plans can't be drawn for this kiln yet, or None. The
-    calculations (heat loss, firing, chimney, roof) still run."""
+    """Why the lining can't be laid out in brick, planned or priced for this kiln yet, or None.
+    The calculations (heat loss, firing, chimney, roof) still run, and the 3D model is drawn as
+    shells (massing.py)."""
     c = kiln.chamber
     if c.shape == "round":
-        return "round chambers are calculated but not yet drawn, laid out in brick or priced"
+        return "round chambers are calculated and drawn, but not yet laid out in brick or priced"
     if kiln.roof.type == "open":
-        return "an open-topped kiln is calculated but not yet drawn, laid out in brick or priced"
+        return "an open top is calculated and drawn, but not yet laid out in brick or priced"
     if c.chambers > 1:
         return (
-            "chambers in a row are calculated as one long chamber, but not yet drawn, laid out "
+            "chambers in a row are calculated as one long chamber and drawn, but not yet laid out "
             "in brick or priced"
         )
     if c.slope is not None and si(c.slope, "degree") > 0:
-        return "a sloping floor is calculated but not yet drawn, laid out in brick or priced"
+        return "a sloping floor is calculated and drawn, but not yet laid out in brick or priced"
+    if c.bend is not None and si(c.bend, "degree") > 0:
+        return "a bent run is calculated and drawn, but not yet laid out in brick or priced"
     return None
 
 
@@ -606,7 +609,7 @@ def _opening_solid(o: Opening) -> Any:
     return _cylinder(o.round_axis, centre, min(across) / 2, hi[o.round_axis] - lo[o.round_axis])
 
 
-def _piece_solid(p: Piece) -> Any:
+def piece_solid(p: Piece) -> Any:
     from build123d import Compound
 
     solids = [_box(lo, hi) for lo, hi in p.boxes]
@@ -638,6 +641,8 @@ def build_model(
     children: list[Any] = []
     for part in lining_parts(kiln):
         boxed = part.arch is None and part.profile is None and part.dome is None
+        if boxed and any(b - a < 1e-6 for a, b in zip(part.lo, part.hi, strict=True)):
+            continue  # a wall with no height: an arch springing from the floor (a groundhog)
         solid: Any = (
             _box(part.lo, part.hi)
             if boxed
@@ -658,7 +663,7 @@ def build_model(
         coil.color = Color(*COLOURS["element"])
         children.append(coil)
     for piece in hardware.pieces if hardware else []:
-        solid = _piece_solid(piece)
+        solid = piece_solid(piece)
         if piece.kind != "burner" and not piece.name.startswith("frame/"):
             solid = _cut(solid, holes)
         solid.label = piece.name
@@ -669,7 +674,7 @@ def build_model(
     return model
 
 
-def _colour(kind: str) -> str:
+def colour(kind: str) -> str:
     r, g, b = COLOURS.get(kind, (0.8, 0.8, 0.8))
     return f"#{round(r * 255):02x}{round(g * 255):02x}{round(b * 255):02x}"
 
@@ -686,7 +691,7 @@ def part_index(
 
     def entry(title: str, detail: str, kind: str) -> dict[str, str]:
         return {"title": title, "detail": detail, "kind": KIND_NAMES.get(kind, kind),
-                "colour": _colour(kind)}  # fmt: skip
+                "colour": colour(kind)}  # fmt: skip
 
     for p in lining_parts(kiln):
         detail = resolve_material(kiln, p.material).name
@@ -717,8 +722,8 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     what each part is and where its ports are."""
     from kilndesigner.hardware import build_hardware, layout
 
-    if (why := not_drawn(kiln)) is not None:
-        raise GeometryNotSupportedError(why)
+    if not_drawn(kiln) is not None:
+        return _write_massing(kiln, report, out_dir)
     runs: list[ElementRun] = []
     if report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
@@ -730,6 +735,28 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     parts.write_text(json.dumps(index, ensure_ascii=False, indent=2), "utf-8")
     places = out_dir / LAYOUT
     places.write_text(json.dumps(layout(kiln, hardware), ensure_ascii=False, indent=2), "utf-8")
+    return {**written, "parts": parts, "layout": places}
+
+
+def _write_massing(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
+    """The model of a kiln whose bricks aren't laid out yet: its lining as shells."""
+    from kilndesigner.hardware import build_hardware
+    from kilndesigner.massing import MassingError, build_massing, massing_index, massing_layout
+
+    hardware = build_hardware(kiln, report.frame, report.gas, report.fire)
+    try:
+        model = build_massing(kiln, hardware)
+    except MassingError as e:
+        raise GeometryNotSupportedError(str(e)) from e
+    written = export_model(model, out_dir)
+    parts = out_dir / "parts.json"
+    parts.write_text(
+        json.dumps(massing_index(kiln, hardware), ensure_ascii=False, indent=2), "utf-8"
+    )
+    places = out_dir / LAYOUT
+    places.write_text(
+        json.dumps(massing_layout(kiln, hardware), ensure_ascii=False, indent=2), "utf-8"
+    )
     return {**written, "parts": parts, "layout": places}
 
 
