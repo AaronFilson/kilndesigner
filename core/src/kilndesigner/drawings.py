@@ -14,7 +14,14 @@ from xml.sax.saxutils import escape
 
 import numpy as np
 
-from kilndesigner.geometry import COLOURS, Part, arch_outline, lining_parts
+from kilndesigner.geometry import (
+    COLOURS,
+    Part,
+    arch_outline,
+    lining_parts,
+    polygon_corners,
+    polygon_reach,
+)
 from kilndesigner.masonry import IN, LayerPlan
 from kilndesigner.model import CatenaryArch, Kiln
 from kilndesigner.rings import CLOSER, FAMILIES
@@ -154,14 +161,23 @@ def _revolved_cut(p: Part, axis: Axis, at: float) -> list[Rect]:
     assert p.revolve is not None
     fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
     outline = p.revolve
+    sides = p.sides
+
+    def ring(r: float) -> Outline:
+        return _circle(r) if sides is None else tuple(polygon_corners(sides, r))
+
     if axis == 2:
         rects: list[Rect] = []
         for a, b in _crossings(outline, 1, at):
-            hole = (_circle(a),) if a > 1e-6 else ()
-            rects.append(_bounded(_circle(b), fill, p.name, hole))
+            hole = (ring(a),) if a > 1e-6 else ()
+            rects.append(_bounded(ring(b), fill, p.name, hole))
         return rects
     if abs(at) > 1e-6:
         return []  # sections are only drawn through the middle
+    if sides is not None:
+        # A polygon cut through its centre: r out to the corners, scaled to its reach along the cut
+        reach = polygon_reach(sides, 0.0 if axis == 1 else math.pi / 2)
+        outline = tuple((r * reach, z) for r, z in outline)
     n = len(outline)
     on_axis = [
         k for k in range(n) if abs(outline[k][0]) < 1e-6 and abs(outline[(k + 1) % n][0]) < 1e-6
@@ -243,7 +259,7 @@ def _section_views(kiln: Kiln, element_rows: int, coil_mm: float) -> list[View]:
     us = kiln.units == "us"
     parts = lining_parts(kiln)
     if kiln.chamber.shape == "round":
-        return _round_views(kiln, parts, us)
+        return _round_views(kiln, parts, us, element_rows, coil_mm)
     if kiln.chamber.chambers > 1:
         return _run_views(kiln, parts, us)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
@@ -330,9 +346,14 @@ def _on_the_slope(kiln: Kiln, parts: list[Part], views: tuple[View, View, View],
     side.circles = []
 
 
-def _round_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
+def _round_views(
+    kiln: Kiln, parts: list[Part], us: bool, element_rows: int = 0, coil_mm: float = 0.0
+) -> list[View]:
     """A round chamber is the same through its axis whichever way it's cut: one section through
-    the axis, and the plan at mid-height."""
+    the axis, and the plan at mid-height. The element grooves are cut in the section where the
+    elements' quarters of the ring cross it (geometry.round_groove)."""
+    from kilndesigner.geometry import hot_face_reach
+
     d, h = si(kiln.chamber.width, "mm"), si(kiln.chamber.height, "mm")
     section = View("Section A–A: through the axis, looking at the back", _cut(parts, 1, 0.0, 0, 2),
                    [], [])  # fmt: skip
@@ -349,6 +370,13 @@ def _round_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
         Dimension(-d / 2, 0, d / 2, 0, 0.0, f"{length_text(d, us)} across inside"),
         Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} across outside"),
     ]
+    walls = kiln.heat.electric.walls if kiln.heat.electric else []
+    x = hot_face_reach(kiln, 0.0)  # the hot face where the cut crosses it
+    for i in range(element_rows):
+        z = h * (i + 0.5) / element_rows
+        for wall, sign in (("left", -1), ("right", 1)):
+            if wall in walls:
+                section.circles.append(Circle(sign * x, z, coil_mm / 2))
     return [section, plan]
 
 

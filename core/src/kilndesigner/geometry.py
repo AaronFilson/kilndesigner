@@ -127,6 +127,31 @@ class DomeShape:
         return np.where(under > 0, self.centre_z + np.sqrt(np.maximum(under, 0.0)), -np.inf)
 
 
+def polygon_fraction(sides: int) -> float:
+    """A regular polygon's area over its circumscribed circle's: N·sin(2π/N)/(2π)."""
+    return sides * math.sin(2 * math.pi / sides) / (2 * math.pi)
+
+
+def polygon_reach(sides: int, angle: float) -> float:
+    """How far a regular polygon, corners at radius 1 and a flat facing the front (−y), reaches
+    from its centre in the direction ``angle`` (radians from +x): cos(π/N) / cos(θ − φ), φ the
+    nearest flat's outward normal."""
+    step = 2 * math.pi / sides
+    k = round((angle + math.pi / 2) / step)
+    return math.cos(math.pi / sides) / math.cos(angle - (-math.pi / 2 + k * step))
+
+
+def polygon_corners(sides: int, radius: float) -> list[tuple[float, float]]:
+    """A regular polygon's corners, ``radius`` out, a flat facing the front (−y), anticlockwise."""
+    return [
+        (
+            radius * math.cos(-math.pi / 2 + (2 * k + 1) * math.pi / sides),
+            radius * math.sin(-math.pi / 2 + (2 * k + 1) * math.pi / sides),
+        )
+        for k in range(sides)
+    ]
+
+
 @dataclass(frozen=True)
 class Part:
     """One layer of one face. A box unless ``arch`` is set; then an arch ring, or (with
@@ -150,6 +175,9 @@ class Part:
     # An outline in the r–z plane (r ≥ 0, mm), turned about the z axis: a round wall's layer, a
     # disc of floor or roof, a layer of a round dome. ``ring`` is then its thickness.
     revolve: tuple[tuple[float, float], ...] | None = None
+    # With ``revolve``: a faceted round kiln's regular polygon of this many sides, a flat at the
+    # front, rather than a circle; the outline's r is then out to the polygon's corners
+    sides: int | None = None
     # A ``profile`` in the y–z plane, (y, z) pairs, run along x: an arch spanning along the
     # draft, its skewbacks, and the side walls' caps closing it (chambers in a row)
     across: bool = False
@@ -213,7 +241,9 @@ class Part:
             moment = sum(
                 (r0 + r1) * (r0 * z1 - r1 * z0) for (r0, z0), (r1, z1) in zip(pts, nxt, strict=True)
             )
-            return math.pi * abs(moment) / 3
+            # A polygon through the corners has N·sin(2π/N)/(2π) of the circle's area, at every r
+            scale = 1.0 if self.sides is None else polygon_fraction(self.sides)
+            return math.pi * abs(moment) / 3 * scale
         if self.profile is not None:
             pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
             area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
@@ -548,12 +578,23 @@ def _round_parts(kiln: Kiln) -> list[Part]:
     wall's outside; the wall as rings, one per layer, from the floor to the springline; and a flat
     roof as discs on the wall, or a dome as layers of a sphere through the springline circle
     (shape.RoundDome) above the springline, or nothing for an open top. Each is an outline in the
-    r–z plane turned about the chamber's axis."""
+    r–z plane turned about the chamber's axis. A faceted wall (shape.facets) is a regular
+    polygon instead, its flats the bricks' faces, and the floor and lid slabs are the polygon out
+    to the wall's outside corners, as round_masonry lays them; r is then out to the corners."""
     from kilndesigner.castable import resolve_material
+    from kilndesigner.shape import facets
 
     radius, h = si(kiln.chamber.width, "mm") / 2, si(kiln.chamber.height, "mm")
     walls = [(x.material, si(x.thickness, "mm")) for x in kiln.lining.walls]
-    outside = radius + sum(t for _, t in walls)
+    sides = facets(kiln)
+    # Out to the corners for a faceted wall: each layer's apothem over cos(π/N)
+    corner = 1.0
+    if sides is not None:
+        from kilndesigner.rings import inside_apothem
+
+        corner = 1 / math.cos(math.pi / sides)
+        radius = inside_apothem(2 * radius, sides)
+    outside = (radius + sum(t for _, t in walls)) * corner
     parts: list[Part] = []
 
     def add(name: str, mat: str, outline: list[tuple[float, float]], th: float, face: Face | None):
@@ -563,9 +604,11 @@ def _round_parts(kiln: Kiln) -> list[Part]:
             Part(
                 name, mat, resolve_material(kiln, mat).kind, (-reach, -reach, min(zs)),
                 (reach, reach, max(zs)), face=face, ring=th, revolve=tuple(outline),
+                sides=sides if flat else None,
             )
         )  # fmt: skip
 
+    flat = True
     cum = 0.0
     for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
         z0, z1 = -cum - th, -cum
@@ -574,14 +617,16 @@ def _round_parts(kiln: Kiln) -> list[Part]:
         cum += th
     r = radius
     for i, (mat, th) in enumerate(walls):
-        add(f"wall/{i + 1}-{mat}", mat, [(r, 0.0), (r + th, 0.0), (r + th, h), (r, h)], th, None)
+        r0, r1 = r * corner, (r + th) * corner
+        add(f"wall/{i + 1}-{mat}", mat, [(r0, 0.0), (r1, 0.0), (r1, h), (r0, h)], th, None)
         r += th
     roof = kiln.roof
     cum = 0.0
     if isinstance(roof, Dome):
+        flat = False  # a dome is a sphere's; facets() is for electric kilns, with flat lids
         from kilndesigner.shape import RoundDome
 
-        dome = RoundDome(2 * radius, si(roof.rise, "mm"))
+        dome = RoundDome(si(kiln.chamber.width, "mm"), si(roof.rise, "mm"))
         below = dome.radius - dome.rise  # the sphere's centre under the springline
         centre = h - below
         rho = dome.radius
@@ -739,12 +784,75 @@ class ElementRun:
     path: tuple[tuple[float, float, float], ...]
 
 
+def grooves_drawn(kiln: Kiln) -> bool:
+    """Whether the model draws the element grooves: in a box on a stand, or round a round kiln's
+    wall; not yet along chambers in a row or up a slope."""
+    return on_a_stand(kiln) or (kiln.chamber.shape == "round" and kiln.chamber.slope is None)
+
+
+QUARTERS = {"front": -90.0, "left": 180.0, "back": 90.0, "right": 0.0}
+"""The middle of each quarter of a round kiln's ring, degrees from +x (electric._groove_length
+gives the elements a quarter of the ring for each wall named)."""
+
+
+def hot_face_reach(kiln: Kiln, angle: float) -> float:
+    """How far a round kiln's hot face is from its axis (mm) in the direction ``angle`` (radians
+    from +x): the radius, or for a faceted wall, out to the polygon (rings.inside_apothem)."""
+    from kilndesigner.shape import facets
+
+    radius = si(kiln.chamber.width, "mm") / 2
+    sides = facets(kiln)
+    if sides is None:
+        return radius
+    from kilndesigner.rings import inside_apothem
+
+    corner = inside_apothem(2 * radius, sides) / math.cos(math.pi / sides)
+    return corner * polygon_reach(sides, angle)
+
+
+def round_groove(kiln: Kiln, walls: list[str], z: float) -> list[tuple[float, float, float]]:
+    """One groove round a round kiln's hot face at height ``z`` (mm): round the facets of each
+    quarter of the ring the elements are in (electric._groove_length), front, left, back, right,
+    the coil bending at each corner; a circle's when the wall isn't faceted."""
+    from kilndesigner.shape import facets
+
+    sides = facets(kiln)
+    steps = 12  # a quarter of a circle drawn in this many chords
+    points: list[tuple[float, float, float]] = []
+    for wall in [w for w in ("front", "left", "back", "right") if w in walls]:
+        mid = math.radians(QUARTERS[wall])
+        start, end = mid + math.pi / 4, mid - math.pi / 4  # clockwise, as the box's run goes
+        angles = [start + (end - start) * k / steps for k in range(steps + 1)]
+        if sides is not None:
+            # The quarter's ends, and every corner between them
+            corners = [
+                end + (-math.pi / 2 + (2 * k + 1) * math.pi / sides - end) % (2 * math.pi)
+                for k in range(sides)
+            ]
+            inside = sorted((a for a in corners if end + 1e-9 < a < start - 1e-9), reverse=True)
+            angles = [start, *inside, end]
+        for a in angles:
+            reach = hot_face_reach(kiln, a)
+            p = (reach * math.cos(a), reach * math.sin(a), z)
+            if not points or math.dist(points[-1], p) > 1e-6:
+                points.append(p)
+    return points
+
+
 def element_runs(kiln: Kiln, rows: int, coil_diameter_mm: float) -> list[ElementRun]:
     """Element coils centred on the inside face of the element walls, one per row."""
     electric = kiln.heat.electric
     if electric is None or rows == 0:
         return []
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
+    if kiln.chamber.shape == "round":
+        return [
+            ElementRun(
+                f"element/{row + 1}", coil_diameter_mm,
+                tuple(round_groove(kiln, list(electric.walls), h * (row + 0.5) / rows)),
+            )
+            for row in range(rows)
+        ]  # fmt: skip
     corners = {
         "front": ((w / 2, -d / 2), (-w / 2, -d / 2)),
         "left": ((-w / 2, -d / 2), (-w / 2, d / 2)),
@@ -842,8 +950,26 @@ def _revolved_solid(part: Part) -> Any:
     from build123d import Axis, Plane, Polyline, make_face, revolve
 
     assert part.revolve is not None
+    if part.sides is not None:
+        return _polygon_solid(part)
     face: Any = Plane.XZ * make_face(Polyline(*part.revolve, close=True))
     return revolve(face, Axis.Z)
+
+
+def _polygon_solid(part: Part) -> Any:
+    """A faceted round kiln's wall layer or slab: its rectangle in the r–z plane (r out to the
+    corners) made a regular polygon, or a polygon ring, and extruded up."""
+    from build123d import Plane, Polygon, extrude
+
+    assert part.revolve is not None
+    assert part.sides is not None
+    rs, zs = [r for r, _ in part.revolve], [z for _, z in part.revolve]
+    r0, r1, z0, z1 = min(rs), max(rs), min(zs), max(zs)
+    plane = Plane.XY.offset(z0)
+    outer: Any = plane * Polygon(*polygon_corners(part.sides, r1), align=None)
+    if r0 > 1e-6:
+        outer -= plane * Polygon(*polygon_corners(part.sides, r0), align=None)
+    return extrude(outer, z1 - z0)
 
 
 def part_solid(part: Part) -> Any | None:
@@ -1063,7 +1189,7 @@ def part_index(
         for g in grates(kiln):
             index[g.name] = entry(g.title, g.detail, "steel")
     electric = report.electric
-    if on_a_stand(kiln) and electric is not None and electric.elements is not None:
+    if grooves_drawn(kiln) and electric is not None and electric.elements is not None:
         el = electric.elements
         # The model draws one coil a groove; an element may run several grooves, in turn
         per = max(1, el.groove_rows // max(1, el.count))
@@ -1090,9 +1216,9 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     if not_drawn(kiln) is not None:
         return _write_massing(kiln, report, out_dir)
     runs: list[ElementRun] = []
-    # Element grooves round a curve, along chambers in a row or up a slope aren't laid out yet
+    # Element grooves along chambers in a row or up a slope aren't laid out yet
     round_ = not on_a_stand(kiln)
-    if not round_ and report.electric is not None and report.electric.elements is not None:
+    if grooves_drawn(kiln) and report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
         runs = element_runs(kiln, el.groove_rows, el.coil_outside_diameter_mm)
     hardware = build_hardware(kiln, report.frame, report.gas, report.fire)

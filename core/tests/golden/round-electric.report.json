@@ -480,8 +480,14 @@
     {
       "check": null,
       "level": "info",
-      "message": "Three 1 in peepholes are cut through the door. Their heights are not sourced; they are spaced evenly.",
-      "reference": "electric-kiln-hardware.md §4 [S3] [S6]"
+      "message": "The kiln loads from the top: the lid is the flat roof's slab of mortared straights in a steel band, and the band carries the lid's hinge on one side and a handle opposite it to lift it by. The walls have no door. UL 499 holds a handle grasped to lift to 55 °C if metal, 75 °C if not. The hinge and handle aren't sized: no source found gives their size or steel, so take them from the maker of the bands or a kiln of the same size.",
+      "reference": "electric-kiln-survey.md (the lid's band carries the hinge, the user); electric-kiln-hardware.md §1.1 [S8] [S1] (bands round the lid and floor slab), §7.1 [S16] (a lid lifter), §8.4 (UL 499, Table 36.2: handles)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "3 peepholes, 1 in round, through the wall, as the kiln has no door: each in the middle of a 9 in section, between its two courses' element grooves, as L&L drills a two-row section square to the case (more holes than sections are spaced evenly). No maker gives their heights.",
+      "reference": "electric-kiln-hardware.md §4.1–4.2 [S3] [S6] [S8]"
     },
     {
       "check": null,

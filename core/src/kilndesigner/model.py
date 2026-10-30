@@ -308,14 +308,26 @@ class DoorOpening(Spec):
 
 
 class Loading(Spec):
-    """How ware goes in: through a door in one wall, or on a car that rolls out through it.
+    """How ware goes in: through a door in one wall, on a car that rolls out through it, or from
+    the top under a hinged lid.
 
     On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car. Left out,
-    ``opening`` makes the whole wall the door.
+    ``opening`` makes the whole wall the door. A lid is a round electric kiln's flat roof, a slab
+    of mortared straights in a steel band that carries its hinge (electric-kiln-survey.md); its
+    walls are all wall, and ``face`` is then the wall the peepholes go in.
     """
 
-    type: Literal["door", "car"] = "door"
-    face: WallFace = Field(default="front", description="The wall with the door, or the car's end")
+    type: Literal["door", "car", "lid"] = Field(
+        default="door",
+        description=(
+            "Through a door in a wall, on a car, or from the top under a hinged lid (a round "
+            "electric kiln's flat roof)"
+        ),
+    )
+    face: WallFace = Field(
+        default="front",
+        description="The wall with the door, or the car's end; under a lid, the peepholes' wall",
+    )
     door: Literal["bricked", "hinged"] | None = Field(
         default=None,
         description=(
@@ -523,7 +535,8 @@ class Burners(Spec):
 
 
 class SpyHoles(Spec):
-    """The spy holes, for watching the cones. Left out: three in the door."""
+    """The spy holes, for watching the cones. Left out: three in the door, or in a top-loader's
+    wall (loading.face)."""
 
     count: int | None = Field(default=None, ge=0, le=12, description="Three when left out")
     port: Port | None = Field(
@@ -974,6 +987,27 @@ class Kiln(Spec):
         return self
 
     @model_validator(mode="after")
+    def _a_lid_it_can_build(self) -> Kiln:
+        if self.loading.type != "lid":
+            return self
+        if (
+            self.chamber.shape != "round"
+            or self.heat.electric is None
+            or not isinstance(self.roof, FlatRoof)
+        ):
+            raise ValueError(
+                "a lid is laid out only on a round electric kiln with a flat roof, the lid, as "
+                "top-loaders are built (electric-kiln-survey.md): use a door, or make it round, "
+                "electric and flat-roofed"
+            )
+        if self.loading.opening is not None or self.lining.door is not None:
+            raise ValueError(
+                "a top-loader's lid is its roof, in the roof's layers, and its walls have no door: "
+                "leave out loading.opening and lining.door"
+            )
+        return self
+
+    @model_validator(mode="after")
     def _an_opening_it_can_build(self) -> Kiln:
         door = self.loading.opening
         if door is None:
@@ -1070,8 +1104,11 @@ class Kiln(Spec):
 
     @property
     def door_wall(self) -> Face | None:
-        """The wall that is the door, when the whole wall is; None for a door in part of one."""
-        return self.door_face if self.loading.opening is None else None
+        """The wall that is the door, when the whole wall is; None for a door in part of one, or
+        a top-loader, whose walls are all wall."""
+        if self.loading.opening is not None or self.loading.type == "lid":
+            return None
+        return self.door_face
 
     def castable(self, mix_id: str) -> CastableMix | None:
         return next((m for m in self.castables or [] if m.id == mix_id), None)
@@ -1082,9 +1119,11 @@ class Kiln(Spec):
 
     @property
     def door_kind(self) -> Literal["bricked", "hinged"] | None:
-        """How the door is built, or None for a car kiln."""
+        """How the door is built, or None for a car kiln; a top-loader's lid is hinged."""
         if self.loading.type == "car":
             return None
+        if self.loading.type == "lid":
+            return "hinged"
         if self.loading.door is not None:
             return self.loading.door
         return "hinged" if self.heat.gas is None and self.heat.fire is None else "bricked"

@@ -305,6 +305,26 @@ describe("DesignForm, loading", () => {
     });
   });
 
+  it("loads a round electric kiln from the top, under a hinged lid", () => {
+    const options = () =>
+      Array.from(field("Ware goes in through").querySelectorAll("option")).map((o) => o.value);
+    form(electric);
+    expect(options()).toEqual(["door", "car"]);
+    cleanup();
+    const round: KilnDocument = {
+      ...electric,
+      chamber: { ...electric.chamber, shape: "round", depth: electric.chamber.width },
+    };
+    const last = live(round);
+    expect(options()).toEqual(["door", "car", "lid"]);
+    set("Ware goes in through", "lid");
+    expect(last().loading).toEqual({ type: "lid" });
+    expect(screen.queryByLabelText("Door")).toBeNull();
+    expect(screen.getByText(/The walls have no door/)).toBeTruthy();
+    set("The peepholes' wall", "back");
+    expect(last().loading).toEqual({ type: "lid", face: "back" });
+  });
+
   it("puts a door in part of a gas kiln's wall, and one into each chamber of a row", () => {
     const gas: KilnDocument = {
       ...electric,

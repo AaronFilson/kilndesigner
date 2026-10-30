@@ -8,8 +8,8 @@
 # Assumed: K23 insulating firebrick, L&L's for its 3 in walls (Skutt's grade isn't found); the
 # floor slab and lid of the same 3 in brick (no maker's slab or lid thickness is found); elements
 # in all four quarters of the ring, as a top-loader's go all the way round.
-# Not modelled: the lid's hinge (the lid is taken as a flat roof, and the front quarter stays the
-# design's door face); the element grooves aren't drawn on a round kiln.
+# It loads from the top: the lid is the flat roof, a slab in a steel band carrying its hinge and a
+# handle (listed, not sized: no source gives them); the peepholes are in the front of the wall.
 schema: 1
 name: Round electric, 12 sides of 3 in brick
 units: us
@@ -23,6 +23,8 @@ chamber:
   rings: cut
 roof:
   type: flat
+loading:
+  type: lid
 lining:
   walls:
     - material: ifb-k23
