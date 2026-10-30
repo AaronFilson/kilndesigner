@@ -212,9 +212,12 @@ def test_the_part_index_says_what_every_part_and_piece_is(kiln: Kiln) -> None:
     assert elements is not None
     assert set(index) == (
         {p.name for p in lining_parts(kiln)}
-        | {f"element/{i + 1}" for i in range(elements.count)}
+        | {f"element/{i + 1}" for i in range(elements.groove_rows)}  # one coil a groove
         | {p.name for p in hw.pieces}
     )
+    per = elements.groove_rows // elements.count
+    assert per > 1  # an element runs several grooves, each named for its element
+    assert index["element/2"]["title"] == f"Element 1 of {elements.count}, groove 2 of {per}"
     # JM 26 is drawn in (0.93, 0.89, 0.78): #ede3c7
     assert index["door/1-ifb-jm26"] == {
         "title": "Door, layer 1 from the inside",
@@ -222,8 +225,8 @@ def test_the_part_index_says_what_every_part_and_piece_is(kiln: Kiln) -> None:
         "kind": "Insulating firebrick",
         "colour": "#ede3c7",
     }
-    assert index[f"element/{elements.count}"] == {
-        "title": f"Element {elements.count} of {elements.count}",
+    assert index[f"element/{elements.groove_rows}"] == {
+        "title": f"Element {elements.count} of {elements.count}, groove {per} of {per}",
         "detail": (
             f"{elements.gauge} {report.electric.alloy}, {elements.length_each} of wire, "
             f"{elements.power_each}"

@@ -455,7 +455,7 @@ const domeExample = readFileSync(
 
 for (const [kind, example, arch, holds] of [
   ["catenary arch", catenaryExample, "Catenary arch, layer 1 from the inside", /pushes out with/],
-  ["dome", domeExample, "Roof, layer 1 from the inside", /no source gives how hard/],
+  ["dome", domeExample, "Roof, layer 1 from the inside", /No source sizes the steel for a dome/],
 ] as const) {
   test(`a ${kind} is built, named, drawn and its thrust spoken for`, async ({
     page,

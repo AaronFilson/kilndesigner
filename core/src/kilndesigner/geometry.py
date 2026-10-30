@@ -697,9 +697,13 @@ def part_index(
     electric = report.electric
     if electric is not None and electric.elements is not None:
         el = electric.elements
-        for i in range(el.count):
-            index[f"element/{i + 1}"] = entry(
-                f"Element {i + 1} of {el.count}",
+        # The model draws one coil a groove; an element may run several grooves, in turn
+        per = max(1, el.groove_rows // max(1, el.count))
+        for row in range(max(el.groove_rows, el.count)):
+            i, groove = divmod(row, per)
+            index[f"element/{row + 1}"] = entry(
+                f"Element {min(i, el.count - 1) + 1} of {el.count}"
+                + (f", groove {groove + 1} of {per}" if per > 1 else ""),
                 f"{el.gauge} {electric.alloy}, {el.length_each} of wire, {el.power_each}",
                 "element",
             )

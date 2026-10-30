@@ -294,6 +294,8 @@ export function Model({
       }
       material.opacity = faint ? 0.25 : 1;
       material.visible = visible;
+      // A faint burner lets the pointer through to its port, which may be no bigger than it
+      mesh.raycast = faint ? () => {} : Mesh.prototype.raycast;
     }
     if (look.edges || wire || scene.userData.outlines) {
       for (const lines of outlines(scene)) {
