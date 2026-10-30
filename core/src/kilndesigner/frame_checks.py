@@ -71,7 +71,9 @@ CAPPED = (
 )
 
 
-def _thrust(s: Sheet, n: int, thick: str = "t", capped: float | None = None) -> None:
+def _thrust(
+    s: Sheet, n: int, thick: str = "t", capped: float | None = None, cold: bool = False
+) -> None:
     """The arch's weight W, its cold thrust H_c, the heated factor f and the hot thrust H, from
     its ``n`` layers' thicknesses (``t_1``…, or a dome slice's ``τ_1``…) and the cells T, φ, r.
     ``capped``: the factor to use where HarbisonWalker's method has no finite answer."""
@@ -100,6 +102,8 @@ def _thrust(s: Sheet, n: int, thick: str = "t", capped: float | None = None) -> 
         "lbf/ft",
         source="three-hinged circular arch: moments about a springing",
     )
+    if cold:
+        return
     if capped is not None:
         s.given(
             "f", "hot thrust ÷ cold thrust: the most HarbisonWalker prints", capped, source=CAPPED
@@ -152,6 +156,40 @@ def skewback_on_wall(a: ArchInputs, wall: float) -> Sheet:
     s.let("x_w", "the side wall's outside, out from the centre line", "S/2 + t_w", "in")
     s.require("x_c", "<=", "x_w")
     s.lever("t_w", Q_(1, "in"), Q_(60, "in"))
+    return s
+
+
+THRUST_THROUGH_STEEL = (
+    'HarbisonWalker: "When the skewback is carried on a channel or angle, the line of thrust '
+    'should pass through, or slightly above, the corner of the supporting steel"; '
+    "kiln-hardware.md §4.1 [S20]"
+)
+
+
+def thrust_through_steel(a: ArchInputs, wall: float, leg: float, t: float) -> Sheet:
+    """The line of thrust from the ring's outer corner at the skewback, carried out through the
+    skewback and wall at the slope of the springing's reaction (W/2 down, H_c out), against the
+    buttress angle whose corner sits at the ring's outer corner's height on the wall's outside
+    (review S5). Cold thrust: the steepest line, the worst case."""
+    s = Sheet("frame.thrust-steel", "The line of thrust meets the buttress angle",
+              reference=THRUST_THROUGH_STEEL)  # fmt: skip
+    _arch(s, a, weights=True)
+    _thrust(s, len(a.layers), cold=True)
+    s.given("t_w", "the thicker side wall", Q_(wall, "in"), source=f"{DESIGN}: the walls' layers")
+    s.let("x_c", "the ring's outer corner, out from the centre line", "(r + T)*sin(φ)", "in")
+    s.let("x_w", "the side wall's outside, out from the centre line", "S/2 + t_w", "in")
+    s.let(
+        "δ",
+        "how far the line drops from the ring's corner to the wall's outside",
+        "W/(2*H_c)*(x_w - x_c)",
+        "in",
+        source="the reaction at a springing: W/2 down and H_c out",
+    )
+    s.given("L", "the angle's upright leg", Q_(leg, "in"), source="the angle chosen")
+    s.given("t_a", "the angle's thickness", Q_(t, "in"), source="the angle chosen")
+    s.let("δ_max", "the upright leg below the angle's corner", "L - t_a", "in")
+    s.require("δ", "<=", "δ_max", level="warning")
+    s.lever("t_w", Q_(0.5, "in"), Q_(60, "in"))
     return s
 
 
@@ -746,4 +784,5 @@ __all__ = [
     "rise_rule",
     "rod_stress",
     "skewback_on_wall",
+    "thrust_through_steel",
 ]

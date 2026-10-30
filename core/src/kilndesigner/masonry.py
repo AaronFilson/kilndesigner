@@ -34,7 +34,7 @@ from kilndesigner.materials_checks import whole_bricks
 from kilndesigner.model import CatenaryArch, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
-from kilndesigner.working import Finding, length_text
+from kilndesigner.working import Finding, length_text, show
 
 IN = 25.4  # mm
 BRICK = (9 * IN, 4.5 * IN, 2.5 * IN)  # length, width, thickness (mm)
@@ -249,8 +249,7 @@ def plan_layers(part: Part) -> list[LayerPlan] | None:
     plans: list[LayerPlan] = []
     for k, piece in enumerate(_split(part, sizes)):
         plan = plan_layer(piece)
-        if plan is None:  # every piece is one brick thick, so this can't happen
-            raise AssertionError(f"{part.name}: no laying for {piece.thickness:.1f} mm")
+        assert plan is not None, "every piece is one brick thick, so it can always be laid"
         plan.within = (k + 1, len(sizes))
         plans.append(plan)
     return plans
@@ -625,7 +624,16 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             continue  # your own mix: counted by batches and ingredients (castable.py)
         m = material(mid)
         volume = Q_(volume_mm3, "mm**3")
-        mass = volume * parse_quantity(m.density)
+        # A castable is bought by its maker's "material required" where the sheet gives one
+        # (review M8); else at its dried density
+        required = m.material_required if m.kind in CAST_KINDS else None
+        mass = volume * parse_quantity(required or m.density)
+        basis = (
+            f"at the maker's {show(parse_quantity(required), 'lb/ft**3' if us else 'kg/m**3')} "
+            "required to place it"
+            if required
+            else "at the dried density"
+        )
         quantities.append(
             Quantity(
                 material=mid,
@@ -635,7 +643,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 unit="lb" if us else "kg",
                 detail=(
                     f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} placed, "
-                    f"at the dried density, plus {WASTE:.0%}"
+                    f"{basis}, plus {WASTE:.0%}"
                     if m.kind in CAST_KINDS
                     else f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} "
                     f"laid, at its density, plus {WASTE:.0%}"
@@ -655,9 +663,11 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 level="info",
                 message=(
                     "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage.{corners}"
+                    f"cut, and {WASTE:.0%} extra for breakage. The size is sourced; the saw cut "
+                    f"and the {WASTE:.0%} are assumptions no source gives, so adjust them to your "
+                    f"saw and your bricks.{corners}"
                 ),
-                reference=BRICK_SOURCE,
+                reference=f"{BRICK_SOURCE}; kerf and waste assumed",
             )
         )
     return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))

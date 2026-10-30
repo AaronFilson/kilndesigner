@@ -47,14 +47,22 @@ class Conductivity:
         return slope, ks[i] - slope * ts[i]
 
     def k(self, t: float) -> float:
+        """Linear between the points and carried on past the last one; below the first point no
+        lower than the first point's k, since extrapolating a rising k downward can fall below
+        still air's (Kaowool 8 pcf at 40 °C: science review E6/M9). Holding it errs on the side of
+        more heat loss."""
         slope, intercept = self._segment(t)
-        return max(slope * t + intercept, _K_FLOOR)
+        k = slope * t + intercept
+        if t < self.temperatures[0]:
+            k = max(k, self.values[0])
+        return max(k, _K_FLOOR)
 
     def integral(self, t0: float, t1: float) -> float:
         """∫ k dT from t0 to t1 (W/m), exact for the piecewise-linear k."""
         if t1 < t0:
             return -self.integral(t1, t0)
-        breaks = sorted({t0, t1, *(t for t in self.temperatures[1:-1] if t0 < t < t1)})
+        inner = self.temperatures[:-1] if len(self.temperatures) > 1 else ()
+        breaks = sorted({t0, t1, *(t for t in inner if t0 < t < t1)})
         total = 0.0
         for a, b in itertools.pairwise(breaks):
             # k is linear on [a, b] (apart from the floor, which only matters far off the data)

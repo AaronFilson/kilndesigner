@@ -223,6 +223,12 @@
       {
         "check": null,
         "level": "info",
+        "message": "The elements run above Olsen's 9 W/in², held only to Krueger's 17.5, which is for Kanthal A-1 in kilns rated about 2300 °F. This kiln is kanthal-a1 to 2345 °F: no source covers that load there, so expect the elements to wear faster than Krueger's.",
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
+      },
+      {
+        "check": null,
+        "level": "info",
         "message": "The tool chose 2 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]"
       },
@@ -313,10 +319,14 @@
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
-        "inputs": {},
+        "inputs": {
+          "P, each element": "5760 W",
+          "U, each element": "240 V",
+          "d": "2.91 mm"
+        },
         "name": "Wire length per element",
         "note": null,
-        "reference": null,
+        "reference": "Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md §1.6 [S13]",
         "value": "143.1 ft"
       },
       {
@@ -331,12 +341,24 @@
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
         "inputs": {
           "D/d": "5.5",
-          "pitch range": "2–4 d"
+          "pitch range": "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
         },
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
         "value": "1062 turns, 0.629 in outside, pitch 2.22 d"
+      },
+      {
+        "formula": "installed power ÷ inside area of the element walls",
+        "inputs": {
+          "Kanthal's most, in grooves at 1000 °C": "35 kW/m²",
+          "element walls": "left, right, back",
+          "their area": "11.3 ft²"
+        },
+        "name": "Wall loading",
+        "note": "Kanthal gives no figure above 1000 °C, where it can only be lower; and the floor and roof carry no elements here.",
+        "reference": "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]",
+        "value": "11 kW/m²"
       },
       {
         "formula": null,
@@ -352,7 +374,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "2.01"
+        "value": "2.02"
       }
     ]
   },
@@ -460,25 +482,25 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 243.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 230.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 229.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
     },
     {
@@ -498,6 +520,12 @@
       "level": "info",
       "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
       "reference": "electrical-supply.md §1 [E1–E3], §3"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The elements run above Olsen's 9 W/in², held only to Krueger's 17.5, which is for Kanthal A-1 in kilns rated about 2300 °F. This kiln is kanthal-a1 to 2345 °F: no source covers that load there, so expect the elements to wear faster than Krueger's.",
+      "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
     },
     {
       "check": null,
@@ -526,8 +554,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
     },
     {
       "check": null,
@@ -635,178 +663,178 @@
     "faces": [
       {
         "face": "left",
-        "heat_loss": "983.1 W",
+        "heat_loss": "978.6 W",
         "inside_area": "3.75 ft²",
         "layers": [
           {
-            "cold_side": "1029 °F",
-            "cold_side_k": 827.0753321553,
+            "cold_side": "994.8 °F",
+            "cold_side_k": 808.0571658835551,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999994,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "244.8 °F",
-            "cold_side_k": 391.38044796758953,
-            "hot_side": "1029 °F",
-            "hot_side_k": 827.0753321553,
+            "cold_side": "244.2 °F",
+            "cold_side_k": 391.0528676870143,
+            "hot_side": "994.8 °F",
+            "hot_side_k": 808.0571658835551,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "8.142 ft²",
-        "surface_temperature": "244.8 °F"
+        "surface_temperature": "244.2 °F"
       },
       {
         "face": "right",
-        "heat_loss": "983.1 W",
+        "heat_loss": "978.6 W",
         "inside_area": "3.75 ft²",
         "layers": [
           {
-            "cold_side": "1029 °F",
-            "cold_side_k": 827.0753321553,
+            "cold_side": "994.8 °F",
+            "cold_side_k": 808.0571658835551,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999994,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "244.8 °F",
-            "cold_side_k": 391.38044796758953,
-            "hot_side": "1029 °F",
-            "hot_side_k": 827.0753321553,
+            "cold_side": "244.2 °F",
+            "cold_side_k": 391.0528676870143,
+            "hot_side": "994.8 °F",
+            "hot_side_k": 808.0571658835551,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "8.142 ft²",
-        "surface_temperature": "244.8 °F"
+        "surface_temperature": "244.2 °F"
       },
       {
         "face": "back",
-        "heat_loss": "983.1 W",
+        "heat_loss": "978.6 W",
         "inside_area": "3.75 ft²",
         "layers": [
           {
-            "cold_side": "1029 °F",
-            "cold_side_k": 827.0753321553,
+            "cold_side": "994.8 °F",
+            "cold_side_k": 808.0571658835551,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999994,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "244.8 °F",
-            "cold_side_k": 391.38044796758953,
-            "hot_side": "1029 °F",
-            "hot_side_k": 827.0753321553,
+            "cold_side": "244.2 °F",
+            "cold_side_k": 391.0528676870143,
+            "hot_side": "994.8 °F",
+            "hot_side_k": 808.0571658835551,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "8.142 ft²",
-        "surface_temperature": "244.8 °F"
+        "surface_temperature": "244.2 °F"
       },
       {
         "face": "front",
-        "heat_loss": "983.1 W",
+        "heat_loss": "978.6 W",
         "inside_area": "3.75 ft²",
         "layers": [
           {
-            "cold_side": "1029 °F",
-            "cold_side_k": 827.0753321553,
+            "cold_side": "994.8 °F",
+            "cold_side_k": 808.0571658835551,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999994,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "244.8 °F",
-            "cold_side_k": 391.38044796758953,
-            "hot_side": "1029 °F",
-            "hot_side_k": 827.0753321553,
+            "cold_side": "244.2 °F",
+            "cold_side_k": 391.0528676870143,
+            "hot_side": "994.8 °F",
+            "hot_side_k": 808.0571658835551,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "8.142 ft²",
-        "surface_temperature": "244.8 °F"
+        "surface_temperature": "244.2 °F"
       },
       {
         "face": "floor",
-        "heat_loss": "856.9 W",
+        "heat_loss": "847.2 W",
         "inside_area": "3.516 ft²",
         "layers": [
           {
-            "cold_side": "1151 °F",
-            "cold_side_k": 895.009398143054,
+            "cold_side": "1127 °F",
+            "cold_side_k": 881.5470031585862,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.149999999907,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "243.1 °F",
-            "cold_side_k": 390.4218332398377,
-            "hot_side": "1151 °F",
-            "hot_side_k": 895.009398143054,
+            "cold_side": "241.7 °F",
+            "cold_side_k": 389.6321774466907,
+            "hot_side": "1127 °F",
+            "hot_side_k": 881.5470031585862,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "9.252 ft²",
-        "surface_temperature": "243.1 °F"
+        "surface_temperature": "241.7 °F"
       },
       {
         "face": "roof",
-        "heat_loss": "933.9 W",
+        "heat_loss": "931.4 W",
         "inside_area": "3.516 ft²",
         "layers": [
           {
-            "cold_side": "1023 °F",
-            "cold_side_k": 823.4524581887964,
+            "cold_side": "985.3 °F",
+            "cold_side_k": 802.7514513700787,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999996,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "230.2 °F",
-            "cold_side_k": 383.23918908215074,
-            "hot_side": "1023 °F",
-            "hot_side_k": 823.4524581887964,
+            "cold_side": "229.8 °F",
+            "cold_side_k": 383.0599813075282,
+            "hot_side": "985.3 °F",
+            "hot_side_k": 802.7514513700787,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "7.793 ft²",
-        "surface_temperature": "230.2 °F"
+        "surface_temperature": "229.8 °F"
       }
     ],
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 243.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 230.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 229.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
@@ -817,8 +845,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "5.723 kW",
-    "total_watts": 5723.335471835284,
+    "total": "5.693 kW",
+    "total_watts": 5693.144157055688,
     "working": [
       {
         "formula": null,
@@ -853,81 +881,81 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "8.142 ft²",
-          "outside surface": "244.8 °F",
-          "surface coefficient h": "13.38 W/K/m²"
+          "outside surface": "244.2 °F",
+          "surface coefficient h": "13.37 W/K/m²"
         },
         "name": "Heat loss, left",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "983.1 W"
+        "value": "978.6 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "8.142 ft²",
-          "outside surface": "244.8 °F",
-          "surface coefficient h": "13.38 W/K/m²"
+          "outside surface": "244.2 °F",
+          "surface coefficient h": "13.37 W/K/m²"
         },
         "name": "Heat loss, right",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "983.1 W"
+        "value": "978.6 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "8.142 ft²",
-          "outside surface": "244.8 °F",
-          "surface coefficient h": "13.38 W/K/m²"
+          "outside surface": "244.2 °F",
+          "surface coefficient h": "13.37 W/K/m²"
         },
         "name": "Heat loss, back",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "983.1 W"
+        "value": "978.6 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "8.142 ft²",
-          "outside surface": "244.8 °F",
-          "surface coefficient h": "13.38 W/K/m²"
+          "outside surface": "244.2 °F",
+          "surface coefficient h": "13.37 W/K/m²"
         },
         "name": "Heat loss, front",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "983.1 W"
+        "value": "978.6 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "9.252 ft²",
-          "outside surface": "243.1 °F",
-          "surface coefficient h": "10.37 W/K/m²"
+          "outside surface": "241.7 °F",
+          "surface coefficient h": "10.34 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "856.9 W"
+        "value": "847.2 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "7.793 ft²",
-          "outside surface": "230.2 °F",
-          "surface coefficient h": "14.5 W/K/m²"
+          "outside surface": "229.8 °F",
+          "surface coefficient h": "14.49 W/K/m²"
         },
         "name": "Heat loss, roof",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "933.9 W"
+        "value": "931.4 W"
       },
       {
         "formula": "sum of the six faces",
         "inputs": {},
         "name": "Total heat loss at top temperature",
-        "note": null,
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "5.723 kW (1.95e+04 Btu/h)"
+        "value": "5.693 kW (1.94e+04 Btu/h)"
       }
     ]
   },
@@ -1009,8 +1037,8 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
       }
     ],
     "quantities": [

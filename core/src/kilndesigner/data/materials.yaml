@@ -20,9 +20,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.12], [600, 0.14], [800, 0.17], [1000, 0.19]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.14], [600, 0.16], [800, 0.17], [1000, 0.19]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
   specific_heat:
     # One vendor's 26-class IFB (500 kg/m³) at 1000 °C; no maker of JM or K brick gives c_p
     unit: kJ/(kg*K)
@@ -39,9 +39,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33], [1100, 0.33]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
   specific_heat:
     # One vendor's 26-class IFB (500 kg/m³) at 1000 °C; no maker of JM or K brick gives c_p
     unit: kJ/(kg*K)
@@ -58,9 +58,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36], [1100, 0.36]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
   specific_heat:
     # One vendor's 26-class IFB (500 kg/m³) at 1000 °C; no maker of JM or K brick gives c_p
     unit: kJ/(kg*K)
@@ -322,6 +322,8 @@
   kind: insulating_castable
   # 90–100 lb/ft³ dried at 220 °F; the middle of the range.
   density: 95 lb/ft**3
+  # "86 lb/ft³ needed to place" (electric-and-thermal.md §4.5 [S44], excerpt)
+  material_required: 86 lb/ft**3
   max_service: 2600 degF
   conductivity:
     unit: BTU*in/(hr*ft**2*degF)
@@ -335,13 +337,15 @@
   kind: insulating_castable
   # 98 lb/ft³ dried at 220 °F; 92 lb/ft³ of material places one cubic foot.
   density: 98 lb/ft**3
+  # HWI 10/19: "92 lb/ft³ required" (flat-roofs.md [F16], verified)
+  material_required: 92 lb/ft**3
   max_service: 3000 degF
   conductivity:
     unit: BTU*in/(hr*ft**2*degF)
     temperature_unit: degF
     points: [[400, 5.6], [800, 4.2], [1200, 4.1], [1600, 4.5], [2000, 4.9]]
-  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
-  status: excerpt
+  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
+  status: verified
 
 - id: kaolite-2600-li
   name: Morgan Thermal Ceramics Kaolite 2600-LI insulating castable
@@ -349,6 +353,8 @@
   # 1330–1570 kg/m³ dried 24 h at 105 °C; the middle of the range. Olsen's Table 1-5 gives 81 lb
   # to cast a cubic foot, as Morgan's 37 kg does (masonry-materials.md §5.1)
   density: 1450 kg/m**3
+  # "net to place 1330 kg/m³ (83 pcf)" on the Pump sheet [M20]
+  material_required: 1330 kg/m**3
   max_service: 1427 degC
   conductivity:
     unit: W/(m*K)
@@ -361,13 +367,15 @@
   name: HarbisonWalker Mizzou Castable Plus dense castable
   kind: dense_castable
   density: 145 lb/ft**3
+  # HWI 12/12: "Material Required 140 lb/ft3" (flat-roofs.md [F17], door-headers.md, verified)
+  material_required: 140 lb/ft**3
   max_service: 3000 degF
   conductivity:
     unit: BTU*in/(hr*ft**2*degF)
     temperature_unit: degF
-    points: [[400, 7.8], [2400, 7.4]]
-  source: "electric-and-thermal.md §4.5, HWI Mizzou Castable Plus data 1/05 [S46]"
-  status: excerpt
+    points: [[400, 7.8], [800, 7.7], [1200, 7.6], [1600, 7.5], [2000, 7.4], [2400, 7.4]]
+  source: "door-headers.md [H18], HWI Mizzou Castable Plus data sheet 12/12 (5976); combustion-and-masonry.md §6.1"
+  status: verified
 
 - id: calcium-silicate-promasil-1100
   name: Promat PROMASIL-1100 calcium silicate board

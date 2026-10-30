@@ -66,6 +66,8 @@ class Material(_Entry):
     source: str
     status: Literal["verified", "excerpt", "derived"]
     specific_heat: SpecificHeatData | None = None  # None: no source gives one
+    # A castable's "material required" to place a unit volume, from its maker's sheet
+    material_required: str | None = None
 
     @property
     def max_service_temperature(self) -> Quantity | None:

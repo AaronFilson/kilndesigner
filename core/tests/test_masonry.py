@@ -205,6 +205,21 @@ def test_front_loader_quantities() -> None:
     assert by_material["kaowool-blanket-8pcf"].unit == "ft²"
 
 
+def test_a_castable_is_bought_by_its_makers_material_required() -> None:
+    """Review M8: Kast-O-Lite 30 LI Plus is 98 lb/ft³ dried but 92 lb/ft³ "required" to place
+    (HWI 10/19, flat-roofs.md [F16]): the bill counts 92, plus 10 % for waste."""
+    kiln = load_design(EXAMPLES / "gas-crossdraft.yaml")
+    result = plan_masonry(kiln).result
+    cast = [q for q in result.quantities if q.kind in ("insulating_castable", "dense_castable")]
+    assert cast
+    [q] = cast
+    assert q.material == "kast-o-lite-30-li-plus"
+    assert materials()[q.material].material_required == "92 lb/ft**3"
+    assert "at the maker's 92 lb/ft³ required to place it" in q.detail
+    placed_ft3 = float(q.detail.split()[0])
+    assert q.amount == pytest.approx(placed_ft3 * 92 * 1.1, rel=5e-3, abs=1)
+
+
 def test_brick_count_covers_the_volume() -> None:
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     masonry = plan_masonry(kiln)

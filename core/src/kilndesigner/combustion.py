@@ -20,7 +20,10 @@ from typing import Any, Literal
 
 type Fuel = Literal["propane", "natural_gas"]
 
-PROPANE_HHV_MJ_PER_KG = 50.152  # GREET [S5]
+# One propane data set, [S1, S2] (combustion-and-masonry.md §1.1): 21,548 BTU/lb (× 2.326 kJ/kg
+# per BTU/lb = 50.12 MJ/kg), 91,502 BTU/gal and 4.20 lb/gal, all at 60 °F. GREET's 50.152 is its
+# LPG row, not propane's (review G11).
+PROPANE_HHV_MJ_PER_KG = 21_548 * 2.326e-3
 PROPANE_HHV_BTU_PER_GAL = 91_502  # at 60 °F [S1, S2]
 PROPANE_LB_PER_GAL = 4.20  # at 60 °F [S1, S2]
 METHANE_HHV_MJ_PER_KG = 890.7 / 16.0425  # NIST: ΔcH° −890.7 kJ/mol, M 16.0425 g/mol [S87]
@@ -29,9 +32,9 @@ N2_PER_O2 = (1 - O2_IN_AIR) / O2_IN_AIR
 OXIDATION_O2 = 0.03  # oxidation means more than 3% excess oxygen (Frenzel) [S69]
 REDUCTION_AIR = 0.9  # a moderate reduction, λ = 0.9 (combustion-and-masonry.md §8, derived)
 SOURCE = (
-    "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and "
-    "91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md "
-    "§1.1"
+    "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and "
+    "91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); "
+    "combustion-and-masonry.md §1.1"
 )
 
 

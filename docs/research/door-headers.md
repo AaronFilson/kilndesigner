@@ -604,6 +604,16 @@ Worked examples (all derived):
 - **Kiln books.** Olsen, Rhodes, Cardew (*Pioneer Pottery*) and Gregory (*Kiln Building*) were
   searched by snippet only. None gives a sizing rule for a door header. Cardew's snippets had nothing
   on door arches.
+- **Search of 29 October 2026, still NOT FOUND.** A web search for a refractory lintel's allowable
+  stress, a factor of safety on MOR or hot strength for an arch over an opening returned only
+  building-masonry guidance (CMHA TEK 17-01D and 17-02A, TMS's ASD course) and ISO 5014:2025, which
+  measures MOR at room temperature only. The makers' sheets already read (HWI, Morgan, [H17]–[H22])
+  give cold MOR and crushing strength and, for KX-99, a hot-load deformation without its load; none
+  gives a hot MOR or a design stress. So the engine keeps refusing a door below a roof with a lintel
+  or door arch that would have to carry it: there is nothing to check the design against. What
+  would unblock it: hot MOR (ASTM C583) on a maker's sheet for the materials a header is made of,
+  and a published factor of safety on it (the HWI *Modern Refractory Practice* [H9] is the likeliest
+  place; it is borrow-only and was not read).
 
 ---
 

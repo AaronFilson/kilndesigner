@@ -273,8 +273,8 @@ def analyse_hybrid(kiln: Kiln, element_watts: float) -> HybridAnalysis:
         Finding(
             level="info",
             message=(
-                "Cost per firing needs a firing schedule and the heat stored in the walls and "
-                "ware; that comes with the firing simulation (plan milestone M6)."
+                "Cost per firing, and cost and time against the switch-over temperature, come "
+                "from the firing simulation (`kilndesigner simulate`, or the Firing tab)."
             ),
         )
     )

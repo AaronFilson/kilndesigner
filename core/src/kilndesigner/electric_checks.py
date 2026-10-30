@@ -209,6 +209,36 @@ def surface_load(
     return s
 
 
+def groove_wire(diameter: float, least: Quantity, source: str) -> Sheet:
+    """The wire against the thinnest Kanthal gives for coils in grooves (key data, 2.0–5.0 mm)."""
+    s = Sheet(
+        "electric.groove-wire", "The wire against Kanthal's range in grooves", reference=source
+    )
+    s.given("d", "the wire's diameter", Q_(diameter, "m"), "mm", source="the wire chosen")
+    s.given("d_min", "the thinnest Kanthal gives for coils in grooves", least, "mm", source=source)
+    s.require("d", ">=", "d_min", level="warning")
+    s.lever("d", Q_(0.5, "mm"), Q_(6, "mm"))
+    return s
+
+
+def wall_loading(power: float, area: float, most: Quantity, source: str) -> Sheet:
+    """The installed power over the element walls' inside area, against Kanthal's most for coils
+    in grooves at 1000 °C."""
+    s = Sheet("electric.wall-loading", "The element walls' loading", reference=source)
+    s.given("P", "installed power", Q_(power, "W"), "kW", source="the design")
+    s.given(
+        "A", "inside area of the walls with elements", Q_(area, "m**2"), "ft**2",
+        source="the chamber: each element wall's length × height",
+    )  # fmt: skip
+    s.let("w", "wall loading", "P/A", "kW/m**2")
+    s.given(
+        "w_max", "Kanthal's most, spiral in grooves, at 1000 °C", most, "kW/m**2", source=source
+    )
+    s.require("w", "<=", "w_max", level="warning")
+    s.lever("P", Q_(100, "W"), Q_(100, "kW"))
+    return s
+
+
 @dataclass(frozen=True)
 class Arrangement:
     """One way of wiring the elements, and what the engine needs to try it."""

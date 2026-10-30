@@ -25,7 +25,6 @@ from kilndesigner.report import Report
 from kilndesigner.results import WallHeatmap, read_summary
 from kilndesigner.simulation import FiringPoint, FiringResult, SwitchOverChart
 from kilndesigner.templates import templates
-from kilndesigner.units import UnitError
 from kilndesigner_api import db, schemas
 from kilndesigner_api.jobs import JobRunner
 from kilndesigner_api.settings import Settings
@@ -55,9 +54,7 @@ def read_design(body: schemas.DesignInput) -> tuple[Kiln, str]:
         raise InvalidDesignError([schemas.Problem(loc=[], msg=f"not valid YAML: {e}")]) from e
     except ValidationError as e:
         problems = [schemas.Problem(loc=list(p["loc"]), msg=p["msg"]) for p in e.errors()]
-        raise InvalidDesignError(problems) from e
-    except UnitError as e:
-        raise InvalidDesignError([schemas.Problem(loc=[], msg=str(e))]) from e
+        raise InvalidDesignError(problems) from e  # pydantic wraps a UnitError in this too
     problems: list[schemas.Problem] = []
     known = set(materials()) | {m.id for m in kiln.castables or []}
     for face in ("walls", "floor", "roof", "door"):

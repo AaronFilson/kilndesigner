@@ -26,14 +26,20 @@ ROOT_P = (
     "on one orifice a venturi burner's output grows with √pressure: a straight line in √p "
     "between its two nearest published ratings; combustion-and-masonry.md §3.2 (derived)"
 )
-CYLINDER_PSI = (
-    "burners kept to 10 psi on cylinders, so the regulator still works when they are cold and "
-    "low; combustion-and-masonry.md §2.2, §2.7"
+REGULATOR = (
+    "RegO 597F series data sheet: capacity rated with the inlet 20 psig above the set pressure "
+    "and delivery 20 % below it; combustion-and-masonry.md §2.8 [S89]"
 )
-TANK_PSI = (
-    "a tank's burners kept 10 psi under its vapour pressure for the regulator, and to the 20 psi "
-    "the ratings go to; combustion-and-masonry.md §2.7, §3.2"
-)
+LIQUID_COOLING_F = 20.0
+"""How much colder than the air the liquid propane runs under continuous draw: the D × L × K
+rule's basis (combustion-and-masonry.md §2.3 [S1], §2.8)."""
+COOLING = "the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8"
+REGULATOR_INLET_PSI = 20.0  # RegO 597F: inlet 20 psig over the set pressure
+REGULATOR_DROOP = 0.8  # RegO 597F: delivery 20 % below the set pressure at rated capacity
+TANK_PSI = "to the 20 psi the burners' ratings go to; combustion-and-masonry.md §3.2"
+TANK_TABLE_FILL = 73.3 / 90
+"""The ⅓-full tank table is D × L × 90, the 50 %-full K; ⅓ full is K ≈ 73.3
+(combustion-and-masonry.md §2.3, §2.8, derived)."""
 ALTITUDE = (
     "Olsen, 4th ed. p.230–232: burner output × 0.9279 at 5000 ft, × 0.8579 at 10,000 ft, which "
     "√σ of the U.S. Standard Atmosphere reproduces to 0.2 % (derived)"
@@ -123,10 +129,18 @@ def demand(s: Sheet, d: Demand) -> None:
     s.let("D", "design burner input", "b*V", "BTU/hr")
 
 
+def pressure_ceiling(vapour_psig: float) -> float:
+    """The most pressure the burners are sure of from cylinders or a tank whose liquid has
+    ``vapour_psig``: the regulator set 20 psi under it, no more than the ratings' 20 psi, and 20 %
+    of droop at full flow (RegO 597F). Zero or less: the regulator can't work at all."""
+    return REGULATOR_DROOP * min(20.0, vapour_psig - REGULATOR_INLET_PSI)
+
+
 @dataclass(frozen=True)
 class Pressure:
-    """The most pressure the burners may run at: 10 psi on cylinders; on a tank, 10 psi under its
-    vapour pressure at the coldest air, and no more than 20 psi; on a line, the line's."""
+    """The most pressure the burners may run at from cylinders or a tank: the regulator set 20 psi
+    under propane's vapour pressure with the liquid 20 °F under the coldest air, no more than
+    20 psi, less 20 % droop (RegO 597F); on a line, the line's."""
 
     tank: bool
     air_f: float
@@ -145,27 +159,37 @@ def _pressure(s: Sheet, p: Pressure) -> None:
             source=f"{DESIGN}: supply.pressure",
         )
         return
-    if not p.tank:
-        s.given("p_max", "the most pressure for the burners", Q_(10, "psi"), source=CYLINDER_PSI)
-        return
     s.given("t", "the coldest air it fires in", Q_(p.air_f, "degF"), source=DESIGN)
+    s.given(
+        "Δt_l",
+        "the liquid's cooling under draw",
+        Q_(LIQUID_COOLING_F, "delta_degF"),
+        source=COOLING,
+    )
+    s.let("t_l", "the liquid's temperature", "t - Δt_l", "degF", source=COOLING)
     lookup(
         s,
         "p_v",
         "propane's vapour pressure (gauge)",
-        "t",
+        "t_l",
         p.vapour,
         ("degF", "psi"),
         p.vapour_source,
     )
     s.given("p_top", "the highest pressure the ratings go to", Q_(20, "psi"), source=TANK_PSI)
-    s.given("p_reg", "kept in the tank over the burners' pressure", Q_(10, "psi"), source=TANK_PSI)
+    s.given(
+        "p_reg",
+        "the regulator's inlet over its set pressure",
+        Q_(REGULATOR_INLET_PSI, "psi"),
+        source=REGULATOR,
+    )
+    s.given("f_d", "delivery at full flow, as a share of set", REGULATOR_DROOP, source=REGULATOR)
     s.let(
         "p_max",
-        "the most pressure for the burners",
-        "min(p_top, p_v - p_reg)",
+        "the most pressure the burners are sure of",
+        "f_d*min(p_top, p_v - p_reg)",
         "psi",
-        source=TANK_PSI,
+        source=REGULATOR,
     )
 
 
@@ -344,14 +368,37 @@ class Supply:
     air_f: float
     table: tuple[list[float], list[float]]  # °F, BTU/hr for one cylinder or the tank
     source: str
+    by_liquid: bool = False  # the table is by the liquid's temperature, not the air's
+    fill: float = 1.0  # the table scaled to the fill it's labelled with (the ⅓-full tank table)
 
 
 def supply(id: str, d: Demand, draw: Draw, sup: Supply, level: Level) -> Sheet:
     s = Sheet(id, f"Propane supply: {sup.case}", reference=sup.source)
     _draw(s, d, draw)
     s.given("t", "the coldest air it fires in", Q_(sup.air_f, "degF"), source=DESIGN)
+    at = "t"
+    if sup.by_liquid:
+        s.given(
+            "Δt_l",
+            "the liquid's cooling under draw",
+            Q_(LIQUID_COOLING_F, "delta_degF"),
+            source=COOLING,
+        )
+        s.let("t_l", "the liquid's temperature, which the table is read by", "t - Δt_l", "degF")
+        at = "t_l"
     one = "one cylinder" if sup.cylinders is not None else "the tank"
-    lookup(s, "c", f"what {one} vaporizes", "t", sup.table, ("degF", "BTU/hr"), sup.source)
+    if sup.fill != 1.0:
+        lookup(s, "c_50", "the table's figure (D × L × 90)", at, sup.table, ("degF", "BTU/hr"),
+               sup.source)  # fmt: skip
+        s.given(
+            "f_fill",
+            "K at ⅓ full over the table's K of 90",
+            sup.fill,
+            source="combustion-and-masonry.md §2.3, §2.8: K 73.3 at ⅓ full (derived)",
+        )
+        s.let("c", f"what {one} vaporizes", "c_50*f_fill", "BTU/hr")
+    else:
+        lookup(s, "c", f"what {one} vaporizes", at, sup.table, ("degF", "BTU/hr"), sup.source)
     if sup.cylinders is None:
         s.let("C", "what the supply gives", "c", "BTU/hr")
     else:

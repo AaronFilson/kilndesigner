@@ -82,11 +82,10 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
         points = tuple(arch_outline(p))
         xs, zs = [x for x, _ in points], [z for _, z in points]
         return Rect(min(xs), min(zs), max(xs) - min(xs), max(zs) - min(zs), fill, p.name, points)
-    if axis == 0:
-        bottom = p.lo[2] if p.cap else a.centre_z + a.radius
-        top = a.centre_z + a.radius + a.thickness
-        return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
-    return None
+    assert axis == 0, "arches are only cut across and along"
+    bottom = p.lo[2] if p.cap else a.centre_z + a.radius
+    top = a.centre_z + a.radius + a.thickness
+    return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
 
 
 def _crossings(
@@ -118,8 +117,7 @@ def _dome_cut(p: Part, axis: Axis, steps: int = 96) -> Rect | None:
     inside = d.heights(s, zero, d.radius)
     bottom = np.full_like(s, springline) if p.cap else np.maximum(inside, springline)
     keep = top > bottom + 1e-6
-    if not keep.any():
-        return None
+    assert keep.any(), "a dome layer always stands above its springline at the centre line"
     lower = [(float(a), float(b)) for a, b in zip(s[keep], bottom[keep], strict=True)]
     upper = [(float(a), float(b)) for a, b in zip(s[keep], top[keep], strict=True)]
     points = (*lower, *reversed(upper))

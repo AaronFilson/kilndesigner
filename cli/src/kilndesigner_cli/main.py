@@ -36,7 +36,7 @@ for stream in (sys.stdout, sys.stderr):
 def _load(path: Path) -> Kiln:
     try:
         return load_design(path)
-    except (ValidationError, UnitError) as e:
+    except ValidationError as e:  # pydantic wraps a UnitError in this too
         typer.echo(f"{path}: the design is not valid\n{e}", err=True)
         raise typer.Exit(code=2) from e
 

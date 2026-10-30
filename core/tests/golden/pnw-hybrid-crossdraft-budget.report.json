@@ -92,7 +92,7 @@
               "symbol": "c_6",
               "text": null,
               "unit": "USD",
-              "value": 395.0
+              "value": 790.0
             },
             {
               "expr": null,
@@ -105,7 +105,7 @@
               "symbol": "c_7",
               "text": null,
               "unit": "USD",
-              "value": 855.65
+              "value": 1030.05
             },
             {
               "expr": null,
@@ -131,13 +131,13 @@
               "symbol": "C",
               "text": null,
               "unit": "USD",
-              "value": 8247.51
+              "value": 8816.91
             }
           ],
           "id": "bom.budget",
           "label": null,
           "lever": {
-            "hi": 16495.02,
+            "hi": 17633.82,
             "lo": 0.0,
             "step": null,
             "symbol": "B"
@@ -148,7 +148,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = $8,248, 165 % of B = $5,000",
+              "margin": "C = $8,817, 176.3 % of B = $5,000",
               "op": "<=",
               "right": "B"
             }
@@ -156,12 +156,12 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when B ≥ $8,248",
+          "solve": "Passes when B ≥ $8,817",
           "status": "warning",
           "title": "The priced materials against the budget"
         },
         "level": "warning",
-        "message": "The priced materials come to $8,248, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $8,817, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
@@ -206,7 +206,7 @@
         "buy": "8 bags",
         "cost": 921.68,
         "item": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "needed": "439 lb (4.08 ft³ placed, at the dried density, plus 10%)",
+        "needed": "412 lb (4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 10%)",
         "priced_as": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
         "source": "combustion-and-masonry.md §9 [S51]",
         "unit_price": "$115.21"
@@ -221,19 +221,19 @@
         "unit_price": null
       },
       {
-        "buy": "1 burners",
-        "cost": 395.0,
+        "buy": "2 burners",
+        "cost": 790.0,
         "item": "Ransome B5 burner",
-        "needed": "1 burners at 9.6 psi, 452,083 BTU/hr each",
+        "needed": "2 burners at 2.4 psi, 226,042 BTU/hr each",
         "priced_as": "Ransome B5, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
         "unit_price": "$395.00"
       },
       {
-        "buy": "157 bricks",
-        "cost": 855.65,
+        "buy": "189 bricks",
+        "cost": 1030.05,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "157 straights (with 5 % for cuts)",
+        "needed": "189 straights (with 5 % for cuts)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -242,7 +242,7 @@
         "buy": "36 ft",
         "cost": null,
         "item": "L4×4×5/16",
-        "needed": "32.4 ft (corner posts, buttresses behind the skewbacks)",
+        "needed": "31.9 ft (corner posts, buttresses behind the skewbacks)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
@@ -267,7 +267,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 8247.51
+    "total": 8816.91
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -401,10 +401,14 @@
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
-        "inputs": {},
+        "inputs": {
+          "P, each element": "5760 W",
+          "U, each element": "240 V",
+          "d": "3.26 mm"
+        },
         "name": "Wire length per element",
         "note": null,
-        "reference": null,
+        "reference": "Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md §1.6 [S13]",
         "value": "180.6 ft"
       },
       {
@@ -419,12 +423,24 @@
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
         "inputs": {
           "D/d": "5.5",
-          "pitch range": "2–4 d"
+          "pitch range": "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
         },
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
         "value": "1193 turns, 0.707 in outside, pitch 3.13 d"
+      },
+      {
+        "formula": "installed power ÷ inside area of the element walls",
+        "inputs": {
+          "Kanthal's most, in grooves at 1000 °C": "35 kW/m²",
+          "element walls": "left",
+          "their area": "18.3 ft²"
+        },
+        "name": "Wall loading",
+        "note": "Kanthal gives no figure above 1000 °C, where it can only be lower; and the floor and roof carry no elements here.",
+        "reference": "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]",
+        "value": "6.76 kW/m²"
       },
       {
         "formula": null,
@@ -440,7 +456,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "0.803"
+        "value": "0.804"
       }
     ]
   },
@@ -525,7 +541,7 @@
             "symbol": "c_6",
             "text": null,
             "unit": "USD",
-            "value": 395.0
+            "value": 790.0
           },
           {
             "expr": null,
@@ -538,7 +554,7 @@
             "symbol": "c_7",
             "text": null,
             "unit": "USD",
-            "value": 855.65
+            "value": 1030.05
           },
           {
             "expr": null,
@@ -564,13 +580,13 @@
             "symbol": "C",
             "text": null,
             "unit": "USD",
-            "value": 8247.51
+            "value": 8816.91
           }
         ],
         "id": "bom.budget",
         "label": "W1",
         "lever": {
-          "hi": 16495.02,
+          "hi": 17633.82,
           "lo": 0.0,
           "step": null,
           "symbol": "B"
@@ -581,7 +597,7 @@
             "holds": false,
             "left": "C",
             "level": "warning",
-            "margin": "C = $8,248, 165 % of B = $5,000",
+            "margin": "C = $8,817, 176.3 % of B = $5,000",
             "op": "<=",
             "right": "B"
           }
@@ -589,48 +605,48 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when B ≥ $8,248",
+        "solve": "Passes when B ≥ $8,817",
         "status": "warning",
         "title": "The priced materials against the budget"
       },
       "level": "warning",
-      "message": "The priced materials come to $8,248, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $8,817, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 6 pcf runs down to 174 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Kaowool ceramic fibre blanket, 6 pcf runs down to 173.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 279.2 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 280.5 °F (data from 500 °F) and up to 1810 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
     },
     {
@@ -672,6 +688,12 @@
     {
       "check": null,
       "level": "info",
+      "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+    },
+    {
+      "check": null,
+      "level": "info",
       "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
       "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
     },
@@ -685,12 +707,12 @@
       "check": null,
       "level": "info",
       "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
+      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Cost per firing needs a firing schedule and the heat stored in the walls and ware; that comes with the firing simulation (plan milestone M6).",
+      "message": "Cost per firing, and cost and time against the switch-over temperature, come from the firing simulation (`kilndesigner simulate`, or the Firing tab).",
       "reference": null
     },
     {
@@ -756,8 +778,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
     },
     {
       "check": null,
@@ -795,7 +817,7 @@
     "members": [
       {
         "count": 4,
-        "length_in": 55.33055638202916,
+        "length_in": 53.598333829217495,
         "part": "corner posts",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "L4×4×5/16"
@@ -934,46 +956,6 @@
   "gas": {
     "burner_options": [
       {
-        "count": 1,
-        "each": "452,083 BTU/hr",
-        "model": "Ransome B5",
-        "pressure": "9.6 psi",
-        "total_cost": 395.0,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "226,042 BTU/hr",
-        "model": "GACO MR750",
-        "pressure": "17.3 psi",
-        "total_cost": 199.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "226,042 BTU/hr",
-        "model": "GACO MR100",
-        "pressure": "10.9 psi",
-        "total_cost": 319.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "226,042 BTU/hr",
-        "model": "Ransome B3",
-        "pressure": "16.8 psi",
-        "total_cost": 490.0,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "226,042 BTU/hr",
-        "model": "Ransome B4",
-        "pressure": "6.3 psi",
-        "total_cost": 590.0,
-        "type": "venturi"
-      },
-      {
         "count": 2,
         "each": "226,042 BTU/hr",
         "model": "Ransome B5",
@@ -984,26 +966,66 @@
       {
         "count": 3,
         "each": "150,694 BTU/hr",
-        "model": "GACO MR750",
-        "pressure": "7.7 psi",
-        "total_cost": 299.85,
+        "model": "Ransome B4",
+        "pressure": "2.8 psi",
+        "total_cost": 885.0,
         "type": "venturi"
       },
       {
         "count": 3,
         "each": "150,694 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "1.1 psi",
+        "total_cost": 1185.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "113,021 BTU/hr",
         "model": "GACO MR100",
-        "pressure": "4.9 psi",
-        "total_cost": 479.84999999999997,
+        "pressure": "2.7 psi",
+        "total_cost": 639.8,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "113,021 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "1.6 psi",
+        "total_cost": 1180.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "113,021 BTU/hr",
+        "model": "Ransome B5",
+        "pressure": "17 in. w.c.",
+        "total_cost": 1580.0,
+        "type": "venturi"
+      },
+      {
+        "count": 5,
+        "each": "90,417 BTU/hr",
+        "model": "GACO MR750",
+        "pressure": "2.8 psi",
+        "total_cost": 499.75,
+        "type": "venturi"
+      },
+      {
+        "count": 5,
+        "each": "90,417 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "2.7 psi",
+        "total_cost": 1225.0,
         "type": "venturi"
       }
     ],
     "burners": {
-      "count": 1,
-      "each": "452,083 BTU/hr",
+      "count": 2,
+      "each": "226,042 BTU/hr",
       "model": "Ransome B5",
-      "pressure": "9.6 psi",
-      "total_cost": 395.0,
+      "pressure": "2.4 psi",
+      "total_cost": 790.0,
       "type": "venturi"
     },
     "chimney_height": "4.4 ft (53 in) above the chamber floor",
@@ -1026,6 +1048,12 @@
       {
         "check": null,
         "level": "info",
+        "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+      },
+      {
+        "check": null,
+        "level": "info",
         "message": "Above the kiln a ventilation hood and stack carry the flue gases out of the building, above where people are (Olsen p.151).",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151: with burners, the chimney as tall as the kiln or level with its top framework, then a ventilation hood and stack"
       },
@@ -1036,23 +1064,23 @@
         "reference": null
       }
     ],
-    "flue_area": "28 in²",
-    "flue_area_in2": 28.274333882308138,
+    "flue_area": "57 in²",
+    "flue_area_in2": 56.548667764616276,
     "fuel": "propane",
     "full_fire_btu_hr": 452083.3333333334,
-    "inlet_area_in2": 28.274333882308138,
+    "inlet_area_in2": 56.548667764616276,
     "propane_at_full_fire": "4.94 gal/hr",
     "supply": [
       {
-        "capacity": "567,700 BTU/hr",
-        "capacity_btu_hr": 567700.0,
+        "capacity": "462,360 BTU/hr",
+        "capacity_btu_hr": 462360.11111111107,
         "case": "500 gal tank, ⅓ full",
         "meets_demand": true,
-        "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13]"
+        "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], × 73.3/90 for ⅓ full (§2.3, §2.8)"
       }
     ],
     "supply_temperature": "20 °F",
-    "tank_suggestion": "A 325 gal tank, kept at least ⅓ full, supplies 467,670 BTU/hr at 20 °F",
+    "tank_suggestion": "A 500 gal tank, kept at least ⅓ full, supplies 462,360 BTU/hr at 20 °F",
     "ward_volume": "45.2 ft³",
     "working": [
       {
@@ -1068,10 +1096,11 @@
         "inputs": {
           "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
-          "construction": "9 in insulating brick"
+          "construction": "9 in insulating brick",
+          "this kiln's walls": "4.5 in ifb-jm26 + 3.5 in kaowool-blanket-6pcf"
         },
         "name": "Burner input per cubic foot",
-        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours. The table's column is chosen by the hot face and assumes its construction; a thinner or thicker wall is checked by the energy balance at the top temperature (gas.top), from this kiln's own heat loss.",
         "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
@@ -1086,25 +1115,27 @@
         "value": "452,083 BTU/hr (132.5 kW)"
       },
       {
-        "formula": null,
+        "formula": "0.8 × min(20 psi, p_v − 20 psi)",
         "inputs": {
-          "burners limited to": "20 psi"
+          "burners limited to": "2.96 psi",
+          "coldest air": "20 °F",
+          "liquid under draw": "20 °F colder"
         },
         "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
+        "note": "The regulator needs its inlet 20 psi over its setting, and at full flow delivers 20 % under it; the burners' ratings go to 20 psi.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]; the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8; RegO 597F series data sheet: capacity rated with the inlet 20 psig above the set pressure and delivery 20 % below it; combustion-and-masonry.md §2.8 [S89]",
+        "value": "24 psig in the cylinder or tank, the liquid at 0 °F"
       },
       {
         "formula": null,
         "inputs": {
-          "cost": "$395.00",
-          "each": "452,083 BTU/hr"
+          "cost": "$790.00",
+          "each": "226,042 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "1 × Ransome B5 at 9.6 psi"
+        "value": "2 × Ransome B5 at 2.4 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -1123,7 +1154,7 @@
         },
         "name": "Available heat at the top temperature",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "0.316"
       },
       {
@@ -1132,7 +1163,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "142,982 BTU/hr kept against 48,974 BTU/hr lost"
+        "value": "143,072 BTU/hr kept against 48,913 BTU/hr lost"
       },
       {
         "formula": null,
@@ -1141,8 +1172,8 @@
         },
         "name": "Supply: 500 gal tank, ⅓ full",
         "note": "meets the burners' draw",
-        "reference": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13]",
-        "value": "567,700 BTU/hr"
+        "reference": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], × 73.3/90 for ⅓ full (§2.3, §2.8)",
+        "value": "462,360 BTU/hr"
       },
       {
         "formula": "⅓ of the tank",
@@ -1156,12 +1187,12 @@
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
           "Olsen's other methods": "113 in² (2½ in² per ft³), 65 in² (1 in² per 7000 BTU/hr)",
-          "burner ports together": "28 in²"
+          "burner ports together": "57 in²"
         },
         "name": "Exit flue, to start",
         "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
-        "value": "28 in²"
+        "value": "57 in²"
       },
       {
         "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
@@ -1202,190 +1233,190 @@
     "faces": [
       {
         "face": "left",
-        "heat_loss": "2759 W",
+        "heat_loss": "2751 W",
         "inside_area": "18.33 ft²",
         "layers": [
           {
-            "cold_side": "1507 °F",
-            "cold_side_k": 1092.556363962975,
+            "cold_side": "1473 °F",
+            "cold_side_k": 1073.8365892261834,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999974,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "182.7 °F",
-            "cold_side_k": 356.8624651807676,
-            "hot_side": "1507 °F",
-            "hot_side_k": 1092.556363962975,
+            "cold_side": "182.4 °F",
+            "cold_side_k": 356.70340106448253,
+            "hot_side": "1473 °F",
+            "hot_side_k": 1073.8365892261834,
             "material": "kaowool-blanket-6pcf",
             "thickness": "3.5 in"
           }
         ],
         "outside_area": "31.67 ft²",
-        "surface_temperature": "182.7 °F"
+        "surface_temperature": "182.4 °F"
       },
       {
         "face": "right",
-        "heat_loss": "2759 W",
+        "heat_loss": "2751 W",
         "inside_area": "18.33 ft²",
         "layers": [
           {
-            "cold_side": "1507 °F",
-            "cold_side_k": 1092.556363962975,
+            "cold_side": "1473 °F",
+            "cold_side_k": 1073.8365892261834,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999974,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "182.7 °F",
-            "cold_side_k": 356.8624651807676,
-            "hot_side": "1507 °F",
-            "hot_side_k": 1092.556363962975,
+            "cold_side": "182.4 °F",
+            "cold_side_k": 356.70340106448253,
+            "hot_side": "1473 °F",
+            "hot_side_k": 1073.8365892261834,
             "material": "kaowool-blanket-6pcf",
             "thickness": "3.5 in"
           }
         ],
         "outside_area": "31.67 ft²",
-        "surface_temperature": "182.7 °F"
+        "surface_temperature": "182.4 °F"
       },
       {
         "face": "back",
-        "heat_loss": "1501 W",
+        "heat_loss": "1499 W",
         "inside_area": "9.049 ft²",
         "layers": [
           {
-            "cold_side": "1470 °F",
-            "cold_side_k": 1072.1397926055074,
+            "cold_side": "1435 °F",
+            "cold_side_k": 1052.448061463209,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999976,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "174 °F",
-            "cold_side_k": 352.05608645111937,
-            "hot_side": "1470 °F",
-            "hot_side_k": 1072.1397926055074,
+            "cold_side": "173.9 °F",
+            "cold_side_k": 351.9863582784579,
+            "hot_side": "1435 °F",
+            "hot_side_k": 1052.448061463209,
             "material": "kaowool-blanket-6pcf",
             "thickness": "3.5 in"
           }
         ],
         "outside_area": "18.83 ft²",
-        "surface_temperature": "174 °F"
+        "surface_temperature": "173.9 °F"
       },
       {
         "face": "front",
-        "heat_loss": "1501 W",
+        "heat_loss": "1499 W",
         "inside_area": "9.049 ft²",
         "layers": [
           {
-            "cold_side": "1470 °F",
-            "cold_side_k": 1072.1397926055074,
+            "cold_side": "1435 °F",
+            "cold_side_k": 1052.448061463209,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999976,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "174 °F",
-            "cold_side_k": 352.05608645111937,
-            "hot_side": "1470 °F",
-            "hot_side_k": 1072.1397926055074,
+            "cold_side": "173.9 °F",
+            "cold_side_k": 351.9863582784579,
+            "hot_side": "1435 °F",
+            "hot_side_k": 1052.448061463209,
             "material": "kaowool-blanket-6pcf",
             "thickness": "3.5 in"
           }
         ],
         "outside_area": "18.83 ft²",
-        "surface_temperature": "174 °F"
+        "surface_temperature": "173.9 °F"
       },
       {
         "face": "floor",
-        "heat_loss": "2353 W",
+        "heat_loss": "2327 W",
         "inside_area": "11.67 ft²",
         "layers": [
           {
-            "cold_side": "1236 °F",
-            "cold_side_k": 942.2712055950825,
+            "cold_side": "1212 °F",
+            "cold_side_k": 928.4606382430342,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "238.9 °F",
-            "cold_side_k": 388.09919088330497,
-            "hot_side": "1236 °F",
-            "hot_side_k": 942.2712055950825,
+            "cold_side": "237.4 °F",
+            "cold_side_k": 387.2833908085758,
+            "hot_side": "1212 °F",
+            "hot_side_k": 928.4606382430342,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "21.58 ft²",
-        "surface_temperature": "238.9 °F"
+        "surface_temperature": "237.4 °F"
       },
       {
         "face": "roof",
-        "heat_loss": "3480 W",
+        "heat_loss": "3508 W",
         "inside_area": "12.22 ft²",
         "layers": [
           {
-            "cold_side": "1814 °F",
-            "cold_side_k": 1263.3797694296604,
+            "cold_side": "1810 °F",
+            "cold_side_k": 1260.8754806086492,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999976,
             "material": "kast-o-lite-30-li-plus",
             "thickness": "3 in"
           },
           {
-            "cold_side": "279.2 °F",
-            "cold_side_k": 410.47753187949235,
-            "hot_side": "1814 °F",
-            "hot_side_k": 1263.3797694296604,
+            "cold_side": "280.5 °F",
+            "cold_side_k": 411.19781393354964,
+            "hot_side": "1810 °F",
+            "hot_side_k": 1260.8754806086492,
             "material": "kaowool-blanket-8pcf",
             "thickness": "2 in"
           }
         ],
         "outside_area": "16.8 ft²",
-        "surface_temperature": "279.2 °F"
+        "surface_temperature": "280.5 °F"
       }
     ],
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 6 pcf runs down to 174 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 6 pcf runs down to 173.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 279.2 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 280.5 °F (data from 500 °F) and up to 1810 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
+        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
@@ -1396,8 +1427,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "14.35 kW",
-    "total_watts": 14352.74824139925,
+    "total": "14.33 kW",
+    "total_watts": 14334.905269759363,
     "working": [
       {
         "formula": null,
@@ -1432,269 +1463,269 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "31.67 ft²",
-          "outside surface": "182.7 °F",
-          "surface coefficient h": "12.72 W/K/m²"
+          "outside surface": "182.4 °F",
+          "surface coefficient h": "12.71 W/K/m²"
         },
         "name": "Heat loss, left",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2759 W"
+        "value": "2751 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "31.67 ft²",
-          "outside surface": "182.7 °F",
-          "surface coefficient h": "12.72 W/K/m²"
+          "outside surface": "182.4 °F",
+          "surface coefficient h": "12.71 W/K/m²"
         },
         "name": "Heat loss, right",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2759 W"
+        "value": "2751 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.83 ft²",
-          "outside surface": "174 °F",
-          "surface coefficient h": "12.46 W/K/m²"
+          "outside surface": "173.9 °F",
+          "surface coefficient h": "12.45 W/K/m²"
         },
         "name": "Heat loss, back",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1501 W"
+        "value": "1499 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.83 ft²",
-          "outside surface": "174 °F",
-          "surface coefficient h": "12.46 W/K/m²"
+          "outside surface": "173.9 °F",
+          "surface coefficient h": "12.45 W/K/m²"
         },
         "name": "Heat loss, front",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1501 W"
+        "value": "1499 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "21.58 ft²",
-          "outside surface": "238.9 °F",
-          "surface coefficient h": "11.18 W/K/m²"
+          "outside surface": "237.4 °F",
+          "surface coefficient h": "11.14 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2353 W"
+        "value": "2327 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "16.8 ft²",
-          "outside surface": "279.2 °F",
-          "surface coefficient h": "17.51 W/K/m²"
+          "outside surface": "280.5 °F",
+          "surface coefficient h": "17.55 W/K/m²"
         },
         "name": "Heat loss, roof",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "3480 W"
+        "value": "3508 W"
       },
       {
         "formula": "sum of the six faces",
         "inputs": {},
         "name": "Total heat loss at top temperature",
-        "note": null,
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "14.35 kW (4.9e+04 Btu/h)"
+        "value": "14.33 kW (4.89e+04 Btu/h)"
       }
     ]
   },
   "hybrid": {
     "cost_crossover": null,
-    "electric_ceiling": "2067 °F",
-    "electric_ceiling_c": 1130.81522028457,
+    "electric_ceiling": "2044 °F",
+    "electric_ceiling_c": 1117.9127527637597,
     "element_power": "11.52 kW",
     "findings": [
       {
         "check": null,
         "level": "info",
         "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Cost per firing needs a firing schedule and the heat stored in the walls and ware; that comes with the firing simulation (plan milestone M6).",
+        "message": "Cost per firing, and cost and time against the switch-over temperature, come from the firing simulation (`kilndesigner simulate`, or the Firing tab).",
         "reference": null
       }
     ],
     "points": [
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 11.076233389275407,
-        "propane_per_kwh": 0.1494950378851549,
+        "element_surplus_kw": 10.548830629490311,
+        "propane_per_kwh": 0.14940158262060363,
         "propane_reducing_per_kwh": null,
         "temperature_c": 148.8888888888889,
         "temperature_f": 300.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.784915384236974,
-        "propane_per_kwh": 0.15361604650493665,
+        "element_surplus_kw": 10.157740447451506,
+        "propane_per_kwh": 0.1535200150348054,
         "propane_reducing_per_kwh": null,
         "temperature_c": 204.44444444444446,
         "temperature_f": 400.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.44320591093123,
-        "propane_per_kwh": 0.15802899127196476,
+        "element_surplus_kw": 9.766646538991324,
+        "propane_per_kwh": 0.15793020109541267,
         "propane_reducing_per_kwh": null,
         "temperature_c": 260.0,
         "temperature_f": 500.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.057325919297858,
-        "propane_per_kwh": 0.16276771497193676,
+        "element_surplus_kw": 9.375146413812189,
+        "propane_per_kwh": 0.16266596243166323,
         "propane_reducing_per_kwh": null,
         "temperature_c": 315.55555555555566,
         "temperature_f": 600.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.631037606029212,
-        "propane_per_kwh": 0.1678716768727881,
+        "element_surplus_kw": 8.975758324255072,
+        "propane_per_kwh": 0.16776673364393752,
         "propane_reducing_per_kwh": null,
         "temperature_c": 371.1111111111112,
         "temperature_f": 700.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.164388811581428,
-        "propane_per_kwh": 0.17338666048062892,
+        "element_surplus_kw": 8.555120017333898,
+        "propane_per_kwh": 0.1732782696172658,
         "propane_reducing_per_kwh": null,
         "temperature_c": 426.66666666666674,
         "temperature_f": 800.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.661249747184458,
-        "propane_per_kwh": 0.17936559767727267,
+        "element_surplus_kw": 8.095470782977044,
+        "propane_per_kwh": 0.17925346914364737,
         "propane_reducing_per_kwh": null,
         "temperature_c": 482.2222222222223,
         "temperature_f": 900.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.120722565721458,
-        "propane_per_kwh": 0.18586952360589884,
+        "element_surplus_kw": 7.593907230122922,
+        "propane_per_kwh": 0.18575332921077817,
         "propane_reducing_per_kwh": null,
         "temperature_c": 537.7777777777778,
         "temperature_f": 1000.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.547821490656189,
-        "propane_per_kwh": 0.19296867232635787,
+        "element_surplus_kw": 7.05469467775776,
+        "propane_per_kwh": 0.19284803997241834,
         "propane_reducing_per_kwh": null,
         "temperature_c": 593.3333333333334,
         "temperature_f": 1100.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.942280425985745,
-        "propane_per_kwh": 0.2007437142976811,
+        "element_surplus_kw": 6.47951749290056,
+        "propane_per_kwh": 0.20061822145730265,
         "propane_reducing_per_kwh": null,
         "temperature_c": 648.888888888889,
         "temperature_f": 1200.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.298356625842759,
-        "propane_per_kwh": 0.20928712043796044,
+        "element_surplus_kw": 5.864436524873878,
+        "propane_per_kwh": 0.20915628677630857,
         "propane_reducing_per_kwh": null,
         "temperature_c": 704.4444444444446,
         "temperature_f": 1300.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.613282664868141,
-        "propane_per_kwh": 0.21870456710073302,
+        "element_surplus_kw": 5.206274159379737,
+        "propane_per_kwh": 0.2185678462204543,
         "propane_reducing_per_kwh": null,
         "temperature_c": 760.0000000000001,
         "temperature_f": 1400.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.886227729286083,
-        "propane_per_kwh": 0.2291235177127495,
+        "element_surplus_kw": 4.50535048029395,
+        "propane_per_kwh": 0.22898028353410602,
         "propane_reducing_per_kwh": null,
         "temperature_c": 815.5555555555555,
         "temperature_f": 1500.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.116955609952623,
-        "propane_per_kwh": 0.2407051842577994,
+        "element_surplus_kw": 3.7617488739278495,
+        "propane_per_kwh": 0.2405547099210462,
         "propane_reducing_per_kwh": null,
         "temperature_c": 871.1111111111112,
         "temperature_f": 1600.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 3.3070285363067744,
-        "propane_per_kwh": 0.25364861146216067,
-        "propane_reducing_per_kwh": 0.27626434264677424,
+        "element_surplus_kw": 2.9754868340907943,
+        "propane_per_kwh": 0.25349004567681893,
+        "propane_reducing_per_kwh": 0.2760916388728337,
         "temperature_c": 926.6666666666666,
         "temperature_f": 1700.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 2.458059911890119,
-        "propane_per_kwh": 0.2682019328195847,
-        "propane_reducing_per_kwh": 0.29049141480255625,
+        "element_surplus_kw": 2.148307137156644,
+        "propane_per_kwh": 0.26803426917710294,
+        "propane_reducing_per_kwh": 0.29030981712276493,
         "temperature_c": 982.2222222222223,
         "temperature_f": 1800.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 1.5707643150848198,
-        "propane_per_kwh": 0.2846785729296969,
-        "propane_reducing_per_kwh": 0.30635507502078513,
+        "element_surplus_kw": 1.2852814723237025,
+        "propane_per_kwh": 0.2845006090874077,
+        "propane_reducing_per_kwh": 0.30616356033917613,
         "temperature_c": 1037.7777777777778,
         "temperature_f": 1900.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 0.6453623242939338,
-        "propane_per_kwh": 0.3034803915378504,
-        "propane_reducing_per_kwh": 0.32415239927606554,
+        "element_surplus_kw": 0.39892709139735416,
+        "propane_per_kwh": 0.3032906739346543,
+        "propane_reducing_per_kwh": 0.3239497587827232,
         "temperature_c": 1093.3333333333335,
         "temperature_f": 2000.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -0.31769113552897216,
-        "propane_per_kwh": 0.325131548077979,
-        "propane_reducing_per_kwh": 0.34425712765488103,
+        "element_surplus_kw": -0.5086942249903277,
+        "propane_per_kwh": 0.3249282954799764,
+        "propane_reducing_per_kwh": 0.3440419189001706,
         "temperature_c": 1148.8888888888891,
         "temperature_f": 2100.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -1.3178241992489401,
-        "propane_per_kwh": 0.3503294331056673,
-        "propane_reducing_per_kwh": 0.3671460886154727,
+        "element_surplus_kw": -1.4363891003033968,
+        "propane_per_kwh": 0.3501104283125039,
+        "propane_reducing_per_kwh": 0.36691657106541936,
         "temperature_c": 1204.4444444444443,
         "temperature_f": 2200.0
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -2.3544511729830044,
-        "propane_per_kwh": 0.380023726024597,
-        "propane_reducing_per_kwh": 0.39343761872910665,
+        "element_surplus_kw": -2.3829949387519154,
+        "propane_per_kwh": 0.3797861581537634,
+        "propane_reducing_per_kwh": 0.3931916653030738,
         "temperature_c": 1260.0,
         "temperature_f": 2300.0
       }
@@ -1711,7 +1742,7 @@
         "name": "Electric ceiling",
         "note": "The steady loss ignores the heat going into the ware and walls, so the elements slow down well before this; it is an upper bound.",
         "reference": null,
-        "value": "2067 °F"
+        "value": "2044 °F"
       },
       {
         "formula": "price per gallon ÷ (26.8 kWh per gallon × available heat)",
@@ -1722,7 +1753,7 @@
         },
         "name": "Propane, cost per useful kWh",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "$0.149 at 300 °F rising to $0.380 at 2300 °F"
       },
       {
@@ -1872,8 +1903,8 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
       }
     ],
     "quantities": [
@@ -1914,12 +1945,12 @@
         "unit": "ft²"
       },
       {
-        "amount": 439.0,
-        "detail": "4.08 ft³ placed, at the dried density, plus 10%",
+        "amount": 412.0,
+        "detail": "4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 10%",
         "kind": "insulating_castable",
         "material": "kast-o-lite-30-li-plus",
         "name": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "priced_amount": 439.3803912231167,
+        "priced_amount": 412.4795509441504,
         "unit": "lb"
       }
     ]

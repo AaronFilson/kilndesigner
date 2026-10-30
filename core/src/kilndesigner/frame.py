@@ -27,6 +27,7 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.frame_checks import (
     CAPPED,
+    THRUST_THROUGH_STEEL,
     ArchInputs,
     CatenaryLayer,
     DomeInputs,
@@ -52,6 +53,7 @@ from kilndesigner.frame_checks import (
     rise_rule,
     rod_stress,
     skewback_on_wall,
+    thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.model import CatenaryArch, Dome, Kiln, SprungArch
@@ -177,12 +179,15 @@ def outside(kiln: Kiln) -> Outside:
     )
 
 
-def skewback_top(kiln: Kiln) -> float:
-    """Height of the skewback's top above the chamber floor (in): the arch's outer corner."""
+def skewback_top(kiln: Kiln, *, whole_roof: bool = False) -> float:
+    """Height of the skewback's top above the chamber floor (in): the solid ring's outer corner,
+    where the buttress takes the thrust (review S5); insulation laid over the ring is only load.
+    ``whole_roof``: the outer corner of every roof layer, the kiln's outside at the springing."""
     assert isinstance(kiln.roof, SprungArch)
     w = si(kiln.chamber.width, "in")
     arch = Arch(w, si(kiln.roof.rise, "in"))
-    roof = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof"))
+    layers = kiln.lining.for_face("roof")
+    roof = sum(si(x.thickness, "in") for x in (layers if whole_roof else layers[: kiln.roof.ring]))
     centre = si(kiln.chamber.height, "in") + arch.rise - arch.radius
     return centre + (arch.radius + roof) * math.cos(arch.half_angle)
 
@@ -779,7 +784,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
 
     # The smallest angle, from the builders who published theirs: Olsen's (p.139, p.174), and
     # Pitelka's for a hinged door
-    outside_ft3 = o.width * o.depth * (o.bottom + skewback_top(kiln)) / 1728
+    outside_ft3 = o.width * o.depth * (o.bottom + skewback_top(kiln, whole_roof=True)) / 1728
     if kiln.door_kind == "hinged":
         floor = angle("L3×3×1/4") if volume_ft3 <= 24 else angle("L4×4×1/4")
         why = f"hinged door, {volume_ft3:.0f} ft³ ({'≤' if volume_ft3 <= 24 else '>'} 24 ft³)"
@@ -1095,6 +1100,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
                     f"{posts} rods takes {per_rod:,.0f} lb, {per_rod / rod['stress_area']:,.0f} "
                     "psi, hot."
                 ),
+                reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
             )
         )
     working.append(
@@ -1122,6 +1128,26 @@ def design_frame(kiln: Kiln) -> FrameDesign:
 
     top = skewback_top(kiln)
     leg = chosen.leg
+    # HarbisonWalker: the line of thrust through, or slightly above, the steel's corner (S5).
+    # A note, not a warning: Olsen's built kilns (Kahler's salt kiln, his three-chamber kiln)
+    # stand with it lower, and ADR 0014 takes them as the reference.
+    sheet = thrust_through_steel(arch_in, max(o.left, o.right), chosen.leg, chosen.t)
+    if sheet.check().status != "pass":
+        drop, most = sheet.env["δ"] / 0.0254, sheet.env["δ_max"] / 0.0254
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The cold line of thrust drops {drop:.2f} in from the ring's corner to the "
+                    f"side wall's outside, past the {chosen.name} buttress's {most:.2f} in of "
+                    "upright leg: HarbisonWalker, for industrial furnaces, wants it through or "
+                    "just above the steel's corner. Olsen's built kilns stand with it lower, so "
+                    "this is a note; a longer-legged angle, thinner walls at the skewback or more "
+                    "rise would bring it up."
+                ),
+                reference=THRUST_THROUGH_STEEL,
+            )
+        )
     members = [
         Member(
             part="corner posts" if posts == 2 else "posts, at the corners and along the sides",
