@@ -36,6 +36,8 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.combustion import (
     OXIDATION_O2,
+    PROPANE_HHV_BTU_PER_GAL,
+    PROPANE_LB_PER_GAL,
     REDUCTION_AIR,
     air_ratio_for_flue_oxygen,
     available_heat_fraction,
@@ -81,8 +83,7 @@ from kilndesigner.sheet import Check
 from kilndesigner.units import Q_, Quantity, si
 from kilndesigner.working import Finding, Step, show
 
-PROPANE_BTU_PER_GAL = 91_502  # HHV at 60 °F [S1, S2]
-PROPANE_LB_PER_GAL = 4.20  # [S1, S2]
+PROPANE_BTU_PER_GAL = PROPANE_HHV_BTU_PER_GAL  # one propane data set (review G11)
 STACK_C = 0.0342  # K/m, stack-effect equation [S42]
 ATMOSPHERE = 101_325.0  # Pa
 PA_PER_IN_WC = 249.09
@@ -762,6 +763,21 @@ def _choose_burners(
         return Burning(None, wanted or 1, 0.0, source, options)
     if options:
         chosen = options[0]
+        # Review G10: the fewest burners is the engine's pick, not a source's; Olsen's builds use
+        # several. Said, not imposed: no source gives a rule for the count.
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The tool chose the fewest burners that carry the input ({chosen.count} × "
+                    f"{chosen.model}). Olsen's builds use several: a 20 ft³ cross-draft on four, "
+                    "a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten "
+                    "(p.226–228). No source gives a rule for the count; set burners.count to "
+                    "spread the heat over more."
+                ),
+                reference="Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md",
+            )
+        )
         return _burning(chosen, _each(chosen, demand, how, gas), demand, how, working, options)
     findings.append(
         Finding.failed(
@@ -1053,6 +1069,10 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             value=f"{low:,}–{high:,} BTU/ft³/hr",
             inputs={
                 "construction": WALL_WORDS[construction],
+                "this kiln's walls": " + ".join(
+                    f"{show(layer.thickness, 'in' if us else 'mm')} {layer.material}"
+                    for layer in kiln.lining.walls
+                ),
                 "cone column": column,
                 **(
                     {"Olsen's Rule 1": f"{olsen[0]:,}–{olsen[1]:,} BTU/ft³/hr"}
@@ -1064,7 +1084,9 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             note=(
                 "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns "
                 "overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. "
-                "Ward's high end gives about 6–7 hours."
+                "Ward's high end gives about 6–7 hours. The table's column is chosen by the hot "
+                "face and assumes its construction; a thinner or thicker wall is checked by the "
+                "energy balance at the top temperature (gas.top), from this kiln's own heat loss."
             ),
         ),
         Step(

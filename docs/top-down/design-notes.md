@@ -57,7 +57,8 @@ The full report is in `research-report.md`, and the four sets of notes behind it
 - **Expansion adds volume, not pressure.** Combustion at constant pressure creates no push.
   - With the 9 × 9 in flue, the full-fire hot gas (about 44 L/s) leaves at 0.8 m/s and needs only 0.08 Pa (derived).
   - So the gas will flow top to bottom easily. Getting it to flow isn't the problem.
-- **Chimney suction at the ports** (derived; chimney gas averaging 500–900 °C, 0.5 Pa friction):
+- **Chimney suction at the ports** (model: the chimney gas's 500–900 °C average and the 0.5 Pa
+  friction are assumed, not measured; science review T5):
 
 | Chimney height above floor flue | Top ports | Floor ports |
 |---|---|---|
@@ -109,6 +110,7 @@ Two inspirators of 50,000 BTU/hr each, each feeding a half-ring manifold of 10 p
 
 - **Turndown:** 70% flow at 3.4 psi gives ports at 9.3 m/s; 50% at 1.7 psi, 6.7 m/s; 30% at 17 in w.c., 4.0 m/s.
 - **Keep the manifold off the castable.** The outside of a Mizzou ring runs about 290–540 °C (model), near propane's ignition temperature. Stand the manifold off 2–3 in in open air.
+- **The 310 port tubes can't take it (science review T1).** In ½ in pockets at the hot face they sit at about 1,220–1,300 °C (the science review's estimate, model), above the 1,035 °C the Nickel Institute gives for 310 heated and cooled every firing (§2; `research-notes/burner-hardware-and-patents.md` §5). And the 30 % turndown, ports at 4.0 m/s, is the low-velocity full-premix regime where burn-back starts (§3). Another reason the design is superseded; don't build it.
 
 ### B. Two rings of low-pressure natural-draft burners (proposed; depends on chimney height)
 
@@ -168,7 +170,7 @@ Two inspirators of 50,000 BTU/hr each, each feeding a half-ring manifold of 10 p
 
 - **Flame supervision on every burner.** NFPA 86 reportedly asks for the gas to close within 4 s of flame loss (secondhand). Thermocouple valves take about a minute.
 - **Purge before every lighting.** A sealed kiln holds gas.
-- **Oxidize below about 900 °C.** Below 500–600 °C a flame that goes out isn't relit by the kiln.
+- **Oxidize below about 900 °C.** Don't count on the kiln to relight a flame that goes out: propane's autoignition range (920–1,120 °F, about 500–600 °C, §1.1) is not what the code uses. NFPA 86, as reported secondhand, lets a furnace skip flame proving only above 1,400 °F (760 °C) (`research-notes/engineering-and-safety.md`; science review T2). Below that, treat a lost flame as unlit gas.
 - **Blower-fed designs:** an air-flow switch that shuts off the gas if the blower stops.
 - **Burners on the lid:** a switch that shuts the gas off before the lid lifts. Keep hoses and regulators out of the heat rising off the lid (UL 21 hose is rated to 60 °C).
 - **CO:** a CO alarm, and a stack exit away from people. Expect flame at the stack during reduction.

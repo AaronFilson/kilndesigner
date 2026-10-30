@@ -924,6 +924,12 @@
     {
       "check": null,
       "level": "info",
+      "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+    },
+    {
+      "check": null,
+      "level": "info",
       "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
       "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
     },
@@ -943,7 +949,7 @@
       "check": null,
       "level": "info",
       "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
+      "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
     },
     {
       "check": null,
@@ -1282,6 +1288,12 @@
         "reference": null
       },
       {
+        "check": null,
+        "level": "info",
+        "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+      },
+      {
         "check": {
           "cells": [
             {
@@ -1614,10 +1626,11 @@
         "inputs": {
           "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
-          "construction": "9 in insulating brick"
+          "construction": "9 in insulating brick",
+          "this kiln's walls": "4.5 in ifb-jm26 + 2.5 in ifb-k23 + 1 in kaowool-blanket-8pcf"
         },
         "name": "Burner input per cubic foot",
-        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours. The table's column is chosen by the hot face and assumes its construction; a thinner or thicker wall is checked by the energy balance at the top temperature (gas.top), from this kiln's own heat loss.",
         "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
@@ -1671,7 +1684,7 @@
         },
         "name": "Available heat at the top temperature",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "0.316"
       },
       {
@@ -1680,7 +1693,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "142,982 BTU/hr kept against 48,840 BTU/hr lost"
+        "value": "143,072 BTU/hr kept against 48,840 BTU/hr lost"
       },
       {
         "formula": null,
@@ -2114,7 +2127,7 @@
         "check": null,
         "level": "info",
         "message": "At $0.12/kWh and $3.50/gal, electricity is the cheaper heat at every temperature, so run the elements as long as they can keep the schedule, and add the burners alongside them rather than instead of them.",
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1"
       },
       {
         "check": null,
@@ -2127,7 +2140,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 10.392973978827934,
-        "propane_per_kwh": 0.1494950378851549,
+        "propane_per_kwh": 0.14940158262060363,
         "propane_reducing_per_kwh": null,
         "temperature_c": 148.8888888888889,
         "temperature_f": 300.0
@@ -2135,7 +2148,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 9.938351968493519,
-        "propane_per_kwh": 0.15361604650493665,
+        "propane_per_kwh": 0.1535200150348054,
         "propane_reducing_per_kwh": null,
         "temperature_c": 204.44444444444446,
         "temperature_f": 400.0
@@ -2143,7 +2156,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 9.483396625300102,
-        "propane_per_kwh": 0.15802899127196476,
+        "propane_per_kwh": 0.15793020109541267,
         "propane_reducing_per_kwh": null,
         "temperature_c": 260.0,
         "temperature_f": 500.0
@@ -2151,7 +2164,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 9.027774273789989,
-        "propane_per_kwh": 0.16276771497193676,
+        "propane_per_kwh": 0.16266596243166323,
         "propane_reducing_per_kwh": null,
         "temperature_c": 315.55555555555566,
         "temperature_f": 600.0
@@ -2159,7 +2172,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 8.564103277245003,
-        "propane_per_kwh": 0.1678716768727881,
+        "propane_per_kwh": 0.16776673364393752,
         "propane_reducing_per_kwh": null,
         "temperature_c": 371.1111111111112,
         "temperature_f": 700.0
@@ -2167,7 +2180,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 8.091168274079795,
-        "propane_per_kwh": 0.17338666048062892,
+        "propane_per_kwh": 0.1732782696172658,
         "propane_reducing_per_kwh": null,
         "temperature_c": 426.66666666666674,
         "temperature_f": 800.0
@@ -2175,7 +2188,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 7.596614247644558,
-        "propane_per_kwh": 0.17936559767727267,
+        "propane_per_kwh": 0.17925346914364737,
         "propane_reducing_per_kwh": null,
         "temperature_c": 482.2222222222223,
         "temperature_f": 900.0
@@ -2183,7 +2196,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 7.0731554023117384,
-        "propane_per_kwh": 0.18586952360589884,
+        "propane_per_kwh": 0.18575332921077817,
         "propane_reducing_per_kwh": null,
         "temperature_c": 537.7777777777778,
         "temperature_f": 1000.0
@@ -2191,7 +2204,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 6.523701625630757,
-        "propane_per_kwh": 0.19296867232635787,
+        "propane_per_kwh": 0.19284803997241834,
         "propane_reducing_per_kwh": null,
         "temperature_c": 593.3333333333334,
         "temperature_f": 1100.0
@@ -2199,7 +2212,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 5.9471001076731,
-        "propane_per_kwh": 0.2007437142976811,
+        "propane_per_kwh": 0.20061822145730265,
         "propane_reducing_per_kwh": null,
         "temperature_c": 648.888888888889,
         "temperature_f": 1200.0
@@ -2207,7 +2220,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 5.339001099385863,
-        "propane_per_kwh": 0.20928712043796044,
+        "propane_per_kwh": 0.20915628677630857,
         "propane_reducing_per_kwh": null,
         "temperature_c": 704.4444444444446,
         "temperature_f": 1300.0
@@ -2215,7 +2228,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 4.696977954373071,
-        "propane_per_kwh": 0.21870456710073302,
+        "propane_per_kwh": 0.2185678462204543,
         "propane_reducing_per_kwh": null,
         "temperature_c": 760.0000000000001,
         "temperature_f": 1400.0
@@ -2223,7 +2236,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 4.020901898836729,
-        "propane_per_kwh": 0.2291235177127495,
+        "propane_per_kwh": 0.22898028353410602,
         "propane_reducing_per_kwh": null,
         "temperature_c": 815.5555555555555,
         "temperature_f": 1500.0
@@ -2231,7 +2244,7 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 3.310702878389544,
-        "propane_per_kwh": 0.2407051842577994,
+        "propane_per_kwh": 0.2405547099210462,
         "propane_reducing_per_kwh": null,
         "temperature_c": 871.1111111111112,
         "temperature_f": 1600.0
@@ -2239,56 +2252,56 @@
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 2.5662315533024085,
-        "propane_per_kwh": 0.25364861146216067,
-        "propane_reducing_per_kwh": 0.27626434264677424,
+        "propane_per_kwh": 0.25349004567681893,
+        "propane_reducing_per_kwh": 0.2760916388728337,
         "temperature_c": 926.6666666666666,
         "temperature_f": 1700.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 1.7886102251657157,
-        "propane_per_kwh": 0.2682019328195847,
-        "propane_reducing_per_kwh": 0.29049141480255625,
+        "propane_per_kwh": 0.26803426917710294,
+        "propane_reducing_per_kwh": 0.29030981712276493,
         "temperature_c": 982.2222222222223,
         "temperature_f": 1800.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 0.9827854548701144,
-        "propane_per_kwh": 0.2846785729296969,
-        "propane_reducing_per_kwh": 0.30635507502078513,
+        "propane_per_kwh": 0.2845006090874077,
+        "propane_reducing_per_kwh": 0.30616356033917613,
         "temperature_c": 1037.7777777777778,
         "temperature_f": 1900.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": 0.1600564551928328,
-        "propane_per_kwh": 0.3034803915378504,
-        "propane_reducing_per_kwh": 0.32415239927606554,
+        "propane_per_kwh": 0.3032906739346543,
+        "propane_reducing_per_kwh": 0.3239497587827232,
         "temperature_c": 1093.3333333333335,
         "temperature_f": 2000.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": -0.6782325735568429,
-        "propane_per_kwh": 0.325131548077979,
-        "propane_reducing_per_kwh": 0.34425712765488103,
+        "propane_per_kwh": 0.3249282954799764,
+        "propane_reducing_per_kwh": 0.3440419189001706,
         "temperature_c": 1148.8888888888891,
         "temperature_f": 2100.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": -1.5314359415591552,
-        "propane_per_kwh": 0.3503294331056673,
-        "propane_reducing_per_kwh": 0.3671460886154727,
+        "propane_per_kwh": 0.3501104283125039,
+        "propane_reducing_per_kwh": 0.36691657106541936,
         "temperature_c": 1204.4444444444443,
         "temperature_f": 2200.0
       },
       {
         "electric_per_kwh": 0.12,
         "element_surplus_kw": -2.398858373329129,
-        "propane_per_kwh": 0.380023726024597,
-        "propane_reducing_per_kwh": 0.39343761872910665,
+        "propane_per_kwh": 0.3797861581537634,
+        "propane_reducing_per_kwh": 0.3931916653030738,
         "temperature_c": 1260.0,
         "temperature_f": 2300.0
       }
@@ -2316,7 +2329,7 @@
         },
         "name": "Propane, cost per useful kWh",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "$0.149 at 300 °F rising to $0.380 at 2300 °F"
       },
       {

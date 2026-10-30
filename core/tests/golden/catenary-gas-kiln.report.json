@@ -1255,10 +1255,11 @@
         "inputs": {
           "Olsen's Rule 1": "7,000–10,000 BTU/ft³/hr",
           "cone column": "10",
-          "construction": "9 in insulating brick"
+          "construction": "9 in insulating brick",
+          "this kiln's walls": "4.5 in ifb-jm26 + 4.5 in ifb-k23"
         },
         "name": "Burner input per cubic foot",
-        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours.",
+        "note": "Olsen's Rule 1 is the low end of Ward's range at cone 10. He calls most gas kilns overpowered: a 36 ft³ IFB updraft on 10,000 BTU/ft³/hr fires in about 8 hours. Ward's high end gives about 6–7 hours. The table's column is chosen by the hot face and assumes its construction; a thinner or thicker wall is checked by the energy balance at the top temperature (gas.top), from this kiln's own heat loss.",
         "reference": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]; Olsen, The Kiln Book, 4th ed., p.226–228 (Rule 1)",
         "value": "10,000–16,000 BTU/ft³/hr"
       },
@@ -1312,7 +1313,7 @@
         },
         "name": "Available heat at the top temperature",
         "note": null,
-        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 50.152 MJ/kg (GREET) and 91,502 BTU/gal; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
+        "reference": "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and 91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md §1.1",
         "value": "0.316"
       },
       {
@@ -1321,7 +1322,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "84,340 BTU/hr kept against 36,301 BTU/hr lost"
+        "value": "84,393 BTU/hr kept against 36,301 BTU/hr lost"
       },
       {
         "formula": null,

@@ -347,7 +347,10 @@ def design_fire(kiln: Kiln) -> FireDesign:
                 reference=RULE_5,
                 note=(
                     "Build it to be tuned: add or take off brick, and damper it. 'If the chimney "
-                    "seems too tall, it probably is' (p.80)."
+                    "seems too tall, it probably is' (p.80). The height is measured from the "
+                    "chamber floor. Sources disagree on horizontal pull: Olsen and Ward add ⅓ ft "
+                    "of chimney per foot, Rhodes 2 ft (kiln-hardware.md, conflict on horizontal "
+                    "pull); Olsen's is used, as ADR 0014 takes his built kilns as the reference."
                 ),
             )
         )

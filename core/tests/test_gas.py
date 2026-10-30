@@ -369,7 +369,11 @@ def test_a_fibre_kiln_at_cone_06_takes_wards_fibre_column() -> None:
     assert gas.demand_range == f"{4000 * volume_ft3:,.0f}–{6000 * volume_ft3:,.0f} BTU/hr"
     assert gas.design_input_btu_hr == pytest.approx(4000 * volume_ft3)  # slow: the low end
     step = next(s for s in gas.working if s.name == "Burner input per cubic foot")
-    assert step.inputs == {"construction": "6 in ceramic fibre", "cone column": "06"}
+    assert step.inputs == {
+        "construction": "6 in ceramic fibre",
+        "this kiln's walls": "6 in kaowool-blanket-8pcf",  # review G3: the real wall, printed
+        "cone column": "06",
+    }
 
 
 def test_a_hard_brick_kiln_takes_wards_hard_brick_column() -> None:
