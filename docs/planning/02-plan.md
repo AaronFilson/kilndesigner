@@ -180,6 +180,9 @@ kilndesigner/                 uv workspace
 | [0009](../adr/0009-physics-checked-against-published-references.md) | The physics is checked against published references, in CI |
 | [0010](../adr/0010-react-and-react-three-fiber.md) | The web app is React with React Three Fiber |
 | [0011](../adr/0011-hosted-on-one-ec2-instance.md) | The hosted app is the self-hosted compose file on one EC2 instance |
+| [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
+| [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
+| [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
 
 ## The engineering, by kiln type
 
@@ -258,6 +261,49 @@ references used. The plans print the working, so a builder can check it.
   position (S5), validation notebooks, and the fixes waiting on the research files left on the
   Windows machine.
 - Performance on small machines: `docs/reviews/2026-10-28-performance-review.md`.
+
+### Status (2026-10-29)
+
+- **M4 is merged to `main`** (PR #1). Each of its five points has a Playwright test in
+  `web/e2e/designs.spec.ts`: the buildable model; drawings, course plans, bill and cut list in
+  the page; the views, cutaway and named parts; a design started from a kind of kiln and edited
+  with choices; and castables you mix, with the refusal outside the checked range.
+- Since 28 October: Olsen's *The Kiln Book* is the ground truth (ADR 0014,
+  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` and all build
+  with no error. Gas sizing follows his rules (Rule 1, the 1:1 flue, Rule 5 chimneys, natural
+  gas, altitude, no 60 ft³ limit), fireboxes for wood, coal and oil are in (`fire.py`), round,
+  sloped and chambered kilns compute, and floors on the ground lose heat to the soil. Every check
+  is an editable sheet of formulas (ADR 0013).
+- The research files once left on the Windows machine are now in the repo (`castables.md`,
+  `castables-minerals.md`, `thermal-properties.md`, `electrical-supply.md`,
+  `structure-and-draft.md`, `cones.md`), so the review work that waited on them is unblocked.
+- Carried over from M4 (the science review's backlog, see [10-28-26.md](10-28-26.md)):
+  - Fix 2 (organics burning off in dry-out) and Fix 4 (propane supply in the cold, regulator
+    droop);
+  - S5 (the buttress at the ring's outer corner), S14, and steel sized for domes;
+  - door headers: the method is in `door-headers.md`, refractory allowables aren't found;
+  - most of 3a, 3c and 3d, the dead code in 3f, and the validation notebooks (3e);
+  - the web form doesn't edit fireboxes, chimneys, round chambers, open tops or floors on the
+    ground (YAML does); chamber kilns' arches along the draft aren't drawn;
+  - Olsen's Table 1-12 wall: the engine's 445 BTU/ft²·h against his 360, recorded, not tested.
+
+### What's next
+
+The plan put M5 (hosted) after M4, but neither first user needs accounts yet, and what they do
+need is still open. In order:
+
+1. **Close the science backlog that's now unblocked:** Fix 4 first (the author's four 100 lb
+   cylinders on a 20 °F day is a stall-or-not answer they need), then Fix 2, then 3d. These are
+   correctness on numbers that are already shown to users.
+2. **The author's kiln, end to end.** Rebuild `pnw-hybrid-crossdraft` (dome, door, car) on the
+   Olsen-era engine and read its report against the book; settle the door header or move the
+   door, since it's the dome over a door that blocks it.
+3. **M6, firing simulation**, pulled ahead of M5: the switch-over chart and fuel and electricity
+   per firing (both M3 leftovers) need the transient model, and the 1D finite volume is half of
+   the thermal work already planned.
+4. **The client's kiln (M7)** is now cheaper than it was: fireboxes, natural draft and Rule 5
+   exist. It needs the client's answers (open question 3) before it can start; ask now.
+5. **M5, hosted**, once one of the two kilns has plans someone builds from.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
