@@ -1087,8 +1087,9 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
         places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
     else:
         # The bottom hole about 8 in up [S13]; the top one level with the bottom of the arch
-        # [S4], or a foot below a flat roof [S13]; all a few inches off centre, the top one to
-        # the other side, so they miss the shelf posts.
+        # [S4], or a foot below a flat roof, adapted from Pitelka's "about 1 ft below the inside
+        # peak of the arch" [S13] (review S14: no source gives it for a flat roof); all a few
+        # inches off centre, the top one to the other side, so they miss the shelf posts.
         top = h - COURSE if isinstance(kiln.roof, SprungArch | Dome) else h - 12
         if top < 2 * COURSE and isinstance(kiln.roof, SprungArch):
             # An arch springing at or near the floor, as a groundhog's (Olsen p.112): the door's
@@ -1117,11 +1118,21 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             f"port/spy-{i + 1}", f"{word} {i + 1}", "spy", wall, across, up, sw, sh, is_round
         )
         f.place(kiln, hw, spot)
-    hw.findings.append(_spy_hole_note(kiln.spy_holes, n, (sw, sh, is_round), electric=electric))
+    hw.findings.append(
+        _spy_hole_note(
+            kiln.spy_holes, n, (sw, sh, is_round), electric=electric,
+            flat=kiln.roof.type == "flat",
+        )
+    )  # fmt: skip
 
 
 def _spy_hole_note(
-    asked: SpyHoles | None, n: int, size: tuple[float, float, bool], *, electric: bool
+    asked: SpyHoles | None,
+    n: int,
+    size: tuple[float, float, bool],
+    *,
+    electric: bool,
+    flat: bool = False,
 ) -> Finding:
     if n == 0:
         return Finding(level="info", message="No spy holes: the cones can't be watched.")
@@ -1143,6 +1154,12 @@ def _spy_hole_note(
                 "floor (a course above any burner ports there), midway and near the top, a few "
                 "inches off centre so they miss the shelf posts. Cone packs in the top and bottom, "
                 "draw rings in the middle."
+                + (
+                    " Under a flat roof the top one is a foot down, as Pitelka puts it a foot "
+                    "below an arch's peak; no source gives it for a flat roof."
+                    if flat
+                    else ""
+                )
             ),
             reference="kiln-hardware.md §2 [S4] [S13]",
         )

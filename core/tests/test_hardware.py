@@ -495,6 +495,17 @@ def test_an_electric_kilns_door_in_a_side_wall_takes_that_side_of_the_case() -> 
     assert {s[0] for s in _spots(hw, "spy")} == {"left"}
 
 
+def test_a_flat_roofs_top_spy_hole_says_its_height_is_adapted() -> None:
+    """Review S14: Pitelka puts the top hole a foot below an arch's peak [S13]; under a flat roof
+    the engine does the same, and says no source gives it."""
+    from kilndesigner.hardware import _spy_hole_note  # pyright: ignore[reportPrivateUsage]
+
+    flat = _spy_hole_note(None, 3, (2.25, 2.5, False), electric=False, flat=True)
+    assert flat.message.endswith("no source gives it for a flat roof.")
+    arch = _spy_hole_note(None, 3, (2.25, 2.5, False), electric=False)
+    assert "flat roof" not in arch.message
+
+
 def test_electric_peepholes_say_how_many_where_and_what_size() -> None:
     reference = "electric-kiln-hardware.md §4 [S3] [S6]"
 

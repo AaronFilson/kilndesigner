@@ -667,6 +667,22 @@ The user remembers springs from the 1st or 2nd edition.
 
   So fiber's gain is low heat storage, not lower steady loss: the fiber wall loses more per hour
   and stores less than a quarter as much.
+
+  **Why the engine gets about 445 BTU/ft²·h for the IFB wall, not 360 (investigated 29 October
+  2026).** No stated cause was found: the book gives no method, ambient or data source for the
+  table, and no other source reproduces it. What the numbers themselves show **(derived)**:
+  - The surface is not the difference. Olsen's 360.19 BTU/ft²·h off a 227 °F face is about 2.3
+    BTU/ft²·h·°F over 70 °F air (an assumed ambient); the engine's 445 off about 250 °F is about 2.5.
+    Both are ordinary still-air coefficients for a face at that temperature.
+  - The wall is. The mean conductivity his figures imply, Q·L/ΔT = 360.19 × 7 / (2350 − 227), is
+    about 1.19 BTU·in/hr·ft²·°F; the engine's, 445 × 7 / (2350 − 250), about 1.48. Morgan's 2025
+    K-26 sheet alone gives 1.60 at 1004 °F and 1.80 at 1499 °F (`castables.md` §6.3), so his bricks
+    insulate about a fifth better than the current sheets.
+  - The two-decimal figures and the heat storage beside them look like the output of a heat-flow
+    program run on that era's brick data, but nothing in the book says so (inference, not a source).
+  So the engine keeps Morgan's current data, and the table stays recorded, not tested. A K-26 or
+  K-23 sheet from the book's time (the 4th edition is 2011) with lower k would explain it; none has
+  been found.
 - **Verdict** (Read): fiber kilns cost more per ft³ than IFB kilns, need more frequent and costlier
   maintenance, and are less durable against knocks (p.60, p.71). The drawbacks: the surface
   embrittles and is open to abrasion and impact; lost resilience causes door-seal problems; high
@@ -3174,7 +3190,7 @@ the kilns are `examples/olsen/`).
 | Electric surface load (`electric.py` KILN_SURFACE_LOAD) | Designed at 9 W/in²; a warning above it, an error only past Krueger's 17.5 | 6.4–9 W/in² for cone 10 (p.254, p.257) | Agrees (decided 2026-10-29) |
 | Element arithmetic (`electric.py`) | Kanthal's wire equations | W25: 154.2 ft at 7.4 W/in² (p.258–260) | Agrees: 154.0 ft and 7.3 W/in², his rounding and a slip in his denominator apart |
 | Electric power density (electric-and-thermal.md §7) | about 1650–1720 W/ft³ from L&L and Skutt | 1500–2070 W/ft³ (p.256) | Agrees; not an engine check |
-| Wall heat loss (`heatloss.py`) | Table 1-12's IFB wall (4½ in K-26 + 2½ in K-23, 2350 °F hot face): about 445 BTU/ft²·h, cold face about 250 °F, with Morgan's 2025 conductivities and still air at 60–80 °F | 360.19 BTU/ft²·h, 227 °F (p.39, W28) | **Disagrees by about 24 %.** His method, air temperature and conductivity data aren't stated; his bricks would have to insulate about a quarter better than Morgan's current sheets. Not a test |
+| Wall heat loss (`heatloss.py`) | Table 1-12's IFB wall (4½ in K-26 + 2½ in K-23, 2350 °F hot face): about 445 BTU/ft²·h, cold face about 250 °F, with Morgan's 2025 conductivities and still air at 60–80 °F | 360.19 BTU/ft²·h, 227 °F (p.39, W28) | **Disagrees by about 24 %.** His method, air temperature and conductivity data aren't stated; his bricks would have to insulate about a quarter better than Morgan's current sheets. Investigated 29 Oct 2026 (Table 1-12 notes above): the surface coefficients agree; his implied mean k is about 1.19 against the engine's 1.48 BTU·in/hr·ft²·°F; no stated cause. Not a test |
 | Service limits (`heatloss.py`, heatloss.service) | A warning when a brick's hot face runs past its rating | K-23 is for cone 6 and cold spots at cone 10 (p.25–26), yet his fast-fire kiln is 2300 °F IFB (p.140) | Agrees with his own caution; his kiln keeps the warning |
 | Stretcher course under the skewback (`masonry.py`) | A note | His IFB kits lay one (p.176) | Agrees |
 | A-1 maximum temperature (`alloys.yaml`) | 1400 °C | 1374 °C (older handbook, p.252) | Kanthal's current sheet governs |

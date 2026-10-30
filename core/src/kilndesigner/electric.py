@@ -60,7 +60,9 @@ COIL_RATIO = (5.0, 6.0)  # outside coil diameter / wire diameter, coils in groov
 # Coil pitch / wire diameter: at least 2 d for a spiral in grooves (Kanthal key data [S14]); no
 # more than 4 d, the top of Kanthal's general 2–4 d (§1.6 [S13]), since no groove rule gives one
 PITCH_RATIO = (2.0, 4.0)
-PITCH_TEXT = "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
+PITCH_TEXT = (
+    "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
+)
 COIL_SOURCE = "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]"
 # Kanthal key data for a spiral in grooves [S14]: wire 2.0–5.0 mm; wall loading at most 35 kW/m²
 # at 1000 °C (no figure is given for hotter furnaces, where it can only be lower)

@@ -33,8 +33,8 @@ OXIDATION_O2 = 0.03  # oxidation means more than 3% excess oxygen (Frenzel) [S69
 REDUCTION_AIR = 0.9  # a moderate reduction, λ = 0.9 (combustion-and-masonry.md §8, derived)
 SOURCE = (
     "Cantera 3.2, GRI-Mech 3.0 thermodynamics; propane HHV 21,548 BTU/lb (50.12 MJ/kg) and "
-    "91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); combustion-and-masonry.md "
-    "§1.1"
+    "91,502 BTU/gal [S1, S2]; natural gas as methane, HHV 55.52 MJ/kg (NIST); "
+    "combustion-and-masonry.md §1.1"
 )
 
 

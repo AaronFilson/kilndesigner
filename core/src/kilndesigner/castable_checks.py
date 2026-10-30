@@ -139,9 +139,7 @@ def no_shrinkage(name: str) -> Sheet:
 
 def fired_too_cool(name: str, fired_to: Quantity, top: Quantity) -> Sheet:
     """Test pieces fired below the kiln's top temperature don't show its full shrinkage (M10)."""
-    s = Sheet(
-        "castable.test-firing", f"{name}: the test pieces' firing", reference="the design"
-    )
+    s = Sheet("castable.test-firing", f"{name}: the test pieces' firing", reference="the design")
     s.given("T_test", "the test pieces' firing", fired_to, "degF", source="the design: measured")
     s.given("T_top", "the kiln's top temperature", top, "degF", source="the design: the firing")
     s.require("T_test", ">=", "T_top", level="warning")

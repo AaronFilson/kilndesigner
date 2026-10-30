@@ -160,8 +160,8 @@ def skewback_on_wall(a: ArchInputs, wall: float) -> Sheet:
 
 
 THRUST_THROUGH_STEEL = (
-    "HarbisonWalker: \"When the skewback is carried on a channel or angle, the line of thrust "
-    "should pass through, or slightly above, the corner of the supporting steel\"; "
+    'HarbisonWalker: "When the skewback is carried on a channel or angle, the line of thrust '
+    'should pass through, or slightly above, the corner of the supporting steel"; '
     "kiln-hardware.md §4.1 [S20]"
 )
 

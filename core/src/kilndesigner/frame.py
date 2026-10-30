@@ -27,6 +27,7 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.frame_checks import (
     CAPPED,
+    THRUST_THROUGH_STEEL,
     ArchInputs,
     CatenaryLayer,
     DomeInputs,
@@ -52,7 +53,6 @@ from kilndesigner.frame_checks import (
     rise_rule,
     rod_stress,
     skewback_on_wall,
-    THRUST_THROUGH_STEEL,
     thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
@@ -1100,6 +1100,7 @@ def design_frame(kiln: Kiln) -> FrameDesign:
                     f"{posts} rods takes {per_rod:,.0f} lb, {per_rod / rod['stress_area']:,.0f} "
                     "psi, hot."
                 ),
+                reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
             )
         )
     working.append(

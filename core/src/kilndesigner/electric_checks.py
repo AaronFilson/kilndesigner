@@ -211,7 +211,9 @@ def surface_load(
 
 def groove_wire(diameter: float, least: Quantity, source: str) -> Sheet:
     """The wire against the thinnest Kanthal gives for coils in grooves (key data, 2.0–5.0 mm)."""
-    s = Sheet("electric.groove-wire", "The wire against Kanthal's range in grooves", reference=source)
+    s = Sheet(
+        "electric.groove-wire", "The wire against Kanthal's range in grooves", reference=source
+    )
     s.given("d", "the wire's diameter", Q_(diameter, "m"), "mm", source="the wire chosen")
     s.given("d_min", "the thinnest Kanthal gives for coils in grooves", least, "mm", source=source)
     s.require("d", ">=", "d_min", level="warning")
@@ -229,7 +231,9 @@ def wall_loading(power: float, area: float, most: Quantity, source: str) -> Shee
         source="the chamber: each element wall's length × height",
     )  # fmt: skip
     s.let("w", "wall loading", "P/A", "kW/m**2")
-    s.given("w_max", "Kanthal's most, spiral in grooves, at 1000 °C", most, "kW/m**2", source=source)
+    s.given(
+        "w_max", "Kanthal's most, spiral in grooves, at 1000 °C", most, "kW/m**2", source=source
+    )
     s.require("w", "<=", "w_max", level="warning")
     s.lever("P", Q_(100, "W"), Q_(100, "kW"))
     return s

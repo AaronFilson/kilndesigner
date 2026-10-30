@@ -663,9 +663,11 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 level="info",
                 message=(
                     "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage.{corners}"
+                    f"cut, and {WASTE:.0%} extra for breakage. The size is sourced; the saw cut "
+                    f"and the {WASTE:.0%} are assumptions no source gives, so adjust them to your "
+                    f"saw and your bricks.{corners}"
                 ),
-                reference=BRICK_SOURCE,
+                reference=f"{BRICK_SOURCE}; kerf and waste assumed",
             )
         )
     return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
