@@ -346,11 +346,21 @@ the next round are in [10-30-26.md](10-30-26.md).
   4½ in courses, checked against five published kilns to 0.15 in
   (`electric-kiln-survey.md`; a spec log artifact gathers more).
 
+### Status (2026-10-30, round 2)
+
+- **The web form** edits the ring method, firebox step and door openings.
+- **Round electric kilns** are N-sided polygons when built of whole cut bricks: elements in
+  grooves round the facets, polygon lids and floor slabs in steel bands, a round-electric template.
+- **Doors in part of a wall**, from Olsen's figures: steel lintels sized hot, arched heads and
+  jambs checked by thrust-line statics, Bidai and Kawaii with their side-wall doors as built.
+  Refractory bearing stress is researched but has no published allowable, so it is shown, not
+  checked.
+- 1531 tests, coverage over 98 % in Python and web, 22 Playwright specs against a rebuilt stack.
+
 ### What's next (2026-10-30)
 
-See [10-30-26.md](10-30-26.md) for the queue. In short: put the new choices in the web form,
-finish round electric kilns (elements in their grooves, lids and floors, steel bands), describe
-doors in part of a wall so the lintel can be checked, then the author's kiln end to end and M7.
+See [10-30-26.md](10-30-26.md): sourced bearing and sliding checks, the author's kiln end to end,
+the rest of round electric kilns, more door test cases, then M7.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
