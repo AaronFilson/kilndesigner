@@ -1103,6 +1103,8 @@ export function DesignForm({
   const mixes = (doc.castables ?? []).map((c) => ({ id: c.id, name: c.name }));
   const round = doc.chamber.shape === "round";
   const chambers = doc.chamber.chambers ?? 1;
+  const lid = loading.type === "lid";
+  const lidOk = round && electric !== undefined && roof.type === "flat";
   // The last heat source left can't be turned off: a kiln needs one
   const sources = [electric, gas, fire].filter((h) => h !== undefined).length;
 
@@ -1350,16 +1352,26 @@ export function DesignForm({
           options={[
             ["door", "A door"],
             ["car", "A car that rolls out"],
+            // A top-loader's lid: a round electric kiln's flat roof, hinged on its band
+            ...(lidOk || lid ? [["lid", "A hinged lid, from the top"] as [string, string]] : []),
           ]}
           onChange={(v) => change(["loading", "type"], v)}
         />
         <Choice
-          label={loading.type === "car" ? "The car's end" : "The door's wall"}
+          label={
+            loading.type === "car" ? "The car's end" : lid ? "The peepholes' wall" : "The door's wall"
+          }
           value={loading.face ?? "front"}
           options={faceOptions}
           onChange={(v) => change(["loading", "face"], v)}
         />
-        {loading.type !== "car" && (
+        {lid && (
+          <p className="muted section-note">
+            The kiln loads from the top: the lid is the flat roof, a slab in a steel band that
+            carries its hinge and a handle. The walls have no door.
+          </p>
+        )}
+        {loading.type !== "car" && !lid && (
           <Choice
             label="Door"
             value={loading.door ?? (gas ? "bricked" : "hinged")}

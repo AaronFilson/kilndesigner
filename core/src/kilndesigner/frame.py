@@ -1085,6 +1085,33 @@ def _electric_bands(kiln: Kiln) -> Finding:
     )
 
 
+def round_door_bands(kiln: Kiln) -> Finding:
+    """A round kiln's bands where a door breaks its wall: each band at the door's height stops at
+    the jambs, and those above run over its head; listed, not sized (no source sizes a band)."""
+    door = kiln.loading.opening
+    assert door is not None, "only a door in part of the wall breaks the bands"
+    sill = si(door.sill, "in")
+    top = sill + si(door.height, "in")
+    dome = isinstance(kiln.roof, Dome)
+    return Finding(
+        level="info",
+        message=(
+            f"The door breaks the round wall's ring and the iron bands round it, from {sill:g} "
+            f"to {top:g} in up: a band there can't run round in one piece, so it ends at the "
+            "jambs, and the bands above run over the door's head"
+            + (
+                ", which can't hold the dome's thrust as a ring: the band over the door carries "
+                "it across"
+                if dome
+                else ""
+            )
+            + ". No source sizes a band or says how its ends are held at a jamb, so they aren't "
+            "sized."
+        ),
+        reference="steel-design.md §S5; Olsen, The Kiln Book, 4th ed., p.167–169 (iron bands)",
+    )
+
+
 def design_frame(kiln: Kiln) -> FrameDesign:
     """The frame, and for a door in part of a wall, what spans the door (door.py)."""
     from kilndesigner.door import door_head
@@ -1100,18 +1127,8 @@ def design_frame(kiln: Kiln) -> FrameDesign:
                    source="steel-design.md §S5; door-openings.md")
         )  # fmt: skip
     findings = [*frame.findings, *head.findings]
-    if kiln.chamber.shape == "round" and isinstance(kiln.roof, Dome):
-        findings.append(
-            Finding(
-                level="info",
-                message=(
-                    "The door breaks the round wall's ring, so over the door the wall can't hold "
-                    "the roof's thrust as a ring: the band round the kiln carries it across. No "
-                    "source sizes that band, so it isn't sized."
-                ),
-                reference="steel-design.md §S5; Olsen, The Kiln Book, 4th ed., p.167",
-            )
-        )
+    if kiln.chamber.shape == "round":
+        findings.append(round_door_bands(kiln))
     return frame.model_copy(
         update={
             "members": members, "working": [*frame.working, *head.working], "findings": findings,

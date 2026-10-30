@@ -587,7 +587,7 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                     max_load=max_load,
                     fixed_count=None,
                 )
-            findings.append(_thin_wire(best, everything, electric, kiln.door_face))
+            findings.append(_thin_wire(best, everything, electric, kiln.door_wall or ""))
 
     # Wall loading: the power over the inside area of the walls that carry elements
     c = kiln.chamber

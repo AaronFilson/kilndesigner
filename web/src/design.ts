@@ -47,7 +47,8 @@ export interface KilnDocument {
     | { type: "catenary_arch" }
     | { type: "dome"; rise: string };
   loading?: {
-    type?: "door" | "car";
+    /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
+    type?: "door" | "car" | "lid";
     face?: WallFace;
     door?: "bricked" | "hinged";
     opening?: DoorOpening;

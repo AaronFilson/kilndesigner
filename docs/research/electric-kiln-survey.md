@@ -25,6 +25,7 @@ conflicts noted below.
 | Skutt KM-818-3 | 16.5 dia | 8 | 3 in | Snippet: <https://archiebrayclay.com/?p=56017> |
 | Skutt KM-1227-3 / -3PK | "28.125 in. dia. x 27 in."; others "28 Diameter x 27 High" | "12 Sided" | "3 in. Firebrick" | Snippet: <https://www.nascoeducation.com/skutt-ceramic-kiln-model-km-1227-3pk-1-phase-x0000z47117.html> (now redirects), <https://www.theceramicshop.com/product/18808/km-1227-3-240v-1p/> |
 | L&L Easy-Fire e23T-3 | 22.30 x 27.00; outside 30 x 40 x 68 (with stand) | Not on this page; "Three 9" high sections" | "3" K23 Firebrick" | Verified: <https://www.clay-king.com/kilns/l_l_kilns/l_l_e23t.html> |
+| Paragon TnF-27-3 (searched 2026-10-30) | "Firing Opening 28" Depth - 22-1/4""; 8.11 ft³; "top row of brick ... 2" high and without element grooves" | "12-sided" | "3" thick firebrick" in walls, bottom and lid | Snippet (dealer, search summary; Paragon's own sheet not reached): <https://abrimagery.com/products/tnf-27-3-12-sided-workhouse-kiln>; <https://www.schoolspecialty.com/kiln-408300> gives "28W x 22-1/4D". Not added to the test table: a dealer's figures, and 22¼ in isn't whole 4½ in courses (the 2 in top row) |
 | L&L Easy-Fire e23T-3 | 22-3/8 x 27 | "10 sided" | 3 in | Snippet: <https://kruegerpottery.com/products/ll-easy-fire-e23t-3> (429 on fetch) |
 
 **Skutt's own spec sheet, KM-1227** (a PDF the user saved, 2026-10-30; Verified): "Chamber Depth 27,

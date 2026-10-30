@@ -500,7 +500,36 @@ def _case(kiln: Kiln, f: Faces, hw: Hardware) -> None:
     )
 
 
+LID_SOURCE = (
+    "electric-kiln-survey.md (the lid's band carries the hinge, the user); electric-kiln-"
+    "hardware.md §1.1 [S8] [S1] (bands round the lid and floor slab), §7.1 [S16] (a lid "
+    "lifter), §8.4 (UL 499, Table 36.2: handles)"
+)
+
+
+def _lid(hw: Hardware) -> None:
+    """A top-loader's lid: the flat roof's slab in its steel band, which carries its hinge and a
+    handle to lift it by. Listed, not sized: no source gives the hinge's or handle's size."""
+    hw.findings.append(
+        Finding(
+            level="info",
+            message=(
+                "The kiln loads from the top: the lid is the flat roof's slab of mortared "
+                "straights in a steel band, and the band carries the lid's hinge on one side and a "
+                "handle opposite it to lift it by. The walls have no door. UL 499 holds a handle "
+                "grasped to lift to 55 °C if metal, 75 °C if not. The hinge and handle aren't "
+                "sized: no source found gives their size or steel, so take them from the maker of "
+                "the bands or a kiln of the same size."
+            ),
+            reference=LID_SOURCE,
+        )
+    )
+
+
 def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
+    if kiln.loading.type == "lid":
+        _lid(hw)
+        return
     face = kiln.door_face
     assert face not in ("floor", "roof")
     o = outside(kiln)
@@ -1109,6 +1138,7 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     asked = kiln.spy_holes or SpyHoles()
     h = si(kiln.chamber.height, "in")
     word = "Peephole" if electric else "Spy hole"
+    lid = kiln.loading.type == "lid"
     if asked.port is not None:
         (sw, sh), is_round = asked.port.size_in(), asked.port.round
     elif electric:
@@ -1119,6 +1149,8 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     places: list[tuple[WallFace, float, float]]
     if asked.places is not None:
         places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
+    elif lid:
+        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n)]
     elif electric:
         places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
     else:
@@ -1166,9 +1198,23 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     hw.findings.append(
         _spy_hole_note(
             kiln.spy_holes, n, (sw, sh, is_round), electric=electric,
-            flat=kiln.roof.type == "flat",
+            flat=kiln.roof.type == "flat", lid=lid,
         )
     )  # fmt: skip
+
+
+def lid_peephole_heights(height_in: float, n: int) -> list[float]:
+    """A top-loader's peepholes (in up from the floor): in the wall, each in the middle of a 9 in
+    section (frame.SECTION_IN), between its two courses' element grooves, as L&L drills a two-row
+    section square to the case (electric-kiln-hardware.md §4.1 [S8]); with more holes than
+    sections, spaced evenly."""
+    from kilndesigner.frame import SECTION_IN
+
+    sections = math.ceil(height_in / SECTION_IN - 1e-6)
+    if n > sections:
+        return [height_in * (i + 1) / (n + 1) for i in range(n)]
+    picks = [math.floor((i + 0.5) * sections / n) for i in range(n)]
+    return [(k * SECTION_IN + min((k + 1) * SECTION_IN, height_in)) / 2 for k in picks]
 
 
 def _spy_hole_note(
@@ -1178,9 +1224,24 @@ def _spy_hole_note(
     *,
     electric: bool,
     flat: bool = False,
+    lid: bool = False,
 ) -> Finding:
     if n == 0:
         return Finding(level="info", message="No spy holes: the cones can't be watched.")
+    if lid and (asked is None or asked.places is None):
+        w, h, is_round = size
+        shown = f"{w:g} in round" if is_round else f"{w:g} × {h:g} in"
+        holes = f"{n} peephole{'' if n == 1 else 's'}, {shown},"
+        return Finding(
+            level="info",
+            message=(
+                f"{holes} through the wall, as the kiln has no door: each in the middle of a 9 in "
+                "section, between its two courses' element grooves, as L&L drills a two-row "
+                "section square to the case (more holes than sections are spaced evenly). No "
+                "maker gives their heights."
+            ),
+            reference="electric-kiln-hardware.md §4.1–4.2 [S3] [S6] [S8]",
+        )
     if asked is None and electric:
         return Finding(
             level="info",
