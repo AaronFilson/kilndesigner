@@ -406,7 +406,12 @@ The user remembers springs from the 1st or 2nd edition.
     straights and featheredges, or cast. Featheredges are one way; straights cut to the angle the
     circle needs are the other, and the norm in electric kilns. A 4½ in wall of straights is also
     laid with the inside faces following the curve and the wedge-shaped joint behind filled with
-    mortar.
+    mortar. Rings of straights cut to the angle are built in whole bricks, the full 9 in face on
+    the outside: electric kilns are named 6, 8, 10, 12 bricks round. Where a set size is needed,
+    the fewest bricks and a closer, allowed but not usual. Near enough to whole is 1/16 in, dry
+    laid; mortared joints take more. In small kilns, electric especially, a smooth wall matters
+    more than staggering the joints. Longer bricks (13½ in) are seldom worth their cost (the
+    user, 2026-10-30).
 - **Square-edge fire tiles** serve as kiln floors and shelves: 12 × 12, 12 × 15, 12 × 18 and
   12 × 24 in, each 2½ or 3 in thick; a further column, probably 2 in, is unreadable (p.23, Read).
 

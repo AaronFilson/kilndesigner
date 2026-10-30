@@ -134,6 +134,17 @@ class Chamber(Spec):
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
         ),
     )
+    rings: Literal["mortar", "cut", "featheredge", "arch"] | None = Field(
+        default=None,
+        description=(
+            "How a round wall's 4½ in brick rings are turned: 'mortar', straights with their "
+            "inside faces on the curve and the wedge-shaped joints behind filled with mortar "
+            "(Olsen, The Kiln Book, 4th ed., Fig. 2-13, p.45); 'cut', straights cut to the angle, "
+            "the norm in electric kilns; 'featheredge', straights with featheredges among them; "
+            "'arch', arch bricks, possible but not recommended (p.45). Left out: 'cut' for an "
+            "electric kiln, 'mortar' otherwise"
+        ),
+    )
 
     @model_validator(mode="after")
     def _a_shape_it_can_be(self) -> Chamber:

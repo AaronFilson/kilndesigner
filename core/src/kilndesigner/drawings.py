@@ -17,7 +17,7 @@ import numpy as np
 from kilndesigner.geometry import COLOURS, Part, arch_outline, lining_parts
 from kilndesigner.masonry import IN, LayerPlan
 from kilndesigner.model import CatenaryArch, Kiln
-from kilndesigner.rings import FAMILIES
+from kilndesigner.rings import CLOSER, FAMILIES
 from kilndesigner.round_masonry import RingPlan
 from kilndesigner.shape import CatenaryCurve
 from kilndesigner.units import si
@@ -536,12 +536,17 @@ SHAPE_TONES = ("#9a6fb0", "#5f8fc4", "#5ba88a", "#d1a23f")
 
 def ring_plan_svg(plan: RingPlan, us: bool) -> str:
     """One ring of a round wall seen from above: every brick of an odd course and of an even one,
-    which starts half a brick round so that the joints don't line up. Each brick's thick end is
+    which starts half a brick round so that the joints don't line up; a cut ring's courses are
+    stacked in line, so it shows one. Each brick's thick end is
     on the outside circle and its thin end on the inside, laid in turn round the ring."""
     r_in, r_out = plan.inside_radius, plan.inside_radius + plan.depth
     family = FAMILIES[plan.series]
     thin = {t.name: t.thin * IN for t in family.tapers} | {family.straight: family.thick * IN}
     tapers = [t.name for t in family.tapers]
+    if plan.ring.length is not None and plan.series in ("mortar", "cut", "cut2.5", "cut3"):
+        # The closer: a straight cut short, its inside face the chord it closes
+        thin[CLOSER] = plan.ring.length
+        tapers.append(CLOSER)
     tone = {name: SHAPE_TONES[k % len(SHAPE_TONES)] for k, name in enumerate(tapers)}
     tone[family.straight] = _hex(COLOURS.get(plan.part.kind, (0.85, 0.85, 0.85)))
     order = plan.order()
@@ -557,7 +562,11 @@ def ring_plan_svg(plan: RingPlan, us: bool) -> str:
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{vx:.2f} {vy:.2f} {vw:.2f} {vh:.2f}">',
         f'<g stroke="#222" stroke-width="{stroke:.2f}">',
     ]
-    for k, (label, shift) in enumerate((("Odd courses", 0.0), ("Even courses", 0.5))):
+    # Cut rings stack course on course, facets in line, for a smooth wall (the user: in small
+    # kilns, electric especially, smooth walls matter more than staggered joints)
+    staggered = (("Odd courses", 0.0), ("Even courses", 0.5))
+    courses = (("Every course", 0.0),) if plan.series.startswith("cut") else staggered
+    for k, (label, shift) in enumerate(courses):
         cx = k * (2 * r_out + gap)
         step = 2 * math.pi / len(order)  # round the outside, every brick shows its thick end
         inner = 0.0

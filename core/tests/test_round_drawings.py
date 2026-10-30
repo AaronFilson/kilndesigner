@@ -115,17 +115,18 @@ def test_the_sections_cut_through_the_axis_and_across_it() -> None:
 def test_each_ring_has_a_plan_of_its_bricks() -> None:
     masonry = plan_masonry(_small())
     rings = masonry.rings
-    assert [r.series for r in rings] == ["arch", "key"]
-    arch, key = rings
-    assert arch.courses == 4  # 36 in of 9 in courses
-    assert not arch.ripped
+    # Not electric, so the 4½ in ring is straights with mortar-filled joints (Fig. 2-13)
+    assert [r.series for r in rings] == ["mortar", "key"]
+    inner, key = rings
+    assert inner.courses == math.ceil(36 / 2.5)  # straights laid flat, 2½ in courses
     assert key.courses == math.ceil(36 / 2.5)
     assert key.ripped
     assert key.top == pytest.approx(36 * IN - 14 * 2.5 * IN)
     assert len(key.order()) == key.ring.total
-    assert "arch bricks standing on end" in arch.description(True)
-    assert "circle bricks" in arch.description(True)
+    assert "wedge-shaped joints behind filled with mortar" in inner.description(True)
+    assert "the joints open to" in inner.description(True)
     assert "key bricks laid flat" in key.description(True)
+    assert ring_plan_svg(inner, True).count("<polygon") == 2 * inner.ring.total
     svg = ring_plan_svg(key, True)
     assert svg.count("<polygon") == 2 * key.ring.total
     assert "Even courses" in svg

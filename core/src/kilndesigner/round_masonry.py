@@ -2,8 +2,9 @@
 discs of straights cut to the circle, its dome counted by volume.
 
 - The wall, ring by ring from the inside out (rings.py): a 9 in ring of key bricks laid flat in
-  2½ in courses, a 4½ in ring of arch bricks on end in 9 in courses (Olsen, p.45; circle bricks,
-  which he prefers for 4½ in, aren't sized in docs/research). Each course is the same ring; the
+  2½ in courses (Olsen, p.45); a 4½ in ring as the design's ``chamber.rings`` says, straights
+  with mortar-filled wedge joints, straights cut to the angle, straights with featheredges, or
+  arch bricks (rings.py). Each course is the same ring; the
   top course is ripped to the wall's height. A wall that isn't whole 9 and 4½ in rings is
   reported, as a straight wall that isn't whole bricks is.
 - The floor runs under the whole kiln, out to the wall's outside, as the box kiln's does; a flat
@@ -49,18 +50,25 @@ from kilndesigner.masonry import (
 from kilndesigner.materials_checks import SUMS, whole_bricks
 from kilndesigner.model import Dome, FlatRoof, Kiln
 from kilndesigner.rings import (
+    CUT_SLACK,
     FAMILIES,
+    FEATHEREDGE_SOURCE,
     IN,
+    MORTAR_SOURCE,
     SOURCE,
     Ring,
     RingError,
     Series,
+    cut_bricks,
+    cut_diameter,
     ring,
+    ring_method,
     ring_series,
     wall_rings,
 )
 from kilndesigner.shape import RoundDome
-from kilndesigner.units import si
+from kilndesigner.sheet import Sheet
+from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, length_text
 
 RINGS = "whole 9 and 4½ in rings: a·9 + b·4½ in (Olsen, The Kiln Book, 4th ed., p.45)"
@@ -68,8 +76,28 @@ RINGS = "whole 9 and 4½ in rings: a·9 + b·4½ in (Olsen, The Kiln Book, 4th e
 RING_WORDS: dict[str, str] = {
     "key": "key bricks laid flat, 9 in through the wall, in 2½ in courses",
     "arch": (
-        "arch bricks standing on end, 4½ in through the wall, in 9 in courses (Olsen prefers "
-        "circle bricks for a 4½ in ring, p.45; their sizes aren't in our sources)"
+        "arch bricks standing on end, 4½ in through the wall, in 9 in courses (possible but not "
+        "recommended, Olsen p.45)"
+    ),
+    "featheredge": (
+        "straights standing on end with featheredges among them, 4½ in through the wall, in "
+        "9 in courses"
+    ),
+    "mortar": (
+        "straights laid flat, 4½ in through the wall, in 2½ in courses, their inside faces on the "
+        "curve and the wedge-shaped joints behind filled with mortar (Olsen p.45, Fig. 2-13)"
+    ),
+    "cut": (
+        "straights laid flat, 4½ in through the wall, in 2½ in courses, each cut at both ends to "
+        "the angle so the ring closes tight"
+    ),
+    "cut2.5": (
+        "2½ in straights on their 4½ in face, 2½ in through the wall, in 4½ in courses, each cut "
+        "at both ends to the angle so the ring closes tight, as electric kilns are built"
+    ),
+    "cut3": (
+        "3 in straights on their 4½ in face, 3 in through the wall, in 4½ in courses, each cut "
+        "at both ends to the angle so the ring closes tight, as electric kilns are built"
     ),
 }
 
@@ -105,6 +133,7 @@ class RingPlan:
             f"{self.ring.describe()} round a circle {length_text(2 * self.inside_radius, us)} "
             "across inside"
         )
+        text += straight_ring_text(self.ring, us)
         if self.ripped:
             text += f"; the top course ripped to {length_text(self.top, us)}"
         return text + "."
@@ -113,6 +142,52 @@ class RingPlan:
         """The shapes round the ring, each spread evenly among the others."""
         keyed = [((j + 0.5) / n, name) for name, n in self.ring.counts for j in range(n)]
         return [name for _, name in sorted(keyed)]
+
+
+def straight_ring_text(r: Ring, us: bool) -> str:
+    """What a ring of straights needs beyond its count: the closer, the joints, the cuts."""
+    out = ""
+    if r.series == "mortar":
+        if r.length is not None:
+            out += f", the closer cut to {length_text(r.length, us)}"
+        assert r.joint is not None
+        assert r.mortar is not None
+        per_ft = r.mortar * 12 * IN / IN**3  # in³ for each foot of wall height
+        out += (
+            f"; the joints open to {length_text(r.joint, us)} at the outside, about "
+            f"{per_ft:.0f} in³ of mortar in them for each foot of wall height (no source sets a "
+            "widest joint)"
+        )
+    elif r.series in ("cut", "cut2.5", "cut3"):
+        assert r.angle is not None
+        out += f", each cut at both ends {r.angle:.1f}° off square, its 9 in outside face whole"
+        if r.length is not None:
+            out += f"; the closer cut to {length_text(r.length, us)} along its outside face"
+    return out
+
+
+def cut_ring_sheet(inside_diameter: float, depth: float) -> Sheet:
+    """Whether full 9 in straights cut to the angle turn this ring exactly (mm in): the ring of
+    the nearest whole number of bricks that has this inside diameter (the mean of its flats and
+    corners, as makers quote it), and how far its faces miss 9 in, all round."""
+    whole = max(round(cut_bricks(inside_diameter, depth)), 3)
+    s = Sheet("masonry.cut-ring", "Full bricks turn the ring", reference=FEATHEREDGE_SOURCE)
+    s.given("D", "inside diameter, the mean of flats and corners",
+            Q_(inside_diameter, "mm").to("in"), "in", source="the design: the chamber")  # fmt: skip
+    s.given("t", "the wall, through", Q_(depth, "mm").to("in"), "in", source="the walls' layers")
+    s.given("L", "a straight's outside face", Q_(9, "in"), "in", source="a 9 in straight")
+    s.given("N", "the nearest whole number of bricks round", float(whole),
+            source="solved from D, rounded")  # fmt: skip
+    s.let("a_i", "inside apothem", "D/(1 + 1/cos(pi/N))", "in")
+    s.let("F", "each brick's outside face, for this D", "2*(a_i + t)*tan(pi/N)", "in")
+    s.let("g", "the ring's miss round the outside", "N*abs(F - L)", "in")
+    s.given("g_max", "near enough", Q_(CUT_SLACK, "in"), "in",
+            source="the user, a kiln builder: 1/16 in, dry-laid; mortared joints take "
+            "more")  # fmt: skip
+    s.require("g", "<=", "g_max", level="warning")
+    s.lever("D", Q_(cut_diameter(max(whole - 1, 3), depth), "mm").to("in"),
+            Q_(cut_diameter(whole + 1, depth), "mm").to("in"))  # fmt: skip
+    return s
 
 
 def _disc_rows(radius: float, thickness: float, part: Part) -> list[LayerPlan] | None:
@@ -153,6 +228,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     c = kiln.chamber
     inside = si(c.width, "mm") / 2
     height = si(c.height, "mm")
+    method = ring_method(c.rings, kiln.heat.electric is not None)
     findings: list[Finding] = []
     whole: Counter[str] = Counter()
     shapes: Counter[tuple[str, str]] = Counter()
@@ -184,7 +260,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         sheet_ = whole_bricks(name, thickness, below, above, 1.0, us, source, sums)
         choices = " or ".join(length_text(t, us) for t in (below, above) if t is not None)
         what = (
-            "a round wall is laid in rings of 9 in key bricks and 4½ in arch bricks (Olsen, p.45)"
+            "a round wall is laid in rings of 9 in key bricks and 4½ in rings (Olsen, p.45)"
             if rings
             else "whole 9 × 4½ × 2½ in bricks make layers 2½, 4½ or 9 in thick, or sums of those"
         )
@@ -202,7 +278,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
 
     def _wall_ring(mid: str, r: float, depth: float, part: Part, within: tuple[int, int]) -> str:
         """Count one ring of the wall, ``r`` its inside radius; plan it; say what it is."""
-        series = ring_series(depth)
+        series = ring_series(depth, method)
         assert series is not None, "wall_rings gives 9 and 4½ in rings only"
         family = FAMILIES[series]
         course = family.height * IN
@@ -215,6 +291,37 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         top = height - (courses - 1) * course
         ripped = abs(top - course) >= TOL
         ring_plans.append(RingPlan(part, within, r, depth, series, one, courses, course, top))
+        is_cut = series in ("cut", "cut2.5", "cut3")
+        if is_cut and (check := cut_ring_sheet(2 * r, depth).check()).status != "pass":
+            n = math.floor(cut_bricks(2 * r, depth))
+            near = " or ".join(
+                f"{length_text(cut_diameter(k, depth), us)} ({k} bricks)"
+                for k in (n, n + 1)
+                if k >= 3
+            )
+            findings.append(Finding.failed(check, (
+                f"Round wall: a {length_text(2 * r, us)} ring of straights cut to the angle "
+                f"takes {cut_bricks(2 * r, depth):.2f} full 9 in bricks round, more than 1/16 in from "
+                f"whole bricks, so it is laid with the fewest, {n}, and a closer cut to "
+                f"{length_text(one.length or 0.0, us)}: allowed, but not usual. Cut rings are "
+                "built in whole bricks, as electric kilns are sized 6, 8, 10, 12 bricks round: "
+                f"for no closer make this ring {near} across inside.")))  # fmt: skip
+        if series == "mortar" or is_cut:
+            full = 9 * IN
+            heights = [course] * (courses - 1) + [top]
+            for name, n in one.counts:
+                long = full if name == family.straight else one.length
+                assert long is not None
+                for h in heights:
+                    if abs(long - full) < TOL and abs(h - course) < TOL:
+                        whole[mid] += n
+                    else:
+                        cuts.setdefault(mid, []).extend([Cut(long, h, full, course)] * n)
+            text = f"{length_text(depth, us)} ring of {courses} courses of {one.describe()}"
+            text += straight_ring_text(one, us)
+            if ripped:
+                text += f", the top course ripped to {length_text(top, us)}"
+            return text
         for name, n in one.counts:
             if name != family.straight:
                 shapes[(mid, name)] += n * courses  # the top course's are cut down from whole
@@ -242,7 +349,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         th = si(layer.thickness, "mm")
         where = f"Round wall, layer {i + 1} from the inside"
         if m.kind in BRICK_KINDS:
-            depths = wall_rings(th)
+            depths = wall_rings(th, method)
             if depths is None:
                 unbuildable(where, m.id, th, rings=True)
             else:
@@ -319,13 +426,24 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             Finding(
                 level="info",
                 message=(
-                    "Round kiln: " + "; ".join(lines) + ". Rings follow Olsen's circle tables; "
-                    "he prefers circle bricks for a 4½ in ring, whose sizes aren't in our "
-                    "sources, so arch bricks on end are counted. Stagger the joints course to "
-                    "course as in a straight wall (p.45). Brick counts assume dry joints at the "
-                    "nominal size; the breakage allowances are those of a box kiln (allowance.py)."
+                    "Round kiln: " + "; ".join(lines) + ". Tapered rings follow Olsen's circle "
+                    "tables. A 4½ in ring is the builder's choice (the design's chamber.rings): "
+                    "straights with mortar-filled wedge joints, as Olsen draws a curved wall "
+                    "(Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; "
+                    "straights with featheredges; or arch bricks, possible but not recommended "
+                    f"(p.45). This one: {method}. "
+                    + (
+                        "Cut rings are stacked course on course, their facets in line: in small "
+                        "kilns, electric especially, a smooth wall matters more than staggered "
+                        "joints (the user, a kiln builder). "
+                        if method == "cut"
+                        else "Stagger the joints course to course as in a straight wall (p.45). "
+                    )
+                    + "Brick counts assume dry joints at the nominal size, "
+                    "but for the wedge joints said; the breakage allowances are those of a box "
+                    "kiln (allowance.py)."
                 ),
-                reference=f"{SOURCE}; {BRICK_SOURCE}",
+                reference=f"{SOURCE}; {MORTAR_SOURCE}; {FEATHEREDGE_SOURCE}; {BRICK_SOURCE}",
             )
         )
     # The fireboxes: boxes of the kiln's layers, laid as a box kiln's are
