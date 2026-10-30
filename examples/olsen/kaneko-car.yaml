@@ -16,7 +16,12 @@
 # least for wide spans (p.296); its ring is 9 in of K-26 (4½, 6¾ or 9 in by brick and span,
 # p.296). Cone 10, the high fire Olsen's updraft rules are for: he checks the flue at about cone 8
 # (p.173). The exit flue: engine default.
-# Not modelled: the door on its I-beam is taken as the car's end wall. The burners' ports are the
+# Not modelled: the door on its I-beam is taken as the car's end wall. As printed (p.172, Fig
+# 6-64, checked on the page image 2026-10-30) it hangs from an overhead I-beam on two Yale
+# half-ton trolleys, by U-bolts and eye-bolts, and spring-tension latches draw it into the door
+# jambs; the photo is "a similar suspended kiln door", so the trolleys may be that door's. The
+# I-beam's size, the door's build and weight and the latches aren't printed, so nothing on it is
+# sized or checked; the engine's car door is its end wall riding on the car. The burners' ports are the
 # engine's for an MR-100. The car's wheels and rails (no source sizes them).
 schema: 1
 name: Jun Kaneko's car kiln

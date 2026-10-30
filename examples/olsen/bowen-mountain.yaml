@@ -19,9 +19,12 @@
 # engine sizes the exit flue, and the steel that braces the arch (the drawing shows bracing on
 # its front).
 # Not modelled: the arch comes down at the back to 18 in (?) above the floor (Fig 4-153); the
-# engine's arch is level, so the chamber is a little larger here. The door, about 24 in, is in a
-# side wall; a sprung arch here springs from the side walls, so the door is put in the front wall,
-# where the burners fire through its bricking. The firebox and bag wall, 12 in (?) below the
+# engine's arch is level, so the chamber is a little larger here. The door, "24" (+-) DOOR" in the
+# plan, is in a side wall, at the back (Fig 4-153, checked on the page image 2026-10-30); its
+# height isn't printed, and the long section draws the crown curving down along the 5 ft length
+# to the back, which this file's arch, spanning the 3 ft width from the side walls, can't follow:
+# so the door is put in the
+# front wall, where the burners fire through its bricking. The firebox and bag wall, 12 in (?) below the
 # floor, the four salt holes and the salt itself are left out.
 schema: 1
 name: Bowen Mountain salt kiln, gas

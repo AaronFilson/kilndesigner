@@ -926,6 +926,17 @@ class Kiln(Spec):
             # walls instead, and take a door in part of a side wall, as climbing kilns do (Olsen
             # Figs 4-36, 4-45; door-openings.md)
             along = self.chamber.chambers > 1 and not self.roof.tube
+            if (
+                self.roof.tube
+                and self.loading.face in ("left", "right")
+                and self.loading.opening is not None
+            ):
+                raise ValueError(
+                    "a tube's doors are in its side, through the springing of its vault, which is "
+                    "turned as an arch over each (Tamba, Olsen Figs 4-11, 4-15): that isn't laid "
+                    "out here, and no source gives the vault's load on such a door. Put the door "
+                    "in the front or back wall"
+                )
             if self.loading.face in ("left", "right") and not (
                 along and self.loading.opening is not None
             ):
@@ -1061,6 +1072,13 @@ class Kiln(Spec):
 
             curve = CatenaryCurve(si(self.chamber.width, "in"), top)
             top = min(curve.z(across - w / 2), curve.z(across + w / 2))
+        elif isinstance(self.roof, Dome) and self.chamber.shape != "round" and not row:
+            # A sail dome meets each wall in a curve that rises above the springline towards the
+            # wall's middle (geometry.inside_top): the door may reach up to it at both its jambs,
+            # as Calimpong's 37 in door does under walls of 35 in (Olsen Fig 4-140)
+            from kilndesigner.geometry import inside_top
+
+            top = min(inside_top(self, face, (across + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
         if sill + h > top + 1e-9:
             raise ValueError(
                 f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "

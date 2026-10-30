@@ -403,6 +403,26 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     r = w / 2
     springing = si(door.sill, "in") + si(door.height, "in") - r
     above = _wall_above(kiln, crown=True) + r
+    if isinstance(kiln.roof, Dome):
+        # A dome stands on the door's wall: its shell is cast over the door's arch, laid first
+        # (Olsen Figs 4-135, 4-137, Höhr-Grenzhausen), so the masonry over the ring runs on into
+        # the shell; its weight is counted twice, as wall here and as the roof's edge, the safe
+        # side for the ring's thrust
+        above += ring
+        out.working.append(
+            Step(
+                name="The dome over the door's arch",
+                value=f"the wall over the door taken {ring:g} in higher, the dome's shell",
+                reference=(
+                    "Olsen Figs 4-135, 4-137 (p.123): the entry door's arch is laid, then the "
+                    "dome cast over it; door-openings.md"
+                ),
+                note=(
+                    "The shell's weight is counted as wall over the ring and again as the "
+                    "roof's edge on it: the safe side for the ring's thrust."
+                ),
+            )
+        )
     jamb, jamb_source, corner = _jamb(kiln)
     q = sum(x.density * x.thickness for x in layers) / 1728  # lb per square inch of face
     cross = cross_q = 0.0

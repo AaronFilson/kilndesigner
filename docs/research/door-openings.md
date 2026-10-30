@@ -81,6 +81,24 @@ figure of a door in a catenary's end wall.
 So the updrafts' doors are whole fronts or a hinged door in a rectangular angle-iron frame in the
 front wall; none shows a lift-off door or a lintel.
 
+## Door sizes read for the Olsen examples (2026-10-30)
+
+Each read again on the page image, at 100–800 dpi; status of every row: **Checked on the page
+image**.
+
+| Kiln, figure, page (PDF) | Reading | Used |
+|---|---|---|
+| Tamba, Fig 4-15, p.87 (PDF 73) | the door's height reads "3′" and a mark, its width "2′" and a mark; both figures are washed out and the drawing runs into the gutter, so the rest is lost even at 800 dpi. Fig 4-11 (p.86, PDF 72) and Fig 4-14 print no size | no: not legible. The door also rises through the springing of the tube's vault, turned as an arch over it (Fig 4-11), which the engine doesn't lay out: it refuses a door in a tube's side with that reason |
+| Kawaii, Figs 4-45, 4-46 and text, p.97 (PDF 83) | no door size printed; Fig 4-46's doorway is tall and rectangular, its head not clear | no: the Bidai kiln's 20 in stays, as before |
+| Calimpong's teardrop, Fig 4-140, p.124 (PDF 111) | "KILN DOOR" 33″ wide, 37″ high from the floor, in the side elevation; 48″ from its far jamb to the back; the head drawn with rounded corners and a flattish top; "ALL DIMENSIONS ARE INTERIOR MEASUREMENTS" | yes: `conrad-teardrop.yaml`, 33 × 37 in, from 36 to 69 in of the 117 in run; arched (the head's form isn't printed). It reaches 2 in over the 35 in walls into the dome's sides |
+| Höhr-Grenzhausen, Figs 4-135, 4-137 captions, p.123 (PDF 110) | "Placing the key brick to the entry door arch and starting to put dirt on the wooden platform"; "Casting the dome … looking down the shape to the entry door" | the door arch is laid first and the dome cast over it: under a dome the engine counts the shell as masonry over the door's ring |
+| Bowen Mountain, Fig 4-153, p.127 (PDF 114) | "24" (+-) DOOR" in the plan's side wall, at the back; no height | no: no height, and the long section's crown curves down along the length, which the example's arch can't follow |
+| Updraft frame, Fig 6-69 and text, p.174 (PDF 163) | "door frame 3 x 3 x ¼in." angle; no opening size printed | no: no example has this door |
+| Kaneko, Fig 6-64 and text, p.172 (PDF 161) | "The suspended door on the overhead I-beam uses a trolley. A detail of a similar suspended kiln door is pictured. Two Yale half-ton trolleys rode the overhead I-beam using U-bolts and eye-bolts to suspend the door (Fig. 6-64)"; spring-tension latches draw it into the jambs; the trolley's plate reads "Yale" and a rating not legible. No I-beam size, door size, build or weight | no: the photo is "a similar" door; with no door weight printed nothing can be checked against the trolleys, and the engine's car carries its end wall. Left as a note in `kaneko-car.yaml` |
+
+Kanayama (Fig 4-64, Figs 7-17 to 7-25) and Kecskemét (Fig 5-42) print no door size, and neither
+is an example.
+
 ## What the engine takes from them
 
 - **Whole-wall doors stay** (Figs 5-18, 5-35, 5-41, 6-61 to 6-63): the engine's door today.
