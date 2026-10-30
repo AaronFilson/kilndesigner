@@ -7,7 +7,19 @@ from pathlib import Path
 
 import pytest
 
-from kilndesigner.rings import IN, RingError, ring, ring_series, wall_rings
+from kilndesigner.rings import (
+    CLOSER,
+    IN,
+    RingError,
+    cut_bricks,
+    cut_count,
+    cut_diameter,
+    nominal_diameter,
+    ring,
+    ring_method,
+    ring_series,
+    wall_rings,
+)
 
 # Table A-4, 9 × 4½ × 2½ in arch bricks (p.303): inside diameter in inches, No.3, No.2, No.1,
 # straights. Every row of the book.
@@ -132,3 +144,97 @@ def test_round_walls_are_rings_of_9_and_4_and_a_half_inches() -> None:
     assert ring_series(9 * IN) == "key"
     assert ring_series(4.5 * IN) == "arch"
     assert ring_series(2.5 * IN) is None
+
+
+def test_a_mortar_ring_follows_the_curve_with_one_closer() -> None:
+    """A 36 in circle: each 9 in inside face turns 2·asin(9/36) = 28.96°, so 12 whole bricks
+    (347.5°) and a closer cut to the chord of the 12.54° left, 36·sin(6.27°) = 3.93 in. Two whole
+    bricks open a joint 2 × 4½ × sin(14.48°) = 2¼ in wide at the outside (d·L/r)."""
+    r = ring(36 * IN, "mortar")
+    assert dict(r.counts) == {"straight laid flat": 12, CLOSER: 1}
+    assert r.length == pytest.approx(3.932 * IN, abs=0.01 * IN)
+    assert r.joint == pytest.approx(2.25 * IN)
+    assert r.mortar is not None
+    assert r.mortar > 0
+
+
+def test_a_mortar_ring_narrower_than_a_straight_is_refused() -> None:
+    with pytest.raises(RingError, match="narrower than a 9 in straight"):
+        ring(8 * IN, "mortar")
+
+
+def test_a_cut_ring_keeps_full_bricks_and_closes_with_one_short_one() -> None:
+    """A 36 in ring 4½ in through, sized as makers quote it (the mean of flats and corners):
+    N solves 2(4½/tan(π/N) − 4½)(1 + 1/cos(π/N)) ÷ 2 = 36 at 15.79, so 15 full bricks and a
+    closer of 0.79 × 9 = 7.1 in along the outside, the ends 180/15.79 = 11.4° off square."""
+    r = ring(36 * IN, "cut")
+    assert dict(r.counts) == {"straight cut to the angle": 15, CLOSER: 1}
+    assert r.length == pytest.approx(7.125 * IN, abs=0.01 * IN)
+    assert r.angle == pytest.approx(11.40, abs=0.01)
+
+
+def test_whole_brick_cut_rings_need_no_closer() -> None:
+    """12 full bricks round, 4½ in through: inside apothem 4½/tan(15°) − 4½ = 12.29 in, so
+    12.29 × (1 + 1/cos 15°) = 25.02 in across inside, the mean of flats and corners."""
+    assert cut_diameter(12) == pytest.approx(25.02 * IN, abs=0.01 * IN)
+    assert cut_bricks(cut_diameter(12)) == pytest.approx(12)
+    r = ring(cut_diameter(12), "cut")
+    assert dict(r.counts) == {"straight cut to the angle": 12}
+    assert r.length is None
+    assert r.angle == pytest.approx(15)
+
+
+# Published round electric kilns: sides, brick (in), inside diameter (in), as electric-kiln-
+# survey.md records them. Skutt's own KM-1227 sheet prints 28.00 in for 12 sides of 3 in brick.
+ELECTRIC = [
+    ("Skutt KM-1227-3", 12, 3.0, 28.00),
+    ("L&L e23T-3", 10, 3.0, 22.30),
+    ("Skutt KM-1027", 10, 2.5, 23.375),
+    ("Skutt KM-818", 8, 2.5, 17.5),
+    ("Skutt KM-818-3", 8, 3.0, 16.5),
+]
+
+
+@pytest.mark.parametrize("kiln", ELECTRIC, ids=lambda k: k[0])
+def test_cut_rings_match_published_electric_kilns(kiln: tuple[str, int, float, float]) -> None:
+    """Full 9 in faces outside, the inside quoted as the mean of flats and corners: within
+    0.15 in of each published diameter (derived, electric-kiln-survey.md)."""
+    _, sides, brick, published = kiln
+    assert nominal_diameter(sides, brick * IN) == pytest.approx(published * IN, abs=0.15 * IN)
+    assert round(cut_bricks(published * IN, brick * IN)) == sides
+
+
+def test_electric_walls_are_one_cut_ring_of_2_and_a_half_or_3_inch_brick() -> None:
+    assert wall_rings(3 * IN, "cut") == [3 * IN]
+    assert wall_rings(2.5 * IN, "cut") == [2.5 * IN]
+    assert wall_rings(3 * IN, "mortar") is None
+    assert ring_series(3 * IN, "cut") == "cut3"
+    assert ring_series(2.5 * IN, "cut") == "cut2.5"
+    r = ring(nominal_diameter(12, 3 * IN), "cut3")
+    assert dict(r.counts) == {"straight cut to the angle": 12}
+    assert r.series == "cut3"
+
+
+def test_a_featheredge_ring_takes_about_twelve_whatever_its_size() -> None:
+    """π × 45 in ÷ 2½ = 56.5, so 57 round the outside; round the inside π × 36 = 113.1 in =
+    ⅛ n_f + 2½ n_s, so n_s = (113.1 − 56.5 × ⅛) ÷ 2⅜ = 44.6 → 45 straights and 12 featheredges:
+    2π × 4½ ÷ 2⅜ = 11.9 at any diameter."""
+    assert dict(ring(36 * IN, "featheredge").counts) == {"featheredge": 12, "straight": 45}
+    assert dict(ring(72 * IN, "featheredge").counts)["featheredge"] == 12
+
+
+def test_the_4_and_a_half_inch_ring_is_the_builders_choice() -> None:
+    assert ring_series(4.5 * IN, "mortar") == "mortar"
+    assert ring_series(9 * IN, "cut") == "key"
+    assert ring_method(None, electric=True) == "cut"
+    assert ring_method(None, electric=False) == "mortar"
+    assert ring_method("featheredge", electric=True) == "featheredge"
+
+
+def test_a_cut_ring_within_a_sixteenth_of_whole_bricks_is_laid_whole() -> None:
+    """1/16 in round the ring is near enough (the user); 9 in × 0.006 = 0.054 in is, 9 in ×
+    0.01 = 0.09 in isn't, so that ring takes the fewest bricks and a closer."""
+    assert cut_count(12.006) == (12, True)
+    assert cut_count(11.994) == (12, True)
+    assert cut_count(12.01) == (12, False)
+    assert cut_count(11.99) == (11, False)

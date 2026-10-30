@@ -27,15 +27,34 @@ Shapes, 2½ in series (kiln-reference.md, "Brick sizes and shapes", p.21, p.298�
 - keys, 9 × (4½ → t) × 2½, taper along the 9 in: a ring 9 in deep, the 4½ in face outside.
 
 Olsen's bricks for curved walls (p.45): 4½ in, circle bricks (arch bricks possible but not
-recommended); 9 in, key bricks, or circle and key bricks. Circle bricks' sizes are in his appendix
-but not transcribed into docs/research, so they aren't offered here.
+recommended); 9 in, key bricks, or circle and key bricks. His appendix has no circle-brick table,
+and round face brick is little used (the user, a kiln builder, 2026-10-30), so a 4½ in ring is
+turned one of four ways, the builder's choice:
+
+- **mortar**: straights laid flat as stretchers, 9 in round the ring, 4½ in through, 2½ in
+  courses, their inside faces on the curve and the wedge-shaped joints behind filled with mortar,
+  as Olsen draws a curved wall (Fig. 2-13, p.45). Each brick's inside face is a 9 in chord of the
+  inside circle, turning θ = 2·asin(L/D); n = ⌊2π/θ⌋ whole bricks and one closer cut to the
+  chord 2·r·sin(φ/2) of the angle φ = 2π − nθ left. Two bricks meeting at their inside corners
+  open a joint 2·d·sin(α/2) wide at the outside, α the angle between them; the joints' mortar is
+  Σ ½·d²·sin α per course height.
+- **cut**: straights laid as above, each cut at both ends to the angle θ_o/2 off square so the
+  ring closes with no wedge joints, the norm in electric kilns (the user). θ_o is the angle a
+  9 in chord of the outside circle turns: the bricks keep their full 9 in outside face, and an
+  electric kiln is sized to a whole number of them, 6, 8, 10, 12 bricks round (the user). A
+  diameter that isn't takes ⌊2π/θ_o⌋ full bricks and a closer cut to what is left, and is
+  warned of, with the diameters whole bricks give.
+- **featheredge**: straights on end with featheredges among them, 9 × 4½ × (2½ → ⅛) in
+  (HarbisonWalker's 2½ in series, kiln-hardware.md §5.1 [S20]), laid as arch bricks are: the
+  same tapered ring above, with the featheredge the one taper (the user names the method).
+- **arch**: arch bricks on end, Olsen's fallback.
 """
 
 from __future__ import annotations
 
 import itertools
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 IN = 25.4  # mm
@@ -46,7 +65,20 @@ SOURCE = (
 
 DOWN = 0.1  # of a brick: rounded down below this (derived from tables A-4 and A-6, above)
 
-type Series = Literal["arch", "wedge", "key", "arch3", "wedge3"]
+type Series = Literal[
+    "arch", "wedge", "key", "arch3", "wedge3", "featheredge", "mortar", "cut", "cut2.5", "cut3"
+]
+type Method = Literal["mortar", "cut", "featheredge", "arch"]
+STRAIGHT = 9.0  # in, a straight's length
+FEATHEREDGE_SOURCE = (
+    "HarbisonWalker featheredge, 9 × 4½ × (2½ − ⅛) in (kiln-hardware.md §5.1 [S20]); straights "
+    "with featheredges, and straights cut to the angle, the norm in electric kilns (the user, a "
+    "kiln builder, 2026-10-30)"
+)
+MORTAR_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.45, Fig. 2-13: straights on the curve, their joints opening "
+    "toward the outside"
+)
 
 
 @dataclass(frozen=True)
@@ -100,7 +132,17 @@ FAMILIES: dict[Series, Family] = {
         (Taper("No. 3 wedge, 3 in series", 2.0), Taper("No. 2 wedge, 3 in series", 2.5)),
         "3 in straight",
     ),
+    # On end as arch bricks are: 4½ in through, 2½ in round the outside, 9 in courses
+    "featheredge": Family(2.5, 4.5, 9.0, (Taper("featheredge", 0.125),), "straight"),
+    # Straights laid flat as stretchers: 9 in round the ring, 4½ in through, 2½ in courses
+    "mortar": Family(9.0, 4.5, 2.5, (), "straight laid flat"),
+    "cut": Family(9.0, 4.5, 2.5, (), "straight cut to the angle"),
+    # Electric kilns' walls: 2½ or 3 in brick through, laid flat on the 4½ in face, 9 in round
+    # the outside, 4½ in courses (Skutt KM-1227-3, L&L e23T-3; electric-kiln-survey.md)
+    "cut2.5": Family(9.0, 2.5, 4.5, (), "straight cut to the angle"),
+    "cut3": Family(9.0, 3.0, 4.5, (), "straight cut to the angle"),
 }  # fmt: skip
+CLOSER = "closer, a straight cut short"
 
 
 class RingError(ValueError):
@@ -112,6 +154,11 @@ class Ring:
     series: Series
     inside_diameter: float  # mm
     counts: tuple[tuple[str, int], ...]  # shape and how many, tightest first
+    # Straight rings (mortar, cut), mm and degrees
+    length: float | None = None  # the closer's face: mortar, inside; cut, outside
+    joint: float | None = None  # mortar: the widest joint at the outside
+    mortar: float | None = None  # mortar: the wedge joints' mortar per mm of course height, mm²
+    angle: float | None = None  # cut: each end cut off square by this
 
     @property
     def total(self) -> int:
@@ -123,6 +170,11 @@ class Ring:
 
 def ring(inside_diameter_mm: float, series: Series) -> Ring:
     """The bricks for one ring of the given inside diameter (mm)."""
+    if series in ("mortar", "cut", "cut2.5", "cut3"):
+        method = "mortar" if series == "mortar" else "cut"
+        return replace(
+            straight_ring(inside_diameter_mm, method, FAMILIES[series].depth * IN), series=series
+        )
     f = FAMILIES[series]
     d = inside_diameter_mm / IN
     exact = math.pi * (d + 2 * f.depth) / f.thick
@@ -144,19 +196,117 @@ def ring(inside_diameter_mm: float, series: Series) -> Ring:
     raise AssertionError("the straights' pair always fits: they make up any larger circle")
 
 
-def ring_series(depth_mm: float) -> Series | None:
-    """The shapes Olsen gives for a round wall ring this deep (p.45): 9 in, keys; 4½ in, arch
-    bricks (as circle bricks' sizes aren't transcribed). None for any other depth."""
+CUT_SLACK = 1 / 16  # in round the outside: a ring this near whole bricks is laid whole (the user)
+
+
+def cut_count(n: float) -> tuple[int, bool]:
+    """The full bricks a cut ring lays for ``n`` round its outside, and whether that's whole: the
+    nearest whole number when it is within 1/16 in of it round the ring, else the fewest, n
+    rounded down, with a closer (the user, a kiln builder, 2026-10-30: whole bricks, or the
+    fewest and a closer when a size is needed; 1/16 in for near enough, dry-laid)."""
+    near = round(n)
+    if abs(n - near) * STRAIGHT <= CUT_SLACK and near >= 3:
+        return near, True
+    return math.floor(n), False
+
+
+def nominal_diameter(bricks: float, depth_mm: float) -> float:
+    """A cut ring's inside diameter as makers quote it (mm): the mean of its inside flat-to-flat
+    and corner-to-corner widths, for ``bricks`` full 9 in faces round the outside and walls
+    ``depth_mm`` thick. The outside apothem is 4½ / tan(π/N), the inside one that less the wall.
+    Skutt's KM-1227-3 sheet, 12 sides of 3 in brick, prints 28.00 in; this gives 28.07 in
+    (electric-kiln-survey.md, derived)."""
+    half = math.pi / bricks
+    inner = STRAIGHT * IN / 2 / math.tan(half) - depth_mm
+    return inner * (1 + 1 / math.cos(half))
+
+
+def cut_bricks(inside_diameter_mm: float, depth_mm: float = 4.5 * IN) -> float:
+    """How many full 9 in straights, cut to the angle, turn a ring of this inside diameter (as
+    makers quote it, nominal_diameter) and depth: N solved from nominal_diameter(N) = D, by
+    bisection (it grows with N). Electric kilns are built to a whole number of them, 6, 8, 10,
+    12 bricks round (the user, a kiln builder, 2026-10-30)."""
+    lo, hi = 3.0, 400.0
+    if nominal_diameter(lo, depth_mm) >= inside_diameter_mm:
+        return lo
+    for _ in range(80):
+        mid = (lo + hi) / 2
+        if nominal_diameter(mid, depth_mm) < inside_diameter_mm:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+def cut_diameter(bricks: int, depth_mm: float = 4.5 * IN) -> float:
+    """The inside diameter (mm) that ``bricks`` full straights cut to the angle turn exactly."""
+    return nominal_diameter(bricks, depth_mm)
+
+
+def straight_ring(inside_diameter_mm: float, method: Literal["mortar", "cut"],
+                  depth_mm: float | None = None) -> Ring:  # fmt: skip
+    """A ring of straights laid flat: with wedge joints of mortar, or cut to the angle."""
+    f = FAMILIES[method]
+    r, d, length = inside_diameter_mm / 2, f.depth * IN, STRAIGHT * IN
+    if method == "cut":
+        d = depth_mm if depth_mm is not None else d
+        exact = cut_bricks(inside_diameter_mm, d)
+        n, whole = cut_count(exact)
+        # Each end of a brick in an N-sided ring is cut 180/N degrees off square; a closer takes
+        # the part of a brick left over, along the outside
+        closer = None if whole else (exact - n) * length
+        counts = ((f.straight, n),) + (((CLOSER, 1),) if closer is not None else ())
+        return Ring(
+            method, inside_diameter_mm, counts, length=closer, angle=180 / (n if whole else exact)
+        )
+    if length > 2 * r:
+        raise RingError(
+            f"a {inside_diameter_mm / IN:.3g} in circle is narrower than a 9 in straight, so "
+            "straights can't follow it: cut them to the angle, or use featheredges"
+        )
+    theta = 2 * math.asin(length / (2 * r))
+    n = math.floor(2 * math.pi / theta + 1e-9)
+    rest = 2 * math.pi - n * theta
+    if rest < 1e-6:
+        angles, closer = [theta] * n, None
+    else:
+        # The closer's two joints each turn half its angle and half a whole brick's
+        angles, closer = [theta] * (n - 1) + [(theta + rest) / 2] * 2, 2 * r * math.sin(rest / 2)
+    counts = ((f.straight, n),) + (((CLOSER, 1),) if closer is not None else ())
+    return Ring(
+        method, inside_diameter_mm, counts, length=closer,
+        joint=max(2 * d * math.sin(a / 2) for a in angles),
+        mortar=sum(0.5 * d * d * math.sin(a) for a in angles),
+    )  # fmt: skip
+
+
+def ring_series(depth_mm: float, method: Method = "arch") -> Series | None:
+    """The shapes for a round wall ring this deep (p.45): 9 in, keys; 4½ in, as ``method`` says.
+    None for any other depth."""
     if abs(depth_mm - 9 * IN) < 1.0:
         return "key"
     if abs(depth_mm - 4.5 * IN) < 1.0:
-        return "arch"
+        return method
+    if method == "cut":
+        for series in ("cut2.5", "cut3"):
+            if abs(depth_mm - FAMILIES[series].depth * IN) < 1.0:
+                return series
     return None
 
 
-def wall_rings(thickness_mm: float) -> list[float] | None:
+def ring_method(kiln_rings: Method | None, electric: bool) -> Method:
+    """The 4½ in ring's method: the design's, or cut for an electric kiln and mortar otherwise."""
+    if kiln_rings is not None:
+        return kiln_rings
+    return "cut" if electric else "mortar"
+
+
+def wall_rings(thickness_mm: float, method: Method = "arch") -> list[float] | None:
     """A round wall as rings of 9 and 4½ in, from the inside out, the 4½ in ring (if any) on the
-    hot face; None if 9s and 4½s don't make the thickness."""
+    hot face; or, cut to the angle, one ring of 2½ or 3 in brick, as electric kilns are. None if
+    those don't make the thickness."""
+    if method == "cut" and any(abs(thickness_mm - t * IN) < 1.0 for t in (2.5, 3.0)):
+        return [thickness_mm]
     halves = thickness_mm / (4.5 * IN)
     n = round(halves)
     if n < 1 or abs(halves - n) * 4.5 * IN >= 1.0:

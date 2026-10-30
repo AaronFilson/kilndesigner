@@ -320,6 +320,38 @@ need is still open. In order:
   room-temperature c_p; no radiation between faces or inside film; wood and oil wait for M7;
   natural gas has no price field, so its cost isn't given.
 
+### Status (2026-10-30)
+
+On branch `m6`, merged (`a0d89fd` and the fireboxes merge after it), with the rest uncommitted at
+the time of writing; 1482 tests, coverage over 98 % in both Python and web. The round's notes and
+the next round are in [10-30-26.md](10-30-26.md).
+
+- **Waste allowances** come from sources (BIA 5 %, `brick-waste.md`), not a flat 10 %.
+  **Kast-O-Lite** is researched (`castables.md` §14).
+- **Steel for domes** is sized (AISC 360-16, hot; `steel-design.md`): an angle along each wall the
+  dome bears on, posts, tie rods and a ring, drawn and billed. The lintel for a door in part of a
+  wall is a written method only: the design can't yet describe such a door.
+- **Every kiln shape is laid in brick:** round kilns (rings, plans, a layer model), open tops,
+  chambers in a row (stepped on a slope, an arch over each along the draft), sloping single
+  chambers, bent runs, and fireboxes (against a wall, under the floor, troughs), with flues
+  between chambers, floor ports and roof flues cut in the model. Tamba and the tunnel are one
+  vault over the run, as Olsen draws them. Dimension text is sized to each view.
+- **Fireboxes give options, not rules:** a grate step and ash pit set by the design, with
+  Olsen's figures for each way of firing reported beside the numbers (heat, even burn, ash and
+  flashing); the only error is a firebox that doesn't reach the chamber floor.
+- **4½ in round rings** are the builder's choice: straights with mortar-filled wedge joints
+  (Olsen Fig. 2-13, the default), straights cut to the angle (the default for electric kilns,
+  whole bricks, faces 9 in outside, courses stacked in line, warned when a size needs a closer),
+  featheredges, or arch bricks. **Electric walls** of 2½ and 3 in brick are one cut ring in
+  4½ in courses, checked against five published kilns to 0.15 in
+  (`electric-kiln-survey.md`; a spec log artifact gathers more).
+
+### What's next (2026-10-30)
+
+See [10-30-26.md](10-30-26.md) for the queue. In short: put the new choices in the web form,
+finish round electric kilns (elements in their grooves, lids and floors, steel bands), describe
+doors in part of a wall so the lintel can be checked, then the author's kiln end to end and M7.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
 the client's plans before the app exists.
