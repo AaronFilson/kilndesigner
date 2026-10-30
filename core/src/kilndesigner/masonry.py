@@ -23,7 +23,7 @@ from __future__ import annotations
 import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field, replace
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ConfigDict
 
@@ -36,6 +36,9 @@ from kilndesigner.model import CatenaryArch, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step, length_text, show
+
+if TYPE_CHECKING:
+    from kilndesigner.round_masonry import RingPlan
 
 IN = 25.4  # mm
 BRICK = (9 * IN, 4.5 * IN, 2.5 * IN)  # length, width, thickness (mm)
@@ -88,6 +91,8 @@ class LayerPlan:
     span: float  # mm across all courses (wall height, or floor depth)
     courses: list[Course] = field(default_factory=list[Course])
     within: tuple[int, int] = (1, 1)  # this wall of brick, of how many side by side in the layer
+    # A round kiln's floor or roof: the circle its rows are cut to, centred on the layer (mm)
+    circle: float | None = None
 
     @property
     def pieces(self) -> list[Piece]:
@@ -431,6 +436,15 @@ class Masonry(BaseModel):
 class MasonryPlan:
     layers: list[LayerPlan]
     result: Masonry
+    rings: list[RingPlan] = field(default_factory=list["RingPlan"])  # a round wall's rings
+
+    def course_plans(self) -> list[LayerPlan | RingPlan]:
+        """Every layer with a course plan, floor first, then the walls, then the roof."""
+        if not self.rings:
+            return list(self.layers)
+        floor = [p for p in self.layers if p.part.wall == "floor"]
+        rest = [p for p in self.layers if p.part.wall != "floor"]
+        return [*floor, *self.rings, *rest]
 
 
 def plan_masonry(kiln: Kiln) -> MasonryPlan:

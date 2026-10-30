@@ -1,5 +1,6 @@
-"""The 3D model of a kiln whose bricks can't yet be laid out: round and bottle kilns, open tops,
-chambers in a row, sloping floors and runs that bend (geometry.not_drawn says which).
+"""The 3D model of a kiln whose bricks can't yet be laid out: open-topped box kilns, chambers in a
+row, sloping floors and runs that bend (geometry.not_drawn says which). A round kiln is drawn
+layer by layer (geometry._round_parts), but takes its ports and its chimney and burners from here.
 
 The lining is drawn as shells: the chamber's inside, offset outward by each layer's reach and
 the inner offset taken away, so every layer wraps the whole kiln. The shell takes the walls'
@@ -398,14 +399,14 @@ def build_massing(kiln: Kiln, hardware: Hardware | None) -> Any:
         solid.label = name
         solid.color = Color(*COLOURS.get(resolve_material(kiln, material).kind, (0.8, 0.8, 0.8)))
         children.append(solid)
-    for piece in _moved_pieces(kiln, run, hardware):
+    for piece in moved_pieces(kiln, run, hardware):
         children.append(piece)
     model = Compound(children=children)
     model.label = kiln.name
     return model
 
 
-def _moved_pieces(kiln: Kiln, run: Run, hardware: Hardware | None) -> list[Any]:
+def moved_pieces(kiln: Kiln, run: Run, hardware: Hardware | None) -> list[Any]:
     """The chimney, its duct and the burners, moved from the first chamber's walls to where the
     run puts them. The frame and door are drawn for a box on a stand, so they're left out."""
     from build123d import Axis, Color, Pos

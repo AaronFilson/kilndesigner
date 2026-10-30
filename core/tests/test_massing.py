@@ -51,8 +51,8 @@ def test_a_bend_is_an_angle_up_to_a_half_turn_and_not_on_a_round_kiln() -> None:
 def test_every_shape_the_bricks_cant_be_laid_for_says_it_is_drawn() -> None:
     for text in (ANAGAMA, KYOTO, _bent(ANAGAMA, 30)):
         assert "drawn, but not yet laid out" in (not_drawn(parse_design(text)) or "")
-    # A round kiln is counted and priced (round_masonry.py), but still drawn as shells
-    assert "counted in brick and priced" in (not_drawn(parse_design(BOTTLE)) or "")
+    # A round kiln is laid out in brick and planned (round_masonry.py, geometry._round_parts)
+    assert not_drawn(parse_design(BOTTLE)) is None
     level = ANAGAMA.replace("  slope: 25 degree\n", "  bend: 30 degree\n")
     assert "bent run" in (not_drawn(parse_design(level)) or "")
 

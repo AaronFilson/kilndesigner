@@ -163,6 +163,11 @@
   Each drawing shows one layer as seen from inside the kiln, course by course from the bottom
   (walls) or from the front (floor and roof). Whole bricks are pale; cut pieces are orange.
   Odd and even courses start differently so that the joints don't line up.
+  #if d.at("round", default: false) [
+    A round wall's ring is drawn from above, one odd and one even course, each brick's thick end
+    on the outside; tapered shapes are coloured by shape. A round floor or roof is laid in rows of
+    straights across it, their ends cut to the dashed circle.
+  ]
   #for c in d.course_plans [
     #block(breakable: false)[
       == #c.title

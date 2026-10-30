@@ -17,11 +17,18 @@ import typst
 
 from kilndesigner.bom import Bom, bill_of_materials
 from kilndesigner.charts import Marker, Series, line_chart
-from kilndesigner.drawings import course_plan_svg, section_views, view_svg, write_dxf
+from kilndesigner.drawings import (
+    course_plan_svg,
+    ring_plan_svg,
+    section_views,
+    view_svg,
+    write_dxf,
+)
 from kilndesigner.hybrid import CostPoint, HybridAnalysis
 from kilndesigner.masonry import MasonryPlan, plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.report import Report
+from kilndesigner.round_masonry import RingPlan
 from kilndesigner.sheet import Check, cell_text, requirement_text
 from kilndesigner.working import Finding, Step
 
@@ -290,20 +297,23 @@ def build_plans(
             data["views"].append({"title": view.title, "file": name})
             drawings.append(Drawing(name, "section", view.title, "", svg))
         data["course_plans"] = []
-        for i, layer in enumerate(masonry.layers):
+        data["round"] = bool(masonry.rings)
+        for i, layer in enumerate(masonry.course_plans()):
             name = f"course-{i + 1}.svg"
-            svg = course_plan_svg(layer, us)
-            (root / name).write_text(svg, encoding="utf-8")
-            pieces = layer.pieces
-            cut = sum(1 for p in pieces if not p.is_whole)
-            plan = {
-                "title": layer.title(),
-                "description": (
-                    f"{len(layer.courses)} courses of {LAYING_WORDS[layer.laying]}: "
+            if isinstance(layer, RingPlan):
+                svg = ring_plan_svg(layer, us)
+                description = layer.description(us)
+            else:
+                svg = course_plan_svg(layer, us)
+                pieces = layer.pieces
+                cut = sum(1 for p in pieces if not p.is_whole)
+                rows = "rows" if layer.circle is not None else "courses"
+                description = (
+                    f"{len(layer.courses)} {rows} of {LAYING_WORDS[layer.laying]}: "
                     f"{len(pieces) - cut} whole bricks and {cut} cut pieces."
-                ),
-                "file": name,
-            }
+                )
+            (root / name).write_text(svg, encoding="utf-8")
+            plan = {"title": layer.title(), "description": description, "file": name}
             data["course_plans"].append(plan)
             drawings.append(Drawing(name, "course plan", plan["title"], plan["description"], svg))
         if report.hybrid is not None:

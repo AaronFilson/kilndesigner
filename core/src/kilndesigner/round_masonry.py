@@ -19,8 +19,10 @@ from __future__ import annotations
 
 import math
 from collections import Counter, defaultdict
+from dataclasses import dataclass, replace
 
 from kilndesigner.castable import resolve_material
+from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
 from kilndesigner.masonry import (
     BRICK_KINDS,
@@ -29,7 +31,9 @@ from kilndesigner.masonry import (
     BULK_KINDS,
     SHEET_KINDS,
     TOL,
+    Course,
     Cut,
+    LayerPlan,
     Masonry,
     MasonryPlan,
     brick_sizes,
@@ -40,37 +44,101 @@ from kilndesigner.masonry import (
 )
 from kilndesigner.materials_checks import SUMS, whole_bricks
 from kilndesigner.model import Dome, FlatRoof, Kiln
-from kilndesigner.rings import FAMILIES, IN, SOURCE, RingError, ring, ring_series, wall_rings
+from kilndesigner.rings import (
+    FAMILIES,
+    IN,
+    SOURCE,
+    Ring,
+    RingError,
+    Series,
+    ring,
+    ring_series,
+    wall_rings,
+)
 from kilndesigner.shape import RoundDome
 from kilndesigner.units import si
 from kilndesigner.working import Finding, length_text
 
 RINGS = "whole 9 and 4½ in rings: a·9 + b·4½ in (Olsen, The Kiln Book, 4th ed., p.45)"
 
+RING_WORDS: dict[str, str] = {
+    "key": "key bricks laid flat, 9 in through the wall, in 2½ in courses",
+    "arch": (
+        "arch bricks standing on end, 4½ in through the wall, in 9 in courses (Olsen prefers "
+        "circle bricks for a 4½ in ring, p.45; their sizes aren't in our sources)"
+    ),
+}
 
-def _disc_rows(radius: float, thickness: float) -> list[Cut] | None:
-    """A disc of brick ``thickness`` thick, laid in rows of straights across it: the pieces that
-    aren't whole, and how many are (as Cuts with full size; whole ones have no cut). None if
+
+@dataclass
+class RingPlan:
+    """One ring of a round wall, the same in every course: which shapes, how many, in order."""
+
+    part: Part  # the wall's layer it's in
+    within: tuple[int, int]  # this ring, of how many in the layer, from the inside
+    inside_radius: float  # mm
+    depth: float  # mm, through the wall
+    series: Series
+    ring: Ring
+    courses: int
+    course_height: float  # mm
+    top: float  # mm, the top course's height; less than course_height when ripped
+
+    @property
+    def ripped(self) -> bool:
+        return abs(self.top - self.course_height) >= TOL
+
+    def title(self) -> str:
+        title = f"{self.part.title}: {material(self.part.material).name}"
+        k, n = self.within
+        if n > 1:
+            title += f", ring {k} of {n} from the inside"
+        return title
+
+    def description(self, us: bool) -> str:
+        text = (
+            f"{self.courses} courses of {RING_WORDS[self.series]}, each course "
+            f"{self.ring.describe()} round a circle {length_text(2 * self.inside_radius, us)} "
+            "across inside"
+        )
+        if self.ripped:
+            text += f"; the top course ripped to {length_text(self.top, us)}"
+        return text + "."
+
+    def order(self) -> list[str]:
+        """The shapes round the ring, each spread evenly among the others."""
+        keyed = [((j + 0.5) / n, name) for name, n in self.ring.counts for j in range(n)]
+        return [name for _, name in sorted(keyed)]
+
+
+def _disc_rows(radius: float, thickness: float, part: Part) -> list[LayerPlan] | None:
+    """A disc of brick ``thickness`` thick, laid in rows of straights across it, the rows' ends
+    cut to the circle: one plan for each wall of brick in the layer, from the inside out. None if
     whole bricks don't make the thickness."""
     sizes = brick_sizes(thickness)
     if sizes is None:
         return None
-    pieces: list[Cut] = []
-    for size in sizes:
-        laying = next(v for k, v in layings(True).items() if abs(k - size) < 1.0)
-        _, unit, width = laying
+    plans: list[LayerPlan] = []
+    for k, size in enumerate(sizes):
+        kind, unit, width = next(v for s, v in layings(True).items() if abs(s - size) < 1.0)
+        plan = LayerPlan(part, kind, 2 * radius, 2 * radius, within=(k + 1, len(sizes)),
+                         circle=radius)  # fmt: skip
         rows = math.ceil(2 * radius / width - TOL / width)
         for i in range(rows):
             y0 = -radius + i * width
             y1 = min(y0 + width, radius)
             near = 0.0 if y0 <= 0 <= y1 else min(abs(y0), abs(y1))
             chord = 2 * math.sqrt(max(radius * radius - near * near, 0.0))
-            for p in run_pieces(chord, unit, stagger=i % 2 == 1, height=y1 - y0, full_h=width):
-                pieces.append(Cut(p.length, p.height, p.full_length, p.full_height))
-    return pieces
+            start = radius - chord / 2  # the row centred on the circle
+            pieces = run_pieces(chord, unit, stagger=i % 2 == 1, height=y1 - y0, full_h=width)
+            plan.courses.append(
+                Course(i + 1, y0 + radius, tuple(replace(p, start=p.start + start) for p in pieces))
+            )
+        plans.append(plan)
+    return plans
 
 
-def _cap_volume(rho: float, below: float) -> float:
+def cap_volume(rho: float, below: float) -> float:
     """A sphere of radius rho, its centre ``below`` the springline: its volume above it."""
     h = rho - below
     return math.pi * h * h * (3 * rho - h) / 3 if h > 0 else 0.0
@@ -90,6 +158,9 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     sheet_thickness: dict[str, set[float]] = {}
     cast_volume: defaultdict[str, float] = defaultdict(float)
     lines: list[str] = []
+    parts = {p.name: p for p in lining_parts(kiln)}
+    layers: list[LayerPlan] = []
+    ring_plans: list[RingPlan] = []
 
     def sheet(mid: str, area: float, thickness: float) -> None:
         sheet_area[mid] += area
@@ -125,8 +196,8 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
 
-    def _wall_ring(mid: str, r: float, depth: float) -> str:
-        """Count one ring of the wall, ``r`` its inside radius; say what it is."""
+    def _wall_ring(mid: str, r: float, depth: float, part: Part, within: tuple[int, int]) -> str:
+        """Count one ring of the wall, ``r`` its inside radius; plan it; say what it is."""
         series = ring_series(depth)
         assert series is not None, "wall_rings gives 9 and 4½ in rings only"
         family = FAMILIES[series]
@@ -139,6 +210,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             return ""
         top = height - (courses - 1) * course
         ripped = abs(top - course) >= TOL
+        ring_plans.append(RingPlan(part, within, r, depth, series, one, courses, course, top))
         for name, n in one.counts:
             if name != family.straight:
                 shapes[(mid, name)] += n * courses  # the top course's are cut down from whole
@@ -170,8 +242,12 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             if depths is None:
                 unbuildable(where, m.id, th, rings=True)
             else:
-                parts = [_wall_ring(m.id, r + sum(depths[:k]), d) for k, d in enumerate(depths)]
-                lines.append(f"{where}: " + "; then ".join(p for p in parts if p))
+                part = parts[f"wall/{i + 1}-{layer.material}"]
+                said = [
+                    _wall_ring(m.id, r + sum(depths[:k]), d, part, (k + 1, len(depths)))
+                    for k, d in enumerate(depths)
+                ]
+                lines.append(f"{where}: " + "; then ".join(s for s in said if s))
         elif m.kind in SHEET_KINDS:
             sheet(m.id, 2 * math.pi * (r + th / 2) * height, th)
         elif m.kind in BULK_KINDS:
@@ -186,16 +262,20 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             where = f"{face.capitalize()}, layer {i + 1} from the inside"
             area = math.pi * radius * radius
             if m.kind in BRICK_KINDS:
-                pieces = _disc_rows(radius, th)
-                if pieces is None:
+                plans = _disc_rows(radius, th, parts[f"{face}/{i + 1}-{layer.material}"])
+                if plans is None:
                     unbuildable(where, m.id, th, rings=False)
                     continue
+                layers.extend(plans)
+                pieces = [p for plan in plans for p in plan.pieces]
                 n_whole = 0
                 for p in pieces:
                     if abs(p.length - p.full_length) < TOL and abs(p.height - p.full_height) < TOL:
                         n_whole += 1
                     else:
-                        cuts.setdefault(m.id, []).append(p)
+                        cuts.setdefault(m.id, []).append(
+                            Cut(p.length, p.height, p.full_length, p.full_height)
+                        )
                 whole[m.id] += n_whole
                 lines.append(
                     f"{where}: rows of straights across a {length_text(2 * radius, us)} circle, "
@@ -217,7 +297,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         for i, layer in enumerate(kiln.lining.for_face("roof")):
             m = resolve_material(kiln, layer.material)
             th = si(layer.thickness, "mm")
-            volume = _cap_volume(rho + th, below) - _cap_volume(rho, below)
+            volume = cap_volume(rho + th, below) - cap_volume(rho, below)
             if m.kind in BRICK_KINDS:
                 count = math.ceil(volume / BRICK_VOLUME)
                 whole[m.id] += count
@@ -249,4 +329,4 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         shapes_in="the round wall",
     )  # fmt: skip
     result = Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working)
-    return MasonryPlan([], result)
+    return MasonryPlan(layers, result, ring_plans)
