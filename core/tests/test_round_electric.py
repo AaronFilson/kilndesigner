@@ -264,3 +264,100 @@ def test_the_section_cuts_the_grooves() -> None:
     xs = [x for r in plan.rects for x, _ in r.points]
     assert max(xs) == pytest.approx(a + 3 * IN)
     assert len(plan.rects[0].points) == 12
+
+
+# Paragon's way (electric-kiln-survey.md, the user): 27 in of wall, the floor slab inside its
+# lowest 4½ in course, 22½ in inside
+INSIDE = {"height: 27 in": "height: 22.5 in\n  floor_inside: true"}
+
+
+def test_a_floor_inside_the_walls_is_the_inside_polygon_in_a_course_taller_wall() -> None:
+    from kilndesigner.geometry import lining_parts
+
+    k = kiln(**INSIDE)
+    assert k.chamber.floor_inside
+    a = inside_apothem(28.075 * IN, 12)
+    parts = {p.name.split("/")[0]: p for p in lining_parts(k)}
+    floor, wall = parts["floor"], parts["wall"]
+    assert floor.sides == 12
+    assert max(r for r, _ in floor.revolve or ()) == pytest.approx(a / math.cos(math.pi / 12))
+    assert (floor.lo[2], floor.hi[2]) == pytest.approx((-3 * IN, 0))
+    assert wall.lo[2] == pytest.approx(-4.5 * IN)  # the wall runs a course below the floor
+    assert wall.hi[2] - wall.lo[2] == pytest.approx(27 * IN)
+    plan = plan_masonry(k)
+    (ring,) = plan.rings
+    assert ring.courses == 6
+    assert not ring.ripped
+    slab = next(p for p in plan.layers if p.part.name.startswith("floor/"))
+    assert slab.circle == pytest.approx(a / math.cos(math.pi / 12))
+    text = " ".join(f.message for f in plan.result.findings)
+    assert "not hinged, inside the wall's lowest course" in text
+
+
+def test_a_floor_inside_a_ring_with_a_closer_is_the_inside_circle() -> None:
+    k = kiln(**{**INSIDE, "28.075 in": "30 in"})
+    slab = next(p for p in plan_masonry(k).layers if p.part.name.startswith("floor/"))
+    assert slab.circle == pytest.approx(15 * IN)
+
+
+def test_a_floor_inside_the_walls_leaves_its_course_without_grooves() -> None:
+    e = design_elements(kiln(**INSIDE))
+    step = next(s for s in e.working if s.name.startswith("Groove round"))
+    assert step.inputs["courses"] == "5"
+    assert step.inputs["the wall's lowest course"] == "holds the floor slab, no groove"
+
+
+def test_a_floor_inside_the_walls_bands_and_peepholes() -> None:
+    from kilndesigner.hardware import build_hardware, lid_peephole_heights
+
+    k = kiln(**INSIDE)
+    (band,) = design_frame(k).findings
+    assert "3 round the wall" in band.message
+    assert "the floor slab, inside the wall's lowest course" in band.message
+    hw = build_hardware(k, design_frame(k), None)
+    spies = sorted(p.up for p in hw.ports if p.kind == "spy")
+    # The sections count from the wall's foot, 4½ in under the floor: each hole in the middle of
+    # its section's part above the floor
+    assert spies == pytest.approx([2.25, 9.0, 18.0])
+    assert lid_peephole_heights(22.5, 3, 4.5) == pytest.approx(spies)
+
+
+def test_a_floor_inside_the_walls_loses_less_through_the_floor() -> None:
+    from kilndesigner.heatloss import heat_loss
+
+    under, inside = (
+        heat_loss(kiln(**{"height: 27 in": "height: 22.5 in"})),
+        heat_loss(kiln(**INSIDE)),
+    )
+    assert inside.total_watts < under.total_watts  # the same walls, a floor that doesn't spread
+    assert any(s.name == "Floor inside the walls" for s in inside.working)
+    assert not any(s.name == "Floor inside the walls" for s in under.working)
+
+
+@pytest.mark.parametrize(
+    ("swap", "match"),
+    [
+        ({"  shape: round\n": "", LID: "", "height: 27 in": "height: 27 in\n  floor_inside: true"},
+         "is for a round wall"),
+        ({"rings: cut": "rings: mortar", "height: 27 in": "height: 27 in\n  floor_inside: true"},
+         "is for a round wall"),
+        ({"thickness: 3 in": "thickness: 4.5 in", "height: 27 in":
+          "height: 27 in\n  floor_inside: true"}, "is for a round wall"),
+    ],
+)  # fmt: skip
+def test_a_floor_inside_is_only_in_an_electric_ring(swap: dict[str, str], match: str) -> None:
+    text = SOURCE
+    for old, new in swap.items():
+        text = text.replace(old, new, 1)
+    with pytest.raises(ValueError, match=match):
+        parse_design(text)
+
+
+def test_a_floor_inside_is_no_thicker_than_its_course() -> None:
+    floor = "  floor:\n    - material: ifb-k23\n      thickness: 3 in\n"
+    thick = floor + "    - material: ifb-k23\n      thickness: 2.5 in\n"
+    text = SOURCE.replace(floor, thick).replace(
+        "height: 27 in", "height: 27 in\n  floor_inside: true"
+    )
+    with pytest.raises(ValueError, match=r"at most 4\.5 in thick; this one is 5\.5 in"):
+        parse_design(text)

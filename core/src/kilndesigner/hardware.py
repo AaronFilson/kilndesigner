@@ -1150,7 +1150,10 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     if asked.places is not None:
         places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
     elif lid:
-        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n)]
+        from kilndesigner.rings import FLOOR_COURSE_IN
+
+        below = FLOOR_COURSE_IN if kiln.chamber.floor_inside else 0.0
+        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n, below)]
     elif electric:
         places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
     else:
@@ -1203,18 +1206,23 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     )  # fmt: skip
 
 
-def lid_peephole_heights(height_in: float, n: int) -> list[float]:
+def lid_peephole_heights(height_in: float, n: int, below: float = 0.0) -> list[float]:
     """A top-loader's peepholes (in up from the floor): in the wall, each in the middle of a 9 in
     section (frame.SECTION_IN), between its two courses' element grooves, as L&L drills a two-row
     section square to the case (electric-kiln-hardware.md §4.1 [S8]); with more holes than
-    sections, spaced evenly."""
+    sections, spaced evenly. The wall starts ``below`` in under the floor when the floor slab is
+    inside its lowest course: the sections count from there, each hole in the middle of the part
+    of its section above the floor."""
     from kilndesigner.frame import SECTION_IN
 
-    sections = math.ceil(height_in / SECTION_IN - 1e-6)
+    sections = math.ceil((height_in + below) / SECTION_IN - 1e-6)
     if n > sections:
         return [height_in * (i + 1) / (n + 1) for i in range(n)]
     picks = [math.floor((i + 0.5) * sections / n) for i in range(n)]
-    return [(k * SECTION_IN + min((k + 1) * SECTION_IN, height_in)) / 2 for k in picks]
+    return [
+        (max(k * SECTION_IN - below, 0.0) + min((k + 1) * SECTION_IN - below, height_in)) / 2
+        for k in picks
+    ]
 
 
 def _spy_hole_note(

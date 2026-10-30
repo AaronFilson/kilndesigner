@@ -1068,11 +1068,15 @@ BANDS_SOURCE = (
 def _electric_bands(kiln: Kiln) -> Finding:
     """A round electric kiln's steel bands, listed but not sized: one round each section, the
     floor slab and the lid. No source gives a band's width, thickness or tension."""
-    height = si(kiln.chamber.height, "in")
+    from kilndesigner.rings import wall_height
+
+    inside = kiln.chamber.floor_inside
+    height = wall_height(si(kiln.chamber.height, "in"), inside)
     sections = math.ceil(height / SECTION_IN - 1e-6)
     lid = "the lid" if isinstance(kiln.roof, FlatRoof) else None
-    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section", "one round "
-             "the floor slab"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
+    slab = "the floor slab" + (", inside the wall's lowest course" if inside else "")
+    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section",
+             f"one round {slab}"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
     return Finding(
         level="info",
         message=(

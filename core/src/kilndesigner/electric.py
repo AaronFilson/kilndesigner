@@ -469,7 +469,11 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
     course = ROUND_COURSE_HEIGHT if is_round else COURSE_HEIGHT
     max_rows = int(si(kiln.chamber.height, "m") / si(course, "m") + 1e-9)
     if is_round:
-        working.append(_round_grooves_step(electric, shape.sides, groove, max_rows, us))
+        working.append(
+            _round_grooves_step(
+                electric, shape.sides, groove, max_rows, us, kiln.chamber.floor_inside
+            )
+        )
     max_load = si(MOST_SURFACE_LOAD, "W/m**2")
     preferred = si(KILN_SURFACE_LOAD, "W/m**2")
     candidates = _candidates(
@@ -696,14 +700,22 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
 
 
 def _round_grooves_step(
-    electric: Electric, sides: int | None, groove: float, rows: int, us: bool
+    electric: Electric,
+    sides: int | None,
+    groove: float,
+    rows: int,
+    us: bool,
+    floor_inside: bool = False,
 ) -> Step:
-    """The grooves of a round kiln: round the facets, one per course."""
+    """The grooves of a round kiln: round the facets, one per course above the floor."""
     inputs = {
         "element walls (quarters of the ring)": ", ".join(electric.walls),
         "courses": str(rows),
         "course height": show(ROUND_COURSE_HEIGHT),
     }
+    if floor_inside:
+        # The floor slab fills the wall's lowest course, so it has no groove (FLOOR_INSIDE_SOURCE)
+        inputs["the wall's lowest course"] = "holds the floor slab, no groove"
     if sides is None:
         formula = "π·D/4 per quarter"
         note = (
