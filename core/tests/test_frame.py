@@ -309,8 +309,9 @@ def test_a_domes_sheets_work_on_the_slice_that_decides_them() -> None:
     hot = _check(kiln, "frame.dome-heated-factor")
     assert hot.status == "warning"
     assert hot.solve == "Passes when h ≥ 9.168 in"  # not where the hot line leaves the ring
-    steel = _check(kiln, "frame.dome-steel")
-    assert {"H", "F", "F_tie"} <= {c.symbol for c in steel.cells}
+    steel = _check(kiln, "frame.dome-buttress")
+    assert {"H", "M", "M_a", "k_y", "k_E", "T_s"} <= {c.symbol for c in steel.cells}
+    assert {"P", "A_s"} <= {c.symbol for c in _check(kiln, "frame.dome-rod").cells}
     assert _check(kiln, "frame.dome-checked-range").solve == "Passes when t_1 ≤ 2.673 in"
 
 

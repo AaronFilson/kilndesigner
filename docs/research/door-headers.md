@@ -592,6 +592,10 @@ Worked examples (all derived):
   T/S 4–10 % only. Tie rods across door arches.
 - **Roof edge loads.** How a sail dome's edge load (vertical and thrust) is shared along each wall.
   How a flat roof bearing on four walls shares its load.
+- **Steel carrying it all (2026-10-30).** A steel lintel that carries everything above an
+  opening needs no refractory allowable stress except at its end bearings, which stay NOT FOUND;
+  the hot-steel method, and how Olsen's dome kilns span their doors (ring arches in buttressed
+  walls, no steel lintel), are in `steel-design.md`.
 - **Skewback over a door.** A sizing rule for a skewback beam spanning a door in a springing wall.
   HarbisonWalker gives only detailing.
 - **Car kilns.** Header construction for a studio car kiln: steel size, span, hung or arched.
