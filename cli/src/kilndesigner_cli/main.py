@@ -15,7 +15,6 @@ from kilndesigner.build import DRAWINGS, build_design
 from kilndesigner.castable import CastableError
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
-from kilndesigner.units import UnitError
 
 app = typer.Typer(no_args_is_help=True, help="Design kilns from YAML design files.")
 
@@ -33,7 +32,7 @@ for stream in (sys.stdout, sys.stderr):
 def _load(path: Path) -> Kiln:
     try:
         return load_design(path)
-    except (ValidationError, UnitError) as e:
+    except ValidationError as e:  # pydantic wraps a UnitError in this too
         typer.echo(f"{path}: the design is not valid\n{e}", err=True)
         raise typer.Exit(code=2) from e
 

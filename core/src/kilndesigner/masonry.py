@@ -249,8 +249,7 @@ def plan_layers(part: Part) -> list[LayerPlan] | None:
     plans: list[LayerPlan] = []
     for k, piece in enumerate(_split(part, sizes)):
         plan = plan_layer(piece)
-        if plan is None:  # every piece is one brick thick, so this can't happen
-            raise AssertionError(f"{part.name}: no laying for {piece.thickness:.1f} mm")
+        assert plan is not None, "every piece is one brick thick, so it can always be laid"
         plan.within = (k + 1, len(sizes))
         plans.append(plan)
     return plans

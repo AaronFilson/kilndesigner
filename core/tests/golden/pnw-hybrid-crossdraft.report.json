@@ -220,7 +220,7 @@
         "buy": "36 ft",
         "cost": null,
         "item": "L4×4×5/16",
-        "needed": "32.4 ft (corner posts, buttresses behind the skewbacks)",
+        "needed": "31.9 ft (corner posts, buttresses behind the skewbacks)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
@@ -1050,7 +1050,7 @@
     "members": [
       {
         "count": 4,
-        "length_in": 55.33055638202916,
+        "length_in": 53.598333829217495,
         "part": "corner posts",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "L4×4×5/16"

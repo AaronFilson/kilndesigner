@@ -124,10 +124,10 @@
         "unit_price": "$5.45"
       },
       {
-        "buy": "40 ft",
+        "buy": "38 ft",
         "cost": null,
         "item": "L4×4×5/16",
-        "needed": "36.1 ft (corner posts, buttresses behind the skewbacks)",
+        "needed": "34.3 ft (corner posts, buttresses behind the skewbacks)",
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
@@ -2708,6 +2708,12 @@
     {
       "check": null,
       "level": "info",
+      "message": "The cold line of thrust drops 4.43 in from the ring's corner to the side wall's outside, past the L4×4×5/16 buttress's 3.69 in of upright leg: HarbisonWalker, for industrial furnaces, wants it through or just above the steel's corner. Olsen's built kilns stand with it lower, so this is a note; a longer-legged angle, thinner walls at the skewback or more rise would bring it up.",
+      "reference": "HarbisonWalker: \"When the skewback is carried on a channel or angle, the line of thrust should pass through, or slightly above, the corner of the supporting steel\"; kiln-hardware.md §4.1 [S20]"
+    },
+    {
+      "check": null,
+      "level": "info",
       "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
       "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
     },
@@ -2897,6 +2903,12 @@
       {
         "check": null,
         "level": "info",
+        "message": "The cold line of thrust drops 4.43 in from the ring's corner to the side wall's outside, past the L4×4×5/16 buttress's 3.69 in of upright leg: HarbisonWalker, for industrial furnaces, wants it through or just above the steel's corner. Olsen's built kilns stand with it lower, so this is a note; a longer-legged angle, thinner walls at the skewback or more rise would bring it up.",
+        "reference": "HarbisonWalker: \"When the skewback is carried on a channel or angle, the line of thrust should pass through, or slightly above, the corner of the supporting steel\"; kiln-hardware.md §4.1 [S20]"
+      },
+      {
+        "check": null,
+        "level": "info",
         "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
       }
@@ -2905,7 +2917,7 @@
     "members": [
       {
         "count": 4,
-        "length_in": 63.297560975609755,
+        "length_in": 57.82439024390244,
         "part": "corner posts",
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "steel": "L4×4×5/16"

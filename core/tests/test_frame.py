@@ -17,7 +17,7 @@ from kilndesigner.frame import (
     heated_thrust_factor,
     steel_data,
 )
-from kilndesigner.model import Kiln
+from kilndesigner.model import Kiln, SprungArch
 from kilndesigner.sheet import Check
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
@@ -199,6 +199,47 @@ def test_a_flat_roof_outside_what_the_sources_cover(
     document["lining"]["roof"][0]["thickness"] = roof
     kiln = Kiln.model_validate({**document, "roof": {"type": "flat"}})
     assert [f.level for f in design_frame(kiln).findings if says in f.message] == [level]
+
+
+def test_the_buttress_sits_at_the_solid_rings_outer_corner() -> None:
+    """Review S5: the skewback top, where the buttress angle sits, is the ring's outer corner;
+    blanket laid over the ring is only load (HarbisonWalker, kiln-hardware.md §4.1)."""
+    from kilndesigner.frame import skewback_top
+    from kilndesigner.shape import Arch
+    from kilndesigner.units import si
+
+    kiln = load_design(EXAMPLES / "gas-crossdraft.yaml")
+    assert isinstance(kiln.roof, SprungArch)
+    arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
+    layers = kiln.lining.for_face("roof")
+    ring = sum(si(x.thickness, "in") for x in layers[: kiln.roof.ring])
+    whole = sum(si(x.thickness, "in") for x in layers)
+    centre = si(kiln.chamber.height, "in") + arch.rise - arch.radius
+    assert skewback_top(kiln) == pytest.approx(
+        centre + (arch.radius + ring) * math.cos(arch.half_angle)
+    )
+    assert skewback_top(kiln, whole_roof=True) == pytest.approx(
+        centre + (arch.radius + whole) * math.cos(arch.half_angle)
+    )
+
+
+def test_the_line_of_thrust_is_followed_to_the_buttress() -> None:
+    """HarbisonWalker: the line of thrust through, or slightly above, the steel's corner. From
+    the ring's corner it drops W/(2·H_c) per inch out; past the angle's upright leg is a note,
+    since Olsen's built kilns stand like that (ADR 0014)."""
+    from kilndesigner.frame import _arch_inputs  # pyright: ignore[reportPrivateUsage]
+    from kilndesigner.frame_checks import thrust_through_steel
+
+    kiln = load_design(EXAMPLES / "gas-crossdraft.yaml")
+    a = _arch_inputs(kiln)
+    sheet = thrust_through_steel(a, 8.0, 3.0, 0.25)
+    w, h_c = sheet.env["W"], sheet.env["H_c"]
+    x_c, x_w = sheet.env["x_c"], sheet.env["x_w"]
+    assert sheet.env["δ"] == pytest.approx(w / (2 * h_c) * (x_w - x_c))
+    assert x_w == pytest.approx((28 / 2 + 8) * 0.0254)
+    # A 1 in leg can't catch it; a 6 in leg does
+    assert thrust_through_steel(a, 8.0, 1.0, 0.25).check().status == "warning"
+    assert thrust_through_steel(a, 8.0, 6.0, 0.25).check().status == "pass"
 
 
 def _flat(width: str, roof: str) -> Kiln:
