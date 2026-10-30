@@ -301,8 +301,8 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             )
             findings.append(Finding.failed(check, (
                 f"Round wall: a {length_text(2 * r, us)} ring of straights cut to the angle "
-                f"takes {cut_bricks(2 * r, depth):.2f} full 9 in bricks round, more than 1/16 in from "
-                f"whole bricks, so it is laid with the fewest, {n}, and a closer cut to "
+                f"takes {cut_bricks(2 * r, depth):.2f} full 9 in bricks round, more than 1/16 in "
+                f"from whole bricks, so it is laid with the fewest, {n}, and a closer cut to "
                 f"{length_text(one.length or 0.0, us)}: allowed, but not usual. Cut rings are "
                 "built in whole bricks, as electric kilns are sized 6, 8, 10, 12 bricks round: "
                 f"for no closer make this ring {near} across inside.")))  # fmt: skip
