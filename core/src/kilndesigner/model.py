@@ -571,7 +571,17 @@ class Firebox(Spec):
     grate: Grate | None = Field(
         default=None, description="Left out: the fuel burns on the firebox's floor"
     )
-    ash_pit: Length | None = Field(default=None, description="From the grate down")
+    ash_pit: Length | None = Field(
+        default=None,
+        description="From the grate down; left out with a grate, as deep as the firebox is tall "
+        "above it, Olsen's grate at the vertical midpoint (The Kiln Book, 4th ed., p.199–200)",
+    )
+    step: Length | None = Field(
+        default=None,
+        description="From the grate up to the chamber floor beside it. Left out, 0 in: the grate "
+        "level with the floor, the firebox part of the first chamber, as kilns fired for ash and "
+        "flashing are; Olsen's 9–12 in drops smouldering coals into the front stacking (p.188)",
+    )
     inlet: Port | None = Field(
         default=None, description="Each inlet flue from the firebox into the chamber"
     )

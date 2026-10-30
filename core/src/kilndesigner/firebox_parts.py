@@ -40,7 +40,9 @@ from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Literal
 
 from kilndesigner.model import Firebox, Kiln
-from kilndesigner.units import si
+from kilndesigner.shape import chamber_shape
+from kilndesigner.sheet import Sheet
+from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, length_text
 
 if TYPE_CHECKING:
@@ -182,6 +184,26 @@ def _outside(s: Site, face: str, u0: float, u1: float) -> float:
     return s.width / 2 + s.reach[face]
 
 
+GRATE_HEIGHT_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; "
+    "12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the "
+    "chamber floor), p.179 (a 12–15 in step up)"
+)
+
+
+def grate_heights(fb: Firebox) -> tuple[float, float, float]:
+    """A firebox's space above the grate, its ash pit below and the step up from the grate to
+    the chamber floor (mm). With a grate, an ash pit left out is as deep as the space above,
+    Olsen's grate at the vertical midpoint (p.199–200). A step left out is 0: the grate level with
+    the chamber floor, the firebox open to the first chamber; the report gives Olsen's 9–12 in
+    (p.188) as the other choice. Without a grate the fuel burns on the floor."""
+    fh = si(fb.height, "mm") if fb.height is not None else si(fb.width, "mm")
+    grate = fb.grate is not None
+    ash = si(fb.ash_pit, "mm") if fb.ash_pit is not None else (fh if grate else 0.0)
+    step = si(fb.step, "mm") if fb.step is not None else 0.0
+    return fh, ash, step
+
+
 def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
     """Every firebox's inside, where it stands."""
     fire = kiln.heat.fire
@@ -194,8 +216,7 @@ def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
     ends = 0  # fireboxes at the ends of a row so far: the later ones feed the later chambers
     for fb in fire.fireboxes:
         fw, fl = si(fb.width, "mm"), si(fb.length, "mm")
-        fh = si(fb.height, "mm") if fb.height is not None else fw
-        ash = si(fb.ash_pit, "mm") if fb.ash_pit is not None else 0.0
+        fh, ash, step = grate_heights(fb)
         n, face = fb.count, fb.position
         first = 0
         troughs = n * fw > s.width + 1e-6 and 1 < n <= s.chambers
@@ -226,23 +247,25 @@ def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
             if face in ("front", "back"):
                 y_out = _outside(s, face, u0, u1)
                 level = s.floors[0] if face == "front" else s.floors[-1]
+                g = level - step
                 if face == "front":
-                    lo, hi = (u0, -y_out - fl, level - ash), (u1, -y_out, level + fh)
+                    lo, hi = (u0, -y_out - fl, g - ash), (u1, -y_out, g + fh)
                     side: Side = "+y"
                 else:
-                    lo, hi = (u0, y_out, level - ash), (u1, y_out + fl, level + fh)
+                    lo, hi = (u0, y_out, g - ash), (u1, y_out + fl, g + fh)
                     side = "-y"
             else:
                 y0, y1 = s.middle + u0, s.middle + u1
                 level = s.floor_at(s.middle + c)
+                g = level - step
                 x_out = _outside(s, face, u0, u1)
                 if face == "left":
-                    lo, hi = (-x_out - fl, y0, level - ash), (-x_out, y1, level + fh)
+                    lo, hi = (-x_out - fl, y0, g - ash), (-x_out, y1, g + fh)
                     side = "+x"
                 else:
-                    lo, hi = (x_out, y0, level - ash), (x_out + fl, y1, level + fh)
+                    lo, hi = (x_out, y0, g - ash), (x_out + fl, y1, g + fh)
                     side = "-x"
-            out.append(FireboxBox(j, fb, lo, hi, level, side, level=level))
+            out.append(FireboxBox(j, fb, lo, hi, g, side, level=level))
     return out
 
 
@@ -264,10 +287,12 @@ def _lined(
     open_side: Side | None,
     roof: bool,
     chamber: int | None,
+    floor_: bool = True,
 ) -> list[Part]:
-    """A box's walls, floor and (with ``roof``) roof round the inside lo–hi, the walls' layers
-    wrapped like the kiln's own (geometry._level_parts): the walls across x run through, those
-    across y fit between them. ``open_side`` is left unbuilt: the kiln's wall is there."""
+    """A box's walls, floor (unless not ``floor_``) and (with ``roof``) roof round the inside
+    lo–hi, the walls' layers wrapped like the kiln's own (geometry._level_parts): the walls across
+    x run through, those across y fit between them. ``open_side`` is left unbuilt: the kiln's
+    wall is there."""
     from kilndesigner.castable import resolve_material
     from kilndesigner.geometry import Part
 
@@ -305,7 +330,7 @@ def _lined(
     xs = (x0 - out("-x", total), x1 + out("+x", total))
     ys = (y0 - out("-y", total), y1 + out("+y", total))
     cum = 0.0
-    for k, (mat, th) in enumerate(floor):
+    for k, (mat, th) in enumerate(floor if floor_ else []):
         add(f"{k + 1}-{mat}-floor", mat, "floor", (xs[0], ys[0], z0 - cum - th),
             (xs[1], ys[1], z0 - cum))  # fmt: skip
         cum += th
@@ -351,8 +376,18 @@ def firebox_parts(kiln: Kiln) -> list[Part]:
                 # Shallower than the floor: the floor's layers under it, in the cut
                 parts += _trough_floor(kiln, tag, b)
             continue
-        open_side = None if b.kiln_side == "up" else b.kiln_side
-        parts += _lined(kiln, tag, b.lo, b.hi, open_side, b.kiln_side != "up", b.chamber)
+        if b.kiln_side == "up":
+            parts += _lined(kiln, tag, b.lo, b.hi, None, False, b.chamber)
+            continue
+        # Below the kiln's floor the kiln has no wall, so the firebox builds its own there
+        cut = b.level - s.floor_t
+        if b.lo[2] < cut - 1e-6:
+            parts += _lined(kiln, f"{tag}/pit", b.lo, (b.hi[0], b.hi[1], cut), None, False,
+                            b.chamber)  # fmt: skip
+            parts += _lined(kiln, tag, (b.lo[0], b.lo[1], cut), b.hi, b.kiln_side, True,
+                            b.chamber, floor_=False)  # fmt: skip
+        else:
+            parts += _lined(kiln, tag, b.lo, b.hi, b.kiln_side, True, b.chamber)
     return parts
 
 
@@ -623,20 +658,97 @@ def firebox_findings(kiln: Kiln) -> list[Finding]:
                         "opening its whole width is cut")  # fmt: skip
         if fb.grate is not None and fb.grate.gap is None:
             bits.append("its grate's bar spacing isn't given, so no bars are drawn or listed")
+        if fb.grate is not None:
+            ash = grate_heights(fb)[1]
+            said = []
+            if fb.ash_pit is None:
+                said.append(f"its ash pit {length_text(ash, us)} deep, as deep as the space "
+                            "above the grate (Olsen's grate at the vertical midpoint, "
+                            "p.199–200)")  # fmt: skip
+            if fb.step is None and b.kiln_side != "up":
+                said.append("its grate level with the chamber floor, as no step is given")
+            if said:
+                bits.append("drawn with " + " and ".join(said))
         notes.append(", ".join(bits))
     message = (
         "Fireboxes are built of the kiln's own layers, the walls' round their sides and over "
         "their roofs, the floor's under them; no source here gives a firebox its own lining. "
-        "Against a wall, the grate (or the firebox's floor) is at the chamber floor's level and "
-        "the inlet flues are cut at the foot of the wall between; Olsen's grates sit 9–15 in "
-        "below the ware floor (p.188–189, p.179–180), which the design doesn't say, so set the "
-        "step as you build. Stoke holes are cut with their foot at the grate (p.188), and ash "
-        "pits are left open at the mouth (p.188). The flat roofs are drawn of the walls' layers: "
-        "span them with an arch, bricks or kiln shelves as Olsen does (p.145). "
-        + "; ".join(notes)
-        + "."
+        "Against a wall, the grate sits its step below the chamber floor, so smouldering coals "
+        "fall into the front stacking (p.188), and the inlet flues are cut at the floor's level "
+        "in the wall between; below the kiln's floor the firebox has walls of its own. Stoke "
+        "holes are cut with their foot at the grate (p.188), and ash pits are left open at the "
+        "mouth (p.188). The flat roofs are drawn of the walls' layers: span them with an arch, "
+        "bricks or kiln shelves as Olsen does (p.145). " + "; ".join(notes) + "."
     )
-    return [Finding(level="info", message=message, reference=FIREBOX_SOURCE)]
+    return [Finding(level="info", message=message, reference=FIREBOX_SOURCE),
+            *grate_findings(kiln, boxes)]  # fmt: skip
+
+
+def grate_sheets(kiln: Kiln, b: FireboxBox) -> list[Sheet]:
+    """The one thing a grate firebox against a wall must do whatever it is fired for: rise above
+    the chamber floor, so its flame has a way in. Its heights otherwise are the builder's choice
+    and are reported, not judged (grate_findings)."""
+    if b.kiln_side == "up" or b.trough:
+        return []
+    fh, _, step = grate_heights(b.box)
+    given = "the design: the firebox"
+    s = Sheet(f"firebox.reaches-floor.{b.index}",
+              f"Firebox {b.index} rises above the chamber floor",
+              reference=FIREBOX_SOURCE)  # fmt: skip
+    s.given("a", "space above the grate", Q_(fh, "mm").to("in"), "in", source=given)
+    s.given("e", "grate to chamber floor", Q_(step, "mm").to("in"), "in", source=given)
+    s.require("a", ">", "e")
+    s.lever("a", Q_(1, "in"), Q_(60, "in"))
+    return [s]
+
+
+def grate_findings(kiln: Kiln, boxes: list[FireboxBox]) -> list[Finding]:
+    """Each grate firebox's heights, with what Olsen gives for each way of firing. A wood or coal
+    firebox is built for the effect wanted, so these are options to weigh, not limits: the most
+    heat from a high grate with the most air under it (his fast-fire kilns), an even burn from the
+    grate at the midpoint, or ash carried up round the ware for ash glazing and flashing, the
+    firebox part of the first chamber (the user, a kiln builder, 2026-10-30)."""
+    us = kiln.units == "us"
+    ft3 = chamber_shape(kiln).volume / si(Q_(1, "ft**3"), "m**3")
+    out: list[Finding] = []
+    for b in boxes:
+        if b.box.grate is None:
+            continue
+        fh, ash, step = grate_heights(b.box)
+        for sheet in grate_sheets(kiln, b):
+            if (check := sheet.check()).status != "pass":
+                out.append(Finding.failed(check, (
+                    f"Firebox {b.index} is {length_text(fh, us)} tall above its grate, which is "
+                    f"{length_text(step, us)} below the chamber floor, so it doesn't reach the "
+                    "floor and its flame has no way into the chamber: make it taller or the step "
+                    "less.")))  # fmt: skip
+        share = ash / (ash + fh) if ash + fh > 0 else 0.0
+        where = (
+            f", the grate {length_text(step, us)} below the chamber floor"
+            if b.kiln_side != "up" and not b.trough
+            else ""
+        )
+        band = (
+            f" This kiln is {ft3:.0f} ft³, inside the 30–100 ft³ for which Olsen gives 12–18 in "
+            "below the grate and the same above (p.199)."
+            if 30 <= ft3 <= 100
+            else f" This kiln is {ft3:.0f} ft³; Olsen's 12–18 in below and above is for "
+            "30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at "
+            "6–7 in, on a 12–16 ft³ fast-fire kiln."
+        )
+        out.append(Finding(level="info", reference=GRATE_HEIGHT_SOURCE, message=(
+            f"Firebox {b.index}: {length_text(fh, us)} above the grate and an ash pit "
+            f"{length_text(ash, us)} below it ({share:.0%} of its height below the grate){where}. "
+            "How high to set the grate depends on the firing wanted. Olsen sets it at the "
+            "vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and "
+            "below, p.167); for the most heat his fast-fire kilns put more than half below, for "
+            "the most air under the coals (p.140, p.204); a grate set too low chokes the coals "
+            "(p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals "
+            "into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns "
+            "fired for ash glazing and flashing make the firebox part of the first chamber, so "
+            "the ash rides up round the pots: a step of 0 in, the default." + band
+        )))  # fmt: skip
+    return out
 
 
 def model_holes(kiln: Kiln) -> list[tuple[Vec, Vec, object]]:

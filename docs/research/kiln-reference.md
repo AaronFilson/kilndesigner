@@ -400,7 +400,13 @@ The user remembers springs from the 1st or 2nd edition.
     and the wedges No.1 9 × 4½ × (2½–1⅞), No.2 (2½–1½) (p.298–302, Read). p.299's header reads
     "(2½–1½)" and "(2½–2⅞)" (?) for the arch bricks, probably a misprint.
   - Circle bricks make a 4½ in lining; rotary-kiln and cupola blocks, (9) × 6 × 4 in, a 6 in
-    lining (p.24, Read). Their sizes are in the appendix tables (§20).
+    lining (p.24, Read). Tables A-8 and A-9 (p.306, §20) give the rotary-kiln and cupola blocks for
+    6 and 9 in linings; the appendix has no table of 4½ in circle bricks. The user, a kiln
+    builder (2026-10-30): round face brick is little used; circular kiln parts are mostly made with
+    straights and featheredges, or cast. Featheredges are one way; straights cut to the angle the
+    circle needs are the other, and the norm in electric kilns. A 4½ in wall of straights is also
+    laid with the inside faces following the curve and the wedge-shaped joint behind filled with
+    mortar.
 - **Square-edge fire tiles** serve as kiln floors and shelves: 12 × 12, 12 × 15, 12 × 18 and
   12 × 24 in, each 2½ or 3 in thick; a further column, probably 2 in, is unreadable (p.23, Read).
 
@@ -469,6 +475,10 @@ The user remembers springs from the 1st or 2nd edition.
   the bottom bricks (p.45, Read). Bricks by thickness: 4½ in, circle bricks (arch bricks possible
   but not recommended); 9 in, key bricks, or circle and key bricks; 13½ in and more, key bricks, or
   circle and key bricks (wedges not recommended). Alternate the joints as in straight walls.
+  Fig. 2-13 (p.45, Checked on the page image 2026-10-30) draws a curved wall of rectangular bricks:
+  in plan, a two-brick-thick wall whose bricks are square-ended, so the joints between them open
+  wider toward the outside; in perspective, a stretcher course on a header course, both of straights
+  following the curve. The caption: "Joints are alternated in the construction of a curved wall."
 - **Walls in practice** (Read):
   - IFB kilns: a 7 in wall is sufficient (p.176): a hot-face stretcher course, presumably IFB (the
     word is cut off at the gutter), behind which is a rowlock course of low-duty brick or a 2 in (?)
@@ -3024,7 +3034,9 @@ be used for 13½ × 9 × 3in. arches")
   84–102; 7'3": 18 + 19 of 90–108 (the totals for 6'0"–7'3" are faint). The user's photo of p.306
   shows the totals 32 (6'0"), 33 (6'3"), 34 (6'6") and 35 (the row below), and that each two-size
   row pairs its own row's block with the next size, as in Table A-8 (so 6'3" is 16 of 72–90 + 17 of
-  78–96).
+  78–96). A second photo of p.306 (2026-10-30) reads all the totals: 32, 33, 34, 35 (6'9"), 36 (7'0")
+  and 37 (7'3"); every total equals its sum. It also shows that p.306 has no table of 4½ in circle
+  bricks: its only circle tables are A-8 and A-9.
 
 ### Other appendix pages
 

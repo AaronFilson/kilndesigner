@@ -11,6 +11,7 @@ from kilndesigner.masonry import plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.plans import build_plans
 from kilndesigner.report import design_report
+from kilndesigner.units import parse_quantity
 
 ROOT = Path(__file__).parents[2]
 EXAMPLES = ROOT / "examples"
@@ -195,3 +196,51 @@ def test_fireboxes_are_in_the_model(name: str, tmp_path: Path) -> None:
     written = write_model(kiln, design_report(kiln), tmp_path)
     index = json.loads(written["parts"].read_text("utf-8"))
     assert any(k.startswith("firebox-") for k in index)
+
+
+def _bidai_with(**firebox: str) -> Kiln:
+    """Olsen's Bidai kiln, its front firebox changed."""
+    kiln = load_design(EXAMPLES / "olsen" / "bidai.yaml")
+    assert kiln.heat.fire is not None
+    fb = kiln.heat.fire.fireboxes[0].model_copy(update={
+        k: parse_quantity(v) for k, v in firebox.items()})  # fmt: skip
+    fire = kiln.heat.fire.model_copy(update={"fireboxes": [fb]})
+    return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": fire})})
+
+
+def test_a_step_sets_the_grate_below_the_chamber_floor() -> None:
+    level = firebox_boxes(_bidai_with())[0]
+    stepped = firebox_boxes(_bidai_with(step="9 in", height="30 in"))[0]
+    assert level.grate_z == pytest.approx(level.level)
+    assert stepped.grate_z == pytest.approx(stepped.level - 9 * IN)
+    # Below the kiln's floor the firebox builds its own walls, round its pit
+    assert any("/pit/" in n for n in _firebox_parts(_bidai_with(step="9 in", height="30 in")))
+
+
+def test_an_ash_pit_left_out_is_as_deep_as_the_space_above_the_grate() -> None:
+    b = firebox_boxes(_bidai_with(height="20 in", ash_pit="0 in"))[0]
+    assert b.grate_z - b.lo[2] == pytest.approx(0)
+    kiln = _bidai_with(height="20 in")
+    fb = kiln.heat.fire.fireboxes[0]  # type: ignore[union-attr]
+    kiln = kiln.model_copy(update={"heat": kiln.heat.model_copy(update={
+        "fire": kiln.heat.fire.model_copy(update={  # type: ignore[union-attr]
+            "fireboxes": [fb.model_copy(update={"ash_pit": None})]})})})  # fmt: skip
+    b = firebox_boxes(kiln)[0]
+    assert b.grate_z - b.lo[2] == pytest.approx(20 * IN)
+
+
+def test_the_grate_heights_are_reported_as_choices_not_warned() -> None:
+    report = design_report(_bidai_with(height="12 in", ash_pit="30 in"))
+    notes = [f for f in report.findings if f.message.startswith("Firebox 1: ")]
+    assert len(notes) == 1
+    assert notes[0].level == "info"
+    assert "fast-fire" in notes[0].message
+    assert "flashing" in notes[0].message
+    assert not [f for f in report.findings
+                if f.check is not None and f.check.id.startswith("firebox.")]  # fmt: skip
+
+
+def test_a_firebox_that_doesnt_reach_the_floor_is_an_error() -> None:
+    report = design_report(_bidai_with(step="12 in", height="9 in"))
+    errors = [f for f in report.findings if f.level == "error"]
+    assert [f.check.id for f in errors if f.check] == ["firebox.reaches-floor.1"]
