@@ -2,7 +2,7 @@ import { Ray, Vector3 } from "three";
 import { describe, expect, it } from "vitest";
 
 import type { Layout, RunInfo, WallFrame } from "./design";
-import { placePoint, roundHit, wallMatrix, wallPoint } from "./run";
+import { chamberAt, placePoint, roundHit, stepAt, wallMatrix, wallPoint } from "./run";
 import { fit, wallHit } from "./components/PortMarkers";
 
 const frame = (origin: [number, number, number], normal: [number, number, number], right: [number, number, number]): WallFrame => ({
@@ -84,6 +84,39 @@ describe("walls on a run of chambers", () => {
     expect(hit?.wall).toBe("back");
     expect(hit?.across).toBeCloseTo(fit(layout, "back", 100, 300, { kind: "spy", width: 50, height: 50 }).across);
     expect(hit?.up).toBeCloseTo(300, -1);
+  });
+});
+
+describe("chambers in a row that step up their slope", () => {
+  // Laid out in brick: each chamber level, its floor 300 mm above the last's; the slope isn't a tilt
+  const stepped: RunInfo = { ...run, slope: 15, step: 300 };
+  const layout = layoutOf(stepped);
+
+  it("finds each point's chamber, and raises it with that chamber's floor", () => {
+    expect(chamberAt(stepped, -800)).toBe(0);
+    expect(chamberAt(stepped, 1300)).toBe(1);
+    expect(chamberAt(stepped, 99999)).toBe(2);
+    near(placePoint(stepped, new Vector3(0, 1300, 50)), [0, 1300, 350]);
+    near(placePoint({ ...stepped, step: undefined }, new Vector3(0, -500, 0)), [0, -500, 0]);
+  });
+
+  it("puts the flue end's wall on the last floor, and side-wall ports on their own chamber's", () => {
+    near(wallPoint(layout, "back", 0, 100).point, [0, 600 + 2 * 1200, 100 + 2 * 300]);
+    near(wallPoint(layout, "front", 0, 100).point, [0, -600, 100]);
+    // Along the right wall, 1300 mm in: the second chamber's floor
+    const second = wallPoint(layout, "right", 1300, 100);
+    near(second.point, [600, 1300, 400]);
+    expect(stepAt(layout, "right", new Vector3(600, 0, 0))).toBe(0);
+    expect(stepAt(layoutOf(run), "right", new Vector3(600, 1300, 0))).toBe(0);
+  });
+
+  it("finds a port dragged on a later chamber's side wall at its height above that floor", () => {
+    const wide = { ...layout, walls: { ...layout.walls, right: { ...layout.walls.right, half_width: 4000 } } };
+    const { point, normal } = wallPoint(wide, "right", 1300, 200, 50);
+    const ray = new Ray(point.clone().add(normal.clone().multiplyScalar(1000)), normal.clone().negate());
+    const hit = wallHit(wide, ray, { kind: "spy", width: 50, height: 50 });
+    expect(hit?.wall).toBe("right");
+    expect(hit?.up).toBeCloseTo(200, -1);
   });
 });
 

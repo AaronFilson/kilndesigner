@@ -17,7 +17,7 @@ import {
   WALLS,
   type WallFace,
 } from "../design";
-import { roundHit, wallMatrix, wallPoint } from "../run";
+import { roundHit, stepAt, wallMatrix, wallPoint } from "../run";
 
 /** A port as a marker: where it is now (the design's place, if it has one, or the build's). */
 export interface Marker {
@@ -176,7 +176,10 @@ export function wallHit(
     const origin = new Vector3(...frame.origin);
     const t = origin.clone().sub(local.origin).dot(normal) / facing;
     if (t <= 0) continue;
-    const hit = local.at(t, new Vector3()).sub(origin);
+    const point = local.at(t, new Vector3());
+    const hit = point.clone().sub(origin);
+    // A run that steps up: further along a side wall, the floor stands higher
+    hit.z -= stepAt(layout, wall, point);
     const across = hit.dot(new Vector3(...frame.right));
     const reach = frame.half_width + frame.thickness;
     if (Math.abs(across) > reach || hit.z < -frame.thickness || hit.z > topAt(layout, wall, 0) + reach) {

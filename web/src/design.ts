@@ -243,6 +243,9 @@ export interface RunInfo {
   slope: number;
   bend: number;
   length: number;
+  /** Chambers in a row laid out in brick (core run_parts.py) stand level, each floor this far
+   * above the last: the run steps up its slope rather than tilting. Absent for shells. */
+  step?: number;
 }
 
 export interface Layout {
