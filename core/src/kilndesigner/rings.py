@@ -15,9 +15,10 @@ taper, the gentlest is mixed with straights. The book doesn't say how it rounds 
 round a fraction of a brick of 0.097 or less down (A-4 at 3'6", 0.088; A-6 at 6'0", 0.097) and
 one of 0.106 or more up (A-4 at 7", 0.106). So N is rounded down within 0.1 of a brick and up
 otherwise: derived from the tables, not stated by them. The gentler shape's count is rounded to
-the nearest brick, and the tighter one makes up N. This reproduces Olsen's tables A-4 (arch
-bricks) and A-6 (wedges) to within a brick of each shape and exactly in total (The Kiln Book, 4th
-ed. p.303–305; kiln-reference.md, "Tables A-4 to A-7"), which the tests keep.
+the nearest brick, and the tighter one makes up N. This reproduces Olsen's tables A-4 to A-7
+(arch bricks and wedges, 2½ and 3 in series) to within a brick of each shape and exactly in
+total (The Kiln Book, 4th ed. p.303–305; kiln-reference.md, "Tables A-4 to A-7"), which the
+tests keep.
 
 Shapes, 2½ in series (kiln-reference.md, "Brick sizes and shapes", p.21, p.298–302):
 
@@ -45,7 +46,7 @@ SOURCE = (
 
 DOWN = 0.1  # of a brick: rounded down below this (derived from tables A-4 and A-6, above)
 
-type Series = Literal["arch", "wedge", "key"]
+type Series = Literal["arch", "wedge", "key", "arch3", "wedge3"]
 
 
 @dataclass(frozen=True)
@@ -81,6 +82,23 @@ FAMILIES: dict[Series, Family] = {
         (Taper("No. 4 key", 2.25), Taper("No. 3 key", 3.0), Taper("No. 2 key", 3.5),
          Taper("No. 1 key", 4.0)),
         "straight laid through the wall",
+    ),
+    # 3 in series (9 × 4½ × 3 in), tables A-5 and A-7. The book's shape page for this series is
+    # cut off or faint (p.22), so the thin ends are derived from the tables' single-shape rows:
+    # A-5 at 1'6", 29 No.3 arch round π × 18 in → 1.95 ≈ 2 in; at 3'9", 57 No.2 round π × 45 in
+    # → 2.48 ≈ 2½ in; at 6'0", 28 No.2 and 57 No.1 round π × 72 in → 2.74 ≈ 2¾ in. A-7 at 3'0",
+    # 57 No.3 wedges round π × 36 in → 1.98 ≈ 2 in; at 4'6", 38 + 38 → No.2 2.46 ≈ 2½ in. These
+    # agree with the faint "No.2 (3–2½)" on p.22 and the (3–2) No.3 arch there.
+    "arch3": Family(
+        3.0, 4.5, 9.0,
+        (Taper("No. 3 arch, 3 in series", 2.0), Taper("No. 2 arch, 3 in series", 2.5),
+         Taper("No. 1 arch, 3 in series", 2.75)),
+        "3 in straight",
+    ),
+    "wedge3": Family(
+        3.0, 9.0, 4.5,
+        (Taper("No. 3 wedge, 3 in series", 2.0), Taper("No. 2 wedge, 3 in series", 2.5)),
+        "3 in straight",
     ),
 }  # fmt: skip
 

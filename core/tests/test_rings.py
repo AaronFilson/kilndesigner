@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
 import pytest
 
 from kilndesigner.rings import IN, RingError, ring, ring_series, wall_rings
@@ -59,6 +62,52 @@ def test_wedge_rings_match_olsens_table_a6(row: tuple[int, ...]) -> None:
     assert sum(got.values()) == sum(want.values())
     for name, n in got.items():
         assert abs(n - want[name]) <= 1, (name, got, want)
+
+
+REFERENCE = Path(__file__).parents[2] / "docs" / "research" / "kiln-reference.md"
+
+
+def _table(heading: str) -> list[list[int]]:
+    """A transcribed table's rows: the diameter in inches, then each column's count (– is 0)."""
+    text = REFERENCE.read_text(encoding="utf-8").split(heading, 1)[1].split("\n\n**", 1)[0]
+    text = text.split("\n### ", 1)[0]
+    rows: list[list[int]] = []
+    for line in text.splitlines():
+        m = re.match(r"\| (\d+)'(\d+)\" \|(.*)\|$", line)
+        if m:
+            cells = [c.strip().replace("(?)", "").strip() for c in m[3].split("|")]
+            rows.append([int(m[1]) * 12 + int(m[2])] + [0 if c == "–" else int(c) for c in cells])
+    return rows
+
+
+A5 = _table("**Table A-5")
+A7 = _table("**Table A-7")
+
+
+@pytest.mark.parametrize("row", A5, ids=lambda r: f"{r[0]}in")
+def test_3_inch_arch_rings_match_olsens_table_a5(row: list[int]) -> None:
+    d, n3, n2, n1, total = row
+    got = _counts(d, "arch3")
+    want = {"No. 3 arch, 3 in series": n3, "No. 2 arch, 3 in series": n2,
+            "No. 1 arch, 3 in series": n1, "3 in straight": 0}  # fmt: skip
+    assert sum(got.values()) == total
+    for name, n in got.items():
+        assert abs(n - want[name]) <= 1, (name, got, want)
+
+
+@pytest.mark.parametrize("row", A7, ids=lambda r: f"{r[0]}in")
+def test_3_inch_wedge_rings_match_olsens_table_a7(row: list[int]) -> None:
+    d, n3, n2, total = row
+    got = _counts(d, "wedge3")
+    want = {"No. 3 wedge, 3 in series": n3, "No. 2 wedge, 3 in series": n2, "3 in straight": 0}
+    assert sum(got.values()) == total
+    for name, n in got.items():
+        assert abs(n - want[name]) <= 1, (name, got, want)
+
+
+def test_the_3_inch_tables_are_all_read() -> None:
+    assert (len(A5), A5[0][0], A5[-1][0]) == (66, 18, 83)
+    assert (len(A7), A7[0][0], A7[-1][0]) == (49, 36, 84)
 
 
 def test_a_circle_tighter_than_the_tightest_shape_is_refused() -> None:
