@@ -13,9 +13,18 @@ export interface KilnDocument {
   name: string;
   units?: "us" | "metric";
   firing: { cone?: string; final_rate?: 60 | 100 | 150 | 600; top_temperature?: string };
-  chamber: { width: string; depth: string; height: string };
+  chamber: {
+    shape?: "box" | "round";
+    width: string;
+    depth: string;
+    height: string;
+    chambers?: number;
+    slope?: string;
+    on_ground?: boolean;
+  };
   roof?:
     | { type: "flat" }
+    | { type: "open" }
     | {
         type: "sprung_arch";
         rise: string;
@@ -33,13 +42,14 @@ export interface KilnDocument {
   };
   lining: { walls: Layer[]; floor?: Layer[]; roof?: Layer[]; door?: Layer[] };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
-  heat: { electric?: Electric; gas?: Gas };
+  heat: { electric?: Electric; gas?: Gas; fire?: Fire };
   draft?: {
     type: "cross" | "down" | "up";
     flue_wall?: WallFace;
     run_to_chimney?: string;
     flue_port?: Port;
     flue_across?: string;
+    chimney?: Chimney;
   };
   spy_holes?: { count?: number; port?: Port; places?: Place[] };
   site?: {
@@ -97,16 +107,57 @@ export interface Burners {
   type?: "venturi" | "power";
   count?: number;
   model?: string;
-  wall?: WallFace;
+  rating?: string;
+  wall?: WallFace | "floor";
   port?: Port;
   up?: string;
   places?: Place[];
 }
 
+/** A flue's or chimney's inside: round, by its diameter, or a rectangle. */
+export interface FlueSection {
+  diameter?: string;
+  width?: string;
+  depth?: string;
+}
+
+export interface Chimney {
+  height: string;
+  inside?: FlueSection;
+  top?: FlueSection;
+}
+
+export type FireboxPosition = "front" | "back" | "left" | "right" | "under";
+
+export interface Firebox {
+  count?: number;
+  position?: FireboxPosition;
+  width: string;
+  length: string;
+  height?: string;
+  grate?: { width: string; length: string; gap?: string };
+  ash_pit?: string;
+  inlet?: Port;
+  inlets?: number;
+  stoke_hole?: Port;
+}
+
+/** Wood, coal or oil burned in fireboxes (model.py Fire). */
+export interface Fire {
+  fuel?: "wood" | "coal" | "oil";
+  fireboxes: Firebox[];
+  forced?: boolean;
+  oil_burners?: number;
+  oil_rate?: string;
+}
+
 export interface Gas {
-  fuel?: "propane";
+  fuel?: "propane" | "natural_gas";
   burners?: Burners;
-  supply: { type: "cylinders"; count: number; size?: "100 lb" } | { type: "tank"; gallons: number };
+  supply:
+    | { type: "cylinders"; count: number; size?: "100 lb" }
+    | { type: "tank"; gallons: number }
+    | { type: "line"; pressure: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
 }
