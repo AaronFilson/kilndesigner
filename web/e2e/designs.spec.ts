@@ -401,13 +401,19 @@ test("a burner port dragged on the model is placed there, saved and built there"
   if (!box) throw new Error("no viewer");
   const status = viewer.getByRole("status");
   let at: { x: number; y: number } | null = null;
-  for (let y = 0.95; y > 0.3 && !at; y -= 0.015) {
-    for (let x = 0.2; x < 0.8 && !at; x += 0.01) {
+  // Up and down each column, out from the middle where the example's one port is: a sweep row by
+  // row took too long for CI's 3 minutes
+  const offsets = [0];
+  for (let dx = 0.01; dx < 0.3; dx += 0.01) offsets.push(dx, -dx);
+  for (const dx of offsets) {
+    for (let y = 0.95; y > 0.3 && !at; y -= 0.015) {
+      const x = 0.5 + dx;
       await page.mouse.move(box.x + box.width * x, box.y + box.height * y);
       if ((await status.textContent())?.startsWith("Burner port 1")) {
         at = { x: box.x + box.width * x, y: box.y + box.height * y };
       }
     }
+    if (at) break;
   }
   expect(at, "burner port 1's marker").not.toBeNull();
 
