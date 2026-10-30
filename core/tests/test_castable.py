@@ -123,10 +123,31 @@ def test_the_conductivity_law_reproduces_the_published_bricks() -> None:
     law = conductivity_law()
     assert law.bricks == 9
     assert law.rms < 0.10
-    # Each brick predicted from the other eight: the error the results quote
-    assert law.worst < 0.25
+    # Each brick predicted from the other eight: the error the results quote (25.1 % since JM 23
+    # takes Morgan's 2025 figures)
+    assert law.worst < 0.26
     # K-26, 657 kg/m³: 0.26 W/(m·K) at 815 °C on Morgan's 2025 sheet
     assert law.k(657, 815 + 273.15) == pytest.approx(0.26, rel=0.15)
+
+
+def test_the_conductivity_law_is_checked_on_castables_it_wasnt_fitted_to() -> None:
+    """Review M2: Morgan's Firelite 2600LI (1140 kg/m³, 0.38 W/(m·K) at 400 °C, 0.39 at 1000 °C)
+    and Kaolite 2600LI (1201 kg/m³, 0.39–0.46), masonry-materials.md §5.1–5.2, held out of the
+    fit. The law runs from about 9 % under to 22 % over on them, and the results quote that."""
+    law = conductivity_law()
+    assert law.held_out_names == ("Firelite 2600LI", "Kaolite 2600LI")
+    lo, hi = law.held_out
+    # Firelite at 200 °C: k = a·1.14ⁿ·(1 + s·(473.15 − 673.15)/1000) against 0.38
+    firelite_200 = law.k(1140, 473.15) / 0.38 - 1
+    assert lo == pytest.approx(firelite_200)
+    assert lo == pytest.approx(-0.09, abs=0.01)
+    assert hi == pytest.approx(law.k(1140, 1273.15) / 0.39 - 1)
+    assert hi == pytest.approx(0.22, abs=0.01)
+    a = analyse_mix(KILN, _mix(BACKUP, 14.5, foam=60))
+    step = next(s for s in a.working if s.inputs.get("on castables held out"))
+    assert step.inputs["on castables held out"] == (
+        f"{100 * lo:+.0f} % to {100 * hi:+.0f} % (Firelite 2600LI, Kaolite 2600LI)"
+    )
 
 
 @given(st.floats(480, 1250), st.floats(480, 1250), st.floats(533, 1643))
@@ -492,12 +513,12 @@ def test_organics_only_in_layers_that_stay_cool_give_no_heat() -> None:
 
 
 def test_the_diy_kiln_reports_its_burnout() -> None:
-    """Review fix 2: the dextrin and paper in both mixes give off about 109 kW through the
+    """Review fix 2: the dextrin and paper in both mixes give off about 108 kW through the
     window together, against the 3 kW the thick-walled kiln loses at 1022 °F."""
     report = design_report(KILN)
     steps = [s for c in report.castables for s in c.first_firing if s.name == BURNOUT_STEP]
     assert len(steps) == 1
-    assert steps[0].value.startswith("109 kW against 2.95 kW")
+    assert steps[0].value.startswith("108 kW against 3.16 kW")
     warnings = [f for f in report.findings if "can run away" in f.message]
     assert len(warnings) == 1
     assert warnings[0].level == "warning"

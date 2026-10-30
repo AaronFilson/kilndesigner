@@ -161,7 +161,7 @@
         {
           "check": null,
           "level": "info",
-          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
           "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
         },
         {
@@ -411,7 +411,7 @@
                 "symbol": "V_2",
                 "text": null,
                 "unit": "ft**3",
-                "value": 2.1499072409473667
+                "value": 2.1315191368952493
               },
               {
                 "expr": null,
@@ -437,7 +437,7 @@
                 "symbol": "Q",
                 "text": null,
                 "unit": "kWh",
-                "value": 2914577159.3322225
+                "value": 2894893809.0027704
               },
               {
                 "expr": null,
@@ -502,7 +502,7 @@
                 "symbol": "P_b",
                 "text": null,
                 "unit": "kW",
-                "value": 108817.8449571469
+                "value": 108082.95284508551
               },
               {
                 "expr": null,
@@ -515,7 +515,7 @@
                 "symbol": "P_k",
                 "text": null,
                 "unit": "kW",
-                "value": 2954.1059619252846
+                "value": 3164.487050763751
               },
               {
                 "expr": null,
@@ -545,7 +545,7 @@
                 "holds": false,
                 "left": "P_b",
                 "level": "warning",
-                "margin": "P_b = 108.8 kW, 3,684 % of P_k = 2.954 kW",
+                "margin": "P_b = 108.1 kW, 3,415 % of P_k = 3.164 kW",
                 "op": "<=",
                 "right": "P_k"
               }
@@ -553,12 +553,12 @@
             "rule": null,
             "rule_holds": true,
             "rule_level": "error",
-            "solve": "Passes when r ≤ 2.036 Δ°F/h",
+            "solve": "Passes when r ≤ 2.196 Δ°F/h",
             "status": "warning",
             "title": "The organics' heat as they burn out"
           },
           "level": "warning",
-          "message": "Burning out the organics releases about 109 kW through 464–1022 °F, 36.8 times the 2.95 kW the kiln loses there. The controller can only switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, and watch it.",
+          "message": "Burning out the organics releases about 108 kW through 464–1022 °F, 34.2 times the 3.16 kW the kiln loses there. The controller can only switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, and watch it.",
           "reference": "castables.md §7 [S51] [S54]"
         }
       ],
@@ -617,72 +617,72 @@
           "inputs": {
             "mixes": "Foamed grog and fireclay hot face (the notes' \"K26 type\"), Foamed fireclay backup with paper fibre (the notes' \"K16 type\")",
             "the kiln's installed heat": "134 kW",
-            "the kiln's loss at 1022 °F": "2.95 kW"
+            "the kiln's loss at 1022 °F": "3.16 kW"
           },
           "name": "Burnout heat, every mix, against what the schedule needs",
           "note": "Only the castable that gets above 464 °F counts. The heat stored in the lining as it climbs is left out of the need, so this errs towards a warning.",
           "reference": "castables.md §7 [S51] [S54]; castables.md §7 [S54] (excerpt); Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)",
-          "value": "109 kW against 2.95 kW (36.8×)"
+          "value": "108 kW against 3.16 kW (34.2×)"
         }
       ],
       "layers": [
         {
-          "cold_side": "1985 °F",
+          "cold_side": "1978 °F",
           "face": "left",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest ⅞ in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.849 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         },
         {
-          "cold_side": "1985 °F",
+          "cold_side": "1978 °F",
           "face": "right",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest ⅞ in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.849 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         },
         {
-          "cold_side": "1947 °F",
+          "cold_side": "1938 °F",
           "face": "back",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest 0.785 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.769 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         },
         {
-          "cold_side": "1947 °F",
+          "cold_side": "1938 °F",
           "face": "front",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest 0.785 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.769 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         },
         {
-          "cold_side": "1958 °F",
+          "cold_side": "1951 °F",
           "face": "floor",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest 0.808 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.793 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         },
         {
-          "cold_side": "1973 °F",
+          "cold_side": "1960 °F",
           "face": "roof",
           "hot_side": "2345 °F",
           "notes": [
             "The organics are gone from the hottest 2 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Kyanite starts to convert in the hottest 0.84 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
+            "Kyanite starts to convert in the hottest 0.812 in (above 2192 °F) and converts fully in none of it (above 2552 °F) (castables.md §2.2 [S19] [S2])."
           ],
           "thickness": "2 in"
         }
@@ -726,10 +726,10 @@
         "cast_volume_m3": 0.03149389018600002,
         "cement_kg": 0.0,
         "conductivity": [
-          "500 °F: 1.24 BTU·in/(hr·ft²·°F)",
-          "1000 °F: 1.41 BTU·in/(hr·ft²·°F)",
-          "1500 °F: 1.57 BTU·in/(hr·ft²·°F)",
-          "2000 °F: 1.73 BTU·in/(hr·ft²·°F)"
+          "500 °F: 1.27 BTU·in/(hr·ft²·°F)",
+          "1000 °F: 1.43 BTU·in/(hr·ft²·°F)",
+          "1500 °F: 1.59 BTU·in/(hr·ft²·°F)",
+          "2000 °F: 1.75 BTU·in/(hr·ft²·°F)"
         ],
         "dried_density": "45 lb/ft³",
         "dry_mass": "50 lb",
@@ -738,7 +738,7 @@
           {
             "check": null,
             "level": "info",
-            "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+            "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
           },
           {
@@ -920,16 +920,17 @@
             "value": "78 %"
           },
           {
-            "formula": "k = 0.326·(ρ/1000)^1.14·(1 + 0.44·(T − 400 °C)/1000 K) W/(m·K)",
+            "formula": "k = 0.327·(ρ/1000)^1.11·(1 + 0.42·(T − 400 °C)/1000 K) W/(m·K)",
             "inputs": {
               "fired density": "626 kg/m³",
-              "fit error": "9 % rms; up to 21 % for a brick left out of the fit",
-              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C"
+              "fit error": "8 % rms; up to 25 % for a brick left out of the fit",
+              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C",
+              "on castables held out": "-9 % to +21 % (Firelite 2600LI, Kaolite 2600LI)"
             },
             "name": "Conductivity",
             "note": "Fitted law, not measured: test pieces measured for conductivity would replace it.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1",
-            "value": "500 °F: 1.24 BTU·in/(hr·ft²·°F); 1000 °F: 1.41 BTU·in/(hr·ft²·°F); 1500 °F: 1.57 BTU·in/(hr·ft²·°F); 2000 °F: 1.73 BTU·in/(hr·ft²·°F)"
+            "value": "500 °F: 1.27 BTU·in/(hr·ft²·°F); 1000 °F: 1.43 BTU·in/(hr·ft²·°F); 1500 °F: 1.59 BTU·in/(hr·ft²·°F); 2000 °F: 1.75 BTU·in/(hr·ft²·°F)"
           }
         ]
       },
@@ -982,7 +983,7 @@
         {
           "check": null,
           "level": "info",
-          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
           "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
         },
         {
@@ -1208,25 +1209,25 @@
         {
           "formula": "(C₆H₁₀O₅)ₙ + 6n O₂ → 6n CO₂ + 5n H₂O; heat of combustion 4.15–4.16 kcal/g",
           "inputs": {
-            "CO₂ made": "475 lb",
-            "air, at 68 °F": "19,842 ft³",
-            "oxygen": "345 lb",
-            "water made": "162 lb"
+            "CO₂ made": "471 lb",
+            "air, at 68 °F": "19,672 ft³",
+            "oxygen": "342 lb",
+            "water made": "161 lb"
           },
           "name": "Organics to burn out (the castable above 464 °F)",
           "note": "The (C₆H₁₀O₅)ₙ formula is standard chemistry; castables.md §7 still wants a cited page.",
           "reference": "castables.md §7 [S51]; air 20.95 % oxygen (combustion-and-masonry.md §1.1)",
-          "value": "292 lb, releasing 639 kWh (2,181,254 Btu)"
+          "value": "289 lb, releasing 634 kWh (2,162,598 Btu)"
         },
         {
           "formula": "heat ÷ (time to climb from 464 to 1022 °F at 75 °F/h)",
           "inputs": {
-            "air needed": "44.4 ft³/min"
+            "air needed": "44.1 ft³/min"
           },
           "name": "Burnout heat, spread over the window",
           "note": "The holds stretch the window, which lowers the rate; a wall lagging the kiln does too.",
           "reference": "castables.md §7 [S54] (excerpt)",
-          "value": "85.9 kW for about 7.4 h"
+          "value": "85.2 kW for about 7.4 h"
         },
         {
           "formula": "⅓ × kyanite's share of the cast volume × (3.61 ÷ 3.03 − 1)",
@@ -1239,68 +1240,68 @@
       ],
       "layers": [
         {
-          "cold_side": "136.2 °F",
+          "cold_side": "138.1 °F",
           "face": "left",
-          "hot_side": "1985 °F",
+          "hot_side": "1978 °F",
           "notes": [
-            "The organics are gone from the hottest 5.16 in (above about 1022 °F) and stay in the coolest 1.32 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1985 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.96 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 5.09 in (above about 1022 °F) and stay in the coolest 1.39 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1978 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.89 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "9 in"
         },
         {
-          "cold_side": "136.2 °F",
+          "cold_side": "138.1 °F",
           "face": "right",
-          "hot_side": "1985 °F",
+          "hot_side": "1978 °F",
           "notes": [
-            "The organics are gone from the hottest 5.16 in (above about 1022 °F) and stay in the coolest 1.32 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1985 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.96 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 5.09 in (above about 1022 °F) and stay in the coolest 1.39 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1978 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.89 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "9 in"
         },
         {
-          "cold_side": "128.8 °F",
+          "cold_side": "130.6 °F",
           "face": "back",
-          "hot_side": "1947 °F",
+          "hot_side": "1938 °F",
           "notes": [
-            "The organics are gone from the hottest 5.05 in (above about 1022 °F) and stay in the coolest 1⅜ in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1947 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.84 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 4.97 in (above about 1022 °F) and stay in the coolest 1.45 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1938 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.76 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "9 in"
         },
         {
-          "cold_side": "128.8 °F",
+          "cold_side": "130.6 °F",
           "face": "front",
-          "hot_side": "1947 °F",
+          "hot_side": "1938 °F",
           "notes": [
-            "The organics are gone from the hottest 5.05 in (above about 1022 °F) and stay in the coolest 1⅜ in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1947 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.84 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 4.97 in (above about 1022 °F) and stay in the coolest 1.45 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1938 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.76 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "9 in"
         },
         {
-          "cold_side": "149.4 °F",
+          "cold_side": "151.6 °F",
           "face": "floor",
-          "hot_side": "1958 °F",
+          "hot_side": "1951 °F",
           "notes": [
-            "The organics are gone from the hottest 5⅛ in (above about 1022 °F) and stay in the coolest 1.3 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1958 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.92 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 5.05 in (above about 1022 °F) and stay in the coolest 1.36 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1951 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 4.85 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "9 in"
         },
         {
-          "cold_side": "1050 °F",
+          "cold_side": "1014 °F",
           "face": "roof",
-          "hot_side": "1973 °F",
+          "hot_side": "1960 °F",
           "notes": [
-            "The organics are gone from the hottest 4 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
-            "Its hot side reaches 1973 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
-            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 3.95 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
+            "The organics are gone from the hottest 3.97 in (above about 1022 °F) and stay in the coolest 0 in (below about 464 °F). Where they're gone and the clay hasn't sintered, nothing binds the mix; the clay's sintering temperature isn't sourced, so test pieces must show it (castables.md §7 [S54] (excerpt)).",
+            "Its hot side reaches 1960 °F, below 2192 °F, where kyanite starts to turn to mullite. Here the kyanite never expands: it is only a grog (castables.md §2.2 [S19] [S2]).",
+            "The free quartz in Greenstripe fireclay (10–20 % quartz) in the hottest 3.81 in passes its 1063 °F inversion every firing, growing about 0.45 % in length and shrinking back; sources differ on the size (castables.md §3 [S23]; castables-minerals.md §2)."
           ],
           "thickness": "4 in"
         }
@@ -1352,10 +1353,10 @@
         "cast_volume_m3": 0.03871669389026212,
         "cement_kg": 0.0,
         "conductivity": [
-          "500 °F: 0.96 BTU·in/(hr·ft²·°F)",
-          "1000 °F: 1.08 BTU·in/(hr·ft²·°F)",
-          "1500 °F: 1.21 BTU·in/(hr·ft²·°F)",
-          "2000 °F: 1.33 BTU·in/(hr·ft²·°F)"
+          "500 °F: 0.99 BTU·in/(hr·ft²·°F)",
+          "1000 °F: 1.11 BTU·in/(hr·ft²·°F)",
+          "1500 °F: 1.23 BTU·in/(hr·ft²·°F)",
+          "2000 °F: 1.35 BTU·in/(hr·ft²·°F)"
         ],
         "dried_density": "36.8 lb/ft³",
         "dry_mass": "50.2 lb",
@@ -1364,7 +1365,7 @@
           {
             "check": null,
             "level": "info",
-            "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+            "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
           },
           {
@@ -1566,16 +1567,17 @@
             "value": "82 %"
           },
           {
-            "formula": "k = 0.326·(ρ/1000)^1.14·(1 + 0.44·(T − 400 °C)/1000 K) W/(m·K)",
+            "formula": "k = 0.327·(ρ/1000)^1.11·(1 + 0.42·(T − 400 °C)/1000 K) W/(m·K)",
             "inputs": {
               "fired density": "497 kg/m³",
-              "fit error": "9 % rms; up to 21 % for a brick left out of the fit",
-              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C"
+              "fit error": "8 % rms; up to 25 % for a brick left out of the fit",
+              "fitted to": "9 insulating firebricks, 480–1250 kg/m³, 260–1370 °C",
+              "on castables held out": "-9 % to +21 % (Firelite 2600LI, Kaolite 2600LI)"
             },
             "name": "Conductivity",
             "note": "Fitted law, not measured: test pieces measured for conductivity would replace it.",
             "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1",
-            "value": "500 °F: 0.96 BTU·in/(hr·ft²·°F); 1000 °F: 1.08 BTU·in/(hr·ft²·°F); 1500 °F: 1.21 BTU·in/(hr·ft²·°F); 2000 °F: 1.33 BTU·in/(hr·ft²·°F)"
+            "value": "500 °F: 0.99 BTU·in/(hr·ft²·°F); 1000 °F: 1.11 BTU·in/(hr·ft²·°F); 1500 °F: 1.23 BTU·in/(hr·ft²·°F); 2000 °F: 1.35 BTU·in/(hr·ft²·°F)"
           }
         ]
       },
@@ -2211,7 +2213,7 @@
             "symbol": "V_2",
             "text": null,
             "unit": "ft**3",
-            "value": 2.1499072409473667
+            "value": 2.1315191368952493
           },
           {
             "expr": null,
@@ -2237,7 +2239,7 @@
             "symbol": "Q",
             "text": null,
             "unit": "kWh",
-            "value": 2914577159.3322225
+            "value": 2894893809.0027704
           },
           {
             "expr": null,
@@ -2302,7 +2304,7 @@
             "symbol": "P_b",
             "text": null,
             "unit": "kW",
-            "value": 108817.8449571469
+            "value": 108082.95284508551
           },
           {
             "expr": null,
@@ -2315,7 +2317,7 @@
             "symbol": "P_k",
             "text": null,
             "unit": "kW",
-            "value": 2954.1059619252846
+            "value": 3164.487050763751
           },
           {
             "expr": null,
@@ -2345,7 +2347,7 @@
             "holds": false,
             "left": "P_b",
             "level": "warning",
-            "margin": "P_b = 108.8 kW, 3,684 % of P_k = 2.954 kW",
+            "margin": "P_b = 108.1 kW, 3,415 % of P_k = 3.164 kW",
             "op": "<=",
             "right": "P_k"
           }
@@ -2353,12 +2355,12 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when r ≤ 2.036 Δ°F/h",
+        "solve": "Passes when r ≤ 2.196 Δ°F/h",
         "status": "warning",
         "title": "The organics' heat as they burn out"
       },
       "level": "warning",
-      "message": "Burning out the organics releases about 109 kW through 464–1022 °F, 36.8 times the 2.95 kW the kiln loses there. The controller can only switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, and watch it.",
+      "message": "Burning out the organics releases about 108 kW through 464–1022 °F, 34.2 times the 3.16 kW the kiln loses there. The controller can only switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, and watch it.",
       "reference": "castables.md §7 [S51] [S54]"
     },
     {
@@ -2462,13 +2464,13 @@
     {
       "check": null,
       "level": "info",
-      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 130.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 150.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
@@ -2528,7 +2530,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
       "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
     },
     {
@@ -2558,7 +2560,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 21 %, and more if the mix's pores or solids differ from a firebrick's.",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
       "reference": "Morgan Thermal Ceramics K and JM series data sheets; castables.md §6.3, electric-and-thermal.md §4.1"
     },
     {
@@ -3317,7 +3319,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "144,520 BTU/hr kept against 28,841 BTU/hr lost"
+        "value": "144,520 BTU/hr kept against 29,700 BTU/hr lost"
       },
       {
         "formula": null,
@@ -3407,174 +3409,174 @@
     "faces": [
       {
         "face": "left",
-        "heat_loss": "1902 W",
+        "heat_loss": "1955 W",
         "inside_area": "18.75 ft²",
         "layers": [
           {
-            "cold_side": "1985 °F",
-            "cold_side_k": 1358.1486618743622,
+            "cold_side": "1978 °F",
+            "cold_side_k": 1354.0942213753533,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000012,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "136.2 °F",
-            "cold_side_k": 331.0245257682125,
-            "hot_side": "1985 °F",
-            "hot_side_k": 1358.1486618743622,
+            "cold_side": "138.1 °F",
+            "cold_side_k": 332.07831776747076,
+            "hot_side": "1978 °F",
+            "hot_side_k": 1354.0942213753533,
             "material": "diy-backup",
             "thickness": "9 in"
           }
         ],
         "outside_area": "38.15 ft²",
-        "surface_temperature": "136.2 °F"
+        "surface_temperature": "138.1 °F"
       },
       {
         "face": "right",
-        "heat_loss": "1902 W",
+        "heat_loss": "1955 W",
         "inside_area": "18.75 ft²",
         "layers": [
           {
-            "cold_side": "1985 °F",
-            "cold_side_k": 1358.1486618743622,
+            "cold_side": "1978 °F",
+            "cold_side_k": 1354.0942213753533,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000012,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "136.2 °F",
-            "cold_side_k": 331.0245257682125,
-            "hot_side": "1985 °F",
-            "hot_side_k": 1358.1486618743622,
+            "cold_side": "138.1 °F",
+            "cold_side_k": 332.07831776747076,
+            "hot_side": "1978 °F",
+            "hot_side_k": 1354.0942213753533,
             "material": "diy-backup",
             "thickness": "9 in"
           }
         ],
         "outside_area": "38.15 ft²",
-        "surface_temperature": "136.2 °F"
+        "surface_temperature": "138.1 °F"
       },
       {
         "face": "back",
-        "heat_loss": "1054 W",
+        "heat_loss": "1084 W",
         "inside_area": "9.142 ft²",
         "layers": [
           {
-            "cold_side": "1947 °F",
-            "cold_side_k": 1336.7948798692048,
+            "cold_side": "1938 °F",
+            "cold_side_k": 1332.2815319709077,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.15,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "128.8 °F",
-            "cold_side_k": 326.93415226475963,
-            "hot_side": "1947 °F",
-            "hot_side_k": 1336.7948798692048,
+            "cold_side": "130.6 °F",
+            "cold_side_k": 327.911714699607,
+            "hot_side": "1938 °F",
+            "hot_side_k": 1332.2815319709077,
             "material": "diy-backup",
             "thickness": "9 in"
           }
         ],
         "outside_area": "23.66 ft²",
-        "surface_temperature": "128.8 °F"
+        "surface_temperature": "130.6 °F"
       },
       {
         "face": "front",
-        "heat_loss": "1054 W",
+        "heat_loss": "1084 W",
         "inside_area": "9.142 ft²",
         "layers": [
           {
-            "cold_side": "1947 °F",
-            "cold_side_k": 1336.7948798692048,
+            "cold_side": "1938 °F",
+            "cold_side_k": 1332.2815319709077,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.15,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "128.8 °F",
-            "cold_side_k": 326.93415226475963,
-            "hot_side": "1947 °F",
-            "hot_side_k": 1336.7948798692048,
+            "cold_side": "130.6 °F",
+            "cold_side_k": 327.911714699607,
+            "hot_side": "1938 °F",
+            "hot_side_k": 1332.2815319709077,
             "material": "diy-backup",
             "thickness": "9 in"
           }
         ],
         "outside_area": "23.66 ft²",
-        "surface_temperature": "128.8 °F"
+        "surface_temperature": "130.6 °F"
       },
       {
         "face": "floor",
-        "heat_loss": "1299 W",
+        "heat_loss": "1334 W",
         "inside_area": "11.67 ft²",
         "layers": [
           {
-            "cold_side": "1958 °F",
-            "cold_side_k": 1343.3718527004496,
+            "cold_side": "1951 °F",
+            "cold_side_k": 1339.184288351943,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999996,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "149.4 °F",
-            "cold_side_k": 338.3981420482158,
-            "hot_side": "1958 °F",
-            "hot_side_k": 1343.3718527004496,
+            "cold_side": "151.6 °F",
+            "cold_side_k": 339.5754691964219,
+            "hot_side": "1951 °F",
+            "hot_side_k": 1339.184288351943,
             "material": "diy-backup",
             "thickness": "9 in"
           }
         ],
         "outside_area": "28.47 ft²",
-        "surface_temperature": "149.4 °F"
+        "surface_temperature": "151.6 °F"
       },
       {
         "face": "roof",
-        "heat_loss": "1240 W",
+        "heat_loss": "1292 W",
         "inside_area": "12.02 ft²",
         "layers": [
           {
-            "cold_side": "1973 °F",
-            "cold_side_k": 1351.6087753628535,
+            "cold_side": "1960 °F",
+            "cold_side_k": 1344.5186842546054,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999992,
             "material": "diy-hot-face",
             "thickness": "2 in"
           },
           {
-            "cold_side": "1050 °F",
-            "cold_side_k": 838.7332896207522,
-            "hot_side": "1973 °F",
-            "hot_side_k": 1351.6087753628535,
+            "cold_side": "1014 °F",
+            "cold_side_k": 818.9434285879514,
+            "hot_side": "1960 °F",
+            "hot_side_k": 1344.5186842546054,
             "material": "diy-backup",
             "thickness": "4 in"
           },
           {
-            "cold_side": "147.6 °F",
-            "cold_side_k": 337.3598681379018,
-            "hot_side": "1050 °F",
-            "hot_side_k": 838.7332896207522,
+            "cold_side": "150.7 °F",
+            "cold_side_k": 339.10859740745565,
+            "hot_side": "1014 °F",
+            "hot_side_k": 818.9434285879514,
             "material": "kaowool-blanket-8pcf",
             "thickness": "2 in"
           }
         ],
         "outside_area": "18.79 ft²",
-        "surface_temperature": "147.6 °F"
+        "surface_temperature": "150.7 °F"
       }
     ],
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 128.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\") runs down to 130.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "your mix; conductivity from its fired density (castables.md §6.3)"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 147.6 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 150.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
@@ -3585,8 +3587,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "8.452 kW",
-    "total_watts": 8452.410427153904,
+    "total": "8.704 kW",
+    "total_watts": 8704.199008271826,
     "working": [
       {
         "formula": null,
@@ -3621,73 +3623,73 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "38.15 ft²",
-          "outside surface": "136.2 °F",
-          "surface coefficient h": "11.21 W/K/m²"
+          "outside surface": "138.1 °F",
+          "surface coefficient h": "11.27 W/K/m²"
         },
         "name": "Heat loss, left",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1902 W"
+        "value": "1955 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "38.15 ft²",
-          "outside surface": "136.2 °F",
-          "surface coefficient h": "11.21 W/K/m²"
+          "outside surface": "138.1 °F",
+          "surface coefficient h": "11.27 W/K/m²"
         },
         "name": "Heat loss, right",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1902 W"
+        "value": "1955 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "23.66 ft²",
-          "outside surface": "128.8 °F",
-          "surface coefficient h": "10.96 W/K/m²"
+          "outside surface": "130.6 °F",
+          "surface coefficient h": "11.02 W/K/m²"
         },
         "name": "Heat loss, back",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1054 W"
+        "value": "1084 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "23.66 ft²",
-          "outside surface": "128.8 °F",
-          "surface coefficient h": "10.96 W/K/m²"
+          "outside surface": "130.6 °F",
+          "surface coefficient h": "11.02 W/K/m²"
         },
         "name": "Heat loss, front",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1054 W"
+        "value": "1084 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "28.47 ft²",
-          "outside surface": "149.4 °F",
-          "surface coefficient h": "8.89 W/K/m²"
+          "outside surface": "151.6 °F",
+          "surface coefficient h": "8.941 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1299 W"
+        "value": "1334 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.79 ft²",
-          "outside surface": "147.6 °F",
-          "surface coefficient h": "13.11 W/K/m²"
+          "outside surface": "150.7 °F",
+          "surface coefficient h": "13.22 W/K/m²"
         },
         "name": "Heat loss, roof",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1240 W"
+        "value": "1292 W"
       },
       {
         "formula": "sum of the six faces",
@@ -3695,7 +3697,7 @@
         "name": "Total heat loss at top temperature",
         "note": null,
         "reference": null,
-        "value": "8.452 kW (2.88e+04 Btu/h)"
+        "value": "8.704 kW (2.97e+04 Btu/h)"
       }
     ]
   },

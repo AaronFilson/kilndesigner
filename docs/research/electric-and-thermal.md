@@ -321,13 +321,19 @@ values.
 
 ### 4.1 Insulating firebrick (IFB)
 
-**Morgan Thermal Ceramics JM series, metric (excerpt, from the 06:2011 JM data sheet [S29])**
+**Morgan Thermal Ceramics JM series, metric (Verified, read from the PDF on 29 October 2026:
+Morgan, *JM Insulating Firebrick Series*, Product Data Sheet, Publication Date 01 January 2025,
+Code BR.05, ASTM C-182; https://www.murugappamorgan.com/media/9428/jm-ifb-series_eng.pdf [S30])**
 
-| Grade | Classification temp (°C) | Density (kg/m³) | k at 400 °C | k at 600 °C | k at 800 °C | k at 1000 °C |
-|---|---|---|---|---|---|---|
-| JM 23 | 1260 | 480 | 0.12 | 0.14 | 0.17 | 0.19 |
-| JM 26 | 1430 | 800 | 0.25 | 0.27 | 0.30 | 0.33 |
-| JM 28 | 1540 | 890 | 0.30 | 0.32 | 0.34 | 0.36 |
+| Grade | Classification temp (°C) | Density (kg/m³) | k at 400 °C | k at 600 °C | k at 800 °C | k at 1000 °C | k at 1100 °C |
+|---|---|---|---|---|---|---|---|
+| JM 23 | 1260 | 480 | 0.14 | 0.16 | 0.17 | 0.19 | – |
+| JM 26 | 1430 | 800 | 0.25 | 0.27 | 0.30 | 0.33 | 0.33 |
+| JM 28 | 1540 | 890 | 0.30 | 0.32 | 0.34 | 0.36 | 0.36 |
+
+The 06:2011 excerpt [S29] gave JM 23 as 0.12 and 0.14 at 400 and 600 °C, 14 % low against the
+2025 sheet (science review E3/M7); the engine now uses the 2025 sheet. The 2025 sheet's JM 26 and
+JM 28 rows match the 2011 excerpt and add the 1100 °C point.
 
 k is in W/(m·K). Classification temperatures and densities are also in the 2025 JM data sheet
 [S30], which adds JM 26HD at 920 kg/m³. Excerpt: check the column mapping, since the sheet also has

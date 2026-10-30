@@ -371,7 +371,9 @@ def heat_loss(
                 level="info",
                 message=(
                     f"{m.name} runs {' and '.join(ends)}; past its data sheet's points the "
-                    "conductivity is carried on along the nearest pair of points."
+                    "conductivity is carried on along the nearest pair of points above the data, "
+                    "and held at the first point's value below it (no lower: more heat loss, the "
+                    "safe side)."
                 ),
                 reference=m.source,
             )

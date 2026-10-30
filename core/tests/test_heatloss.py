@@ -59,12 +59,13 @@ def test_front_loader_heat_loss_is_plausible() -> None:
 
 
 def test_k_past_the_data_sheet_is_one_note_per_material_not_a_warning() -> None:
-    """JM 26's sheet stops at 1832 °F; at cone 10 that is normal, so it is a note."""
+    """JM 26's 2025 sheet stops at 1100 °C (2012 °F); at cone 10 that is normal, so it is a
+    note."""
     result = heat_loss(load_design(EXAMPLES / "electric-front-loader.yaml"))
     past = [f for f in result.findings if "past its data sheet's points" in f.message]
     jm26 = [f for f in past if "JM 26" in f.message]
     assert len(jm26) == 1
-    assert "up to 2345 °F (data to 1832 °F)" in jm26[0].message
+    assert "up to 2345 °F (data to 2012 °F)" in jm26[0].message
     assert all(f.level == "info" for f in past)
     assert not [f for f in result.findings if f.level == "warning"]
 
@@ -142,7 +143,8 @@ def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
     cells = {c.symbol: c for c in check.cells}
     assert cells["Ra"].formula == "g·β·|T_s − T_a|·L³/(ν·α)"
     assert cells["Ra"].value == pytest.approx(ra, rel=0.01)
-    assert check.requirements[0].margin.startswith("Ra = 71,6")
+    # 87,0xx since k below a sheet's first point is held there, not carried down (review E6)
+    assert check.requirements[0].margin.startswith("Ra = 87,0")
     assert check.solve is not None
     assert check.solve.startswith("Passes when L ≥ ")
     length = float(check.solve.split("≥ ")[1].split()[0])

@@ -427,7 +427,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "0.808"
+        "value": "0.805"
       }
     ]
   },
@@ -842,31 +842,31 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-      "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+      "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 174.3 °F (data from 500 °F) and up to 1810 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+      "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics K-23 insulating firebrick",
       "reference": null
     },
     {
@@ -1664,7 +1664,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "142,982 BTU/hr kept against 48,648 BTU/hr lost"
+        "value": "142,982 BTU/hr kept against 48,840 BTU/hr lost"
       },
       {
         "formula": null,
@@ -1754,216 +1754,216 @@
     "faces": [
       {
         "face": "left",
-        "heat_loss": "2719 W",
+        "heat_loss": "2735 W",
         "inside_area": "18.33 ft²",
         "layers": [
           {
-            "cold_side": "1520 °F",
-            "cold_side_k": 1100.0597654999779,
+            "cold_side": "1479 °F",
+            "cold_side_k": 1076.919390236025,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999999,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "848.3 °F",
-            "cold_side_k": 726.6458222311958,
-            "hot_side": "1520 °F",
-            "hot_side_k": 1100.0597654999779,
+            "cold_side": "790 °F",
+            "cold_side_k": 694.2346344995645,
+            "hot_side": "1479 °F",
+            "hot_side_k": 1076.919390236025,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "181.2 °F",
-            "cold_side_k": 356.0518934828609,
-            "hot_side": "848.3 °F",
-            "hot_side_k": 726.6458222311958,
+            "cold_side": "181.8 °F",
+            "cold_side_k": 356.37398290998505,
+            "hot_side": "790 °F",
+            "hot_side_k": 694.2346344995645,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "31.67 ft²",
-        "surface_temperature": "181.2 °F"
+        "surface_temperature": "181.8 °F"
       },
       {
         "face": "right",
-        "heat_loss": "2719 W",
+        "heat_loss": "2735 W",
         "inside_area": "18.33 ft²",
         "layers": [
           {
-            "cold_side": "1520 °F",
-            "cold_side_k": 1100.0597654999779,
+            "cold_side": "1479 °F",
+            "cold_side_k": 1076.919390236025,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999999,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "848.3 °F",
-            "cold_side_k": 726.6458222311958,
-            "hot_side": "1520 °F",
-            "hot_side_k": 1100.0597654999779,
+            "cold_side": "790 °F",
+            "cold_side_k": 694.2346344995645,
+            "hot_side": "1479 °F",
+            "hot_side_k": 1076.919390236025,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "181.2 °F",
-            "cold_side_k": 356.0518934828609,
-            "hot_side": "848.3 °F",
-            "hot_side_k": 726.6458222311958,
+            "cold_side": "181.8 °F",
+            "cold_side_k": 356.37398290998505,
+            "hot_side": "790 °F",
+            "hot_side_k": 694.2346344995645,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "31.67 ft²",
-        "surface_temperature": "181.2 °F"
+        "surface_temperature": "181.8 °F"
       },
       {
         "face": "back",
-        "heat_loss": "1493 W",
+        "heat_loss": "1505 W",
         "inside_area": "9.049 ft²",
         "layers": [
           {
-            "cold_side": "1475 °F",
-            "cold_side_k": 1074.9651621297508,
+            "cold_side": "1431 °F",
+            "cold_side_k": 1050.3769875144121,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "818.3 °F",
-            "cold_side_k": 709.9964181731954,
-            "hot_side": "1475 °F",
-            "hot_side_k": 1074.9651621297508,
+            "cold_side": "755.2 °F",
+            "cold_side_k": 674.9178520156493,
+            "hot_side": "1431 °F",
+            "hot_side_k": 1050.3769875144121,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "173.5 °F",
-            "cold_side_k": 351.78276964917694,
-            "hot_side": "818.3 °F",
-            "hot_side_k": 709.9964181731954,
+            "cold_side": "174.3 °F",
+            "cold_side_k": 352.18428507716527,
+            "hot_side": "755.2 °F",
+            "hot_side_k": 674.9178520156493,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "18.83 ft²",
-        "surface_temperature": "173.5 °F"
+        "surface_temperature": "174.3 °F"
       },
       {
         "face": "front",
-        "heat_loss": "1493 W",
+        "heat_loss": "1505 W",
         "inside_area": "9.049 ft²",
         "layers": [
           {
-            "cold_side": "1475 °F",
-            "cold_side_k": 1074.9651621297508,
+            "cold_side": "1431 °F",
+            "cold_side_k": 1050.3769875144121,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "818.3 °F",
-            "cold_side_k": 709.9964181731954,
-            "hot_side": "1475 °F",
-            "hot_side_k": 1074.9651621297508,
+            "cold_side": "755.2 °F",
+            "cold_side_k": 674.9178520156493,
+            "hot_side": "1431 °F",
+            "hot_side_k": 1050.3769875144121,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "173.5 °F",
-            "cold_side_k": 351.78276964917694,
-            "hot_side": "818.3 °F",
-            "hot_side_k": 709.9964181731954,
+            "cold_side": "174.3 °F",
+            "cold_side_k": 352.18428507716527,
+            "hot_side": "755.2 °F",
+            "hot_side_k": 674.9178520156493,
             "material": "kaowool-blanket-8pcf",
             "thickness": "1 in"
           }
         ],
         "outside_area": "18.83 ft²",
-        "surface_temperature": "173.5 °F"
+        "surface_temperature": "174.3 °F"
       },
       {
         "face": "floor",
-        "heat_loss": "2353 W",
+        "heat_loss": "2327 W",
         "inside_area": "11.67 ft²",
         "layers": [
           {
-            "cold_side": "1236 °F",
-            "cold_side_k": 942.2712055950825,
+            "cold_side": "1212 °F",
+            "cold_side_k": 928.4606382430342,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "238.9 °F",
-            "cold_side_k": 388.09919088330497,
-            "hot_side": "1236 °F",
-            "hot_side_k": 942.2712055950825,
+            "cold_side": "237.4 °F",
+            "cold_side_k": 387.2833908085758,
+            "hot_side": "1212 °F",
+            "hot_side_k": 928.4606382430342,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "21.58 ft²",
-        "surface_temperature": "238.9 °F"
+        "surface_temperature": "237.4 °F"
       },
       {
         "face": "roof",
-        "heat_loss": "3480 W",
+        "heat_loss": "3508 W",
         "inside_area": "12.22 ft²",
         "layers": [
           {
-            "cold_side": "1814 °F",
-            "cold_side_k": 1263.3797694296604,
+            "cold_side": "1810 °F",
+            "cold_side_k": 1260.8754806086492,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999976,
             "material": "kast-o-lite-30-li-plus",
             "thickness": "3 in"
           },
           {
-            "cold_side": "279.2 °F",
-            "cold_side_k": 410.47753187949235,
-            "hot_side": "1814 °F",
-            "hot_side_k": 1263.3797694296604,
+            "cold_side": "280.5 °F",
+            "cold_side_k": 411.19781393354964,
+            "hot_side": "1810 °F",
+            "hot_side_k": 1260.8754806086492,
             "material": "kaowool-blanket-8pcf",
             "thickness": "2 in"
           }
         ],
         "outside_area": "16.8 ft²",
-        "surface_temperature": "279.2 °F"
+        "surface_temperature": "280.5 °F"
       }
     ],
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 1832 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
-        "reference": "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
+        "message": "Morgan Thermal Ceramics JM 26 insulating firebrick runs up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 238.9 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 173.5 °F (data from 500 °F) and up to 1814 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "Morgan Kaowool ceramic fibre blanket, 8 pcf runs down to 174.3 °F (data from 500 °F) and up to 1810 °F (data to 1800 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.3, Foundry Service Kaowool blanket page [S39]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points.",
+        "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics JM 26 insulating firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable, Morgan Thermal Ceramics K-23 insulating firebrick",
         "reference": null
       },
       {
@@ -1974,8 +1974,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "14.26 kW",
-    "total_watts": 14257.296753611769,
+    "total": "14.31 kW",
+    "total_watts": 14313.71468291903,
     "working": [
       {
         "formula": null,
@@ -2010,73 +2010,73 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "31.67 ft²",
-          "outside surface": "181.2 °F",
-          "surface coefficient h": "12.68 W/K/m²"
+          "outside surface": "181.8 °F",
+          "surface coefficient h": "12.7 W/K/m²"
         },
         "name": "Heat loss, left",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2719 W"
+        "value": "2735 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "31.67 ft²",
-          "outside surface": "181.2 °F",
-          "surface coefficient h": "12.68 W/K/m²"
+          "outside surface": "181.8 °F",
+          "surface coefficient h": "12.7 W/K/m²"
         },
         "name": "Heat loss, right",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2719 W"
+        "value": "2735 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.83 ft²",
-          "outside surface": "173.5 °F",
-          "surface coefficient h": "12.44 W/K/m²"
+          "outside surface": "174.3 °F",
+          "surface coefficient h": "12.46 W/K/m²"
         },
         "name": "Heat loss, back",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1493 W"
+        "value": "1505 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.83 ft²",
-          "outside surface": "173.5 °F",
-          "surface coefficient h": "12.44 W/K/m²"
+          "outside surface": "174.3 °F",
+          "surface coefficient h": "12.46 W/K/m²"
         },
         "name": "Heat loss, front",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1493 W"
+        "value": "1505 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "21.58 ft²",
-          "outside surface": "238.9 °F",
-          "surface coefficient h": "11.18 W/K/m²"
+          "outside surface": "237.4 °F",
+          "surface coefficient h": "11.14 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2353 W"
+        "value": "2327 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "16.8 ft²",
-          "outside surface": "279.2 °F",
-          "surface coefficient h": "17.51 W/K/m²"
+          "outside surface": "280.5 °F",
+          "surface coefficient h": "17.55 W/K/m²"
         },
         "name": "Heat loss, roof",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "3480 W"
+        "value": "3508 W"
       },
       {
         "formula": "sum of the six faces",
@@ -2084,14 +2084,14 @@
         "name": "Total heat loss at top temperature",
         "note": null,
         "reference": null,
-        "value": "14.26 kW (4.86e+04 Btu/h)"
+        "value": "14.31 kW (4.88e+04 Btu/h)"
       }
     ]
   },
   "hybrid": {
     "cost_crossover": null,
-    "electric_ceiling": "2052 °F",
-    "electric_ceiling_c": 1122.3420522651954,
+    "electric_ceiling": "2019 °F",
+    "electric_ceiling_c": 1104.0214205100224,
     "element_power": "11.52 kW",
     "findings": [
       {
@@ -2110,7 +2110,7 @@
     "points": [
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.855683920215046,
+        "element_surplus_kw": 10.392973978827934,
         "propane_per_kwh": 0.1494950378851549,
         "propane_reducing_per_kwh": null,
         "temperature_c": 148.8888888888889,
@@ -2118,7 +2118,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.499831184997872,
+        "element_surplus_kw": 9.938351968493519,
         "propane_per_kwh": 0.15361604650493665,
         "propane_reducing_per_kwh": null,
         "temperature_c": 204.44444444444446,
@@ -2126,7 +2126,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.104741927441225,
+        "element_surplus_kw": 9.483396625300102,
         "propane_per_kwh": 0.15802899127196476,
         "propane_reducing_per_kwh": null,
         "temperature_c": 260.0,
@@ -2134,7 +2134,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.674964828983352,
+        "element_surplus_kw": 9.027774273789989,
         "propane_per_kwh": 0.16276771497193676,
         "propane_reducing_per_kwh": null,
         "temperature_c": 315.55555555555566,
@@ -2142,7 +2142,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.214262079456498,
+        "element_surplus_kw": 8.564103277245003,
         "propane_per_kwh": 0.1678716768727881,
         "propane_reducing_per_kwh": null,
         "temperature_c": 371.1111111111112,
@@ -2150,7 +2150,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.726001229800646,
+        "element_surplus_kw": 8.091168274079795,
         "propane_per_kwh": 0.17338666048062892,
         "propane_reducing_per_kwh": null,
         "temperature_c": 426.66666666666674,
@@ -2158,7 +2158,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.208689633129085,
+        "element_surplus_kw": 7.596614247644558,
         "propane_per_kwh": 0.17936559767727267,
         "propane_reducing_per_kwh": null,
         "temperature_c": 482.2222222222223,
@@ -2166,7 +2166,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.660632370601589,
+        "element_surplus_kw": 7.0731554023117384,
         "propane_per_kwh": 0.18586952360589884,
         "propane_reducing_per_kwh": null,
         "temperature_c": 537.7777777777778,
@@ -2174,7 +2174,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.086193889562979,
+        "element_surplus_kw": 6.523701625630757,
         "propane_per_kwh": 0.19296867232635787,
         "propane_reducing_per_kwh": null,
         "temperature_c": 593.3333333333334,
@@ -2182,7 +2182,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.484597646781896,
+        "element_surplus_kw": 5.9471001076731,
         "propane_per_kwh": 0.2007437142976811,
         "propane_reducing_per_kwh": null,
         "temperature_c": 648.888888888889,
@@ -2190,7 +2190,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.849765526406092,
+        "element_surplus_kw": 5.339001099385863,
         "propane_per_kwh": 0.20928712043796044,
         "propane_reducing_per_kwh": null,
         "temperature_c": 704.4444444444446,
@@ -2198,7 +2198,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.178671896976963,
+        "element_surplus_kw": 4.696977954373071,
         "propane_per_kwh": 0.21870456710073302,
         "propane_reducing_per_kwh": null,
         "temperature_c": 760.0000000000001,
@@ -2206,7 +2206,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.471557530311339,
+        "element_surplus_kw": 4.020901898836729,
         "propane_per_kwh": 0.2291235177127495,
         "propane_reducing_per_kwh": null,
         "temperature_c": 815.5555555555555,
@@ -2214,7 +2214,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 3.7310728644259323,
+        "element_surplus_kw": 3.310702878389544,
         "propane_per_kwh": 0.2407051842577994,
         "propane_reducing_per_kwh": null,
         "temperature_c": 871.1111111111112,
@@ -2222,7 +2222,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 2.9589419177383607,
+        "element_surplus_kw": 2.5662315533024085,
         "propane_per_kwh": 0.25364861146216067,
         "propane_reducing_per_kwh": 0.27626434264677424,
         "temperature_c": 926.6666666666666,
@@ -2230,7 +2230,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 2.156224587643279,
+        "element_surplus_kw": 1.7886102251657157,
         "propane_per_kwh": 0.2682019328195847,
         "propane_reducing_per_kwh": 0.29049141480255625,
         "temperature_c": 982.2222222222223,
@@ -2238,7 +2238,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 1.3238645968674554,
+        "element_surplus_kw": 0.9827854548701144,
         "propane_per_kwh": 0.2846785729296969,
         "propane_reducing_per_kwh": 0.30635507502078513,
         "temperature_c": 1037.7777777777778,
@@ -2246,7 +2246,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 0.46177812377423105,
+        "element_surplus_kw": 0.1600564551928328,
         "propane_per_kwh": 0.3034803915378504,
         "propane_reducing_per_kwh": 0.32415239927606554,
         "temperature_c": 1093.3333333333335,
@@ -2254,7 +2254,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -0.4298676385071358,
+        "element_surplus_kw": -0.6782325735568429,
         "propane_per_kwh": 0.325131548077979,
         "propane_reducing_per_kwh": 0.34425712765488103,
         "temperature_c": 1148.8888888888891,
@@ -2262,7 +2262,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -1.3507468693349383,
+        "element_surplus_kw": -1.5314359415591552,
         "propane_per_kwh": 0.3503294331056673,
         "propane_reducing_per_kwh": 0.3671460886154727,
         "temperature_c": 1204.4444444444443,
@@ -2270,7 +2270,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -2.300485906185706,
+        "element_surplus_kw": -2.398858373329129,
         "propane_per_kwh": 0.380023726024597,
         "propane_reducing_per_kwh": 0.39343761872910665,
         "temperature_c": 1260.0,
@@ -2289,7 +2289,7 @@
         "name": "Electric ceiling",
         "note": "The steady loss ignores the heat going into the ware and walls, so the elements slow down well before this; it is an upper bound.",
         "reference": null,
-        "value": "2052 °F"
+        "value": "2019 °F"
       },
       {
         "formula": "price per gallon ÷ (26.8 kWh per gallon × available heat)",

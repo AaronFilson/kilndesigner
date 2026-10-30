@@ -17,9 +17,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.12], [600, 0.14], [800, 0.17], [1000, 0.19]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.14], [600, 0.16], [800, 0.17], [1000, 0.19]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
 
 - id: ifb-jm26
   name: Morgan Thermal Ceramics JM 26 insulating firebrick
@@ -29,9 +29,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.25], [600, 0.27], [800, 0.30], [1000, 0.33], [1100, 0.33]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
 
 - id: ifb-jm28
   name: Morgan Thermal Ceramics JM 28 insulating firebrick
@@ -41,9 +41,9 @@
   conductivity:
     unit: W/(m*K)
     temperature_unit: degC
-    points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36]]
-  source: "electric-and-thermal.md §4.1, Morgan JM data sheet 06:2011 [S29]"
-  status: excerpt
+    points: [[400, 0.30], [600, 0.32], [800, 0.34], [1000, 0.36], [1100, 0.36]]
+  source: "electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05"
+  status: verified
 
 - id: ifb-k23
   name: Morgan Thermal Ceramics K-23 insulating firebrick

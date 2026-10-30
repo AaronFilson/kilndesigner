@@ -127,6 +127,10 @@ class ConductivityLaw:
     temperatures: tuple[float, float]  # °C, the data's range
     bricks: int
     source: str
+    # The error on castables held out of the fit (Morgan's, in the bricks' density range), as
+    # fractions: the most under and the most over (review M2)
+    held_out: tuple[float, float] = (0.0, 0.0)
+    held_out_names: tuple[str, ...] = ()
 
     def k(self, density: float, t_kelvin: float) -> float:
         return self.a * (density / 1000) ** self.n * (1 + self.s * (t_kelvin - 673.15) / 1000)
@@ -171,6 +175,11 @@ def conductivity_law() -> ConductivityLaw:
             worst = max(worst, abs(math.expm1(math.log(loo.k(rho, t + 273.15) / k))))
     densities = [b[0] for b in bricks.values()]
     temps = [t for b in bricks.values() for t, _ in b[1]]
+    held: list[float] = [
+        math.expm1(math.log(law.k(float(c["density"]), float(t) + 273.15) / float(k)))
+        for c in raw.get("held_out", {}).values()
+        for t, k in c["points"]
+    ]
     return ConductivityLaw(
         a,
         n,
@@ -181,6 +190,8 @@ def conductivity_law() -> ConductivityLaw:
         temperatures=(min(temps), max(temps)),
         bricks=len(bricks),
         source=raw["source"],
+        held_out=(min(held, default=0.0), max(held, default=0.0)),
+        held_out_names=tuple(raw.get("held_out", {})),
     )
 
 
@@ -394,6 +405,8 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
                 f"{law.temperatures[0]:.0f}–{law.temperatures[1]:.0f} °C",
                 "fit error": f"{100 * law.rms:.0f} % rms; up to {100 * law.worst:.0f} % for a "
                 "brick left out of the fit",
+                "on castables held out": f"{100 * law.held_out[0]:+.0f} % to "
+                f"{100 * law.held_out[1]:+.0f} % ({', '.join(law.held_out_names)})",
             },
             reference=f"{law.source}",
             note="Fitted law, not measured: test pieces measured for conductivity would replace "
@@ -406,8 +419,10 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
             message=(
                 f"{mix.name}: its conductivity is estimated from its fired density by a law "
                 f"fitted to {law.bricks} commercial insulating firebricks. Expect it to be off by "
-                f"up to about {100 * law.worst:.0f} %, and more if the mix's pores or solids "
-                "differ from a firebrick's."
+                f"up to about {100 * law.worst:.0f} % for a brick; on Morgan's castables held "
+                f"out of the fit it is {100 * law.held_out[0]:+.0f} % to "
+                f"{100 * law.held_out[1]:+.0f} %, and it may be further off if the mix's pores "
+                "or solids differ from these."
             ),
             reference=law.source,
         )
