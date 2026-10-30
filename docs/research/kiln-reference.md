@@ -3239,3 +3239,20 @@ in their sections above. Still open:
 
 Pages not in the scan (pp.1–14, 190–193, 195, 263–294) are left out, as the user decided
 (2026-10-29).
+
+## Metric partners looked for in the examples' marked values (2026-10-30)
+
+Format as `door-openings.md`. Every row: **Checked on the page image** (`kiln-reference.pdf`,
+110–300 dpi; book page = PDF page + 13 for pp.107–158). A value is settled only where a metric
+partner or a repeat in the text agrees; none of these has one, so all stay marked.
+
+| Kiln, figure, page (PDF) | Imperial | Metric | Agree? |
+|---|---|---|---|
+| Kato, Fig 5-4, p.131 (PDF 118) | walls "10"" at the door end and by the chimney; chimney "20' TALL TAPERING TO 15½"" (clear at 300 dpi) | none: the text (p.131) gives 250 cu ft (7 m³), 2372 °F (1300 °C), 432 sq in (0.28 m²), no wall or chimney size | no partner; stays (?) |
+| Moveros, Fig 6-3, p.153 (PDF 140) | mouth "27"" high, width handwritten "22"" or "28"" | none: the text gives the chamber 5 ft (150 cm) and walls 18–24 in (46–61 cm) only | no partner; stays (?) |
+| Singh coal, Fig 5-10, p.134 (PDF 121) | chimney label "CHIMNEY 29' …" runs into the gutter | none: the text's pairs are the notch 9 in (23 cm), 2 ft (61 cm), 3 ft (91 cm) and the flue 15 × 24 in (38 × 61 cm) | no partner; stays (?) |
+| Singh low-fire, Fig 6-12, p.156 (PDF 143) | "2'6"" (domed floor to pit) and "2'" at the firebox, clear; the side opening "10–15"(?)" cut off at the page edge | none: the text gives no kiln size in either unit | the reading is clear, what it spans is still the drawing's; no partner |
+
+Not looked at in this pass (no time; still marked as before): the rest of the ~240 marks in this
+file and `olsen-kilns.md`, including Bae (p.107–108), Miravet (p.158), Kannofen, Kenzan, Bowen
+Mountain, Chappell and Tamba's p.85 length. No example input changed.
