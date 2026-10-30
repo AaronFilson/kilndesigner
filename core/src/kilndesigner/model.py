@@ -269,10 +269,41 @@ type Roof = Annotated[
 type WallFace = Literal["left", "right", "back", "front"]
 
 
+class DoorOpening(Spec):
+    """A door in part of a wall, as Olsen's built kilns have them (door-openings.md): a doorway
+    with brick jambs and a semicircular arch over it, bricked up for each firing (the Tamba and
+    Kanayama kilns, Figs 4-11, 4-14, 4-15, 7-17, 7-18, 7-25) or closed by a swing door (Fig 5-42),
+    or a rectangular opening framed in angle iron, closed by a hinged door (Fig 6-69), its head a
+    steel lintel (steel-design.md §S5)."""
+
+    width: Length = Field(description="The opening's width, inside the jambs")
+    height: Length = Field(
+        description="From the sill to the top of the opening: an arched head's crown"
+    )
+    across: Length = Field(
+        default_factory=lambda: Q_(0, "in"),
+        description=(
+            "From the middle of the wall to the door's centre: to your right, standing outside "
+            "and facing the wall, or to your left when negative"
+        ),
+    )
+    sill: Length = Field(
+        default_factory=lambda: Q_(0, "in"), description="From the chamber floor up to the sill"
+    )
+    head: Literal["arch", "lintel"] = Field(
+        default="arch",
+        description=(
+            "A semicircular brick arch on the jambs (Olsen Figs 4-15, 5-42, 7-18), or a steel "
+            "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5)"
+        ),
+    )
+
+
 class Loading(Spec):
     """How ware goes in: through a door in one wall, or on a car that rolls out through it.
 
-    On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car.
+    On a car kiln the floor is the car's deck and the wall at ``face`` rides on the car. Left out,
+    ``opening`` makes the whole wall the door.
     """
 
     type: Literal["door", "car"] = "door"
@@ -283,6 +314,9 @@ class Loading(Spec):
             "A door bricked up for each firing, or one hung on hinges. Left out: hinged on an "
             "electric kiln, bricked on a gas one"
         ),
+    )
+    opening: DoorOpening | None = Field(
+        default=None, description="A door in part of the wall. Left out: the whole wall is the door"
     )
     car_hardware_cost: Money | None = Field(
         default=None,
@@ -875,8 +909,14 @@ class Kiln(Spec):
                 raise ValueError(
                     f"the arch's ring can't be {self.roof.ring} layers: the roof has {layers}"
                 )
-            # The arch's skewbacks stand on the side walls, and a door or car is a whole wall
-            if self.loading.face in ("left", "right"):
+            # The arch's skewbacks stand on the side walls, and a door or car is a whole wall;
+            # chambers in a row under arches along the draft spring from their front and back
+            # walls instead, and take a door in part of a side wall, as climbing kilns do (Olsen
+            # Figs 4-36, 4-45; door-openings.md)
+            along = self.chamber.chambers > 1 and not self.roof.tube
+            if self.loading.face in ("left", "right") and not (
+                along and self.loading.opening is not None
+            ):
                 what = "the car" if self.loading.type == "car" else "the door"
                 raise ValueError(
                     f"a sprung arch springs from the left and right walls, so {what} can't be "
@@ -920,6 +960,88 @@ class Kiln(Spec):
                         "wall: use the front or back wall"
                     )
         return self
+
+    @model_validator(mode="after")
+    def _an_opening_it_can_build(self) -> Kiln:
+        door = self.loading.opening
+        if door is None:
+            return self
+        face = self.loading.face
+        if self.loading.type == "car":
+            raise ValueError(
+                "a car's door is its whole end, which rolls out with it: leave out the opening"
+            )
+        if self.heat.electric is not None:
+            raise ValueError(
+                "an electric kiln's door here is its whole front, hinged in its case: leave out "
+                "the opening"
+            )
+        if self.lining.door is not None:
+            raise ValueError(
+                "a door in part of a wall is laid in the wall's own layers: leave out lining.door"
+            )
+        w, h = si(door.width, "in"), si(door.height, "in")
+        across, sill = si(door.across, "in"), si(door.sill, "in")
+        if w <= 0 or h <= 0 or sill < 0:
+            raise ValueError("a door's width and height must be more than 0, its sill not below 0")
+        if door.head == "arch" and h < w / 2:
+            raise ValueError(
+                f"an arched door's height takes its semicircular head, {w / 2:g} in: make it at "
+                "least that tall"
+            )
+        row = self.chamber.chambers > 1
+        if row and isinstance(self.roof, SprungArch) and not self.roof.tube:
+            if face in ("front", "back"):
+                raise ValueError(
+                    "each chamber's arch springs from the front and back walls, so a door in part "
+                    f"of the {face} wall would be under a springing: no source here allows it. Put "
+                    "it in a side wall, as climbing kilns do (Olsen Figs 4-36, 4-45), or leave out "
+                    "the opening, so the whole wall is the door"
+                )
+        elif row and face in ("left", "right"):
+            raise ValueError(
+                "a door in part of a side wall of chambers in a row is laid out only under arches "
+                "along the draft: put it in the front or back wall"
+            )
+        along = self.chamber.width if face in ("front", "back") else self.chamber.depth
+        half = si(along, "in") / 2
+        if row and face in ("left", "right"):
+            from kilndesigner.run_parts import run_layout
+
+            run = run_layout(self)
+            lo, hi = run.front(0) / 25.4, run.back(run.chambers - 1) / 25.4
+            half = (hi - lo) / 2
+            u = (lo + hi) / 2 + (across if face == "right" else -across)
+            if not any(
+                run.front(k) / 25.4 - 1e-9 <= u - w / 2 and u + w / 2 <= run.back(k) / 25.4 + 1e-9
+                for k in range(run.chambers)
+            ):
+                raise ValueError(
+                    "a door in a side wall of chambers in a row must open into one chamber, "
+                    "between the walls across the run: move it along"
+                )
+        if abs(across) + w / 2 > half * (0.95 if self.chamber.shape == "round" else 1) + 1e-9:
+            raise ValueError(
+                f"the door, {w:g} in wide and {across:g} in off the middle, doesn't fit in the "
+                f"{face} wall, {2 * half:g} in long inside"
+            )
+        top = si(self.chamber.height, "in")
+        if isinstance(self.roof, CatenaryArch):
+            from kilndesigner.shape import CatenaryCurve
+
+            curve = CatenaryCurve(si(self.chamber.width, "in"), top)
+            top = min(curve.z(across - w / 2), curve.z(across + w / 2))
+        if sill + h > top + 1e-9:
+            raise ValueError(
+                f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "
+                f"{top:.1f} in: lower it"
+            )
+        return self
+
+    @property
+    def door_wall(self) -> Face | None:
+        """The wall that is the door, when the whole wall is; None for a door in part of one."""
+        return self.door_face if self.loading.opening is None else None
 
     def castable(self, mix_id: str) -> CastableMix | None:
         return next((m for m in self.castables or [] if m.id == mix_id), None)

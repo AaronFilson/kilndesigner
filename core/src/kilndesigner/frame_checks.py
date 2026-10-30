@@ -705,6 +705,78 @@ def dome_rod(
     return s
 
 
+@dataclass(frozen=True)
+class LintelInputs:
+    """A steel lintel over a door in part of a wall (steel-design.md §S5): the opening, the wall's
+    layers over it, and the roof's edge load on it."""
+
+    clear: float  # in, the opening's width
+    bearing: float  # in, at each end
+    above: float  # in, the wall over the opening, at its highest
+    layers: tuple[Layer, ...]  # the wall's
+    edge: float  # lb/ft, the roof's vertical load on the wall over the opening
+    edge_source: str
+    longest: float  # in, the longest span checked
+    longest_source: str
+
+
+BIA_LINTEL = "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]"
+LINTEL_BEARING = "TMS 402-16 §5.2.1.3, at least 4 in; door-headers.md §D1.5 [H6]"
+
+
+def door_lintel(
+    li: LintelInputs, a: AngleSection, ix: float, hot: HotSteel, limit: float, stress_source: str
+) -> Sheet:
+    """A steel angle over a door in part of a wall, carrying everything above the opening with no
+    arching (BIA TN 31B) and the roof's edge on it, checked hot by AISC 360-16 F10 as the dome's
+    buttress is; its deflection by BIA's L/600 and 0.3 in, × 1.56 for an angle free to twist (AISC
+    Commentary F10). The bearing of its ends on refractory brick is not checked: no allowable
+    stress is found (door-openings.md)."""
+    s = Sheet(
+        "frame.door-lintel",
+        f"Steel lintel over the door, {a.name}, hot",
+        reference=f"{BIA_LINTEL}; {hot.source}; steel-design.md §S5",
+    )
+    s.given("L_c", "the opening's width", Q_(li.clear, "in"), source=f"{DESIGN}: the door")
+    s.given("L_max", "the widest opening a steel angle lintel spans", Q_(li.longest, "in"),
+            source=li.longest_source)  # fmt: skip
+    s.require("L_c", "<=", "L_max")
+    s.given("b_e", "bearing at each end", Q_(li.bearing, "in"), source=LINTEL_BEARING)
+    s.let("L", "span, centre to centre of the bearings", "L_c + b_e", "in", source=BIA_LINTEL)
+    s.given("h_a", "the wall over the opening, at its highest", Q_(li.above, "in"),
+            source=f"{DESIGN}: the wall's inside top less the door's top")  # fmt: skip
+    for i, x in enumerate(li.layers, 1):
+        s.given(f"t_{i}", f"layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"ρ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    total = " + ".join(f"ρ_{i}*t_{i}" for i in range(1, len(li.layers) + 1))
+    s.let("w_m", "the wall over the opening, all of it, per foot", f"({total})*h_a", "lbf/ft",
+          source=f"{BIA_LINTEL}: with no arching, the full weight above the opening")  # fmt: skip
+    s.given("V", "the roof's edge load on the wall over the opening", Q_(li.edge, "lbf/ft"),
+            source=li.edge_source)  # fmt: skip
+    s.let("w", "load on the lintel", "w_m + V", "lbf/ft")
+    s.let("M", "bending moment, a simple beam", "w*L^2/8", "lbf*in", source=BIA_LINTEL)
+    s.let("L_b", "unbraced length, AISC L_b: the span", "L", "in")
+    _aisc_angle_moment(s, a, hot)
+    s.require("M", "<=", "M_a")
+    s.let("σ_b", "bending stress", "M/S_x", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress_source)
+    s.require("σ_b", "<=", "σ_allow")
+    s.given("I_x", f"{a.name}'s moment of inertia, geometric axis", Q_(ix, "in**4"),
+            source=a.source)  # fmt: skip
+    s.let("Δ", "deflection, hot, the angle free to twist", "1.56*5*w*L^4/(384*E*I_x)", "in",
+          source=f"{BIA_LINTEL}: 5wL⁴/384EI; AISC 360-16 Commentary F10, × 1.56")  # fmt: skip
+    s.let("Δ_600", "BIA's limit: the clear span over 600", "L_c/600", "in", source=BIA_LINTEL)
+    s.given("Δ_max", "BIA's limit, at most", Q_(0.3, "in"), source=BIA_LINTEL)
+    s.require("Δ", "<=", "Δ_600")
+    s.require("Δ", "<=", "Δ_max")
+    s.let("R", "each end's reaction on the brick", "w*L/2", "lbf",
+          source="statics; its bearing stress is not checked: no allowable stress for refractory "
+          "brick is found (door-openings.md)")  # fmt: skip
+    s.lever("S_x", Q_(0.05, "in**3"), Q_(10, "in**3"))
+    return s
+
+
 def steel_heat(hot: HotSteel, table_top: float, service: float, service_source: str) -> Sheet:
     """The frame steel's temperature against the sourced range: AISC's table of E(T) ends at
     1,400 °F (past it nothing sourced gives the steel's stiffness: refuse), and Giles keeps carbon

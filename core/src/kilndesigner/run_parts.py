@@ -154,7 +154,7 @@ def run_parts(kiln: Kiln) -> list[Part]:
         return resolve_material(kiln, mat).kind
 
     def named(face: str) -> str:
-        return "door" if face == kiln.door_face else face
+        return "door" if face == kiln.door_wall else face
 
     def box(name: str, mat: str, face: str, lo: Any, hi: Any, chamber: int | None) -> Part:
         return Part(name, mat, kind(mat), lo, hi, face=face, chamber=chamber)  # type: ignore[arg-type]
