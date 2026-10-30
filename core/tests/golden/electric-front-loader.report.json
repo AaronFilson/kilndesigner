@@ -223,6 +223,12 @@
       {
         "check": null,
         "level": "info",
+        "message": "The elements run above Olsen's 9 W/in², held only to Krueger's 17.5, which is for Kanthal A-1 in kilns rated about 2300 °F. This kiln is kanthal-a1 to 2345 °F: no source covers that load there, so expect the elements to wear faster than Krueger's.",
+        "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
+      },
+      {
+        "check": null,
+        "level": "info",
         "message": "The tool chose 2 elements of 9 AWG wire (2.91 mm): the fewest elements that work, each with the thickest wire whose coil fits its groove. Kanthal recommends wire of 3 mm or more for the longest life in grooves. No number of elements in the left, right and back walls fits wire that thick, because its coils would be longer than the grooves. Expect to replace these elements sooner.",
         "reference": "electric-and-thermal.md §1.6 [S9, S13]"
       },
@@ -313,10 +319,14 @@
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
-        "inputs": {},
+        "inputs": {
+          "P, each element": "5760 W",
+          "U, each element": "240 V",
+          "d": "2.91 mm"
+        },
         "name": "Wire length per element",
         "note": null,
-        "reference": null,
+        "reference": "Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md §1.6 [S13]",
         "value": "143.1 ft"
       },
       {
@@ -331,12 +341,24 @@
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
         "inputs": {
           "D/d": "5.5",
-          "pitch range": "2–4 d"
+          "pitch range": "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
         },
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
         "value": "1062 turns, 0.629 in outside, pitch 2.22 d"
+      },
+      {
+        "formula": "installed power ÷ inside area of the element walls",
+        "inputs": {
+          "Kanthal's most, in grooves at 1000 °C": "35 kW/m²",
+          "element walls": "left, right, back",
+          "their area": "11.3 ft²"
+        },
+        "name": "Wall loading",
+        "note": "Kanthal gives no figure above 1000 °C, where it can only be lower; and the floor and roof carry no elements here.",
+        "reference": "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]",
+        "value": "11 kW/m²"
       },
       {
         "formula": null,
@@ -498,6 +520,12 @@
       "level": "info",
       "message": "The elements draw 48.0 A hot at 240 V. At +5 % supply voltage (ANSI C84.1 Range A) that is 50.4 A, and 52.8 A while the wire is cold, against the 48 A continuous limit. Kiln makers rate kilns the same way.",
       "reference": "electrical-supply.md §1 [E1–E3], §3"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The elements run above Olsen's 9 W/in², held only to Krueger's 17.5, which is for Kanthal A-1 in kilns rated about 2300 °F. This kiln is kanthal-a1 to 2345 °F: no source covers that load there, so expect the elements to wear faster than Krueger's.",
+      "reference": "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
     },
     {
       "check": null,
@@ -925,7 +953,7 @@
         "formula": "sum of the six faces",
         "inputs": {},
         "name": "Total heat loss at top temperature",
-        "note": null,
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
         "value": "5.693 kW (1.94e+04 Btu/h)"
       }

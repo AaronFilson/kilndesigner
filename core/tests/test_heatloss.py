@@ -58,6 +58,15 @@ def test_front_loader_heat_loss_is_plausible() -> None:
     assert not [f for f in result.findings if f.level == "error"]
 
 
+def test_the_total_says_what_the_loss_leaves_out() -> None:
+    """Review E12: the loss is conduction only, and the floor is a hot plate facing down."""
+    result = heat_loss(load_design(EXAMPLES / "electric-front-loader.yaml"))
+    total = next(s for s in result.working if s.name == "Total heat loss at top temperature")
+    assert total.note is not None
+    assert total.note.startswith("Conduction through the lining only, in steady state")
+    assert "hot plate facing down" in total.note
+
+
 def test_k_past_the_data_sheet_is_one_note_per_material_not_a_warning() -> None:
     """JM 26's 2025 sheet stops at 1100 °C (2012 °F); at cone 10 that is normal, so it is a
     note."""

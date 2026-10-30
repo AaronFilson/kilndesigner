@@ -465,7 +465,8 @@ def test_one_cylinder_cant_keep_up_even_with_a_slow_firing() -> None:
     volume_ft3 = 28 * 48 * (40 + 2 / 3 * 3.75) / 1728
     assert 10_000 * volume_ft3 > 113_000
     errors = [f.message for f in gas.findings if f.level == "error"]
-    assert any(e.startswith("Even full, the propane supply gives only 113,000 BTU/hr") for e in errors)
+    short = "Even full, the propane supply gives only 113,000 BTU/hr"
+    assert any(e.startswith(short) for e in errors)
     assert not [f for f in gas.findings if "slow firing" in f.message]
     assert not [f for f in gas.findings if "joined in parallel" in f.message]
 

@@ -57,8 +57,18 @@ SURFACE_LOAD_SOURCE = (
 MOST_SURFACE_LOAD = Q_(17.5, "W/in**2")
 MOST_LOAD_SOURCE = "Krueger Pottery, A-1 coils in grooves; electric-and-thermal.md §1.6 [S15]"
 COIL_RATIO = (5.0, 6.0)  # outside coil diameter / wire diameter, coils in grooves
-PITCH_RATIO = (2.0, 4.0)  # coil pitch / wire diameter
+# Coil pitch / wire diameter: at least 2 d for a spiral in grooves (Kanthal key data [S14]); no
+# more than 4 d, the top of Kanthal's general 2–4 d (§1.6 [S13]), since no groove rule gives one
+PITCH_RATIO = (2.0, 4.0)
+PITCH_TEXT = "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
 COIL_SOURCE = "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]"
+# Kanthal key data for a spiral in grooves [S14]: wire 2.0–5.0 mm; wall loading at most 35 kW/m²
+# at 1000 °C (no figure is given for hotter furnaces, where it can only be lower)
+GROOVE_WIRE = (Q_(2.0, "mm"), Q_(5.0, "mm"))
+WALL_LOADING = Q_(35, "kW/m**2")
+KEY_DATA = "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]"
+# Krueger's 17.5 W/in² is for Kanthal A-1 in kilns rated about 2300 °F (§1.6 [S15])
+KRUEGER_ALLOY, KRUEGER_TOP = "kanthal-a1", Q_(2300, "degF")
 GROOVED_MAX_FURNACE = Q_(1250, "degC")  # Kanthal key data, spiral in grooves [S14]
 CONE_10_FAST = cone_temperature("10", 150)  # the hottest that studio kiln makers build for
 KANTHAL_MIN_WIRE = Q_(3, "mm")  # Kanthal minimum for grooved elements, for long life [S9, S13]
@@ -518,6 +528,34 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
         # The limit the chosen wire was held to: Olsen's, or Krueger's when nothing fits his
         limit = (preferred, SURFACE_LOAD_SOURCE) if within else (max_load, MOST_LOAD_SOURCE)
         working.extend(_element_steps(best, p_e, v_e, rho_t, limit, us))
+        if not within and (
+            electric.alloy != KRUEGER_ALLOY or si(top, "degF") > si(KRUEGER_TOP, "degF") + 1e-6
+        ):
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        f"The elements run above Olsen's 9 W/in², held only to Krueger's 17.5, "
+                        f"which is for Kanthal A-1 in kilns rated about 2300 °F. This kiln is "
+                        f"{electric.alloy} to {show(top, temp_unit)}: no source covers that load "
+                        "there, so expect the elements to wear faster than Krueger's."
+                    ),
+                    reference=MOST_LOAD_SOURCE,
+                )
+            )
+        thin = sheets.groove_wire(best.diameter, GROOVE_WIRE[0], KEY_DATA).check()
+        if thin.status != "pass":
+            findings.append(
+                Finding.failed(
+                    thin,
+                    message=(
+                        f"The wire is {show(Q_(best.diameter, 'm'), 'mm', 3)}, under the 2.0–5.0 "
+                        "mm Kanthal gives for coils in grooves: outside the range the maker "
+                        "has checked. Thinner wire sags and burns through sooner."
+                    ),
+                    reference=KEY_DATA,
+                )
+            )
         if best.diameter < si(KANTHAL_MIN_WIRE, "m"):
             everything = candidates
             if electric.elements is not None:
@@ -532,6 +570,43 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
                     fixed_count=None,
                 )
             findings.append(_thin_wire(best, everything, electric, kiln.door_face))
+
+    # Wall loading: the power over the inside area of the walls that carry elements
+    c = kiln.chamber
+    w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
+    side = {"left": d * h, "right": d * h, "back": w * h, "front": w * h}
+    wall_area = sum(side.get(wall, 0.0) for wall in electric.walls)
+    if wall_area > 0:
+        loading = power / wall_area
+        working.append(
+            Step(
+                name="Wall loading",
+                value=show(Q_(loading, "W/m**2"), "kW/m**2", 3),
+                formula="installed power ÷ inside area of the element walls",
+                inputs={
+                    "element walls": ", ".join(electric.walls),
+                    "their area": show(Q_(wall_area, "m**2"), "ft**2" if us else "m**2", 3),
+                    "Kanthal's most, in grooves at 1000 °C": show(WALL_LOADING),
+                },
+                reference=KEY_DATA,
+                note="Kanthal gives no figure above 1000 °C, where it can only be lower; and the "
+                "floor and roof carry no elements here.",
+            )
+        )
+        walls = sheets.wall_loading(power, wall_area, WALL_LOADING, KEY_DATA)
+        walls.agrees("w", Q_(loading, "W/m**2"))
+        if (check := walls.check()).status != "pass":
+            findings.append(
+                Finding.failed(
+                    check,
+                    message=(
+                        f"The element walls carry {show(Q_(loading, 'W/m**2'), 'kW/m**2', 3)}, "
+                        f"over Kanthal's {show(WALL_LOADING)} for coils in grooves at 1000 °C "
+                        "(less hotter). Put elements in more walls, or install less power."
+                    ),
+                    reference=KEY_DATA,
+                )
+            )
 
     volume = _chamber_volume(kiln)
     per_volume = Q_(power / volume, "W/m**3")
@@ -740,6 +815,13 @@ def _element_steps(
             name="Wire length per element",
             value=show(Q_(c.length, "m"), "ft" if us else "m"),
             formula="L = U²/P · (πd²/4) / ρ_T",
+            inputs={
+                "U, each element": show(Q_(v_e, "V"), digits=4),
+                "P, each element": show(Q_(p_e, "W"), "W", 4),
+                "d": show(Q_(c.diameter, "m"), "mm", 3),
+            },
+            reference="Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md "
+            "§1.6 [S13]",
         ),
         Step(
             name="Surface load",
@@ -754,7 +836,7 @@ def _element_steps(
                 f"pitch {c.pitch_ratio:.2f} d"
             ),
             formula="turns = L / (π·(D − d)); pitch = groove length / turns",
-            inputs={"D/d": f"{sum(COIL_RATIO) / 2:g}", "pitch range": "2–4 d"},
+            inputs={"D/d": f"{sum(COIL_RATIO) / 2:g}", "pitch range": PITCH_TEXT},
             reference=COIL_SOURCE,
         ),
     ]

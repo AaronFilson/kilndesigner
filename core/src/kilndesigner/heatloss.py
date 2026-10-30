@@ -302,6 +302,19 @@ def heat_loss(
                 f"{({3: 'three', 4: 'four', 5: 'five', 6: 'six'}).get(len(faces), len(faces))} "
                 "faces"
             ),
+            note=(
+                "Conduction through the lining only, in steady state: air leaking at the door and "
+                "spy holes, the flue gases and the heat stored in the walls and ware are not in "
+                "it. "
+                + (
+                    "The floor loses heat into the ground."
+                    if grounded
+                    else "The floor stands over its fireboxes and isn't counted."
+                    if over_fire
+                    else "The floor is taken as a hot plate facing down in open air, as on a "
+                    "stand; on a slab it would lose less."
+                )
+            ),
         )
     )
     if kiln.roof.type == "open":

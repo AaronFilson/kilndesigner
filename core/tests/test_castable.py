@@ -24,7 +24,6 @@ from kilndesigner.castable_checks import dryout_reach
 from kilndesigner.heatloss import HeatLoss, heat_loss
 from kilndesigner.model import CastableMix, Kiln
 from kilndesigner.report import design_report
-from kilndesigner.sheet import number
 from kilndesigner.units import Q_, parse_quantity, si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"

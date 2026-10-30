@@ -379,10 +379,14 @@
       },
       {
         "formula": "L = U²/P · (πd²/4) / ρ_T",
-        "inputs": {},
+        "inputs": {
+          "P, each element": "5760 W",
+          "U, each element": "240 V",
+          "d": "3.26 mm"
+        },
         "name": "Wire length per element",
         "note": null,
-        "reference": null,
+        "reference": "Kanthal element design: R = U²/P, L = R·q/ρ_T; electric-and-thermal.md §1.6 [S13]",
         "value": "180.6 ft"
       },
       {
@@ -397,12 +401,24 @@
         "formula": "turns = L / (π·(D − d)); pitch = groove length / turns",
         "inputs": {
           "D/d": "5.5",
-          "pitch range": "2–4 d"
+          "pitch range": "at least 2 d in grooves (Kanthal key data [S14]), at most 4 d (Kanthal, general [S13])"
         },
         "name": "Coil",
         "note": null,
         "reference": "Kanthal, element in grooves; electric-and-thermal.md §1.6 [S13, S14]",
         "value": "1193 turns, 0.707 in outside, pitch 3.13 d"
+      },
+      {
+        "formula": "installed power ÷ inside area of the element walls",
+        "inputs": {
+          "Kanthal's most, in grooves at 1000 °C": "35 kW/m²",
+          "element walls": "left",
+          "their area": "18.3 ft²"
+        },
+        "name": "Wall loading",
+        "note": "Kanthal gives no figure above 1000 °C, where it can only be lower; and the floor and roof carry no elements here.",
+        "reference": "Kanthal key data, spiral in grooves; electric-and-thermal.md §1.6 [S14]",
+        "value": "6.76 kW/m²"
       },
       {
         "formula": null,
@@ -2073,7 +2089,7 @@
         "formula": "sum of the six faces",
         "inputs": {},
         "name": "Total heat loss at top temperature",
-        "note": null,
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
         "value": "14.31 kW (4.88e+04 Btu/h)"
       }
