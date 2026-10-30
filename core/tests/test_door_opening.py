@@ -125,6 +125,26 @@ def test_a_ring_too_thin_for_its_door_is_refused_with_its_sheet() -> None:
     assert "1.9 times the thinnest" in refused.message
 
 
+def test_the_arch_is_checked_for_sliding_at_its_springing(monkeypatch: pytest.MonkeyPatch) -> None:
+    kiln = _kiln("gas-crossdraft.yaml", ARCH)
+    head = door_head(kiln)
+    assert head is not None
+    step = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert "needs friction" in step.value
+    assert "of 0.6" in step.value
+    assert "bonded into the jamb's end is counted" in (step.note or "")
+    # With almost no friction it would slide (BIA's 0.60 swapped for 0.01)
+    import kilndesigner.frame as frame
+
+    monkeypatch.setattr(frame, "FRICTION", 0.01)
+    head = door_head(kiln)
+    assert head is not None
+    slid = next(f for f in head.findings if f.level == "error")
+    assert slid.check is not None
+    assert slid.check.id == "frame.door-slide"
+    assert "could slide there" in slid.message
+
+
 def test_a_jamb_too_narrow_for_the_thrust_is_refused() -> None:
     # A 26 in door in a 28 in wall of 2½ in brick: each jamb is the inch beside it and the side
     # wall's 2½ in, and the 4½ in ring's thrust carries the resultant past it

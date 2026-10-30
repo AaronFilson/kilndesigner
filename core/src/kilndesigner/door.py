@@ -330,22 +330,30 @@ def _ring_depth(kiln: Kiln) -> float | None:
     return sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof")[:ring])
 
 
-def _jamb(kiln: Kiln) -> tuple[float, str]:
+def _jamb(kiln: Kiln) -> tuple[float, str, WallFace | None]:
     """The narrowest jamb (in): from a door's edge along the wall's outside to the next door or
-    the wall's outside end."""
+    the wall's outside end; and the cross wall bonded into its far end when that end is the
+    wall's corner (None between two doors)."""
     s = site(kiln)
     face = kiln.loading.face
+    sides: tuple[WallFace, WallFace]
     if face in ("front", "back"):
+        sides = ("left", "right")
         ends = (-s.width / 2 - s.reach["left"], s.width / 2 + s.reach["right"])
     else:
+        sides = ("front", "back")
         ends = (s.front - s.reach["front"], s.back + s.reach["back"])
     doors = sorted(_alongs(kiln))
     gaps = [doors[0][0] - ends[0], ends[1] - doors[-1][1]]
     gaps += [b[0] - a[1] for a, b in itertools.pairwise(doors)]
-    return min(gaps) / IN, (
+    narrow = min(range(len(gaps)), key=gaps.__getitem__)
+    corner = sides[narrow] if narrow < 2 else None
+    return (
+        gaps[narrow] / IN,
         f"{DESIGN_WORD}: from the door's edge along the wall's outside to "
         + ("the next door or " if len(doors) > 1 else "")
-        + "the wall's outside end, the narrower side; the cross walls bonded into it aren't counted"
+        + "the wall's outside end, the narrower side",
+        corner,
     )
 
 
@@ -354,12 +362,13 @@ DESIGN_WORD = "the design"
 
 def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     from kilndesigner.castable import resolve_material
-    from kilndesigner.frame import steel_data
+    from kilndesigner.frame import FRICTION, steel_data
     from kilndesigner.frame_checks import (
         DoorArchInputs,
         Layer,
         door_arch_ring,
         door_jamb,
+        door_slide,
     )
 
     door = kiln.loading.opening
@@ -394,18 +403,27 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     r = w / 2
     springing = si(door.sill, "in") + si(door.height, "in") - r
     above = _wall_above(kiln, crown=True) + r
-    jamb, jamb_source = _jamb(kiln)
+    jamb, jamb_source, corner = _jamb(kiln)
     q = sum(x.density * x.thickness for x in layers) / 1728  # lb per square inch of face
+    cross = cross_q = 0.0
+    if corner is not None:
+        for x in kiln.lining.for_face(corner):
+            m = resolve_material(kiln, x.material)
+            t = si(x.thickness, "in")
+            cross += t
+            cross_q += si(parse_quantity(m.density), "lb/ft**3") * t / 1728
     least, most = door_thrusts(r, r + ring, max(above, r + ring), q, edge / 12)
     da = DoorArchInputs(w, ring, layers, above, edge, edge_source, RING_SOURCE, springing, jamb,
-                        jamb_source, least, most)  # fmt: skip
+                        jamb_source, least, most, cross, cross_q)  # fmt: skip
     minimum = steel_data()["arch_minimum_thickness"]
     eta = float(np.interp(90.0, minimum["half_angle_deg"], minimum["eta"]))
     standing = door_arch_ring(da, eta, minimum["safety"], minimum["source"])
     k = ring / (r + ring / 2) / eta
     standing.agrees("k", k)
     holding = door_jamb(da)
+    sliding = door_slide(da, FRICTION, SLIDE_SOURCE)
     x_r, x_3 = (holding.env[n] / 0.0254 for n in ("x_R", "x_3"))
+    mu_need = sliding.env["μ_need"]
     out.working.append(
         Step(
             name="The door's arch and jambs",
@@ -413,12 +431,14 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 f"a {ring:g} in ring over {w:g} in, {k:.1f} times the thinnest that stands; "
                 f"its thrust {least:.0f} lb at least, {most:.0f} lb at most; on the {jamb:.1f} in "
                 f"jamb the resultant {x_r:.1f} in in from the door's edge (its middle third to "
-                f"{x_3:.1f} in)"
+                f"{x_3:.1f} in); at the springing it needs friction {mu_need:.2f} of "
+                f"{FRICTION:g}"
             ),
             formula=(
                 "k = d/(r + d/2) ÷ η(90°) ≥ 2; H_min ≤ H_max, each the loads' moment about the "
                 "touching point over its height to the crown's line; "
-                "x_R = (N·x_p + G₁·e/2 + G₂·(d + e)/2 + H_min·h_s)/ΣV ≤ e"
+                "x_R = (N·x_p + G₁·e/2 + G₂·(d + e)/2 + G₃·(e − b_c/2) + H_min·h_s)/ΣV ≤ e; "
+                "H_min/N ≤ μ"
             ),
             inputs={
                 "ring depth": f"{ring:g} in",
@@ -434,14 +454,21 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 "a little lets the arch settle to its least thrust, so that is what it must hold "
                 "(Heyman). A hot arch held rigidly would push towards the most; a door arch's hot "
                 "thrust is not sourced (door-headers.md §D8). The whole wall over the arch is "
-                "taken to bear on it, BIA's safe side. Sliding at a joint isn't checked: no "
-                "friction for refractory masonry is sourced. Neither is the walls bonded into "
-                "the jamb's far end counted: only the jamb's own strip of wall."
+                "taken to bear on it, BIA's safe side. Sliding uses BIA's friction between brick "
+                f"masonry units, {FRICTION:g}: for clay brick, none is sourced for insulating "
+                "firebrick or refractory joints (refractory-bearing.md §B4.1). "
+                + (
+                    f"The {corner} wall bonded into the jamb's end is counted for a length of the "
+                    "jamb wall's thickness only (a design rule, door-headers.md §D9). "
+                    if corner
+                    else "The jamb ends at another door: no cross wall is counted. "
+                )
+                + "A partition wall bonded in between doors isn't counted."
             ),
         )
     )
     failed = False
-    for sheet in (standing, holding):
+    for sheet in (standing, holding, sliding):
         if (check := sheet.check()).status != "pass":
             failed = True
             out.findings.append(
@@ -457,6 +484,11 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                         f"wall over it its least thrust is {least:.0f} lb, its most {most:.0f} "
                         "lb: thicken the roof's ring or narrow the door."
                         if sheet is standing
+                        else f"The door arch's least thrust, {least:.0f} lb, over its "
+                        f"{sliding.env['N'] / 4.4482216:.0f} lb load at the springing needs "
+                        f"friction {mu_need:.2f}, more than the {FRICTION:g} BIA gives for brick: "
+                        "it could slide there. Load the arch more or narrow the door."
+                        if sheet is sliding
                         else f"The door arch's thrust carries the resultant {x_r:.1f} in into "
                         f"the {jamb:.1f} in jamb, "
                         + (
@@ -506,10 +538,17 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
 
 
 ARCH_REFERENCE = "arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
+SLIDE_SOURCE = (
+    "BIA TN 31A: 'the coefficient of friction between the units composing a brick or tile masonry "
+    "arch is at least 0.60', stable against sliding if the resultant's angle to the joint's normal "
+    "is under the angle of friction (door-headers.md §D3.3; refractory-bearing.md §B4.1)"
+)
 BEARING_SOURCE = "refractory-bearing.md"
 BEARING_NOTE = (
     "Reported, not checked: no maker, standard or handbook found gives an allowable bearing "
-    "stress or a factor of safety for refractory brick or castable, cold or hot; ASTM C133 says "
+    "stress or a factor of safety for refractory brick or castable, cold or hot (one search "
+    "extract, unread, gives a factor of 2 on the crushing strength at temperature for refractory-"
+    "lined vessels: refractory-bearing.md §B4); ASTM C133 says "
     "cold crushing strength is not a measure of performance hot, and the ASTM C16 load (25 psi) "
     "is a test condition, not a limit (refractory-bearing.md). Compare it with the brick's cold "
     "crushing strength and hot-load data there."

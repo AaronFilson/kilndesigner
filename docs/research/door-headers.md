@@ -644,20 +644,30 @@ is a formula sheet (`frame_checks.py`, `frame.door-arch`, `frame.door-jamb`,
 4. **The jamb.** A jamb that gives a little lets the arch settle to its least thrust ("an arch on
    spreading supports will act in a state of minimum thrust", [A1]), so that is what it holds.
    The jamb is its own strip of wall from the door's edge to the next door or the wall's outside
-   end (the walls bonded into its end aren't counted: cautious). With the springing's load where
+   end. Where that end is the wall's corner, the cross wall bonded into it is part of BIA's
+   "adjacent mass of masonry" (§D3.5); the engine counts only a length of it equal to the jamb
+   wall's thickness b, the jamb's full height, its weight at the cross wall's middle (G₃ =
+   q_c·b·(h_s + Z) at e − b_c/2). That length is a cautious design rule, not a sourced one: a
+   corner bond laps the courses about one wall's thickness, and the rest of the return is spare.
+   A partition wall bonded in between two doors is not counted. With the springing's load where
    the line crosses the springing, the jamb's weight under the springline and the wall over it
    beside the ring, the resultant at the jamb's base must lie within it (error) and within its
    middle third (warning: no tension, [D7], BIA TN 31A §D3.2).
-5. **Not checked:** sliding (no friction for refractory masonry is sourced), the hot thrust of a
-   door arch held rigidly (it rises toward the most; not sourced as a number), and the walls
-   bonded into the jamb.
+5. **Sliding** at the springing's level joint: H_min/N ≤ 0.60, BIA's friction between brick
+   masonry units (§D3.3), `frame.door-slide`; for IFB and refractory joints no friction is
+   sourced (refractory dry joints 0.50–0.60, Snippet: `refractory-bearing.md` §B4.1). **Not
+   checked:** the hot thrust of a door arch held rigidly (it rises toward the most; not sourced
+   as a number).
 6. **Bearing.** At the springing and the jamb's toe, the triangle of stress 2N/(3·b·a), a the
    resultant's distance to the nearer edge, against the brick's sourced figure at its
    temperature there (`refractory-bearing.md`).
 
 Olsen's built kilns with arched doors in `examples/olsen` (Bidai, Kawaii: doors per chamber in a
 side wall, 20 in wide, Fig 4-36) pass: their 9 in rings are 5.8 times the thinnest, the least
-thrust under the wall over them about 8 lb, the resultant 2.8–3.2 in into a 10 in end jamb.
+thrust under the wall over them about 8 lb, the resultant 3.7–4.0 in into a 10 in end jamb with
+the end wall bonded in (2.8–3.2 in without it), and the springing needs friction 0.02 of BIA's
+0.60. Their bearing is 31–32 psi at the springing and 18 psi at the jamb's toe: shown, not
+checked (`refractory-bearing.md` §B4).
 
 ---
 

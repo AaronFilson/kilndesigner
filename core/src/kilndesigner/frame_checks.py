@@ -796,6 +796,8 @@ class DoorArchInputs:
     jamb_source: str
     least: float  # lbf, the minimum thrust: a line of thrust from the crown's top
     most: float  # lbf, the maximum thrust: a line of thrust from the crown's soffit
+    cross: float = 0.0  # in, the cross wall bonded into the jamb's far end (0: none, a door)
+    cross_q: float = 0.0  # psi, that wall's weight per square inch of its face
 
 
 ARCH_STATICS = (
@@ -812,6 +814,14 @@ MINIMUM_THRUST = (
 NO_TENSION = (
     "the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 "
     "[D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress"
+)
+
+
+BONDED = (
+    "a design rule, not a sourced one (door-headers.md §D9): 'resistance to horizontal thrust ... "
+    "is provided by the adjacent mass of masonry' (BIA TN 31A §D3.5), and a cross wall bonded "
+    "into the jamb's end is part of it; only a length of it equal to the jamb wall's thickness "
+    "is counted, its weight at the cross wall's middle, so the rest of the return is spare"
 )
 
 
@@ -886,17 +896,25 @@ def _jamb_base(s: Sheet, da: DoorArchInputs) -> None:
     s.let("G_1", "the jamb under the springline", "q*e*h_s", "lbf")
     s.let("G_2", "the wall over the springline on the jamb, beside the ring",
           "q*max(e - d, 0*d)*Z", "lbf")  # fmt: skip
-    s.let("ΣV", "the vertical load on the jamb's base", "N + G_1 + G_2", "lbf")
+    s.given("b_c", "the cross wall bonded into the jamb's far end, its thickness",
+            Q_(da.cross, "in"), source=f"{DESIGN}: the wall at the corner; 0 where the jamb "
+            "ends at another door")  # fmt: skip
+    s.given("q_c", "the cross wall's weight per square inch of its face", Q_(da.cross_q, "psi"),
+            source="its lining's layers and densities")  # fmt: skip
+    s.let("G_3", "the cross wall bonded in: one wall's thickness b of it, the jamb's full height",
+          "q_c*b*(h_s + Z)", "lbf",
+          source=BONDED)  # fmt: skip
+    s.let("ΣV", "the vertical load on the jamb's base", "N + G_1 + G_2 + G_3", "lbf")
     s.let("x_R", "where the resultant meets the base, in from the door's edge",
-          "(N*x_p + G_1*e/2 + G_2*(d + e)/2 + H*h_s)/ΣV", "in",
+          "(N*x_p + G_1*e/2 + G_2*(d + e)/2 + G_3*(e - b_c/2) + H*h_s)/ΣV", "in",
           source="moments about the door's edge at the base: the thrust carries the resultant "
           "away from the door")  # fmt: skip
 
 
 def door_jamb(da: DoorArchInputs) -> Sheet:
-    """The jamb as a buttress: the arch's least thrust and its load, with the jamb's own weight
-    and the wall over it, give a resultant at the jamb's base that must lie within it (the safe
-    theorem), and in its middle third for no tension."""
+    """The jamb as a buttress: the arch's least thrust and its load, with the jamb's own weight,
+    the wall over it and a cross wall bonded into its far end, give a resultant at the jamb's base
+    that must lie within it (the safe theorem), and in its middle third for no tension."""
     s = Sheet("frame.door-jamb", "The door's jamb holds the arch's thrust",
               reference=f"{ARCH_STATICS}; {MINIMUM_THRUST}; {NO_TENSION}")  # fmt: skip
     _door_arch(s, da)
@@ -907,6 +925,21 @@ def door_jamb(da: DoorArchInputs) -> Sheet:
     s.let("x_3", "the far edge of the base's middle third", "2*e/3", "in", source=NO_TENSION)
     s.require("x_R", "<=", "x_3", level="warning")
     s.lever("e", Q_(2, "in"), Q_(240, "in"))
+    return s
+
+
+def door_slide(da: DoorArchInputs, mu: float, source: str) -> Sheet:
+    """Sliding at the springing: the arch's least thrust over its vertical load there must not
+    pass the friction between brick units (BIA: stable if the resultant's angle to the joint's
+    normal is under the angle of friction). The jamb's base carries more weight for the same
+    thrust, so the springing's level joint governs."""
+    s = Sheet("frame.door-slide", "The door's arch doesn't slide at its springing",
+              reference=f"{source}; {MINIMUM_THRUST}")  # fmt: skip
+    _door_arch(s, da)
+    s.let("μ_need", "the friction the springing's level joint needs", "H/N",
+          source="the resultant's angle to the joint's normal: tan⁻¹(H/N)")  # fmt: skip
+    s.given("μ", "friction between brick masonry units", mu, source=source)
+    s.require("μ_need", "<=", "μ")
     return s
 
 

@@ -178,6 +178,37 @@ temperatures, and "ASTM tests on Super Duty Brick have published results of a 7.
 | Fireclay refractoriness falls as load rises; silica brick far better under load | Old gasworks text via search extract | Snippet | search result, not opened |
 | Arch crushing check | `arch-thrust-theory.md` (~line 136): crushing is "then the governing check, not covered"; K23 cold CCS about 1 MPa | Verified (repo) | `arch-thrust-theory.md` |
 
+Round 3 searches (2026-10-30, extended web search):
+
+| Question | Finding | Status | Source |
+|---|---|---|---|
+| Allowable compressive stress for refractory, any code | Search extract of an Elsevier "Allowable Compressive Stress" topic page (apparently from a pressure-vessel design text on refractory-lined vessels): "no code or standard that dictates the allowable stresses for refractory materials"; "one criteria that has been used is a factor of safety of 2 based on the minimum specified crush strength of the material at temperature"; tensile "40% of the modulus of rupture at 1000 °F". The page returned 403; the book and edition are not identified (Moss, *Pressure Vessel Design Manual*, suspected, not confirmed) | **Snippet** (not adopted: unread, unattributed, written for castable linings of steel vessels, and needs a *minimum* CCS *at temperature*, which no sheet in §B2 gives) | [B18] |
+| Skewback load up to crushing | US 4,505,210 (multiple hearth furnace): the load on the skewback "can be anything up to the crushing stress of the bricks, 2500 psi" | **Snippet** (patent PDF is a scanned image; not read). A patentee's figure, not a design allowable | [B19] |
+| Masonry arch edge stress | UIC 776-3R (railway masonry arch bridges) limits edge stress to 65 % of characteristic strength, quoted in a Leeds thesis | Snippet; building masonry, not refractory: not used | search |
+| HWI Handbook, Schacht, Routschka, Carniglia & Barna, API 936, ASME | Searched again: no text reachable giving an allowable bearing stress or FoS for refractory brick | NOT FOUND | search |
+
+So the bearing stays **shown, not checked**.
+
+### B4.1 Friction at a joint
+
+| Question | Finding | Status | Source |
+|---|---|---|---|
+| Brick masonry arch joints | BIA TN 31A: "The coefficient of friction between the units composing a brick or tile masonry arch is at least 0.60, without considering the additional resistance to sliding resulting from bond between mortar and the masonry units ... approximately 31 deg." Stable against sliding if the resultant's angle to the joint's normal is under the friction angle | Verified (repo), `door-headers.md` §D3.3, `flat-roofs.md` §2.2 [F2] | [H3] |
+| Dry joints in refractory masonry (alumina-spinel, ladle lining), by temperature | Gajjar et al., "Characterisation of mortarless refractory masonry joints under elevated temperatures", *Engineering Structures* (2023), doi 10.1016/j.engstruct.2022.115234, quote a table from Oliveira et al. ("Normal and tangential behaviour of dry joints in refractory masonry", *Eng. Struct.* 2021) of 0.60, 0.50, 0.51, 0.53 at temperatures up to about 1200 °C, and adopt 0.598. The temperature for each value did not come through; the open PDF (Zenodo 7965714, CC BY 4.0) was over the fetch size limit | **Snippet** (values); paper identity Verified (Zenodo record) | [B20] |
+| Fireclay brick, IFB, refractory-mortared joints | none | NOT FOUND | search |
+
+The engine uses BIA's 0.60 at the door arch's springing, as it already does for flat roofs
+(`frame.flat-friction`). The refractory dry-joint values (0.50 to 0.60, Snippet) bracket it from
+below at some temperatures; that is noted, not used, until the table is read.
+
+### B4.2 What the engine checks (2026-10-30)
+
+| Place | Check | Status |
+|---|---|---|
+| Door arch springing | sliding, H_min/N ≤ 0.60 (BIA), `frame.door-slide` | checked; the jamb's base carries more weight for the same thrust, so the springing governs |
+| Lintel ends, door arch springing, jamb toe | bearing stress | shown, not checked: no allowable or FoS (§B4) |
+| Roof arch skewbacks, dome feet | bearing | not computed: no rule to check against |
+
 Search notes: there is no published hot compressive-strength test standard in the results ("no
 standards for hot crushing tests of refractory products were found to exist" in one extract), so
 hot CCS is not a number makers print. HWI lists only hot load deformation and creep.
@@ -254,4 +285,8 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 - [B15] HWI, *Kast-O-Lite 30 LI Plus* Product Data 10/19: 5874. https://ssfbs.com/wp-content/uploads/2021/06/KAST-O-LITE_30_LI_PLUS.pdf (= [H17])
 - [B16] HWI, *Mizzou Castable Plus* Product Data 12/12: 5976 (= [H18]; URL in `door-headers.md` sources)
 - [B17] Morgan Thermal Ceramics, *Kaolite 2600 LI Gun / Kaolite 2600LI* sheets. Search extract only. https://www.morganthermalceramics.com/media/11772/kaolite-2600li-_eng.pdf
+- [B18] Elsevier ScienceDirect Topics, "Allowable Compressive Stress - an overview" (book excerpts). Search extract only; the page returned 403. https://www.sciencedirect.com/topics/engineering/allowable-compressive-stress
+- [B19] US Patent 4,505,210, *Multiple hearth furnace chamber*. Search extract only (scanned PDF). https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/4505210
+- [B20] Gajjar P., Pereira J., Luchini B., Sinnema S., Lourenço P., Put P., "Characterisation of mortarless refractory masonry joints under elevated temperatures", *Engineering Structures* (2023), doi 10.1016/j.engstruct.2022.115234. Record read: https://zenodo.org/records/7965714 ; friction table by search extract only. Cites Oliveira R.L.G., Rodrigues J.P.C., Pereira J.M., Lourenço P.B., Marschall H.U., "Normal and tangential behaviour of dry joints in refractory masonry", *Engineering Structures* (2021), https://www.sciencedirect.com/science/article/abs/pii/S0141029621007501 (not read).
+- [H3] BIA Technical Note 31A: see `door-headers.md`.
 - [H1], [H23], [H24]: see `door-headers.md` sources (BIA Technical Notes; Giles, *Structural Design of Refractory Concrete*; US 10,155,210 B2).
