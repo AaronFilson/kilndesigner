@@ -149,14 +149,15 @@ def test_a_door_lining_or_electric_kiln_is_refused() -> None:
 
 
 def test_climbing_kilns_take_doors_in_their_side_walls() -> None:
-    side = {"face": "left", "opening": {"width": "20 in", "height": "36 in"}}
+    door = {"width": "20 in", "height": "36 in"}
+    side: dict[str, Any] = {"face": "left", "opening": door}
     kiln = _kiln("olsen/bidai.yaml", side)
     assert door_hole(kiln) is not None
     assert door_head(kiln) is not None
     with pytest.raises(ValidationError, match="under a springing"):
         _kiln("olsen/bidai.yaml", {"opening": {"width": "20 in", "height": "36 in"}})
     with pytest.raises(ValidationError, match="one chamber"):
-        _kiln("olsen/bidai.yaml", {**side, "opening": {**side["opening"], "across": "20 in"}})
+        _kiln("olsen/bidai.yaml", {**side, "opening": {**door, "across": "20 in"}})
 
 
 def test_a_round_kiln_door_breaks_its_ring() -> None:
