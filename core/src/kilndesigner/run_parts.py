@@ -20,10 +20,16 @@ kilns, p.97). Every chamber's own parts are then level, so their bricks are laid
   the walls in front of and behind it. Where two chambers share a wall, each chamber's arch and
   fill stop at the wall's middle on the level, or at the lower chamber's face of the wall on a
   slope, where the wall rises past the lower arch's springline.
+- A tube's vault (``roof.tube``) spans the width instead and runs along the draft, chamber by
+  chamber, as a single chamber's arch does; the end walls and the walls between chambers under it
+  are filled up to it, and the side walls carry its skewbacks.
 - A dome stands on each chamber's walls the same way, its walls filled up to it; a flat roof is
   laid over each chamber; an open top has nothing over the walls.
+- Each wall between chambers has Olsen's standard flue holes, 4½ × 9 in with a 9 in separator,
+  at the higher chamber's floor (p.96, p.45): ``flue_holes``.
 
-A catenary over chambers in a row isn't laid out (geometry.not_drawn).
+A catenary over level chambers is one vault the whole run long (geometry._catenary_parts); over
+chambers stepped up a slope it isn't laid out (geometry.not_drawn).
 """
 
 from __future__ import annotations
@@ -39,6 +45,7 @@ from kilndesigner.shape import Arch, SailDome
 from kilndesigner.units import si
 
 if TYPE_CHECKING:
+    from kilndesigner.firebox_parts import Opening
     from kilndesigner.hardware import Hardware
 
 type Outline = list[tuple[float, float]]
@@ -243,6 +250,8 @@ def run_parts(kiln: Kiln) -> list[Part]:
                                  (x0, lo, springline + cum), (x1, hi, springline + cum + th),
                                  i + 1))  # fmt: skip
                 cum += th
+        elif isinstance(roof, SprungArch) and roof.tube:
+            parts += _tube(kiln, run, i, (lo, hi), rings, walls_up, layers)
         elif isinstance(roof, SprungArch):
             parts += _arch(kiln, run, i, (lo, hi), (x0, x1), rings, walls_up, layers, walls)
         elif isinstance(roof, Dome):
@@ -340,6 +349,78 @@ def _arch(
     return parts
 
 
+def _tube(
+    kiln: Kiln,
+    run: RunLayout,
+    i: int,
+    ends: tuple[float, float],
+    rings: list[tuple[str, float]],
+    walls_up: list[tuple[Part, int | None]],
+    layers: dict[str, list[tuple[str, float]]],
+) -> list[Part]:
+    """Chamber i's stretch of a tube's vault: the arch spans the width and runs along the draft,
+    as a single chamber's does (geometry._level_parts), from where chamber i's roof starts to where
+    it stops. The end walls and the walls between chambers under it are filled up to it, and the
+    side walls carry its skewbacks."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.geometry import _skewbacks  # pyright: ignore[reportPrivateUsage]
+
+    assert isinstance(kiln.roof, SprungArch)
+    w = run.width
+    arch = Arch(w, si(kiln.roof.rise, "mm"))
+    springline = run.floor(i) + run.height
+    centre_z = springline + arch.rise - arch.radius
+    lo, hi = ends
+    tag = f"-chamber-{i + 1}"
+    parts: list[Part] = []
+
+    def kind(mat: str) -> str:
+        return resolve_material(kiln, mat).kind
+
+    # The walls across the run whose tops are this chamber's springline, under its stretch
+    for p, owner in walls_up:
+        if p.wall not in ("front", "back") or not _tops(p, owner, i, run):
+            continue
+        mid = (p.lo[1] + p.hi[1]) / 2
+        last = i == run.chambers - 1
+        if mid < lo - 1e-6 or (mid >= hi - 1e-6 and not last):
+            continue  # under the next chamber's stretch, where a shared wall is counted once
+        shape = ArchShape(arch.radius, 0.0, centre_z, arch.half_angle)
+        name = p.name.rsplit("-chamber-", 1)[0] if "-chamber-" in p.name else p.name
+        parts.append(
+            Part(
+                f"{name}{tag}-arch", p.material, p.kind, (-w / 2, p.lo[1], springline),
+                (w / 2, p.hi[1], springline + arch.rise), arch=shape, cap=True, face=p.face,
+                chamber=p.chamber or i + 1,
+            )
+        )  # fmt: skip
+    cum = 0.0
+    for k, (mat, th) in enumerate(rings):
+        r_in = arch.radius + cum
+        half = (r_in + th) * math.sin(arch.half_angle)
+        parts.append(
+            Part(
+                f"roof/{k + 1}-{mat}{tag}", mat, kind(mat), (-half, lo, springline),
+                (half, hi, centre_z + r_in + th), face="roof", chamber=i + 1,
+                arch=ArchShape(r_in, th, centre_z, arch.half_angle),
+            )
+        )  # fmt: skip
+        cum += th
+    # The skewbacks, laid out at the floor and raised to this chamber's springline
+    rise = run.floor(i)
+    level = _skewbacks(kiln, arch, centre_z - rise, cum, (lo, hi), layers)
+    for p in level:
+        assert p.profile is not None
+        parts.append(
+            replace(
+                p, name=f"{p.name}{tag}", chamber=i + 1,
+                lo=(p.lo[0], p.lo[1], p.lo[2] + rise), hi=(p.hi[0], p.hi[1], p.hi[2] + rise),
+                profile=tuple((x, z + rise) for x, z in p.profile),
+            )
+        )  # fmt: skip
+    return parts
+
+
 def _tops(p: Part, owner: int | None, i: int, run: RunLayout) -> bool:
     """Whether the wall part's top is chamber i's springline."""
     return abs(p.hi[2] - (run.floor(i) + run.height)) < 1e-6 and owner in (None, i)
@@ -396,6 +477,60 @@ def _dome(
         )  # fmt: skip
         cum += th
     return parts
+
+
+FLUE_WIDTH = 4.5 * 25.4  # Olsen's standard flue between chambers, 4½ × 9 in (p.96)
+FLUE_HEIGHT = 9 * 25.4
+FLUE_PIER = 9 * 25.4  # a 9 in flue separator (p.45)
+FLUE_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.96 (standard 4½ × 9 in flues at 9 in), p.45 (a 9 in flue "
+    "separator; flue holes on a header course)"
+)
+
+
+@dataclass(frozen=True)
+class FlueRow:
+    """The flue holes through the wall between chambers ``chamber`` and the next (mm)."""
+
+    chamber: int  # from 1
+    count: int
+    bottom: float
+    top: float
+
+
+def flue_rows(kiln: Kiln) -> list[FlueRow]:
+    """Olsen's standard flues through each wall between chambers: 4½ in wide and 9 in tall, as
+    many as fit across the chamber with a 9 in separator between each, their foot at the higher
+    chamber's floor, so the gases pass along the floor into it (p.96, p.45). Each stops at the
+    lower chamber's springline."""
+    run = run_layout(kiln)
+    n = max(1, math.floor((run.width + FLUE_PIER) / (FLUE_WIDTH + FLUE_PIER) + 1e-9))
+    rows: list[FlueRow] = []
+    for i in range(run.chambers - 1):
+        bottom = run.floor(i + 1)
+        top = min(bottom + FLUE_HEIGHT, run.floor(i) + run.height)
+        if top - bottom > 1e-6:
+            rows.append(FlueRow(i + 1, n, bottom, top))
+    return rows
+
+
+def flue_holes(kiln: Kiln) -> list[Opening]:
+    """The flue holes, to cut from the walls between chambers."""
+    from kilndesigner.firebox_parts import Opening
+
+    run = run_layout(kiln)
+    out: list[Opening] = []
+    for row in flue_rows(kiln):
+        i = row.chamber - 1
+        span = row.count * FLUE_WIDTH + (row.count - 1) * FLUE_PIER
+        y0, y1 = run.back(i) - 1.0, run.back(i) + run.between + 1.0
+        for k in range(row.count):
+            x = -span / 2 + k * (FLUE_WIDTH + FLUE_PIER)
+            out.append(
+                Opening(f"flue-{row.chamber}-{k + 1}", (x, y0, row.bottom),
+                        (x + FLUE_WIDTH, y1, row.top))
+            )  # fmt: skip
+    return out
 
 
 def run_holes(kiln: Kiln, hardware: Hardware | None) -> list[tuple[Any, Any, Any]]:

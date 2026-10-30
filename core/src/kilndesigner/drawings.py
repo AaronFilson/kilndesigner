@@ -230,6 +230,16 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
 
 def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> list[View]:
     """Three sections through the middle: front (x–z), side (y–z) and plan (x–y)."""
+    from kilndesigner.bend import bent
+
+    views = _section_views(kiln, element_rows, coil_mm)
+    if bent(kiln):
+        for view in views:
+            view.title += ", the bend drawn straightened"
+    return views
+
+
+def _section_views(kiln: Kiln, element_rows: int, coil_mm: float) -> list[View]:
     us = kiln.units == "us"
     parts = lining_parts(kiln)
     if kiln.chamber.shape == "round":
@@ -389,12 +399,30 @@ def _hex(rgb: tuple[float, float, float]) -> str:
     return "#" + "".join(f"{round(c * 255):02x}" for c in rgb)
 
 
+def text_size(view: View) -> float:
+    """The dimension text's height for a view (mm, in the view's own units): a twentieth of the
+    view's longer side for a squarish view, as before; for a long one, a twentieth of three times
+    its shorter side, so the text stays in scale with the section it labels, but never under 1.5 %
+    of the longer side, so it still reads when the page fits the whole length."""
+    x0, y0, x1, y1 = view.bounds()
+    long, short = max(x1 - x0, y1 - y0), min(x1 - x0, y1 - y0)
+    return max(0.05 * min(long, 3 * short), 0.015 * long)
+
+
 def view_svg(view: View, font: float | None = None) -> str:
     """An SVG of a view, y up, with a margin for the dimensions."""
     x0, y0, x1, y1 = view.bounds()
     size = max(x1 - x0, y1 - y0)
-    font = font or size * 0.05
-    margin = size * 0.25
+    font = font or text_size(view)
+    # Room for every dimension line and its text, and a margin round it all
+    for dim in view.dims:
+        if abs(dim.y2 - dim.y1) < 1e-9:
+            line = dim.y1 - dim.offset
+            y0, y1 = min(y0, line - 1.5 * font), max(y1, line + 1.5 * font)
+        else:
+            line = dim.x1 + dim.offset
+            x0, x1 = min(x0, line - 1.5 * font), max(x1, line + 1.5 * font)
+    margin = max(2 * font, 0.05 * size)
     vx, vy = x0 - margin, -(y1 + margin)
     vw, vh = (x1 - x0) + 2 * margin, (y1 - y0) + 2 * margin
     stroke = size * 0.002
@@ -583,6 +611,7 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
     offset = 0.0
     for view in views:
         x0, y0, x1, _ = view.bounds()
+        text = text_size(view)
         dx = offset - x0
         for r in view.rects:
             layer = r.layer.replace("/", "_")
@@ -610,10 +639,11 @@ def write_dxf(views: list[View], path: str, us: bool) -> None:
                 p2=(dim.x2 + dx, dim.y2),
                 angle=0 if horizontal else 90,
                 text=dim.text,
+                override={"dimtxt": text, "dimasz": text * 0.6},
                 dxfattribs={"layer": "dimensions"},
             ).render()
-        msp.add_text(
-            view.title, height=(x1 - x0) * 0.03, dxfattribs={"layer": "titles"}
-        ).set_placement((offset, y0 - (x1 - x0) * 0.3))
+        msp.add_text(view.title, height=text, dxfattribs={"layer": "titles"}).set_placement(
+            (offset, y0 - 6 * text)
+        )
         offset += (x1 - x0) * 1.6
     doc.saveas(path)

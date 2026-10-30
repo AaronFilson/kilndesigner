@@ -707,7 +707,9 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
     thrust: str | None = None
     roof = kiln.roof
     if isinstance(roof, SprungArch) and kiln.chamber.shape == "box":
-        span = si(kiln.chamber.width, "in")
+        # Chambers in a row: each arch spans its chamber's depth, along the draft (run_parts.py)
+        along = kiln.chamber.chambers > 1 and not roof.tube
+        span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
         arch = Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
         cold = cold_thrust_factor(span, arch.rise) * load.weight
@@ -733,6 +735,63 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
                 "and front chamber."
             ),
             reference=MASONRY_SOURCE,
+        )
+    ]
+    return FrameDesign(
+        kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
+        thrust=thrust, members=[], working=working, findings=findings,
+    )  # fmt: skip
+
+
+ROW_SOURCE = (
+    "Olsen, The Kiln Book, 4th ed., p.94–95 (the arches throw their thrust onto the common wall), "
+    "p.97 (bracing a chamber kiln's firebox and front chamber 'is a must')"
+)
+
+
+def _row_arches(kiln: Kiln) -> FrameDesign:
+    """Chambers in a row, each under an arch spanning its depth along the draft (run_parts.py).
+    Each wall between chambers takes the thrust of the arches either side, which push against
+    each other (Olsen p.94–95); the front and back walls take one arch's thrust each, across the
+    kiln's width, and want bracing (p.97). No source here sizes that bracing, so the thrust is
+    worked out and no steel is sized."""
+    assert isinstance(kiln.roof, SprungArch)
+    depth, width = si(kiln.chamber.depth, "in"), si(kiln.chamber.width, "in")
+    arch = Arch(depth, si(kiln.roof.rise, "in"))
+    load = _arch_load(kiln, arch)
+    cold = cold_thrust_factor(depth, arch.rise) * load.weight
+    heated = heated_thrust_factor(depth, arch.rise, load.ring)
+    hot = min((heated if heated is not None else MAX_PRINTED_HEATED) * cold,
+              MAX_PRINTED_HEATED * cold)  # fmt: skip
+    whole = hot * width / 12
+    thrust = (
+        f"{hot:.0f} lb per foot of arch, hot ({cold:.0f} cold): {whole:,.0f} lb on each end wall"
+    )
+    working = [
+        Step(
+            name="Thrust on each end wall",
+            value=thrust,
+            formula=(
+                "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's width; "
+                "the arch spans one chamber's depth"
+            ),
+            inputs={"span": f"{depth:g} in", "rise": f"{arch.rise:g} in", "width": f"{width:g} in"},
+            reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}",
+        )
+    ]
+    findings = [
+        Finding(
+            level="info",
+            message=(
+                "Each chamber's arch spans its depth, along the draft, so its thrust falls on the "
+                "walls before and behind it, not on the side walls. The walls between chambers "
+                "take the arches either side, which push against each other (Olsen p.94–95); the "
+                f"front and back walls each take one arch's thrust, {whole:,.0f} lb hot across the "
+                "kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front "
+                "chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is "
+                "sized; or hold the ends with masonry (roof.buttressed)."
+            ),
+            reference=ROW_SOURCE,
         )
     ]
     return FrameDesign(
@@ -769,6 +828,8 @@ def design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.chamber.chambers > 1 and not kiln.roof.tube:
+        return _row_arches(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)
     if isinstance(kiln.roof, Dome):

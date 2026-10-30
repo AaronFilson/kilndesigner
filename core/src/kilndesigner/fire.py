@@ -420,7 +420,7 @@ def design_fire(kiln: Kiln) -> FireDesign:
         Finding(
             level="info",
             message=(
-                "Fireboxes are calculated and drawn in the 3D model, not yet in the plans; their "
+                "Fireboxes are laid out in brick in the masonry, plans and 3D model; their "
                 f"{fuel} use per firing waits for the client's kiln (plan milestone M7)."
             ),
         )

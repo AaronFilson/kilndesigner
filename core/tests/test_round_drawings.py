@@ -130,14 +130,16 @@ def test_each_ring_has_a_plan_of_its_bricks() -> None:
     assert svg.count("<polygon") == 2 * key.ring.total
     assert "Even courses" in svg
     # Floor first, then the wall's rings, then the roof (a dome: counted by volume, no plan)
-    order = masonry.course_plans()
+    order = [p for p in masonry.course_plans() if not p.part.name.startswith("firebox-")]
     assert order[0].part.wall == "floor"
     assert all(isinstance(p, RingPlan) for p in order[1:])
+    # The fireboxes' walls come last
+    assert all(p.part.name.startswith("firebox-") for p in masonry.course_plans()[len(order) :])
 
 
 def test_a_round_floor_is_laid_in_rows_cut_to_the_circle() -> None:
     masonry = plan_masonry(_small("roof: {type: flat}"))
-    floor, roof = masonry.layers
+    floor, roof = [p for p in masonry.layers if not p.part.name.startswith("firebox-")]
     radius = (30 + 13.5) * IN
     assert floor.circle == pytest.approx(radius)
     assert floor.span == pytest.approx(2 * radius)

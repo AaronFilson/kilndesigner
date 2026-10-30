@@ -28,7 +28,10 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.allowance import allowance
+from kilndesigner.bend import bent, developed
+from kilndesigner.bend import note as bend_note
 from kilndesigner.castable import resolve_material
+from kilndesigner.firebox_parts import firebox_findings
 from kilndesigner.geometry import Part, in_a_row, lining_parts
 from kilndesigner.library import material
 from kilndesigner.materials_checks import whole_bricks
@@ -442,9 +445,11 @@ class MasonryPlan:
         """Every layer with a course plan, floor first, then the walls, then the roof."""
         if not self.rings:
             return list(self.layers)
-        floor = [p for p in self.layers if p.part.wall == "floor"]
-        rest = [p for p in self.layers if p.part.wall != "floor"]
-        return [*floor, *self.rings, *rest]
+        own = [p for p in self.layers if not p.part.name.startswith("firebox-")]
+        fireboxes = [p for p in self.layers if p.part.name.startswith("firebox-")]
+        floor = [p for p in own if p.part.wall == "floor"]
+        rest = [p for p in own if p.part.wall != "floor"]
+        return [*floor, *self.rings, *rest, *fireboxes]
 
 
 def plan_masonry(kiln: Kiln) -> MasonryPlan:
@@ -467,7 +472,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
     row = in_a_row(kiln)
-    for part in lining_parts(kiln):
+    along = row and not (isinstance(kiln.roof, SprungArch) and kiln.roof.tube)
+    for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
         if part.across and part.arch is not None and m.kind in BRICK_KINDS:
             # An arch along the draft that stops short of its neighbour: in standard shapes
@@ -523,7 +529,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 continue
             if len(plans) > 1:
                 side_by_side.append((part, plans))
-            springs = ("front", "back") if row else ("left", "right")
+            springs = ("front", "back") if along else ("left", "right")
             if isinstance(kiln.roof, SprungArch) and part.wall in springs:
                 under_skewbacks.extend(plan.laying for plan in plans)
             layers.extend(plans)
@@ -557,7 +563,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
     if isinstance(kiln.roof, SprungArch):
-        span = kiln.chamber.depth if row else kiln.chamber.width
+        span = kiln.chamber.depth if along else kiln.chamber.width
         arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)
         findings.append(
@@ -568,13 +574,21 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                     "at the springline and counted by volume. The skewback's face must match the "
                     f"arch: {skew:.0f}° to the horizontal here, 90° less half the arch's central "
                     "angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at "
-                    "2.302 in/ft). The steel that takes the arch's thrust is in the frame."
+                    "2.302 in/ft). "
+                    + (
+                        "The arch's thrust is held by the kiln's masonry, as the design says."
+                        if kiln.roof.buttressed
+                        else "The end walls take the arches' thrust; no steel for them is sized "
+                        "(the frame's findings)."
+                        if along
+                        else "The steel that takes the arch's thrust is in the frame."
+                    )
                 ),
                 reference="kiln-hardware.md §5.2 [S20]",
             )
         )
         if "stretcher" in under_skewbacks:
-            these = "the walls the arches spring from" if row else "these side walls"
+            these = "the walls the arches spring from" if along else "these side walls"
             findings.append(
                 Finding(
                     level="info",
@@ -629,6 +643,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
             )
         )
+    findings += firebox_findings(kiln) + port_findings(kiln)
+    if bent(kiln):
+        findings.append(Finding(level="info", message=bend_note(kiln), reference="bend.py"))
     if row:
         findings.append(_row_note(kiln, us))
     elif kiln.chamber.slope is not None and si(kiln.chamber.slope, "degree") > 0:
@@ -652,6 +669,32 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     )
 
 
+def port_findings(kiln: Kiln) -> list[Finding]:
+    """What the brick count leaves in for the holes the burners and an updraft's flue need: they
+    are placed with the burners (hardware.py), after the masonry is counted."""
+    gas = kiln.heat.gas
+    through: list[str] = []
+    if gas is not None and gas.burners.wall == "floor":
+        through.append("the burner ports up through the floor")
+    burnt = gas is not None or kiln.heat.fire is not None
+    if burnt and (kiln.draft is None or kiln.draft.type == "up"):
+        through.append("the flue through the roof")
+    if not through:
+        return []
+    return [
+        Finding(
+            level="info",
+            message=(
+                " and ".join(through).capitalize()
+                + (" are" if len(through) > 1 or "ports" in through[0] else " is")
+                + " cut in the 3D model where the burners "
+                "and flue are placed; the brick count leaves those bricks in, to be cut on site, "
+                "as the side walls' ports are."
+            ),
+        )
+    ]
+
+
 def _row_note(kiln: Kiln, us: bool) -> Finding:
     """How chambers in a row are laid out (run_parts.py), and what isn't."""
     from kilndesigner.run_parts import run_layout
@@ -672,7 +715,14 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
             "is built level, in level courses. "
         )
         reference += ", p.97"
-    if isinstance(kiln.roof, SprungArch):
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.tube:
+        text += (
+            "The chambers stand in one tube: its arch spans the width and runs the whole length, "
+            "as a tube kiln's, 'an anagama extended' (p.85), its thrust on the side walls; the end "
+            "walls and the walls between chambers are filled up to it. "
+        )
+        reference += ", p.85"
+    elif isinstance(kiln.roof, SprungArch):
         text += (
             "Each chamber's arch spans along the draft, over its depth, and throws its thrust "
             "onto the walls before and behind it, as in Olsen's climbing kilns (p.94–95). Where "
@@ -680,13 +730,32 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
             "volume. "
         )
         reference += ", p.94–95; kiln-reference.md, Tube and climbing chamber kilns"
-    text += (
-        "The flue holes through the walls between chambers aren't cut, as no size for them is "
-        "worked out, so those walls are counted solid; lay the flue holes on a header course "
-        "with the header over each one laid so it can be knocked out if the flue proves too "
-        "small (p.45)."
-    )
-    return Finding(level="info", message=text, reference=reference + ", p.45")
+    from kilndesigner.run_parts import FLUE_HEIGHT, flue_rows
+
+    rows = flue_rows(kiln)
+    if rows:
+        n = rows[0].count
+        short = [r.chamber for r in rows if r.top - r.bottom < FLUE_HEIGHT - 1e-6]
+        text += (
+            f"Each wall between chambers has {n} flue {'hole' if n == 1 else 'holes'} 4½ in "
+            "wide and 9 in tall at the higher chamber's floor, 9 in apart: Olsen's standard "
+            '4½ × 9 in flues for the Kyoto climbing kilns, "at 9 in" read as a 9 in separator '
+            "(p.96, p.45); the book doesn't say which way the 4½ in runs, so it is taken across. "
+            "They are cut from the brick count. "
+        )
+        if short:
+            text += (
+                "The flues out of chambers " + ", ".join(str(c) for c in short) + " stop at the "
+                "lower chamber's springline, under 9 in tall. "
+            )
+        text += (
+            "Lay them on a header course with the header over each one laid so it can be knocked "
+            "out if the flue proves too small, and size them against your firing: Olsen errs on "
+            "flues too large (p.45)."
+        )
+    else:
+        text += "No flue hole fits under the springlines, so the walls between are counted solid."
+    return Finding(level="info", message=text, reference=reference + ", p.45, p.96")
 
 
 def buy_quantities(

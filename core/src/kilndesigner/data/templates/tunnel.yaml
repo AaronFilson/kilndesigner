@@ -20,7 +20,8 @@
 # Höhr-Grenzhausen in 2003 (hohr-2003, p.122).
 # Not modelled: the slope, which isn't printed, so the tube is level; the side doors (arched,
 # bricked up for each firing), as the engine's door in the front wall; the side stoke holes; the
-# flue holes between the chambers (20 × 12 and 24 × 12 in, Fig 4-12). The end chamber's open holes
+# flue holes between the chambers as drawn (20 × 12 and 24 × 12 in, Fig 4-12): the engine cuts
+# Olsen's standard 4½ × 9 in flues (p.96) instead. The end chamber's open holes
 # are the only chimney: with no stack entered, the engine sizes one by Rule 5. The oil burners
 # most of the kilns now fire their fireboxes with (p.86, p.210). The floor's loss into the ground,
 # which the engine doesn't work out.
@@ -39,6 +40,7 @@ roof:
   type: sprung_arch
   rise: 30 in
   buttressed: true
+  tube: true # one vault over the whole tube, "an anagama extended" (p.85)
 lining:
   walls:
     - material: ifb-k26

@@ -224,6 +224,22 @@ def bill_of_materials(
                 )
             )  # fmt: skip
         unpriced.append("steel")
+    if kiln.heat.fire is not None:
+        from kilndesigner.firebox_parts import GRATE_SOURCE, grates
+
+        bars = grates(kiln)
+        if bars:
+            feet = sum(g.bars * g.length for g in bars) / 304.8
+            lines.append(
+                BomLine(
+                    item="Grate bars: ¾ in round steel bar",
+                    needed=f"{feet:.1f} ft (" + "; ".join(f"{g.title}, {g.detail}" for g in bars)
+                    + ")",
+                    buy=f"{math.ceil(feet * 1.1):g} ft", unit_price=None, cost=None,
+                    priced_as=None, source=GRATE_SOURCE,
+                )
+            )  # fmt: skip
+            unpriced.append("steel")
     if kiln.loading.type == "car":
         cost = kiln.loading.car_hardware_cost
         lines.append(

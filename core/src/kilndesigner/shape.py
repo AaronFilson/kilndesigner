@@ -251,9 +251,17 @@ class ChamberShape:
     round_dome: RoundDome | None = None
     open_top: bool = False
     """No built roof (shards over the setting): no roof face."""
+    chambers: int = 1
+    """Chambers in a row along ``depth``: an arch or dome over each, spanning along the draft
+    (run_parts.py); ``arch`` and ``dome`` are then one chamber's."""
 
     @property
     def volume(self) -> float:
+        n = self.chambers
+        if n > 1 and self.arch is not None:
+            return (self.width * self.height * self.depth) + n * self.arch.segment_area * self.width
+        if n > 1 and self.dome is not None:
+            return self.width * self.depth * self.height + n * self.dome.volume
         if self.round:
             cap = self.round_dome.volume if self.round_dome is not None else 0.0
             return math.pi / 4 * self.width**2 * self.height + cap
@@ -279,6 +287,8 @@ class ChamberShape:
             return self._round_faces()
         if self.catenary is not None:
             return self._catenary_faces(self.catenary)
+        if self.chambers > 1 and (self.arch is not None or self.dome is not None):
+            return self._row_faces()
         floor = FaceShape("floor", "facing_down", w * d, w, d)
         if self.dome is not None:
             dome = self.dome
@@ -305,6 +315,46 @@ class ChamberShape:
             FaceShape("front", "vertical", w * h + segment, w, h),
             floor,
             roof,
+        ]
+
+    def _row_faces(self) -> list[FaceShape]:
+        """Chambers in a row, each with its own arch or dome, as they are built (run_parts.py):
+        an arch spans along the draft, over one chamber's depth, and runs across the kiln, so its
+        ends close against the side walls and the end walls stand to the springline (Olsen's
+        climbing kilns, p.94–95). A dome stands on each chamber's four walls. The walls between
+        chambers lose no heat outside."""
+        w, d, h, n = self.width, self.depth, self.height, self.chambers
+        one = d / n
+        floor = FaceShape("floor", "facing_down", w * d, w, d)
+        if self.arch is not None:
+            arch = self.arch
+
+            def vaults(t: float) -> float:
+                return n * 2 * (arch.radius + t) * arch.half_angle * (w + 2 * t)
+
+            seg = n * arch.segment_area
+            return [
+                FaceShape("left", "vertical", d * h + seg, d, h),
+                FaceShape("right", "vertical", d * h + seg, d, h),
+                FaceShape("back", "vertical", w * h, w, h),
+                FaceShape("front", "vertical", w * h, w, h),
+                floor,
+                FaceShape("roof", "facing_up", vaults(0.0), n * arch.arc_length, w, grows=vaults),
+            ]
+        dome = self.dome
+        assert dome is not None
+
+        def domes(t: float) -> float:
+            return n * dome.area(t)
+
+        sides, ends = n * dome.segment(w / 2, one), dome.segment(one / 2, w)
+        return [
+            FaceShape("left", "vertical", d * h + sides, d, h),
+            FaceShape("right", "vertical", d * h + sides, d, h),
+            FaceShape("back", "vertical", w * h + ends, w, h),
+            FaceShape("front", "vertical", w * h + ends, w, h),
+            floor,
+            FaceShape("roof", "facing_up", domes(0.0), w, d, grows=domes),
         ]
 
     def _round_faces(self) -> list[FaceShape]:
@@ -350,7 +400,7 @@ class ChamberShape:
 
 def chamber_shape(kiln: Kiln) -> ChamberShape:
     """The chamber's shape: chambers in a row count as one long chamber, the walls between them
-    losing no heat outside."""
+    losing no heat outside, each under its own arch or dome as it is built (run_parts.py)."""
     c = kiln.chamber
     w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
     open_top = isinstance(kiln.roof, OpenTop)
@@ -359,6 +409,12 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
         return ChamberShape(w, w, h, None, round=True, round_dome=dome, open_top=open_top)
     if open_top:
         return ChamberShape(w, d, h, None, open_top=True)
+    n = c.chambers
+    if isinstance(kiln.roof, SprungArch) and n > 1 and not kiln.roof.tube:
+        return ChamberShape(w, d, h, Arch(si(c.depth, "m"), si(kiln.roof.rise, "m")), chambers=n)
+    if isinstance(kiln.roof, Dome) and n > 1:
+        one = SailDome(w, si(c.depth, "m"), si(kiln.roof.rise, "m"))
+        return ChamberShape(w, d, h, None, dome=one, chambers=n)
     if isinstance(kiln.roof, SprungArch):
         return ChamberShape(w, d, h, Arch(w, si(kiln.roof.rise, "m")))
     if isinstance(kiln.roof, CatenaryArch):
