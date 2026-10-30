@@ -1,0 +1,57 @@
+# A cone 10 catenary-arch kiln on propane: the arch springs from the floor and is both side walls
+# and roof. Two venturi burners low in the bricked door, placed by hand, and the flue and chimney
+# at the back. The arch's feet push out; the report says how hard.
+schema: 1
+name: Catenary gas kiln, cone 10
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 40 in # the arch's span at the floor, inside
+  depth: 36 in # front to back
+  height: 48 in # to the crown, inside
+roof:
+  type: catenary_arch
+loading:
+  type: door
+  face: front
+lining:
+  walls: # the front and back walls, which close the arch's ends
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99
+      thickness: 2.5 in
+    - material: ifb-k23
+      thickness: 4.5 in
+  roof: # the arch
+    - material: ifb-jm26
+      thickness: 4.5 in
+    - material: kaowool-blanket-8pcf
+      thickness: 2 in
+shell:
+  finish: painted
+heat:
+  gas:
+    burners:
+      type: venturi
+      places:
+        - wall: front
+          across: -9 in
+          up: 6 in
+        - wall: front
+          across: 9 in
+          up: 6 in
+    supply:
+      type: cylinders
+      count: 4
+    reduction: true
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  propane_price: 3.50 USD/gallon

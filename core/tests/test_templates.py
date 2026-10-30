@@ -14,6 +14,22 @@ FROM_EXAMPLE = {
     "electric-front-loader": "electric-front-loader.yaml",
     "gas-crossdraft": "gas-crossdraft.yaml",
     "hybrid-crossdraft": "pnw-hybrid-crossdraft.yaml",
+    "catenary-gas": "catenary-gas-kiln.yaml",
+    "dome-castable": "dome-castable-kiln.yaml",
+    "castable-test": "diy-castable-test-kiln.yaml",
+    "electric-car": "olsen/electric-car-45.yaml",
+    "gas-updraft": "olsen/updraft-test-1.yaml",
+    "gas-chambers": "olsen/olsen-three-chamber.yaml",
+    "wood-fast-fire": "olsen/fast-fire.yaml",
+    "wood-two-chamber": "olsen/olsen-two-chamber.yaml",
+    "anagama": "olsen/anagama-hole.yaml",
+    "climbing": "olsen/kyoto-climbing.yaml",
+    "tunnel": "olsen/tamba.yaml",
+    "groundhog": "olsen/groundhog-basic.yaml",
+    "bottle": "olsen/breda-bottle.yaml",
+    "round-open-top": "olsen/ninodaguia.yaml",
+    "coal": "olsen/kato-coal.yaml",
+    "oil": "olsen/olsen-oil-drip.yaml",
 }
 
 

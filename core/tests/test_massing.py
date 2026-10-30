@@ -16,8 +16,8 @@ from kilndesigner.massing import (
     Cell,
     MassingError,
     Run,
-    check_bend,
     cells,
+    check_bend,
     massing_index,
     massing_layout,
     place,
@@ -210,7 +210,7 @@ def _roofed(text: str, roof: dict[str, object] | None) -> Kiln:
         (KYOTO, {"type": "catenary_arch"}),
         (KYOTO, {"type": "flat"}),
     ],
-    ids=["bent", "round-open", "round-flat","chambers-dome", "chambers-catenary", "flat"],
+    ids=["bent", "round-open", "round-flat", "chambers-dome", "chambers-catenary", "flat"],
 )
 def test_every_roof_on_every_run_is_drawn(
     text: str, roof: dict[str, object] | None, tmp_path: Path

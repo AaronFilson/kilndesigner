@@ -1,0 +1,60 @@
+# Updraft test kiln 1 (Olsen, The Kiln Book, 4th ed., p.74): one of the gas updrafts with floor
+# burners behind Design Principle 1. A 2 × 3 ft base stacked 5 ft-plus high fired ½ to 1 cone apart
+# top to bottom, whatever the schedule.
+#
+# From the book: stacking space 2 × 3 ft, "5ft (152cm)-plus-high"; burners in the floor; updraft
+# (p.74).
+# Assumed: the stacking height is taken as 5 ft (the "plus" isn't sized). The chamber adds Olsen's
+# 4½ in combustion space round the setting for floor burners (p.76, p.171): 33 × 45 in, 60 in to
+# the springline, the arch spanning the 2 ft side. Twelve MR-750s, the burners of Olsen's own
+# updraft kits (olsen-kit-24, p.222), 11.5 in apart round the floor (p.171: 9–12 in apart), in
+# 2½ in ports, a trifle over the 2½ in tip (p.173). Natural gas on an 8 in. w.c. line, the meter's
+# normal pressure (p.227), at which p.222 rates the burners. Walls 7 in: 4½ in K-26 backed by 2½ in
+# K-23, Olsen's 7 in IFB wall (p.39, p.176). A No. 1 arch of 4½ in K-26 at 1½ in per foot of span,
+# on top of the cube (p.74–75, p.171, p.176). A 4½ in floor of K-26 (p.173: floors are 4½–5 in).
+# A hinged door (p.175–176). Cone 10, the high fire Olsen's updraft rules are for: he checks the
+# flue at about cone 8 (p.173). The exit flue: engine default.
+# Not modelled: how evenly it fires top to bottom, which is what the test showed.
+schema: 1
+name: Updraft test kiln 1, 2 × 3 × 5 ft stacking
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 33 in # the 2 ft side, plus 4½ in each side
+  depth: 45 in # the 3 ft side, plus 4½ in each side
+  height: 60 in
+roof:
+  type: sprung_arch
+  rise: 4.13 in # 1½ in per foot of span: a No. 1 featheredge arch
+loading:
+  type: door
+  face: front
+  door: hinged
+lining:
+  walls:
+    - material: ifb-k26
+      thickness: 4.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  floor:
+    - material: ifb-k26
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: natural_gas
+    burners:
+      type: venturi
+      model: GACO MR750
+      count: 12
+      wall: floor
+      port:
+        diameter: 2.5 in
+    supply:
+      type: line
+      pressure: 8 inch_H2O
+draft:
+  type: up

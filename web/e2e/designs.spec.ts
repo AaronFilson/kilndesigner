@@ -510,6 +510,83 @@ test("a kiln is given a catenary arch with choices, and its door moves off the s
   await expect(page.locator(".cm-content")).toContainText("type: catenary_arch");
 });
 
+/** Start from the gas cross-draft, named for this test, and return the form. */
+async function fromGasCrossdraft(page: Page, name: string) {
+  await page.goto("/designs/new");
+  await page.getByRole("button", { name: /Gas cross-draft/ }).click();
+  const form = page.getByRole("form", { name: "Design" });
+  await form.getByLabel("Name").fill(name);
+  return form;
+}
+
+/** Save, then wait for the model to be built and shown with nothing wrong. */
+async function savedAndDrawn(page: Page, cleanup: (id: string) => void, name: string) {
+  const model = page.waitForResponse((r) => r.url().endsWith("/files/kiln.glb") && r.ok(), {
+    timeout: 180_000,
+  });
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  await expect(page.getByRole("heading", { name })).toBeVisible();
+  await model;
+  const viewer = page.getByLabel("3D model of the kiln");
+  await expect(viewer.locator("canvas")).toBeVisible();
+  await page.waitForLoadState("networkidle");
+  await expect(viewer.getByRole("alert")).toHaveCount(0);
+  await page.getByRole("tab", { name: "YAML" }).click();
+  return page.locator(".cm-content");
+}
+
+test("a climbing kiln of three chambers is made from choices and drawn", async ({ page, cleanup }) => {
+  const name = `E2E chambers ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await form.getByRole("button", { name: "Add a chamber" }).click();
+  await form.getByRole("button", { name: "Add a chamber" }).click();
+  await expect(form.getByLabel("Chambers", { exact: true })).toHaveText("3");
+  await form.getByLabel("Floor's slope, firing end to flue end (blank: level)").fill("15");
+  await form.getByLabel("The floor is on the ground (not raised on a stand)").check();
+  const yaml = await savedAndDrawn(page, cleanup, name);
+  await expect(yaml).toContainText("chambers: 3");
+  await expect(yaml).toContainText("slope: 15 deg");
+});
+
+test("a kiln with two fireboxes, wood with gas, is made from choices and drawn", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const name = `E2E two fireboxes ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await form.getByLabel("Fire with wood, coal or oil in fireboxes").check();
+  await form.getByRole("button", { name: "Add a firebox" }).click();
+  await form.getByLabel("Firebox 1, position").selectOption("left");
+  await form.getByLabel("Firebox 2, position").selectOption("right");
+  for (const n of [1, 2]) {
+    await form.getByLabel(`Firebox ${n}, width`, { exact: true }).fill("13.5");
+    await form.getByLabel(`Firebox ${n}, length`, { exact: true }).fill("27");
+  }
+  await savedAndDrawn(page, cleanup, name);
+  // The saved design: the fire's two fireboxes, and the gas still there
+  const saved = (await (await request.get(`/api/designs/${designId(page)}`)).json()) as {
+    latest: { document: { heat: { gas?: object; fire?: { fireboxes: { position: string }[] } } } };
+  };
+  const heat = saved.latest.document.heat;
+  expect(heat.gas).toBeDefined();
+  expect(heat.fire?.fireboxes.map((b) => b.position)).toEqual(["left", "right"]);
+});
+
+test("a round kiln under a dome is made from choices and drawn", async ({ page, cleanup }) => {
+  const name = `E2E round ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await form.getByLabel("Chamber shape").selectOption("round");
+  await form.getByLabel("Diameter", { exact: true }).fill("36");
+  const roof = form.locator("label.field").filter({ has: page.getByText("Roof", { exact: true }) });
+  await roof.locator("select").selectOption("dome");
+  const yaml = await savedAndDrawn(page, cleanup, name);
+  await expect(yaml).toContainText("shape: round");
+  await expect(yaml).toContainText("type: dome");
+});
+
 test("a model that can't be loaded leaves the rest of the page working", async ({
   page,
   request,

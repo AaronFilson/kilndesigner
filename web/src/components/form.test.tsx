@@ -772,6 +772,36 @@ describe("DesignForm, castables", () => {
 });
 
 describe("shapes, fireboxes and chimneys", () => {
+  it("keeps every part of a design it doesn't touch: a climbing kiln with two kinds of firebox", () => {
+    const climbing: KilnDocument = {
+      ...electric,
+      chamber: {
+        width: "63 in",
+        depth: "41.33 in",
+        height: "57.3 in",
+        chambers: 10,
+        slope: "18.4 deg",
+        bend: "20 degree",
+        on_ground: true,
+      },
+      roof: { type: "sprung_arch", rise: "20.7 in" },
+      heat: {
+        fire: {
+          fuel: "wood",
+          fireboxes: [
+            { count: 10, position: "front", width: "9 in", length: "63 in" },
+            { position: "under", width: "1 ft", length: "2 ft", grate: { width: "1 ft", length: "2 ft" } },
+          ],
+        },
+        gas: { fuel: "natural_gas", supply: { type: "line", pressure: "8 inch_H2O" } },
+      },
+      draft: { type: "cross", flue_wall: "back", chimney: { height: "20 ft", inside: { width: "9 in", depth: "13.5 in" } } },
+    };
+    const last = live(climbing);
+    set("Name", "Renamed");
+    expect(last()).toEqual({ ...climbing, name: "Renamed" });
+  });
+
   it("makes a round chamber, its depth following its diameter, and back to a box", () => {
     const last = live(electric);
     set("Chamber shape", "round");

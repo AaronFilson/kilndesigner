@@ -4,6 +4,7 @@ from pathlib import Path
 import httpx
 import pytest
 
+from kilndesigner.model import Kiln
 from kilndesigner_api import db
 from kilndesigner_api.jobs import InlineRunner
 from kilndesigner_api.tasks import refresh_build_keys
@@ -70,6 +71,26 @@ async def test_a_design_can_be_saved_from_the_forms_as_json(
     assert from_json["document"] == document
     assert from_json["build_key"] == from_yaml["build_key"]
     assert "chamber:" in from_json["source"]
+
+
+EVERY_EXAMPLE = sorted(EXAMPLES.rglob("*.yaml"))
+
+
+@pytest.mark.parametrize("path", EVERY_EXAMPLE, ids=lambda p: f"{p.parent.name}/{p.stem}")
+async def test_every_example_comes_back_the_same_through_the_forms_json(
+    client: httpx.AsyncClient, path: Path
+) -> None:
+    """The form edits the JSON document in place: an example loaded from YAML, sent back as the
+    form sends it, is the same design (the same build), whatever kind of kiln it is."""
+    from kilndesigner.designfile import load_design
+
+    source = path.read_text(encoding="utf-8")
+    from_yaml = (await client.post("/api/designs", json={"source": source})).json()["latest"]
+    document = from_yaml["document"]
+    from_json = (await client.post("/api/designs", json={"document": document})).json()["latest"]
+    assert from_json["document"] == document
+    assert from_json["build_key"] == from_yaml["build_key"]
+    assert Kiln.model_validate(document) == load_design(path)
 
 
 @pytest.mark.geometry
@@ -151,11 +172,13 @@ async def test_deleting_a_design(client: httpx.AsyncClient, example: str) -> Non
 
 async def test_the_kinds_of_kiln_to_start_from(client: httpx.AsyncClient) -> None:
     templates = (await client.get("/api/templates")).json()
-    assert [t["id"] for t in templates] == [
+    assert [t["id"] for t in templates][:3] == [
         "electric-front-loader",
         "gas-crossdraft",
         "hybrid-crossdraft",
     ]
+    # A kind of kiln to start from for each kind in the examples: round, chambered, wood, coal, oil
+    assert {"bottle", "climbing", "wood-fast-fire", "coal", "oil"} <= {t["id"] for t in templates}
     for t in templates:
         saved = await client.post("/api/designs", json={"document": t["document"]})
         assert saved.status_code == 201, saved.text
