@@ -584,7 +584,8 @@ The user remembers springs from the 1st or 2nd edition.
 - **Table 1-6, ASTM castable classes** (p.30, Read; source line "ASTM chart C4?0-70"): permanent
   linear shrinkage no more than 1.5 % after 5 h at the class temperature.
   - Dense: A 2000 °F (1095 °C); B 2300 °F (1260 °C); C 2500 °F (1370 °C); D 2700 °F (1480 °C);
-    E 2900 °F (1595 °C); F 3100 °F (1705 °C); G 3200 °F (?) (1760 °C (?)), cut at the page edge.
+    E 2900 °F (1595 °C); F 3100 °F (1705 °C); G 3200 °F (1760 °C), cut at the page edge (the two
+    partial readings agree: 3200 °F is 1760 °C; settled 2026-10-30).
   - Insulating, with maximum bulk density after drying at 220–230 °F (105–110 °C): N 1700 °F
     (925 °C), 55 lb/ft³ (881 kg/m³); O 1900 °F (1040 °C), 65 (1041); P 2100 °F (1150 °C), 75
     (1201); Q 2300 °F (1260 °C), 95 (1522); V 3200 °F (1760 °C), 105 (1682).
@@ -2134,7 +2135,7 @@ The user remembers springs from the 1st or 2nd edition.
   surface a Kanthal element touches with alumina or a high-quality refractory cement: the element
   lives by its oxide layer, which iron oxide, alkalis and glaze or enamel vapour attack.
 - **Grooves** (p.246–247, Read): a square notch (parallel saw cuts to depth with the slivers broken
-  out; the text prints "¼in. (6mm) apart" (?)) or a cylindrical groove (drilled along the 9 in
+  out; the text prints "¼in. (6mm) apart"; ¼ in is 6.4 mm, settled 2026-10-30) or a cylindrical groove (drilled along the 9 in
   length near a corner or the middle, then sawn open). Groove width 1.25 × the coil's outside
   diameter (p.247). Leave room for free radiation and for changing elements; don't recess the coil
   too deeply or narrow the opening.
@@ -2624,8 +2625,8 @@ Misprint: the first "4'0"" row's rise of 7 in and radius of 2'11 belong to a 3'6
 |---|---|---|---|---|---|---|---|
 | 1'0" | 2 5/16 | 8 31/32 | 1 | 7 | – | – | 8 |
 | 1'1" | 2½ | 9 23/32 (?) | 1 | 8 | – | – | 9 |
-| 1'2" | 2 11/16 (?) | 10 15/32 (?) | – | 9 | – | – | 9 |
-| 1'3" | 2⅞ (?) | 11 7/32 (?) | – | 9 | – | – | 10 |
+| 1'2" | 2 11/16 | 10 15/32 | – | 9 | – | – | 9 |
+| 1'3" | 2⅞ | 11 7/32 (?) | – | 9 | – | – | 10 |
 | 1'4" | 3 1/16 (?) | 11 31/32 (?) | – | 8 | – | – | 10 |
 | 1'5" | 3¼ (?) | faint | – | 7 | – | – | 10 |
 | 1'6" | 3 15/32 (?) | faint | – | 7 | – | – | 11 |
@@ -2837,7 +2838,8 @@ high; every total equals its sum.
 | 7'0" | – | – | 76 | 41 | 117 |
 
 **Table A-5, 3 in series arch bricks, for 9 × 4½ × 3 and 13½ × 4½ × 3 in arches** (p.304). The cells
-for 1'11"–2'3" are faint (?), but their sums still match the totals; the right-hand totals are
+for 1'11"–2'3" are faint, but their sums match the clearly printed totals and the No.2 column steps
+by 2 a row (checked on the page image, 2026-10-30: settled); the right-hand totals are
 faint at the page edge and read as the sums.
 
 | Diameter | No.3 | No.2 | No.1 | Total |
@@ -2847,11 +2849,11 @@ faint at the page edge and read as the sums.
 | 1'8" | 26 | 5 | – | 31 |
 | 1'9" | 25 | 7 | – | 32 |
 | 1'10" | 24 | 9 | – | 33 |
-| 1'11" | 23 | 11 (?) | – | 34 |
-| 2'0" | 22 | 13 (?) | – | 35 |
-| 2'1" | 21 | 15 (?) | – | 36 |
-| 2'2" | 20 (?) | 17 (?) | – | 37 |
-| 2'3" | 19 | 19 (?) | – | 38 |
+| 1'11" | 23 | 11 | – | 34 |
+| 2'0" | 22 | 13 | – | 35 |
+| 2'1" | 21 | 15 | – | 36 |
+| 2'2" | 20 | 17 | – | 37 |
+| 2'3" | 19 | 19 | – | 38 |
 | 2'4" | 18 | 21 | – | 39 |
 | 2'5" | 17 | 23 | – | 40 |
 | 2'6" | 16 | 25 | – | 41 |
@@ -3253,6 +3255,38 @@ partner or a repeat in the text agrees; none of these has one, so all stay marke
 | Singh coal, Fig 5-10, p.134 (PDF 121) | chimney label "CHIMNEY 29' …" runs into the gutter | none: the text's pairs are the notch 9 in (23 cm), 2 ft (61 cm), 3 ft (91 cm) and the flue 15 × 24 in (38 × 61 cm) | no partner; stays (?) |
 | Singh low-fire, Fig 6-12, p.156 (PDF 143) | "2'6"" (domed floor to pit) and "2'" at the firebox, clear; the side opening "10–15"(?)" cut off at the page edge | none: the text gives no kiln size in either unit | the reading is clear, what it spans is still the drawing's; no partner |
 
-Not looked at in this pass (no time; still marked as before): the rest of the ~240 marks in this
-file and `olsen-kilns.md`, including Bae (p.107–108), Miravet (p.158), Kannofen, Kenzan, Bowen
-Mountain, Chappell and Tamba's p.85 length. No example input changed.
+Second pass (2026-10-30). PDF page = book page − 13 for pp.107–158 but − 14 for pp.107–109 (p.107
+is PDF 93); − 11 for p.179; − 16 for pp.196–216; − 15 for pp.246–262; PDF 248–264 hold pp.295–309,
+with p.300 and p.302 scanned twice (PDF 253/254, 256/257). A second scan of a page counts as a
+second reading.
+
+| Value, page (PDF) | Reading 1 | Reading 2 | Result |
+|---|---|---|---|
+| ASTM castable class G, Table 1-5, p.30 (PDF 24) | "3200°F" cut at the edge | "(1760°C)" cut at the edge | agree (3200 °F = 1760 °C) and the column steps 200 °F: **settled** |
+| Square groove spacing, p.246 (PDF 231) | "¼in." | "(6mm)" | agree (6.4 mm): **settled** |
+| Table A-5 No.2 cells 1'11"–2'3", p.304 (PDF 259) | 11, 13, 15, 17, 19 (and No.3 20 at 2'2"), faint | totals 34–38, clear; the column steps by 2 | agree: **settled** |
+| Table A-3.1 (2.302 in/ft) 1'2" rise and radius, 1'3" rise, p.300 (PDF 253) | 2 11/16, 10 15/32, 2⅞, faint | the second scan (PDF 254): the same | agree: **settled**; 1'1", 1'3" radius and 1'4"–1'8" stay (?) (both scans too faint) |
+| Fig 5-2 chimney height, p.130 (PDF 117), `olsen-kilns.md` W10 | "13.12 ft", faint | "(4 meters)" | agree: **settled**; the top "1? in" has no partner and stays |
+| Fig 5-3, p.131 (PDF 118), `olsen-kilns.md` W11 | the figure's faint "⅓ meter", "20 cm", "6 m", "3 ft"/"1 meter" | the caption (p.130), clear: 12 in (30.5 cm), 8 in (20 cm), 20 ft (6 m), 3 ft (91 cm) | agree: **settled** |
+| Taper "1 to ¾ or 1⅓ to 1", p.131 (PDF 118) | blurred at the gutter | none (p.80 gives no taper) | stays (?) |
+| Kanthal A weight per in³, Table 9-4, p.255 (PDF 240) | header "0.258 lb", clear | second header "0.256 lb", clear | both are printed: the book disagrees with itself, not a reading problem; stays marked |
+| Table 9-6 volume labels, p.257 (PDF 242) | cut at the left edge | none | stays (?) |
+| Table A-2 radius factors, p.298 (PDF 251) | washed out | none (one scan) | stays; the formula is a derivation, not a reading |
+| "four established rises", Fig A-3 backs "4½" and "8"", p.297 (PDF 250) | the third rise is lost in the gutter; the backs are cut at the left edge | none | stay (?) |
+| Advancer data, Table 1-10, p.35 (PDF 19) | blurred: cone 16, 24500 / 25500 psi, 125, 1305 psi, 30.1 %, "1250 °F" | only 2642 °F (1450 °C) has a partner, and it isn't marked | stay (?) |
+| Gulgong firebox, p.119 (PDF 106) | 5 × 3 × 4 ft, clear | the metric "(152 × …" runs off the line end | the imperial governs; the metric (?) stays |
+| Fig 7-3 ash pit 14", p.179 (PDF 168) | "14"", clear at 200 dpi | none | clear, but one reading: stays (?) |
+| Oil-drip channel 6 in, p.208 (PDF 192) | not on p.208's text | none | stays (?) |
+| Miravet, Fig 6-19, p.158 (PDF 145) | "6'" clear; what it spans is the question | text: three equal cubes, no 6 ft | stays (?) |
+| Bae, Fig 4-67, p.107 (PDF 93) | "4½'" tallest point, "22°", "20° SLOPE" | text p.108: "20% slope"; no height | the slope conflict is printed (Flagged stays); 4½' and 22° have no partner |
+| Tamba, p.85 (PDF 71) | "Kilns are 120–150" long", stoke holes "2½' apart", "…650 years" at the gutter | text: 120 ft (36.5 m) | the 120 ft length agrees with its metric (already used); the inch mark stays Flagged; 2½' and 650 stay (?) |
+| Bowen Mountain, Fig 4-153, p.127 (PDF 114) | 18", 12", "4½" × 7" FLUES", "2½" HOLES", three flues: all clear at 200 dpi | none: the text gives only salt 1 lb (0.45 kg) | clear, one reading: stay (?) |
+| Chappell, Fig 4-149, p.126 (PDF 113) | "5½' TALL", 31", 4' | text: 40 ft³ (1.13 m³), 50 ft³ | the volume conflict is arithmetic, not reading: stays Flagged |
+| Kannofen, Fig 6-37, p.163 (PDF 150) | "BACK ENTRANCE" | — | a printed label, not a reading: stays Flagged |
+
+The rest of the 244 marked lines (checklist from both files) were sorted without a new render:
+about 70 are **Flagged** misprints or contradictions in print (arithmetic that doesn't add, two pages
+that disagree, a wrong unit): a second reading of a misprint can't settle it, so they stay. The
+remaining (?) readings are in drawings or tables with no metric partner and no repeat in the text
+(kiln drawings in pp.33–189, the burner drawings of Ch. 8, the arch-brick drawings of p.23–25), so
+they stay marked. No example input or engine input changed.

@@ -1693,7 +1693,7 @@ These are not whole kilns, or are kilns drawn only to show a rule. They make goo
 
 - **W10. Early natural-draft downdraft** (pp.129–130, Fig 5-2). Chamber 6.56 ft (2 meters) wide, high
   and long (a cube); "FLUE CONNECTION 3.28 ft (1 meter)"; chimney base 3.28 ft (1 meter) diameter;
-  chimney height 13.12 ft (4 meters) (digits faint); top "1? in" (16 in (?) by a 2½:1 taper). Caption:
+  chimney height 13.12 ft (4 meters) (faint, but 4 m is 13.12 ft: settled 2026-10-30); top "1? in" (16 in (?) by a 2½:1 taper). Caption:
   78 × 78 in (2 × 2 m) to 67 × 67 in (1.7 × 1.7 m) chambers "with the same chimney relationship".
   Text: chimney diameter half the chamber's, so it can serve more kilns, with a "greatly restricted"
   entrance flue and a 2½ to 1 taper; the chimney at 90° to the firebox flues. This height is the
@@ -1702,8 +1702,9 @@ These are not whole kilns, or are kilns drawn only to show a rule. They make goo
 - **W11. Modern downdraft, 6 × 6 ft chamber** (caption Fig 5-3, p.130; figure p.131). Chimney base at
   least 12 in (30.5 cm) diameter, top 8 in (20 cm), height at least 20 ft (6 m); the chamber-to-chimney
   distance can be under 3 ft (91 cm) without changing the chimney. Fig 5-3, metric: chamber 2 m high,
-  floor 2 m, flue connection 1 m, base "⅓ (?) meter", top "20 cm" (?), height "6 m" (?); imperial:
-  6 ft, 6 ft, 3 ft (?), 12 in, 8 in (?), 20 ft. Taper "1 to ¾ or 1⅓ (?) to 1"; with forced-draft
+  floor 2 m, flue connection 1 m, base "⅓ meter", top "20 cm", height "6 m"; imperial:
+  6 ft, 6 ft, 3 ft, 12 in, 8 in, 20 ft. The figure's faint labels agree with the caption's clear
+  12 in (30.5 cm), 8 in (20 cm), 20 ft (6 m) and 3 ft (91 cm) (settled 2026-10-30). Taper "1 to ¾ or 1⅓ (?) to 1"; with forced-draft
   burners up to 25 % shorter, "no certain rule" (p.131).
 - **W12. Box "downward-draft" layout** (pp.150–151, Figs 5-81 to 5-84). All sides flat; burners at the
   side ("requires a bagwall"), back or floor; exit flue in the back wall at floor level. Fig 5-82:
