@@ -7,7 +7,7 @@ give off as they burn out, a mix with no service limit, and castable cast in lay
 from __future__ import annotations
 
 from kilndesigner.sheet import Sheet
-from kilndesigner.units import Q_
+from kilndesigner.units import Q_, Quantity
 
 
 def dryout_reach(thickest_in: float, max_in: float, source: str) -> Sheet:
@@ -120,6 +120,34 @@ def no_service_limit(name: str, ingredients: list[str], top_f: float, source: st
     return s
 
 
+def no_shrinkage(name: str) -> Sheet:
+    """A mix with no measured firing shrinkage or fired density: both are estimated with none,
+    so density and conductivity come out as lower bounds (review M3)."""
+    s = Sheet(
+        "castable.shrinkage", f"{name}: firing shrinkage", reference="castables.md §11a (derived)"
+    )
+    s.fact("linear shrinkage on firing", "not measured; taken as 0 %", source="the design")
+    s.rule(
+        "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about "
+        "16 % denser); with none measured, the fired density and k are lower bounds, the unsafe "
+        "side for heat loss. Measure test pieces.",
+        holds=False,
+        level="warning",
+    )
+    return s
+
+
+def fired_too_cool(name: str, fired_to: Quantity, top: Quantity) -> Sheet:
+    """Test pieces fired below the kiln's top temperature don't show its full shrinkage (M10)."""
+    s = Sheet(
+        "castable.test-firing", f"{name}: the test pieces' firing", reference="the design"
+    )
+    s.given("T_test", "the test pieces' firing", fired_to, "degF", source="the design: measured")
+    s.given("T_top", "the kiln's top temperature", top, "degF", source="the design: the firing")
+    s.require("T_test", ">=", "T_top", level="warning")
+    return s
+
+
 def cast_in_layers(face: str, layers_in: list[float], schedule_in: float, source: str) -> Sheet:
     s = Sheet("castable.layers", f"Castable cast in layers in the {face} wall", reference=source)
     for i, t in enumerate(layers_in, 1):
@@ -146,4 +174,11 @@ def cast_in_layers(face: str, layers_in: list[float], schedule_in: float, source
     return s
 
 
-__all__ = ["burnout_heat", "cast_in_layers", "dryout_reach", "no_service_limit"]
+__all__ = [
+    "burnout_heat",
+    "cast_in_layers",
+    "dryout_reach",
+    "fired_too_cool",
+    "no_service_limit",
+    "no_shrinkage",
+]

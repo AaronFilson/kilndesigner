@@ -163,15 +163,19 @@ def test_a_mix_outside_the_checked_densities_is_refused() -> None:
 
 
 def test_an_ingredient_without_a_sourced_density_must_be_given_one() -> None:
-    with pytest.raises(CastableError, match="no density is sourced for Expanded perlite"):
+    """A lightweight grain needs its particle (envelope) density (review M6): its skeletal
+    density (perlite's 2.2–2.4, castables.md §9) would shrink its volume about tenfold. No
+    particle density for expanded perlite is sourced; the 0.3 g/cm³ below is a test input only."""
+    with pytest.raises(CastableError, match="no density is sourced for Expanded perlite") as e:
         analyse_mix(KILN, _mix([("mulcoa-70", 40), ("perlite", 1)], 8))
+    assert "particle (envelope) density" in str(e.value)
     given_one = CastableMix.model_validate(
         {
             "id": "test",
             "name": "test",
             "ingredients": [
                 {"ingredient": "mulcoa-70", "mass": "40 lb"},
-                {"ingredient": "perlite", "mass": "1 lb", "density": "2.3 g/cm**3"},
+                {"ingredient": "perlite", "mass": "1 lb", "density": "0.3 g/cm**3"},
             ],
             "water": "8 lb",
             "foam": 50,
@@ -324,6 +328,53 @@ def test_a_measured_fired_density_replaces_the_estimate() -> None:
     assert estimated.fired_density_kg_m3 < a.fired_density_kg_m3
     law = conductivity_law()
     assert law.k(a.fired_density_kg_m3, 1000) > law.k(estimated.fired_density_kg_m3, 1000)
+
+
+def test_without_a_measured_shrinkage_density_and_k_are_lower_bounds() -> None:
+    """Review M3: shrinkage defaults to none, so density and k come out low; that is a warning."""
+    a = analyse_mix(KILN, _mix(BACKUP, 14.5, foam=60))
+    [low] = [f for f in a.findings if f.check and f.check.id == "castable.shrinkage"]
+    assert low.level == "warning"
+    assert "lower bounds" in low.message
+    measured = CastableMix.model_validate(
+        {**_mix(BACKUP, 14.5, foam=60).model_dump(mode="json"),
+         "measured": {"linear_shrinkage": 1.5}}
+    )  # fmt: skip
+    assert not [f for f in analyse_mix(KILN, measured).findings if "lower bounds" in f.message]
+
+
+def test_test_pieces_fired_below_the_top_are_a_warning() -> None:
+    """Review M10: pieces fired to 1800 °F say nothing of the kiln's cone 10 shrinkage."""
+    base = _mix(BACKUP, 14.5, foam=60).model_dump(mode="json")
+    cool = CastableMix.model_validate(
+        {**base, "measured": {"linear_shrinkage": 1.5, "fired_to": "1800 degF"}}
+    )
+    [w] = [
+        f
+        for f in analyse_mix(KILN, cool).findings
+        if f.check and f.check.id == "castable.test-firing"
+    ]
+    assert w.level == "warning"
+    hot = CastableMix.model_validate(
+        {**base, "measured": {"linear_shrinkage": 1.5, "fired_to": "2400 degF"}}
+    )
+    assert not [
+        f
+        for f in analyse_mix(KILN, hot).findings
+        if f.check and f.check.id == "castable.test-firing"
+    ]
+
+
+def test_porosity_comes_from_a_measured_fired_density() -> None:
+    """Review M11: with a measured fired density ρ, porosity is 1 − ρ / ρ_solids."""
+    base = _mix(BACKUP, 14.5, foam=60).model_dump(mode="json")
+    m = CastableMix.model_validate({**base, "measured": {"fired_density": "35 lb/ft**3"}})
+    a = analyse_mix(KILN, m)
+    step = next(s for s in a.working if s.name == "Porosity when fired")
+    solids = float(step.inputs["fired solids' density"].split()[0])
+    rho = si(Q_(35, "lb/ft**3"), "kg/m**3")
+    assert step.value == f"{100 * (1 - rho / solids):.0f} %"
+    assert step.formula == "1 − measured fired density ÷ the fired solids' density"
 
 
 def test_a_mix_denser_than_its_solids_is_refused() -> None:

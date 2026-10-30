@@ -49,6 +49,8 @@ class Material(_Entry):
     conductivity: ConductivityData
     source: str
     status: Literal["verified", "excerpt", "derived"]
+    # A castable's "material required" to place a unit volume, from its maker's sheet
+    material_required: str | None = None
 
     @property
     def max_service_temperature(self) -> Quantity | None:

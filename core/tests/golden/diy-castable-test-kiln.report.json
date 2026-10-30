@@ -159,6 +159,39 @@
       "batches": 18,
       "findings": [
         {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "linear shrinkage on firing",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "the design",
+                "symbol": "",
+                "text": "not measured; taken as 0 %",
+                "unit": "",
+                "value": null
+              }
+            ],
+            "id": "castable.shrinkage",
+            "label": null,
+            "lever": null,
+            "reference": "castables.md §11a (derived)",
+            "requirements": [],
+            "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): firing shrinkage"
+          },
+          "level": "warning",
+          "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+          "reference": "castables.md §11a (derived)"
+        },
+        {
           "check": null,
           "level": "info",
           "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
@@ -736,6 +769,39 @@
         "dry_mass_kg": 22.679618500000004,
         "findings": [
           {
+            "check": {
+              "cells": [
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "linear shrinkage on firing",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "the design",
+                  "symbol": "",
+                  "text": "not measured; taken as 0 %",
+                  "unit": "",
+                  "value": null
+                }
+              ],
+              "id": "castable.shrinkage",
+              "label": null,
+              "lever": null,
+              "reference": "castables.md §11a (derived)",
+              "requirements": [],
+              "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+              "rule_holds": false,
+              "rule_level": "warning",
+              "solve": null,
+              "status": "warning",
+              "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): firing shrinkage"
+            },
+            "level": "warning",
+            "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+            "reference": "castables.md §11a (derived)"
+          },
+          {
             "check": null,
             "level": "info",
             "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
@@ -881,7 +947,7 @@
               "water": "5.44 l"
             },
             "name": "Cast volume of one batch",
-            "note": "Water taken as 1 kg/L.",
+            "note": "Water taken as 1 kg/L. Foam is taken as air: the liquid in it isn't counted (no foam density is sourced), so a quart of the mix weighs a little more than shown.",
             "reference": null,
             "value": "1.11 ft³ (31.5 l)"
           },
@@ -913,7 +979,9 @@
           },
           {
             "formula": "1 − fired solids' volume ÷ fired volume",
-            "inputs": {},
+            "inputs": {
+              "fired solids' density": "2799 kg/m³"
+            },
             "name": "Porosity when fired",
             "note": "Solids fired: clay as metakaolin, kyanite as mullite and silica.",
             "reference": null,
@@ -980,6 +1048,39 @@
     {
       "batches": 71,
       "findings": [
+        {
+          "check": {
+            "cells": [
+              {
+                "expr": null,
+                "formula": null,
+                "label": "",
+                "meaning": "linear shrinkage on firing",
+                "offset": 0.0,
+                "scale": 1.0,
+                "source": "the design",
+                "symbol": "",
+                "text": "not measured; taken as 0 %",
+                "unit": "",
+                "value": null
+              }
+            ],
+            "id": "castable.shrinkage",
+            "label": null,
+            "lever": null,
+            "reference": "castables.md §11a (derived)",
+            "requirements": [],
+            "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+            "rule_holds": false,
+            "rule_level": "warning",
+            "solve": null,
+            "status": "warning",
+            "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): firing shrinkage"
+          },
+          "level": "warning",
+          "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+          "reference": "castables.md §11a (derived)"
+        },
         {
           "check": null,
           "level": "info",
@@ -1363,6 +1464,39 @@
         "dry_mass_kg": 22.793016592500003,
         "findings": [
           {
+            "check": {
+              "cells": [
+                {
+                  "expr": null,
+                  "formula": null,
+                  "label": "",
+                  "meaning": "linear shrinkage on firing",
+                  "offset": 0.0,
+                  "scale": 1.0,
+                  "source": "the design",
+                  "symbol": "",
+                  "text": "not measured; taken as 0 %",
+                  "unit": "",
+                  "value": null
+                }
+              ],
+              "id": "castable.shrinkage",
+              "label": null,
+              "lever": null,
+              "reference": "castables.md §11a (derived)",
+              "requirements": [],
+              "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+              "rule_holds": false,
+              "rule_level": "warning",
+              "solve": null,
+              "status": "warning",
+              "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): firing shrinkage"
+            },
+            "level": "warning",
+            "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+            "reference": "castables.md §11a (derived)"
+          },
+          {
             "check": null,
             "level": "info",
             "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): its conductivity is estimated from its fired density by a law fitted to 9 commercial insulating firebricks. Expect it to be off by up to about 25 % for a brick; on Morgan's castables held out of the fit it is -9 % to +21 %, and it may be further off if the mix's pores or solids differ from these.",
@@ -1528,7 +1662,7 @@
               "water": "6.58 l"
             },
             "name": "Cast volume of one batch",
-            "note": "Water taken as 1 kg/L.",
+            "note": "Water taken as 1 kg/L. Foam is taken as air: the liquid in it isn't counted (no foam density is sourced), so a quart of the mix weighs a little more than shown.",
             "reference": null,
             "value": "1.37 ft³ (38.7 l)"
           },
@@ -1560,7 +1694,9 @@
           },
           {
             "formula": "1 − fired solids' volume ÷ fired volume",
-            "inputs": {},
+            "inputs": {
+              "fired solids' density": "2740 kg/m³"
+            },
             "name": "Porosity when fired",
             "note": "Solids fired: clay as metakaolin, kyanite as mullite and silica.",
             "reference": null,
@@ -1997,6 +2133,39 @@
             "expr": null,
             "formula": null,
             "label": "",
+            "meaning": "linear shrinkage on firing",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design",
+            "symbol": "",
+            "text": "not measured; taken as 0 %",
+            "unit": "",
+            "value": null
+          }
+        ],
+        "id": "castable.shrinkage",
+        "label": "W2",
+        "lever": null,
+        "reference": "castables.md §11a (derived)",
+        "requirements": [],
+        "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): firing shrinkage"
+      },
+      "level": "warning",
+      "message": "Foamed grog and fireclay hot face (the notes' \"K26 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+      "reference": "castables.md §11a (derived)"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
             "meaning": "ingredient, no service limit sourced",
             "offset": 0.0,
             "scale": 1.0,
@@ -2060,7 +2229,7 @@
           }
         ],
         "id": "castable.service-limit",
-        "label": "W2",
+        "label": "W3",
         "lever": null,
         "reference": "castables.md §4.1",
         "requirements": [],
@@ -2132,7 +2301,7 @@
           }
         ],
         "id": "castable.layers",
-        "label": "W3",
+        "label": "W4",
         "lever": null,
         "reference": "castables-minerals.md §5",
         "requirements": [],
@@ -2334,7 +2503,7 @@
           }
         ],
         "id": "castable.burnout",
-        "label": "W4",
+        "label": "W5",
         "lever": {
           "hi": 0.15432098765432098,
           "lo": 0.00015432098765432098,
@@ -2362,6 +2531,39 @@
       "level": "warning",
       "message": "Burning out the organics releases about 108 kW through 464–1022 °F, 34.2 times the 3.16 kW the kiln loses there. The controller can only switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, and watch it.",
       "reference": "castables.md §7 [S51] [S54]"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "linear shrinkage on firing",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the design",
+            "symbol": "",
+            "text": "not measured; taken as 0 %",
+            "unit": "",
+            "value": null
+          }
+        ],
+        "id": "castable.shrinkage-2",
+        "label": "W6",
+        "lever": null,
+        "reference": "castables.md §11a (derived)",
+        "requirements": [],
+        "rule": "Firing shrinkage makes a mix denser and more conductive (5 % linear shrinkage is about 16 % denser); with none measured, the fired density and k are lower bounds, the unsafe side for heat loss. Measure test pieces.",
+        "rule_holds": false,
+        "rule_level": "warning",
+        "solve": null,
+        "status": "warning",
+        "title": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): firing shrinkage"
+      },
+      "level": "warning",
+      "message": "Foamed fireclay backup with paper fibre (the notes' \"K16 type\"): no firing shrinkage or fired density is measured, so none is assumed: its fired density and conductivity are lower bounds, and the heat loss may be higher than shown. Fire test pieces and enter what they measure.",
+      "reference": "castables.md §11a (derived)"
     },
     {
       "check": {
@@ -2446,7 +2648,7 @@
           }
         ],
         "id": "castable.service-limit-2",
-        "label": "W5",
+        "label": "W7",
         "lever": null,
         "reference": "castables.md §4.1",
         "requirements": [],

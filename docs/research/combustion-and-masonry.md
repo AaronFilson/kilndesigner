@@ -515,10 +515,10 @@ Off-grid note: only natural-draft (venturi) burners work without power, and they
 
 | Product | Max service | Material per ft³ | Bulk density | Water | Thermal k (BTU·in/hr·ft²·°F) | Source |
 |---|---|---|---|---|---|---|
-| Kast-O-Lite 30 LI Plus (HWI, insulating) | 3,000 °F | 92 lb/ft³ | 98 lb/ft³ after 220 °F; 92 after 1,500 °F | 17.0 % of dry weight (≈ 9.4 lb per 55 lb bag) | 5.6 @400 °F, 4.2 @800, 4.1 @1200, 4.5 @1600, 4.9 @2000 | HWI data sheet, via search snippets [S50] |
+| Kast-O-Lite 30 LI Plus (HWI, insulating) | 3,000 °F | 92 lb/ft³ | 98 lb/ft³ after 220 °F; 92 after 1,500 °F | 17.0 % of dry weight (≈ 9.4 lb per 55 lb bag) | 5.6 @400 °F, 4.2 @800, 4.1 @1200, 4.5 @1600, 4.9 @2000 | HWI data sheet [S50]; since Verified on the 10/19 sheet (`door-headers.md` [H17], `flat-roofs.md` [F16]) |
 | Kast-O-Lite 30 LI Plus (retailer figures) | 3,000 °F | — | 90 lb/ft³ | 18 % by weight | — | [S51] [S52] |
 | Kast-O-Lite 26 LI Plus (HWI, insulating) | 2,600 °F | 86 lb/ft³ | 90–100 after 220 °F; 86–96 after 1,500 °F | not readable; one snippet showed 20.0 % (**unverified**) | 3.6 @400, 3.4 @800, 3.5 @1200, 3.7 @1600, 4.0 @2000 | data sheet copy on Yumpu [S53] |
-| Mizzou Castable Plus (HWI, dense) | 3,000 °F | NOT FOUND | 2.27 g/cc ≈ 142 lb/ft³ (**derived**, from a distributor snippet, unverified) | about 5 pints per 55 lb; never over 11.0 % | NOT FOUND | High Temp Tools FAQ via E. Lippert (secondary) [S54] [S55] |
+| Mizzou Castable Plus (HWI, dense) | 3,000 °F | 140 lb/ft³ (HWI 12/12) | 142 after 220 °F; 140 after 1,500 °F (HWI 12/12) | 9.0 % hand cast, 8.6 % vibrated (HWI 12/12); never over 11.0 % [S54] | 7.8 @400, 7.7 @800, 7.6 @1200, 7.5 @1600, 7.4 @2000, 7.4 @2400 (HWI 12/12) | HWI sheet 12/12, 5976 (`door-headers.md` [H18], Verified; reconciled 29 Oct 2026, review M15); High Temp Tools FAQ [S54] [S55] |
 
 Other Kast-O-Lite 30 LI Plus data [S50]:
 - Modulus of rupture: 600 psi after 220 °F, 300 after 1,500 °F, 300 after 2,000 °F, 900 after 2,500 °F, 800 after 2,910 °F.

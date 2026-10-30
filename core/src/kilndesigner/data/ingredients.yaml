@@ -66,7 +66,10 @@
   density: 3.24 g/cm**3
   loi: 0
   limit: 1271 degC
-  limit_note: "PCE 8–9 on the neat paste, about 2320 °F; not for reducing atmospheres"
+  limit_note: >-
+    PCE 8–9 on the neat paste, about 2320 °F: a softening point, not a service limit, which no
+    source gives for Ciment Fondu in a castable (review M12); so the real limit is lower. Not for
+    reducing atmospheres.
   source: "castables.md §5.1, Kerneos Ciment Fondu sheet [S11]"
   status: verified
 
@@ -143,6 +146,8 @@
   loi: 0
   limit: 871 degC
   limit_note: "softens at 1600–2000 °F; the lower end is taken"
-  note: "The density of an expanded perlite grain is not sourced: give it in the mix."
+  note: >-
+    The particle (envelope) density of an expanded perlite grain is not sourced: give it in the
+    mix. Not the loose bulk density on the bag, nor the 2.2–2.4 specific gravity of the solid.
   source: "castables.md §9, Perlite Institute via Engineering Toolbox [S16]"
   status: secondary

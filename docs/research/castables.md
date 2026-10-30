@@ -228,8 +228,8 @@ These ratios are for pure CA reacting to completion. Real cements contain other 
 | ULC product sheet | 5.3–5.7 % and 4.0–4.7 % water by weight (two grades) | Excerpt (Scribd upload, unnamed maker) | [S40] |
 | Insulating castables, water | NOT FOUND | | |
 | Mizzou: "55 lbs. to 5 pints of water"; "Do not exceed 11.0 % water under any circumstances" | High Temp Tools FAQ, quoted on a blog | Verified (secondary) | [S41] |
-| Mizzou water, by weight | 5 US pints = 2.366 L ≈ 5.20 lb; 5.20 / 55 = 9.5 % of dry weight **(derived)** | | [S41] |
-| Mizzou Castable Plus | 2.27 g/cm³ bulk, 3000 °F rating, 60.6 % Al₂O₃, 32.6 % SiO₂, 2.6 % CaO | Excerpt (distributor; page 403) | [S42] |
+| Mizzou water, by weight | 5 US pints = 2.366 L ≈ 5.20 lb; 5.20 / 55 = 9.5 % of dry weight **(derived)**. **Superseded** by HWI's own sheet (12/12, 5976): 9.0 % for hand casting, 8.6 % for vibration casting (`door-headers.md` [H18], Verified). | | [S41] |
+| Mizzou Castable Plus | 2.27 g/cm³ bulk, 3000 °F rating, 60.6 % Al₂O₃, 32.6 % SiO₂, 2.6 % CaO | Excerpt (distributor; page 403). HWI's 12/12 sheet: bulk 142 lb/ft³ after 220 °F, 140 after 1,500 °F, "Material Required 140 lb/ft3", k 7.8–7.4 Btu·in/hr·ft²·°F from 400 to 2,400 °F ([H18], Verified) | [S42] |
 
 ---
 
@@ -552,8 +552,8 @@ as one source. Values the engine uses come first (`castable.py`, `data/ingredien
 | Dextrin 1.45, starch 1.5, cellulose 1.5 | 1–2 each [S13] [S13b] [S14] [S12] | No third found. |
 | Heat of combustion, starch 4.16 / cellulose 4.15 kcal/g (`HHV_*`) | [S51] (a review of ~100 values), [S52] 16.31 kJ/g cellulose, [S80] NBS 1950 bomb calorimetry (values not read), [S81] potato starch calorimetry (values not read) | Effectively 2 read. [S51] 17.4 kJ/g vs [S52] 16.31 kJ/g: **6 % apart**. A teaching page's 14.2 kJ/g [S82] uses glucose's enthalpy for cellulose and is not a measurement; ignore. |
 | Mizzou dry-out 75 °F/h, ½ h per inch, ≤ 9 in (`DRYOUT_*`) | [S41] only for Mizzou; AGC [S56] 50 °C/h, 1 h per 10 mm; an unnamed maker sheet [S83] 50 °C/h per 25 mm | **Disagree.** AGC's hold is 1 h per 10 mm ≈ 2.5 h per inch, five times the Mizzou ½ h per inch the engine uses. No HWI, Allied or Plibrico primary schedule found. |
-| Mizzou water 9.5 %, ≤ 11 % | 1 [S41] | No HWI sheet found. |
-| Mizzou Castable Plus 2.27 g/cm³ | 1 distributor [S42] | |
+| Mizzou water 9.0 % hand cast (8.6 % vibrated), ≤ 11 % | HWI 12/12 sheet [H18 in `door-headers.md`]; [S41] | Reconciled 29 Oct 2026 (review M15): HWI's sheet replaces the derived 9.5 %. |
+| Mizzou Castable Plus 142 / 140 lb/ft³ | HWI 12/12 sheet [H18]; distributor [S42] 2.27 g/cm³ (142 lb/ft³) | Agree. |
 | CAC hydrate densities, water ratios | excerpts [S38] only | |
 | ASTM C401 classes | 1 snippet [S39] | Paid standard. |
 | Conventional castable water 8–15 % | 1 [S40] | |

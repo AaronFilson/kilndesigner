@@ -36,7 +36,9 @@ from kilndesigner.castable_checks import (
     burnout_heat,
     cast_in_layers,
     dryout_reach,
+    fired_too_cool,
     no_service_limit,
+    no_shrinkage,
 )
 from kilndesigner.library import ConductivityData, Material, material
 from kilndesigner.model import CastableMix, Kiln
@@ -250,9 +252,15 @@ def _density(mix: CastableMix, part_index: int) -> tuple[float, float]:
         d = si(part.density, "kg/m**3")
         return d, d
     if ing.density is None:
+        what = (
+            "its particle (envelope) density: the grain's mass over its volume with its closed "
+            "pores, not the loose bulk density on a bag or the solid's skeletal density"
+            if ing.role == "lightweight"
+            else "its true (particle) density, from the maker's sheet"
+        )
         raise CastableError(
-            f"{mix.id}: no density is sourced for {ing.name}. Give it in the mix "
-            f"(density: …, from the maker's sheet)."
+            f"{mix.id}: no density is sourced for {ing.name}. Give it in the mix (density: …): "
+            f"{what}."
         )
     d = si(parse_quantity(ing.density), "kg/m**3")
     fired = si(parse_quantity(ing.fired_density), "kg/m**3") if ing.fired_density else d
@@ -285,11 +293,40 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
     shrink = (measured.linear_shrinkage or 0.0) / 100 if measured else 0.0
     fired_volume = cast * (1 - shrink) ** 3
     fired_density = fired_mass / fired_volume
+    skeletal = fired_mass / fired_solid  # the fired solids' own density
+    porosity = 1 - fired_solid / fired_volume
     if measured and measured.fired_density is not None:
         fired_density = si(measured.fired_density, "kg/m**3")
-    porosity = 1 - fired_solid / fired_volume
+        porosity = 1 - fired_density / skeletal  # review M11: from the measured density
     working: list[Step] = []
     findings: list[Finding] = []
+    if not measured or (measured.linear_shrinkage is None and measured.fired_density is None):
+        findings.append(
+            Finding.failed(
+                no_shrinkage(mix.name).check(),
+                message=(
+                    f"{mix.name}: no firing shrinkage or fired density is measured, so none is "
+                    "assumed: its fired density and conductivity are lower bounds, and the heat "
+                    "loss may be higher than shown. Fire test pieces and enter what they measure."
+                ),
+            )
+        )
+    if measured and measured.fired_to is not None:
+        from kilndesigner.heatloss import top_temperature
+
+        top = top_temperature(kiln)[0]
+        cool = fired_too_cool(mix.name, measured.fired_to, top).check()
+        if cool.status != "pass":
+            findings.append(
+                Finding.failed(
+                    cool,
+                    message=(
+                        f"{mix.name}: the test pieces were fired to {show(measured.fired_to)}, "
+                        f"below the kiln's {show(top, 'degF')}; the lining will shrink more where "
+                        "it gets hotter. Fire test pieces to the top temperature."
+                    ),
+                )
+            )
     lb = "lb"
 
     def mass_text(kg: float) -> str:
@@ -325,7 +362,8 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
                 "water": show(Q_(water_volume, "m**3"), "L", 3),
                 "air from foam": f"{100 * air:.0f} %",
             },
-            note="Water taken as 1 kg/L.",
+            note="Water taken as 1 kg/L. Foam is taken as air: the liquid in it isn't counted "
+            "(no foam density is sourced), so a quart of the mix weighs a little more than shown.",
         )
     )
     wet = (dry + water) / cast
@@ -373,7 +411,12 @@ def analyse_mix(kiln: Kiln, mix: CastableMix) -> MixAnalysis:
         Step(
             name="Porosity when fired",
             value=f"{100 * porosity:.0f} %",
-            formula="1 − fired solids' volume ÷ fired volume",
+            formula=(
+                "1 − measured fired density ÷ the fired solids' density"
+                if measured and measured.fired_density is not None
+                else "1 − fired solids' volume ÷ fired volume"
+            ),
+            inputs={"fired solids' density": f"{skeletal:.0f} kg/m³"},
             note="Solids fired: clay as metakaolin, kyanite as mullite and silica.",
         )
     )
