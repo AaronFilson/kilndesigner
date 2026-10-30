@@ -22,6 +22,7 @@ export interface KilnDocument {
     slope?: string;
     bend?: string;
     on_ground?: boolean;
+    rings?: RingMethod;
   };
   roof?:
     | { type: "flat" }
@@ -62,6 +63,9 @@ export interface KilnDocument {
   };
   castables?: Castable[];
 }
+
+/** How a round wall's brick rings are turned (model.py Chamber.rings). */
+export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
 
 export interface MixPart {
   ingredient: string;
@@ -139,6 +143,7 @@ export interface Firebox {
   height?: string;
   grate?: { width: string; length: string; gap?: string };
   ash_pit?: string;
+  step?: string;
   inlet?: Port;
   inlets?: number;
   stoke_hole?: Port;

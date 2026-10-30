@@ -813,6 +813,21 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.shape).toBeUndefined();
   });
 
+  it("turns a round chamber's rings a chosen way, only for round chambers", () => {
+    const last = live(electric);
+    expect(screen.queryByLabelText("Brick rings turned with")).toBeNull();
+    set("Chamber shape", "round");
+    // Left out, the engine cuts an electric kiln's rings and mortars the rest
+    expect(field("Brick rings turned with").value).toBe("");
+    set("Brick rings turned with", "featheredge");
+    expect(last().chamber.rings).toBe("featheredge");
+    set("Brick rings turned with", "");
+    expect(last().chamber.rings).toBeUndefined();
+    set("Brick rings turned with", "mortar");
+    set("Chamber shape", "box");
+    expect(last().chamber.rings).toBeUndefined();
+  });
+
   it("adds and removes chambers in a row, with a slope and a floor on the ground", () => {
     const last = live(electric);
     expect(disabled("Remove a chamber")).toBe(true);
@@ -863,6 +878,7 @@ describe("shapes, fireboxes and chimneys", () => {
     set("Firebox 2, grate length", "24");
     set("Firebox 2, gap between bars", "1");
     set("Firebox 2, ash pit depth", "9");
+    set("Firebox 2, step from the grate up to the chamber floor (blank: level)", "10");
     set("Firebox 2, inlet flues into the chamber", "3");
     set("Firebox 2, inlet flue size", "round");
     set("Firebox 2, inlet flue size: diameter", "4");
@@ -875,6 +891,7 @@ describe("shapes, fireboxes and chimneys", () => {
       height: "20 in",
       grate: { width: "12 in", length: "24 in", gap: "1 in" },
       ash_pit: "9 in",
+      step: "10 in",
       inlets: 3,
       inlet: { diameter: "4 in" },
     });
@@ -883,6 +900,7 @@ describe("shapes, fireboxes and chimneys", () => {
     fireEvent.click(screen.getByLabelText("Firebox 2 has a grate"));
     expect(last().heat.fire?.fireboxes[1]?.count).toBeUndefined();
     expect(last().heat.fire?.fireboxes[1]?.grate).toBeUndefined();
+    expect(last().heat.fire?.fireboxes[1]?.step).toBeUndefined();
     fireEvent.click(screen.getByRole("button", { name: "Remove firebox 1" }));
     expect(last().heat.fire?.fireboxes).toHaveLength(1);
     // The electric elements can go now the fire heats it; then the fire can't

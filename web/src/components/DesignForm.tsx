@@ -858,6 +858,7 @@ function FireSection({
                           ...box,
                           grate: e.target.checked ? { width: box.width, length: box.length } : undefined,
                           ash_pit: e.target.checked ? box.ash_pit : undefined,
+                          step: e.target.checked ? box.step : undefined,
                         })
                       }
                     />
@@ -888,6 +889,14 @@ function FireSection({
                         value={box.ash_pit}
                         units={LENGTH}
                         onChange={(v) => setBox(i, { ...box, ash_pit: v })}
+                      />
+                      {/* Level, the firebox is part of the chamber, for ash and flashing; a step
+                          drops the coals short of the ware (Olsen p.188) */}
+                      <Quantity
+                        label={`${name}, step from the grate up to the chamber floor (blank: level)`}
+                        value={box.step}
+                        units={LENGTH}
+                        onChange={(v) => setBox(i, { ...box, step: v })}
                       />
                     </>
                   )}
@@ -1157,10 +1166,33 @@ export function DesignForm({
               ["chamber"],
               v === "round"
                 ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
-                : { ...doc.chamber, shape: undefined },
+                : { ...doc.chamber, shape: undefined, rings: undefined },
             )
           }
         />
+        {round && (
+          <>
+            <Choice
+              label="Brick rings turned with"
+              value={doc.chamber.rings ?? ""}
+              options={[
+                ["", "As usual: cut for electric, mortar otherwise"],
+                ["mortar", "Straights, wedge joints filled with mortar"],
+                ["cut", "Straights cut to the angle"],
+                ["featheredge", "Straights with featheredges among them"],
+                ["arch", "Arch bricks"],
+              ]}
+              onChange={(v) => change(["chamber", "rings"], v || undefined)}
+            />
+            <p className="muted section-note">
+              Mortar: whole straights, inside faces on the curve, the wedge-shaped joints behind
+              them filled (Olsen, Fig. 2-13). Cut: each straight sawn to the angle so the joints
+              close, as electric kilns are built, in whole bricks round. Featheredge: tapered
+              bricks among the straights to turn the curve. Arch bricks: possible, but not
+              recommended.
+            </p>
+          </>
+        )}
         {(round ? (["width", "height"] as const) : (["width", "depth", "height"] as const)).map((k) => (
           <Quantity
             key={k}

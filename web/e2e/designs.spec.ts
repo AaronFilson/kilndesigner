@@ -587,6 +587,82 @@ test("a round kiln under a dome is made from choices and drawn", async ({ page, 
   await expect(yaml).toContainText("type: dome");
 });
 
+test("a round kiln's rings are turned the way chosen, and saved", async ({ page, cleanup }) => {
+  const name = `E2E rings ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await expect(form.getByLabel("Brick rings turned with")).toHaveCount(0);
+  await form.getByLabel("Chamber shape").selectOption("round");
+  await form.getByLabel("Diameter", { exact: true }).fill("36");
+  await form.getByLabel("Brick rings turned with").selectOption("featheredge");
+  const yaml = await savedAndDrawn(page, cleanup, name);
+  await expect(yaml).toContainText("rings: featheredge");
+});
+
+test("a firebox's grate, step, ash pit, inlets and stoke hole, and a chimney, are given", async ({
+  page,
+  request,
+  cleanup,
+}) => {
+  const name = `E2E firebox parts ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await form.getByLabel("Fire with wood, coal or oil in fireboxes").check();
+  await form.getByLabel("Firebox 1, width", { exact: true }).fill("13.5");
+  await form.getByLabel("Firebox 1, length", { exact: true }).fill("27");
+  await form.getByLabel("Firebox 1, height", { exact: true }).fill("18");
+  await form.getByLabel("Firebox 1 has a grate").check();
+  await form.getByLabel("Firebox 1, grate width", { exact: true }).fill("13.5");
+  await form.getByLabel("Firebox 1, grate length", { exact: true }).fill("18");
+  await form.getByLabel("Firebox 1, gap between bars", { exact: true }).fill("1");
+  await form.getByLabel("Firebox 1, ash pit depth", { exact: true }).fill("9");
+  await form
+    .getByLabel("Firebox 1, step from the grate up to the chamber floor (blank: level)", { exact: true })
+    .fill("9");
+  await form.getByLabel("Firebox 1, inlet flues into the chamber").fill("2");
+  await form.getByLabel("Firebox 1, stoke hole size", { exact: true }).selectOption("rect");
+  await form.getByLabel("Firebox 1, stoke hole size: width", { exact: true }).fill("9");
+  await form.getByLabel("Firebox 1, stoke hole size: height", { exact: true }).fill("9");
+  await form.getByLabel("Give the chimney as built (otherwise the engine sizes it)").check();
+  await form.getByLabel("Chimney height, from the chamber floor (needed)").fill("144");
+  await form.getByLabel("Chimney inside", { exact: true }).selectOption("rect");
+  await form.getByLabel("Chimney inside width").fill("9");
+  await form.getByLabel("Chimney inside depth").fill("9");
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  const saved = (await (await request.get(`/api/designs/${designId(page)}`)).json()) as {
+    latest: {
+      document: {
+        heat: { fire?: { fireboxes: Record<string, unknown>[] } };
+        draft?: { chimney?: object };
+      };
+    };
+  };
+  const doc = saved.latest.document;
+  expect(doc.heat.fire?.fireboxes[0]).toMatchObject({
+    height: "18 in",
+    grate: { width: "13.5 in", length: "18 in", gap: "1 in" },
+    ash_pit: "9 in",
+    step: "9 in",
+    inlets: 2,
+    stoke_hole: { width: "9 in", height: "9 in" },
+  });
+  expect(doc.draft?.chimney).toEqual({ height: "144 in", inside: { width: "9 in", depth: "9 in" } });
+});
+
+test("an open-topped kiln on the ground is made from choices", async ({ page, cleanup }) => {
+  const name = `E2E open top ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  const roof = form.locator("label.field").filter({ has: page.getByText("Roof", { exact: true }) });
+  await roof.locator("select").selectOption("open");
+  await form.getByLabel("The floor is on the ground (not raised on a stand)").check();
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  await page.getByRole("tab", { name: "YAML" }).click();
+  await expect(page.locator(".cm-content")).toContainText("type: open");
+  await expect(page.locator(".cm-content")).toContainText("on_ground: true");
+});
+
 test("a model that can't be loaded leaves the rest of the page working", async ({
   page,
   request,
