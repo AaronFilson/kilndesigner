@@ -69,11 +69,11 @@ def test_castables_are_measured_from_the_lining() -> None:
 
 def test_findings_are_listed_once_each_errors_first() -> None:
     # One small burner can't hold this kiln at the top, and four cylinders can't keep up on a
-    # cold day
+    # cold day (20 °F: the liquid at 0 °F, the regulator still working)
     kiln = _variant(
         "gas-crossdraft",
         ("      wall: front\n", "      wall: front\n      model: Ransome B1\n      count: 1\n"),
-        ("coldest_ambient: 20 degF", "coldest_ambient: 0 degF"),
+        ("type: cylinders\n      count: 4", "type: cylinders\n      count: 1"),
     )
     report = design_report(kiln)
     levels = [f.level for f in report.findings]

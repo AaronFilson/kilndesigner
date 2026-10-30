@@ -44,7 +44,11 @@ from kilndesigner.combustion import SOURCE as COMBUSTION_SOURCE
 from kilndesigner.cones import cone_temperature, hotter_than
 from kilndesigner.gas_checks import (
     ALTITUDE,
+    COOLING,
+    LIQUID_COOLING_F,
     MOST_BURNERS,
+    REGULATOR,
+    TANK_TABLE_FILL,
     Demand,
     Draw,
     Pressure,
@@ -55,6 +59,7 @@ from kilndesigner.gas_checks import (
     chimney_height,
     coldest_air,
     holds_top,
+    pressure_ceiling,
     supply,
     unknown_burner,
     ward_range,
@@ -388,14 +393,15 @@ def _supply_cases(gas: Gas, demand: float, t_f: float) -> tuple[list[SupplyCase]
         opt = data["cylinder_100lb_optimistic"]
         con = data["cylinder_100lb_conservative"]
         n = supply.count
+        liquid = min(max(t_f - LIQUID_COOLING_F, 0.0), 70.0)  # the table is by liquid temperature
         for label, lb in (("full", 100), ("half full", 50)):
-            each = interpolate(t, opt["temps_f"], opt["rows"][lb])
+            each = interpolate(liquid, opt["temps_f"], opt["rows"][lb])
             cases.append(
                 SupplyCase(
                     case=f"{n} × 100 lb cylinders, {label}",
                     capacity=f"{n * each:,.0f} BTU/hr ({each:,.0f} each)",
                     capacity_btu_hr=n * each, meets_demand=n * each >= demand,
-                    source=opt["source"],
+                    source=f"{opt['source']}, read at the liquid's temperature ({COOLING})",
                 )
             )  # fmt: skip
         each = interpolate(min(t, 60.0), con["temps_f"], con["btu_hr"])
@@ -410,12 +416,13 @@ def _supply_cases(gas: Gas, demand: float, t_f: float) -> tuple[list[SupplyCase]
         return cases, n * 100 / PROPANE_LB_PER_GAL
     assert isinstance(supply, Tank)
     table = data["tanks_one_third_full"]
-    cap = interpolate(t, table["temps_f"], table["gallons"][supply.gallons])
+    cap = interpolate(t, table["temps_f"], table["gallons"][supply.gallons]) * TANK_TABLE_FILL
     cases.append(
         SupplyCase(
             case=f"{supply.gallons} gal tank, ⅓ full",
             capacity=f"{cap:,.0f} BTU/hr",
-            capacity_btu_hr=cap, meets_demand=cap >= demand, source=table["source"],
+            capacity_btu_hr=cap, meets_demand=cap >= demand,
+            source=f"{table['source']}, × 73.3/90 for ⅓ full (§2.3, §2.8)",
         )
     )  # fmt: skip
     return cases, supply.gallons / 3
@@ -443,6 +450,7 @@ def _supply(gas: Gas, t_f: float, conservative: bool) -> Supply:
             t_f,
             (opt["temps_f"], opt["rows"][100]),
             opt["source"],
+            by_liquid=True,
         )
     assert isinstance(gas.supply, Tank)
     table = data["tanks_one_third_full"]
@@ -452,6 +460,7 @@ def _supply(gas: Gas, t_f: float, conservative: bool) -> Supply:
         t_f,
         (table["temps_f"], table["gallons"][gas.supply.gallons]),
         table["source"],
+        fill=TANK_TABLE_FILL,
     )
 
 
@@ -487,10 +496,11 @@ def _tank_suggestion(demand: float, t_f: float) -> str | None:
     table = gas_data()["tanks_one_third_full"]
     t = min(max(t_f, 0.0), 70.0)
     for gallons, row in table["gallons"].items():
-        if interpolate(t, table["temps_f"], row) >= demand:
+        cap = interpolate(t, table["temps_f"], row) * TANK_TABLE_FILL
+        if cap >= demand:
             return (
                 f"A {gallons} gal tank, kept at least ⅓ full, supplies "
-                f"{interpolate(t, table['temps_f'], row):,.0f} BTU/hr at {t_f:.0f} °F"
+                f"{cap:,.0f} BTU/hr at {t_f:.0f} °F"
             )
     return None
 
@@ -623,8 +633,9 @@ class Burning:
 
 
 def _supplying(gas: Gas, t_f: float, altitude: float, working: list[Step]) -> Supplying:
-    """The most pressure the burners may run at: a line's own, 10 psi on cylinders, or a tank's
-    vapour pressure less 10 psi, no more than 20."""
+    """The most pressure the burners may run at: a line's own; or, on cylinders or a tank, the
+    regulator set 20 psi under propane's vapour pressure with the liquid 20 °F under the coldest
+    air, no more than 20 psi, less 20 % droop at full flow (RegO 597F)."""
     if isinstance(gas.supply, Line):
         psi = si(gas.supply.pressure, "psi")
         working.append(
@@ -636,17 +647,23 @@ def _supplying(gas: Gas, t_f: float, altitude: float, working: list[Step]) -> Su
         )
         return Supplying(psi, True, altitude)
     vapour = gas_data()["vapour_pressure"]
-    tank_psig = interpolate(t_f, vapour["temps_f"], vapour["psig"])
-    max_psi = 10.0 if isinstance(gas.supply, Cylinders) else min(20.0, tank_psig - 10.0)
+    liquid = t_f - LIQUID_COOLING_F
+    tank_psig = interpolate(liquid, vapour["temps_f"], vapour["psig"])
+    max_psi = pressure_ceiling(tank_psig)
     working.append(
         Step(
             name="Propane pressure available",
-            value=f"{tank_psig:.0f} psig in the cylinder or tank at {t_f:.0f} °F",
-            inputs={"burners limited to": f"{max_psi:.3g} psi"},
-            reference=vapour["source"],
+            value=f"{tank_psig:.0f} psig in the cylinder or tank, the liquid at {liquid:.0f} °F",
+            formula="0.8 × min(20 psi, p_v − 20 psi)",
+            inputs={
+                "coldest air": f"{t_f:.0f} °F",
+                "liquid under draw": f"{LIQUID_COOLING_F:.0f} °F colder",
+                "burners limited to": f"{max_psi:.3g} psi",
+            },
+            reference=f"{vapour['source']}; {COOLING}; {REGULATOR}",
             note=(
-                "With cylinders, burners are kept to 10 psi or less so the regulator still works "
-                "when the cylinders are cold and low."
+                "The regulator needs its inlet 20 psi over its setting, and at full flow delivers "
+                "20 % under it; the burners' ratings go to 20 psi."
             ),
         )
     )
@@ -1078,13 +1095,19 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             f"{data['cylinder_100lb_optimistic']['source']}; "
             f"{data['tanks_one_third_full']['source']}"
         )
-        cold = coldest_air(t_f, data["cylinder_100lb_optimistic"]["temps_f"][0], tables).check()
+        # The cylinder table is by the liquid's temperature, 20 °F under the air under draw
+        first = data["cylinder_100lb_optimistic"]["temps_f"][0] + (
+            LIQUID_COOLING_F if isinstance(gas.supply, Cylinders) else 0.0
+        )
+        cold = coldest_air(t_f, first, f"{tables}; {COOLING}").check()
         if cold.status != "pass":
             findings.append(
                 Finding.failed(
                     cold,
                     message=(
-                        "The vaporization tables start at 0 °F; colder firing can't be checked."
+                        f"The vaporization tables start at {first:.0f} °F of air (the cylinder "
+                        "table at 0 °F of liquid, which runs 20 °F under the air); colder firing "
+                        "can't be checked."
                     ),
                 )
             )

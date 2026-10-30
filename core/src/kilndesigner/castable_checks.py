@@ -28,44 +28,47 @@ def dryout_reach(thickest_in: float, max_in: float, source: str) -> Sheet:
 
 
 def burnout_heat(
-    name: str,
-    heat_per_batch_j: float,
-    placed_m3: float,
-    batch_m3: float,
+    mixes: list[tuple[str, float, float, float]],
     window_c: tuple[float, float],
     ramp_f_per_h: float,
-    kiln_w: float,
+    need_w: float,
+    installed_w: float | None,
     sources: tuple[str, str, str],
 ) -> Sheet:
-    """The organics' heat spread over the climb through their burnout window, against the
-    kiln's own heat."""
+    """Every mix's organics, where they get hot enough to burn, spread over the climb through
+    the burnout window, against the heat the kiln needs to hold that climb.
+
+    ``mixes`` is (name, heat per batch J, volume that reaches the window m³, batch volume m³).
+    ``need_w`` is the kiln's steady loss with the inside at the window's top; the heat stored in
+    the lining while it climbs is left out, so the check errs towards a runaway warning.
+    """
     heat_source, window_source, ramp_source = sources
-    s = Sheet(
-        "castable.burnout", f"{name}: the organics' heat as they burn out", reference=heat_source
-    )
-    s.given(
-        "Q_b",
-        "the organics' heat in one batch",
-        Q_(heat_per_batch_j, "J"),
-        unit="kWh",
-        source=f"{heat_source}: each organic's mass × its heat of combustion",
-    )
-    s.given(
-        "V",
-        "castable placed in the lining",
-        Q_(placed_m3, "m**3"),
-        unit="ft**3",
-        source="the lining's castable layers",
-    )
-    s.given(
-        "V_b",
-        "what one batch casts",
-        Q_(batch_m3, "m**3"),
-        unit="ft**3",
-        source="the mix: its ingredients' volumes",
-    )
-    s.let("n", "batches in the lining", "V/V_b")
-    s.let("Q", "heat the organics give off", "Q_b*n", "kWh")
+    s = Sheet("castable.burnout", "The organics' heat as they burn out", reference=heat_source)
+    terms: list[str] = []
+    for i, (name, heat_per_batch_j, placed_m3, batch_m3) in enumerate(mixes, 1):
+        s.given(
+            f"Q_b{i}",
+            f"{name}: the organics' heat in one batch",
+            Q_(heat_per_batch_j, "J"),
+            unit="kWh",
+            source=f"{heat_source}: each organic's mass × its heat of combustion",
+        )
+        s.given(
+            f"V_{i}",
+            f"{name}: castable that gets above the window's start",
+            Q_(placed_m3, "m**3"),
+            unit="ft**3",
+            source="the lining's castable layers, the part of each above T_lo",
+        )
+        s.given(
+            f"V_b{i}",
+            f"{name}: what one batch casts",
+            Q_(batch_m3, "m**3"),
+            unit="ft**3",
+            source="the mix: its ingredients' volumes",
+        )
+        terms.append(f"Q_b{i}*V_{i}/V_b{i}")
+    s.let("Q", "heat the organics give off, every mix", " + ".join(terms), "kWh")
     s.given(
         "T_lo",
         "the organics start to burn",
@@ -81,11 +84,18 @@ def burnout_heat(
     s.let("P_b", "the organics' heat, spread over that time", "Q/t_w", "kW")
     s.given(
         "P_k",
-        "the kiln's own heat: its elements, or else its burners",
-        Q_(kiln_w, "W"),
+        "the heat the kiln needs at the window's top: its steady loss there",
+        Q_(need_w, "W"),
         unit="kW",
-        source="the elements' installed power, or the burners' input",
+        source="the heat-loss solve with the inside at T_hi (conduction; the lining's stored "
+        "heat left out, which errs towards a warning)",
     )
+    if installed_w is not None:
+        s.fact(
+            "the kiln's installed heat (elements, or else burners)",
+            f"{installed_w / 1000:.3g} kW",
+            source="the design",
+        )
     s.require("P_b", "<=", "P_k", level="warning")
     s.lever("r", Q_(1, "delta_degF/hour"), Q_(1000, "delta_degF/hour"))
     return s
@@ -122,13 +132,14 @@ def cast_in_layers(face: str, layers_in: list[float], schedule_in: float, source
     )
     s.given(
         "t_s",
-        "the thickest single layer, which sets the schedule",
+        "the thickest single layer",
         Q_(schedule_in, "in"),
         source=source,
     )
     s.rule(
-        "The schedule is set by the thickest single layer, as HarbisonWalker does; no maker "
-        "gives holds for layers cast wet together, so each must dry before the next is cast.",
+        "The only sourced dry-out schedule covers a single layer of 9 in or less; HarbisonWalker "
+        "evaluates a lining of several components case by case, so none is given for layers "
+        "cast together (refused, ADR 0009).",
         holds=False,
         level="warning",
     )

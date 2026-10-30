@@ -189,7 +189,7 @@ def test_burnout_chemistry() -> None:
     assert 5 * mol * 0.018015 == pytest.approx(0.556, abs=0.001)  # kg of water
     report = design_report(KILN)
     backup = next(c for c in report.castables if c.mix.id == "diy-backup")
-    burn = next(s for s in backup.first_firing if s.name == "Organics to burn out")
+    burn = next(s for s in backup.first_firing if s.name.startswith("Organics to burn out"))
     organic_lb = float(burn.value.split()[0].replace(",", ""))
     heat_kwh = float(burn.value.split("releasing ")[1].split()[0].replace(",", ""))
     # 4.15–4.16 kcal/g
@@ -205,12 +205,16 @@ def test_the_kyanite_in_the_backup_never_converts() -> None:
 
 
 def test_the_dryout_holds_half_an_hour_per_inch_and_refuses_thick_layers() -> None:
-    report = design_report(KILN)
-    backup = next(c for c in report.castables if c.mix.id == "diy-backup")
+    single = Kiln.model_validate(
+        {**KILN.model_dump(mode="json", by_alias=True),
+         "lining": {"walls": [{"material": "ifb-jm26", "thickness": "4.5 in"},
+                              {"material": "diy-backup", "thickness": "9 in"}]}}
+    )  # fmt: skip
+    backup = next(c for c in design_report(single).castables if c.mix.id == "diy-backup")
     assert [s.hold for s in backup.schedule[:3]] == ["4.5 h"] * 3  # the 9 in walls
     thick = Kiln.model_validate(
         {**KILN.model_dump(mode="json", by_alias=True),
-         "lining": {"walls": [{"material": "diy-hot-face", "thickness": "2 in"},
+         "lining": {"walls": [{"material": "ifb-jm26", "thickness": "4.5 in"},
                               {"material": "diy-backup", "thickness": "10 in"}]}}
     )  # fmt: skip
     backup = next(c for c in design_report(thick).castables if c.mix.id == "diy-backup")
@@ -237,12 +241,30 @@ def test_a_mix_is_a_lining_material() -> None:
     assert math.isfinite(si(parse_quantity(m.density), "kg/m**3"))
 
 
-def test_one_kiln_dries_on_one_schedule_set_by_its_thickest_layer() -> None:
-    """HarbisonWalker: the thickest section sets the schedule (castables-minerals.md §5)."""
+def test_castable_cast_in_layers_gets_no_schedule() -> None:
+    """HarbisonWalker evaluates linings of several components case by case, and Mizzou's
+    schedule covers one layer up to 9 in (castables-minerals.md §5), so the example's 2 + 9 in
+    walls get no schedule, as an over-9 in layer doesn't (review M4)."""
     report = design_report(load_design(EXAMPLES / "diy-castable-test-kiln.yaml"))
-    hours = {c.schedule_hours for c in report.castables if c.layers}
-    assert len(hours) == 1
-    assert any("castable in layers" in f.message for c in report.castables for f in c.findings)
+    assert {c.schedule_hours for c in report.castables if c.layers} == {None}
+    assert all(not c.schedule for c in report.castables)
+    layered = [f for c in report.castables for f in c.findings if "castable in layers" in f.message]
+    assert layered
+    assert all("no dry-out schedule is given" in f.message for f in layered)
+
+
+def test_one_kiln_dries_on_one_schedule_set_by_its_thickest_layer(
+    foamed_kiln: tuple[Kiln, HeatLoss],
+) -> None:
+    """HarbisonWalker: the thickest section sets the schedule (castables-minerals.md §5); and a
+    mix listed but not in the lining doesn't put its organics into the schedule's reasons."""
+    kiln, loss = foamed_kiln
+    mix = kiln.castable("foamed-mulcoa")
+    assert mix is not None
+    cast = analyse_mix(kiln, mix).cast_volume_m3
+    report, _ = castable_reports(kiln, loss, 11_520, {"foamed-mulcoa": 2 * cast})
+    assert report.schedule
+    assert not any("organics" in s.why for s in report.schedule)
 
 
 def test_free_quartz_in_a_fireclay_is_noted() -> None:
@@ -404,40 +426,78 @@ def test_a_layer_past_the_schedules_reach_says_how_thin_it_must_be() -> None:
     assert check.solve == "Passes when t ≤ 9 in"
 
 
-def test_burning_out_more_than_the_kilns_own_heat_is_a_warning(
+BURNOUT_STEP = "Burnout heat, every mix, against what the schedule needs"
+
+
+def test_burning_out_more_than_the_kiln_loses_is_a_warning(
     starch_kiln: tuple[Kiln, HeatLoss, float],
 ) -> None:
-    """Five batches hold 50 lb of corn starch at 4.16 kcal/g [S51]: 395 MJ. Spread over the climb
-    from 464 to 1022 °F at 75 °F/h (7.44 h), that is 14.7 kW, 1.3 times the kiln's 11.52 kW."""
+    """Only the castable above 464 °F burns [S54]: the roof's layer, behind blanket, never gets
+    there, so its starch gives nothing. The rest, at 4.16 kcal/g [S51] spread over the climb from
+    464 to 1022 °F at 75 °F/h (7.44 h), is compared with what the kiln loses with the inside at
+    1022 °F, the heat the schedule needs there, not with the elements' 11.52 kW (review M1)."""
     kiln, loss, cast = starch_kiln
     [report] = castable_reports(kiln, loss, 11_520, {"starch-mix": 5 * cast})
-    heat = 5 * 10 * LB * 4.16 * 4184e3
+    burn = next(s for s in report.first_firing if s.name.startswith("Organics to burn out"))
+    burned_lb = float(burn.value.split()[0])
+    assert 0 < burned_lb < 50  # less than the 5 batches' 50 lb: the roof's share doesn't burn
     window_h = (550 - 240) * 1.8 / 75
-    rate = heat / (window_h * 3600)
-    assert f"{rate / 1000:.3g}" == "14.7"
-    step = next(s for s in report.first_firing if s.name == "Burnout heat, spread over the window")
-    assert step.value == f"{rate / 1000:.3g} kW for about {window_h:.1f} h"
-    assert step.inputs["the kiln's own heat"] == f"11.5 kW ({rate / 11_520:.1f}×)"
+    rate = burned_lb * LB * 4.16 * 4184e3 / (window_h * 3600)
+    need = heat_loss(kiln, inside=Q_(550, "degC")).total_watts
+    assert need < 11_520
+    step = next(s for s in report.first_firing if s.name == BURNOUT_STEP)
+    assert step.inputs["the kiln's installed heat"] == "11.5 kW"
+    assert step.value.endswith(f"({rate / need:.1f}×)")
     [warning] = [f for f in report.findings if "can run away" in f.message]
     assert warning.level == "warning"
-    assert f"about 14.7 kW through the burnout window, {rate / 11_520:.1f} times" in warning.message
-    # Its sheet: the climb slow enough that the burnout is no more than the kiln's own heat
     check = warning.check
     assert check is not None
     assert check.id == "castable.burnout"
-    assert check.solve == f"Passes when r ≤ {number(75 * 11_520 / rate)} Δ°F/h"
+    assert check.solve is not None
+    assert check.solve.startswith("Passes when r ≤")
     # Unfoamed, so the check on each batch is the weight of a level US quart (0.946353 L)
     volume = (20 / 2700 + 5 / 2940 + 10 / 1500 + 10 / 1000) * LB  # m³ per batch
     quart_lb = 45 * LB / volume * 0.946353e-3 / LB
     assert any(f"a level US quart weighs {quart_lb:.3g} lb" in s for s in report.steps)
 
 
-def test_without_the_kilns_heat_the_burnout_isnt_compared(
+def test_without_the_installed_heat_the_burnout_is_still_compared(
     starch_kiln: tuple[Kiln, HeatLoss, float],
 ) -> None:
     kiln, loss, cast = starch_kiln
     [report] = castable_reports(kiln, loss, None, {"starch-mix": 5 * cast})
-    step = next(s for s in report.first_firing if s.name == "Burnout heat, spread over the window")
-    assert "the kiln's own heat" not in step.inputs
-    assert not [f for f in report.findings if "can run away" in f.message]
+    step = next(s for s in report.first_firing if s.name == BURNOUT_STEP)
+    assert "the kiln's installed heat" not in step.inputs
     assert any("burn out as smoke" in f.message for f in report.findings)
+
+
+def test_organics_only_in_layers_that_stay_cool_give_no_heat() -> None:
+    """The castable bug at castable.py:712: a layer below 240 °C must not count in the burnout."""
+    kiln = _front_loader_with(
+        [STARCH],
+        walls=[_layer("ifb-jm26", "4.5 in")],
+        roof=[
+            _layer("ifb-jm26", "4.5 in"),
+            _layer("kaowool-blanket-8pcf", "2 in"),
+            _layer("starch-mix", "1 in"),
+        ],
+    )
+    mix = kiln.castable("starch-mix")
+    assert mix is not None
+    cast = analyse_mix(kiln, mix).cast_volume_m3
+    [report] = castable_reports(kiln, heat_loss(kiln), 11_520, {"starch-mix": cast})
+    assert not any(s.name.startswith("Organics to burn out") for s in report.first_firing)
+    assert not any(s.name == BURNOUT_STEP for s in report.first_firing)
+    assert any("never burn out and give no heat" in f.message for f in report.findings)
+
+
+def test_the_diy_kiln_reports_its_burnout() -> None:
+    """Review fix 2: the dextrin and paper in both mixes give off about 109 kW through the
+    window together, against the 3 kW the thick-walled kiln loses at 1022 °F."""
+    report = design_report(KILN)
+    steps = [s for c in report.castables for s in c.first_firing if s.name == BURNOUT_STEP]
+    assert len(steps) == 1
+    assert steps[0].value.startswith("109 kW against 2.95 kW")
+    warnings = [f for f in report.findings if "can run away" in f.message]
+    assert len(warnings) == 1
+    assert warnings[0].level == "warning"

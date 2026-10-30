@@ -218,6 +218,42 @@ Ward's tank guidance for soft-brick stoneware kilns [S20]:
 | Ceramics Monthly kiln | 0–30 psi regulator and 0–15 psi gauge on MR-750 venturis | [S30] |
 | Regulator service life | 15 years (industry standard) | [S25] |
 
+### 2.8 Regulator droop and the liquid's cooling under draw (added 29 October 2026)
+
+RegO, *High Pressure Industrial / Commercial Pounds-to-Pounds Regulators, 597F Series*, catalogue
+page A32 (data sheet) [S89]. Verified (read from the PDF):
+
+| Part | Delivery range (psig) | Capacity at set pressure (psig) | Capacity, propane (BTU/hr) |
+|---|---|---|---|
+| 597FA | 1–15 | 10 | 1,750,000 |
+| 597FB | 10–30 | 20 | 3,000,000 |
+| 597FC | 20–45 | 30 | 3,500,000 |
+| 597FD | 40–100 | 40 | 4,500,000 |
+
+- "Set pressure established at 100 PSIG inlet and a flow of 250,000 BTU/hr."
+- "Capacity determined at actual delivery pressure 20% less than set pressure with inlet pressure
+  20 PSIG higher than the set pressure."
+- The sheet's curves show delivery falling with flow and falling further as the inlet drops
+  (597FB: set 20 psig, about 16 psig at 3,000,000 BTU/hr on a 50 psig inlet).
+
+The engine reads this as: the regulator needs the container **20 psig above** the set pressure, and
+at full flow the burners may see **20 % less** than the set pressure. Both are this one regulator
+family's rating basis, used as the margin for any adjustable pounds-to-pounds regulator; a
+regulator with its own published curve may do better. Neither Emerson/Fisher's droop for an
+equivalent nor the RegO LP-Gas Serviceman's Manual was read.
+
+**The liquid's cooling under draw.** The D × L × K rule (§2.3) assumes the liquid cools 20 °F
+below the air under continuous draw [S1]. The engine takes the same 20 °F for cylinders and tanks
+when it reads propane's vapour pressure (§1.2), and reads the 100 lb cylinder table (§2.1), which
+Propane Warehouse gives by liquid temperature [S1], at the air temperature less 20 °F.
+
+**The ⅓-full tank table (§2.4).** Its 0 °F column is D × L × 90 (e.g. 120 gal, 24 × 60 × 90 =
+129,600), the 50 %-full K (§2.3). At ⅓ full K is 70 + (33.3 − 30) × (80 − 70)/10 = 73.3 (linear
+between the 30 % and 40 % rows, **derived**), so the engine scales the table by 73.3 ÷ 90 = 0.815.
+
+- [S89] RegO, 597F Series data sheet, catalogue p. A32 (read 2026-10-29).
+  https://cdn.shopify.com/s/files/1/0029/6461/9313/files/252-RE597F.pdf
+
 - Pipe and hose sizing tables: **NOT FOUND** in a readable source. The NFPA 54 / IFGC propane sizing tables are the standard reference; use those.
 
 ---

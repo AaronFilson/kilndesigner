@@ -239,7 +239,7 @@ def test_ports_that_overlap_are_refused() -> None:
     # The burners are cut first, then the flue, which would cut through burner port 2. The flue
     # is as large as the burner ports together (Olsen p.151), in whole half-bricks (p.81)
     assert [m for m in _errors(hw) if "overlaps" in m] == [
-        "Flue port (4.5 × 7.5 in, 0 in across and 3.75 in up the back wall) overlaps burner "
+        "Flue port (9 × 7.5 in, 0 in across and 3.75 in up the back wall) overlaps burner "
         "port 2, so it isn't cut. Move it or make it smaller."
     ]
     assert [o.name for o in hw.openings if o.name == "port/flue"] == []

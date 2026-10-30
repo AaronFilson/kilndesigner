@@ -255,28 +255,54 @@ def _fast(kiln):  # type: ignore[no-untyped-def]
     return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"gas": gas})})
 
 
-def test_four_cylinders_at_20f_match_the_research_check(pnw) -> None:  # type: ignore[no-untyped-def]
-    """combustion-and-masonry.md §10: 668,000 full, 376,000 half, 173,200 conservative, against
-    a fast firing's 16,000 BTU/ft³/hr."""
+def test_four_cylinders_at_20f_are_read_by_the_liquids_temperature(pnw) -> None:  # type: ignore[no-untyped-def]
+    """The 100 lb table is by the liquid's temperature, which runs 20 °F under the air under draw
+    (combustion-and-masonry.md §2.3, §2.8; review G5): at 20 °F air it is read at 0 °F, 113,000
+    each full and 64,000 half full, not the 20 °F row's 167,000. The conservative ¼-full case
+    stays by air, 43,300. Against a fast firing's 16,000 BTU/ft³/hr."""
     gas = design_gas(_fast(pnw))
     capacities = [s.capacity_btu_hr for s in gas.supply]
-    assert capacities == pytest.approx([668_000, 376_000, 173_200])
+    assert capacities == pytest.approx([4 * 113_000, 4 * 64_000, 4 * 43_300])
     assert not any(s.meets_demand for s in gas.supply)
     [stall] = [f for f in gas.findings if f.level == "error" and "stall" in f.message]
-    # The sheet: 16,000 BTU/ft³/hr × 45.21 ft³ against 4 × 167,000 read from the 20 °F row
     check = stall.check
     assert check is not None
     assert check.id == "gas.supply-full"
-    assert check.requirements[0].margin == "C = 668,000 Btu/h, 92.35 % of P = 723,333 Btu/h"
-    assert check.solve == "Passes when n ≥ 5"  # 723,333 ÷ 167,000 cylinders
+    cells = {c.symbol: c for c in check.cells}
+    assert cells["t_l"].formula == "t − Δt_l"
+    assert check.requirements[0].margin == "C = 452,000 Btu/h, 62.49 % of P = 723,333 Btu/h"
+    assert check.solve == "Passes when n ≥ 7"  # 723,333 ÷ 113,000 cylinders
+
+
+def test_a_cold_day_that_passed_now_stalls(pnw) -> None:  # type: ignore[no-untyped-def]
+    """Review fix 4: the PNW kiln on four cylinders at 20 °F, slow firing (452,083 BTU/hr), passed
+    against the 20 °F row (4 × 167,000 = 668,000). Read at the liquid's 0 °F it gets 452,000 and
+    stalls; the regulator leaves the burners 2.96 psi (0.8 × (23.7 − 20))."""
+    gas = design_gas(pnw)
+    step = next(s for s in gas.working if s.name == "Propane pressure available")
+    assert step.inputs["burners limited to"] == "2.96 psi"
+    [stall] = [f for f in gas.findings if f.level == "error"]
+    assert "stall" in stall.message
+
+
+def test_the_pressure_ceiling_leaves_room_for_the_regulator() -> None:
+    """RegO 597F: inlet 20 psig over set, delivery 20 % under set at capacity [S89]; no more than
+    the ratings' 20 psi."""
+    from kilndesigner.gas_checks import pressure_ceiling
+
+    assert pressure_ceiling(23.7) == pytest.approx(0.8 * 3.7)
+    assert pressure_ceiling(110.2) == pytest.approx(16.0)
+    assert pressure_ceiling(16.7) < 0
 
 
 def test_chosen_burners_cover_the_input(pnw) -> None:  # type: ignore[no-untyped-def]
     gas = design_gas(pnw)
     assert gas.burners is not None
     each = float(gas.burners.each.split()[0].replace(",", ""))
-    assert each * gas.burners.count == pytest.approx(gas.design_input_btu_hr, rel=1e-6)
-    assert float(gas.burners.pressure.split()[0]) <= 10
+    assert each * gas.burners.count == pytest.approx(gas.design_input_btu_hr, rel=1e-5)
+    step = next(s for s in gas.working if s.name == "Propane pressure available")
+    limit = float(step.inputs["burners limited to"].split()[0])
+    assert float(gas.burners.pressure.split()[0]) <= limit
 
 
 def test_a_gas_kiln_chimney_reaches_the_kiln_top(pnw) -> None:  # type: ignore[no-untyped-def]
@@ -420,25 +446,26 @@ def test_a_big_kiln_needs_more_than_one_power_burner() -> None:
 
 
 def test_firing_below_the_vaporization_tables_is_an_error() -> None:
-    """The cylinder and tank tables start at 0 °F (§2.1–2.4); propane's vapour pressure at
-    −10 °F is 16.7 psig (NIST [S6])."""
+    """The cylinder table starts at 0 °F of liquid, 20 °F of air (§2.1, §2.8); the vapour-pressure
+    table at −20 °F (NIST [S6]), which the liquid at −30 °F is held to: 10.7 psig, under the
+    regulator's 20 psi margin, so nothing is left for the burners."""
     text = GAS.replace("coldest_ambient: 20 degF", "coldest_ambient: -10 degF")
     gas = design_gas(parse_design(text))
     errors = [f.message for f in gas.findings if f.level == "error"]
-    assert "The vaporization tables start at 0 °F; colder firing can't be checked." in errors
+    assert any(m.startswith("The vaporization tables start at 20 °F of air") for m in errors)
     step = next(s for s in gas.working if s.name == "Propane pressure available")
-    assert step.value == "17 psig in the cylinder or tank at -10 °F"
-    assert step.inputs == {"burners limited to": "10 psi"}
+    assert step.value == "11 psig in the cylinder or tank, the liquid at -30 °F"
+    assert step.inputs["burners limited to"] == "-7.44 psi"
 
 
 def test_one_cylinder_cant_keep_up_even_with_a_slow_firing() -> None:
-    """One 100 lb cylinder at 20 °F gives 167,000 BTU/hr full [S3]: short of the fast input and
-    of the slow one (10,000 BTU/ft³/hr for 9 in insulating brick at cone 10 [S28])."""
+    """One 100 lb cylinder at 20 °F air, its liquid at 0 °F, gives 113,000 BTU/hr full [S3]: short
+    of the slow input (10,000 BTU/ft³/hr for 9 in insulating brick at cone 10 [S28])."""
     gas = design_gas(parse_design(GAS.replace(CYLINDERS, "type: cylinders\n      count: 1")))
     volume_ft3 = 28 * 48 * (40 + 2 / 3 * 3.75) / 1728
-    assert 10_000 * volume_ft3 > 167_000
-    [error] = [f.message for f in gas.findings if f.level == "error"]
-    assert error.startswith("Even full, the propane supply gives only 167,000 BTU/hr")
+    assert 10_000 * volume_ft3 > 113_000
+    errors = [f.message for f in gas.findings if f.level == "error"]
+    assert any(e.startswith("Even full, the propane supply gives only 113,000 BTU/hr") for e in errors)
     assert not [f for f in gas.findings if "slow firing" in f.message]
     assert not [f for f in gas.findings if "joined in parallel" in f.message]
 
@@ -456,7 +483,8 @@ def test_burners_that_cant_hold_the_top_are_an_error() -> None:
     text = GAS.replace("wall: front\n    supply", one_b1)
     gas = design_gas(parse_design(text), _loss(text))
     assert gas.burners is not None
-    assert gas.full_fire_btu_hr == pytest.approx(30_700)
+    # Under the 30,700 it gives at 10 psi [S27]: at 20 °F the regulator leaves it 2.96 psi
+    assert 0 < gas.full_fire_btu_hr < 30_700
     [top] = [f for f in gas.findings if f.check and f.check.id == "gas.top"]
     assert top.level == "error"
     assert "The kiln can't reach its top temperature" in top.message
@@ -476,7 +504,9 @@ def test_named_burners_under_the_rule_fire_more_slowly() -> None:
     assert not [f for f in gas.findings if f.level == "error"]
     [slow] = [f for f in gas.findings if "fires more slowly" in f.message]
     assert slow.level == "info"
-    assert gas.full_fire_btu_hr == pytest.approx(286_600)
+    # Its 10 psi rating is 286,600 [S27]; at 20 °F the regulator leaves 2.96 psi, and the √p
+    # curve between its published ratings gives less
+    assert 0 < gas.full_fire_btu_hr < 286_600
 
 
 def test_a_named_power_burner_bigger_than_needed_is_used() -> None:
@@ -539,7 +569,7 @@ def test_a_tank_colder_than_its_vapour_table_is_held_at_the_table() -> None:
     [none] = [f for f in gas.findings if f.message.startswith("The burners chosen aren't rated")]
     assert none.check is not None
     cells = {c.symbol: c for c in none.check.cells}
-    assert cells["t_c"].formula == "min(max(t, t_first), t_last)"
+    assert cells["t_l_c"].formula == "min(max(t_l, t_l_first), t_l_last)"
 
 
 def test_an_up_draft_has_no_chimney() -> None:

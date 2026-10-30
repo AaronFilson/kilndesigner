@@ -619,7 +619,15 @@ def castable_reports(
     # section anywhere in the lining (HarbisonWalker: castables-minerals.md §5).
     mix_ids = {mix.id for mix in kiln.castables or []}
     lib = ingredients()
-    all_roles = {lib[p.ingredient].role for mix in kiln.castables or [] for p in mix.ingredients}
+    # Only the mixes the lining uses set what the schedule says (a listed, unused mix doesn't)
+    all_roles = {
+        lib[p.ingredient].role
+        for mix in kiln.castables or []
+        if placed_m3.get(mix.id, 0.0)
+        for p in mix.ingredients
+    }
+    burning = _burning_shares(kiln, loss)
+    burnout: list[tuple[str, float, float, float]] = []  # name, J per batch, m³ burning, batch m³
     kiln_thickest = 0.0
     stacked: list[tuple[str, list[float]]] = []
     for face in loss.faces:
@@ -672,9 +680,16 @@ def castable_reports(
                         notes=notes,
                     )
                 )
-        first, more = _first_firing(kiln, a, volume / a.cast_volume_m3, heat_watts)
+        burns = volume * burning.get(mix.id, 0.0)
+        first, more = _first_firing(kiln, a, volume / a.cast_volume_m3, burns / a.cast_volume_m3)
         findings += more
-        schedule, hours, more = _schedule(kiln, kiln_thickest if thickest else 0.0, all_roles)
+        if a.organic_heat_j and burns:
+            burnout.append((a.name, a.organic_heat_j, burns, a.cast_volume_m3))
+        # Stacked castables get no schedule, as an over-9 in layer doesn't: HarbisonWalker says
+        # multi-component linings need case-by-case evaluation (castables-minerals.md §5)
+        schedule, hours, more = _schedule(
+            kiln, kiln_thickest if thickest and not stacked else 0.0, all_roles
+        )
         findings += more
         if stacked and volume:
             face, cast = max(stacked, key=lambda s: sum(s[1]))
@@ -687,10 +702,11 @@ def castable_reports(
                 Finding.failed(
                     sheet.check(),
                     message=(
-                        f"The {face} wall has {total / 0.0254:.1f} in of castable in layers. The "
-                        "schedule is set by the thickest single layer, as HarbisonWalker does, "
-                        "but no maker gives holds for layers cast wet together. Let each layer "
-                        "dry before the next, or hold longer."
+                        f"The {face} wall has {total / 0.0254:.1f} in of castable in layers. "
+                        "HarbisonWalker evaluates linings of several components case by case, "
+                        "and the only sourced schedule covers a single layer, so no dry-out "
+                        "schedule is given. Cast and fire each layer on its own, or get the "
+                        "maker's schedule for the whole lining."
                     ),
                 )
             )
@@ -708,7 +724,84 @@ def castable_reports(
                 findings=findings,
             )
         )
+    if burnout:
+        step, finding = _burnout_check(kiln, burnout, heat_watts)
+        first_report = next(r for r in reports if r.mix.name == burnout[0][0])
+        first_report.first_firing.append(step)
+        if finding is not None:
+            first_report.findings.append(finding)
     return reports
+
+
+def _burning_shares(kiln: Kiln, loss: HeatLoss) -> dict[str, float]:
+    """Each castable's share, by volume, that gets above the organics' burnout start: the part of
+    each layer hotter than T_lo, weighted by the face's inside area × the layer's thickness."""
+    mix_ids = {mix.id for mix in kiln.castables or []}
+    hot: dict[str, float] = {}
+    whole: dict[str, float] = {}
+    for face in loss.faces:
+        area = si(parse_quantity(face.inside_area), "m**2")
+        for layer in face.layers:
+            if layer.material not in mix_ids:
+                continue
+            th = si(parse_quantity(layer.thickness), "m")
+            m = resolve_material(kiln, layer.material)
+            depth = _depth_at(m, layer.hot_side_k, layer.cold_side_k, BURNOUT[0] + 273.15, th)
+            whole[layer.material] = whole.get(layer.material, 0.0) + area * th
+            hot[layer.material] = hot.get(layer.material, 0.0) + area * depth
+    return {k: hot[k] / v for k, v in whole.items() if v}
+
+
+def _burnout_check(
+    kiln: Kiln, mixes: list[tuple[str, float, float, float]], installed_w: float | None
+) -> tuple[Step, Finding | None]:
+    """Every mix's organics together against the heat the kiln needs through the window."""
+    from kilndesigner.heatloss import heat_loss
+
+    need = heat_loss(kiln, inside=Q_(BURNOUT[1], "degC")).total_watts
+    sheet = burnout_heat(
+        mixes,
+        BURNOUT,
+        DRYOUT_RAMP_F,
+        need,
+        installed_w,
+        (f"{SOURCE} §7 [S51] [S54]", BURNOUT_SOURCE, DRYOUT_SOURCE),
+    )
+    heat = sum(q * v / vb for _, q, v, vb in mixes)
+    window = (BURNOUT[1] - BURNOUT[0]) * 1.8 / DRYOUT_RAMP_F
+    rate = heat / (window * 3600)
+    sheet.agrees("Q", Q_(heat, "J"))
+    sheet.agrees("P_b", Q_(rate, "W"))
+    inputs = {
+        "mixes": ", ".join(name for name, *_ in mixes),
+        "the kiln's loss at 1022 °F": show(Q_(need, "W"), "kW", 3),
+    }
+    if installed_w is not None:
+        inputs["the kiln's installed heat"] = show(Q_(installed_w, "W"), "kW", 3)
+    step = Step(
+        name="Burnout heat, every mix, against what the schedule needs",
+        value=f"{show(Q_(rate, 'W'), 'kW', 3)} against {show(Q_(need, 'W'), 'kW', 3)} "
+        f"({rate / need:.1f}×)",
+        formula="Σ heat of the organics above 464 °F ÷ the climb from 464 to 1022 °F at 75 °F/h; "
+        "against the kiln's steady loss with the inside at 1022 °F",
+        inputs=inputs,
+        reference=f"{SOURCE} §7 [S51] [S54]; {BURNOUT_SOURCE}; {DRYOUT_SOURCE}",
+        note="Only the castable that gets above 464 °F counts. The heat stored in the lining as "
+        "it climbs is left out of the need, so this errs towards a warning.",
+    )
+    if (check := sheet.check()).status == "pass":
+        return step, None
+    return step, Finding.failed(
+        check,
+        message=(
+            f"Burning out the organics releases about {show(Q_(rate, 'W'), 'kW', 3)} through "
+            f"464–1022 °F, {rate / need:.1f} times the "
+            f"{show(Q_(need, 'W'), 'kW', 3)} the kiln loses there. The controller can only "
+            "switch off, so the kiln can run away. Hold longer through 464–1022 °F, vent hard, "
+            "and watch it."
+        ),
+        reference=f"{SOURCE} §7 [S51] [S54]",
+    )
 
 
 def _zone_notes(
@@ -784,9 +877,10 @@ def _kyanite_bound(a: MixAnalysis, mix: CastableMix) -> float | None:
 
 
 def _first_firing(
-    kiln: Kiln, a: MixAnalysis, batches: float, heat_watts: float | None
+    kiln: Kiln, a: MixAnalysis, batches: float, burning: float
 ) -> tuple[list[Step], list[Finding]]:
-    """The water and organics in the cast lining (``batches``' worth, as placed)."""
+    """The water and organics in the cast lining (``batches``' worth, as placed; ``burning``
+    batches' worth of it gets above the organics' burnout start)."""
     steps: list[Step] = []
     findings: list[Finding] = []
     if not batches:
@@ -815,14 +909,23 @@ def _first_firing(
             note="Why the holds must be long enough to dry the layer through before it gets hot.",
         )
     )
-    organic = a.organic_kg * batches
+    organic = a.organic_kg * burning
+    if a.organic_kg and not burning:
+        findings.append(
+            Finding(
+                level="info",
+                message=f"{a.name}: none of it gets above 464 °F, so its organics never burn out "
+                "and give no heat in the first firing.",
+                reference=BURNOUT_SOURCE,
+            )
+        )
     if organic:
         mol = organic / GLUCAN_MOLAR_MASS
         air_m3 = 6 * mol / O2_IN_AIR * GAS_CONSTANT * 293.15 / 101_325
-        heat = a.organic_heat_j * batches
+        heat = a.organic_heat_j * burning
         steps.append(
             Step(
-                name="Organics to burn out",
+                name="Organics to burn out (the castable above 464 °F)",
                 value=(
                     f"{amount(Q_(organic, 'kg'), 'lb')}, releasing {amount(Q_(heat, 'J'), 'kWh')} "
                     f"({amount(Q_(heat, 'J'), 'BTU')})"
@@ -852,44 +955,6 @@ def _first_firing(
                 "does too.",
             )
         )
-        if heat_watts:
-            ratio = rate / heat_watts
-            steps[-1] = steps[-1].model_copy(
-                update={
-                    "inputs": {
-                        **steps[-1].inputs,
-                        "the kiln's own "
-                        "heat": f"{show(Q_(heat_watts, 'W'), 'kW', 3)} ({ratio:.1f}×)",
-                    }
-                }
-            )
-            sheet = burnout_heat(
-                a.name,
-                a.organic_heat_j,
-                batches * a.cast_volume_m3,
-                a.cast_volume_m3,
-                BURNOUT,
-                DRYOUT_RAMP_F,
-                heat_watts,
-                (f"{SOURCE} §7 [S51] [S54]", BURNOUT_SOURCE, DRYOUT_SOURCE),
-            )
-            sheet.agrees("Q", Q_(heat, "J"))
-            sheet.agrees("P_b", Q_(rate, "W"))
-            if (check := sheet.check()).status != "pass":
-                findings.append(
-                    Finding.failed(
-                        check,
-                        message=(
-                            f"{a.name}: burning out its organics releases about "
-                            f"{show(Q_(rate, 'W'), 'kW', 3)} through the burnout window, "
-                            f"{ratio:.1f} times the kiln's own "
-                            f"{show(Q_(heat_watts, 'W'), 'kW', 3)}. "
-                            "The controller can only switch off, so the kiln can run away. Hold "
-                            "longer through 464–1022 °F, vent hard, and watch it."
-                        ),
-                        reference=f"{SOURCE} §7 [S51] [S54]",
-                    )
-                )
         findings.append(
             Finding(
                 level="info",

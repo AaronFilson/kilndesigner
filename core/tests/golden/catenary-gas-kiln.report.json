@@ -53,25 +53,25 @@
       },
       {
         "buy": "2 burners",
-        "cost": 199.9,
-        "item": "GACO MR750 burner",
-        "needed": "2 burners at 6.0 psi, 133,333 BTU/hr each",
-        "priced_as": "GACO MR750, Ward Burner Systems",
+        "cost": 590.0,
+        "item": "Ransome B4 burner",
+        "needed": "2 burners at 2.2 psi, 133,333 BTU/hr each",
+        "priced_as": "Ransome B4, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
-        "unit_price": "$99.95"
+        "unit_price": "$295.00"
       },
       {
-        "buy": "135 bricks",
-        "cost": 735.75,
+        "buy": "168 bricks",
+        "cost": 915.6,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "135 straights (with 5 % for cuts)",
+        "needed": "168 straights (with 5 % for cuts)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 6812.209999999999
+    "total": 7382.16
   },
   "castables": [],
   "chamber_volume": "29.2 ft³",
@@ -584,7 +584,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 7.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
@@ -878,46 +878,6 @@
   "gas": {
     "burner_options": [
       {
-        "count": 1,
-        "each": "266,667 BTU/hr",
-        "model": "Ransome B4",
-        "pressure": "8.7 psi",
-        "total_cost": 295.0,
-        "type": "venturi"
-      },
-      {
-        "count": 1,
-        "each": "266,667 BTU/hr",
-        "model": "Ransome B5",
-        "pressure": "3.4 psi",
-        "total_cost": 395.0,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "133,333 BTU/hr",
-        "model": "GACO MR750",
-        "pressure": "6.0 psi",
-        "total_cost": 199.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "133,333 BTU/hr",
-        "model": "GACO MR100",
-        "pressure": "3.8 psi",
-        "total_cost": 319.9,
-        "type": "venturi"
-      },
-      {
-        "count": 2,
-        "each": "133,333 BTU/hr",
-        "model": "Ransome B3",
-        "pressure": "5.8 psi",
-        "total_cost": 490.0,
-        "type": "venturi"
-      },
-      {
         "count": 2,
         "each": "133,333 BTU/hr",
         "model": "Ransome B4",
@@ -940,14 +900,54 @@
         "pressure": "2.7 psi",
         "total_cost": 299.85,
         "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "88,889 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "2.6 psi",
+        "total_cost": 735.0,
+        "type": "venturi"
+      },
+      {
+        "count": 3,
+        "each": "88,889 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "27 in. w.c.",
+        "total_cost": 885.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "66,667 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "1.5 psi",
+        "total_cost": 980.0,
+        "type": "venturi"
+      },
+      {
+        "count": 4,
+        "each": "66,667 BTU/hr",
+        "model": "Ransome B4",
+        "pressure": "16 in. w.c.",
+        "total_cost": 1180.0,
+        "type": "venturi"
+      },
+      {
+        "count": 5,
+        "each": "53,333 BTU/hr",
+        "model": "Ransome B3",
+        "pressure": "26 in. w.c.",
+        "total_cost": 1225.0,
+        "type": "venturi"
       }
     ],
     "burners": {
       "count": 2,
       "each": "133,333 BTU/hr",
-      "model": "GACO MR750",
-      "pressure": "6.0 psi",
-      "total_cost": 199.9,
+      "model": "Ransome B4",
+      "pressure": "2.2 psi",
+      "total_cost": 590.0,
       "type": "venturi"
     },
     "chimney_height": "4.5 ft (54 in) above the chamber floor",
@@ -1209,26 +1209,26 @@
         "reference": null
       }
     ],
-    "flue_area": "19 in²",
-    "flue_area_in2": 19.24225500323748,
+    "flue_area": "35 in²",
+    "flue_area_in2": 35.44109212330985,
     "fuel": "propane",
     "full_fire_btu_hr": 266666.6666666667,
-    "inlet_area_in2": 19.24225500323748,
+    "inlet_area_in2": 35.44109212330985,
     "propane_at_full_fire": "2.91 gal/hr",
     "supply": [
       {
-        "capacity": "668,000 BTU/hr (167,000 each)",
-        "capacity_btu_hr": 668000.0,
+        "capacity": "452,000 BTU/hr (113,000 each)",
+        "capacity_btu_hr": 452000.0,
         "case": "4 × 100 lb cylinders, full",
         "meets_demand": true,
-        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
-        "capacity": "376,000 BTU/hr (94,000 each)",
-        "capacity_btu_hr": 376000.0,
+        "capacity": "256,000 BTU/hr (64,000 each)",
+        "capacity_btu_hr": 256000.0,
         "case": "4 × 100 lb cylinders, half full",
-        "meets_demand": true,
-        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
+        "meets_demand": false,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
         "capacity": "173,200 BTU/hr (43,300 each)",
@@ -1239,7 +1239,7 @@
       }
     ],
     "supply_temperature": "20 °F",
-    "tank_suggestion": "A 250 gal tank, kept at least ⅓ full, supplies 369,400 BTU/hr at 20 °F",
+    "tank_suggestion": "A 250 gal tank, kept at least ⅓ full, supplies 300,856 BTU/hr at 20 °F",
     "ward_volume": "26.7 ft³",
     "working": [
       {
@@ -1273,25 +1273,27 @@
         "value": "266,667 BTU/hr (78.15 kW)"
       },
       {
-        "formula": null,
+        "formula": "0.8 × min(20 psi, p_v − 20 psi)",
         "inputs": {
-          "burners limited to": "10 psi"
+          "burners limited to": "2.96 psi",
+          "coldest air": "20 °F",
+          "liquid under draw": "20 °F colder"
         },
         "name": "Propane pressure available",
-        "note": "With cylinders, burners are kept to 10 psi or less so the regulator still works when the cylinders are cold and low.",
-        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]",
-        "value": "41 psig in the cylinder or tank at 20 °F"
+        "note": "The regulator needs its inlet 20 psi over its setting, and at full flow delivers 20 % under it; the burners' ratings go to 20 psi.",
+        "reference": "NIST Chemistry WebBook, pure propane; combustion-and-masonry.md §1.2 [S6]; the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8; RegO 597F series data sheet: capacity rated with the inlet 20 psig above the set pressure and delivery 20 % below it; combustion-and-masonry.md §2.8 [S89]",
+        "value": "24 psig in the cylinder or tank, the liquid at 0 °F"
       },
       {
         "formula": null,
         "inputs": {
-          "cost": "$199.90",
+          "cost": "$590.00",
           "each": "133,333 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × GACO MR750 at 6.0 psi"
+        "value": "2 × Ransome B4 at 2.2 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -1328,8 +1330,8 @@
         },
         "name": "Supply: 4 × 100 lb cylinders, full",
         "note": "meets the burners' draw",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-        "value": "668,000 BTU/hr (167,000 each)"
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "452,000 BTU/hr (113,000 each)"
       },
       {
         "formula": null,
@@ -1337,9 +1339,9 @@
           "air temperature": "20 °F"
         },
         "name": "Supply: 4 × 100 lb cylinders, half full",
-        "note": "meets the burners' draw",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-        "value": "376,000 BTU/hr (94,000 each)"
+        "note": "short of the burners' draw",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "256,000 BTU/hr (64,000 each)"
       },
       {
         "formula": null,
@@ -1363,12 +1365,12 @@
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
           "Olsen's other methods": "73 in² (2½ in² per ft³), 38 in² (1 in² per 7000 BTU/hr)",
-          "burner ports together": "19 in²"
+          "burner ports together": "35 in²"
         },
         "name": "Exit flue, to start",
         "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
-        "value": "19 in²"
+        "value": "35 in²"
       },
       {
         "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
