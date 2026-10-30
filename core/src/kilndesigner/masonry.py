@@ -116,7 +116,7 @@ def layer_name(part: Part) -> str:
     return part.title
 
 
-def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
+def layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
     """For each brick size through a layer: (laying, unit along the run, course height)."""
     length, width, thick = BRICK
     if horizontal:
@@ -134,7 +134,7 @@ def _layings(horizontal: bool) -> dict[float, tuple[Laying, float, float]]:
 
 def _laying(thickness: float, horizontal: bool) -> tuple[Laying, float, float] | None:
     """How bricks are laid for one wall of brick: (laying, unit along the run, course height)."""
-    for size, laying in _layings(horizontal).items():
+    for size, laying in layings(horizontal).items():
         if abs(thickness - size) < THICKNESS_TOL:
             return laying
     return None
@@ -197,7 +197,9 @@ def _split(part: Part, sizes: list[float]) -> list[Part]:
     return pieces
 
 
-def _run(length: float, unit: float, stagger: bool, height: float, full_h: float) -> list[Piece]:
+def run_pieces(
+    length: float, unit: float, stagger: bool, height: float, full_h: float
+) -> list[Piece]:
     pieces: list[Piece] = []
     pos = 0.0
     if stagger:
@@ -235,7 +237,7 @@ def plan_layer(part: Part) -> LayerPlan | None:
     for i in range(n):
         offset = i * course_h
         height = min(course_h, span - offset)
-        pieces = _run(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
+        pieces = run_pieces(run, unit, stagger=i % 2 == 1, height=height, full_h=course_h)
         plan.courses.append(Course(i + 1, offset, tuple(pieces)))
     return plan
 
@@ -431,6 +433,10 @@ class MasonryPlan:
 
 
 def plan_masonry(kiln: Kiln) -> MasonryPlan:
+    if kiln.chamber.shape == "round":
+        from kilndesigner.round_masonry import plan_round_masonry
+
+        return plan_round_masonry(kiln)
     us = kiln.units == "us"
     findings: list[Finding] = []
     layers: list[LayerPlan] = []
@@ -511,45 +517,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         elif m.kind in BULK_KINDS:
             cast_volume[m.id] += part.volume
 
-    quantities: list[Quantity] = []
-    cut_list: list[CutLine] = []
-    for mid in sorted(set(whole) | set(cuts)):
-        m = material(mid)
-        from_cuts = bricks_for_cuts(cuts.get(mid, []))
-        exact = whole[mid] + from_cuts
-        buy = math.ceil(exact * (1 + WASTE))
-        quantities.append(
-            Quantity(
-                material=mid,
-                name=m.name,
-                kind=m.kind,
-                amount=buy,
-                unit="bricks",
-                detail=(
-                    f"{whole[mid]} whole, {from_cuts} cut into {len(cuts.get(mid, []))} pieces; "
-                    f"{exact} in the kiln plus {WASTE:.0%} for breakage"
-                ),
-                priced_amount=buy,
-            )
-        )
-        counts = Counter(c.describe(us) for c in cuts.get(mid, []))
-        cut_list.extend(
-            CutLine(material=mid, cut=desc, count=n) for desc, n in sorted(counts.items())
-        )
-    for (mid, shape), count in sorted(shapes.items()):
-        m = material(mid)
-        buy = math.ceil(count * (1 + WASTE))
-        quantities.append(
-            Quantity(
-                material=mid,
-                name=f"{m.name}, {shape}",
-                kind=m.kind,
-                amount=buy,
-                unit="bricks",
-                detail=f"{count} in the arch plus {WASTE:.0%} for breakage",
-                priced_amount=buy,
-            )
-        )
+    quantities, cut_list = buy_quantities(
+        kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
+    )
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
     if arch_lines:
@@ -602,6 +572,81 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference="combustion-and-masonry.md §6.2 [S54, S56]",
             )
         )
+    if layers:
+        corners = (
+            ""
+            if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
+            else " At the corners the side walls run through and the back and door fit between "
+            "them, layer by layer."
+        )
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
+                    f"cut, and {WASTE:.0%} extra for breakage. The size is sourced; the saw cut "
+                    f"and the {WASTE:.0%} are assumptions no source gives, so adjust them to your "
+                    f"saw and your bricks.{corners}"
+                ),
+                reference=f"{BRICK_SOURCE}; kerf and waste assumed",
+            )
+        )
+    return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
+
+
+def buy_quantities(
+    kiln: Kiln,
+    whole: Counter[str],
+    shapes: Counter[tuple[str, str]],
+    cuts: dict[str, list[Cut]],
+    sheet_area: dict[str, float],
+    sheet_area_thickness: dict[str, float],
+    sheet_thickness: dict[str, set[float]],
+    cast_volume: dict[str, float],
+    shapes_in: str = "the arch",
+) -> tuple[list[Quantity], list[CutLine]]:
+    """What to buy: whole bricks and cuts, shapes (laid in ``shapes_in``), sheet by area,
+    castable by weight."""
+    us = kiln.units == "us"
+    quantities: list[Quantity] = []
+    cut_list: list[CutLine] = []
+    for mid in sorted(set(whole) | set(cuts)):
+        m = material(mid)
+        from_cuts = bricks_for_cuts(cuts.get(mid, []))
+        exact = whole[mid] + from_cuts
+        buy = math.ceil(exact * (1 + WASTE))
+        quantities.append(
+            Quantity(
+                material=mid,
+                name=m.name,
+                kind=m.kind,
+                amount=buy,
+                unit="bricks",
+                detail=(
+                    f"{whole[mid]} whole, {from_cuts} cut into {len(cuts.get(mid, []))} pieces; "
+                    f"{exact} in the kiln plus {WASTE:.0%} for breakage"
+                ),
+                priced_amount=buy,
+            )
+        )
+        counts = Counter(c.describe(us) for c in cuts.get(mid, []))
+        cut_list.extend(
+            CutLine(material=mid, cut=desc, count=n) for desc, n in sorted(counts.items())
+        )
+    for (mid, shape), count in sorted(shapes.items()):
+        m = material(mid)
+        buy = math.ceil(count * (1 + WASTE))
+        quantities.append(
+            Quantity(
+                material=mid,
+                name=f"{m.name}, {shape}",
+                kind=m.kind,
+                amount=buy,
+                unit="bricks",
+                detail=f"{count} in {shapes_in} plus {WASTE:.0%} for breakage",
+                priced_amount=buy,
+            )
+        )
     for mid, area_mm2 in sorted(sheet_area.items()):
         m = material(mid)
         area = Q_(area_mm2, "mm**2")
@@ -651,23 +696,4 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 priced_amount=si(mass, "lb") * (1 + WASTE),
             )
         )
-    if layers:
-        corners = (
-            ""
-            if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
-            else " At the corners the side walls run through and the back and door fit between "
-            "them, layer by layer."
-        )
-        findings.append(
-            Finding(
-                level="info",
-                message=(
-                    "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage. The size is sourced; the saw cut "
-                    f"and the {WASTE:.0%} are assumptions no source gives, so adjust them to your "
-                    f"saw and your bricks.{corners}"
-                ),
-                reference=f"{BRICK_SOURCE}; kerf and waste assumed",
-            )
-        )
-    return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
+    return quantities, cut_list

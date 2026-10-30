@@ -232,7 +232,10 @@ def not_drawn(kiln: Kiln) -> str | None:
     shells (massing.py)."""
     c = kiln.chamber
     if c.shape == "round":
-        return "round chambers are calculated and drawn, but not yet laid out in brick or priced"
+        return (
+            "round chambers are calculated, counted in brick and priced, and drawn as shells, but "
+            "not yet drawn brick by brick or given plans"
+        )
     if kiln.roof.type == "open":
         return "an open top is calculated and drawn, but not yet laid out in brick or priced"
     if c.chambers > 1:
