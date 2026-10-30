@@ -81,6 +81,9 @@ _DIMENSION_NAMES = {
     "[mass] / [time] ** 2": "spring rate (force per length)",
     "[]": "angle",
     "[length] ** 3 / [time]": "flow (volume per time)",
+    "[temperature] / [time]": "heating rate (temperature per time)",
+    "[time]": "time",
+    "[length] ** 2 / [time] ** 2 / [temperature]": "specific heat",
 }
 
 
@@ -136,3 +139,8 @@ MassPrice = Annotated[pint.Quantity, QuantityField("[currency] / [mass]", "1.02 
 SpringRate = Annotated[pint.Quantity, QuantityField("[mass] / [time] ** 2", "283 lbf/in")]
 Angle = Annotated[pint.Quantity, QuantityField("[]", "20 degree")]
 Flow = Annotated[pint.Quantity, QuantityField("[length] ** 3 / [time]", "2 gallon/hour")]
+Rate = Annotated[pint.Quantity, QuantityField("[temperature] / [time]", "200 delta_degF/hour")]
+Duration = Annotated[pint.Quantity, QuantityField("[time]", "30 minute")]
+SpecificHeat = Annotated[
+    pint.Quantity, QuantityField("[length] ** 2 / [time] ** 2 / [temperature]", "1.0 kJ/(kg*K)")
+]

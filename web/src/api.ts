@@ -1,5 +1,11 @@
 // The API, as TanStack Query hooks over the generated client.
-import { createClient, type Build, type Problem } from "@kilndesigner/api-client";
+import {
+  createClient,
+  type Build,
+  type Problem,
+  type Simulation,
+  type SwitchOverChart,
+} from "@kilndesigner/api-client";
 
 import type { KilnDocument, Layout } from "./design";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -177,6 +183,81 @@ export function useLayout(build: Build | null | undefined) {
       return (await response.json()) as Layout;
     },
   });
+}
+
+const settled = (sim: Simulation | null | undefined) =>
+  sim != null && (sim.status === "done" || sim.status === "failed");
+
+/** A simulated firing of a design version, polled while it runs. `null`: not started. */
+export function useSimulation(key: string) {
+  return useQuery({
+    queryKey: ["simulations", key],
+    queryFn: async (): Promise<Simulation | null> => {
+      const { data, error, response } = await api.GET("/api/simulations/{key}", {
+        params: { path: { key } },
+      });
+      if (response.status === 404) return null;
+      return data ?? fail(response, error);
+    },
+    refetchInterval: (query) => (query.state.data === null || settled(query.state.data) ? false : 1000),
+  });
+}
+
+export function useStartSimulation() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: async (key: string) => {
+      const { data, error, response } = await api.POST("/api/simulations/{key}", {
+        params: { path: { key } },
+      });
+      return data ?? fail(response, error);
+    },
+    onSuccess: (sim) => client.setQueryData(["simulations", sim.key], sim),
+  });
+}
+
+/** A finished firing's results: its summary, its series, the walls' heatmap and, for a hybrid, the
+ * switch-over chart (null when the kiln has none). A finished run never changes. */
+export function useFiring(key: string) {
+  const path = { params: { path: { key } } };
+  const result = useQuery({
+    queryKey: ["firing", key, "result"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET("/api/simulations/{key}/result", path);
+      return data ?? fail(response, error);
+    },
+  });
+  const series = useQuery({
+    queryKey: ["firing", key, "series"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET("/api/simulations/{key}/series", {
+        params: { path: { key }, query: { max_points: 400 } },
+      });
+      return data ?? fail(response, error);
+    },
+  });
+  const heatmap = useQuery({
+    queryKey: ["firing", key, "heatmap"],
+    staleTime: Infinity,
+    queryFn: async () => {
+      const { data, error, response } = await api.GET("/api/simulations/{key}/heatmap", {
+        params: { path: { key }, query: { max_times: 120 } },
+      });
+      return data ?? fail(response, error);
+    },
+  });
+  const switchover = useQuery({
+    queryKey: ["firing", key, "switchover"],
+    staleTime: Infinity,
+    queryFn: async (): Promise<SwitchOverChart | null> => {
+      const { data, error, response } = await api.GET("/api/simulations/{key}/switchover", path);
+      if (response.status === 404) return null;
+      return data ?? fail(response, error);
+    },
+  });
+  return { result, series, heatmap, switchover };
 }
 
 /** Whether a build has a report to load: one that finished and wrote it. */
