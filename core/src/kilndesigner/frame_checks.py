@@ -543,24 +543,184 @@ def dome_checked_range(dm: DomeInputs, at: float, ts_max: float, source: str) ->
     return s
 
 
-def dome_steel(dm: DomeInputs, at: float, along: float, source: str) -> Sheet:
-    s = Sheet("frame.dome-steel", "What the dome's steel must hold", reference=source)
+@dataclass(frozen=True)
+class HotSteel:
+    """The frame steel's temperature and AISC 360-16 Table A-4.2.1's factors at it, with the
+    steel's room-temperature properties (steel-design.md §S2–S3)."""
+
+    temperature: float  # °F, the bearing wall's outside face, steady at the top temperature
+    ky: float  # Fy(T)/Fy, interpolated in the table
+    ke: float  # E(T)/E, interpolated in the table
+    fy: float  # psi, room temperature
+    e: float  # psi, room temperature
+    omega: float  # ASD safety factor for bending
+    source: str  # AISC 360-16 §F1, §F10, App. 4
+    where: str  # how the temperature was found
+
+
+@dataclass(frozen=True)
+class AngleSection:
+    name: str
+    leg: float  # in
+    t: float  # in
+    sx: float  # in³, geometric axis
+    source: str
+
+
+def _aisc_angle_moment(s: Sheet, a: AngleSection, hot: HotSteel) -> None:
+    """AISC 360-16 §F10, an equal-leg angle bent about a geometric axis with no lateral-torsional
+    restraint along its bay (L_b, a cell above), toe in compression, Cb = 1: the allowable
+    moment M_a = M_n/Ω_b, with Fy and E reduced to the steel's temperature (Appendix 4)."""
+    s.given("b", f"{a.name}'s leg", Q_(a.leg, "in"), source=a.source)
+    s.given("t_a", f"{a.name}'s thickness", Q_(a.t, "in"), source=a.source)
+    s.given(
+        "S_x", f"{a.name}'s section modulus, geometric axis", Q_(a.sx, "in**3"), source=a.source
+    )
+    s.given("T_s", "the steel's temperature", Q_(hot.temperature, "degF"), "degF", source=hot.where)
+    s.given("F_y0", "A36 yield stress, cold", Q_(hot.fy, "psi"), source=hot.source)
+    s.given("E_0", "steel's modulus, cold", Q_(hot.e, "psi"), source=hot.source)
+    s.given("k_y", "Fy(T)/Fy at T_s", hot.ky, source=f"{hot.source}: Table A-4.2.1, interpolated")
+    s.given("k_E", "E(T)/E at T_s", hot.ke, source=f"{hot.source}: Table A-4.2.1, interpolated")
+    s.let("F_y", "yield stress, hot", "k_y*F_y0", "psi")
+    s.let("E", "modulus, hot", "k_E*E_0", "psi")
+    s.let("M_y", "yield moment: 0.80 × the geometric one (F10)", "0.8*F_y*S_x", "lbf*in")
+    s.let(
+        "M_cr",
+        "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
+        "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
+        "lbf*in",
+        source=hot.source,
+    )
+    ratio = s.env["M_y"] / s.env["M_cr"]
+    if ratio <= 1:
+        s.let(
+            "M_ltb",
+            "lateral-torsional buckling strength (F10-2)",
+            "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
+            "lbf*in",
+            source=hot.source,
+        )
+    else:
+        s.let(
+            "M_ltb",
+            "lateral-torsional buckling strength (F10-3)",
+            "(0.92 - 0.17*M_cr/M_y)*M_cr",
+            "lbf*in",
+            source=hot.source,
+        )
+    s.let("λ", "leg slenderness", "b/t_a")
+    s.let("λ_p", "compact limit (Table B4.1b, case 12)", "0.54*sqrt(E/F_y)")
+    s.let("λ_r", "noncompact limit", "0.91*sqrt(E/F_y)")
+    s.let("S_c", "section modulus to the toe: 0.80 S_x (F10)", "0.8*S_x", "in**3")
+    lam, lp, lr = s.env["λ"], s.env["λ_p"], s.env["λ_r"]
+    if lam <= lp:
+        s.let("M_lb", "leg local buckling: a compact leg, none (yielding governs)", "1.5*M_y",
+              "lbf*in", source=hot.source)  # fmt: skip
+    elif lam <= lr:
+        s.let("M_lb", "leg local buckling, noncompact leg (F10-6)",
+              "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))", "lbf*in", source=hot.source)  # fmt: skip
+    else:
+        s.let("M_lb", "leg local buckling, slender leg (F10-7, F10-8)", "0.71*E/λ^2*S_c",
+              "lbf*in", source=hot.source)  # fmt: skip
+    s.let("M_n", "nominal moment: the least of F10-1, LTB and leg buckling",
+          "min(1.5*M_y, M_ltb, M_lb)", "lbf*in", source=hot.source)  # fmt: skip
+    s.given("Ω_b", "ASD safety factor for bending (F1)", hot.omega, source=hot.source)
+    s.let("M_a", "allowable moment, hot", "M_n/Ω_b", "lbf*in", source=hot.source)
+
+
+def dome_buttress(
+    dm: DomeInputs,
+    at: float,
+    bay: float,
+    a: AngleSection,
+    hot: HotSteel,
+    limit: float,
+    stress_source: str,
+) -> Sheet:
+    """The angle along the top of each wall the dome's slices bear on, bending between posts
+    under the most thrust any slice gives, hot: AISC 360-16 F10 with the steel's properties at
+    its temperature, and HarbisonWalker's 12,000 psi for bindings that may run hot."""
+    s = Sheet(
+        "frame.dome-buttress",
+        f"Buttress angle along the dome's bearing walls, {a.name}, hot",
+        reference=f"{hot.source}; {stress_source}; steel-design.md §S4",
+    )
     _slice(s, dm, at, weights=True)
     _thrust(s, len(dm.layers), "τ")
     s.given(
-        "F",
-        "the hot thrust along each wall",
-        Q_(along, "lbf"),
-        source="each slice's H, summed along the wall over the 21 slices (trapezoid rule)",
+        "ℓ",
+        "the bay: the buttress between posts",
+        Q_(bay, "in"),
+        source=f"{DESIGN}: the bearing wall's outside length, and the posts along it",
     )
     s.let(
-        "F_tie", "each tie: one across the door's head, one across the wall opposite", "F/2", "lbf"
+        "M",
+        "bending moment, a simple beam between posts, the peak thrust all along",
+        "H*ℓ^2/8",
+        "lbf*in",
+        source="statics; the slices' peak thrust taken over the whole bay (cautious)",
     )
-    s.rule(
-        "No source sizes the steel for a dome: have it designed for H and F_tie.",
-        holds=False,
-        level="warning",
+    # F10's Lb is the bay
+    s.let("L_b", "unbraced length, AISC L_b", "ℓ", "in")
+    _aisc_angle_moment(s, a, hot)
+    s.require("M", "<=", "M_a")
+    s.let("σ_b", "bending stress", "M/S_x", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress_source)
+    s.require("σ_b", "<=", "σ_allow")
+    s.lever("S_x", Q_(0.05, "in**3"), Q_(10, "in**3"))
+    return s
+
+
+def dome_rod(
+    dm: DomeInputs,
+    at: float,
+    bay: float,
+    share: float,
+    rod: tuple[str, float],
+    limit: float,
+    sources: tuple[str, str],
+) -> Sheet:
+    name, area = rod
+    rods, stress = sources
+    s = Sheet(
+        "frame.dome-rod",
+        f"Ties across the dome's bearing walls, {name} rod, hot",
+        reference=f"{rods}; {stress}; domes-over-doors.md §D4.1 step 4",
     )
+    _slice(s, dm, at, weights=True)
+    _thrust(s, len(dm.layers), "τ")
+    s.given("ℓ", "the bay between posts", Q_(bay, "in"), source=DESIGN)
+    s.given(
+        "m",
+        "the bays the busiest rod ties",
+        share,
+        source="statics: ½ for the corner posts alone (the door's head and the back)",
+    )
+    s.let("P", "load on the busiest rod, hot", "H*ℓ*m", "lbf")
+    s.given("A_s", f"{name} rod's tensile stress area", Q_(area, "in**2"), source=rods)
+    s.let("σ", "stress in each rod", "P/A_s", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress)
+    s.require("σ", "<=", "σ_allow")
+    s.lever("A_s", Q_(0.01, "in**2"), Q_(2, "in**2"))
+    return s
+
+
+def steel_heat(hot: HotSteel, table_top: float, service: float, service_source: str) -> Sheet:
+    """The frame steel's temperature against the sourced range: AISC's table of E(T) ends at
+    1,400 °F (past it nothing sourced gives the steel's stiffness: refuse), and Giles keeps carbon
+    steel at or under 600 °F in continuous service (AISC's table is for fire, a short event)."""
+    s = Sheet(
+        "frame.steel-heat",
+        "The frame steel's temperature against its sourced range",
+        reference=f"{hot.source}; {service_source}; steel-design.md §S3",
+    )
+    s.given("T_s", "the steel's temperature", Q_(hot.temperature, "degF"), "degF", source=hot.where)
+    s.given("T_table", "hottest in AISC Table A-4.2.1's E(T) column", Q_(table_top, "degF"), "degF",
+            source=hot.source)  # fmt: skip
+    s.given("T_service", "hottest for carbon steel held hot (Giles)", Q_(service, "degF"), "degF",
+            source=service_source)  # fmt: skip
+    s.require("T_s", "<=", "T_table")
+    s.require("T_s", "<=", "T_service", level="warning")
     return s
 
 
@@ -759,20 +919,23 @@ def flat_rods(
 
 
 __all__ = [
+    "AngleSection",
     "ArchInputs",
     "CatenaryLayer",
     "DomeInputs",
+    "HotSteel",
     "Layer",
     "Springs",
     "buttress_bending",
     "catenary_feet",
     "checked_range",
+    "dome_buttress",
     "dome_checked_range",
     "dome_factor",
     "dome_heated",
     "dome_hot_line",
     "dome_rise",
-    "dome_steel",
+    "dome_rod",
     "dome_thickest",
     "flat_friction",
     "flat_ifb_top",
@@ -784,5 +947,6 @@ __all__ = [
     "rise_rule",
     "rod_stress",
     "skewback_on_wall",
+    "steel_heat",
     "thrust_through_steel",
 ]

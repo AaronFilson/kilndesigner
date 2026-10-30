@@ -388,10 +388,12 @@ def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
     for side, x, s in (("left", f.x0, -1), ("right", f.x1, 1)):
         flat = ((x - s * (leg - t), f.y0 - t, top), (x + s * t, f.y1 + t, top + t))
         upright = ((x, f.y0 - t, top + t - leg), (x + s * t, f.y1 + t, top + t))
-        title = "Buttress angle" if arch else "Roof angle"
+        dome = frame.kind == "dome frame"
+        title = "Buttress angle" if arch or dome else "Roof angle"
+        roof, where = ("dome", "springline") if dome else ("arch", "skewback")
         detail = (
-            f"{frame.angle}, takes the arch's thrust at the skewback ({frame.thrust}); {source}"
-            if arch and frame.thrust
+            f"{frame.angle}, takes the {roof}'s thrust at the {where} ({frame.thrust}); {source}"
+            if (arch or dome) and frame.thrust
             else f"{frame.angle}; {source}"
         )
         hw.pieces.append(
@@ -406,14 +408,20 @@ def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
     # Cross-members along the front and back, and the tie rods in front of them
     rod_r = frame.rod_d_in / 2
     for end, y, s in (("front", f.y0, -1), ("back", f.y1, 1)):
-        bar = ((f.x0 - t, y, top - 2 + t), (f.x1 + t, y + s * 0.25, top + t))
+        if frame.kind == "dome frame":  # a ring of angle round the springline
+            flat = ((f.x0 - t, y - s * (leg - t), top), (f.x1 + t, y + s * t, top + t))
+            upright = ((f.x0 - t, y, top + t - leg), (f.x1 + t, y + s * t, top + t))
+            boxes, what = (_mm(flat), _mm(upright)), f"{frame.angle} angle"
+        else:
+            bar = ((f.x0 - t, y, top - 2 + t), (f.x1 + t, y + s * 0.25, top + t))
+            boxes, what = (_mm(bar),), "¼ × 2 in flat bar"
         hw.pieces.append(
             Piece(
                 f"frame/{end}-top",
                 "steel",
                 f"Top cross-member, {end}",
-                f"¼ × 2 in flat bar; {source}",
-                boxes=(_mm(bar),),
+                f"{what}; {source}",
+                boxes=boxes,
             )
         )
         if frame.rod:

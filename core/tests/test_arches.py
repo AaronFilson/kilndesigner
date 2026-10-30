@@ -284,14 +284,27 @@ def test_a_catenarys_feet_push_out_with_the_chains_tension() -> None:
     assert not any(p.name.startswith("frame/") for p in hw.pieces)
 
 
-def test_a_domes_thrust_is_given_but_no_steel_is_sized_for_it() -> None:
-    frame = design_frame(_dome())
-    assert (frame.kind, frame.members) == (NO_FRAME, [])
-    [loads] = [f for f in frame.findings if "No source sizes the steel for a dome" in f.message]
-    assert loads.level == "warning"
-    assert "a tie across the door's head and one across the wall opposite" in loads.message
+def test_a_domes_steel_is_sized_hot_by_aisc() -> None:
+    """The dome's thrust on its bearing walls is taken by an angle along each, bending between
+    posts, checked by AISC 360-16 F10 with Fy and E reduced to the steel's temperature from the
+    wall solve, and by rods across the door's head and the back (steel-design.md §S4–S5)."""
+    kiln = _dome()
+    frame = design_frame(kiln)
+    assert frame.kind == "dome frame"
+    assert frame.angle is not None
+    assert frame.rod is not None
     assert frame.thrust is not None
     assert frame.thrust.endswith("lb per foot on the left and right walls, hot")
+    parts = {m.part for m in frame.members}
+    assert "buttresses along the dome's bearing walls" in parts
+    assert "ring angles across the door's head and the back" in parts
+    names = [s.name for s in frame.working]
+    assert "Frame steel's temperature" in names
+    assert "Buttress angle along the bearing walls, hot" in names
+    hw = build_hardware(kiln, frame, design_report(kiln).gas)
+    tops = {p.name: p for p in hw.pieces if p.name.endswith("-top")}
+    assert "angle" in tops["frame/front-top"].detail
+    assert "dome's thrust at the springline" in tops["frame/left-top"].detail
 
 
 def _rise(kiln: Kiln, rise: str, **changes: object) -> Kiln:
