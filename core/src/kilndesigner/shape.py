@@ -38,7 +38,15 @@ class Arch:
 
     @property
     def half_angle(self) -> float:
-        return math.asin(self.span / (2 * self.radius))
+        """The angle each springing turns from the crown, about the centre: past 90° when the
+        arch rises more than half its span (more than a semicircle), as sin = S/(2r) and
+        cos = (r − h)/r give together."""
+        return math.atan2(self.span / 2, self.radius - self.rise)
+
+    @property
+    def half_width(self) -> float:
+        """Half the arch's widest inside width: half the span, or the radius past a semicircle."""
+        return self.radius if self.half_angle > math.pi / 2 else self.span / 2
 
     @property
     def arc_length(self) -> float:

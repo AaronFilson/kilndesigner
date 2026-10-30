@@ -465,7 +465,7 @@ def _level_parts(kiln: Kiln) -> list[Part]:
                 parts.append(
                     Part(
                         name, mat, resolve_material(kiln, mat).kind,
-                        (-w / 2, ys[0], h), (w / 2, ys[1], h + arch.rise),
+                        (-arch.half_width, ys[0], h), (arch.half_width, ys[1], h + arch.rise),
                         arch=shape, cap=True, face=face,
                     )
                 )  # fmt: skip
@@ -473,8 +473,12 @@ def _level_parts(kiln: Kiln) -> list[Part]:
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
             r_in = arch.radius + cum
             shape = ArchShape(r_in, th, centre_z, arch.half_angle)
-            half_width = (r_in + th) * math.sin(arch.half_angle)
-            lo = (-half_width, y0, h)
+            # Past a semicircle the ring is widest at its centre's height, and its outer corner at
+            # each springing turns down below the springline
+            half_width = (r_in + th) * (
+                1.0 if arch.half_angle > math.pi / 2 else math.sin(arch.half_angle)
+            )
+            lo = (-half_width, y0, min(h, centre_z + (r_in + th) * math.cos(arch.half_angle)))
             hi = (half_width, y1, centre_z + r_in + th)
             parts.append(
                 Part(
@@ -703,14 +707,35 @@ def inside_top(kiln: Kiln, face: Face, u: float) -> float:
             return h
         arch = Arch(d, si(kiln.roof.rise, "mm"))
         return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
-    if isinstance(kiln.roof, SprungArch) and end and abs(u) < w / 2:
+    if isinstance(kiln.roof, SprungArch) and end:
         arch = Arch(w, si(kiln.roof.rise, "mm"))
-        return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
+        if abs(u) < arch.half_width:  # past a semicircle, the arch is wider than the span
+            return max(h, h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2))
     if isinstance(kiln.roof, Dome) and abs(u) < (w if end else d) / 2:
         dome = SailDome(w, d, si(kiln.roof.rise, "mm"))
         off = d / 2 if end else w / 2  # the wall's distance from the centre line
         return h + max(0.0, dome.centre + math.sqrt(dome.radius**2 - off**2 - u**2))
     return h
+
+
+def bulge_fill(
+    r_out: float, centre_z: float, h: float, outer: float, steps: int = 16
+) -> list[tuple[float, float]]:
+    """The fill beside an arch more than a semicircle (its centre above the springline ``h``):
+    from the ring's outside at the springline up to its widest, at ``centre_z``, out to the wall's
+    outer face at ``outer``; empty where the ring reaches past that face at the springline."""
+    foot = math.sqrt(r_out**2 - (h - centre_z) ** 2)
+    if foot >= outer:
+        return []
+    outline: list[tuple[float, float]] = []
+    for i in range(steps + 1):
+        z = h + (centre_z - h) * i / steps
+        point = (min(outer, math.sqrt(r_out**2 - (z - centre_z) ** 2)), z)
+        if not outline or outline[-1] != point:
+            outline.append(point)
+    if outline[-1][0] < outer:
+        outline.append((outer, centre_z))
+    return [*outline, (outer, h)]
 
 
 def _skewbacks(
@@ -739,7 +764,14 @@ def _skewbacks(
             continue  # nothing to spring an arch from
         outer = w / 2 + sum(t for _, t in wall)
         top = (r_out * math.sin(a), centre_z + r_out * math.cos(a))  # the arch's outer corner
-        if top[0] <= outer:
+        if a > math.pi / 2:
+            # Past a semicircle the arch springs from the wall's top, its radius there turned
+            # below the level, and bulges out above it: the fill is what lies between the ring's
+            # outside and the wall's outer face, from the springline up to the ring's widest
+            outline = bulge_fill(r_out, centre_z, h, outer)
+            if not outline:
+                continue  # the ring bulges past the wall's outer face: nothing to fill
+        elif top[0] <= outer:
             outline = [(w / 2, h), top, (outer, top[1]), (outer, h)]
         else:  # the arch reaches past the wall: the fill ends where the radius leaves it
             r = outer / math.sin(a)

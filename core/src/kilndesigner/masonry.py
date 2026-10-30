@@ -566,15 +566,22 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         span = kiln.chamber.depth if along else kiln.chamber.width
         arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)
+        skewback = (
+            "The skewbacks and the fill beside the arch are drawn along the arch's radius at the "
+            "springline and counted by volume. The skewback's face must match the arch: "
+            f"{skew:.0f}° to the horizontal here, 90° less half the arch's central angle "
+            "(HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). "
+            if skew >= 0.5
+            else "The arch rises half its span or more: a semicircle or past one, its radius at "
+            "each springing level or turned below it, so it springs from the wall's top with no "
+            "skewback, and the fill beside its bulge, up to its widest, is counted by volume "
+            "(HarbisonWalker's skewbacks are for arches under a semicircle). "
+        )
         findings.append(
             Finding(
                 level="info",
                 message=(
-                    "The skewbacks and the fill beside the arch are drawn along the arch's radius "
-                    "at the springline and counted by volume. The skewback's face must match the "
-                    f"arch: {skew:.0f}° to the horizontal here, 90° less half the arch's central "
-                    "angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at "
-                    "2.302 in/ft). "
+                    skewback
                     + (
                         "The arch's thrust is held by the kiln's masonry, as the design says."
                         if kiln.roof.buttressed

@@ -33,14 +33,9 @@ EXAMPLES = Path(__file__).parents[2] / "examples"
 DESIGNS = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.yaml"))
 
 
-MORE_THAN_A_SEMICIRCLE = (
-    "the arch rises more than half its span; shape.Arch takes its half-angle as asin(s/2r), "
-    "under 90°, so it stops short of the springline and its segment is too small. The form's "
-    "arch_section turns past the vertical, as built. Left for the user: fixing shape.Arch "
-    "changes this kiln's results"
-)
-# Kilns whose form differs from shape.chamber_shape, and why
-DIFFERS = {"bidai": MORE_THAN_A_SEMICIRCLE, "kyoto-climbing": MORE_THAN_A_SEMICIRCLE}
+# Kilns whose form differs from shape.chamber_shape, and why (none: Bidai's and Kyoto's arches,
+# more than semicircles, turn past the vertical in both)
+DIFFERS: dict[str, str] = {}
 
 
 @pytest.mark.parametrize("path", DESIGNS, ids=lambda p: p.stem)
@@ -61,6 +56,29 @@ def test_an_arch_more_than_a_semicircle() -> None:
     radius = (0.25 + 0.36) / 1.2
     assert section.area > math.pi * radius**2 / 2
     assert section.reach(0.0, (0.0, 0.01)) > 0.5  # wider than its span above the springline
+    arch = Arch(1.0, 0.6)
+    assert arch.half_angle > math.pi / 2
+    assert arch.segment_area == pytest.approx(section.area)
+    assert arch.half_width == pytest.approx(radius)
+    assert arch.arc_length == pytest.approx(2 * radius * (math.pi - math.asin(0.5 / radius)))
+
+
+def test_a_semicircular_arch() -> None:
+    arch = Arch(1.0, 0.5)
+    assert arch.radius == pytest.approx(0.5)
+    assert arch.half_angle == pytest.approx(math.pi / 2)
+    assert arch.segment_area == pytest.approx(math.pi * 0.25 / 2)
+    assert arch.half_width == pytest.approx(0.5)
+    assert arch.segment_area == pytest.approx(arch_section(1.0, 0.5).area)
+
+
+@pytest.mark.parametrize("name", ["bidai", "kyoto-climbing"])
+def test_kilns_with_arches_over_a_semicircle(name: str) -> None:
+    kiln = load_design(EXAMPLES / "olsen" / f"{name}.yaml")
+    shape = chamber_shape(kiln)
+    assert shape.arch is not None
+    assert shape.arch.half_angle > math.pi / 2
+    assert shape.volume == pytest.approx(form_of(kiln).volume, rel=1e-9)
 
 
 def test_lines_and_arcs_make_exact_areas() -> None:
