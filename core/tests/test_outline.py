@@ -1,0 +1,180 @@
+"""Shapes as data (outline.py) and the forms the named types stand for (form.py): every example's
+form gives the chamber shape.chamber_shape gives, so the named types are shorthands for it."""
+
+import math
+from pathlib import Path
+
+import pytest
+
+from kilndesigner import load_design
+from kilndesigner.form import form_of
+from kilndesigner.outline import (
+    Arc,
+    Line,
+    Outline,
+    Polyline,
+    Revolved,
+    Run,
+    SphereDome,
+    Station,
+    arch_section,
+    circle,
+    curve_section,
+    oval,
+    prism,
+    rectangle,
+    regular_polygon,
+    shell_profile,
+    teardrop,
+)
+from kilndesigner.shape import Arch, RoundDome, SailDome, chamber_shape
+
+EXAMPLES = Path(__file__).parents[2] / "examples"
+DESIGNS = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.yaml"))
+
+
+MORE_THAN_A_SEMICIRCLE = (
+    "the arch rises more than half its span; shape.Arch takes its half-angle as asin(s/2r), "
+    "under 90°, so it stops short of the springline and its segment is too small. The form's "
+    "arch_section turns past the vertical, as built. Left for the user: fixing shape.Arch "
+    "changes this kiln's results"
+)
+# Kilns whose form differs from shape.chamber_shape, and why
+DIFFERS = {"bidai": MORE_THAN_A_SEMICIRCLE, "kyoto-climbing": MORE_THAN_A_SEMICIRCLE}
+
+
+@pytest.mark.parametrize("path", DESIGNS, ids=lambda p: p.stem)
+def test_every_example_has_the_same_chamber_as_a_form(path: Path) -> None:
+    kiln = load_design(path)
+    form, shape = form_of(kiln), chamber_shape(kiln)
+    floor = next(f for f in shape.faces() if f.face == "floor")
+    assert form.plan.area == pytest.approx(floor.inside_area, rel=1e-12)
+    assert form.open_top == shape.open_top
+    # SailDome's volume is summed on a 400 × 400 grid; the form's in polar form
+    same = form.volume == pytest.approx(shape.volume, rel=2e-4)
+    assert same != (path.stem in DIFFERS), DIFFERS.get(path.stem, "the volumes differ")
+
+
+def test_an_arch_more_than_a_semicircle() -> None:
+    # A semicircle and a little more: its segment is more than half the circle
+    section = arch_section(1.0, 0.6)
+    radius = (0.25 + 0.36) / 1.2
+    assert section.area > math.pi * radius**2 / 2
+    assert section.reach(0.0, (0.0, 0.01)) > 0.5  # wider than its span above the springline
+
+
+def test_lines_and_arcs_make_exact_areas() -> None:
+    assert rectangle(2, 3, (5, -1)).area == pytest.approx(6)
+    assert rectangle(2, 3).perimeter == pytest.approx(10)
+    assert circle(2).area == pytest.approx(math.pi)
+    assert circle(2).perimeter == pytest.approx(2 * math.pi)
+    hexagon = regular_polygon(6, 1)
+    assert hexagon.area == pytest.approx(6 * math.tan(math.pi / 6))
+    assert rectangle(2, 4).bounds == pytest.approx((-1, 1, -2, 2))
+
+
+def test_an_arch_section_is_the_segment_above_the_springline() -> None:
+    section = arch_section(1.2, 0.3)
+    assert section.area == pytest.approx(Arch(1.2, 0.3).segment_area)
+    assert section.farthest() == pytest.approx(0.6)  # the springings
+    assert section.reach(math.pi / 2, (0.0, 0.01)) == pytest.approx(0.29)  # the crown
+
+
+def test_an_oval_is_four_tangent_arcs() -> None:
+    o = oval(2.0, 3.0, 0.6)
+    x0, x1, y0, y1 = o.bounds
+    assert (x1 - x0, y1 - y0) == pytest.approx((2.0, 3.0), abs=1e-4)
+    assert o.reach(0) == pytest.approx(1.0)
+    assert o.reach(math.pi / 2) == pytest.approx(1.5)
+    # The exact area agrees with the polygon through many points on it
+    pts = o.points(4000)
+    nxt = pts[1:] + pts[:1]
+    shoelace = sum(x0 * y1 - x1 * y0 for (x0, y0), (x1, y1) in zip(pts, nxt, strict=True)) / 2
+    assert o.area == pytest.approx(shoelace, rel=1e-6)
+    for bad in ((2.0, 3.0, 1.0), (3.0, 2.0, 0.5), (2.0, 3.0, 0.0)):
+        with pytest.raises(ValueError, match="oval"):
+            oval(*bad)
+    with pytest.raises(ValueError, match="too large"):
+        oval(2.0, 2.0, 0.5)
+
+
+def test_a_teardrop_with_straight_sides() -> None:
+    t = teardrop(1.0, 4.0)
+    x0, x1, y0, y1 = t.bounds
+    assert (x0, x1, y0, y1) == pytest.approx((-1, 1, -1, 3), abs=1e-4)
+    # The circle and the kite of the two tangents: πr² less the circle's slice the kite covers
+    phi = math.asin(1 / 3)
+    kite = 1 * math.sqrt(9 - 1)  # two right triangles, legs r and √(d² − r²)
+    assert t.area == pytest.approx(math.pi - (math.pi - 2 * phi) / 2 + kite)
+    assert t.reach(math.pi / 2) == pytest.approx(3.0)
+    assert t.reach(-math.pi / 2) == pytest.approx(1.0)
+    with pytest.raises(ValueError, match="length"):
+        teardrop(1.0, 2.0)
+
+
+def test_a_teardrop_with_curved_sides() -> None:
+    straight, curved = teardrop(1.0, 4.0), teardrop(1.0, 4.0, side_radius=6.0)
+    assert curved.reach(math.pi / 2) == pytest.approx(3.0)
+    assert curved.area > straight.area  # the sides bulge out
+    # Very large side arcs come close to the straight sides
+    assert teardrop(1.0, 4.0, 1e5).area == pytest.approx(straight.area, rel=1e-4)
+    with pytest.raises(ValueError, match="more than"):
+        teardrop(1.0, 4.0, 0.5)
+    with pytest.raises(ValueError, match="too small"):
+        teardrop(1.0, 4.0, 1.5)
+
+
+def test_an_outline_is_closed_anticlockwise_and_not_empty() -> None:
+    with pytest.raises(ValueError, match="at least one"):
+        Outline(())
+    with pytest.raises(ValueError, match="open"):
+        Outline((Line((0, 0), (1, 0)), Line((1, 0), (1, 1))))
+    square = [(0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)]  # clockwise
+    with pytest.raises(ValueError, match="anticlockwise"):
+        Outline(tuple(Line(p, q) for p, q in zip(square, square[1:] + square[:1], strict=True)))
+
+
+def test_reach_needs_the_centre_inside() -> None:
+    with pytest.raises(ValueError, match="inside"):
+        rectangle(1, 1).reach(0.0, centre=(5.0, 5.0))
+    # A ray along a side's line meets neither it nor (from outside) the arc
+    assert Line((0, 0), (1, 0)).hit((0, 0), (1, 0)) is None
+    assert Arc((0, 0), 1, 0, 1).hit((5, 5), (1, 0)) is None
+    assert Polyline(((2, -1), (2, 1))).hit((0, 0), (0, 1)) is None
+
+
+def test_a_curve_section_and_its_points() -> None:
+    section = curve_section([(1.0, 0.0), (0.0, 1.0), (-1.0, 0.0)])
+    assert section.area == pytest.approx(1.0)
+    assert section.perimeter == pytest.approx(2 + 2 * math.sqrt(2))
+    assert len(section.points()) == 3
+
+
+def test_a_run_lofts_between_stations() -> None:
+    small, big = arch_section(1.0, 0.25), arch_section(1.5, 0.4)
+    run = Run((Station(0, small), Station(2, big), Station(3, big)))
+    assert run.length == 3
+    assert run.volume == pytest.approx((small.area + big.area) + big.area)
+    assert prism(small, 4.0).volume == pytest.approx(4 * small.area)
+    with pytest.raises(ValueError, match="two or more"):
+        Run((Station(0, small),))
+    with pytest.raises(ValueError, match="in order"):
+        Run((Station(1, small), Station(0, small)))
+
+
+def test_a_sphere_dome_over_a_rectangle_or_circle() -> None:
+    assert SphereDome(rectangle(1.2, 0.9), 0.25).volume == pytest.approx(
+        SailDome(1.2, 0.9, 0.25).volume, rel=1e-4
+    )
+    assert SphereDome(circle(1.5), 0.3).volume == pytest.approx(RoundDome(1.5, 0.3).volume)
+    assert SphereDome(circle(1.5), 0.3).radius == pytest.approx(RoundDome(1.5, 0.3).radius)
+    # Over a teardrop, from the round end's centre: springing at the point, the farthest reach
+    drop = SphereDome(teardrop(1.0, 4.0), 0.5)
+    assert drop.radius == pytest.approx((9 + 0.25) / 1.0)
+    assert 0 < drop.volume < teardrop(1.0, 4.0).area * 0.5
+
+
+def test_a_revolved_shell() -> None:
+    # A whole hemisphere shell, radii 1 to 2, centred on the springline: (2/3)π(2³ − 1³)
+    shell = Revolved(tuple(shell_profile(1.0, 2.0, 0.0, 0.0, steps=2000)))
+    assert shell.volume == pytest.approx(2 / 3 * math.pi * 7, rel=1e-5)

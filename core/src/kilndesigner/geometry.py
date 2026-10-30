@@ -28,6 +28,7 @@ from typing import TYPE_CHECKING, Any
 import numpy as np
 
 from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, OpenTop, SprungArch
+from kilndesigner.outline import Revolved, shell_profile
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome
 from kilndesigner.units import si
 from kilndesigner.working import length_text
@@ -236,14 +237,9 @@ class Part:
     @property
     def volume(self) -> float:
         if self.revolve is not None:
-            # Pappus: 2π × the outline's area × its centroid's radius, by the shoelace sums
-            pts, nxt = self.revolve, self.revolve[1:] + self.revolve[:1]
-            moment = sum(
-                (r0 + r1) * (r0 * z1 - r1 * z0) for (r0, z0), (r1, z1) in zip(pts, nxt, strict=True)
-            )
             # A polygon through the corners has N·sin(2π/N)/(2π) of the circle's area, at every r
             scale = 1.0 if self.sides is None else polygon_fraction(self.sides)
-            return math.pi * abs(moment) / 3 * scale
+            return Revolved(self.revolve).volume * scale
         if self.profile is not None:
             pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
             area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
@@ -631,7 +627,7 @@ def _round_parts(kiln: Kiln) -> list[Part]:
         centre = h - below
         rho = dome.radius
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
-            add(f"roof/{i + 1}-{mat}", mat, _dome_outline(rho, rho + th, centre, h), th, "roof")
+            add(f"roof/{i + 1}-{mat}", mat, shell_profile(rho, rho + th, centre, h), th, "roof")
             rho += th
     elif isinstance(roof, FlatRoof):
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
@@ -640,22 +636,6 @@ def _round_parts(kiln: Kiln) -> list[Part]:
                 th, "roof")  # fmt: skip
             cum += th
     return parts
-
-
-def _dome_outline(
-    inner: float, outer: float, centre: float, springline: float, steps: int = 48
-) -> list[tuple[float, float]]:
-    """The part of a spherical shell (radii ``inner`` to ``outer``, centred on the axis at height
-    ``centre``) above the springline, in the r–z plane: up the inside from the springline to the
-    crown, down the outside, and back along the springline."""
-
-    def arc(rho: float, rising: bool) -> list[tuple[float, float]]:
-        end = math.acos(max(-1.0, min(1.0, (springline - centre) / rho)))  # from the vertical
-        angles = [end * (1 - k / steps) for k in range(steps + 1)]
-        pts = [(rho * math.sin(a), centre + rho * math.cos(a)) for a in angles]
-        return pts if rising else pts[::-1]
-
-    return [*arc(inner, True), *arc(outer, False)]
 
 
 def _dome_parts(
