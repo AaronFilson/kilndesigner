@@ -27,6 +27,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.allowance import allowance
 from kilndesigner.castable import resolve_material
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
@@ -34,13 +35,12 @@ from kilndesigner.materials_checks import whole_bricks
 from kilndesigner.model import CatenaryArch, Kiln, SprungArch
 from kilndesigner.shape import Arch
 from kilndesigner.units import Q_, parse_quantity, si
-from kilndesigner.working import Finding, length_text, show
+from kilndesigner.working import Finding, Step, length_text, show
 
 IN = 25.4  # mm
 BRICK = (9 * IN, 4.5 * IN, 2.5 * IN)  # length, width, thickness (mm)
 BRICK_SOURCE = "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
 KERF = IN / 8  # an assumption: a saw cut takes about ⅛ in
-WASTE = 0.10  # an assumption: extra bought for breakage and mistakes, not from a source
 TOL = 0.01  # mm
 # A layer within 1 mm of a brick size is that size, so a metric design can say 114 mm for 4½ in.
 THICKNESS_TOL = 1.0  # mm
@@ -424,6 +424,7 @@ class Masonry(BaseModel):
     quantities: list[Quantity]
     cut_list: list[CutLine]
     findings: list[Finding]
+    working: list[Step] = []
 
 
 @dataclass
@@ -517,9 +518,10 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         elif m.kind in BULK_KINDS:
             cast_volume[m.id] += part.volume
 
-    quantities, cut_list = buy_quantities(
+    quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
     )
+    brick = allowance(kiln, "brick")
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
     if arch_lines:
@@ -584,14 +586,24 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 level="info",
                 message=(
                     "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw "
-                    f"cut, and {WASTE:.0%} extra for breakage. The size is sourced; the saw cut "
-                    f"and the {WASTE:.0%} are assumptions no source gives, so adjust them to your "
-                    f"saw and your bricks.{corners}"
+                    f"cut, and {brick.text} extra for breakage. Each cut piece already takes its "
+                    "own brick in the count. The size is sourced; the saw cut is an assumption no "
+                    "source gives, so adjust it to your saw. "
+                    + (
+                        "The allowance is the design's own."
+                        if brick.from_design
+                        else 'The allowance is the masonry estimators\' "at least 5 percent" '
+                        "(BIA): set allowances.brick in the design from your own experience."
+                    )
+                    + corners
                 ),
-                reference=f"{BRICK_SOURCE}; kerf and waste assumed",
+                reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
             )
         )
-    return MasonryPlan(layers, Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
+    return MasonryPlan(
+        layers,
+        Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working),
+    )
 
 
 def buy_quantities(
@@ -604,17 +616,28 @@ def buy_quantities(
     sheet_thickness: dict[str, set[float]],
     cast_volume: dict[str, float],
     shapes_in: str = "the arch",
-) -> tuple[list[Quantity], list[CutLine]]:
+) -> tuple[list[Quantity], list[CutLine], list[Step]]:
     """What to buy: whole bricks and cuts, shapes (laid in ``shapes_in``), sheet by area,
     castable by weight."""
     us = kiln.units == "us"
     quantities: list[Quantity] = []
     cut_list: list[CutLine] = []
+    working: list[Step] = []
+    brick, shaped = allowance(kiln, "brick"), allowance(kiln, "shaped")
+    sheet, cast = allowance(kiln, "sheet"), allowance(kiln, "castable")
+    if whole or cuts:
+        working.append(brick.step())
+    if shapes:
+        working.append(shaped.step())
+    if sheet_area:
+        working.append(sheet.step())
+    if any(kiln.castable(mid) is None for mid in cast_volume):
+        working.append(cast.step())
     for mid in sorted(set(whole) | set(cuts)):
         m = material(mid)
         from_cuts = bricks_for_cuts(cuts.get(mid, []))
         exact = whole[mid] + from_cuts
-        buy = math.ceil(exact * (1 + WASTE))
+        buy = brick.buy(exact)
         quantities.append(
             Quantity(
                 material=mid,
@@ -624,7 +647,7 @@ def buy_quantities(
                 unit="bricks",
                 detail=(
                     f"{whole[mid]} whole, {from_cuts} cut into {len(cuts.get(mid, []))} pieces; "
-                    f"{exact} in the kiln plus {WASTE:.0%} for breakage"
+                    f"{exact} in the kiln plus {brick.text} for breakage"
                 ),
                 priced_amount=buy,
             )
@@ -635,7 +658,7 @@ def buy_quantities(
         )
     for (mid, shape), count in sorted(shapes.items()):
         m = material(mid)
-        buy = math.ceil(count * (1 + WASTE))
+        buy = shaped.buy(count)
         quantities.append(
             Quantity(
                 material=mid,
@@ -643,7 +666,7 @@ def buy_quantities(
                 kind=m.kind,
                 amount=buy,
                 unit="bricks",
-                detail=f"{count} in {shapes_in} plus {WASTE:.0%} for breakage",
+                detail=f"{count} in {shapes_in} plus {shaped.text} for breakage",
                 priced_amount=buy,
             )
         )
@@ -658,10 +681,15 @@ def buy_quantities(
                 material=mid,
                 name=m.name,
                 kind=m.kind,
-                amount=round(si(area, "ft**2" if us else "m**2") * (1 + WASTE), 1),
+                amount=round(si(area, "ft**2" if us else "m**2") * (1 + sheet.share), 1),
                 unit="ft²" if us else "m²",
-                detail=f"{thick} thick; area plus {WASTE:.0%} for trimming",
-                priced_amount=si(Q_(sheet_area_thickness[mid], "mm**3"), "ft**2*in") * (1 + WASTE),
+                detail=(
+                    f"{thick} thick; area plus {sheet.text} for trimming"
+                    if sheet.share
+                    else f"{thick} thick; the area, with nothing added for trimming"
+                ),
+                priced_amount=si(Q_(sheet_area_thickness[mid], "mm**3"), "ft**2*in")
+                * (1 + sheet.share),
             )
         )
     for mid, volume_mm3 in sorted(cast_volume.items()):
@@ -684,16 +712,16 @@ def buy_quantities(
                 material=mid,
                 name=m.name,
                 kind=m.kind,
-                amount=round(si(mass, "lb" if us else "kg") * (1 + WASTE), 0),
+                amount=round(si(mass, "lb" if us else "kg") * (1 + cast.share), 0),
                 unit="lb" if us else "kg",
                 detail=(
                     f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} placed, "
-                    f"{basis}, plus {WASTE:.0%}"
+                    f"{basis}, plus {cast.text}"
                     if m.kind in CAST_KINDS
                     else f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'} "
-                    f"laid, at its density, plus {WASTE:.0%}"
+                    f"laid, at its density, plus {cast.text}"
                 ),
-                priced_amount=si(mass, "lb") * (1 + WASTE),
+                priced_amount=si(mass, "lb") * (1 + cast.share),
             )
         )
-    return quantities, cut_list
+    return quantities, cut_list, working

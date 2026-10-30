@@ -239,13 +239,14 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                     "he prefers circle bricks for a 4½ in ring, whose sizes aren't in our "
                     "sources, so arch bricks on end are counted. Stagger the joints course to "
                     "course as in a straight wall (p.45). Brick counts assume dry joints at the "
-                    "nominal size; the waste allowance is added as for a box kiln."
+                    "nominal size; the breakage allowances are those of a box kiln (allowance.py)."
                 ),
                 reference=f"{SOURCE}; {BRICK_SOURCE}",
             )
         )
-    quantities, cut_list = buy_quantities(
+    quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume,
         shapes_in="the round wall",
     )  # fmt: skip
-    return MasonryPlan([], Masonry(quantities=quantities, cut_list=cut_list, findings=findings))
+    result = Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working)
+    return MasonryPlan([], result)

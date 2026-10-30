@@ -9,7 +9,7 @@
 # The engine uses these points as k(T), interpolated linearly, as ASTM C680 does with k(T) data.
 # max_service: the classification or use-limit temperature the maker states.
 # specific_heat: c_p for the firing simulation, held at its end values beyond its points, with its
-# own source. Left out where none is sourced (the castables, Cerachem): the simulation then asks the
+# own source. Left out where none is sourced (most castables): the simulation then asks the
 # design for one (a lining layer's specific_heat) rather than guess.
 
 - id: ifb-jm23
@@ -316,6 +316,13 @@
     points: [[200, 0.05], [400, 0.08], [600, 0.14], [800, 0.19], [1000, 0.27], [1200, 0.36]]
   source: "electric-and-thermal.md §4.3, Morgan Cerablanket and Cerachem data sheet BL.03 [S101]"
   status: verified
+  specific_heat:
+    # Morgan's own figure for its blankets: 0.26 BTU/(lb·°F) at 1800 °F (= 1.09 kJ/(kg·K))
+    unit: BTU/(lb*degF)
+    temperature_unit: degF
+    points: [[1800, 0.26]]
+    source: "castables.md §14.4, Morgan Thermal Ceramics North America Product Data Brochure 2012, p.5 [S88]"
+    status: verified
 
 - id: kast-o-lite-26-li-plus
   name: HarbisonWalker Kast-O-Lite 26 LI Plus insulating castable
@@ -344,8 +351,17 @@
     unit: BTU*in/(hr*ft**2*degF)
     temperature_unit: degF
     points: [[400, 5.6], [800, 4.2], [1200, 4.1], [1600, 4.5], [2000, 4.9]]
-  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
+  source: "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]; castables.md §14"
   status: verified
+  specific_heat:
+    # A class value, not HWI's: HWI gives none. VDI's sillimanite refractory (Al2SiO5, the
+    # kyanite family; the sheet's calcined analysis is 56.6 % Al2O3, 35.3 % SiO2). VDI's
+    # high-duty fireclay and mullite bracket it within 2 % (castables.md §14.3)
+    unit: J/(kg*K)
+    temperature_unit: degC
+    points: [[400, 978], [600, 1024], [800, 1052], [1000, 1072], [1200, 1093]]
+    source: "castables.md §14.3, VDI Heat Atlas 2nd ed., sillimanite, via ht (masonry-materials.md [M2]); a class value"
+    status: derived
 
 - id: kaolite-2600-li
   name: Morgan Thermal Ceramics Kaolite 2600-LI insulating castable

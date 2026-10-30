@@ -10,6 +10,7 @@ from typing import Any
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.allowance import allowance
 from kilndesigner.castable import CastableReport
 from kilndesigner.electric import ElectricDesign
 from kilndesigner.frame import FrameDesign
@@ -195,7 +196,10 @@ def bill_of_materials(
         lines.append(
             BomLine(
                 item="Chimney and flue duct: hard firebrick",
-                needed=f"{chimney_bricks} straights (with 5 % for cuts)",
+                needed=(
+                    f"{chimney_bricks} straights "
+                    f"(with {allowance(kiln, 'brick').text} for cuts and breakage)"
+                ),
                 buy=f"{chimney_bricks} bricks",
                 unit_price=None if unit_price is None else f"${unit_price:,.2f}",
                 cost=cost,

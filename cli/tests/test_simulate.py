@@ -22,9 +22,13 @@ def test_simulate_writes_parquet(tmp_path: Path) -> None:
 
 
 def test_simulate_refuses_a_castable_without_specific_heat(tmp_path: Path) -> None:
-    result = runner.invoke(
-        app, ["simulate", str(EXAMPLES / "pnw-hybrid-crossdraft.yaml"), "--out", str(tmp_path)]
+    # Kast-O-Lite 26 has no specific heat in the library (Kast-O-Lite 30 has a class value)
+    text = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")
+    design = tmp_path / "kol26.yaml"
+    design.write_text(
+        text.replace("kast-o-lite-30-li-plus", "kast-o-lite-26-li-plus"), encoding="utf-8"
     )
+    result = runner.invoke(app, ["simulate", str(design), "--out", str(tmp_path / "out")])
     assert result.exit_code == 2
     assert "specific_heat" in result.output
 

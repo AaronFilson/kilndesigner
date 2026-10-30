@@ -148,7 +148,9 @@ class TransientWall:
         ts, h, a = self.t_surface, 0.0, self.outside_area
         for _ in range(4):
             h = self.surface.coefficient(ts, self.t_ambient)
-            if h <= 0:  # no film: the face is the last cell's half-cell away from nothing
+            # No film (or one so thin h·A underflows): the face is the last cell's half-cell away
+            # from nothing
+            if h * a <= 0:
                 return t_last, 0.0
             film = 1.0 / (h * a)
             ts = self.t_ambient + (t_last - self.t_ambient) * film / (r_half + film)

@@ -27,7 +27,7 @@
               "symbol": "c_1",
               "text": null,
               "unit": "USD",
-              "value": 4918.62
+              "value": 4696.35
             },
             {
               "expr": null,
@@ -40,7 +40,7 @@
               "symbol": "c_2",
               "text": null,
               "unit": "USD",
-              "value": 586.5600000000001
+              "value": 561.6
             },
             {
               "expr": null,
@@ -53,7 +53,7 @@
               "symbol": "c_3",
               "text": null,
               "unit": "USD",
-              "value": 420.0
+              "value": 350.0
             },
             {
               "expr": null,
@@ -131,13 +131,13 @@
               "symbol": "C",
               "text": null,
               "unit": "USD",
-              "value": 8816.91
+              "value": 8499.68
             }
           ],
           "id": "bom.budget",
           "label": null,
           "lever": {
-            "hi": 17633.82,
+            "hi": 16999.36,
             "lo": 0.0,
             "step": null,
             "symbol": "B"
@@ -148,7 +148,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = $8,817, 176.3 % of B = $5,000",
+              "margin": "C = $8,500, 170 % of B = $5,000",
               "op": "<=",
               "right": "B"
             }
@@ -156,39 +156,39 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when B ≥ $8,817",
+          "solve": "Passes when B ≥ $8,500",
           "status": "warning",
           "title": "The priced materials against the budget"
         },
         "level": "warning",
-        "message": "The priced materials come to $8,817, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $8,500, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
     "lines": [
       {
-        "buy": "686 bricks",
-        "cost": 4918.62,
+        "buy": "655 bricks",
+        "cost": 4696.35,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "686 bricks (496 whole, 127 cut into 176 pieces; 623 in the kiln plus 10% for breakage)",
+        "needed": "655 bricks (496 whole, 127 cut into 176 pieces; 623 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
       },
       {
-        "buy": "94 bricks",
-        "cost": 586.5600000000001,
+        "buy": "90 bricks",
+        "cost": 561.6,
         "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "needed": "94 bricks (64 whole, 21 cut into 29 pieces; 85 in the kiln plus 10% for breakage)",
+        "needed": "90 bricks (64 whole, 21 cut into 29 pieces; 85 in the kiln plus 5 % for breakage)",
         "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
         "source": "combustion-and-masonry.md §9 [S71]",
         "unit_price": "$6.24"
       },
       {
-        "buy": "6 rolls",
-        "cost": 420.0,
+        "buy": "5 rolls",
+        "cost": 350.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 6 pcf",
-        "needed": "77 ft² (3.5 in thick; area plus 10% for trimming)",
+        "needed": "70 ft² (3.5 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 6 pcf, 2300 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$70.00"
@@ -197,7 +197,7 @@
         "buy": "1 roll",
         "cost": 150.0,
         "item": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "needed": "19.5 ft² (2 in thick; area plus 10% for trimming)",
+        "needed": "17.7 ft² (2 in thick; the area, with nothing added for trimming)",
         "priced_as": "Ceramic fibre blanket, 8 pcf, 2600 °F, 1 in × 24 in × 25 ft roll (50 ft² at 1 in), High Temp Refractory Store (eBay) (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S73]",
         "unit_price": "$150.00"
@@ -206,7 +206,7 @@
         "buy": "8 bags",
         "cost": 921.68,
         "item": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "needed": "412 lb (4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 10%)",
+        "needed": "394 lb (4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 5 %)",
         "priced_as": "Kast-O-Lite 30 LI Plus, 55 lb bag, Refractory West",
         "source": "combustion-and-masonry.md §9 [S51]",
         "unit_price": "$115.21"
@@ -233,7 +233,7 @@
         "buy": "189 bricks",
         "cost": 1030.05,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "189 straights (with 5 % for cuts)",
+        "needed": "189 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -267,7 +267,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 8816.91
+    "total": 8499.68
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -476,7 +476,7 @@
             "symbol": "c_1",
             "text": null,
             "unit": "USD",
-            "value": 4918.62
+            "value": 4696.35
           },
           {
             "expr": null,
@@ -489,7 +489,7 @@
             "symbol": "c_2",
             "text": null,
             "unit": "USD",
-            "value": 586.5600000000001
+            "value": 561.6
           },
           {
             "expr": null,
@@ -502,7 +502,7 @@
             "symbol": "c_3",
             "text": null,
             "unit": "USD",
-            "value": 420.0
+            "value": 350.0
           },
           {
             "expr": null,
@@ -580,13 +580,13 @@
             "symbol": "C",
             "text": null,
             "unit": "USD",
-            "value": 8816.91
+            "value": 8499.68
           }
         ],
         "id": "bom.budget",
         "label": "W1",
         "lever": {
-          "hi": 17633.82,
+          "hi": 16999.36,
           "lo": 0.0,
           "step": null,
           "symbol": "B"
@@ -597,7 +597,7 @@
             "holds": false,
             "left": "C",
             "level": "warning",
-            "margin": "C = $8,817, 176.3 % of B = $5,000",
+            "margin": "C = $8,500, 170 % of B = $5,000",
             "op": "<=",
             "right": "B"
           }
@@ -605,12 +605,12 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when B ≥ $8,817",
+        "solve": "Passes when B ≥ $8,500",
         "status": "warning",
         "title": "The priced materials against the budget"
       },
       "level": "warning",
-      "message": "The priced materials come to $8,817, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $8,500, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
@@ -641,7 +641,7 @@
       "check": null,
       "level": "info",
       "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
-      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
+      "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]; castables.md §14"
     },
     {
       "check": null,
@@ -778,8 +778,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
     },
     {
       "check": null,
@@ -1411,7 +1411,7 @@
         "check": null,
         "level": "info",
         "message": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable runs up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
-        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]"
+        "reference": "combustion-and-masonry.md §6.1, HWI Kast-O-Lite 30 LI Plus data 10/19 [S50]; verified on the sheet, door-headers.md [H17]; castables.md §14"
       },
       {
         "check": null,
@@ -1903,55 +1903,87 @@
       {
         "check": null,
         "level": "info",
-        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 10% extra for breakage. The size is sourced; the saw cut and the 10% are assumptions no source gives, so adjust them to your saw and your bricks. At the corners the side walls run through and the back and door fit between them, layer by layer.",
-        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf and waste assumed"
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
       }
     ],
     "quantities": [
       {
-        "amount": 686.0,
-        "detail": "496 whole, 127 cut into 176 pieces; 623 in the kiln plus 10% for breakage",
+        "amount": 655.0,
+        "detail": "496 whole, 127 cut into 176 pieces; 623 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 686.0,
+        "priced_amount": 655.0,
         "unit": "bricks"
       },
       {
-        "amount": 94.0,
-        "detail": "64 whole, 21 cut into 29 pieces; 85 in the kiln plus 10% for breakage",
+        "amount": 90.0,
+        "detail": "64 whole, 21 cut into 29 pieces; 85 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-k23",
         "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "priced_amount": 94.0,
+        "priced_amount": 90.0,
         "unit": "bricks"
       },
       {
-        "amount": 77.0,
-        "detail": "3.5 in thick; area plus 10% for trimming",
+        "amount": 70.0,
+        "detail": "3.5 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-6pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 6 pcf",
-        "priced_amount": 269.6601176170129,
+        "priced_amount": 245.14556147001167,
         "unit": "ft²"
       },
       {
-        "amount": 19.5,
-        "detail": "2 in thick; area plus 10% for trimming",
+        "amount": 17.7,
+        "detail": "2 in thick; the area, with nothing added for trimming",
         "kind": "fibre_blanket",
         "material": "kaowool-blanket-8pcf",
         "name": "Morgan Kaowool ceramic fibre blanket, 8 pcf",
-        "priced_amount": 38.906571594280166,
+        "priced_amount": 35.36961054025469,
         "unit": "ft²"
       },
       {
-        "amount": 412.0,
-        "detail": "4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 10%",
+        "amount": 394.0,
+        "detail": "4.08 ft³ placed, at the maker's 92 lb/ft³ required to place it, plus 5 %",
         "kind": "insulating_castable",
         "material": "kast-o-lite-30-li-plus",
         "name": "HarbisonWalker Kast-O-Lite 30 LI Plus insulating castable",
-        "priced_amount": 412.4795509441504,
+        "priced_amount": 393.730480446689,
         "unit": "lb"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "0 %"
+        },
+        "name": "Allowance over the count: blanket and board",
+        "note": "the default; set allowances.sheet in the design to change it",
+        "reference": "brick-waste.md §4: no source gives one",
+        "value": "0 %"
+      },
+      {
+        "formula": "buy = amount × (1 + allowance)",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: castable",
+        "note": "the default; set allowances.castable in the design to change it",
+        "reference": "brick-waste.md §3, PCO Refractories, castable application instructions 1/2026, §5.3 [W2]",
+        "value": "5 %"
       }
     ]
   },

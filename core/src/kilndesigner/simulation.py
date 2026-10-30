@@ -732,8 +732,9 @@ def _data_findings(kiln: Kiln, faces: Sequence[_Face]) -> list[Finding]:
             Finding(
                 level="info",
                 message=(
-                    "Specific heats come from one generic source each, not the makers' sheets, and "
-                    "are held at their end values outside their temperatures: "
+                    "Specific heats come from one source each, most of them generic or a class "
+                    "value rather than the maker's sheet, and are held at their end values outside "
+                    "their temperatures: "
                     + "; ".join(f"{k}: {v}" for k, v in sorted(sources.items()))
                 ),
             )
@@ -759,6 +760,9 @@ class SwitchPoint(BaseModel):
     propane_gallons: float
     held: bool
     completed: bool
+    # Where the burners really took over: lower than asked when the elements stalled first
+    handed_over_c: float | None = None
+    elements_stalled: bool = False
 
 
 class SwitchOverChart(BaseModel):
@@ -799,6 +803,8 @@ def switch_over_chart(kiln: Kiln, *, step_f: float = 200.0, dt: float = DT) -> S
                 propane_gallons=r.propane_gallons or 0.0,
                 held=r.held,
                 completed=r.completed,
+                handed_over_c=r.switch_over_c,
+                elements_stalled=r.switch_over_c is not None and r.switch_over_c < t_c - 0.5,
             )
         )
     done = [p for p in points if p.completed] or points
@@ -824,6 +830,18 @@ def switch_over_chart(kiln: Kiln, *, step_f: float = 200.0, dt: float = DT) -> S
         ),
     ]
     findings: list[Finding] = []
+    stalled = [p for p in points if p.elements_stalled and p.handed_over_c is not None]
+    if stalled:
+        at = show(Q_(min(p.handed_over_c or 0.0 for p in stalled), "degC"), unit)
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The elements stall at about {at}, so a hand-over set above that happens at "
+                    "the stall: those points are the same firing."
+                ),
+            )
+        )
     if any(not p.completed for p in points):
         findings.append(
             Finding(

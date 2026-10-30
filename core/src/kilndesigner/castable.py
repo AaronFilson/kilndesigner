@@ -32,6 +32,7 @@ import numpy as np
 import yaml
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.allowance import allowance
 from kilndesigner.castable_checks import (
     burnout_heat,
     cast_in_layers,
@@ -72,7 +73,6 @@ DRYOUT_MAX_IN = 9.0  # "for one layer ≤ 9 in thick"
 DRYOUT_SOURCE = "Mizzou dry-out via High Temp Tools; castables.md §8.2 [S41] (secondary)"
 CURE_SOURCE = "Mizzou: 16–24 h above 60 °F, kept damp; castables.md §8.2 [S41] (secondary)"
 STATUS_WORDS = {"verified": "source", "secondary": "secondary source", "excerpt": "search excerpt"}
-WASTE = 0.10  # extra mixed for spills and what sticks to the tools: an assumption, not sourced
 US_QUART = 0.946353e-3  # m³
 
 
@@ -648,6 +648,8 @@ class CastableReport(BaseModel):
     mix: MixAnalysis
     placed: str
     batches: int
+    allowance: str  # mixed over the lining's volume, for spills and what sticks to the tools
+    allowance_step: Step
     totals: list[IngredientTotal]
     layers: list[LayerUse]
     first_firing: list[Step]
@@ -697,6 +699,7 @@ def castable_reports(
         kiln_thickest = max([kiln_thickest, *cast])
         if len(cast) > 1:
             stacked.append((face.face, cast))
+    spare = allowance(kiln, "castable")
     for mix in kiln.castables or []:
         a = mix_analysis(kiln, mix)
         m = mix_material(kiln, mix)
@@ -704,7 +707,7 @@ def castable_reports(
         roles = {lib[p.ingredient].role for p in mix.ingredients}
         findings: list[Finding] = list(a.findings)
         volume = placed_m3.get(mix.id, 0.0)
-        batches = math.ceil(volume * (1 + WASTE) / a.cast_volume_m3 - 1e-9) if volume else 0
+        batches = spare.buy(volume / a.cast_volume_m3) if volume else 0
         totals: list[IngredientTotal] = []
         for p in mix.ingredients:
             kg = si(p.mass, "kg") * batches
@@ -773,12 +776,14 @@ def castable_reports(
                 mix=a,
                 placed=f"{show(Q_(volume, 'm**3'), 'ft**3', 3)}" if volume else "none",
                 batches=batches,
+                allowance=spare.text,
+                allowance_step=spare.step(),
                 totals=totals,
                 layers=layers,
                 first_firing=first,
                 schedule=schedule,
                 schedule_hours=hours,
-                steps=_steps(a, roles, batches),
+                steps=_steps(a, roles, batches, spare.text),
                 findings=findings,
             )
         )
@@ -1109,10 +1114,10 @@ def _schedule(
     return segments, hours, findings
 
 
-def _steps(a: MixAnalysis, roles: set[str], batches: int) -> list[str]:
+def _steps(a: MixAnalysis, roles: set[str], batches: int, spare: str) -> list[str]:
     steps = [
         f"Weigh one batch: {', '.join(f'{b.mass} {b.name}' for b in a.batch)}, and {a.water} of "
-        f"water ({a.water_share}). {batches} batches cover the lining with 10 % to spare.",
+        f"water ({a.water_share}). {batches} batches cover the lining with {spare} to spare.",
         "Mix the dry ingredients first, then add the water and mix to an even paste.",
     ]
     if a.foam:

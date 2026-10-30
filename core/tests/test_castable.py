@@ -264,8 +264,8 @@ def test_batches_cover_the_layers_that_use_the_mix() -> None:
     report = design_report(KILN)
     for c in report.castables:
         placed = si(parse_quantity(c.placed), "m**3")
-        assert c.batches * c.mix.cast_volume_m3 >= placed * 1.1 - 1e-9
-        assert (c.batches - 1) * c.mix.cast_volume_m3 < placed * 1.1
+        assert c.batches * c.mix.cast_volume_m3 >= placed * 1.05 - 1e-9
+        assert (c.batches - 1) * c.mix.cast_volume_m3 < placed * 1.05
 
 
 def test_a_mix_is_a_lining_material() -> None:
@@ -425,8 +425,11 @@ def test_a_mix_with_nothing_that_changes_in_the_wall(foamed_kiln: tuple[Kiln, He
     assert mix is not None
     cast = analyse_mix(kiln, mix).cast_volume_m3
     report, _ = castable_reports(kiln, loss, 11_520, {"foamed-mulcoa": 2 * cast})
-    # Two batches' worth placed, with 10 % for waste, is three batches
+    # Two batches' worth placed, with 5 % for waste (brick-waste.md §3), is three batches
     assert report.batches == 3
+    assert report.allowance == "5 %"
+    assert report.allowance_step.reference is not None
+    assert "PCO" in report.allowance_step.reference
     assert [(t.amount, t.cost) for t in report.totals] == [("120 lb", 120.0), ("15 lb", None)]
     # No organics, kyanite or quartz: each layer gets its thickness and temperatures
     assert [use.face for use in report.layers] == ["left", "right", "back", "front"]

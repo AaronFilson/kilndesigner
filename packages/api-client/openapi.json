@@ -1107,6 +1107,13 @@
             "type": "integer",
             "title": "Batches"
           },
+          "allowance": {
+            "type": "string",
+            "title": "Allowance"
+          },
+          "allowance_step": {
+            "$ref": "#/components/schemas/Step"
+          },
           "totals": {
             "items": {
               "$ref": "#/components/schemas/IngredientTotal"
@@ -1166,6 +1173,8 @@
           "mix",
           "placed",
           "batches",
+          "allowance",
+          "allowance_step",
           "totals",
           "layers",
           "first_firing",
@@ -2985,6 +2994,14 @@
             },
             "type": "array",
             "title": "Findings"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working",
+            "default": []
           }
         },
         "type": "object",
@@ -3691,6 +3708,22 @@
           "completed": {
             "type": "boolean",
             "title": "Completed"
+          },
+          "handed_over_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Handed Over C"
+          },
+          "elements_stalled": {
+            "type": "boolean",
+            "title": "Elements Stalled",
+            "default": false
           }
         },
         "type": "object",
