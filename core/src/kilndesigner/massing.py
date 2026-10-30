@@ -133,11 +133,12 @@ def cells(kiln: Kiln, run: Run) -> list[Cell]:
         out.append(Cell("round", 0.0, run.width, width=run.width, z1=run.height))
     else:
         many = run.chambers > 1
+        tube = isinstance(kiln.roof, SprungArch) and kiln.roof.tube
         if many:
             for i in range(run.chambers):
                 out.append(
                     Cell("box", run.chamber_centre(i), run.depth, width=run.width, z1=run.height,
-                         along=True)
+                         along=not tube)
                 )  # fmt: skip
         else:
             pieces = 8 if run.bend > 0 else 1

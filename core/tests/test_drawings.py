@@ -10,7 +10,15 @@ from xml.etree import ElementTree
 import pytest
 
 from kilndesigner import load_design, parse_design
-from kilndesigner.drawings import Rect, View, length_text, section_views, view_svg, write_dxf
+from kilndesigner.drawings import (
+    Dimension,
+    Rect,
+    View,
+    length_text,
+    section_views,
+    view_svg,
+    write_dxf,
+)
 from kilndesigner.model import Kiln
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
@@ -285,6 +293,25 @@ def test_the_svg_draws_rings_as_polygons_and_boxes_as_rects(sprung: list[View]) 
     labels = [t.text for t in root.iter(f"{SVG}text")]
     assert labels == [d.text for d in front.dims]
     assert {t.get("font-size") for t in root.iter(f"{SVG}text")} == {"20.00"}
+
+
+def test_dimension_text_is_sized_to_each_view() -> None:
+    from kilndesigner.drawings import text_size
+
+    # A squarish view keeps a twentieth of its longer side
+    square = View("square", [Rect(0, 0, 1000, 900, (0, 0, 0), "a")], [], [])
+    assert text_size(square) == pytest.approx(50.0)
+    # A long run's section along it: in scale with its height, never under 1.5 % of its length
+    long = View("long", [Rect(0, 0, 12000, 2000, (0, 0, 0), "a")], [], [])
+    assert text_size(long) == pytest.approx(0.05 * 3 * 2000)
+    assert text_size(long) < 0.05 * 12000
+    thin = View("thin", [Rect(0, 0, 36000, 200, (0, 0, 0), "a")], [], [])
+    assert text_size(thin) == pytest.approx(0.015 * 36000)
+    # The view box holds every dimension line and its text
+    long.dims.append(Dimension(0, 0, 12000, 0, 900.0, "12000 mm"))
+    root = ElementTree.fromstring(view_svg(long))
+    _, vy, _, vh = (float(v) for v in root.get("viewBox", "").split())
+    assert -vy - vh <= -900 - 1.5 * text_size(long)
 
 
 def test_the_dxf_keeps_the_arch_outline(sprung: list[View], tmp_path: Path) -> None:

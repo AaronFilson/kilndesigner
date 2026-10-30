@@ -81,6 +81,11 @@ def test_there_are_chambers_in_a_row_level_and_stepped() -> None:
     assert slopes == {True, False}
 
 
+def _lining(kiln: Kiln) -> list[Part]:
+    """The kiln's own lining, its fireboxes left out."""
+    return [p for p in lining_parts(kiln) if not p.name.startswith("firebox-")]
+
+
 def _overlap(a: Part, b: Part) -> float:
     sizes = [min(a.hi[k], b.hi[k]) - max(a.lo[k], b.lo[k]) for k in range(3)]
     return math.prod(sizes) if all(s > 1e-6 for s in sizes) else 0.0
@@ -92,7 +97,7 @@ def test_chambers_in_a_row_are_laid_out_in_brick(path: Path) -> None:
     assert not_drawn(kiln) is None
     parts = lining_parts(kiln)
     assert len({p.name for p in parts}) == len(parts)
-    blocks = [p for p in parts if p.profile is None and p.dome is None]
+    blocks = [p for p in parts if p.profile is None and p.dome is None and p.arch is None]
     for k, a in enumerate(blocks):
         for b in blocks[k + 1 :]:
             assert _overlap(a, b) == 0.0, (a.name, b.name)
@@ -110,7 +115,7 @@ def test_each_chambers_floor_steps_up_the_slope() -> None:
     floors = {p.chamber: p.hi[2] for p in lining_parts(kiln) if p.name.startswith("floor/1-")}
     assert floors == {i + 1: pytest.approx(i * run.step) for i in range(4)}
     # Each chamber's arch spans along the draft, over its depth
-    rings = [p for p in lining_parts(kiln) if p.wall == "roof"]
+    rings = [p for p in _lining(kiln) if p.wall == "roof"]
     assert len(rings) == 4
     assert all(p.across for p in rings)
     assert all(p.hi[1] - p.lo[1] <= run.depth + 2 * run.between + 1e-6 for p in rings)
@@ -120,10 +125,10 @@ def test_a_level_row_runs_its_floor_and_side_walls_the_whole_length() -> None:
     kiln = load_design(TEMPLATES / "tunnel.yaml")
     run = run_layout(kiln)
     parts = lining_parts(kiln)
-    floors = [p for p in parts if p.wall == "floor"]
+    floors = [p for p in parts if p.wall == "floor" and not p.name.startswith("firebox-")]
     assert len(floors) == len(kiln.lining.walls)  # the floor takes the walls' layers
     assert floors[0].length_y == pytest.approx(run.length + 2 * run.between)
-    assert len([p for p in parts if p.name.startswith("division/")]) == run.chambers - 1
+    assert len({p.chamber for p in parts if p.name.startswith("division/")}) == run.chambers - 1
 
 
 def test_a_short_flat_arch_along_the_draft_is_counted_in_arch_shapes() -> None:
@@ -137,16 +142,29 @@ def test_a_short_flat_arch_along_the_draft_is_counted_in_arch_shapes() -> None:
 
 def test_domes_and_flat_roofs_cover_chambers_in_a_row() -> None:
     hollyweird = load_design(EXAMPLES / "olsen" / "hollyweird.yaml")
-    domes = [p for p in lining_parts(hollyweird) if p.wall == "roof"]
+    domes = [p for p in _lining(hollyweird) if p.wall == "roof"]
     assert {p.chamber for p in domes} == {1, 2}
     flat = _with(EXAMPLES / "olsen" / "kawaii.yaml", roof={"type": "flat"})
-    assert len([p for p in lining_parts(flat) if p.wall == "roof"]) == 4
+    assert len([p for p in _lining(flat) if p.wall == "roof"]) == 4
     assert plan_masonry(flat).layers
 
 
-def test_a_catenary_over_chambers_in_a_row_isnt_laid_out() -> None:
+def test_a_catenary_over_level_chambers_in_a_row_is_one_vault() -> None:
     kiln = _with(TEMPLATES / "tunnel.yaml", roof={"type": "catenary_arch"})
-    assert "catenary over chambers" in (not_drawn(kiln) or "")
+    assert not_drawn(kiln) is None
+    parts = lining_parts(kiln)
+    run = run_layout(kiln)
+    divisions = [p for p in parts if p.name.startswith("division/")]
+    assert {p.chamber for p in divisions} == set(range(1, run.chambers))
+    assert all(p.profile is not None for p in divisions)  # closing the catenary
+    rings = [p for p in parts if p.name.startswith("arch/")]
+    assert rings[0].length_y == pytest.approx(run.length + 2 * run.between)
+    assert plan_masonry(kiln).result.quantities
+
+
+def test_a_catenary_over_chambers_stepped_up_a_slope_isnt_laid_out() -> None:
+    kiln = _with(EXAMPLES / "olsen" / "kawaii.yaml", roof={"type": "catenary_arch"})
+    assert "no source here says how one chamber's catenary meets" in (not_drawn(kiln) or "")
 
 
 @pytest.mark.parametrize(
@@ -220,3 +238,20 @@ def test_chambers_in_a_row_have_a_model(path: Path, tmp_path: Path) -> None:
     written = write_model(kiln, design_report(kiln), tmp_path)
     parts = json.loads(written["parts"].read_text(encoding="utf-8"))
     assert {p.name for p in lining_parts(kiln)} <= set(parts)
+
+
+def test_the_layout_tells_the_viewer_the_run_steps() -> None:
+    from kilndesigner.geometry import brick_layout
+    from kilndesigner.hardware import build_hardware
+
+    for path, stepped in (
+        (EXAMPLES / "olsen" / "kawaii.yaml", True),
+        (TEMPLATES / "tunnel.yaml", False),
+    ):
+        kiln = load_design(path)
+        report = design_report(kiln)
+        hardware = build_hardware(kiln, report.frame, report.gas, report.fire)
+        run = brick_layout(kiln, hardware)["run"]
+        assert isinstance(run, dict)
+        assert run["step"] == pytest.approx(run_layout(kiln).step)  # pyright: ignore[reportUnknownArgumentType]
+        assert (run["step"] > 0) is stepped

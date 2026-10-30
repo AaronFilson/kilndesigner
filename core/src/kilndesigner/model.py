@@ -200,6 +200,15 @@ class SprungArch(Spec):
         description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
     )
     buttressed: bool = Field(default=False, description=BUTTRESSED)
+    tube: bool = Field(
+        default=False,
+        description=(
+            "Chambers in a row under one vault: the arch spans the width and runs the whole "
+            "length, as a tube kiln's, 'an anagama extended' (Olsen, 4th ed. p.85), the walls "
+            "between the chambers standing under it. Left out, each chamber in a row has its own "
+            "arch spanning along the draft, as Olsen's climbing kilns' do (p.94–95)"
+        ),
+    )
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:

@@ -22,6 +22,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
 from kilndesigner.castable import resolve_material
+from kilndesigner.firebox_parts import firebox_findings
 from kilndesigner.geometry import Part, lining_parts
 from kilndesigner.library import material
 from kilndesigner.masonry import (
@@ -36,10 +37,13 @@ from kilndesigner.masonry import (
     LayerPlan,
     Masonry,
     MasonryPlan,
+    _not_buildable,  # pyright: ignore[reportPrivateUsage]
     brick_sizes,
     buildable_near,
     buy_quantities,
     layings,
+    plan_layers,
+    port_findings,
     run_pieces,
 )
 from kilndesigner.materials_checks import SUMS, whole_bricks
@@ -324,6 +328,27 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=f"{SOURCE}; {BRICK_SOURCE}",
             )
         )
+    # The fireboxes: boxes of the kiln's layers, laid as a box kiln's are
+    for part in (p for p in parts.values() if p.name.startswith("firebox-")):
+        m = resolve_material(kiln, part.material)
+        if m.kind in BRICK_KINDS:
+            plans = plan_layers(part)
+            if plans is None:
+                findings.append(_not_buildable(part, us))
+                continue
+            layers.extend(plans)
+            for p in (p for plan in plans for p in plan.pieces):
+                if p.is_whole:
+                    whole[m.id] += 1
+                else:
+                    cuts.setdefault(m.id, []).append(
+                        Cut(p.length, p.height, p.full_length, p.full_height)
+                    )
+        elif m.kind in SHEET_KINDS:
+            sheet(m.id, part.area, part.thickness)
+        elif m.kind in BULK_KINDS:
+            cast_volume[m.id] += part.volume
+    findings += firebox_findings(kiln) + port_findings(kiln)
     quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume,
         shapes_in="the round wall",
