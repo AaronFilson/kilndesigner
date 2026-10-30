@@ -101,6 +101,7 @@ class Angle:
     w: float  # lb/ft
     sx: float  # in³, about a geometric axis
     sz: float  # in³, about the minor principal axis
+    ix: float  # in⁴, about a geometric axis
 
 
 def angles() -> list[Angle]:
@@ -1085,6 +1086,40 @@ def _electric_bands(kiln: Kiln) -> Finding:
 
 
 def design_frame(kiln: Kiln) -> FrameDesign:
+    """The frame, and for a door in part of a wall, what spans the door (door.py)."""
+    from kilndesigner.door import door_head
+
+    frame = _design_frame(kiln)
+    head = door_head(kiln)
+    if head is None:
+        return frame
+    members = list(frame.members)
+    if head.lintel is not None:
+        members.append(
+            Member(part="door lintel", steel=head.lintel, count=1, length_in=head.length_in,
+                   source="steel-design.md §S5; door-openings.md")
+        )  # fmt: skip
+    findings = [*frame.findings, *head.findings]
+    if kiln.chamber.shape == "round" and isinstance(kiln.roof, Dome):
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The door breaks the round wall's ring, so over the door the wall can't hold "
+                    "the roof's thrust as a ring: the band round the kiln carries it across. No "
+                    "source sizes that band, so it isn't sized."
+                ),
+                reference="steel-design.md §S5; Olsen, The Kiln Book, 4th ed., p.167",
+            )
+        )
+    return frame.model_copy(
+        update={
+            "members": members, "working": [*frame.working, *head.working], "findings": findings,
+        }
+    )  # fmt: skip
+
+
+def _design_frame(kiln: Kiln) -> FrameDesign:
     o = outside(kiln)
     volume_ft3 = chamber_shape(kiln).volume / si(parse_quantity("1 ft**3"), "m**3")
     if kiln.roof.type == "open":

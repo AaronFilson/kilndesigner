@@ -333,6 +333,10 @@ def lining_parts(kiln: Kiln) -> list[Part]:
     from kilndesigner.firebox_parts import carve, firebox_parts, openings
 
     parts = _level_parts(kiln)
+    if kiln.loading.opening is not None:
+        from kilndesigner.door import cut_door
+
+        parts = cut_door(kiln, parts)
     holes = openings(kiln)
     if in_a_row(kiln):
         from kilndesigner.run_parts import flue_holes
@@ -377,7 +381,7 @@ def _level_parts(kiln: Kiln) -> list[Part]:
     parts: list[Part] = []
 
     def add(face: Face, i: int, mat: str, lo: tuple[float, ...], hi: tuple[float, ...]) -> None:
-        name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}"
+        name = f"{'door' if face == kiln.door_wall else face}/{i + 1}-{mat}"
         kind = resolve_material(kiln, mat).kind
         parts.append(Part(name, mat, kind, (lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2]), face=face))
 
@@ -430,7 +434,7 @@ def _level_parts(kiln: Kiln) -> list[Part]:
             for i, (mat, th) in enumerate(layers[face]):
                 ys = sorted((sign * (d / 2 + reached), sign * (d / 2 + reached + th)))
                 shape = ArchShape(arch.radius, 0.0, centre_z, arch.half_angle)
-                name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}-arch"
+                name = f"{'door' if face == kiln.door_wall else face}/{i + 1}-{mat}-arch"
                 parts.append(
                     Part(
                         name, mat, resolve_material(kiln, mat).kind,
@@ -510,7 +514,7 @@ def _catenary_parts(kiln: Kiln) -> list[Part]:
         at = last if face == "back" else first
         for i, (mat, th) in enumerate(ends[face]):
             ys = sorted((at + sign * reached, at + sign * (reached + th)))
-            name = f"{'door' if face == kiln.door_face else face}/{i + 1}-{mat}"
+            name = f"{'door' if face == kiln.door_wall else face}/{i + 1}-{mat}"
             lo, hi = (-w / 2, ys[0], 0.0), (w / 2, ys[1], h)
             parts.append(Part(name, mat, kind(mat), lo, hi, face=face, profile=inside))
             reached += th
@@ -971,12 +975,16 @@ def build_model(
         from kilndesigner.run_parts import flue_holes
 
         holes += [_placed_hole(kiln, o.lo, o.hi, _box(o.lo, o.hi)) for o in flue_holes(kiln)]
+    # A door in part of a wall: its opening cuts the walls (the curved ones too), not the door
+    from kilndesigner.door import model_door_holes
+
+    doorway = [_placed_hole(kiln, lo, hi, solid) for lo, hi, solid in model_door_holes(kiln)]  # type: ignore[arg-type]
     children: list[Any] = []
     for part in lining_parts(kiln):
         solid = _placed_part(kiln, part)
         if solid is None:
             continue
-        solid = _cut(solid, holes)
+        solid = _cut(solid, holes if part.name.startswith("door/") else holes + doorway)
         solid.label = part.name
         solid.color = Color(*COLOURS.get(part.kind, (0.8, 0.8, 0.8)))
         children.append(solid)

@@ -102,7 +102,13 @@ inside a bearing wall is not modelled. For it, the sourced method would be:
 No refractory allowable stress is needed for that route, because the steel carries everything
 above the opening. The bearing of the lintel's ends on refractory masonry still needs an
 allowable bearing stress, which is **NOT FOUND** (`door-headers.md` §D8), so that route would
-still have to report its end bearing as unchecked. It is not implemented.
+still have to report its end bearing as unchecked. Implemented 2026-10-30 (`door.py`, sheet
+`frame.door-lintel`) for a door in part of a wall (`loading.opening`, head `lintel`): the span is
+the clear width plus TMS's 4 in bearing, the least angle BIA's 3½ in leg ¼ in thick, the steel's
+temperature the door wall's outside face, the roof's edge load the dome's heaviest slice's half
+weight (cautious) or a round roof's weight spread round the wall; the ends' reactions are reported
+and their bearing stress is left unchecked (`door-openings.md`). Olsen's built kilns arch their
+doors instead (`door-openings.md`); the arched head is laid out but not checked.
 
 ## S6. Gaps
 

@@ -49,7 +49,7 @@ def test_f10_branches() -> None:
     short = angle_allowable(compact, 1, _cold())
     assert short == pytest.approx(1.5 * 0.8 * 36_000 * compact.sx / 1.67, rel=1e-6)
     assert angle_allowable(compact, 2000, _cold()) < short / 5  # F10-3
-    slender = Angle("thin", 4, 0.1, 1, 0.5, 0.4)  # b/t = 40 > λr = 25.8
+    slender = Angle("thin", 4, 0.1, 1, 0.5, 0.4, 1.0)  # b/t = 40 > λr = 25.8
     lam = 40
     e = 29e6
     assert angle_allowable(slender, 1, _cold()) == pytest.approx(

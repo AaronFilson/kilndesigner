@@ -509,6 +509,29 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
     if kiln.loading.type == "car":
         _car(kiln, frame, f, hw)
         return
+    opening = kiln.loading.opening
+    if opening is not None:
+        # A door in part of the wall: its frame and hinges go round the opening, not the wall
+        from kilndesigner.door import door_hole
+
+        hole = door_hole(kiln)
+        assert hole is not None
+        axis = 0 if face in ("front", "back") else 1
+        u0, u1 = hole.lo[axis] / MM, hole.hi[axis] / MM
+        top = si(opening.sill, "in") + si(opening.height, "in")
+    if kiln.door_kind == "bricked" and opening is not None:
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The door is a {si(opening.width, 'in'):g} × {si(opening.height, 'in'):g} in "
+                    f"opening in the {face} wall, bricked up dry for each firing in the wall's "
+                    "own layers, as Olsen's Tamba and Kanayama doors are (Figs 4-14, 7-18)."
+                ),
+                reference="door-openings.md; kiln-hardware.md §6.1 [S4]",
+            )
+        )
+        return
     if kiln.door_kind == "bricked":
         hw.findings.append(
             Finding(
@@ -540,7 +563,7 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
         pin_source = "a ¾ in steel hinge rod (Paragon Dragon), electric-kiln-hardware.md §2.1 [S18]"
     else:
         leg, t = 4.0, 0.25  # ¼ × 4 × 4 angle at any kiln size (Pitelka [S13])
-        z0, z1 = f.bottom, top
+        z0, z1 = (f.bottom if opening is None else si(opening.sill, "in")), top
         sides = [
             f.box(face, (u0, u0 + leg), (z0, z1), (0, t)),
             f.box(face, (u1 - leg, u1), (z0, z1), (0, t)),
@@ -585,9 +608,10 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
                     ),
                 )
             )
-    height = top - f.bottom
+    bottom = f.bottom if opening is None else si(opening.sill, "in")
+    height = top - bottom
     for i, frac in enumerate((0.25, 0.75)):
-        z = f.bottom + frac * height
+        z = bottom + frac * height
         hinge = f.point(face, u0, z, depth + out)
         hw.pieces.append(
             Piece(
@@ -1113,13 +1137,20 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             p.up + p.height / 2 + COURSE for p in hw.ports if p.kind == "burner" and p.wall == face
         ]
         bottom = max([min(8.0, top / 3), *above])
+        middle = 0.0
+        if (door := kiln.loading.opening) is not None:
+            # In the door, where it is in part of the wall: a course inside its top and sill
+            sill = si(door.sill, "in")
+            top = min(top, sill + si(door.height, "in") - COURSE)
+            bottom = max(bottom, sill + COURSE)
+            middle = si(door.across, "in")
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]
             if n > 1
             else [(bottom + top) / 2] * n
         )
-        sides = [3.0 if n > 1 and i == n - 1 else -3.0 for i in range(n)]
+        sides = [middle + (3.0 if n > 1 and i == n - 1 else -3.0) for i in range(n)]
         places = [
             (face, Faces.u_of(face, u), z + sh / 2) for z, u in zip(bottoms, sides, strict=True)
         ]
