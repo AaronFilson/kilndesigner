@@ -27,7 +27,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, OpenTop, SprungArch
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome
 from kilndesigner.units import si
 from kilndesigner.working import length_text
@@ -242,8 +242,6 @@ def not_drawn(kiln: Kiln) -> str | None:
     The calculations (heat loss, firing, chimney, roof) still run, and the 3D model is drawn as
     shells (massing.py)."""
     c = kiln.chamber
-    if kiln.roof.type == "open" and c.shape != "round":
-        return "an open top is calculated and drawn, but not yet laid out in brick or priced"
     if c.chambers > 1:
         return (
             "chambers in a row are calculated as one long chamber and drawn, but not yet laid out "
@@ -364,6 +362,8 @@ def lining_parts(kiln: Kiln) -> list[Part]:
         return parts
     if isinstance(kiln.roof, Dome):
         return parts + _dome_parts(kiln, parts, (x0, x1, y0, y1))
+    if isinstance(kiln.roof, OpenTop):
+        return parts  # the setting is covered for each firing: nothing built over the walls
     for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
         add("roof", i, mat, (x0, y0, h + cum), (x1, y1, h + cum + th))
         cum += th
