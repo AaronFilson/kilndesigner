@@ -853,8 +853,12 @@ class Kiln(Spec):
         if self.chamber.shape == "round":
             if isinstance(self.roof, SprungArch | CatenaryArch):
                 raise ValueError("a round chamber takes a dome or a flat roof, not an arch")
-            if self.heat.electric is not None:
-                raise ValueError("elements in a round kiln's curved walls aren't designed here")
+            if self.heat.electric is not None and self.chamber.rings not in (None, "cut"):
+                raise ValueError(
+                    "elements in a round kiln are designed only in a faceted wall, straights cut "
+                    "to the angle (chamber.rings: cut), as electric kilns are built; not in a "
+                    "curved one"
+                )
             if isinstance(self.roof, Dome):
                 rise, radius = si(self.roof.rise, "in"), si(self.chamber.width, "in") / 2
                 if not 0 < rise <= radius:

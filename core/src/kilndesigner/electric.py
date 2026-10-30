@@ -80,6 +80,14 @@ KANTHAL_MIN_WIRE = Q_(3, "mm")  # Kanthal minimum for grooved elements, for long
 # (electrical-supply.md §5); no figure exists for coils in grooves.
 WIRE_ABOVE_KILN = Q_(100, "delta_degC")
 COURSE_HEIGHT = Q_(2.5, "in")  # one groove per brick course at most (§5: 9 × 4½ × 2½ in)
+# A faceted round wall of 2½ or 3 in brick is laid in 4½ in courses (Skutt KM-1227-3, L&L
+# e23T-3; electric-kiln-survey.md), so one groove per 4½ in at most. No maker's groove pitch was
+# found; the engine keeps the one-per-course rule, not a spacing of its own.
+ROUND_COURSE_HEIGHT = Q_(4.5, "in")
+ROUND_SOURCE = (
+    "a faceted ring, one brick per facet per course, 4½ in courses (electric-kiln-survey.md, "
+    "Skutt KM-1227-3, L&L e23T-3)"
+)
 GAUGES = range(8, 21)
 
 
@@ -170,6 +178,9 @@ class ElectricDesign(BaseModel):
 
 
 def _groove_length(kiln: Kiln, electric: Electric) -> float:
+    if kiln.chamber.shape == "round":
+        # Round the facets of each quarter of the ring the elements are in, along the hot face
+        return chamber_shape(kiln).perimeter() / 4 * len(set(electric.walls))
     lengths = {
         "left": si(kiln.chamber.depth, "m"),
         "right": si(kiln.chamber.depth, "m"),
@@ -453,7 +464,12 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
     _check_temperatures(kiln, wire, top, wire_temp, findings, temp_unit)
 
     groove = _groove_length(kiln, electric)
-    max_rows = int(si(kiln.chamber.height, "m") // si(COURSE_HEIGHT, "m"))
+    shape = chamber_shape(kiln)
+    is_round = kiln.chamber.shape == "round"
+    course = ROUND_COURSE_HEIGHT if is_round else COURSE_HEIGHT
+    max_rows = int(si(kiln.chamber.height, "m") / si(course, "m") + 1e-9)
+    if is_round:
+        working.append(_round_grooves_step(electric, shape.sides, groove, max_rows, us))
     max_load = si(MOST_SURFACE_LOAD, "W/m**2")
     preferred = si(KILN_SURFACE_LOAD, "W/m**2")
     candidates = _candidates(
@@ -577,6 +593,8 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
     c = kiln.chamber
     w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
     side = {"left": d * h, "right": d * h, "back": w * h, "front": w * h}
+    if is_round:  # quarters of the ring, flats and corners
+        side = {f.face: f.inside_area for f in shape.faces() if f.orientation == "vertical"}
     wall_area = sum(side.get(wall, 0.0) for wall in electric.walls)
     if wall_area > 0:
         loading = power / wall_area
@@ -674,6 +692,39 @@ def design_elements(kiln: Kiln, heat_loss_watts: float | None = None) -> Electri
         power_per_volume=show(per_volume, "W/ft**3" if us else "kW/m**3"),
         working=working,
         findings=findings,
+    )
+
+
+def _round_grooves_step(
+    electric: Electric, sides: int | None, groove: float, rows: int, us: bool
+) -> Step:
+    """The grooves of a round kiln: round the facets, one per course."""
+    inputs = {
+        "element walls (quarters of the ring)": ", ".join(electric.walls),
+        "courses": str(rows),
+        "course height": show(ROUND_COURSE_HEIGHT),
+    }
+    if sides is None:
+        formula = "π·D/4 per quarter"
+        note = (
+            "The wall isn't one ring of whole bricks cut to the angle, so the groove is taken "
+            "round the circle."
+        )
+    else:
+        formula = "2·N·a·tan(π/N)/4 per quarter, a = D/(1 + 1/cos(π/N))"
+        inputs["N, facets"] = str(sides)
+        note = (
+            "Each groove runs round the flats of its course, the coil bending at each corner. No "
+            "source gives a groove pitch, a groove depth, or how tight a coil may bend at a "
+            "facet's corner: one groove per course is the engine's limit, from the bricks' size."
+        )
+    return Step(
+        name="Groove round the ring, per element course",
+        value=show(Q_(groove, "m"), "ft" if us else "m"),
+        formula=formula,
+        inputs=inputs,
+        reference=ROUND_SOURCE,
+        note=note,
     )
 
 

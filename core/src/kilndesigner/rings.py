@@ -221,6 +221,18 @@ def nominal_diameter(bricks: float, depth_mm: float) -> float:
     return inner * (1 + 1 / math.cos(half))
 
 
+def inside_apothem(inside_diameter_mm: float, sides: float) -> float:
+    """A cut ring's inside apothem (mm), the centre to the middle of a flat, from its diameter as
+    makers quote it, the mean of flats and corners: D = a·(1 + 1/cos(π/N))."""
+    return inside_diameter_mm / (1 + 1 / math.cos(math.pi / sides))
+
+
+def cut_facets(inside_diameter_mm: float, depth_mm: float) -> int | None:
+    """The facets of a cut ring of whole bricks round, or None when it takes a closer."""
+    n, whole = cut_count(cut_bricks(inside_diameter_mm, depth_mm))
+    return n if whole else None
+
+
 def cut_bricks(inside_diameter_mm: float, depth_mm: float = 4.5 * IN) -> float:
     """How many full 9 in straights, cut to the angle, turn a ring of this inside diameter (as
     makers quote it, nominal_diameter) and depth: N solved from nominal_diameter(N) = D, by
