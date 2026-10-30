@@ -305,6 +305,47 @@ describe("DesignForm, loading", () => {
     });
   });
 
+  it("puts a door in part of a gas kiln's wall, and one into each chamber of a row", () => {
+    const gas: KilnDocument = {
+      ...electric,
+      heat: { gas: { supply: { type: "cylinders", count: 4 } } },
+    };
+    const last = live(gas);
+    expect(screen.queryByLabelText("Door width, inside the jambs")).toBeNull();
+    fireEvent.click(screen.getByLabelText(/The door is in part of the wall/));
+    expect(last().loading?.opening).toEqual({ width: "20 in", height: "36 in" });
+    set("Door width, inside the jambs", "24");
+    set("Door height, sill to the top of the opening", "30");
+    set("Door's centre off the wall's middle, to the right from outside", "-1");
+    set("Sill, above the floor", "2");
+    set("Door head", "lintel");
+    expect(last().loading?.opening).toEqual({
+      width: "24 in",
+      height: "30 in",
+      across: "-1 in",
+      sill: "2 in",
+      head: "lintel",
+    });
+    // A door in each chamber only for chambers in a row, in a side wall
+    expect(screen.queryByLabelText(/A door into each chamber/)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/The door is in part of the wall/));
+    expect(last().loading?.opening).toBeUndefined();
+    cleanup();
+    const row = live({
+      ...gas,
+      chamber: { ...gas.chamber, chambers: 3 },
+      loading: { face: "right", opening: { width: "20 in", height: "38 in" } },
+    });
+    fireEvent.click(screen.getByLabelText(/A door into each chamber/));
+    expect(row().loading?.opening?.each_chamber).toBe(true);
+    fireEvent.click(screen.getByLabelText(/A door into each chamber/));
+    expect(row().loading?.opening?.each_chamber).toBeUndefined();
+    cleanup();
+    // An electric kiln's door is its whole front
+    form(electric);
+    expect(screen.queryByLabelText(/The door is in part of the wall/)).toBeNull();
+  });
+
   it("bricks up a gas kiln's door unless told otherwise", () => {
     form({ ...electric, heat: { gas: { supply: { type: "cylinders", count: 4 } } } });
     expect(field("Door").value).toBe("bricked");

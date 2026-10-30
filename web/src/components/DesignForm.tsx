@@ -1370,6 +1370,70 @@ export function DesignForm({
             onChange={(v) => change(["loading", "door"], v)}
           />
         )}
+        {loading.type !== "car" && !doc.heat.electric && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={loading.opening !== undefined}
+              onChange={(e) =>
+                change(
+                  ["loading", "opening"],
+                  e.target.checked ? { width: "20 in", height: "36 in" } : undefined,
+                )
+              }
+            />
+            The door is in part of the wall (left out: the whole wall is the door)
+          </label>
+        )}
+        {loading.type !== "car" && loading.opening && (
+          <>
+            <Quantity
+              label="Door width, inside the jambs"
+              value={loading.opening.width}
+              units={LENGTH}
+              onChange={(v) => change(["loading", "opening", "width"], v)}
+            />
+            <Quantity
+              label="Door height, sill to the top of the opening"
+              value={loading.opening.height}
+              units={LENGTH}
+              onChange={(v) => change(["loading", "opening", "height"], v)}
+            />
+            <Quantity
+              label="Door's centre off the wall's middle, to the right from outside"
+              value={loading.opening.across}
+              units={LENGTH}
+              onChange={(v) => change(["loading", "opening", "across"], v)}
+            />
+            <Quantity
+              label="Sill, above the floor"
+              value={loading.opening.sill}
+              units={LENGTH}
+              onChange={(v) => change(["loading", "opening", "sill"], v)}
+            />
+            <Choice
+              label="Door head"
+              value={loading.opening.head ?? "arch"}
+              options={[
+                ["arch", "A semicircular brick arch"],
+                ["lintel", "A steel lintel"],
+              ]}
+              onChange={(v) => change(["loading", "opening", "head"], v)}
+            />
+            {chambers > 1 && SIDES.includes(loading.face) && (
+              <label className="check">
+                <input
+                  type="checkbox"
+                  checked={loading.opening.each_chamber ?? false}
+                  onChange={(e) =>
+                    change(["loading", "opening", "each_chamber"], e.target.checked || undefined)
+                  }
+                />
+                A door into each chamber, the same in each (across from each chamber's middle)
+              </label>
+            )}
+          </>
+        )}
         {loading.type === "car" && (
           <Quantity
             label="Car hardware cost"

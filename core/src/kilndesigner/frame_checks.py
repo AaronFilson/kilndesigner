@@ -777,6 +777,139 @@ def door_lintel(
     return s
 
 
+# ---- An arched door head and its jambs (Heyman; door.py) ---------------------------------------
+
+
+@dataclass(frozen=True)
+class DoorArchInputs:
+    """A semicircular ring arch over a door in part of a wall, on brick jambs."""
+
+    span: float  # in, the door's width
+    ring: float  # in, the ring's depth, radially
+    layers: tuple[Layer, ...]  # the wall's, through its thickness
+    above: float  # in, the wall over the springline at the door's crown
+    edge: float  # lb/ft, the roof's vertical load on the wall over the door
+    edge_source: str
+    ring_source: str
+    springing: float  # in, the springline over the jambs' base
+    jamb: float  # in, the narrower jamb, along the wall, to the next opening or the wall's end
+    jamb_source: str
+    least: float  # lbf, the minimum thrust: a line of thrust from the crown's top
+    most: float  # lbf, the maximum thrust: a line of thrust from the crown's soffit
+
+
+ARCH_STATICS = (
+    "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies "
+    "within it, the line found need not be the actual one; domes-over-doors.md §D3, "
+    "arch-thrust-theory.md §2"
+)
+MINIMUM_THRUST = (
+    "the minimum thrust, the line of thrust from the crown's extrados touching the intrados: 'an "
+    "arch on spreading supports will act in a state of minimum thrust' (Heyman, The Stone "
+    "Skeleton; arch-thrust-theory.md §2 [A1], [A3]), the least it pushes on its neighbours "
+    "(domes-over-doors.md §D3 [D7])"
+)
+NO_TENSION = (
+    "the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 "
+    "[D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress"
+)
+
+
+def _door_arch(s: Sheet, da: DoorArchInputs, *, loads: bool = True) -> None:
+    """The arch's size, and with ``loads`` the wall's weight on half of it, its least thrust H and
+    where the line of thrust crosses the springing, x_p in from the door's edge."""
+    s.given("S", "the door's width", Q_(da.span, "in"), source=f"{DESIGN}: the door")
+    s.given("d", "the ring's depth", Q_(da.ring, "in"), source=da.ring_source)
+    s.let("r", "the arch's inside radius: a semicircle", "S/2", "in")
+    s.let("R_o", "the ring's outside radius", "r + d", "in")
+    if not loads:
+        return
+    for i, x in enumerate(da.layers, 1):
+        s.given(f"t_{i}", f"layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"ρ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    n = len(da.layers)
+    s.let("b", "the wall's thickness", " + ".join(f"t_{i}" for i in range(1, n + 1)), "in")
+    s.let("q", "the wall's weight per square inch of its face",
+          " + ".join(f"ρ_{i}*t_{i}" for i in range(1, n + 1)), "psi")  # fmt: skip
+    s.given("Z", "the wall over the springline at the door's crown", Q_(da.above, "in"),
+            source=f"{DESIGN}: the wall's inside top over the door's middle")  # fmt: skip
+    s.given("V", "the roof's vertical load on the wall over the door", Q_(da.edge, "lbf/ft"),
+            source=da.edge_source)  # fmt: skip
+    s.let("W_r", "half the ring's weight", "q*pi/4*(R_o^2 - r^2)", "lbf",
+          source="a quarter annulus")  # fmt: skip
+    s.let("x_r", "its centroid, out from the door's middle",
+          "4*(R_o^3 - r^3)/(3*pi*(R_o^2 - r^2))", "in", source="a quarter annulus")  # fmt: skip
+    s.let("W_s", "the wall over half the ring, all of it", "q*(R_o*Z - pi*R_o^2/4)", "lbf",
+          source="the whole wall above the soffit taken to bear on the arch, 'certainly on the "
+          "safe side' (BIA TN 31A; door-headers.md §D3.6)")  # fmt: skip
+    s.let("x_s", "its centroid, out from the door's middle",
+          "(R_o^2*Z/2 - R_o^3/3)/(R_o*Z - pi*R_o^2/4)", "in",
+          source="a rectangle R_o by Z less a quarter disc")  # fmt: skip
+    s.let("W_v", "the roof's load over half the ring", "V*R_o", "lbf")
+    s.let("N", "each springing's vertical load", "W_r + W_s + W_v", "lbf")
+    s.given("H", "thrust: the least the arch pushes on each jamb", Q_(da.least, "lbf"),
+            source=f"{MINIMUM_THRUST}; the engine's search over radial joints every ½° "
+            "(door.py: door_thrusts)")  # fmt: skip
+    s.let("x_p", "where the line of thrust crosses the springing, in from the door's edge",
+          "(H*R_o + W_r*x_r + W_s*x_s + W_v*R_o/2)/N - r", "in",
+          source="moments of half the arch about the crown's top")  # fmt: skip
+
+
+def door_arch_ring(da: DoorArchInputs, eta: float, safety: float, source: str) -> Sheet:
+    """The ring against the thinnest semicircle that holds a line of thrust (Couplet–Heyman),
+    with Heyman's geometric factor of safety; and, under the wall's load, the least thrust no more
+    than the most, so a line of thrust fits in the ring. Geometry: no range of T/S limits it."""
+    s = Sheet("frame.door-arch", "The door's arch: a line of thrust fits in its ring",
+              reference=f"{ARCH_STATICS}; {source}")  # fmt: skip
+    _door_arch(s, da)
+    s.require("Z", ">=", "R_o")
+    s.given("η", "the thinnest semicircle that stands, as t/r", eta,
+            source=f"{source}: Heyman's table at a half-angle of 90°")  # fmt: skip
+    s.let("k", "how many times the thinnest that stands", "d/(r + d/2)/η",
+          source="Heyman's geometric factor of safety, under its own weight")  # fmt: skip
+    s.given("k_min", "Heyman's factor of safety", safety, source=source)
+    s.require("k", ">=", "k_min")
+    s.given("H_max", "the most the arch can push: the line from the crown's soffit",
+            Q_(da.most, "lbf"),
+            source="Heyman's maximum thrust, hinges at the intrados at the crown and the extrados "
+            "lower down (arch-thrust-theory.md §2 [A2]); the engine's search")  # fmt: skip
+    s.require("H", "<=", "H_max")
+    s.lever("d", Q_(0.5, "in"), Q_(24, "in"))
+    return s
+
+
+def _jamb_base(s: Sheet, da: DoorArchInputs) -> None:
+    s.given("h_s", "the springline over the jamb's base", Q_(da.springing, "in"),
+            source=f"{DESIGN}: the door's sill and height, less its radius")  # fmt: skip
+    s.given("e", "the jamb's width along the wall", Q_(da.jamb, "in"), source=da.jamb_source)
+    s.let("G_1", "the jamb under the springline", "q*e*h_s", "lbf")
+    s.let("G_2", "the wall over the springline on the jamb, beside the ring",
+          "q*max(e - d, 0*d)*Z", "lbf")  # fmt: skip
+    s.let("ΣV", "the vertical load on the jamb's base", "N + G_1 + G_2", "lbf")
+    s.let("x_R", "where the resultant meets the base, in from the door's edge",
+          "(N*x_p + G_1*e/2 + G_2*(d + e)/2 + H*h_s)/ΣV", "in",
+          source="moments about the door's edge at the base: the thrust carries the resultant "
+          "away from the door")  # fmt: skip
+
+
+def door_jamb(da: DoorArchInputs) -> Sheet:
+    """The jamb as a buttress: the arch's least thrust and its load, with the jamb's own weight
+    and the wall over it, give a resultant at the jamb's base that must lie within it (the safe
+    theorem), and in its middle third for no tension."""
+    s = Sheet("frame.door-jamb", "The door's jamb holds the arch's thrust",
+              reference=f"{ARCH_STATICS}; {MINIMUM_THRUST}; {NO_TENSION}")  # fmt: skip
+    _door_arch(s, da)
+    _jamb_base(s, da)
+    s.require("x_R", "<=", "e")
+    s.let("x_0", "the door's edge", "0*e", "in")
+    s.require("x_R", ">=", "x_0")
+    s.let("x_3", "the far edge of the base's middle third", "2*e/3", "in", source=NO_TENSION)
+    s.require("x_R", "<=", "x_3", level="warning")
+    s.lever("e", Q_(2, "in"), Q_(240, "in"))
+    return s
+
+
 def steel_heat(hot: HotSteel, table_top: float, service: float, service_source: str) -> Sheet:
     """The frame steel's temperature against the sourced range: AISC's table of E(T) ends at
     1,400 °F (past it nothing sourced gives the steel's stiffness: refuse), and Giles keeps carbon

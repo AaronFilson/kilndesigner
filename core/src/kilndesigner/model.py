@@ -297,6 +297,14 @@ class DoorOpening(Spec):
             "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5)"
         ),
     )
+    each_chamber: bool = Field(
+        default=False,
+        description=(
+            "Chambers in a row: the same door into each chamber, in the same side wall, as "
+            "climbing kilns have them (Olsen Figs 4-36, 4-45); 'across' is then from the middle "
+            "of each chamber's stretch of the wall"
+        ),
+    )
 
 
 class Loading(Spec):
@@ -1007,6 +1015,11 @@ class Kiln(Spec):
                 "a door in part of a side wall of chambers in a row is laid out only under arches "
                 "along the draft: put it in the front or back wall"
             )
+        if door.each_chamber and not (row and face in ("left", "right")):
+            raise ValueError(
+                "a door in each chamber is for chambers in a row, in a side wall: leave out "
+                "each_chamber, or put the door in the left or right wall"
+            )
         along = self.chamber.width if face in ("front", "back") else self.chamber.depth
         half = si(along, "in") / 2
         if row and face in ("left", "right"):
@@ -1015,8 +1028,21 @@ class Kiln(Spec):
             run = run_layout(self)
             lo, hi = run.front(0) / 25.4, run.back(run.chambers - 1) / 25.4
             half = (hi - lo) / 2
-            u = (lo + hi) / 2 + (across if face == "right" else -across)
-            if not any(
+            shift = across if face == "right" else -across
+            if door.each_chamber:
+                # Each chamber's own stretch of the wall, from its middle
+                for k in range(run.chambers):
+                    a, b = run.front(k) / 25.4, run.back(k) / 25.4
+                    u = (a + b) / 2 + shift
+                    if u - w / 2 < a - 1e-9 or u + w / 2 > b + 1e-9:
+                        raise ValueError(
+                            f"the door, {w:g} in wide and {across:g} in off the middle of chamber "
+                            f"{k + 1}, doesn't fit between its walls across the run, "
+                            f"{b - a:.1f} in apart: move it or make it narrower"
+                        )
+                half = math.inf
+            u = (lo + hi) / 2 + shift
+            if not door.each_chamber and not any(
                 run.front(k) / 25.4 - 1e-9 <= u - w / 2 and u + w / 2 <= run.back(k) / 25.4 + 1e-9
                 for k in range(run.chambers)
             ):

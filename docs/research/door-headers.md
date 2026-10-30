@@ -621,6 +621,46 @@ Worked examples (all derived):
 
 ---
 
+## D9. The engine's statics for an arched door head and its jambs (2026-10-30, derived)
+
+HarbisonWalker's roof-arch method stays out of reach (§D3.7: a door arch's T/S is 15–45 %, its
+table 4–10 %), so the engine uses Heyman's limit analysis, which is geometry and statics alone
+and needs no checked range (`arch-thrust-theory.md` §2; `domes-over-doors.md` §D3). Every step
+is a formula sheet (`frame_checks.py`, `frame.door-arch`, `frame.door-jamb`,
+`frame.door-bearing-*`):
+
+1. **The ring.** A semicircle of inside radius r = S/2, laid as the roof's ring (Olsen, Rhodes,
+   §D4: "in the same way as the main arch"; a roof with no ring leaves the door unchecked). Its
+   depth d against the thinnest semicircle that holds a line of thrust under its own weight,
+   t/r_m = 0.10743 (Couplet–Heyman, `steel.yaml`), with Heyman's factor of about 2.
+2. **The load.** The whole wall over the soffit, up to the wall's inside top over the door's
+   middle, bears on the arch: BIA's "certainly on the safe side" (§D3.6); the roof's edge load
+   (§D7) on top. The ring must fit under the wall's top (Z ≥ R_o).
+3. **The thrusts.** Half the arch is cut into a grid; at each radial joint (every ½°) the load is
+   the ring nearer the crown and the wall standing on it, cut by a plumb line (a wall's head
+   joints are upright). The least thrust is the line from the crown's extrados touching the
+   intrados; the most, from the crown's intrados touching the extrados ([A1]–[A3]). A line fits
+   in the ring when least ≤ most.
+4. **The jamb.** A jamb that gives a little lets the arch settle to its least thrust ("an arch on
+   spreading supports will act in a state of minimum thrust", [A1]), so that is what it holds.
+   The jamb is its own strip of wall from the door's edge to the next door or the wall's outside
+   end (the walls bonded into its end aren't counted: cautious). With the springing's load where
+   the line crosses the springing, the jamb's weight under the springline and the wall over it
+   beside the ring, the resultant at the jamb's base must lie within it (error) and within its
+   middle third (warning: no tension, [D7], BIA TN 31A §D3.2).
+5. **Not checked:** sliding (no friction for refractory masonry is sourced), the hot thrust of a
+   door arch held rigidly (it rises toward the most; not sourced as a number), and the walls
+   bonded into the jamb.
+6. **Bearing.** At the springing and the jamb's toe, the triangle of stress 2N/(3·b·a), a the
+   resultant's distance to the nearer edge, against the brick's sourced figure at its
+   temperature there (`refractory-bearing.md`).
+
+Olsen's built kilns with arched doors in `examples/olsen` (Bidai, Kawaii: doors per chamber in a
+side wall, 20 in wide, Fig 4-36) pass: their 9 in rings are 5.8 times the thinnest, the least
+thrust under the wall over them about 8 lb, the resultant 2.8–3.2 in into a 10 in end jamb.
+
+---
+
 ## Sources
 
 - [H1] Brick Industry Association, *Technical Notes on Brick Construction 31B, Structural Steel Lintels*, revised, reissued May 1987 (first published Nov/Dec 1981). p. 3 is a scan, read as an image. https://www.gobrick.com/media/file/31b-structural-steel-lintels.pdf

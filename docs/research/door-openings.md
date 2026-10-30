@@ -55,7 +55,11 @@ refused on a car kiln.
 So in climbing kilns the door is in the side wall, where the chamber's arch, running along the
 draft, ends; the walls the arch springs from (front, back, between chambers) have no doors. The
 engine allows a door in part of a side wall of chambers in a row under such arches, and keeps
-refusing one in their front or back wall.
+refusing one in their front or back wall. One door per chamber, alike, is `each_chamber`
+(2026-10-30): Fig 4-36's plan (re-checked on the page image) puts each 20 in door at its
+chamber's front, against the wall between it and the chamber below, all in the same side wall.
+No figure gives the doors' height or what spans their heads; the examples take them to the
+springline and arched, and say so.
 
 ## Downdraft kilns (Olsen ch. 5)
 
@@ -87,9 +91,13 @@ front wall; none shows a lift-off door or a lintel.
   shows a steel lintel carrying a wall over a door; the rectangular frame of Fig 6-69 sits in an
   end wall under a sprung arch, which puts no roof load on that wall (`door-headers.md` §D7).
 - **A semicircular arch's sizes are not given.** No figure gives the ring's depth, the jambs'
-  width or a form's size, and the arch checks in the engine (HarbisonWalker's, for roof arches with
-  T/S 4–10 %) don't reach a door arch (`door-headers.md` §D3.7, §D8). So the arched head is laid
-  out but not checked.
+  width or a form's size, and HarbisonWalker's arch method (for roof arches with T/S 4–10 %)
+  doesn't reach a door arch (`door-headers.md` §D3.7, §D8). Since 2026-10-30 the engine checks it
+  by Heyman's statics, which are geometry and need no range (`door-headers.md` §D9): the ring is
+  laid as the roof's ring (Olsen, Rhodes: "in the same way as the main arch"), against the
+  thinnest semicircle that stands (factor 2); a line of thrust fits in it under the wall above
+  (least thrust ≤ most); and the jamb holds the least thrust with its resultant within its base,
+  and in its middle third (a warning).
 - **A steel lintel** is the method of `steel-design.md` §S5, not a built kiln's. Its end bearing on
   refractory brick stays unchecked (below).
 

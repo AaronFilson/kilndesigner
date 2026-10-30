@@ -525,8 +525,10 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
                 level="info",
                 message=(
                     f"The door is a {si(opening.width, 'in'):g} × {si(opening.height, 'in'):g} in "
-                    f"opening in the {face} wall, bricked up dry for each firing in the wall's "
-                    "own layers, as Olsen's Tamba and Kanayama doors are (Figs 4-14, 7-18)."
+                    f"opening in the {face} wall"
+                    + (", one into each chamber" if opening.each_chamber else "")
+                    + ", bricked up dry for each firing in the wall's own layers, as Olsen's "
+                    "Tamba and Kanayama doors are (Figs 4-14, 7-18)."
                 ),
                 reference="door-openings.md; kiln-hardware.md §6.1 [S4]",
             )
@@ -1143,7 +1145,9 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             sill = si(door.sill, "in")
             top = min(top, sill + si(door.height, "in") - COURSE)
             bottom = max(bottom, sill + COURSE)
-            middle = si(door.across, "in")
+            from kilndesigner.door import door_across
+
+            middle = door_across(kiln)  # the first door's, when there's one per chamber
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]

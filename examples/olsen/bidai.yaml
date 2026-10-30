@@ -19,11 +19,12 @@
 # chamber it feeds, 73 in. Its grate is the 14 in zone (read here as across the firebox) by 21 in,
 # the middle of the 18–24 in bars of Kawaii's kiln, which has the same firebox (kawaii, p.97,
 # p.200). No total chimney height is printed (p.94–95), so the engine sizes the chimney.
-# Not modelled: each arch spans its chamber front to back, between the common walls, peaked
-# toward the back (p.91–92, p.95); the engine's arch spans the width, so it is laid across the
-# 73 in with the same springline and crown. The doors, one per chamber, 20 in wide, are all in
-# one side wall; a sprung arch here springs from the side walls, so the door is put in the front
-# wall. Also left out: the floor's loss into the ground (the engine doesn't work it out), the
+# The doors, one per chamber, 20 in wide, all in one side wall at each chamber's front, under the
+# end of its arch (Fig 4-36's plan); their height isn't printed, so each is as tall as the engine
+# lays a door in a side wall, to the springline, 38 in, and arched, as the doors of Olsen's other
+# built kilns are (door-openings.md).
+# Not modelled: each arch is peaked toward the back (p.91–92, p.95); the engine's is a circular
+# arch from the front wall to the back. Also left out: the floor's loss into the ground (the engine doesn't work it out), the
 # firebox's semicircular front, the 3 in overcoat of fireclay, dirt and straw (p.95), the vapour
 # and spy holes, the steps between chambers, and the chimney's grid of 9 × 9 in flues across the
 # 73 in width (Fig 4-36).
@@ -45,8 +46,13 @@ roof:
   buttressed: true # thrust onto the common walls and the chimney (p.95)
 loading:
   type: door
-  face: front
+  face: right # one side wall (Fig 4-36's plan)
   door: bricked
+  opening:
+    width: 20 in # "DOOR" 20" at each chamber (Fig 4-36)
+    height: 38 in # not printed: to the springline, as tall as the engine lays a side door
+    across: -10.5 in # at each chamber's front, against the wall between (Fig 4-36's plan)
+    each_chamber: true # one per chamber, all in one side wall (Fig 4-36)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield # local firebrick, grade not given

@@ -11,7 +11,15 @@ import yaml
 from pydantic import ValidationError
 
 from kilndesigner.designfile import parse_design
-from kilndesigner.door import cut_door, door_head, door_hole, model_door_holes
+from kilndesigner.door import (
+    cut_door,
+    door_across,
+    door_head,
+    door_hole,
+    door_holes,
+    door_thrusts,
+    model_door_holes,
+)
 from kilndesigner.frame import design_frame
 from kilndesigner.geometry import lining_parts
 from kilndesigner.hardware import build_hardware
@@ -90,17 +98,63 @@ def test_a_lintel_too_long_is_refused_with_its_sheet() -> None:
     assert refused.check.id == "frame.door-lintel"
 
 
-def test_an_arched_door_is_laid_out_not_checked() -> None:
+def test_an_arched_door_and_its_jambs_are_checked_by_heymans_statics() -> None:
     kiln = _kiln("gas-crossdraft.yaml", ARCH)
     head = door_head(kiln)
     assert head is not None
     assert head.lintel is None
-    assert any("aren't checked" in f.message for f in head.findings)
+    assert not [f for f in head.findings if f.level != "info"]
+    assert any("holds its least thrust" in f.message for f in head.findings)
+    step = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert "Heyman" in (step.note or "")
     hole = door_hole(kiln)
     assert hole is not None
     assert hole.radius == pytest.approx(10 * 25.4)
     assert hole.hi[2] == pytest.approx(20 * 25.4)  # the jambs' top: the arch springs there
     assert len(model_door_holes(kiln)) == 2
+
+
+def test_a_ring_too_thin_for_its_door_is_refused_with_its_sheet() -> None:
+    # A 3 in ring over 26 in: 3/(13 + 1.5) ÷ 0.10743 = 1.93 times the thinnest, under Heyman's 2
+    kiln = _kiln("gas-crossdraft.yaml", {"opening": {"width": "26 in", "height": "30 in"}})
+    head = door_head(kiln)
+    assert head is not None
+    refused = next(f for f in head.findings if f.level == "error")
+    assert refused.check is not None
+    assert refused.check.id == "frame.door-arch"
+    assert "1.9 times the thinnest" in refused.message
+
+
+def test_a_jamb_too_narrow_for_the_thrust_is_refused() -> None:
+    # A 26 in door in a 28 in wall of 2½ in brick: each jamb is the inch beside it and the side
+    # wall's 2½ in, and the 4½ in ring's thrust carries the resultant past it
+    kx = "hard-firebrick-kx99"
+    kiln = _kiln("gas-crossdraft.yaml", {"opening": {"width": "26 in", "height": "30 in"}},
+                 lining={"walls": [{"material": kx, "thickness": "2.5 in"}],
+                         "roof": [{"material": kx, "thickness": "4.5 in"}]})  # fmt: skip
+    head = door_head(kiln)
+    assert head is not None
+    refused = next(f for f in head.findings if f.level == "error")
+    assert refused.check is not None
+    assert refused.check.id == "frame.door-jamb"
+    assert "3.5 in jamb, outside it" in refused.message
+    # A ring standing up past the wall's top doesn't fit
+    tall = _kiln("gas-crossdraft.yaml", {"opening": {"width": "26 in", "height": "38 in"}},
+                 lining={"walls": [{"material": kx, "thickness": "4.5 in"}],
+                         "roof": [{"material": kx, "thickness": "9 in"}]})  # fmt: skip
+    head = door_head(tall)
+    assert head is not None
+    assert any("doesn't fit under the wall's top" in f.message for f in head.findings)
+
+
+def test_the_least_thrust_is_no_more_than_the_most_in_a_thick_ring() -> None:
+    for t in (1.0, 4.5, 9.0):
+        least, most = door_thrusts(10.0, 10.0 + t, 10.0 + t, 1.0, 0.0)
+        assert 0 < least <= most
+    # The roof's load on the wall's top adds to both
+    loaded = door_thrusts(10.0, 14.5, 30.0, 1.0, 20.0)
+    bare = door_thrusts(10.0, 14.5, 30.0, 1.0, 0.0)
+    assert loaded[1] > bare[1]
 
 
 def test_a_hinged_door_in_part_of_a_wall_hangs_round_the_opening() -> None:
@@ -155,9 +209,49 @@ def test_climbing_kilns_take_doors_in_their_side_walls() -> None:
     assert door_hole(kiln) is not None
     assert door_head(kiln) is not None
     with pytest.raises(ValidationError, match="under a springing"):
-        _kiln("olsen/bidai.yaml", {"opening": {"width": "20 in", "height": "36 in"}})
+        _kiln("olsen/bidai.yaml", {"face": "front", "opening": door})
     with pytest.raises(ValidationError, match="one chamber"):
         _kiln("olsen/bidai.yaml", {**side, "opening": {**door, "across": "20 in"}})
+
+
+def test_a_row_takes_a_door_into_each_chamber() -> None:
+    kiln = _kiln("olsen/bidai.yaml", {})  # Fig 4-36: a 20 in door per chamber, one side wall
+    holes = door_holes(kiln)
+    assert len(holes) == 3
+    # Each the same, at its chamber's front: 10.5 in towards the front of the chamber's middle
+    from kilndesigner.run_parts import run_layout
+
+    run = run_layout(kiln)
+    for k, hole in enumerate(holes):
+        middle = (run.front(k) + run.back(k)) / 2
+        assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(middle - 10.5 * 25.4)
+    names = {p.name.split("/")[1] for p in lining_parts(kiln) if p.name.startswith("door/")}
+    assert names == {"1", "2", "3"}
+    assert len(model_door_holes(kiln)) == 6  # a box and a half-round each
+    head = door_head(kiln)
+    assert head is not None
+    assert any(s.name == "A door in each chamber" for s in head.working)
+    assert door_across(kiln) == pytest.approx(-10.5)
+    hw = build_hardware(kiln, design_frame(kiln), None)
+    assert any("one into each chamber" in f.message for f in hw.findings)
+
+
+@pytest.mark.parametrize(
+    ("name", "loading", "words"),
+    [
+        ("gas-crossdraft.yaml",
+         {"opening": {**ARCH["opening"], "each_chamber": True}}, "in a row"),
+        ("olsen/bidai.yaml",
+         {"opening": {"width": "20 in", "height": "36 in", "across": "15 in",
+                      "each_chamber": True}},
+         "of chamber 1"),
+    ],
+)  # fmt: skip
+def test_a_door_in_each_chamber_must_be_a_rows_and_fit(
+    name: str, loading: dict[str, Any], words: str
+) -> None:
+    with pytest.raises(ValidationError, match=words):
+        _kiln(name, loading)
 
 
 def test_a_round_kiln_door_breaks_its_ring() -> None:

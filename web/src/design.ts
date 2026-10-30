@@ -8,6 +8,16 @@ export interface Layer {
   thickness: string;
 }
 
+/** A door in part of a wall (model.DoorOpening); left out, the whole wall is the door. */
+export interface DoorOpening {
+  width: string;
+  height: string;
+  across?: string;
+  sill?: string;
+  head?: "arch" | "lintel";
+  each_chamber?: boolean;
+}
+
 export interface KilnDocument {
   schema?: number;
   name: string;
@@ -40,6 +50,7 @@ export interface KilnDocument {
     type?: "door" | "car";
     face?: WallFace;
     door?: "bricked" | "hinged";
+    opening?: DoorOpening;
     car_hardware_cost?: string;
   };
   lining: { walls: Layer[]; floor?: Layer[]; roof?: Layer[]; door?: Layer[] };

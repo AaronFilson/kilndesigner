@@ -28,6 +28,9 @@ def _with(path: Path, **chamber: object) -> Kiln:
     roof = chamber.pop("roof", None)
     if roof is not None:
         document["roof"] = roof
+        if document["loading"].get("opening") is not None:
+            # A side-wall door needs arches along the draft: a new roof takes a whole-wall door
+            document["loading"].update(face="front", opening=None)
     document["chamber"].update(chamber)
     return Kiln.model_validate(document)
 
