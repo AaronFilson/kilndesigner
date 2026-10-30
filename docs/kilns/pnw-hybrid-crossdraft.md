@@ -1,8 +1,8 @@
 # The PNW hybrid cross-draft: results
 
-_Rebuilt 2026-10-30 from `examples/pnw-hybrid-crossdraft*.yaml` on the current engine (this
-replaces the 2026-10-21 first estimate, whose burner, element, chimney and supply figures are
-stale). Rebuild with `uv run kilndesigner build examples/pnw-hybrid-crossdraft.yaml --out out/pnw`
+_Rebuilt 2026-10-30 with the author's answers in (below: "With the answers in"). The section after
+it, "What the engine found before the answers", is the earlier 2026-10-30 build, kept for
+comparison. Rebuild with `uv run kilndesigner build examples/pnw-hybrid-crossdraft.yaml --out out/pnw`
 and `uv run kilndesigner simulate examples/pnw-hybrid-crossdraft.yaml --chart`. Every number
 below has its working and source in the report and plans._
 
@@ -18,7 +18,61 @@ below has its working and source in the report and plans._
 - 240 V, 60 A breaker (48 A continuous, 11.5 kW) of Kanthal APM in the left wall, off above
   1650 °F; propane from four 100 lb cylinders (budget: a 500 gal tank); coldest day 20 °F.
 
-## What the engine finds now
+## With the answers in
+
+| | Bricked door | Car | Budget lining |
+|---|---|---|---|
+| Door | 24 × 40 in, sill at the floor, steel lintel L4×4×¼ | the car's end | as the bricked door |
+| Burners | 8 × Ransome B3 at 1.0 psi, 56,510 BTU/hr each, 452,083 in all, through the door | same, through the right wall | as the bricked door |
+| Burner ports / exit flue | 8 × 4¼ in round, 113 in² / 113 in² (1:1) | same | same |
+| Propane | 11 × 100 lb cylinders: meets 452,083 at 20 °F full (1,243,000), half (704,000), ¼ keeping 10 psi (476,300) | same | same (the tank is gone) |
+| Priced materials | **$11,560** | $11,566 + the car's hardware | **$9,837** |
+| Errors / warnings | 0 / 1 (the budget) | 0 / 1 | 0 / 1 |
+| Simulated firing, 328 lb of shelves, hand-over 1650 °F | 33 h 09 min, $72.30 | same | 29 h 15 min, $66.49 |
+| Electricity / propane per firing | 356.2 kWh / 8.4 gal | same | 311.4 kWh / 8.3 gal |
+| Cheapest hand-over (chart) | 1200 °F: $65.81, 18.1 h | same | 1400 °F: $63.89, 21.6 h |
+
+1. **The door** (`loading.opening`: 24 × 40 in, sill 0, `head: lintel`). The roof of all three
+   variants is a **sprung arch, not a dome**: the author's answer speaks of "the dome" supporting
+   itself over the door. The arch springs from the side walls and runs front to back, so it puts
+   nothing on the front wall (door-headers.md §D7), and the door's 40 in top leaves 4 in of wall
+   under the springline. The roof type is unchanged; tell us if the kiln is to have a dome.
+   - With a steel lintel (the "steel bracing"): `frame.door-lintel` passes with an **L4×4×¼**,
+     32 in long, 4 in bearing each end, about 174 °F at the wall's face; each end puts about 20 lb
+     on the brick (1 psi, not checked: no allowable bearing stress for refractory brick is
+     published, refractory-bearing.md). The wall is 8 in thick and BIA puts an angle under each
+     wythe, so more than one angle is likely; how many isn't sized.
+   - Checked as an arched head instead, it passes too: the 3 in ring is 2.1 times the thinnest
+     that holds a line of thrust, and the 10 in jamb holds its least thrust (8 lb) 6.1 in from the
+     door (Heyman's statics; `frame.door-arch`, `frame.door-jamb`, `frame.door-slide`).
+   - The car variant keeps no opening: a car's door is its whole end.
+2. **Burners: eight.** The same design input (Olsen's Rule 1, 452,083 BTU/hr) split eight ways is
+   56,510 BTU/hr each; the library's cheapest burner carrying that within its pressures is the
+   Ransome B3 at 1.0 psi ($1,960 for eight). Through the door they sit in two rows of four, 6 in
+   apart across, at 4⅝ in and 12⅛ in up (the rows three 2½ in courses apart: a layout choice, not
+   a sourced rule); the eight ports are cut through the door's bricks. With eight ports the exit
+   flue is sized 1:1 to them: 113 in² (p.151, p.236). The car's eight spread along the right wall.
+   The **removable welded-steel rack** they hang on is hardware the engine doesn't size: no
+   source gives one, so it is listed here and left unsized and unpriced.
+3. **Propane: 11 cylinders.** The least count that meets the burners' draw at 20 °F in every case
+   the engine checks, down to ¼ full keeping 10 psi (Flame Engineering's table read at the
+   liquid's temperature; combustion-and-masonry.md §2.1–2.3, §2.8). Five clear the error (full,
+   565,000), eight are enough half full (512,000), eleven ¼ full (476,300; ten give 433,000).
+4. **Budget.** $5,000 stays. The brick kiln is $11,560 priced (the eight burners add $1,170 over
+   the two B5s, and the larger flue for their ports 40 more chimney bricks, 229 in all; the
+   cylinders aren't on the bill), the budget lining $9,837: both over. The linings
+   are unchanged; the castable version the author plans is the one to bring under budget.
+5. **The switch-over stays at 1650 °F**: the start of shino reduction, cone 012 to 010 (Orton,
+   861–915 °C, about 1580–1680 °F by rate, `cones.yaml`). The glaze sets it, not the cost chart's
+   cheapest point (1200 °F, $6.49 less per firing).
+6. **The stack, an estimate.** `firing.ware` is **328 lb, the shelves only**: four 12 × 24 × 1 in
+   mullite shelves a layer, 24 in across the 28 in width and 12 in along (4 in in front, 1 in
+   between and at the back fit four in the 60 in: Olsen p.142, p.151, Fig 5-82), at 20.5 lb each
+   (Olsen p.33–35), and four layers above the first 4½ in off the floor (p.135). **Four layers is
+   an assumption**, not sourced; the posts and the ware itself have no sourced mass and are left
+   out, so the firing simulated is a lower bound on a full kiln's.
+
+## What the engine found before the answers
 
 | | Bricked door | Car | Budget lining, 500 gal tank |
 |---|---|---|---|
@@ -74,18 +128,15 @@ below has its working and source in the report and plans._
    at 978 below 400 °C, which overstates the heat stored early (the conservative side). The
    simulation runs without a value in the design.
 
-## The door
-
-The door variant's door is the **whole front wall**, bricked up dry for each firing. No document
-from the author gives a door size, so no `loading.opening` is set and none is invented. To lay
-out a door in part of the wall the engine needs its width, height and sill (and an arched head
-or a lintel, which it then checks: `frame.door-arch`, `frame.door-jamb`). Note the burners also
-fire through the front wall in this variant, so their ports sit in the bricked door; the car
-variant moves them to the right wall.
-
 ## Open, needs the author
 
-1. **The door's sill height** (the door is 24 × 40 in; see the answers below).
+1. **Dome or arch?** The answer speaks of a dome over the door; the design's roof is a sprung
+   arch (it puts no load on the door wall either way). Say if the roof should be a dome.
+2. **The door head:** a lintel (as entered) or an arched head; both pass.
+3. **The burner layout in the door** (two rows of four) and the rack: the engine has no source to
+   size the rack.
+4. **A real stack:** the number of shelf layers, the posts and the ware's weight, to replace the
+   shelves-only estimate.
 
 ## The author's answers (2026-10-30)
 
@@ -99,7 +150,7 @@ variant moves them to the right wall.
   (`core/src/kilndesigner/data/cones.yaml`), so the hand-over is about 1580–1680 °F; the
   design's 1650 °F sits in that range. The firing is set by the glaze (shino reduction), not by
   the cheapest point on the cost chart.
-- **Door: 24 in wide × 40 in high** (sill height not given). The dome is thick enough to support
+- **Door: 24 in wide × 40 in high, the sill at floor level.** The dome is thick enough to support
   itself over the door, with steel bracing. The burners fire through ports in the door, from a
   removable rack of welded steel.
 - **Burners: eight**, for slow flame movement at high volume.
@@ -109,4 +160,6 @@ variant moves them to the right wall.
 ## Not sourced, left out
 
 Kanthal APM wire price; steel prices; the car's wheels, rails and seal (no source sizes them);
+the burners' removable welded-steel rack; the mass of the ware and the shelf posts; propane
+cylinder prices;
 an allowable bearing stress for the refractory (shown, not checked); HWI's own c_p.

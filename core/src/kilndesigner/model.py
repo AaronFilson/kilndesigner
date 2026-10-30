@@ -1028,10 +1028,18 @@ class Kiln(Spec):
             raise ValueError(
                 "a car's door is its whole end, which rolls out with it: leave out the opening"
             )
-        if self.heat.electric is not None:
+        electric = self.heat.electric
+        if electric is not None and self.heat.gas is None:
             raise ValueError(
                 "an electric kiln's door here is its whole front, hinged in its case: leave out "
                 "the opening"
+            )
+        if electric is not None and face in electric.walls:
+            # A hybrid's door in part of a wall: its elements' grooves run the wall's whole length
+            # (electric.py), so they can't share a wall with the door
+            raise ValueError(
+                f"the elements' grooves run the whole {face} wall, so a door can't be cut in it: "
+                "put the elements in other walls or the door in another wall"
             )
         if self.lining.door is not None:
             raise ValueError(

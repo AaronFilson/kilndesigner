@@ -72,14 +72,14 @@
               "expr": null,
               "formula": null,
               "label": "$",
-              "meaning": "Ransome B5 burner",
+              "meaning": "Ransome B3 burner",
               "offset": 0.0,
               "scale": 1.0,
-              "source": "Ransome B5, Ward Burner Systems",
+              "source": "Ransome B3, Ward Burner Systems",
               "symbol": "c_5",
               "text": null,
               "unit": "USD",
-              "value": 790.0
+              "value": 1960.0
             },
             {
               "expr": null,
@@ -92,7 +92,7 @@
               "symbol": "c_6",
               "text": null,
               "unit": "USD",
-              "value": 1030.05
+              "value": 1248.05
             },
             {
               "expr": null,
@@ -118,13 +118,13 @@
               "symbol": "C",
               "text": null,
               "unit": "USD",
-              "value": 10178.16
+              "value": 11566.16
             }
           ],
           "id": "bom.budget",
           "label": null,
           "lever": {
-            "hi": 20356.32,
+            "hi": 23132.32,
             "lo": 0.0,
             "step": null,
             "symbol": "B"
@@ -135,7 +135,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = $10,178, 203.6 % of B = $5,000",
+              "margin": "C = $11,566, 231.3 % of B = $5,000",
               "op": "<=",
               "right": "B"
             }
@@ -143,12 +143,12 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when B ≥ $10,178",
+          "solve": "Passes when B ≥ $11,566",
           "status": "warning",
           "title": "The priced materials against the budget"
         },
         "level": "warning",
-        "message": "The priced materials come to $10,178, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $11,566, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
@@ -199,19 +199,19 @@
         "unit_price": null
       },
       {
-        "buy": "2 burners",
-        "cost": 790.0,
-        "item": "Ransome B5 burner",
-        "needed": "2 burners at 2.4 psi, 226,042 BTU/hr each",
-        "priced_as": "Ransome B5, Ward Burner Systems",
+        "buy": "8 burners",
+        "cost": 1960.0,
+        "item": "Ransome B3 burner",
+        "needed": "8 burners at 1.0 psi, 56,510 BTU/hr each",
+        "priced_as": "Ransome B3, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
-        "unit_price": "$395.00"
+        "unit_price": "$245.00"
       },
       {
-        "buy": "189 bricks",
-        "cost": 1030.05,
+        "buy": "229 bricks",
+        "cost": 1248.05,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "189 straights (with 5 % for cuts and breakage)",
+        "needed": "229 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -254,7 +254,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 10178.16
+    "total": 11566.16
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -455,274 +455,6 @@
           {
             "expr": null,
             "formula": null,
-            "label": "in",
-            "meaning": "chamber width",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "W",
-            "text": null,
-            "unit": "inch",
-            "value": 0.7111999999999999
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "chamber depth",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "L",
-            "text": null,
-            "unit": "inch",
-            "value": 1.524
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "chamber height, to the springline",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "H",
-            "text": null,
-            "unit": "inch",
-            "value": 1.1176
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "the arch's rise",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "h_r",
-            "text": null,
-            "unit": "inch",
-            "value": 0.09525
-          },
-          {
-            "expr": "W*L*(H + 2/3*h_r)",
-            "formula": "W·L·(H + 2/3·h_r)",
-            "label": "ft³",
-            "meaning": "chamber volume, Ward's way",
-            "offset": 0.0,
-            "scale": 35.31466672148859,
-            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
-            "symbol": "V",
-            "text": null,
-            "unit": "ft**3",
-            "value": 1.2801574396799997
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "Btu/ft³/h",
-            "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
-            "offset": 0.0,
-            "scale": 0.09662107767853079,
-            "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
-            "symbol": "b",
-            "text": null,
-            "unit": "british_thermal_unit / foot ** 3 / hour",
-            "value": 103497.08614585242
-          },
-          {
-            "expr": "b*V",
-            "formula": "b·V",
-            "label": "Btu/h",
-            "meaning": "design burner input",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": null,
-            "symbol": "D",
-            "text": null,
-            "unit": "BTU/hr",
-            "value": 132492.5648148148
-          },
-          {
-            "expr": "D",
-            "formula": "D",
-            "label": "Btu/h",
-            "meaning": "what the burners draw at full fire",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": null,
-            "symbol": "P",
-            "text": null,
-            "unit": "BTU/hr",
-            "value": 132492.5648148148
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "°F",
-            "meaning": "the coldest air it fires in",
-            "offset": -459.67,
-            "scale": 1.8000000000000114,
-            "source": "the design",
-            "symbol": "t",
-            "text": null,
-            "unit": "degree_Fahrenheit",
-            "value": 266.48333333333335
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "Δ°F",
-            "meaning": "the liquid's cooling under draw",
-            "offset": 0.0,
-            "scale": 1.7999999999999998,
-            "source": "the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8",
-            "symbol": "Δt_l",
-            "text": null,
-            "unit": "delta_degree_Fahrenheit",
-            "value": 11.11111111111111
-          },
-          {
-            "expr": "t - Δt_l",
-            "formula": "t − Δt_l",
-            "label": "°F",
-            "meaning": "the liquid's temperature, which the table is read by",
-            "offset": -459.67,
-            "scale": 1.8000000000000114,
-            "source": null,
-            "symbol": "t_l",
-            "text": null,
-            "unit": "degF",
-            "value": 255.37222222222223
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "°F",
-            "meaning": "the table's row",
-            "offset": -459.67,
-            "scale": 1.8000000000000114,
-            "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-            "symbol": "t_l₁",
-            "text": null,
-            "unit": "degree_Fahrenheit",
-            "value": 255.37222222222223
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "Btu/h",
-            "meaning": "what one cylinder vaporizes in that row",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-            "symbol": "c₁",
-            "text": null,
-            "unit": "british_thermal_unit / hour",
-            "value": 33117.03555555556
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "°F",
-            "meaning": "the table's row",
-            "offset": -459.67,
-            "scale": 1.8000000000000114,
-            "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-            "symbol": "t_l₂",
-            "text": null,
-            "unit": "degree_Fahrenheit",
-            "value": 266.48333333333335
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "Btu/h",
-            "meaning": "what one cylinder vaporizes in that row",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-            "symbol": "c₂",
-            "text": null,
-            "unit": "british_thermal_unit / hour",
-            "value": 48942.875555555554
-          },
-          {
-            "expr": "c₁ + (c₂ - c₁)*(t_l - t_l₁)/(t_l₂ - t_l₁)",
-            "formula": "c₁ + (c₂ − c₁)·(t_l − t_l₁)/(t_l₂ − t_l₁)",
-            "label": "Btu/h",
-            "meaning": "what one cylinder vaporizes",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": "a straight line between the table's two nearest rows",
-            "symbol": "c",
-            "text": null,
-            "unit": "BTU/hr",
-            "value": 33117.03555555556
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "",
-            "meaning": "cylinders, joined in parallel",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": "the design",
-            "symbol": "n",
-            "text": null,
-            "unit": "",
-            "value": 4.0
-          },
-          {
-            "expr": "n*c",
-            "formula": "n·c",
-            "label": "Btu/h",
-            "meaning": "what the supply gives",
-            "offset": 0.0,
-            "scale": 3.412141156488376,
-            "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
-            "symbol": "C",
-            "text": null,
-            "unit": "BTU/hr",
-            "value": 132468.14222222223
-          }
-        ],
-        "id": "gas.supply-full",
-        "label": "E1",
-        "lever": {
-          "hi": 40.0,
-          "lo": 1.0,
-          "step": 1.0,
-          "symbol": "n"
-        },
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-        "requirements": [
-          {
-            "holds": false,
-            "left": "C",
-            "level": "error",
-            "margin": "C = 452,000 Btu/h, 99.98 % of P = 452,083 Btu/h",
-            "op": ">=",
-            "right": "P"
-          }
-        ],
-        "rule": null,
-        "rule_holds": true,
-        "rule_level": "error",
-        "solve": "Passes when n ≥ 5",
-        "status": "error",
-        "title": "Propane supply: 4 × 100 lb cylinders, full"
-      },
-      "level": "error",
-      "message": "Even full, the propane supply gives only 452,000 BTU/hr (113,000 each) at 20 °F, short of the 452,083 BTU/hr the burners draw. The kiln would stall before the top.",
-      "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
-    },
-    {
-      "check": {
-        "cells": [
-          {
-            "expr": null,
-            "formula": null,
             "label": "$",
             "meaning": "Morgan Thermal Ceramics JM 26 insulating firebrick",
             "offset": 0.0,
@@ -776,14 +508,14 @@
             "expr": null,
             "formula": null,
             "label": "$",
-            "meaning": "Ransome B5 burner",
+            "meaning": "Ransome B3 burner",
             "offset": 0.0,
             "scale": 1.0,
-            "source": "Ransome B5, Ward Burner Systems",
+            "source": "Ransome B3, Ward Burner Systems",
             "symbol": "c_5",
             "text": null,
             "unit": "USD",
-            "value": 790.0
+            "value": 1960.0
           },
           {
             "expr": null,
@@ -796,7 +528,7 @@
             "symbol": "c_6",
             "text": null,
             "unit": "USD",
-            "value": 1030.05
+            "value": 1248.05
           },
           {
             "expr": null,
@@ -822,13 +554,13 @@
             "symbol": "C",
             "text": null,
             "unit": "USD",
-            "value": 10178.16
+            "value": 11566.16
           }
         ],
         "id": "bom.budget",
         "label": "W1",
         "lever": {
-          "hi": 20356.32,
+          "hi": 23132.32,
           "lo": 0.0,
           "step": null,
           "symbol": "B"
@@ -839,7 +571,7 @@
             "holds": false,
             "left": "C",
             "level": "warning",
-            "margin": "C = $10,178, 203.6 % of B = $5,000",
+            "margin": "C = $11,566, 231.3 % of B = $5,000",
             "op": "<=",
             "right": "B"
           }
@@ -847,12 +579,12 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when B ≥ $10,178",
+        "solve": "Passes when B ≥ $11,566",
         "status": "warning",
         "title": "The priced materials against the budget"
       },
       "level": "warning",
-      "message": "The priced materials come to $10,178, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $11,566, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
@@ -924,12 +656,6 @@
     {
       "check": null,
       "level": "info",
-      "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
-      "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
-    },
-    {
-      "check": null,
-      "level": "info",
       "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
       "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
     },
@@ -984,7 +710,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
@@ -1263,11 +989,11 @@
       }
     ],
     "burners": {
-      "count": 2,
-      "each": "226,042 BTU/hr",
-      "model": "Ransome B5",
-      "pressure": "2.4 psi",
-      "total_cost": 790.0,
+      "count": 8,
+      "each": "56,510 BTU/hr",
+      "model": "Ransome B3",
+      "pressure": "1.0 psi",
+      "total_cost": 1960.0,
       "type": "venturi"
     },
     "chimney_height": "4.4 ft (53 in) above the chamber floor",
@@ -1290,280 +1016,6 @@
       {
         "check": null,
         "level": "info",
-        "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
-        "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
-      },
-      {
-        "check": {
-          "cells": [
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "chamber width",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "W",
-              "text": null,
-              "unit": "inch",
-              "value": 0.7111999999999999
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "chamber depth",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "L",
-              "text": null,
-              "unit": "inch",
-              "value": 1.524
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "chamber height, to the springline",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "H",
-              "text": null,
-              "unit": "inch",
-              "value": 1.1176
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "the arch's rise",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "h_r",
-              "text": null,
-              "unit": "inch",
-              "value": 0.09525
-            },
-            {
-              "expr": "W*L*(H + 2/3*h_r)",
-              "formula": "W·L·(H + 2/3·h_r)",
-              "label": "ft³",
-              "meaning": "chamber volume, Ward's way",
-              "offset": 0.0,
-              "scale": 35.31466672148859,
-              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28]: a sprung arch adds ⅔ of its rise; a catenary is ⅔ of its base × height",
-              "symbol": "V",
-              "text": null,
-              "unit": "ft**3",
-              "value": 1.2801574396799997
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "Btu/ft³/h",
-              "meaning": "Ward's burner input per ft³: 9 in insulating brick, cone 10, the slow (low) end",
-              "offset": 0.0,
-              "scale": 0.09662107767853079,
-              "source": "Ward Burner Systems Data Guide; combustion-and-masonry.md §3.1 [S28] (table)",
-              "symbol": "b",
-              "text": null,
-              "unit": "british_thermal_unit / foot ** 3 / hour",
-              "value": 103497.08614585242
-            },
-            {
-              "expr": "b*V",
-              "formula": "b·V",
-              "label": "Btu/h",
-              "meaning": "design burner input",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": null,
-              "symbol": "D",
-              "text": null,
-              "unit": "BTU/hr",
-              "value": 132492.5648148148
-            },
-            {
-              "expr": "D",
-              "formula": "D",
-              "label": "Btu/h",
-              "meaning": "what the burners draw at full fire",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": null,
-              "symbol": "P",
-              "text": null,
-              "unit": "BTU/hr",
-              "value": 132492.5648148148
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "°F",
-              "meaning": "the coldest air it fires in",
-              "offset": -459.67,
-              "scale": 1.8000000000000114,
-              "source": "the design",
-              "symbol": "t",
-              "text": null,
-              "unit": "degree_Fahrenheit",
-              "value": 266.48333333333335
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "Δ°F",
-              "meaning": "the liquid's cooling under draw",
-              "offset": 0.0,
-              "scale": 1.7999999999999998,
-              "source": "the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8",
-              "symbol": "Δt_l",
-              "text": null,
-              "unit": "delta_degree_Fahrenheit",
-              "value": 11.11111111111111
-            },
-            {
-              "expr": "t - Δt_l",
-              "formula": "t − Δt_l",
-              "label": "°F",
-              "meaning": "the liquid's temperature, which the table is read by",
-              "offset": -459.67,
-              "scale": 1.8000000000000114,
-              "source": null,
-              "symbol": "t_l",
-              "text": null,
-              "unit": "degF",
-              "value": 255.37222222222223
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "°F",
-              "meaning": "the table's row",
-              "offset": -459.67,
-              "scale": 1.8000000000000114,
-              "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-              "symbol": "t_l₁",
-              "text": null,
-              "unit": "degree_Fahrenheit",
-              "value": 255.37222222222223
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "Btu/h",
-              "meaning": "what one cylinder vaporizes in that row",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-              "symbol": "c₁",
-              "text": null,
-              "unit": "british_thermal_unit / hour",
-              "value": 33117.03555555556
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "°F",
-              "meaning": "the table's row",
-              "offset": -459.67,
-              "scale": 1.8000000000000114,
-              "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-              "symbol": "t_l₂",
-              "text": null,
-              "unit": "degree_Fahrenheit",
-              "value": 266.48333333333335
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "Btu/h",
-              "meaning": "what one cylinder vaporizes in that row",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-              "symbol": "c₂",
-              "text": null,
-              "unit": "british_thermal_unit / hour",
-              "value": 48942.875555555554
-            },
-            {
-              "expr": "c₁ + (c₂ - c₁)*(t_l - t_l₁)/(t_l₂ - t_l₁)",
-              "formula": "c₁ + (c₂ − c₁)·(t_l − t_l₁)/(t_l₂ − t_l₁)",
-              "label": "Btu/h",
-              "meaning": "what one cylinder vaporizes",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": "a straight line between the table's two nearest rows",
-              "symbol": "c",
-              "text": null,
-              "unit": "BTU/hr",
-              "value": 33117.03555555556
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "",
-              "meaning": "cylinders, joined in parallel",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": "the design",
-              "symbol": "n",
-              "text": null,
-              "unit": "",
-              "value": 4.0
-            },
-            {
-              "expr": "n*c",
-              "formula": "n·c",
-              "label": "Btu/h",
-              "meaning": "what the supply gives",
-              "offset": 0.0,
-              "scale": 3.412141156488376,
-              "source": "cylinders in parallel add (combustion-and-masonry.md §2.6, inferred)",
-              "symbol": "C",
-              "text": null,
-              "unit": "BTU/hr",
-              "value": 132468.14222222223
-            }
-          ],
-          "id": "gas.supply-full",
-          "label": null,
-          "lever": {
-            "hi": 40.0,
-            "lo": 1.0,
-            "step": 1.0,
-            "symbol": "n"
-          },
-          "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
-          "requirements": [
-            {
-              "holds": false,
-              "left": "C",
-              "level": "error",
-              "margin": "C = 452,000 Btu/h, 99.98 % of P = 452,083 Btu/h",
-              "op": ">=",
-              "right": "P"
-            }
-          ],
-          "rule": null,
-          "rule_holds": true,
-          "rule_level": "error",
-          "solve": "Passes when n ≥ 5",
-          "status": "error",
-          "title": "Propane supply: 4 × 100 lb cylinders, full"
-        },
-        "level": "error",
-        "message": "Even full, the propane supply gives only 452,000 BTU/hr (113,000 each) at 20 °F, short of the 452,083 BTU/hr the burners draw. The kiln would stall before the top.",
-        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]"
-      },
-      {
-        "check": null,
-        "level": "info",
         "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
         "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
       },
@@ -1580,32 +1032,32 @@
         "reference": null
       }
     ],
-    "flue_area": "57 in²",
-    "flue_area_in2": 56.548667764616276,
+    "flue_area": "113 in²",
+    "flue_area_in2": 113.49003461093129,
     "fuel": "propane",
     "full_fire_btu_hr": 452083.3333333334,
-    "inlet_area_in2": 56.548667764616276,
+    "inlet_area_in2": 113.49003461093129,
     "propane_at_full_fire": "4.94 gal/hr",
     "supply": [
       {
-        "capacity": "452,000 BTU/hr (113,000 each)",
-        "capacity_btu_hr": 452000.0,
-        "case": "4 × 100 lb cylinders, full",
-        "meets_demand": false,
+        "capacity": "1,243,000 BTU/hr (113,000 each)",
+        "capacity_btu_hr": 1243000.0,
+        "case": "11 × 100 lb cylinders, full",
+        "meets_demand": true,
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
-        "capacity": "256,000 BTU/hr (64,000 each)",
-        "capacity_btu_hr": 256000.0,
-        "case": "4 × 100 lb cylinders, half full",
-        "meets_demand": false,
+        "capacity": "704,000 BTU/hr (64,000 each)",
+        "capacity_btu_hr": 704000.0,
+        "case": "11 × 100 lb cylinders, half full",
+        "meets_demand": true,
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
       },
       {
-        "capacity": "173,200 BTU/hr (43,300 each)",
-        "capacity_btu_hr": 173200.0,
-        "case": "4 × 100 lb cylinders, ¼ full, keeping 10 psi",
-        "meets_demand": false,
+        "capacity": "476,300 BTU/hr (43,300 each)",
+        "capacity_btu_hr": 476300.0,
+        "case": "11 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "meets_demand": true,
         "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       }
     ],
@@ -1659,13 +1111,13 @@
       {
         "formula": null,
         "inputs": {
-          "cost": "$790.00",
-          "each": "226,042 BTU/hr"
+          "cost": "$1,960.00",
+          "each": "56,510 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × Ransome B5 at 2.4 psi"
+        "value": "8 × Ransome B3 at 1.0 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -1700,30 +1152,30 @@
         "inputs": {
           "air temperature": "20 °F"
         },
-        "name": "Supply: 4 × 100 lb cylinders, full",
-        "note": "short of the burners' draw",
+        "name": "Supply: 11 × 100 lb cylinders, full",
+        "note": "meets the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
-        "value": "452,000 BTU/hr (113,000 each)"
+        "value": "1,243,000 BTU/hr (113,000 each)"
       },
       {
         "formula": null,
         "inputs": {
           "air temperature": "20 °F"
         },
-        "name": "Supply: 4 × 100 lb cylinders, half full",
-        "note": "short of the burners' draw",
+        "name": "Supply: 11 × 100 lb cylinders, half full",
+        "note": "meets the burners' draw",
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
-        "value": "256,000 BTU/hr (64,000 each)"
+        "value": "704,000 BTU/hr (64,000 each)"
       },
       {
         "formula": null,
         "inputs": {
           "air temperature": "20 °F"
         },
-        "name": "Supply: 4 × 100 lb cylinders, ¼ full, keeping 10 psi",
-        "note": "short of the burners' draw",
+        "name": "Supply: 11 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "note": "meets the burners' draw",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
-        "value": "173,200 BTU/hr (43,300 each)"
+        "value": "476,300 BTU/hr (43,300 each)"
       },
       {
         "formula": "cylinders × 100 lb ÷ 4.20 lb/gal",
@@ -1731,18 +1183,18 @@
         "name": "Propane on hand",
         "note": null,
         "reference": null,
-        "value": "95 gal: 19.3 hours at full fire"
+        "value": "262 gal: 53.0 hours at full fire"
       },
       {
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
           "Olsen's other methods": "113 in² (2½ in² per ft³), 65 in² (1 in² per 7000 BTU/hr)",
-          "burner ports together": "57 in²"
+          "burner ports together": "113 in²"
         },
         "name": "Exit flue, to start",
         "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
-        "value": "57 in²"
+        "value": "113 in²"
       },
       {
         "formula": "at least the kiln's top, outside; a hood and stack take the gases on",

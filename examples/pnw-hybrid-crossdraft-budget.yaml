@@ -1,11 +1,12 @@
 # A budget variant of pnw-hybrid-crossdraft.yaml: the K-23 backup brick and the 1 in blanket
 # become 3½ in of 6 pcf ceramic fibre blanket behind the hot-face brick (the wall stays 8 in), the
-# burners are sized for a slow firing, and the propane comes from a 500 gal tank.
+# burners are sized for a slow firing. Door, burners and cylinders as in the bricked-door design.
 schema: 1
 name: PNW hybrid cross-draft, cone 10, budget lining
 units: us
 firing:
   cone: "10"
+  ware: 328 lb # an ESTIMATE of the shelves only, as in pnw-hybrid-crossdraft.yaml
 chamber:
   width: 28 in
   depth: 60 in
@@ -16,6 +17,7 @@ roof:
 loading:
   type: door
   face: front # an end wall: the arch springs from the sides
+  opening: {width: 24 in, height: 40 in, sill: 0 in, head: lintel} # the author's door
 lining:
   walls:
     - material: ifb-jm26
@@ -42,14 +44,24 @@ heat:
       breaker: 60 A
     alloy: kanthal-apm
     walls: [left]
-    off_above: 1650 degF
+    off_above: 1650 degF # the start of shino reduction, cone 012–010 (cones.yaml)
   gas:
     burners:
       type: venturi
+      count: 8 # the author's, through the door as in pnw-hybrid-crossdraft.yaml
       wall: front
-    supply:
-      type: tank
-      gallons: 500
+      places:
+        - {wall: front, across: -9 in, up: 4.625 in}
+        - {wall: front, across: -3 in, up: 4.625 in}
+        - {wall: front, across: 3 in, up: 4.625 in}
+        - {wall: front, across: 9 in, up: 4.625 in}
+        - {wall: front, across: -9 in, up: 12.125 in}
+        - {wall: front, across: -3 in, up: 12.125 in}
+        - {wall: front, across: 3 in, up: 12.125 in}
+        - {wall: front, across: 9 in, up: 12.125 in}
+    supply: # the author's choice: more 100 lb cylinders, not a tank
+      type: cylinders
+      count: 11
     reduction: true
     firing_speed: slow
 draft:
