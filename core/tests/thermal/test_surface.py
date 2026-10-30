@@ -5,6 +5,7 @@ from ht.conv_free_immersed import (  # pyright: ignore[reportMissingTypeStubs]
     Nu_horizontal_plate_McAdams,
     Nu_vertical_plate_Churchill,
 )
+from ht.radiation import q_rad  # pyright: ignore[reportMissingTypeStubs]
 
 from kilndesigner.thermal.air import air
 from kilndesigner.thermal.surface import (
@@ -116,8 +117,21 @@ def test_each_face_knows_whether_its_correlation_covers_it() -> None:
     assert not covered
 
 
-def test_radiation_coefficient() -> None:
-    # εσ(Ts² + T∞²)(Ts + T∞) for a black body at 400 K in 300 K surroundings
-    assert radiation_coefficient(1.0, 400.0, 300.0) == pytest.approx(
-        5.670374e-8 * (400**2 + 300**2) * 700
-    )
+@pytest.mark.parametrize(
+    ("emissivity", "t_surface", "t_air"), [(1.0, 400.0, 300.0), (0.79, 350.0, 300.0)]
+)
+def test_radiation_coefficient_matches_hts_grey_body_flux(
+    emissivity: float, t_surface: float, t_air: float
+) -> None:
+    """h_r against an independent implementation: ``ht``'s net grey-body flux ÷ ΔT. No published
+    worked example with numbers for h_r is in docs/research (notebooks/validation/surface.py)."""
+    flux: float = q_rad(emissivity, t_surface, t_air)  # pyright: ignore[reportArgumentType]
+    expected = flux / (t_surface - t_air)
+    assert radiation_coefficient(emissivity, t_surface, t_air) == pytest.approx(expected, rel=1e-5)
+
+
+@pytest.mark.parametrize("ra", [1e5, 1e7, 1e10])
+def test_hot_face_down_matches_mcadams(ra: float) -> None:
+    """Hot face down, 0.27 Ra^¼ (electric-and-thermal.md §6.2), against ``ht``'s McAdams."""
+    expected = Nu_horizontal_plate_McAdams(0.71, ra / 0.71, buoyancy=False)
+    assert nusselt("facing_down", ra, 0.71) == pytest.approx(expected, rel=1e-9)

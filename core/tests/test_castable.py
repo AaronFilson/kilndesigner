@@ -136,12 +136,26 @@ def test_the_conductivity_law_is_checked_on_castables_it_wasnt_fitted_to() -> No
     law = conductivity_law()
     assert law.held_out_names == ("Firelite 2600LI", "Kaolite 2600LI")
     lo, hi = law.held_out
-    # Firelite at 200 °C: k = a·1.14ⁿ·(1 + s·(473.15 − 673.15)/1000) against 0.38
-    firelite_200 = law.k(1140, 473.15) / 0.38 - 1
-    assert lo == pytest.approx(firelite_200)
-    assert lo == pytest.approx(-0.09, abs=0.01)
-    assert hi == pytest.approx(law.k(1140, 1273.15) / 0.39 - 1)
-    assert hi == pytest.approx(0.22, abs=0.01)
+    # Morgan's sheets, typed here from masonry-materials.md, not read from the engine's data:
+    # (density kg/m³, °C, W/(m·K)). Kaolite Gun [M21] is a third castable, in neither set.
+    published = {
+        "Firelite [M24]": [(1140, t, k) for t, k in
+                           ((200, 0.38), (400, 0.38), (600, 0.38), (800, 0.39), (1000, 0.39))],
+        "Kaolite Pump [M20]": [(1201, t, k) for t, k in
+                               ((260, 0.39), (538, 0.42), (816, 0.43), (1093, 0.46))],
+        "Kaolite Gun [M21]": [(1250, t, k) for t, k in
+                              ((260, 0.42), (538, 0.42), (816, 0.43), (1093, 0.46))],
+    }  # fmt: skip
+    errors = {
+        name: [law.k(rho, t + 273.15) / k - 1 for rho, t, k in points]
+        for name, points in published.items()
+    }
+    quoted = errors["Firelite [M24]"] + errors["Kaolite Pump [M20]"]
+    assert (lo, hi) == pytest.approx((min(quoted), max(quoted)))
+    assert (lo, hi) == pytest.approx((-0.09, 0.22), abs=0.01)
+    # Every point, the third castable too, within the 25 % leave-one-out error the results quote
+    assert all(abs(e) < law.worst for points in errors.values() for e in points)
+    assert max(errors["Kaolite Gun [M21]"]) == pytest.approx(0.18, abs=0.01)
     a = analyse_mix(KILN, _mix(BACKUP, 14.5, foam=60))
     step = next(s for s in a.working if s.inputs.get("on castables held out"))
     assert step.inputs["on castables held out"] == (

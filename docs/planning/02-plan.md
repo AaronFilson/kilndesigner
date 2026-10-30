@@ -244,7 +244,8 @@ references used. The plans print the working, so a builder can check it.
   tests passing (published worked examples, Hypothesis invariants, golden reports).
 - The first results for the author's kiln are in [docs/kilns](../kilns/pnw-hybrid-crossdraft.md).
 - Validation lives in pytest (`core/tests`) rather than marimo notebooks so far; ADR 0009's
-  notebooks are still to do, as readable companions to those tests.
+  notebooks are still to do, as readable companions to those tests. (Done 2026-10-29: see the
+  quality bar below.)
 - Not done in M3: skewbacks and the steel frame, a sourced car-hardware price, and the fuel and
   electricity used per firing (which needs M6).
 
@@ -329,6 +330,17 @@ the client's plans before the app exists.
   ([ADR 0009](../adr/0009-physics-checked-against-published-references.md)). Validation runs in CI
   with stated tolerances. The first references: Kanthal's worked element examples, Ward's BTU per
   cubic foot ranges, an ASTM C680 example, and the analytical solution for a heated slab.
+  - **Status (2026-10-29):** done for nine solvers in `notebooks/validation/` (marimo), each
+    run by `core/tests/test_validation_notebooks.py`, which fails if any figure leaves its stated
+    tolerance: wall (FOSSEE, CSJM), surface (Neutrium air; `ht` for the correlations and h_r),
+    elements (Kanthal, Olsen p.258–260, Kanthal's Ct tables, Krueger), transient wall (Holman's
+    erf), combustion (flame temperature, LHV, Ward's ranges), chimney draft (Olsen's Rule 5, Ward,
+    altitude, stack effect), arch thrust (HarbisonWalker's tables and 12 ft example, Pitelka's
+    arches), castable conductivity (three Morgan castables held out) and propane supply (D × L × K,
+    Ward's tanks, the cylinder tables, RegO). Not found to check against: an ASTM C680 worked
+    example, a published h_r or hot-face-down case with numbers, available heat at kiln flue
+    temperatures, a catenary's thrust, a three-phase element design, a BOM waste or curved-brick
+    cutting allowance.
 - **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
   + lost; a longer element at the same voltage never draws more power; brick counts cover the
   wall volume.

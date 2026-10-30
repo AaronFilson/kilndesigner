@@ -93,7 +93,24 @@ def test_with_no_chimney_given_the_engine_builds_rule_5s() -> None:
     adds 13½ in to the horizontal pull."""
     fire = design_fire(_kiln(draft__chimney=None))
     assert fire.chimney_area_in2 == pytest.approx(13.5 * 18)
-    assert fire.chimney_height_in == pytest.approx(3 * 72 + (60 + 9 + 3 + 13.5) / 3)
+    # Olsen's 20 ft 4 in, plus a third of the 1½ in the wider chimney adds to the pull
+    assert fire.chimney_height_in == pytest.approx(244 + 1.5 / 3)
+
+
+def test_rule_5_reproduces_wards_worked_example() -> None:
+    """Ward [S32] (combustion-and-masonry.md §4.1): 36 in inside, 54 in of linear draw (36 in deep,
+    a 9 in back wall, 9 in to the chimney's base): 3 × 36 + 54/3 = 126 in. Ward stops at the
+    chimney's base, Olsen counts its width too, so a 9 in chimney adds 3 in: 129 in."""
+    kiln = _kiln(
+        chamber={"width": "48 in", "depth": "36 in", "height": "36 in"},
+        draft__run_to_chimney="9 in",
+        draft__chimney={"height": "11 ft", "inside": {"width": "9 in", "depth": "9 in"}},
+    )
+    span = design_fire(kiln).chimney_range
+    assert span is not None
+    most = float(span.split("–")[1].split()[0]) * 12
+    assert most == pytest.approx(126 + 9 / 3, abs=0.61)  # printed to 0.1 ft: 10.75 shows as 10.8
+    assert most / 126 - 1 == pytest.approx(0.024, abs=0.005)
 
 
 def test_a_chimney_under_the_least_is_a_warning_and_over_the_most_a_note() -> None:
