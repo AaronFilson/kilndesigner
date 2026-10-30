@@ -256,6 +256,96 @@ an NPTEL worked example [T36]:
 - **Measured hemispherical ε of painted or oxidised mild steel at 50–150 °C was not found.** That
   is 1 source for the conversion factor.
 
+## 8. Floors on the ground
+
+This section covers a kiln floor laid directly on soil, a slab or a foundation. The floor's layers
+are still solved as a layered wall, but the outer boundary is the ground instead of still air.
+
+### 8.1 Steady state: a disk on a semi-infinite medium
+
+- **Incropera & DeWitt Table 4.1, case 10**: "Circular disk of diameter D on the surface of a
+  semi-infinite medium. The free surface of the semi-infinite medium is adiabatic." **S = 2D**,
+  with q = S·k·(T_disk − T_far). Source: Waterloo ME353 reproduction of the table [T39]. The EES
+  function for the same case [T40] cites Incropera & DeWitt 5th ed. pp. 193–194 and returns
+  SF = 2 m for D = 1 m. The EES page doesn't print the formula. Verified, 2 sources.
+- **Rectangular floor.** No shape factor was found for an isothermal rectangle on the surface of
+  a semi-infinite medium. **NOT FOUND.** Using a disk of equal area, D_eq = √(4A/π), is
+  *Derived*: it is an approximation and nothing found checks it. The flux per unit area is then
+  q″ = 2·D_eq·k·ΔT / A = 8·k·ΔT / (π·D_eq). (Derived)
+- **ISO 13370 and ASHRAE slab F-factors.** These are for buildings: an annual or seasonal loss to
+  outdoor air, through perimeter and characteristic-dimension terms. The text of ISO 13370 wasn't
+  available (paywalled). One UK project report used the EN ISO 13370:2007 method with a ground
+  conductivity of 1.5 W/(m·K) [T41]. Neither was used here, because a floor 1000 °C hot over a few
+  hours is not the near-ambient, months-long case they were written for.
+
+### 8.2 Soil conductivity
+
+| Soil | k, W/(m·K) | Other values | Source | Status |
+|---|---|---|---|---|
+| Soil (mineral), dry, 15 °C | 1 (one significant figure) | ρ 1500 kg/m³, c 1840 J/(kg·K) | Lienhard Table A.2 [M1 in masonry-materials.md] | Verified (secondary), already in the repo |
+| Soil (mineral), wet, 15 °C | 2 (one significant figure) | ρ 1930 kg/m³ | same | Verified (secondary) |
+| Clays, dry to wet | 1.1–1.6 | – | same | Verified (secondary) |
+| Clay or silt (ground), DIN EN 12524 | 1.5 | ρ 1500, c 2085 | `ht` [M2 in masonry-materials.md] | Verified (secondary) |
+| Ground conductivity used for an EN ISO 13370 calculation | 1.5 | – | one project report [T41] | Excerpt. These were one project's inputs, not the standard's own table |
+| Dry sand, gravel, silt or clay | 0.4 | volumetric heat capacity about 1.4–1.6 (unit given as J/(m³·K), which looks like kJ) | pygld ground-materials list [T42] | Excerpt. The list cites no source |
+| Moist sand, clay, silt | 1.0, 1.6, 1.8 | – | same [T42] | Excerpt, no source given |
+| Saturated sand or gravel | 2.4, 1.8 | – | same [T42] | Excerpt, no source given |
+
+The defaults in ISO 13370 itself (reportedly 1.5 for clay or silt, 2.0 for sand or gravel, 3.5
+for rock) are **NOT FOUND** in any text that could be read. The 1.5 figure is backed by DIN EN 12524
+via `ht`, and by [T41].
+
+Soil next to a hot floor dries out. Dry soil can drop to about 0.4 W/(m·K) [T42], and dry mineral
+soil is about 1 [M1]. No source was found on how k changes for soil heated to some hundreds of
+°C. **NOT FOUND.**
+
+### 8.3 Is steady state reasonable?
+
+- **Diffusivity of dry mineral soil** (Derived from [M1]): α = k/(ρc) = 1/(1500 × 1840) ≈
+  3.6×10⁻⁷ m²/s. Measured values in the field are 2.3–8.7×10⁻⁷ m²/s for a sandy soil [T43], and
+  0.5×10⁻⁶ m²/s is a textbook example value [T44]. Excerpt.
+- **Penetration depth** √(α·t) (Derived): 0.12 m after 12 h, 0.31 m after 3 days. The text in
+  [T44] defines the damping depth for a periodic wave as d = √(2α/ω).
+- **Time to reach steady state** for a floor of size D is about D²/α (Derived scaling argument; no
+  source states it). For D_eq = 1.13 m (1 m²) that is about 3.5×10⁶ s, or around 40 days. **A
+  firing of hours to days does not reach steady state in the ground.**
+- **Transient semi-infinite solid** with the surface held at T_s and the ground starting at T_i:
+  q″(t) = k·(T_s − T_i)/√(π·α·t). That is Holman, *Heat Transfer*, Ch. 4, eq. 4-12, as
+  kA(T₀ − T_i)/√(πατ), and the temperature profile is the erf solution (eq. 4-8) [T45]. Excerpt,
+  via the search summary. LearnChemE gives the same erf profile [T46].
+- **Comparison** (Derived; dry soil from [M1], A = 1 m²). Steady disk: q″ = 8k·ΔT/(π·1.13) ≈
+  2.25·k·ΔT. Transient at 12 h: k·ΔT/√(π·3.6×10⁻⁷·43 200) ≈ 4.5·k·ΔT. At 72 h: ≈ 1.85·k·ΔT. So
+  over a typical firing, the transient flux is about the same size as the steady value or larger,
+  and the steady disk alone can underestimate the loss by up to about 2× in a short firing.
+
+### 8.4 Kiln-specific data
+
+**NOT FOUND.** No measured kiln-floor or kiln-foundation heat loss turned up. The slab-on-ground
+studies found [T47] are for buildings near room temperature. Away from the edges, heat flows
+straight down and the flux is about constant [T47]. Perimeter or edge insulation reduces the loss
+[T47]. Olsen hasn't been checked for this. Ask the user for page numbers if needed.
+
+### 8.5 Recommended model (Derived)
+
+Treat the ground as one more series resistance on the floor's outside face, with a ground
+conductance per unit area:
+
+    h_g = max( k_soil / √(π·α_soil·t_f),  8·k_soil / (π·D_eq) ),   D_eq = √(4·A_floor/π)
+
+Here t_f is the firing duration (the time at which the loss is reported), and T_far is the ambient
+ground temperature. The first term is the transient semi-infinite solid [T45]. The second is the
+steady disk [T39] [T40]. Taking the larger one is a conservative choice that nothing found checks
+(Derived). The default is dry mineral soil, k = 1 W/(m·K), α ≈ 3.6×10⁻⁷ m²/s [M1], because soil
+under a hot floor dries out. 1.5 W/(m·K) (DIN EN 12524 clay or silt) is a reasonable damp-ground
+alternative.
+
+Limits:
+- Both formulas assume a uniform surface temperature, and the disk assumes the ground surface
+  around the floor is adiabatic. The edges, where the floor meets air, aren't modelled.
+- The transient formula assumes a step to T_s at t = 0, but a real firing ramps up. So for a
+  given t_f it overstates the loss.
+- k(T) of hot soil, groundwater and moisture migration are not covered.
+
 ---
 
 ## Corroboration summary
@@ -288,6 +378,8 @@ an NPTEL worked example [T36]:
 - Incropera 7th ed. 0.52 Ra^⅕.
 - The text of the edge-factor validity condition.
 - Measured hemispherical ε of painted or oxidised mild steel near 100 °C.
+- §8: a shape factor for a rectangle on a semi-infinite medium; ISO 13370's own ground-property
+  table; k of soil heated to some hundreds of °C; any measured kiln floor or ground loss.
 
 ## Sources
 
@@ -329,3 +421,12 @@ an NPTEL worked example [T36]:
 - [T36] NPTEL course 112108149, Module 4 worked problems. https://archive.nptel.ac.in/content/storage2/courses/112108149/pdf/M4/WE_M4.pdf
 - [T37] IES-VE, Table 23 / CIBSE Guide Table C3.7. https://help.iesve.com/ve2021/table_23_emissivities_of_various_materials__table_c3_7_cibse_guide_.htm
 - [T38] NASA NTRS oxidised-metal hemispherical emissivity https://ntrs.nasa.gov/citations/19980228304 ; Sandia 2018 report https://www.sandia.gov/research/publications/details/total-hemispherical-emissivity-of-metals-applicable-to-radiant-heat-testing-2018-11-01/
+- [T39] University of Waterloo ME353, Conduction shape factors, Table 4.1 (case 10, disk on semi-infinite medium). https://www.mhtlab.uwaterloo.ca/old/courses/me353/maple/condshpfactor/shptable4p11.html
+- [T40] EES heat transfer library, disk on the surface of a semi-infinite medium (cites Incropera & DeWitt 5th ed. pp. 193–194). https://fchartsoftware.com/ees/heat_transfer_library/conduction_shape_factors/hs108.htm
+- [T41] Back to Earth, solid floor U-value report (EN ISO 13370:2007, ground k 1.5 W/mK). https://www.backtoearth.co.uk/wp-content/uploads/2023/11/Floor-solid-0.13.pdf (via search summary)
+- [T42] pygld documentation, predefined ground materials (no source cited). https://pygld.readthedocs.io/en/latest/materials_ground.html
+- [T43] Revista Brasileira de Ciência do Solo (2018), in-situ soil thermal diffusivity, sandy soil. https://www.redalyc.org/journal/1802/180256032025/html/ (via search summary)
+- [T44] LibreTexts, Rain or Shine (CRPSCI 036) §13.4, Sub-surface soil temperatures. https://geo.libretexts.org/Courses/Coalinga_College/Rain_or_Shine%3A_An_Introduction_to_Soil_Physical_Properties_and_Processes_(CRPSCI_036)/13%3A_Soil_Temperature/13.04%3A_Sub-surface_soil_temperatures (via search summary)
+- [T45] J. P. Holman, Heat Transfer, Ch. 4, eqs. 4-8 and 4-12 (Semnan University copy). https://mjahangiri.profile.semnan.ac.ir/downloads/file/8773 (via search summary)
+- [T46] LearnChemE, semi-infinite solid screencasts. https://learncheme.com/quiz-yourself/interactive-self-study-modules/semi-infinite-solid/semi-infinite-solid-screencasts/
+- [T47] Slab-on-ground studies: Illinois IDEALS https://ideals.illinois.edu/items/54948 ; AIVC airbase 7495 https://www.aivc.org/sites/default/files/airbase_7495.pdf ; BRANZ EM2 https://www.branz.co.nz/documents/925/EM2.pdf (via search summary)

@@ -208,8 +208,6 @@ ELECTRIC = {"electric": {"supply": {"voltage": "240 V", "breaker": "60 A"}}}
         ({"chamber": {"shape": "round", "width": "84 in", "depth": "84 in", "height": "42 in"},
           "roof": {"type": "dome", "rise": "50 in"}}, "at most its radius, 42 in"),
         ({"roof": {"type": "open"}, "heat": GAS}, "an open top's heat loss isn't worked out"),
-        ({"chamber": {"width": "48 in", "depth": "48 in", "height": "48 in", "on_ground": True},
-          "heat": ELECTRIC}, "a floor on the ground has its loss left out"),
         ({"heat": {"fire": {"fuel": "wood", "oil_burners": 2,
                             "fireboxes": [{"width": "48 in", "length": "36 in"}]}}},
          "oil burners and their rate are for oil firing"),

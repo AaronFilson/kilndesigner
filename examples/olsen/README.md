@@ -66,4 +66,6 @@ Electric: `electric-car-45`.
   (`buttressed`) and get no steel.
 - Teardrop, tapering and multi-directional plans are boxes of the mean width.
 - One exit flue, one chimney and one stoke hole per firebox; one fuel per kiln.
-- A floor on the ground (`chamber.on_ground`) or over its fireboxes isn't counted in the heat loss.
+- A floor on the ground (`chamber.on_ground`) loses heat into dry soil, worked out at steady
+  state (`docs/research/thermal-properties.md` §8); early in a firing the ground takes more. A
+  floor over its fireboxes is checked at the top temperature but not counted in the heat loss.

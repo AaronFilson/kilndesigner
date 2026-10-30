@@ -28,11 +28,16 @@ def test_report_matches_golden(path: Path, update_golden: bool) -> None:
     assert report == _approx(json.loads(golden.read_text(encoding="utf-8")))
 
 
+# The wall solves iterate to a tolerance, so their last digits differ between platforms' maths
+# libraries (1.5e-9 seen between Windows and Linux); every shown value has 4 figures or fewer
+REL = 1e-7
+
+
 def _keep_close(new: object, old: object) -> object:
-    """``new``, but with ``old``'s floats where they agree to 1e-9, so that regenerating on
+    """``new``, but with ``old``'s floats where they agree to REL, so that regenerating on
     another platform doesn't rewrite every last-bit difference into the diff."""
     if isinstance(new, float) and isinstance(old, float):
-        return old if new == pytest.approx(old, rel=1e-9) else new
+        return old if new == pytest.approx(old, rel=REL) else new
     if isinstance(new, dict) and isinstance(old, dict):
         return {k: _keep_close(v, old.get(k)) for k, v in new.items()}  # pyright: ignore[reportUnknownVariableType, reportUnknownMemberType, reportUnknownArgumentType]
     if isinstance(new, list) and isinstance(old, list) and len(new) == len(old):  # pyright: ignore[reportUnknownArgumentType]
@@ -41,9 +46,9 @@ def _keep_close(new: object, old: object) -> object:
 
 
 def _approx(value: object) -> object:
-    """Floats compared to 1e-9, so a last-bit difference between platforms isn't a failure."""
+    """Floats compared to REL, so a last-digit difference between platforms isn't a failure."""
     if isinstance(value, float):
-        return pytest.approx(value, rel=1e-9)
+        return pytest.approx(value, rel=REL)
     if isinstance(value, dict):
         return {k: _approx(v) for k, v in value.items()}  # pyright: ignore[reportUnknownVariableType]
     if isinstance(value, list):

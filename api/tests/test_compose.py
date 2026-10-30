@@ -44,7 +44,7 @@ def test_a_design_is_saved_built_by_the_worker_and_fetched(app: httpx.Client, ex
         assert {"report.json", "kiln.glb", "kiln.step", "plans.pdf"} <= set(build["files"])
 
         report = app.get(f"/api/builds/{key}/report").raise_for_status().json()
-        assert report["electric"]["elements"]["count"] >= 3
+        assert report["electric"]["elements"]["count"] >= 1  # 2 now: an element runs two grooves
         assert app.get(f"/api/builds/{key}/files/kiln.glb").content[:4] == b"glTF"
         assert app.get(f"/api/builds/{key}/files/plans.pdf").content[:5] == b"%PDF-"
     finally:

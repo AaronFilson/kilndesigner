@@ -110,7 +110,7 @@ class Chamber(Spec):
         default=False,
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
-            "on a stand with air under it. Its loss into the ground isn't worked out"
+            "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
         ),
     )
 
@@ -725,12 +725,6 @@ class Kiln(Spec):
             raise ValueError(
                 "an open top's heat loss isn't worked out, so burners or elements can't be sized "
                 "for it: fire it with wood, coal or oil, or give it a roof"
-            )
-        if self.chamber.on_ground and powered:
-            raise ValueError(
-                "a floor on the ground has its loss left out, so burners or elements can't be "
-                "sized against the total: leave on_ground out for a gas or electric kiln, and its "
-                "floor is counted as losing heat to the air under it"
             )
         if self.chamber.shape == "round":
             if isinstance(self.roof, SprungArch | CatenaryArch):

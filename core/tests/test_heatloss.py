@@ -95,6 +95,24 @@ def test_more_insulation_loses_less_heat() -> None:
     assert thick < thin
 
 
+def test_a_floor_on_the_ground_loses_heat_into_dry_soil() -> None:
+    from math import pi
+
+    kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
+    on_stand = heat_loss(kiln)
+    grounded = heat_loss(
+        kiln.model_copy(update={"chamber": kiln.chamber.model_copy(update={"on_ground": True})})
+    )
+    step = next(s for s in grounded.working if s.name == "Ground under the floor")
+    # h = 8k/(πD), k = 1 W/(m·K): a disk on a semi-infinite medium (Incropera Table 4.1 case 10)
+    number, unit = step.inputs["D"].split(" ", 1)
+    d = si(Q_(float(number), unit), "m")
+    assert float(step.value.split()[0]) == pytest.approx(8 / (pi * d), rel=1e-2)
+    assert len(grounded.faces) == len(on_stand.faces)
+    assert grounded.total_watts != on_stand.total_watts
+    assert any("built on the ground" in f.message for f in grounded.findings)
+
+
 def test_colder_air_loses_more_heat() -> None:
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     assert (
