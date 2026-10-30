@@ -19,7 +19,7 @@ simplification is written into the example's notes:
 | `breda-bottle`, `bottle-two-storey`, `sevres` | Round, domed, cone-frustum bottle chimney (p.166–169) | Round chamber; chimney as a straight stack |
 | `bowen-mountain` | Crown curving down along the length (Fig 4-153) | Arch across the width |
 | `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door refused |
-| corbel-arched kilns (p.134) | Corbelled vaults | Not described |
+| corbel-arched kilns (p.49, Fig 2-23; p.134 is Singh's round downdraft, curved-kilns.md) | Corbelled vaults | Not described |
 
 ## What "complex curves" needs, in layers
 
