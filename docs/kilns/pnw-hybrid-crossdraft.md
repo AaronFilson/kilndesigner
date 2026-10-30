@@ -85,15 +85,26 @@ variant moves them to the right wall.
 
 ## Open, needs the author
 
-1. **The door's size**, if not the whole front wall, and whether the burners stay in the door
-   wall.
-2. **Propane:** a 500 gal tank, or more cylinders, or firing only on warmer days. Four cylinders
-   meet the burners only full and above about 20 °F.
-3. **Budget:** $8,500–$10,178 priced against $5,000, before steel, wire, car hardware, fittings
-   and shipping. JM 26 (655 bricks, $4,696) is most of it.
-4. **Burner count** (two B5s chosen; Olsen's builds use more).
-5. **Ware and shelves** (`firing.ware`) for a realistic firing time and cost.
-6. **Switch-over:** 1650 °F as set, or about 1200 °F for the cheapest firing.
+1. **The door's sill height** (the door is 24 × 40 in; see the answers below).
+
+## The author's answers (2026-10-30)
+
+- **Propane: more 100 lb cylinders**, not a tank. The design adds cylinders to the manifold until
+  the cold-day check passes (to do: how many).
+- **Budget: $5,000 stays.** This brick kiln is over it; the author will make a castable version
+  of the kiln once castable linings are worked out, and that version is the one to bring under
+  budget.
+- **Switch-over: at the start of reduction for shino, about cone 012 to 010.** Orton's large
+  cones put 012 at 861–882 °C (1582–1620 °F) and 010 at 903–915 °C (1657–1679 °F), by rate
+  (`core/src/kilndesigner/data/cones.yaml`), so the hand-over is about 1580–1680 °F; the
+  design's 1650 °F sits in that range. The firing is set by the glaze (shino reduction), not by
+  the cheapest point on the cost chart.
+- **Door: 24 in wide × 40 in high** (sill height not given). The dome is thick enough to support
+  itself over the door, with steel bracing. The burners fire through ports in the door, from a
+  removable rack of welded steel.
+- **Burners: eight**, for slow flame movement at high volume.
+- **Ware and shelves:** estimate a full stack from Olsen's stacking guidance, and say so.
+- **Curves** (for the castable version): shapes picked by choice first, point editing later.
 
 ## Not sourced, left out
 
