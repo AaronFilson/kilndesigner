@@ -106,6 +106,16 @@ class Chamber(Spec):
             "an anagama or a tunnel kiln, as an angle (a 20 % slope is atan 0.2 = 11.3 degree)"
         ),
     )
+    bend: Angle | None = Field(
+        default=None,
+        description=(
+            "How far the run turns in plan, from the firing end to the flue end, for a kiln built "
+            "round a hillside or a corner: a box chamber's centreline on a circular arc, turning "
+            "left as you look from the firing end. Only its drawing changes: a section swept "
+            "along an arc has the same inside area and volume as along a straight line of the "
+            "same length (Pappus's theorems), so the heat loss is worked out as for a straight run"
+        ),
+    )
     on_ground: bool = Field(
         default=False,
         description=(
@@ -128,6 +138,13 @@ class Chamber(Spec):
                 )
             if not 0 <= si(self.slope, "degree") < 60:
                 raise ValueError("a floor's slope must be from 0 to under 60 degrees")
+        if self.bend is not None:
+            if f"{self.bend.units}" not in ("degree", "radian"):
+                raise ValueError("give the bend as an angle, for example '45 degree'")
+            if not 0 <= si(self.bend, "degree") <= 180:
+                raise ValueError("a run's bend must be from 0 to 180 degrees")
+            if self.shape == "round" and si(self.bend, "degree") > 0:
+                raise ValueError("a round chamber has no run to bend")
         return self
 
     @property

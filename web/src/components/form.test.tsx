@@ -795,6 +795,12 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.chambers).toBeUndefined();
     set("Floor's slope, firing end to flue end (blank: level)", "11.3");
     expect(last().chamber.slope).toBe("11.3 degree");
+    set("The run curves to the left by, in plan (blank: straight)", "45");
+    expect(last().chamber.bend).toBe("45 degree");
+    set("Chamber shape", "round");
+    expect(last().chamber.bend).toBeUndefined();
+    expect(screen.queryByLabelText("The run curves to the left by, in plan (blank: straight)")).toBeNull();
+    set("Chamber shape", "box");
     fireEvent.click(screen.getByLabelText("The floor is on the ground (not raised on a stand)"));
     expect(last().chamber.on_ground).toBe(true);
     fireEvent.click(screen.getByLabelText("The floor is on the ground (not raised on a stand)"));
@@ -884,17 +890,24 @@ describe("shapes, fireboxes and chimneys", () => {
       draft: { type: "down", flue_across: "3 in" },
     });
     fireEvent.click(screen.getByLabelText("Give the chimney as built (otherwise the engine sizes it)"));
-    expect(last().draft?.chimney).toEqual({ height: "24 in" });
-    set("Chimney height, from the chamber floor", "120");
+    // Nothing is assumed: the height is left for the builder to give
+    expect(last().draft?.chimney).toEqual({});
+    expect(field("Chimney height, from the chamber floor (needed)").value).toBe("");
+    set("Chimney height, from the chamber floor (needed)", "120");
     set("Chimney inside", "round");
+    expect(field("Chimney inside diameter").value).toBe("");
     set("Chimney inside diameter", "10");
     expect(last().draft?.chimney).toEqual({ height: "120 in", inside: { diameter: "10 in" } });
     set("Chimney inside", "rect");
+    expect(last().draft?.chimney?.inside).toEqual({ width: "10 in", depth: "10 in" });
     set("Chimney inside width", "9");
     set("Chimney inside depth", "13.5");
     expect(last().draft?.chimney?.inside).toEqual({ width: "9 in", depth: "13.5 in" });
     set("Chimney inside", "round");
     expect(last().draft?.chimney?.inside).toEqual({ diameter: "9 in" });
+    set("Chimney inside", "auto");
+    set("Chimney inside", "rect");
+    expect(field("Chimney inside width").value).toBe("");
     set("Chimney inside", "auto");
     expect(last().draft?.chimney?.inside).toBeUndefined();
     set("Draft", "up");
@@ -910,13 +923,14 @@ describe("shapes, fireboxes and chimneys", () => {
       draft: { type: "up" },
     });
     set("Gas", "natural_gas");
-    expect(last().heat.gas).toMatchObject({ fuel: "natural_gas", supply: { type: "line", pressure: "8 inch_H2O" } });
+    // The pressure is the supply's, so it's left for the builder to give
+    expect(last().heat.gas).toMatchObject({ fuel: "natural_gas", supply: { type: "line" } });
     expect(screen.queryByLabelText("Propane supply")).toBeNull();
-    set("Gas pressure at the burners", "7");
+    set("Gas pressure at the burners (needed: from the supply's regulator)", "7");
     expect(last().heat.gas?.supply).toEqual({ type: "line", pressure: "7 inch_H2O" });
     set("Gas", "propane");
     set("Propane supply", "line");
-    expect(last().heat.gas?.supply).toEqual({ type: "line", pressure: "2 psi" });
+    expect(last().heat.gas?.supply).toEqual({ type: "line" });
     set("Burners fire through", "floor");
     expect(last().heat.gas?.burners?.wall).toBe("floor");
   });

@@ -954,6 +954,15 @@ function DraftSection({
   const draft = doc.draft;
   const chimney = draft?.chimney;
   const inside = chimney?.inside;
+  const [picked, setPicked] = useState<"round" | "rect">("round");
+  const insideShape =
+    inside === undefined
+      ? "auto"
+      : inside.width !== undefined || inside.depth !== undefined
+        ? "rect"
+        : inside.diameter !== undefined
+          ? "round"
+          : picked;
   return (
     <Section title="Draft and chimney">
       <Choice
@@ -989,10 +998,7 @@ function DraftSection({
           type="checkbox"
           checked={chimney !== undefined}
           onChange={(e) =>
-            change(
-              ["draft", "chimney"],
-              e.target.checked ? { height: doc.chamber.height } : undefined,
-            )
+            change(["draft", "chimney"], e.target.checked ? {} : undefined)
           }
         />
         Give the chimney as built (otherwise the engine sizes it)
@@ -1000,39 +1006,41 @@ function DraftSection({
       {chimney && (
         <>
           <Quantity
-            label="Chimney height, from the chamber floor"
+            label="Chimney height, from the chamber floor (needed)"
             value={chimney.height}
             units={LENGTH}
-            onChange={(v) => change(["draft", "chimney", "height"], v ?? "")}
+            onChange={(v) => change(["draft", "chimney", "height"], v)}
           />
           <Choice
             label="Chimney inside"
-            value={inside === undefined ? "auto" : inside.diameter !== undefined ? "round" : "rect"}
+            value={insideShape}
             options={[
               ["auto", "The size the engine works out"],
               ["round", "Round"],
               ["rect", "Rectangular"],
             ]}
-            onChange={(v) =>
+            onChange={(v) => {
+              if (v !== "auto") setPicked(v);
+              const side = inside?.diameter ?? inside?.width;
               change(
                 ["draft", "chimney", "inside"],
                 v === "auto"
                   ? undefined
                   : v === "round"
-                    ? { diameter: inside?.width ?? inside?.diameter ?? "9 in" }
-                    : { width: inside?.diameter ?? "9 in", depth: inside?.diameter ?? "9 in" },
-              )
-            }
+                    ? { diameter: side }
+                    : { width: side, depth: inside?.depth ?? side },
+              );
+            }}
           />
-          {inside?.diameter !== undefined && (
+          {insideShape === "round" && (
             <Quantity
               label="Chimney inside diameter"
-              value={inside.diameter}
+              value={inside?.diameter}
               units={LENGTH}
               onChange={(v) => change(["draft", "chimney", "inside"], { diameter: v })}
             />
           )}
-          {inside && inside.diameter === undefined && (
+          {insideShape === "rect" && inside && (
             <>
               <Quantity
                 label="Chimney inside width"
@@ -1148,7 +1156,7 @@ export function DesignForm({
             change(
               ["chamber"],
               v === "round"
-                ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined }
+                ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
                 : { ...doc.chamber, shape: undefined },
             )
           }
@@ -1215,6 +1223,14 @@ export function DesignForm({
           units={["degree"]}
           onChange={(v) => change(["chamber", "slope"], v)}
         />
+        {!round && (
+          <Quantity
+            label="The run curves to the left by, in plan (blank: straight)"
+            value={doc.chamber.bend}
+            units={["degree"]}
+            onChange={(v) => change(["chamber", "bend"], v)}
+          />
+        )}
         <label className="check">
           <input
             type="checkbox"
@@ -1491,7 +1507,7 @@ export function DesignForm({
                 change(
                   ["heat", "gas"],
                   v === "natural_gas"
-                    ? { ...gas, fuel: v, supply: { type: "line", pressure: "8 inch_H2O" } }
+                    ? { ...gas, fuel: v, supply: { type: "line" } }
                     : { ...gas, fuel: undefined, supply: { type: "cylinders", count: 4 } },
                 )
               }
@@ -1561,7 +1577,7 @@ export function DesignForm({
                     v === "tank"
                       ? { type: "tank", gallons: 250 }
                       : v === "line"
-                        ? { type: "line", pressure: "2 psi" }
+                        ? { type: "line" }
                         : { type: "cylinders", count: 4 },
                   )
                 }
@@ -1569,7 +1585,7 @@ export function DesignForm({
             )}
             {gas.supply.type === "line" ? (
               <Quantity
-                label="Gas pressure at the burners"
+                label="Gas pressure at the burners (needed: from the supply's regulator)"
                 value={gas.supply.pressure}
                 units={["inch_H2O", "psi"]}
                 onChange={(v) => change(["heat", "gas", "supply", "pressure"], v)}

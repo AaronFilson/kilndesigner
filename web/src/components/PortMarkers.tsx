@@ -4,7 +4,7 @@
 // model is the engine's, so a moved port is only a marker until it's built).
 import { type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useRef, useState } from "react";
-import { type Group, Matrix4, Mesh, type Ray, Raycaster, Vector2, Vector3 } from "three";
+import { type Group, Matrix4, Mesh, Quaternion, type Ray, Raycaster, Vector2, Vector3 } from "three";
 
 import {
   fromMm,
@@ -17,6 +17,7 @@ import {
   WALLS,
   type WallFace,
 } from "../design";
+import { roundHit, wallMatrix, wallPoint } from "../run";
 
 /** A port as a marker: where it is now (the design's place, if it has one, or the build's). */
 export interface Marker {
@@ -160,15 +161,22 @@ export function wallHit(
   marker: Pick<Marker, "kind" | "width" | "height">,
 ): { wall: WallFace; across: number; up: number } | null {
   let best: { wall: WallFace; across: number; up: number; t: number } | null = null;
-  for (const wall of WALLS) {
+  if (layout.run?.round) {
+    best = roundHit(layout, ray);
+    const half = best ? layout.walls[best.wall].half_width + layout.walls[best.wall].thickness : 0;
+    if (best && (best.up < 0 || best.up > topAt(layout, best.wall, 0) + half)) best = null;
+  }
+  for (const wall of layout.run?.round ? [] : WALLS) {
     const frame = layout.walls[wall];
+    // The ray in the wall's own frame, as the layout gives it, before the run moves it
+    const local = ray.clone().applyMatrix4(wallMatrix(layout, wall).invert());
     const normal = new Vector3(...frame.normal);
-    const facing = ray.direction.dot(normal);
+    const facing = local.direction.dot(normal);
     if (facing >= 0) continue; // seen from inside, or edge on
     const origin = new Vector3(...frame.origin);
-    const t = origin.clone().sub(ray.origin).dot(normal) / facing;
+    const t = origin.clone().sub(local.origin).dot(normal) / facing;
     if (t <= 0) continue;
-    const hit = ray.at(t, new Vector3()).sub(origin);
+    const hit = local.at(t, new Vector3()).sub(origin);
     const across = hit.dot(new Vector3(...frame.right));
     const reach = frame.half_width + frame.thickness;
     if (Math.abs(across) > reach || hit.z < -frame.thickness || hit.z > topAt(layout, wall, 0) + reach) {
@@ -232,18 +240,15 @@ function MarkerMesh({
   onUp: (e: ThreeEvent<PointerEvent>) => void;
   onHover: (marker: Marker | null) => void;
 }) {
-  const frame = layout.walls[marker.wall];
   const depth = 12; // mm out from the face, so it shows over the hole
-  const sideways = marker.wall === "left" || marker.wall === "right";
-  const centre = new Vector3(...frame.origin)
-    .add(new Vector3(...frame.right).multiplyScalar(marker.across))
-    .add(new Vector3(0, 0, marker.up))
-    .add(new Vector3(...frame.normal).multiplyScalar(depth / 2 + 1));
+  // On its wall, however the wall faces: a round wall's curve, or a run that climbs and bends
+  const { point: centre, normal } = wallPoint(layout, marker.wall, marker.across, marker.up, depth / 2 + 1);
+  const turn = new Quaternion().setFromUnitVectors(new Vector3(0, -1, 0), normal.normalize());
   const colour = marker.cut ? KIND_COLOURS[marker.kind] : "#d92d20";
   return (
     <mesh
       position={centre}
-      rotation={marker.round && sideways ? [0, 0, Math.PI / 2] : [0, 0, 0]}
+      quaternion={turn}
       renderOrder={10}
       userData={{ port: true }}
       raycast={facing || active ? Mesh.prototype.raycast : () => {}}
@@ -260,13 +265,7 @@ function MarkerMesh({
       {marker.round ? (
         <cylinderGeometry args={[marker.width / 2, marker.width / 2, depth, 32]} />
       ) : (
-        <boxGeometry
-          args={
-            sideways
-              ? [depth, marker.width, marker.height]
-              : [marker.width, depth, marker.height]
-          }
-        />
+        <boxGeometry args={[marker.width, depth, marker.height]} />
       )}
       <meshStandardMaterial
         color={colour}
@@ -352,8 +351,8 @@ export function PortMarkers({
     if (!group.current) return;
     const eye = group.current.worldToLocal(camera.position.clone());
     const seen = WALLS.filter((wall) => {
-      const frame = layout.walls[wall];
-      return eye.clone().sub(new Vector3(...frame.origin)).dot(new Vector3(...frame.normal)) > 0;
+      const { point, normal } = wallPoint(layout, wall, 0, 0);
+      return eye.clone().sub(point).dot(normal) > 0;
     }).join(" ");
     if (seen !== facing) setFacing(seen);
   });

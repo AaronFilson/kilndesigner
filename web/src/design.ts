@@ -20,6 +20,7 @@ export interface KilnDocument {
     height: string;
     chambers?: number;
     slope?: string;
+    bend?: string;
     on_ground?: boolean;
   };
   roof?:
@@ -122,7 +123,8 @@ export interface FlueSection {
 }
 
 export interface Chimney {
-  height: string;
+  /** Needed: the form leaves it blank for the builder to give. */
+  height?: string;
   inside?: FlueSection;
   top?: FlueSection;
 }
@@ -157,7 +159,7 @@ export interface Gas {
   supply:
     | { type: "cylinders"; count: number; size?: "100 lb" }
     | { type: "tank"; gallons: number }
-    | { type: "line"; pressure: string };
+    | { type: "line"; pressure?: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
 }
@@ -229,10 +231,25 @@ export interface PortSpot {
   cut: boolean;
 }
 
+/** How a kiln drawn as shells (massing.py) lies: a round chamber, or a run of chambers that may
+ * climb and bend. The walls' frames are the first chamber's; the run moves them. In mm and
+ * degrees. */
+export interface RunInfo {
+  round: boolean;
+  radius: number | null;
+  chambers: number;
+  depth: number;
+  chamber_pitch: number;
+  slope: number;
+  bend: number;
+  length: number;
+}
+
 export interface Layout {
   units: "us" | "metric";
   walls: Record<WallFace, WallFrame>;
   ports: PortSpot[];
+  run?: RunInfo;
 }
 
 /** The ports of one kind as places the design can hold, from where the build put them. */
