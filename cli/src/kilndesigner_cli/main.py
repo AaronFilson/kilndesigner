@@ -211,7 +211,16 @@ def simulate(
             typer.echo(
                 f"  {p.switch_over_f:6.0f} °F  {p.duration_h:5.1f} h  ${p.cost_usd:,.2f}"
                 + ("" if p.completed else "  (stalls)")
+                + (
+                    f"  (elements stall; burners from {p.handed_over_c * 1.8 + 32:.0f} °F)"
+                    if p.elements_stalled and p.handed_over_c is not None
+                    else ""
+                )
             )
+        for s in c.working[1:]:  # pyright: ignore[reportPossiblyUnboundVariable]
+            typer.echo(f"  {s.name}: {s.value}")
+        for f in c.findings:  # pyright: ignore[reportPossiblyUnboundVariable]
+            typer.echo(f"  [{f.level}] {f.message}")
     typer.echo("Wrote " + ", ".join(str(p) for p in written))
 
 

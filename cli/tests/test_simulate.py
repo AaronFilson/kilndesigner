@@ -59,4 +59,8 @@ def test_simulate_a_hybrid_with_its_chart(tmp_path: Path, monkeypatch: pytest.Mo
     assert "Fuel burned:" in result.output
     assert "gal propane" in result.output
     assert "Hand-over" in result.output
+    # The chart's working and findings are printed, and a hand-over past the stall is marked
+    assert "Cheapest hand-over:" in result.output
+    assert "elements stall; burners from" in result.output
+    assert "[info] The elements stall at about" in result.output
     assert (out / "switchover.json").is_file()
