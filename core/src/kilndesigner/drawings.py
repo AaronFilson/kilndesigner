@@ -116,8 +116,9 @@ def _dome_cut(p: Part, axis: Axis, steps: int = 96) -> Rect | None:
         return None
     s = np.linspace(lo, hi, steps + 1)
     zero = np.zeros_like(s)
-    top = d.heights(s, zero, d.radius + d.thickness)
-    inside = d.heights(s, zero, d.radius)
+    x, y = (s, zero) if axis == 1 else (zero, s)
+    top = d.heights(x, y, d.radius + d.thickness)
+    inside = d.heights(x, y, d.radius)
     bottom = np.full_like(s, springline) if p.cap else np.maximum(inside, springline)
     keep = top > bottom + 1e-6
     assert keep.any(), "a dome layer always stands above its springline at the centre line"
@@ -186,6 +187,16 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
             if axis != 2 and abs(at) < 1e-6 and (rect := _dome_cut(p, axis)):
                 rects.append(rect)
             continue  # a dome is all above the springline, so the plan misses it
+        if p.profile is not None and p.across:
+            # A (y, z) outline run along x: whole along the kiln (x = at), else crossed
+            if axis == 0:
+                if p.lo[0] - 1e-6 <= at <= p.hi[0] + 1e-6:
+                    rects.append(_bounded(p.profile, fill, p.name))
+                continue
+            # Across (y = at: spans of z) or the plan (z = at: spans of y), both drawn from x
+            for a, b in _crossings(p.profile, 0 if axis == 1 else 1, at):
+                rects.append(Rect(p.lo[0], a, p.length_run, b - a, fill, p.name))
+            continue
         if p.profile is not None and axis == 1:
             if p.lo[1] - 1e-6 <= at <= p.hi[1] + 1e-6:
                 x0, z0, x1, z1 = p.lo[0], p.lo[2], p.hi[0], p.hi[2]
@@ -223,6 +234,8 @@ def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> li
     parts = lining_parts(kiln)
     if kiln.chamber.shape == "round":
         return _round_views(kiln, parts, us)
+    if kiln.chamber.chambers > 1:
+        return _run_views(kiln, parts, us)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
     walls = kiln.heat.electric.walls if kiln.heat.electric else []
     rows = [h * (i + 0.5) / element_rows for i in range(element_rows)]
@@ -277,7 +290,34 @@ def section_views(kiln: Kiln, element_rows: int = 0, coil_mm: float = 0.0) -> li
             side.circles.append(Circle(d / 2, z, coil_mm / 2))
         if "front" in walls:
             side.circles.append(Circle(-d / 2, z, coil_mm / 2))
+    if any(p.tilt for p in parts):
+        _on_the_slope(kiln, parts, (front, side, plan), us)
     return [front, side, plan]
+
+
+def _on_the_slope(kiln: Kiln, parts: list[Part], views: tuple[View, View, View], us: bool) -> None:
+    """A single chamber on a slope: the section along it drawn up the slope, the section across
+    it and the plan square to the floor, as the bricks are laid."""
+    front, side, plan = views
+    tilt = {p.name: p for p in parts}
+    turned: list[Rect] = []
+    for r in side.rects:
+        p = tilt[r.layer]
+        x1, y1 = r.x + r.w, r.y + r.h
+        corners = r.points or ((r.x, r.y), (x1, r.y), (x1, y1), (r.x, y1))
+        turned.append(_bounded(tuple(p.tilted(u, v) for u, v in corners), r.fill, r.layer))
+    side.rects = turned
+    slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
+    side.title = f"Section B–B: along the kiln, up its {slope:.3g}° slope, looking from the right"
+    front.title = "Section A–A: across the kiln, square to its sloping floor, looking at the back"
+    plan.title = "Section C–C: plan at mid-height, laid out along the slope"
+    x0, y0, x1, y1 = side.bounds()
+    h = y1 - y0
+    side.dims = [
+        Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside, level"),
+        Dimension(x1, y0, x1, y1, 0.06 * (x1 - x0), f"{length_text(h, us)} outside, rise included"),
+    ]
+    side.circles = []
 
 
 def _round_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
@@ -300,6 +340,49 @@ def _round_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
         Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} across outside"),
     ]
     return [section, plan]
+
+
+def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
+    """Chambers in a row: across the first chamber, along the whole run (its steps up the slope
+    and every chamber's arch), and the plan of each chamber at its own mid-height."""
+    from kilndesigner.run_parts import run_layout
+
+    run = run_layout(kiln)
+    w, d, h, n = run.width, run.depth, run.height, run.chambers
+    front = View("Section A–A: across the first chamber, looking at the back",
+                 _cut(parts, 1, 0.0, 0, 2), [], [])  # fmt: skip
+    side = View("Section B–B: along the kiln, looking from the right", _cut(parts, 0, 0.0, 1, 2),
+                [], [])  # fmt: skip
+    if run.step > 1e-6:
+        rects: list[Rect] = []
+        for i in range(n):
+            mine = [p for p in parts if p.chamber == i + 1]
+            rects += _cut(mine, 2, run.floor(i) + h / 2, 0, 1)
+        plan = View("Section C–C: plan of each chamber at its mid-height", rects, [], [])
+    else:
+        plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
+    x0, y0, x1, y1 = front.bounds()
+    front.dims += [
+        Dimension(-w / 2, h, w / 2, h, -0.35 * h, f"{length_text(w, us)} inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * h, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(-w / 2, 0, -w / 2, h, 0.3 * w, f"{length_text(h, us)} inside"),
+        Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    x0, y0, x1, y1 = side.bounds()
+    side.dims += [
+        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, each chamber"),
+        Dimension(x0, y0, x1, y0, 0.25 * h, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(-d / 2, 0, -d / 2, h, -0.6 * d, f"{length_text(h, us)} to the springline"),
+        Dimension(x1, y0, x1, y1, 0.04 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    x0, y0, x1, y1 = plan.bounds()
+    start = -d / 2
+    plan.dims += [
+        Dimension(-w / 2, start, w / 2, start, -0.3 * d, f"{length_text(w, us)} inside"),
+        Dimension(x0, y0, x1, y0, 0.12 * d, f"{length_text(x1 - x0, us)} outside"),
+        Dimension(x1, y0, x1, y1, 0.12 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),
+    ]
+    return [front, side, plan]
 
 
 def _hex(rgb: tuple[float, float, float]) -> str:

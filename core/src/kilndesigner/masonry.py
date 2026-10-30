@@ -29,7 +29,7 @@ from pydantic import BaseModel, ConfigDict
 
 from kilndesigner.allowance import allowance
 from kilndesigner.castable import resolve_material
-from kilndesigner.geometry import Part, lining_parts
+from kilndesigner.geometry import Part, in_a_row, lining_parts
 from kilndesigner.library import material
 from kilndesigner.materials_checks import whole_bricks
 from kilndesigner.model import CatenaryArch, Kiln, SprungArch
@@ -351,7 +351,7 @@ def arch_ring(part: Part) -> ArchRing | None:
         n_shaped = gain / (BRICK[2] - thin)
         n_straight = (inner_arc - n_shaped * thin) / BRICK[2]
         if n_straight >= -0.5:  # the gentlest taper that can turn the curve
-            rings = math.ceil(part.length_y / along - TOL / along)
+            rings = math.ceil(part.length_run / along - TOL / along)
             per_ring_shaped = math.ceil(n_shaped - 1e-9)
             per_ring = math.ceil((inner_arc + gain) / BRICK[2] - 1e-9)
             per_ring_straight = max(0, per_ring - per_ring_shaped)
@@ -466,13 +466,22 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     arch_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
+    row = in_a_row(kiln)
     for part in lining_parts(kiln):
         m = resolve_material(kiln, part.material)
+        if part.across and part.arch is not None and m.kind in BRICK_KINDS:
+            # An arch along the draft that stops short of its neighbour: in standard shapes
+            ring = arch_ring(part)
+            if ring is not None:
+                shapes[(m.id, ring.shape)] += ring.shaped
+                whole[m.id] += ring.straights
+                arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
+                continue
         if part.profile is not None or part.dome is not None:
             # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
             # closing it; a dome's layer or a wall's top under it. No standard shapes turn these
             # curves, so brick is counted by volume.
-            skewback = part.profile is not None and part.wall in ("left", "right")
+            skewback = part.is_skewback
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
@@ -514,7 +523,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 continue
             if len(plans) > 1:
                 side_by_side.append((part, plans))
-            if isinstance(kiln.roof, SprungArch) and part.wall in ("left", "right"):
+            springs = ("front", "back") if row else ("left", "right")
+            if isinstance(kiln.roof, SprungArch) and part.wall in springs:
                 under_skewbacks.extend(plan.laying for plan in plans)
             layers.extend(plans)
             for piece in (p for plan in plans for p in plan.pieces):
@@ -547,7 +557,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
     if isinstance(kiln.roof, SprungArch):
-        arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
+        span = kiln.chamber.depth if row else kiln.chamber.width
+        arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)
         findings.append(
             Finding(
@@ -563,12 +574,13 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             )
         )
         if "stretcher" in under_skewbacks:
+            these = "the walls the arches spring from" if row else "these side walls"
             findings.append(
                 Finding(
                     level="info",
                     message=(
                         'HarbisonWalker, for industrial furnaces: "A stretcher course should never '
-                        'be used immediately below the skewback." Brick in these side walls is '
+                        f'be used immediately below the skewback." Brick in {these} is '
                         "laid as stretchers, as in Olsen's insulating-brick kilns, whose "
                         "featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where "
                         "you can, lay the course under each skewback as headers."
@@ -592,6 +604,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         corners = (
             ""
             if isinstance(kiln.roof, CatenaryArch)  # it has no side walls
+            else " The side walls run through, past the end walls and the walls between "
+            "chambers, which fit between them."
+            if row
             else " At the corners the side walls run through and the back and door fit between "
             "them, layer by layer."
         )
@@ -614,10 +629,64 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
             )
         )
+    if row:
+        findings.append(_row_note(kiln, us))
+    elif kiln.chamber.slope is not None and si(kiln.chamber.slope, "degree") > 0:
+        slope = si(kiln.chamber.slope, "degree")
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The kiln is laid out along its {slope:.3g}° slope: the floor, walls and "
+                    "roof are built square to the sloping floor, every course following it, so "
+                    "the course plans are those of a level kiln of the same size. This is how "
+                    "the plans draw it; no source here sets how a sloping kiln's courses run, so "
+                    "level courses stepped up the slope are as good a choice, with more cutting "
+                    "at the top of each wall."
+                ),
+            )
+        )
     return MasonryPlan(
         layers,
         Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working),
     )
+
+
+def _row_note(kiln: Kiln, us: bool) -> Finding:
+    """How chambers in a row are laid out (run_parts.py), and what isn't."""
+    from kilndesigner.run_parts import run_layout
+
+    run = run_layout(kiln)
+    n = run.chambers
+    text = (
+        f"The {n} chambers stand in a row, each wall between them "
+        f"{length_text(run.between, us)} thick, as thick as the side walls. "
+    )
+    reference = "run_parts.py; Olsen, The Kiln Book, 4th ed."
+    if run.step > 1e-6:
+        slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
+        text += (
+            f"Each floor steps {length_text(run.step, us)} above the last: the pitch of a "
+            f"chamber and its wall, {length_text(run.pitch, us)}, times tan {slope:.3g}°, as "
+            "Olsen's climbing kilns step 12–15 in from chamber to chamber (p.97). Each chamber "
+            "is built level, in level courses. "
+        )
+        reference += ", p.97"
+    if isinstance(kiln.roof, SprungArch):
+        text += (
+            "Each chamber's arch spans along the draft, over its depth, and throws its thrust "
+            "onto the walls before and behind it, as in Olsen's climbing kilns (p.94–95). Where "
+            "an arch meets its neighbour over the wall they share, it is cut there and counted by "
+            "volume. "
+        )
+        reference += ", p.94–95; kiln-reference.md, Tube and climbing chamber kilns"
+    text += (
+        "The flue holes through the walls between chambers aren't cut, as no size for them is "
+        "worked out, so those walls are counted solid; lay the flue holes on a header course "
+        "with the header over each one laid so it can be knocked out if the flue proves too "
+        "small (p.45)."
+    )
+    return Finding(level="info", message=text, reference=reference + ", p.45")
 
 
 def buy_quantities(

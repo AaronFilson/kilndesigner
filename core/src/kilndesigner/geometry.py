@@ -118,9 +118,11 @@ class DomeShape:
     radius: float
     thickness: float
     centre_z: float
+    centre_y: float = 0.0  # a chamber's in a row, along the run
 
     def heights(self, x: np.ndarray, y: np.ndarray, r: float) -> np.ndarray:
         """The sphere of radius ``r`` over (x, y); -inf where it doesn't reach."""
+        y = y - self.centre_y
         under = r * r - x * x - y * y
         return np.where(under > 0, self.centre_z + np.sqrt(np.maximum(under, 0.0)), -np.inf)
 
@@ -148,25 +150,56 @@ class Part:
     # An outline in the r–z plane (r ≥ 0, mm), turned about the z axis: a round wall's layer, a
     # disc of floor or roof, a layer of a round dome. ``ring`` is then its thickness.
     revolve: tuple[tuple[float, float], ...] | None = None
+    # A ``profile`` in the y–z plane, (y, z) pairs, run along x: an arch spanning along the
+    # draft, its skewbacks, and the side walls' caps closing it (chambers in a row)
+    across: bool = False
+    chamber: int | None = None  # which chamber in a row it belongs to, from 1
+    # A single chamber on a slope is laid out level, then tilted up the slope (radians) about the
+    # x axis through the foot of its front face, at y = ``pivot``: its courses follow the floor
+    tilt: float = 0.0
+    pivot: float = 0.0
+
+    def tilted(self, y: float, z: float) -> tuple[float, float]:
+        """Where a point (y, z) of the part, laid out level, stands on the slope."""
+        if not self.tilt:
+            return y, z
+        dy, c, s = y - self.pivot, math.cos(self.tilt), math.sin(self.tilt)
+        return self.pivot + dy * c - z * s, dy * s + z * c
 
     @property
     def wall(self) -> str:
         return self.face if self.face is not None else self.name.split("/")[0]
 
     @property
+    def is_skewback(self) -> bool:
+        return self.name.split("/", 1)[1].startswith("skewback")
+
+    @property
     def title(self) -> str:
         """Where the part is, in words: 'Left wall, layer 2 from the inside'."""
         where, rest = self.name.split("/", 1)
         face = FACE_NAMES.get(where, where)
+        of = f" of chamber {self.chamber}" if self.chamber is not None else ""
+        if self.chamber is not None and (where == "division" or "-by-wall" in rest):
+            between = f"the wall between chambers {self.chamber} and {self.chamber + 1}"
+            face = f"Wall between chambers {self.chamber} and {self.chamber + 1}"
+            if where != "division":
+                face = f"{FACE_NAMES.get(where, where)} beside {between}"
+            of = ""
         if rest.startswith("skewback"):
-            return f"{face}, the skewback and fill on top"
+            return f"{face}{of}, the skewback and fill on top"
         number = rest.split("-", 1)[0]
         above = ", above the springline" if self.cap else ""
-        return f"{face}, layer {number} from the inside{above}"
+        return f"{face}{of}, layer {number} from the inside{above}"
 
     @property
     def length_y(self) -> float:
         return self.hi[1] - self.lo[1]
+
+    @property
+    def length_run(self) -> float:
+        """How far a profile or arch runs: along y, or along x when ``across``."""
+        return self.hi[0] - self.lo[0] if self.across else self.length_y
 
     @property
     def volume(self) -> float:
@@ -180,15 +213,15 @@ class Part:
         if self.profile is not None:
             pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
             area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
-            return area / 2 * self.length_y  # the shoelace formula, times the length
+            return area / 2 * self.length_run  # the shoelace formula, times the length
         if self.dome is not None:
             return self._dome_volume(self.dome)
         if self.arch is None:
             return (self.hi[0] - self.lo[0]) * (self.hi[1] - self.lo[1]) * (self.hi[2] - self.lo[2])
         if self.cap:
-            return self.arch.segment_area * self.length_y
+            return self.arch.segment_area * self.length_run
         r, t, a = self.arch.radius, self.arch.thickness, self.arch.half_angle
-        return a * ((r + t) ** 2 - r**2) * self.length_y
+        return a * ((r + t) ** 2 - r**2) * self.length_run
 
     def _dome_volume(self, d: DomeShape, n: int = 500) -> float:
         """Between the springline (or the shell's inside) and the sphere, over the part's plan,
@@ -242,16 +275,25 @@ def not_drawn(kiln: Kiln) -> str | None:
     The calculations (heat loss, firing, chimney, roof) still run, and the 3D model is drawn as
     shells (massing.py)."""
     c = kiln.chamber
-    if c.chambers > 1:
-        return (
-            "chambers in a row are calculated as one long chamber and drawn, but not yet laid out "
-            "in brick or priced"
-        )
-    if c.slope is not None and si(c.slope, "degree") > 0:
-        return "a sloping floor is calculated and drawn, but not yet laid out in brick or priced"
     if c.bend is not None and si(c.bend, "degree") > 0:
         return "a bent run is calculated and drawn, but not yet laid out in brick or priced"
+    if c.chambers > 1 and isinstance(kiln.roof, CatenaryArch):
+        return (
+            "a catenary over chambers in a row is calculated and drawn, but not yet laid out in "
+            "brick or priced"
+        )
     return None
+
+
+def in_a_row(kiln: Kiln) -> bool:
+    """Chambers in a row, laid out by run_parts.py."""
+    return kiln.chamber.chambers > 1
+
+
+def on_a_stand(kiln: Kiln) -> bool:
+    """A single level box: its frame, door and element grooves are drawn (hardware.py). Round
+    kilns, chambers in a row and kilns on a slope take only their chimney and burners."""
+    return kiln.chamber.shape != "round" and not in_a_row(kiln) and not slope_of(kiln)
 
 
 def _thicknesses(kiln: Kiln, face: Face) -> list[tuple[str, float]]:
@@ -259,14 +301,41 @@ def _thicknesses(kiln: Kiln, face: Face) -> list[tuple[str, float]]:
     return [(layer.material, si(layer.thickness, "mm")) for layer in layers]
 
 
+def thicknesses(kiln: Kiln, face: Face) -> list[tuple[str, float]]:
+    """Each layer of a face, inside first: (material, thickness in mm)."""
+    return _thicknesses(kiln, face)
+
+
 def lining_parts(kiln: Kiln) -> list[Part]:
-    """The lining as boxes and arch rings: pure arithmetic, testable without OpenCascade."""
-    from kilndesigner.castable import resolve_material
+    """The lining as boxes and arch rings: pure arithmetic, testable without OpenCascade. A single
+    chamber on a slope is laid out level, each part then tilted up the slope (Part.tilt)."""
+    from dataclasses import replace
 
     if (why := not_drawn(kiln)) is not None:
         raise GeometryNotSupportedError(why)
+    parts = _level_parts(kiln)
+    tilt = slope_of(kiln) if not in_a_row(kiln) else 0.0
+    if not tilt:
+        return parts
+    pivot = -si(kiln.chamber.depth, "mm") / 2
+    return [replace(p, tilt=tilt, pivot=pivot) for p in parts]
+
+
+def slope_of(kiln: Kiln) -> float:
+    """The floor's slope (radians), 0 when level."""
+    s = kiln.chamber.slope
+    return math.radians(si(s, "degree")) if s is not None else 0.0
+
+
+def _level_parts(kiln: Kiln) -> list[Part]:
+    from kilndesigner.castable import resolve_material
+
     if kiln.chamber.shape == "round":
         return _round_parts(kiln)
+    if in_a_row(kiln):
+        from kilndesigner.run_parts import run_parts
+
+        return run_parts(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_parts(kiln)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
@@ -648,6 +717,11 @@ def arch_outline(part: Part, steps: int = 48) -> list[tuple[float, float]]:
 def _arch_solid(part: Part) -> Any:
     from build123d import Plane, Polygon, Pos, extrude
 
+    if part.across:
+        # A (y, z) outline in the y–z plane, extruded along x from the part's x
+        assert part.profile is not None
+        across: Any = extrude(Plane.YZ * Polygon(*part.profile, align=None), amount=part.length_run)
+        return Pos(part.lo[0] - across.bounding_box().min.X, 0, 0) * across
     # Extrude the outline from the x–z plane, then move it so it starts at the part's y.
     outline = part.profile if part.profile is not None else arch_outline(part)
     solid: Any = extrude(Plane.XZ * Polygon(*outline, align=None), amount=part.length_y)
@@ -662,9 +736,9 @@ def _dome_solid(part: Part) -> Any:
     assert part.dome is not None
     d = part.dome
     plan = _box(part.lo, (part.hi[0], part.hi[1], part.hi[2] + 1))
-    solid: Any = plan & (Pos(0, 0, d.centre_z) * Sphere(d.radius + d.thickness))
+    solid: Any = plan & (Pos(0, d.centre_y, d.centre_z) * Sphere(d.radius + d.thickness))
     if not part.cap:
-        solid = solid - Pos(0, 0, d.centre_z) * Sphere(d.radius)
+        solid = solid - Pos(0, d.centre_y, d.centre_z) * Sphere(d.radius)
     return solid
 
 
@@ -710,8 +784,17 @@ def _revolved_solid(part: Part) -> Any:
 
 
 def part_solid(part: Part) -> Any | None:
-    """The solid of one lining part, whatever its shape; None for a wall with no height (an arch
-    springing from the floor, as in a groundhog)."""
+    """The solid of one lining part, whatever its shape, tilted up its slope; None for a wall with
+    no height (an arch springing from the floor, as in a groundhog)."""
+    solid = _level_solid(part)
+    if solid is None or not part.tilt:
+        return solid
+    from build123d import Axis
+
+    return solid.rotate(Axis((0, part.pivot, 0), (1, 0, 0)), math.degrees(part.tilt))
+
+
+def _level_solid(part: Part) -> Any | None:
     if part.revolve is not None:
         return _revolved_solid(part)
     if part.dome is not None:
@@ -747,7 +830,11 @@ def _holes(kiln: Kiln, hardware: Hardware | None) -> list[Hole]:
     a round kiln's ports mapped round its curve, as the shells' are (massing.port_solid)."""
     if hardware is None:
         return []
-    if kiln.chamber.shape != "round":
+    if in_a_row(kiln):
+        from kilndesigner.run_parts import run_holes
+
+        return run_holes(kiln, hardware)
+    if kiln.chamber.shape != "round" and not slope_of(kiln):
         return [(*o.box, _opening_solid(o)) for o in hardware.openings]
     from kilndesigner.massing import port_solid, run_of
 
@@ -783,12 +870,19 @@ def build_model(
         coil.label = run.name
         coil.color = Color(*COLOURS["element"])
         children.append(coil)
-    if kiln.chamber.shape == "round":
-        # The frame and door are drawn for a box on a stand; the chimney and burners stand clear
-        # of the bricks, where the shells' model puts them
+    if kiln.chamber.shape == "round" or (slope_of(kiln) and not in_a_row(kiln)):
+        # The frame and door are drawn for a level box on a stand; the chimney and burners stand
+        # clear of the bricks, where the shells' model puts them, up the slope
         from kilndesigner.massing import moved_pieces, run_of
 
         children += moved_pieces(kiln, run_of(kiln), hardware)
+        hardware = None
+    elif in_a_row(kiln):
+        # The frame and door are drawn for a box on a stand, so they're left out, as on a round
+        # kiln; the chimney and burners stand where the run puts them
+        from kilndesigner.run_parts import run_pieces
+
+        children += run_pieces(kiln, hardware)
         hardware = None
     for piece in hardware.pieces if hardware else []:
         solid = piece_solid(piece)
@@ -823,12 +917,11 @@ def part_index(
 
     for p in lining_parts(kiln):
         detail = resolve_material(kiln, p.material).name
-        skewback = p.profile is not None and p.wall in ("left", "right")
-        if not skewback and not p.cap:
+        if not p.is_skewback and not p.cap:
             detail += f", {length_text(p.thickness, us)} thick"
         index[p.name] = entry(p.title, detail, p.kind)
     electric = report.electric
-    if kiln.chamber.shape != "round" and electric is not None and electric.elements is not None:
+    if on_a_stand(kiln) and electric is not None and electric.elements is not None:
         el = electric.elements
         # The model draws one coil a groove; an element may run several grooves, in turn
         per = max(1, el.groove_rows // max(1, el.count))
@@ -841,7 +934,7 @@ def part_index(
                 "element",
             )
     for piece in hardware.pieces if hardware else []:
-        if kiln.chamber.shape == "round" and not piece.name.startswith(("chimney/", "burner/")):
+        if not on_a_stand(kiln) and not piece.name.startswith(("chimney/", "burner/")):
             continue  # not drawn on a round kiln (build_model)
         index[piece.name] = entry(piece.title, piece.detail, piece.kind)
     return index
@@ -855,7 +948,8 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     if not_drawn(kiln) is not None:
         return _write_massing(kiln, report, out_dir)
     runs: list[ElementRun] = []
-    round_ = kiln.chamber.shape == "round"  # element grooves round a curve aren't laid out yet
+    # Element grooves round a curve, along chambers in a row or up a slope aren't laid out yet
+    round_ = not on_a_stand(kiln)
     if not round_ and report.electric is not None and report.electric.elements is not None:
         el = report.electric.elements
         runs = element_runs(kiln, el.groove_rows, el.coil_outside_diameter_mm)
@@ -865,8 +959,9 @@ def write_model(kiln: Kiln, report: Report, out_dir: Path) -> dict[str, Path]:
     index = part_index(kiln, report, hardware)
     parts.write_text(json.dumps(index, ensure_ascii=False, indent=2), "utf-8")
     places = out_dir / LAYOUT
-    if kiln.chamber.shape == "round":
-        from kilndesigner.massing import massing_layout  # with the radius, for ports on the curve
+    if round_:
+        # With the radius, for ports on the curve, or the run's chambers and steps
+        from kilndesigner.massing import massing_layout
 
         where = massing_layout(kiln, hardware)
     else:

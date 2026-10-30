@@ -1,6 +1,7 @@
-"""The 3D model of a kiln whose bricks can't yet be laid out: open-topped box kilns, chambers in a
-row, sloping floors and runs that bend (geometry.not_drawn says which). A round kiln is drawn
-layer by layer (geometry._round_parts), but takes its ports and its chimney and burners from here.
+"""The 3D model of a kiln whose bricks can't yet be laid out: runs that bend, and a catenary over
+chambers in a row (geometry.not_drawn says which). Round kilns, chambers in a row and sloping
+chambers are drawn part by part (geometry.py, run_parts.py), but take their ports and their
+chimney and burners from here.
 
 The lining is drawn as shells: the chamber's inside, offset outward by each layer's reach and
 the inner offset taken away, so every layer wraps the whole kiln. The shell takes the walls'
