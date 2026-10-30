@@ -96,6 +96,22 @@ image**.
 | Updraft frame, Fig 6-69 and text, p.174 (PDF 163) | "door frame 3 x 3 x ¼in." angle; no opening size printed | no: no example has this door |
 | Kaneko, Fig 6-64 and text, p.172 (PDF 161) | "The suspended door on the overhead I-beam uses a trolley. A detail of a similar suspended kiln door is pictured. Two Yale half-ton trolleys rode the overhead I-beam using U-bolts and eye-bolts to suspend the door (Fig. 6-64)"; spring-tension latches draw it into the jambs; the trolley's plate reads "Yale" and a rating not legible. No I-beam size, door size, build or weight | no: the photo is "a similar" door; with no door weight printed nothing can be checked against the trolleys, and the engine's car carries its end wall. Left as a note in `kaneko-car.yaml` |
 
+### Metric partners looked for (2026-10-30)
+
+Olsen often prints a metric value beside an imperial one. For each unsettled door above, the
+figure and the body text on the same and facing pages were searched for one. Status of every row:
+**Checked on the page image** (`kiln-reference.pdf`, 80–400 dpi). The second scan
+(`Scanned_20261025-1022.pdf`) holds pp.64–65, 70–71 and two pages of orifice tables only, so it
+can't help here.
+
+| Kiln, figure, page (PDF) | Imperial | Metric | Agree? |
+|---|---|---|---|
+| Tamba, Fig 4-15, p.87 (PDF 73); Figs 4-11, 4-14, p.86–87 | height "3′" + a washed-out mark; width "2′" + a washed-out mark | none: the drawing has feet-and-inch marks only; the text on pp.86–87 gives metric for the firebox (6 ft / 183 cm, 5 ft / 152 cm) and the bundles (15 × 15 × 30 in / 38 × 38 × 76 cm), never the door | no metric partner; the door size stays unread |
+| Bowen Mountain, Fig 4-153, p.127 (PDF 114) | "24" (+-) DOOR", no height | none: the drawing is imperial only and the text (salt, 1 lb / 0.45 kg per ft³) gives no door size | nothing to compare; no height |
+| Kawaii, Figs 4-45 to 4-48, p.97 (PDF 83) | no door size | none for the door. The text's pairs are the chamber, "7ft wide, 4ft deep and 5ft 8in. tall (213cm wide, 122cm … 173cm tall)", the flues "7 x 10in. (18 x …)" and "9 x 10in. (23 x …)", the step "12 to 15in. (30.5 x 38cm)" and the dogi "5ft (152cm) … 18 to 24in. (46 to 61cm)" | no door size in either unit |
+
+None of the three is settled, so no opening was added to an example.
+
 Kanayama (Fig 4-64, Figs 7-17 to 7-25) and Kecskemét (Fig 5-42) print no door size, and neither
 is an example.
 

@@ -1737,8 +1737,10 @@ The user remembers springs from the 1st or 2nd edition.
 - **Bundle schedule** (p.93, Read): the firebox is stoked first, 15 h to 1832 °F (1000 °C). Then
   each chamber's sides: ¼, ½ and ¾ bundle per stoking in hours 1–3; from hour 4 one bundle every
   3–4 minutes (reducing); up to two bundles per stoking in hour 7. About 75 bundles per side and
-  7 h of stoking for each reduction chamber; about 5 h for oxidation chambers. A bundle is 15 in (?)
-  in diameter and 18 in long. One such seven-chamber kiln fired to cone 8–9 in about 56 h.
+  7 h of stoking for each reduction chamber; about 5 h for oxidation chambers. A bundle is 15 in
+  in diameter and 18 in long (the inches are washed out at the gutter; the metric beside them,
+  "38cm in diameter by 18in./46cm long", is clear: 38 cm ÷ 2.54 = 14.96 in, agreeing with 15 in;
+  Checked on the page image, 2026-10-30). One such seven-chamber kiln fired to cone 8–9 in about 56 h.
 - **Building a climbing kiln** (p.94–95, Read): lean the front wall in up to the arch springing
   (38 in in his example); set the arch peak back from the chamber centre-line so its thrust goes
   to the common wall and on to the chimney; brace the first chamber's front wall while arching;

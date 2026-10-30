@@ -652,8 +652,9 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   scan, read by the user, 2026-10-29). Read by the Kyoto
   proportions as 4.3 m across × 2 m tall × 1.4 m deep (the note's interpretation); about 425 ft³ per
   chamber (derived).
-- Stoking: firebox 15 hours to 1832 °F (1000 °C); then each chamber's sides. A bundle is 15 in (?) /
-  38 cm across × 18 in / 46 cm long. ¼ bundle per stoking in hour 1, ½ in hour 2, ¾ in hour 3; from
+- Stoking: firebox 15 hours to 1832 °F (1000 °C); then each chamber's sides. A bundle is 15 in /
+  38 cm across (the inches washed out at the gutter; the printed 38 cm ÷ 2.54 = 14.96 in agrees;
+  Checked on the page image, p.93, 2026-10-30) × 18 in / 46 cm long. ¼ bundle per stoking in hour 1, ½ in hour 2, ¾ in hour 3; from
   hour 4 one bundle every 3–4 minutes (reducing); up to two bundles per stoking in hour 7. Chambers
   1–3: about 75 bundles per side, 7 hours (reduction). Chambers 4–7: [number lost] bundles per side,
   5 hours (oxidation).
