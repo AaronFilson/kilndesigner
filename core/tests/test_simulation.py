@@ -267,6 +267,18 @@ def test_the_switch_over_chart_marks_stalls(monkeypatch: pytest.MonkeyPatch) -> 
     assert any("never finish" in f.message for f in chart.findings)
 
 
+def test_a_hand_over_above_the_elements_stall_is_marked() -> None:
+    # The PNW kiln's 11.5 kW of elements stall near 1990 °F, short of a 2100 °F hand-over
+    chart = switch_over_chart(_example("pnw-hybrid-crossdraft"), step_f=1700, dt=600)
+    first, second = chart.points
+    assert not first.elements_stalled
+    assert first.handed_over_c == pytest.approx(first.switch_over_c)
+    assert second.elements_stalled
+    assert second.handed_over_c is not None
+    assert second.handed_over_c < second.switch_over_c
+    assert any("same firing" in f.message for f in chart.findings)
+
+
 @pytest.mark.parametrize(
     ("kiln", "message"),
     [

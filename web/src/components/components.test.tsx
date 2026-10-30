@@ -119,6 +119,7 @@ describe("Materials", () => {
           },
         ],
         cut_list: [{ material: "ifb-jm26", cut: "cut to 4.5 in long", count: 12 }],
+        working: [],
         findings: [],
       },
     } as Report;

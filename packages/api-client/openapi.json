@@ -3708,6 +3708,22 @@
           "completed": {
             "type": "boolean",
             "title": "Completed"
+          },
+          "handed_over_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Handed Over C"
+          },
+          "elements_stalled": {
+            "type": "boolean",
+            "title": "Elements Stalled",
+            "default": false
           }
         },
         "type": "object",

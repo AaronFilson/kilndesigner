@@ -86,10 +86,16 @@ function Summary({ result }: { result: FiringResult }) {
 }
 
 function SwitchOver({ chart }: { chart: SwitchOverChart }) {
+  // A hand-over above the elements' stall is the same firing as the stall, so it isn't plotted
   const at = (y: (p: SwitchOverChart["points"][number]) => number): [number, number][] =>
-    chart.points.filter((p) => p.completed).map((p) => [p.switch_over_c, y(p)]);
+    chart.points.filter((p) => p.completed && !p.elements_stalled).map((p) => [p.switch_over_c, y(p)]);
   return (
     <>
+      {chart.findings.map((f) => (
+        <p key={f.message} className="note">
+          {f.message}
+        </p>
+      ))}
       <LineChart
         title="Cost against the hand-over to the burners"
         xLabel="Hand-over, °C"

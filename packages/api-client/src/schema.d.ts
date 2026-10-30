@@ -1330,6 +1330,13 @@ export interface components {
             held: boolean;
             /** Completed */
             completed: boolean;
+            /** Handed Over C */
+            handed_over_c?: number | null;
+            /**
+             * Elements Stalled
+             * @default false
+             */
+            elements_stalled: boolean;
         };
         /**
          * Template
