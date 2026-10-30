@@ -191,10 +191,28 @@ def cut_ring_sheet(inside_diameter: float, depth: float) -> Sheet:
     return s
 
 
-def _disc_rows(radius: float, thickness: float, part: Part) -> list[LayerPlan] | None:
+def _half_width(radius: float, sides: int | None, y: float) -> float:
+    """Half the width of the disc at ``y`` from its centre: a circle's, or, with ``sides``, a
+    regular polygon's through those corners, a flat at the front."""
+    if sides is None:
+        return math.sqrt(max(radius * radius - y * y, 0.0))
+    apothem = radius * math.cos(math.pi / sides)
+    out = radius
+    for k in range(sides):
+        phi = -math.pi / 2 + 2 * math.pi * k / sides  # each flat's outward normal
+        if math.cos(phi) > 1e-9:
+            out = min(out, (apothem - y * math.sin(phi)) / math.cos(phi))
+    return max(out, 0.0)
+
+
+def _disc_rows(
+    radius: float, thickness: float, part: Part, sides: int | None = None
+) -> list[LayerPlan] | None:
     """A disc of brick ``thickness`` thick, laid in rows of straights across it, the rows' ends
-    cut to the circle: one plan for each wall of brick in the layer, from the inside out. None if
-    whole bricks don't make the thickness."""
+    cut to the circle, or with ``sides`` to the polygon through ``radius``: an electric kiln's lid
+    and floor slab, as many whole bricks as fit, the edge bricks cut to the kiln's profile (the
+    user, electric-kiln-survey.md). One plan for each wall of brick in the layer, from the inside
+    out. None if whole bricks don't make the thickness."""
     sizes = brick_sizes(thickness)
     three = abs(thickness - 3 * IN) < 1.0  # a slab of 3 in series straights, 9 × 4½ × 3 in, flat
     if three:
@@ -210,16 +228,18 @@ def _disc_rows(radius: float, thickness: float, part: Part) -> list[LayerPlan] |
         )
         plan = LayerPlan(part, kind, 2 * radius, 2 * radius, within=(k + 1, len(sizes)),
                          circle=radius)  # fmt: skip
-        rows = math.ceil(2 * radius / width - TOL / width)
+        reach = radius if sides is None else radius * math.cos(math.pi / sides)
+        rows = math.ceil(2 * reach / width - TOL / width)
         for i in range(rows):
-            y0 = -radius + i * width
-            y1 = min(y0 + width, radius)
-            near = 0.0 if y0 <= 0 <= y1 else min(abs(y0), abs(y1))
-            chord = 2 * math.sqrt(max(radius * radius - near * near, 0.0))
+            y0 = -reach + i * width
+            y1 = min(y0 + width, reach)
+            # The row is as long as the disc is wide anywhere across it, its ends cut to the edge
+            ys = [y0, y1] + ([0.0] if y0 <= 0 <= y1 else [])
+            chord = 2 * max(_half_width(radius, sides, y) for y in ys)
             start = radius - chord / 2  # the row centred on the circle
             pieces = run_pieces(chord, unit, stagger=i % 2 == 1, height=y1 - y0, full_h=width)
             plan.courses.append(
-                Course(i + 1, y0 + radius, tuple(replace(p, start=p.start + start) for p in pieces))
+                Course(i + 1, y0 + reach, tuple(replace(p, start=p.start + start) for p in pieces))
             )
         plans.append(plan)
     return plans
@@ -386,7 +406,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             where = f"{face.capitalize()}, layer {i + 1} from the inside"
             area = math.pi * radius * radius
             if m.kind in BRICK_KINDS:
-                plans = _disc_rows(radius, th, parts[f"{face}/{i + 1}-{layer.material}"])
+                plans = _disc_rows(radius, th, parts[f"{face}/{i + 1}-{layer.material}"], sides)
                 if plans is None:
                     unbuildable(where, m.id, th, rings=False)
                     continue
@@ -401,10 +421,19 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                             Cut(p.length, p.height, p.full_length, p.full_height)
                         )
                 whole[m.id] += n_whole
-                lines.append(
-                    f"{where}: rows of straights across a {length_text(2 * radius, us)} circle, "
-                    f"{n_whole} whole and {len(pieces) - n_whole} cut to the circle"
-                )
+                if sides is None:
+                    lines.append(
+                        f"{where}: rows of straights across a {length_text(2 * radius, us)} "
+                        f"circle, {n_whole} whole and {len(pieces) - n_whole} cut to the circle"
+                    )
+                else:
+                    lid = face == "roof"
+                    lines.append(
+                        f"{where}: a {sides}-sided slab of mortared straights, "
+                        f"{length_text(2 * radius, us)} across its corners, {n_whole} whole and "
+                        f"{len(pieces) - n_whole} cut to the kiln's profile, a steel band round it"
+                        + (" carrying the lid's hinge" if lid else ", not hinged")
+                    )
             elif m.kind in SHEET_KINDS:
                 sheet(m.id, area, th)
             elif m.kind in BULK_KINDS:

@@ -19,7 +19,7 @@
         "buy": "137 bricks",
         "cost": 854.88,
         "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
-        "needed": "137 bricks (110 whole, 20 cut into 26 pieces; 130 in the kiln plus 5 % for breakage)",
+        "needed": "137 bricks (110 whole, 20 cut into 24 pieces; 130 in the kiln plus 5 % for breakage)",
         "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
         "source": "combustion-and-masonry.md §9 [S71]",
         "unit_price": "$6.24"
@@ -486,7 +486,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle; Roof, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
+      "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: a 12-sided slab of mortared straights, 34.8 in across its corners, 19 whole and 12 cut to the kiln's profile, a steel band round it, not hinged; Roof, layer 1 from the inside: a 12-sided slab of mortared straights, 34.8 in across its corners, 19 whole and 12 cut to the kiln's profile, a steel band round it carrying the lid's hinge. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
       "reference": "Olsen, The Kiln Book, 4th ed., p.21, p.45, p.303–305 (kiln-reference.md, Brick sizes and shapes; Walls, bonds and openings; Tables A-4 to A-7); Olsen, The Kiln Book, 4th ed., p.45, Fig. 2-13: straights on the curve, their joints opening toward the outside; HarbisonWalker featheredge, 9 × 4½ × (2½ − ⅛) in (kiln-hardware.md §5.1 [S20]); straights with featheredges, and straights cut to the angle, the norm in electric kilns (the user, a kiln builder, 2026-10-30); 9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
     },
     {
@@ -770,17 +770,17 @@
     "cut_list": [
       {
         "count": 2,
-        "cut": "cut to 1.74 in long",
+        "cut": "cut to 0.696 in long",
         "material": "ifb-k23"
       },
       {
         "count": 2,
-        "cut": "cut to 1.97 in long",
+        "cut": "cut to 2.09 in long",
         "material": "ifb-k23"
       },
       {
         "count": 2,
-        "cut": "cut to 3.27 in long",
+        "cut": "cut to 2.73 in long, ripped to 2.09 in",
         "material": "ifb-k23"
       },
       {
@@ -790,37 +790,22 @@
       },
       {
         "count": 2,
-        "cut": "cut to 4.5 in long, ripped to 3.27 in",
+        "cut": "cut to 4.5 in long, ripped to 2.09 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "cut to 6.59 in long",
         "material": "ifb-k23"
       },
       {
         "count": 2,
-        "cut": "cut to 5.34 in long",
+        "cut": "cut to 7.28 in long",
         "material": "ifb-k23"
       },
       {
         "count": 2,
-        "cut": "cut to 6.81 in long, ripped to 3.27 in",
-        "material": "ifb-k23"
-      },
-      {
-        "count": 2,
-        "cut": "cut to 6.89 in long",
-        "material": "ifb-k23"
-      },
-      {
-        "count": 2,
-        "cut": "cut to 7.75 in long",
-        "material": "ifb-k23"
-      },
-      {
-        "count": 2,
-        "cut": "cut to 7.96 in long",
-        "material": "ifb-k23"
-      },
-      {
-        "count": 2,
-        "cut": "ripped to 3.27 in",
+        "cut": "ripped to 2.09 in",
         "material": "ifb-k23"
       }
     ],
@@ -828,14 +813,14 @@
       {
         "check": null,
         "level": "info",
-        "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle; Roof, layer 1 from the inside: rows of straights across a 34.8 in circle, 19 whole and 13 cut to the circle. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
+        "message": "Round kiln: Round wall, layer 1 from the inside: 3 in ring of 6 courses of 12 straight cut to the angle, each cut at both ends 15.0° off square, its 9 in outside face whole; Floor, layer 1 from the inside: a 12-sided slab of mortared straights, 34.8 in across its corners, 19 whole and 12 cut to the kiln's profile, a steel band round it, not hinged; Roof, layer 1 from the inside: a 12-sided slab of mortared straights, 34.8 in across its corners, 19 whole and 12 cut to the kiln's profile, a steel band round it carrying the lid's hinge. Tapered rings follow Olsen's circle tables. A 4½ in ring is the builder's choice (the design's chamber.rings): straights with mortar-filled wedge joints, as Olsen draws a curved wall (Fig. 2-13, p.45); straights cut to the angle, the norm in electric kilns; straights with featheredges; or arch bricks, possible but not recommended (p.45). This one: cut. Cut rings are stacked course on course, their facets in line: in small kilns, electric especially, a smooth wall matters more than staggered joints (the user, a kiln builder). Brick counts assume dry joints at the nominal size, but for the wedge joints said; the breakage allowances are those of a box kiln (allowance.py).",
         "reference": "Olsen, The Kiln Book, 4th ed., p.21, p.45, p.303–305 (kiln-reference.md, Brick sizes and shapes; Walls, bonds and openings; Tables A-4 to A-7); Olsen, The Kiln Book, 4th ed., p.45, Fig. 2-13: straights on the curve, their joints opening toward the outside; HarbisonWalker featheredge, 9 × 4½ × (2½ − ⅛) in (kiln-hardware.md §5.1 [S20]); straights with featheredges, and straights cut to the angle, the norm in electric kilns (the user, a kiln builder, 2026-10-30); 9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]"
       }
     ],
     "quantities": [
       {
         "amount": 137.0,
-        "detail": "110 whole, 20 cut into 26 pieces; 130 in the kiln plus 5 % for breakage",
+        "detail": "110 whole, 20 cut into 24 pieces; 130 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-k23",
         "name": "Morgan Thermal Ceramics K-23 insulating firebrick",

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from kilndesigner.designfile import parse_design
+from kilndesigner.designfile import load_design, parse_design
 from kilndesigner.electric import design_elements
 from kilndesigner.frame import design_frame
 from kilndesigner.masonry import plan_masonry
@@ -100,3 +100,14 @@ def test_bands_are_listed_not_sized() -> None:
     assert "aren't sized" in band.message
     domed = parse_design(SOURCE.replace("type: flat", "type: dome\n  rise: 6 in"))
     assert "round the lid" not in design_frame(domed).findings[0].message
+
+
+def test_an_electric_lid_and_floor_are_polygons_of_whole_bricks_banded() -> None:
+    """The lid and floor slab follow the kiln's 12 sides, as many whole bricks as fit and the
+    edge bricks cut to the profile, each in a steel band; only the lid's band is hinged (the
+    user, electric-kiln-survey.md)."""
+    kiln = load_design(Path(__file__).parents[2] / "examples" / "round-electric.yaml")
+    text = " ".join(f.message for f in plan_masonry(kiln).result.findings)
+    assert "Floor, layer 1 from the inside: a 12-sided slab of mortared straights" in text
+    assert "cut to the kiln's profile, a steel band round it, not hinged" in text
+    assert "a steel band round it carrying the lid's hinge" in text

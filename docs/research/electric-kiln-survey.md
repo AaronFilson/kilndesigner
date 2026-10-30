@@ -56,6 +56,7 @@ above.
 | Thicker brick | Thicker bricks reduce the inside diameter "by about an inch" | Snippet: <https://archiebrayclay.com/?p=56017> |
 | L&L element holders | "hard ceramic element holders", no pins | Verified: <https://www.clay-king.com/kilns/l_l_kilns/l_l_e23t.html> |
 | Steel bands (searched 2026-10-30) | Skutt sells "Lid, Slab and Body Bands" for 8, 10 and 12 sided kilns, body bands as top, middle or bottom; and "Blank Ring Band for 1227-3". A parts seller: the bricks are held only by the band's tension, not cement. No width, thickness, material grade or tension found | Snippet (search summaries; listings returned 301/410/429): <https://m.reach.dog/shop/kilnpartscom/products/bands_12>, <https://m.reach.dog/shop/kilnpartscom/products/br_bands_12>, <https://kruegerpottery.com/products/br_bands_10>. Forum report of rusted bands on an old 1227: <https://community.ceramicartsdaily.org/topic/21220-skutt-1227-rebuild-older-manual-kiln/> (snippet) |
+| Lid (and floor slab) | Almost always a polygon of mortared straights using as many whole bricks as it can, the bricks at the edge cut to the kiln's profile, with a steel band round it; the lid's band carries the hinge, the floor slab is built the same way but not hinged | The user, a kiln builder (2026-10-30) |
 | Mortar vs dry-stack, course bond, brick shape name (wedge, cut angle), K-grade for Skutt, groove pitch | Not found | — |
 
 ## Derived: sides, brick thickness and inside diameter

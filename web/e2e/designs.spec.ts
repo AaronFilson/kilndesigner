@@ -317,9 +317,9 @@ test("a castable you mix: its batch, densities and first firing", async ({
   const batch = page.getByRole("table", { name: /^One batch of Foamed fireclay backup/ });
   await expect(batch).toContainText("Greenstripe fireclay");
   await expect(page.getByText("A level US quart weighs").first()).toBeVisible();
-  await expect(page.getByRole("table", { name: /^First firing of Foamed fireclay backup/ })).toContainText(
-    "1000 °F",
-  );
+  // Its walls are castable in layers, and the one sourced dry-out schedule covers a single layer,
+  // so the page says why none is given rather than showing one
+  await expect(page.getByText(/so no dry-out schedule is given/).first()).toBeVisible();
   await expect(page.getByText(/kyanite never expands/).first()).toBeVisible();
   // The form lists the mixes, and the lining can use them
   const form = page.getByRole("form", { name: "Design" });
@@ -593,6 +593,9 @@ test("a round kiln's rings are turned the way chosen, and saved", async ({ page,
   await expect(form.getByLabel("Brick rings turned with")).toHaveCount(0);
   await form.getByLabel("Chamber shape").selectOption("round");
   await form.getByLabel("Diameter", { exact: true }).fill("36");
+  // A round chamber takes a dome or a flat roof, not the crossdraft's arch
+  const roof = form.locator("label.field").filter({ has: page.getByText("Roof", { exact: true }) });
+  await roof.locator("select").selectOption("dome");
   await form.getByLabel("Brick rings turned with").selectOption("featheredge");
   const yaml = await savedAndDrawn(page, cleanup, name);
   await expect(yaml).toContainText("rings: featheredge");
