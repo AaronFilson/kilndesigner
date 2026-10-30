@@ -232,3 +232,7 @@ test-results/
 playwright-report/
 /scratch/
 docs/research/*.pdf
+
+# Claude Code: agent worktrees and scratch patches
+.claude/worktrees/
+.claude/*.patch

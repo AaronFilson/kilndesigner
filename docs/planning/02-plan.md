@@ -357,10 +357,21 @@ the next round are in [10-30-26.md](10-30-26.md).
   checked.
 - 1531 tests, coverage over 98 % in Python and web, 22 Playwright specs against a rebuilt stack.
 
+### Status (2026-10-30, round 3)
+
+- **Bearing** of refractory still has no published allowable, so it is shown, not checked;
+  **sliding** at a door arch's springing is checked (BIA, μ ≥ 0.60).
+- **The author's kiln** is rebuilt on today's engine and its write-up is current
+  ([pnw-hybrid-crossdraft.md](../kilns/pnw-hybrid-crossdraft.md)); its open items need the author.
+- **Round electric kilns** load from a hinged lid, with grooves and polygon slabs in the model.
+- **Calimpong's teardrop** has its door as built and passes, after two engine fixes for doors
+  under domes.
+
 ### What's next (2026-10-30)
 
-See [10-30-26.md](10-30-26.md): sourced bearing and sliding checks, the author's kiln end to end,
-the rest of round electric kilns, more door test cases, then M7.
+See [10-30-26.md](10-30-26.md): electric floors inside the walls, unclear figures settled by their
+metric values, the first steps of [complex curves](complex-curves.md), the author's answers, then
+M7.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
