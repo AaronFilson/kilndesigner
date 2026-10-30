@@ -266,3 +266,26 @@ def test_a_catenary_door_must_fit_under_its_curve() -> None:
         _kiln("catenary-gas-kiln.yaml", {"opening": {"width": "30 in", "height": "40 in"}})
     kiln = _kiln("catenary-gas-kiln.yaml", ARCH)
     assert door_hole(kiln) is not None
+
+
+def test_calimpongs_door_reaches_into_its_sail_domes_side() -> None:
+    # Fig 4-140: a 33 × 37 in door in the side of walls 35 in tall, under a cast dome
+    kiln = _kiln("olsen/conrad-teardrop.yaml", {})
+    hole = door_hole(kiln)
+    assert hole is not None
+    assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(-6 * 25.4)  # 36 to 69 in of the 117
+    head = door_head(kiln)
+    assert head is not None
+    assert not [f for f in head.findings if f.level != "info"]
+    assert any(s.name == "The dome over the door's arch" for s in head.working)
+    # Past the dome's curve over both jambs it is still refused
+    with pytest.raises(ValidationError, match="inside top"):
+        _kiln("olsen/conrad-teardrop.yaml",
+              {"opening": {"width": "33 in", "height": "45 in", "across": "-6 in"}})  # fmt: skip
+
+
+def test_a_door_in_a_tubes_side_is_refused_with_its_reason() -> None:
+    # Tamba's doors rise through the springing of the tube's vault (Figs 4-11, 4-15)
+    with pytest.raises(ValidationError, match="springing of its vault"):
+        _kiln("olsen/tamba.yaml", {"face": "left", "opening": {"width": "24 in",
+                                                              "height": "36 in"}})  # fmt: skip

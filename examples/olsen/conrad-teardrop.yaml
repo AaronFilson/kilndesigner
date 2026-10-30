@@ -15,7 +15,11 @@
 # Olsen casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"), and "a 6in.
 # thickness is best" (p.59). Its rise, 2¾ in per foot of the 36 in span, 8¼ in: the middle of his
 # 2½–3 in/ft for domes (p.51). Cone 10, from the Gulgong racer, Olsen's cast-dome wood cross-draft
-# (gulgong-racer, p.119). The door in the right wall: the book doesn't say which side.
+# (gulgong-racer, p.119). The door in the right wall: the book doesn't say which side. Its 37 in
+# reaches 2 in above the 35 in walls, into the dome's sides, which the sail dome allows. Its head
+# is drawn with rounded corners and a flatter top than a semicircle, and what spans it isn't
+# printed: it is taken as arched in the dome's 6 in ring, as Olsen's other built doors are
+# (door-openings.md).
 # Not modelled: the teardrop, as a box of its mean width, 36 in: widths 39, 51½, 48, 16 and 12 in
 # at 0, 36, 69, 86 and 98 in from the front, averaged along the 117 in with 12 in carried to the
 # end. The widest is placed at the side door's near jamb, which puts the 48 in at its far jamb;
@@ -39,6 +43,10 @@ loading:
   type: door
   face: right
   door: bricked
+  opening:
+    width: 33 in # "KILN DOOR" 33 in (Fig 4-140)
+    height: 37 in # 37 in (Fig 4-140), from the floor
+    across: -6 in # its far jamb 48 in from the back wall (Fig 4-140): from 36 to 69 in of 117
 lining:
   walls:
     - material: ifb-k26
