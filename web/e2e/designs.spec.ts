@@ -618,14 +618,17 @@ test("a firebox's grate, step, ash pit, inlets and stoke hole, and a chimney, ar
     .getByLabel("Firebox 1, step from the grate up to the chamber floor (blank: level)", { exact: true })
     .fill("9");
   await form.getByLabel("Firebox 1, inlet flues into the chamber").fill("2");
-  await form.getByLabel("Firebox 1, stoke hole size", { exact: true }).selectOption("rect");
+  // A choice's label holds its options' words too, so it's found by its own text
+  const choice = (label: string) =>
+    form.locator("label.field").filter({ has: page.getByText(label, { exact: true }) }).locator("select");
+  await choice("Firebox 1, stoke hole size").selectOption("rect");
   await form.getByLabel("Firebox 1, stoke hole size: width", { exact: true }).fill("9");
   await form.getByLabel("Firebox 1, stoke hole size: height", { exact: true }).fill("9");
   await form.getByLabel("Give the chimney as built (otherwise the engine sizes it)").check();
-  await form.getByLabel("Chimney height, from the chamber floor (needed)").fill("144");
-  await form.getByLabel("Chimney inside", { exact: true }).selectOption("rect");
-  await form.getByLabel("Chimney inside width").fill("9");
-  await form.getByLabel("Chimney inside depth").fill("9");
+  await form.getByLabel("Chimney height, from the chamber floor (needed)", { exact: true }).fill("144");
+  await choice("Chimney inside").selectOption("rect");
+  await form.getByLabel("Chimney inside width", { exact: true }).fill("9");
+  await form.getByLabel("Chimney inside depth", { exact: true }).fill("9");
   await page.getByRole("button", { name: "Save and build" }).click();
   await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
   cleanup(designId(page));
@@ -649,9 +652,12 @@ test("a firebox's grate, step, ash pit, inlets and stoke hole, and a chimney, ar
   expect(doc.draft?.chimney).toEqual({ height: "144 in", inside: { width: "9 in", depth: "9 in" } });
 });
 
-test("an open-topped kiln on the ground is made from choices", async ({ page, cleanup }) => {
+test("an open-topped wood kiln on the ground is made from choices", async ({ page, cleanup }) => {
   const name = `E2E open top ${Date.now()}`;
   const form = await fromGasCrossdraft(page, name);
+  // An open top's loss isn't worked out, so burners can't be sized for it: it's fired with wood
+  await form.getByLabel("Fire with wood, coal or oil in fireboxes").check();
+  await form.getByLabel("Fire with gas").uncheck();
   const roof = form.locator("label.field").filter({ has: page.getByText("Roof", { exact: true }) });
   await roof.locator("select").selectOption("open");
   await form.getByLabel("The floor is on the ground (not raised on a stand)").check();
