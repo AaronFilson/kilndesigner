@@ -1718,6 +1718,14 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     from kilndesigner.foundation import platform_bearing
 
     frame = _design_frame(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
+        from kilndesigner.crossing import crossing_note, crossing_statics
+
+        steps, found = crossing_statics(kiln)
+        frame = frame.model_copy(update={
+            "working": [*frame.working, *steps],
+            "findings": [*frame.findings, *found, crossing_note(kiln)],
+        })  # fmt: skip
     bearing, under = platform_bearing(kiln)
     if bearing or under:
         frame = frame.model_copy(

@@ -351,6 +351,7 @@ def _flat(part: Part) -> bool:
         and part.dome is None
         and part.revolve is None
         and part.plan is None
+        and part.groin is None
     )
 
 
@@ -677,7 +678,8 @@ def plan_masonry(kiln: Kiln, holes: Sequence[Hole] = ()) -> MasonryPlan:
                 whole[m.id] += ring.straights
                 arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
                 continue
-        if part.profile is not None or part.dome is not None or part.plan is not None:
+        if (part.profile is not None or part.dome is not None or part.plan is not None
+                or part.groin is not None):  # fmt: skip
             # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
             # closing it; a dome's layer or a wall's top under it; a curved plan's wall, floor or
             # roof. No standard shapes turn these curves, so brick is counted by volume.
@@ -693,6 +695,12 @@ def plan_masonry(kiln: Kiln, holes: Sequence[Hole] = ()) -> MasonryPlan:
                 cut = "the arch's angle" if skewback else "the curve"
                 if part.plan is not None and part.dome is None:
                     cut = "the plan's curve where it needs it"
+                if part.groin is not None:
+                    cut = (
+                        "the arch's curve, the end cut to the other vault on site"
+                        if part.cap
+                        else "the vaults' curves, the groin cut on site"
+                    )
                 bricks = "brick" if count == 1 else "bricks"
                 arch_lines.append(
                     f"{layer_name(part)}: about {count} {bricks} by volume, cut to {cut}"
@@ -778,7 +786,8 @@ def plan_masonry(kiln: Kiln, holes: Sequence[Hole] = ()) -> MasonryPlan:
                 reference=ARCH_SOURCE,
             )
         )
-    if isinstance(kiln.roof, SprungArch):
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is None:
+        # Crossing vaults' rings take the fill beside them in (crossing.crossing_note)
         span = kiln.chamber.depth if along else kiln.chamber.width
         arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)

@@ -15,7 +15,7 @@ simplification is written into the example's notes:
 | `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | Done (step 3): a teardrop plan (`chamber.outline`) under a sphere through it (`roof.crown_at`), crown and thickness estimated from the figures; the door's head still a semicircle |
 | `bae-gilgama` | Teardrop tube on a slope (p.107–108) | A sloping box |
 | `gulgong-racer`, `hohr-2003` | Cast domes over the chamber (p.118–123) | Dome over a rectangle |
-| `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Not described |
+| `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Two crossing vaults (`roof.crossing`) for Fireworks and Church since 2026-10-31; Kanayama unmodelled |
 | `breda-bottle`, `bottle-two-storey`, `sevres` | Round, domed, cone-frustum bottle chimney (p.166–169) | Round chamber; chimney as a straight stack |
 | `bowen-mountain` | Crown curving down along the length (Fig 4-153) | One arch along the length (`roof.along`), since 2026-10-31 |
 | `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door laid out and checked since 2026-10-31; the example has none, its size unreadable |
@@ -141,10 +141,11 @@ simplification is written into the example's notes:
    (p.178) is a concept, not a built kiln: it shows how the fire and ash travel, with no arch
    heights (the user, 2026-10-31). The engine should take the two tubes' spans and heights as
    design inputs, starting about 5 ft for the anagama and 6 ft for the groundhog (the user's
-   estimate), over Fig 7-2's 9 ft fire zone. Not yet built: two crossing vaults meeting in a
-   groin, their geometry and statics. `fireworks-edmonton` stays a dome over its
-   9 × 9 ft fire zone (builds, no failed checks); `kanayama-multi` prints no fire-zone size and
-   stays unmodelled.
+   estimate), over Fig 7-2's 9 ft fire zone. **Built 2026-10-31** (`roof.crossing`, `groin.py`,
+   `crossing.py`): two crossing vaults meeting in a groin, laid out, drawn, modelled, counted and
+   each vault checked as a sprung arch; the groin's ribs aren't checked (no source; Heyman's
+   vault chapter unread). `fireworks-edmonton` and `church-skaelskor` are now crossing vaults
+   (10-30-26.md); `kanayama-multi` prints no fire-zone size and stays unmodelled.
 
 ## Open questions
 

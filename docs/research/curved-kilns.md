@@ -321,7 +321,12 @@ kiln is an assumption the engine must state.
   wall, under Rhodes's 18 and Olsen's 24 in.
 - **Crossing-axis plans** (Fireworks, Church, Kanayama): Fig 7-2 dimensions only the fire zone's
   diagonal; no arm widths, curve radii or vault sections for the two crossing tubes (Fig 7-1 is
-  undimensioned). Kanayama prints none at all.
+  undimensioned). Kanayama prints none at all. The sizes are the designer's (the user,
+  2026-10-31); the engine takes them as inputs (`roof.crossing`).
+- **Groin vault statics**: masonry-statics.md §M4 now records one worked example (Maia Avelino
+  et al. 2020: forces along the diagonals, corner thrust 67.5–96.7 % of W) and Heyman's slicing
+  (summary only). Not yet applied: the engine checks each vault as a barrel vault on its walls
+  and reports the groin as unchecked; a slicing check on the diagonals is the next step.
 - **Castable makers' forming guidance**: only general release-agent and watertight-mould
   statements, from snippets; no maker's guide on sand or lath dome forms.
 - **Corbel kilns**: the book names them (p.49) but draws none; p.134 is a round dome.

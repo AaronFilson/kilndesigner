@@ -614,7 +614,7 @@ def _through(
 def _plain(p: Part) -> bool:
     return (
         p.arch is None and p.profile is None and p.dome is None and p.revolve is None
-        and p.plan is None
+        and p.plan is None and p.groin is None
     )  # fmt: skip
 
 
