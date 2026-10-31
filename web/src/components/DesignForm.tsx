@@ -845,7 +845,14 @@ function FireSection({
                     label={`${name}, position`}
                     value={box.position ?? "front"}
                     options={POSITIONS}
-                    onChange={(position) => setBox(i, { ...box, position })}
+                    onChange={(position) =>
+                      setBox(
+                        i,
+                        position === "under"
+                          ? { ...box, position, roof: undefined, corbel_step: undefined }
+                          : { ...box, position },
+                      )
+                    }
                   />
                   <Field label={`${name}, how many of this size`}>
                     <input
@@ -950,6 +957,32 @@ function FireSection({
                     seed={undefined}
                     onChange={(stoke_hole) => setBox(i, { ...box, stoke_hole })}
                   />
+                  {/* A corbel: the walls' brick stepped in until one brick bridges 6 in or less
+                      (TMS 402, Rhodes p.101–102); none under the floor, none past 24 in (Olsen p.49) */}
+                  {box.position !== "under" && (
+                    <label className="check">
+                      <input
+                        type="checkbox"
+                        checked={box.roof === "corbel"}
+                        onChange={(e) =>
+                          setBox(i, {
+                            ...box,
+                            roof: e.target.checked ? "corbel" : undefined,
+                            corbel_step: e.target.checked ? box.corbel_step : undefined,
+                          })
+                        }
+                      />
+                      {name} roofed with a corbel
+                    </label>
+                  )}
+                  {box.roof === "corbel" && box.position !== "under" && (
+                    <Quantity
+                      label={`${name}, corbel step per course (blank: the most TMS 402 allows)`}
+                      value={box.corbel_step}
+                      units={LENGTH}
+                      onChange={(v) => setBox(i, { ...box, corbel_step: v })}
+                    />
+                  )}
                   <button
                     type="button"
                     className="secondary"

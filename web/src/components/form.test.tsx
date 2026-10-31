@@ -1183,6 +1183,29 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().heat.fire).toEqual({ fuel: "coal", fireboxes: [{ width: "1 ft", length: "2 ft" }] });
   });
 
+  it("roofs a firebox with a corbel, and drops it under the floor", () => {
+    const last = live({
+      ...electric,
+      heat: { fire: { fuel: "wood", fireboxes: [{ position: "left", width: "13.5 in", length: "2 ft" }] } },
+      draft: { type: "cross" },
+    });
+    const step = "Firebox 1, corbel step per course (blank: the most TMS 402 allows)";
+    expect(screen.queryByLabelText(step)).toBeNull();
+    fireEvent.click(screen.getByLabelText("Firebox 1 roofed with a corbel"));
+    expect(last().heat.fire?.fireboxes[0]?.roof).toBe("corbel");
+    set(step, "1");
+    expect(last().heat.fire?.fireboxes[0]?.corbel_step).toBe("1 in");
+    fireEvent.click(screen.getByLabelText("Firebox 1 roofed with a corbel"));
+    expect(last().heat.fire?.fireboxes[0]?.roof).toBeUndefined();
+    expect(last().heat.fire?.fireboxes[0]?.corbel_step).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Firebox 1 roofed with a corbel"));
+    set("Firebox 1, position", "under");
+    expect(last().heat.fire?.fireboxes[0]?.roof).toBeUndefined();
+    expect(screen.queryByLabelText("Firebox 1 roofed with a corbel")).toBeNull();
+    set("Firebox 1, position", "back");
+    expect(last().heat.fire?.fireboxes[0]?.position).toBe("back");
+  });
+
   it("smokes an electric kiln with a wood firebox that isn't a heat source", () => {
     const last = live({
       ...electric,

@@ -241,6 +241,10 @@ export interface Firebox {
   inlet?: Port;
   inlets?: number;
   stoke_hole?: Port;
+  /** "corbel": the side walls' courses stepped in over its top (model.py Firebox.roof). */
+  roof?: "flat" | "corbel";
+  /** With a corbel roof, each course's step; left out, the most TMS 402 allows. */
+  corbel_step?: string;
 }
 
 /** Wood, coal or oil burned in fireboxes (model.py Fire). */
