@@ -14,7 +14,7 @@
 # hard brick (Olsen's fast-fire wood kiln "can be built of IFB or hard brick", p.142);
 # medium-duty firebrick (Olsen's intermediate duty, p.18). The top isn't
 # described: engine default (a flat roof of the walls' layers), as are the floor and the air.
-# Not modelled: the muffle (2½ ft tall, 16–18 in across, its wall ½ in (?), two bands of seven
+# Not modelled: the muffle (2½ ft tall, 16–18 in across, its wall ½ in, two bands of seven
 # holes, a lid with a lip and a 6 in flue), its pedestal and the wedges between it and the wall.
 # The kiln is taken as a straight cylinder, the firebox as under it.
 schema: 1

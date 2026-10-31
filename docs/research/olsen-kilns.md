@@ -1334,7 +1334,7 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   reduction-sensitive colours.
 - Fig 6-47 (drawing): top outside diameter "2½" (unit not printed; probably ft); wall 4" thick;
   firebox 2' wide × 2' high; iron grate opening 15" × 19"; muffle 2½' tall, 16–18" diameter, wall ½"
-  (?), "7 holes in each band" (two bands); lid with lip and an exit flue "DM 6""; wedge supports
+  (Checked on the page image, 2026-10-31), "7 holes in each band" (two bands); lid with lip and an exit flue "DM 6""; wedge supports
   between muffle and wall; muffle on a pedestal marked "12'" (**Flagged**, surely 12 in).
 - **Not given:** outer height; temperature; firing time.
 
@@ -1360,7 +1360,7 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Fig 6-51 (drawing): inlet flues 4½" × 4½"; 27" from the wall to the first flue line, 18" to the
   next; perimeter flues 27" apart; "2"" at two flue lines (meaning unclear); a 2' bag wall with
   openings 9" apart; firebox 3' high, its floor sloping up sharply to the walls; metal grate on a
-  1' (?) ledge; "GRATE BARS 1" APART AND RUN 8' INTO FIREBOX (37 total grate bars)".
+  1' ledge (Checked on the page image, 2026-10-31); "GRATE BARS 1" APART AND RUN 8' INTO FIREBOX (37 total grate bars)".
 - Fig 6-53 (drawing): 8 dome exit flues in the centre; "21 – 4½ × 5" exit flues" round the perimeter
   with damper blocks; chimney-cone holes 7" × 15", one per exit flue, 15" apart; 9" walls in the cone;
   a door in the cone.
