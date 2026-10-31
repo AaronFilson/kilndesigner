@@ -146,9 +146,10 @@ def stations(kiln: Kiln) -> list[tuple[float, float]]:
     return out
 
 
-def along_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
+def along_statics(kiln: Kiln, *, framed: bool = False) -> tuple[list[Step], list[Finding]]:
     """The section at stations, and Heyman's statics of the arch along the depth and its end
-    walls: the working and the findings."""
+    walls: the working and the findings. ``framed``: a steel frame on the end walls holds the
+    thrust (frame.py), so the end walls' findings say so."""
     from kilndesigner.frame import steel_data
 
     whole = along_arch(kiln, "in")
@@ -248,14 +249,38 @@ def along_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
             findings.append(Finding.failed(check, message=message))
     for face, end in ends:
         which = f"The {face} wall" if whole.drop else "Each end wall"
-        findings.append(_end_finding(end, which))
+        findings.append(_end_finding(end, which, framed))
     return working, findings
 
 
-def _end_finding(end: Sheet, which: str) -> Finding:
+FRAMED = (
+    "The frame on the end walls carries it: its buttress angles at the springing, tied by rods "
+    "over the arch, are sized in the frame's working for the hot thrust"
+)
+
+
+def _end_finding(end: Sheet, which: str, framed: bool = False) -> Finding:
     x_r, e, x_3 = (end.env[n] / 0.0254 for n in ("x_R", "e", "x_3"))
     check = end.check()
     holds = check.status == "pass"
+    if framed:
+        return Finding(
+            level="info",
+            message=(
+                f"{which}, standing on its own, "
+                + (
+                    f"would hold the arch's cold thrust, the resultant {x_r:.1f} in into its "
+                    f"{e:g} in base, within its middle third"
+                    if holds
+                    else f"couldn't hold the arch's cold thrust: the resultant would meet its "
+                    f"base {x_r:.1f} in in from the inside, "
+                    + ("past the wall" if x_r > e else f"past its middle third, {x_3:.1f} in")
+                )
+                + f". {FRAMED}."
+            ),
+            reference=end.reference,
+            check=check,
+        )
     return Finding(
             level="info",
             message=(

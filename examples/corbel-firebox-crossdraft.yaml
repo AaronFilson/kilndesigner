@@ -1,0 +1,73 @@
+# A small wood cross-draft whose side firebox is roofed with a corbel: its walls' brick courses
+# stepped in over its top until one brick bridges what is left (core/src/kilndesigner/corbel.py;
+# TMS 402 via BIA's Corbels brief, Rhodes, Kilns p.101–102, Olsen p.49). A corbel suits a
+# firebox: Olsen spans a firebox with "an arch, bricks or kiln shelves" (p.145), and TMS 402 lets
+# the whole corbel project only half the wall, so a corbel closes a firebox's width, not a
+# chamber's.
+#
+# The chamber, arch, grate, inlet, flue and chimney follow Olsen's fast-fire kiln
+# (examples/olsen/fast-fire.yaml, p.139–143), its firebox moved from under the floor to the left
+# wall so it has a roof of its own.
+# ASSUMED, not sourced: the chamber's depth (27 in, as fast-fire.yaml); the firebox's 27 in length
+# and 18 in height above the grate, and its 9 in ash pit; the walls' second 4½ in of hard brick,
+# which gives the corbel 9 in of brick to step out from (TMS 402: the whole corbel no more than
+# half the wall, so 4½ in walls alone can't close 13½ in).
+schema: 1
+name: Corbel-roofed firebox, small wood cross-draft
+units: us
+firing:
+  cone: "10"
+chamber:
+  width: 27 in
+  depth: 27 in
+  height: 36 in
+roof:
+  type: sprung_arch
+  rise: 3.375 in # 1½ in per foot of span: a No. 1 featheredge arch (fast-fire.yaml)
+loading:
+  type: door
+  face: front
+  door: bricked
+lining:
+  walls:
+    - material: ifb-k23
+      thickness: 4.5 in
+    - material: hard-firebrick-kx99 # ASSUMED: the corbel's brick backing
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99
+      thickness: 4.5 in
+  roof:
+    - material: ifb-k23
+      thickness: 4.5 in
+heat:
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 1
+        position: left
+        width: 13.5 in # three bricks' length and a half: fast-fire.yaml's
+        length: 27 in # ASSUMED: the chamber's depth
+        height: 18 in # ASSUMED: room for the corbel's three 2½ in courses over the fire
+        grate:
+          width: 12 in
+          length: 27 in # ASSUMED: the firebox's length, for 4 × the chimney's section (p.77)
+          gap: 0.75 in
+        ash_pit: 9 in # ASSUMED
+        inlet:
+          width: 13.5 in
+          height: 4.5 in
+        roof: corbel # each course steps in the most TMS 402 allows: min(h/2, d/3) = 1¼ in
+draft:
+  type: cross
+  flue_wall: back
+  flue_port:
+    width: 9 in
+    height: 7.5 in
+  chimney:
+    height: 14 ft
+    inside:
+      width: 9 in
+      depth: 9 in
+site:
+  ambient: 70 degF
