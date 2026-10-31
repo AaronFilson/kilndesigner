@@ -40,7 +40,10 @@ DESIGNS = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.
 
 # Kilns whose form differs from shape.chamber_shape, and why (none: Bidai's and Kyoto's arches,
 # more than semicircles, turn past the vertical in both)
-DIFFERS: dict[str, str] = {}
+DIFFERS: dict[str, str] = {
+    name: "crossing vaults: the form is the chamber's own tube; groin.py has the two tubes' union"
+    for name in ("church-skaelskor", "fireworks-edmonton")
+}
 
 
 @pytest.mark.parametrize("path", DESIGNS, ids=lambda p: p.stem)

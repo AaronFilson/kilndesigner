@@ -3,28 +3,36 @@
 # Nina Hole at the International Ceramic Center. Two cross-draft systems at right angles, an
 # anagama-style tube and a groundhog, share one fire zone; each firebox faces its own chimney.
 #
-# From the book: fire zone 7 ft (p.183); 3½–4½ ft to the ceiling's vertex (p.183), 4 ft used;
+# From the book: fire zone 7 ft (p.183); 3½–4½ ft to the ceiling's vertex (p.183, not used, below);
 # walls 9 in thick, "9 BRICKS TALL 28–30"" (Fig 7-9), read as the walls' height, 29 in used; the
 # smaller firebox 24 in wide, facing the groundhog chimney, the larger 36 in wide, facing the
 # single anagama chimney (p.182); that chimney 13½ × 13½ in (Fig 7-9); an 18 in step down into
 # walk-in channels "below ground" (Fig 7-9), so the floor is on the ground. From Olsen's drawing of
 # these kilns' firebox (Fig 7-3, p.179): a grate, 3–4 ft long, 3½ ft used; an ash pit 18 in deep
 # and 14 in (faint) wide.
-# Assumed: the roof isn't described: a cast dome, as on Olsen's other multi-directional kilns
-# (fireworks-edmonton, p.181; kanayama-multi, p.186–188), its rise the 19 in from the walls to the
-# vertex, 2.7 in per foot of span, inside his 2½–3 in/ft for domes (p.51). The dome 6 in of
-# Kast-O-Lite 26 LI Plus: he casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI
-# Plus"); "a 6in. thickness is best" (p.59), and his Kanayama dome is 5–6 in (kanayama-multi,
-# p.186–188). Walls and floor of K-26 insulating brick, the 2500–2600 °F brick he sets under a cast
-# dome (p.58). Grates the ash pit's 14 in wide and the firebox's length, their bars ¾ in apart,
-# as on his Kanayama kiln (p.188). Buttressed: Olsen buttresses a cast dome's walls "extremely
-# well" (p.59), with dirt, rocks and concrete on his Kanayama kiln (p.186). Cone 10, from the
+# The designer's (the user, 2026-10-31): the roof as Olsen's concept draws it, two tubes crossing at
+# right angles, their vaults meeting in a groin over the fire zone (Fig 7-1, p.178, a concept
+# without heights); the anagama's vault about 5 ft high and the groundhog's about 6 ft, the user's
+# starting heights. p.183 prints the fire zone 3½–4½ ft to the ceiling's vertex, lower: the user's
+# heights are taken over it. The anagama's crown 60 in, so its vault rises 31 in from the printed
+# 29 in walls (4.4 in/ft). The groundhog's lowered to 63 in: over 7 ft from those walls a 6 ft vault
+# would rise 43 in, past a semicircle, which isn't a sprung arch; at 34 in (4.9 in/ft, inside
+# Olsen's 4–6 in/ft on chamber kilns, p.296) its 6 in ring holds a line of thrust 2.1 times the
+# thinnest, Heyman's factor of 2 met (at 42 in, a semicircle, 1.2 times: too thin).
+# Assumed: each tube spans the 7 ft fire zone and is as long as the other is wide, with no arms
+# past the crossing (none is printed). The vaults cast 6 in thick in Kast-O-Lite 26 LI Plus, as on
+# Olsen's other multi-directional kilns (fireworks-edmonton, p.181; kanayama-multi, p.186–188): he
+# casts in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"); "a 6in. thickness is
+# best" (p.59), and his Kanayama roof is 5–6 in (kanayama-multi, p.186–188). Walls and floor of
+# K-26 insulating brick, the 2500–2600 °F brick he sets under a cast roof (p.58). Grates the ash
+# pit's 14 in wide and the firebox's length, their bars ¾ in apart, as on his Kanayama kiln
+# (p.188). Buttressed: Olsen buttresses a cast roof's walls "extremely well" (p.59), with dirt, rocks and concrete on his Kanayama kiln (p.186). Cone 10, from the
 # Fireworks kiln, its sister (fireworks-edmonton, p.181: cone 10-plus; kanayama-multi, p.189:
 # cone 9/10).
-# Not modelled: the plan, two axes crossing in the fire zone, as a 7 × 7 ft box (Fig 7-2 calls the
-# 7 ft a diagonal); the anagama firebox in the front wall facing its chimney behind; the groundhog
-# firebox in the left wall, its three-flue chimney (which would face it in the right wall) left
-# out. The anagama chimney's height isn't printed, so the chimney isn't entered: the engine sizes
+# Not modelled: Fig 7-2's walls curving in between the arms (the plan here is the two straight
+# tubes, a 7 × 7 ft crossing; Fig 7-2 calls the 7 ft a diagonal, p.183 the fire zone); the
+# groundhog's three-flue chimney (which would face its firebox in the right wall) left out; Fig
+# 7-10's roof "like an upturned Viking longboat", whitewashed, not drawn. The anagama chimney's height isn't printed, so the chimney isn't entered: the engine sizes
 # it, and its section comes out 13½ × 13½ in, the book's. The 12–15 in step up from the grate to
 # the ware floor; the floor's loss into the ground, which the engine doesn't work out.
 schema: 1
@@ -38,9 +46,13 @@ chamber:
   height: 29 in # nine bricks, 28–30 in, to the dome's springline
   on_ground: true # walk-in channels below ground (Fig 7-9)
 roof:
-  type: dome
-  rise: 19 in # to the vertex, 4 ft up
+  type: sprung_arch
+  rise: 31 in # the anagama's vault, its crown 5 ft up (the user)
   buttressed: true
+  crossing: # the groundhog's tube, side to side (Fig 7-1)
+    span: 7 ft
+    rise: 34 in # its crown 63 in up, lowered from the user's 6 ft
+    length: 7 ft
 loading:
   type: door
   face: front

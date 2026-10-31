@@ -1410,6 +1410,14 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     from kilndesigner.door import door_head
 
     frame = _design_frame(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
+        from kilndesigner.crossing import crossing_note, crossing_statics
+
+        steps, found = crossing_statics(kiln)
+        frame = frame.model_copy(update={
+            "working": [*frame.working, *steps],
+            "findings": [*frame.findings, *found, crossing_note(kiln)],
+        })  # fmt: skip
     head = door_head(kiln)
     if head is None:
         return frame
