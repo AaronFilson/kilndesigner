@@ -36,6 +36,15 @@ test("a design's firing is simulated, charted and shown as a heatmap", async ({ 
     await expect(page.getByText("0 h 00 min").first()).toBeVisible();
     const hotFaces = page.getByRole("table").getByRole("row").nth(1).getByRole("cell").nth(1);
     await expect(hotFaces).toHaveText(/^2\d °C$/);
+
+    // A slow firing over 48 hours, against the quickest schedule and the sources' slow firings
+    const slow = page.getByRole("region", { name: "Slow firing" });
+    await slow.getByLabel("Firing time").fill("48 h");
+    await slow.getByRole("button", { name: "Work out the slow firing" }).click();
+    await expect(slow.getByText("Quickest firing")).toBeVisible({ timeout: 170_000 });
+    await expect(slow.getByText(/°C\/h to \d+ °C/)).toBeVisible();
+    await expect(slow.getByRole("table", { name: "The sources' slow firings" })).toBeVisible();
+    await expect(slow.getByText("The slow firing can't be worked out")).toHaveCount(0);
     expect(problems).toEqual([]);
   } finally {
     await request.delete(`/api/designs/${id}`);

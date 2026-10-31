@@ -972,6 +972,55 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().lining.conical).toBeUndefined();
   });
 
+  it("springs one chamber's arch along its depth, unevenly, and a tube's vault over a row", () => {
+    const two = [
+      { material: "ifb-k23", thickness: "4.5 in" },
+      { material: "ifb-k23", thickness: "2 in" },
+    ];
+    const last = live({ ...electric, lining: { walls: two } });
+    set("Roof", "sprung_arch");
+    expect(screen.queryByLabelText(/One vault over the whole run/)).toBeNull();
+    const along = /The arch spans the depth/;
+    fireEvent.click(screen.getByLabelText(along));
+    expect(last().roof).toMatchObject({ type: "sprung_arch", along: true });
+    set("Front wall's springline, from the floor (blank: level, the chamber's height)", "16");
+    expect(last().roof).toMatchObject({ along: true, front_springline: "16 in" });
+    fireEvent.click(screen.getByLabelText(along));
+    expect(last().roof).not.toHaveProperty("along", true);
+    expect(last().roof).toMatchObject({ front_springline: undefined });
+    // A second chamber: its arches are along the draft already, so along goes
+    fireEvent.click(screen.getByLabelText(along));
+    fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
+    expect(last().roof).toMatchObject({ along: undefined, front_springline: undefined });
+    expect(screen.queryByLabelText(along)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/One vault over the whole run/));
+    expect(last().roof).toMatchObject({ tube: true });
+    fireEvent.click(screen.getByLabelText(/One vault over the whole run/));
+    expect((last().roof as Record<string, unknown>).tube).toBeUndefined();
+    // Without along, adding a chamber leaves the roof be
+    fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
+    expect(last().chamber.chambers).toBe(3);
+    // The ring's layers, from the roof's (here the walls') two, and a buttressed vault
+    set("Layers in the arch's ring", "2");
+    expect(last().roof).toMatchObject({ ring: 2 });
+    set("Layers in the arch's ring", "1");
+    expect((last().roof as Record<string, unknown>).ring).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    expect(last().roof).toMatchObject({ buttressed: true });
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    expect((last().roof as Record<string, unknown>).buttressed).toBeUndefined();
+    set("Roof", "dome");
+    expect(screen.getByLabelText("Layers in the dome's shell")).toBeTruthy();
+    set("Roof", "flat");
+    expect(screen.queryByLabelText(/Buttressed/)).toBeNull();
+  });
+
+  it("gives the site's height above sea level", () => {
+    const last = live(electric);
+    set("Height above sea level (blank: sea level)", "5000");
+    expect(last().site?.elevation).toBe("5000 ft");
+  });
+
   it("chooses a teardrop or an oval plan, its sizes, and a dome's crown over it", () => {
     const last = live(electric);
     expect(screen.queryByLabelText("Sides' radius (left out: straight)")).toBeNull();
