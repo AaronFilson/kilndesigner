@@ -71,12 +71,35 @@ CAPPED = (
 )
 
 
+@dataclass(frozen=True)
+class GivenCold:
+    """A cold thrust worked out elsewhere (lb/ft), for an arch the sheet's level-arch formula
+    doesn't describe: one springing unevenly (vault.uneven_thrust)."""
+
+    value: float
+    source: str
+
+
 def _thrust(
-    s: Sheet, n: int, thick: str = "t", capped: float | None = None, cold: bool = False
+    s: Sheet,
+    n: int,
+    thick: str = "t",
+    capped: float | None = None,
+    cold: bool = False,
+    given: GivenCold | None = None,
 ) -> None:
     """The arch's weight W, its cold thrust H_c, the heated factor f and the hot thrust H, from
     its ``n`` layers' thicknesses (``t_1``…, or a dome slice's ``τ_1``…) and the cells T, φ, r.
-    ``capped``: the factor to use where HarbisonWalker's method has no finite answer."""
+    ``capped``: the factor to use where HarbisonWalker's method has no finite answer. ``given``:
+    the cold thrust from elsewhere, always with ``capped``."""
+    if given is not None:
+        assert capped is not None, "a given cold thrust has no heated factor of its own"
+        s.given("H_c", "thrust, cold", Q_(given.value, "lbf/ft"), "lbf/ft", source=given.source)
+        s.given(
+            "f", "hot thrust ÷ cold thrust: the most HarbisonWalker prints", capped, source=CAPPED
+        )
+        s.let("H", "thrust, hot", "f*H_c", "lbf/ft", source=CAPPED)
+        return
     below: list[str] = []
     for i in range(1, n + 1):
         inner = " + ".join(["r", *below])
@@ -319,11 +342,12 @@ def rod_stress(
     springs: Springs | None,
     sources: tuple[str, str],
     capped: float | None = None,
+    given: GivenCold | None = None,
 ) -> Sheet:
     rods, stress = sources
     s = Sheet("frame.rod", f"Tie rods, {rod}, hot", reference=f"{rods}; {stress}")
     _arch(s, a, weights=True)
-    _thrust(s, len(a.layers), capped=capped)
+    _thrust(s, len(a.layers), capped=capped, given=given)
     _rod_load(s, a, bay, share, springs)
     s.given("A_s", f"{rod} rod's tensile stress area", Q_(area, "in**2"), source=rods)
     s.let("σ", "stress in each rod", "P/A_s", "psi")
@@ -343,13 +367,14 @@ def buttress_bending(
     springs: Springs | None,
     sources: tuple[str, str],
     capped: float | None = None,
+    given: GivenCold | None = None,
 ) -> Sheet:
     shapes, stress = sources
     s = Sheet(
         "frame.buttress", f"Buttress angle, {angle}, in bending", reference=f"{shapes}; {stress}"
     )
     _arch(s, a, weights=True)
-    _thrust(s, len(a.layers), capped=capped)
+    _thrust(s, len(a.layers), capped=capped, given=given)
     _rod_load(s, a, bay, share, springs)
     s.let("w", "the thrust along the buttress", "P/(m*L)", "lbf/ft")
     s.let("M", "bending moment, a simple beam between the posts", "w*L^2/8", "lbf*in")

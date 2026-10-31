@@ -213,6 +213,23 @@ class PlanOutline(Spec):
         return self
 
 
+class Foundation(Spec):
+    """What the kiln's walls stand on: a concrete platform or slab, and its strength."""
+
+    material: str = Field(
+        default="concrete", description="What the platform is, for example concrete"
+    )
+    compressive_strength: Pressure = Field(
+        description="Its compressive strength, for example 1800 psi (concrete's f′c)"
+    )
+    strength_source: str = Field(
+        description=(
+            "Where the strength comes from: a test, a mix's specification, or the user's own "
+            "starting value. It is reported with every number worked from it"
+        )
+    )
+
+
 class Chamber(Spec):
     """The inside of the kiln: the space the lining encloses."""
 
@@ -263,6 +280,14 @@ class Chamber(Spec):
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
+        ),
+    )
+    foundation: Foundation | None = Field(
+        default=None,
+        description=(
+            "A platform or slab the walls stand on, with its compressive strength: the bearing "
+            "under the walls is then worked out against it. Its heat loss isn't: no thermal "
+            "conductivity for concrete is sourced"
         ),
     )
     floor_inside: bool = Field(
@@ -395,6 +420,11 @@ class SprungArch(Spec):
             raise ValueError("springs on the tie rods need their spring_rate, from the listing")
         if self.along and self.tube:
             raise ValueError("a tube's vault spans the width: leave out along, or tube")
+        if self.along and self.ties == "springs":
+            raise ValueError(
+                "springs on the rods of an arch along the chamber's depth aren't worked out: tie "
+                "its rods rigid"
+            )
         if self.front_springline is not None and not self.along:
             raise ValueError(
                 "front_springline is for one chamber's arch along its depth (along): a level "
