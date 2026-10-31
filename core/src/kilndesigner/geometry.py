@@ -27,7 +27,16 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, OpenTop, SprungArch
+from kilndesigner.model import (
+    CatenaryArch,
+    Dome,
+    Face,
+    FlatRoof,
+    Kiln,
+    OpenTop,
+    SprungArch,
+    arches_along,
+)
 from kilndesigner.outline import Revolved, shell_profile
 from kilndesigner.rings import FLOOR_COURSE_IN, IN
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome
@@ -373,8 +382,9 @@ def not_drawn(kiln: Kiln) -> str | None:
 
 
 def in_a_row(kiln: Kiln) -> bool:
-    """Chambers in a row, laid out by run_parts.py."""
-    return kiln.chamber.chambers > 1
+    """Chambers in a row, laid out by run_parts.py; and one chamber under an arch along its depth
+    (roof.along), laid out as a row of one."""
+    return kiln.chamber.chambers > 1 or arches_along(kiln)
 
 
 def on_a_stand(kiln: Kiln) -> bool:
@@ -813,7 +823,7 @@ def inside_top(kiln: Kiln, face: Face, u: float) -> float:
         return _outline_top(kiln, face, u, h)
     if isinstance(kiln.roof, CatenaryArch):
         return CatenaryCurve(w, h).z(u) if end and abs(u) < w / 2 else 0.0
-    if isinstance(kiln.roof, SprungArch) and in_a_row(kiln) and not kiln.roof.tube:
+    if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
         # Each chamber's arch spans its depth along the draft (run_parts.py): it meets the side
         # walls, the first chamber's centred on u = 0, and the end walls stand to the springline
         if end or abs(u) >= d / 2:

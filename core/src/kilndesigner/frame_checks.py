@@ -962,6 +962,66 @@ def steel_heat(hot: HotSteel, table_top: float, service: float, service_source: 
     return s
 
 
+# ---- An arch along the chamber's depth, on its end walls (vault.py) ----------------------------
+
+
+def vault_ring(a: ArchInputs, eta: float, safety: float, source: str) -> Sheet:
+    """A roof arch's ring against the thinnest circular arch of its half-angle that holds a line
+    of thrust under its own weight (Couplet–Heyman), with Heyman's geometric factor of safety:
+    geometry alone, so no range of T/S limits it (as the door arch's and the dome slice's)."""
+    s = Sheet("frame.vault-ring", "The arch's ring holds a line of thrust",
+              reference=f"{ARCH_STATICS}; {source}")  # fmt: skip
+    _arch(s, a)
+    s.given("η", "the thinnest ring that stands, as t/r, at this half-angle", eta,
+            source=f"{source}: Heyman's table by half-angle, interpolated at φ")  # fmt: skip
+    s.let("k", "how many times the thinnest that stands", "T/(r + T/2)/η",
+          source="Heyman's geometric factor of safety")  # fmt: skip
+    s.given("k_min", "Heyman's factor of safety", safety, source=source)
+    s.require("k", ">=", "k_min")
+    s.lever("t_1", Q_(0.5, "in"), Q_(24, "in"))
+    return s
+
+
+END_WALL = (
+    "the end wall as a buttress, per foot of its width: the arch's thrust and half its weight at "
+    "the springing, with the wall's own weight under it, give a resultant at the wall's base that "
+    "must lie within it (Heyman's safe theorem), and in its middle third for no tension"
+)
+
+
+def vault_end_wall(a: ArchInputs, wall: tuple[Layer, ...], springing: float) -> Sheet:
+    """An arch spanning the chamber's depth springs from the front and back walls: each must hold
+    half its weight and its thrust, cold (hinges at mid-ring, the three-hinged arch's H), as a
+    buttress standing on its own, per foot of the wall's width. The line of thrust crosses the
+    springing at the ring's middle; the fill over the skewback, which would steady the wall, is
+    left out."""
+    s = Sheet("frame.vault-end-wall", "The end wall alone holds the arch's thrust, cold",
+              reference=f"{ARCH_STATICS}; {NO_TENSION}")  # fmt: skip
+    _arch(s, a, weights=True)
+    _thrust(s, len(a.layers), cold=True)
+    for i, x in enumerate(wall, 1):
+        s.given(f"e_{i}", f"end wall layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"γ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    n = len(wall)
+    s.let("e", "the end wall's thickness", " + ".join(f"e_{i}" for i in range(1, n + 1)), "in")
+    s.given("h_s", "the springline over the floor", Q_(springing, "in"),
+            source=f"{DESIGN}: the chamber's height")  # fmt: skip
+    weight = " + ".join(f"γ_{i}*e_{i}" for i in range(1, n + 1))
+    s.let("G", "the end wall's weight under the springline, per foot", f"({weight})*h_s", "lbf/ft")
+    s.let("N", "half the arch's weight, on the springing", "W/2", "lbf/ft")
+    s.let("x_p", "where the line of thrust crosses the springing, in from the wall's inside face",
+          "(r + T/2)*sin(φ) - S/2", "in", source="the ring's middle at the skewback")  # fmt: skip
+    s.let("y_p", "its height over the floor", "h_s + T/2*cos(φ)", "in")
+    s.let("x_R", "where the resultant meets the wall's base, in from its inside face",
+          "(N*x_p + G*e/2 + H_c*y_p)/(N + G)", "in",
+          source="moments about the base's inside edge: the thrust carries it outward")  # fmt: skip
+    s.require("x_R", "<=", "e")
+    s.let("x_3", "the far edge of the base's middle third", "2*e/3", "in", source=NO_TENSION)
+    s.require("x_R", "<=", "x_3", level="warning")
+    return s
+
+
 # ---- A catenary's feet --------------------------------------------------------------------------
 
 

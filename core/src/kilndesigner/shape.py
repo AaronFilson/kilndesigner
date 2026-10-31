@@ -20,7 +20,7 @@ from scipy.optimize import brentq
 
 from kilndesigner.form import Form
 from kilndesigner.library import materials
-from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch, arches_along
 from kilndesigner.rings import IN, cut_facets, inside_apothem, ring_method
 from kilndesigner.thermal.surface import Orientation
 from kilndesigner.units import si
@@ -273,13 +273,20 @@ class ChamberShape:
     (run_parts.py); ``arch`` and ``dome`` are then one chamber's."""
     form: Form | None = None
     """A curved plan (chamber.outline): its walls, floor and dome from the form (form.py)."""
+    along: bool = False
+    """``arch`` spans each chamber's depth, along the draft (model.arches_along): a row's, or one
+    chamber's (roof.along)."""
+
+    @property
+    def _row(self) -> bool:
+        return self.chambers > 1 or self.along
 
     @property
     def volume(self) -> float:
         if self.form is not None:
             return self.form.volume
         n = self.chambers
-        if n > 1 and self.arch is not None:
+        if self._row and self.arch is not None:
             return (self.width * self.height * self.depth) + n * self.arch.segment_area * self.width
         if n > 1 and self.dome is not None:
             return self.width * self.depth * self.height + n * self.dome.volume
@@ -310,7 +317,7 @@ class ChamberShape:
             return self._round_faces()
         if self.catenary is not None:
             return self._catenary_faces(self.catenary)
-        if self.chambers > 1 and (self.arch is not None or self.dome is not None):
+        if self._row and (self.arch is not None or self.dome is not None):
             return self._row_faces()
         floor = FaceShape("floor", "facing_down", w * d, w, d)
         if self.dome is not None:
@@ -514,8 +521,9 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
     if open_top:
         return ChamberShape(w, d, h, None, open_top=True)
     n = c.chambers
-    if isinstance(kiln.roof, SprungArch) and n > 1 and not kiln.roof.tube:
-        return ChamberShape(w, d, h, Arch(si(c.depth, "m"), si(kiln.roof.rise, "m")), chambers=n)
+    if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
+        return ChamberShape(w, d, h, Arch(si(c.depth, "m"), si(kiln.roof.rise, "m")), chambers=n,
+                            along=True)  # fmt: skip
     if isinstance(kiln.roof, Dome) and n > 1:
         one = SailDome(w, si(c.depth, "m"), si(kiln.roof.rise, "m"))
         return ChamberShape(w, d, h, None, dome=one, chambers=n)

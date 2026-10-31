@@ -18,6 +18,7 @@ from kilndesigner.geometry import (
     COLOURS,
     Part,
     arch_outline,
+    in_a_row,
     lining_parts,
     polygon_corners,
     polygon_reach,
@@ -296,7 +297,7 @@ def _section_views(kiln: Kiln, element_rows: int, coil_mm: float) -> list[View]:
     parts = lining_parts(kiln)
     if kiln.chamber.shape == "round":
         return _round_views(kiln, parts, us, element_rows, coil_mm)
-    if kiln.chamber.chambers > 1:
+    if in_a_row(kiln):
         return _run_views(kiln, parts, us)
     w, d, h = (si(getattr(kiln.chamber, n), "mm") for n in ("width", "depth", "height"))
     walls = kiln.heat.electric.walls if kiln.heat.electric else []

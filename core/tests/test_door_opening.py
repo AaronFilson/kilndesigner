@@ -335,11 +335,43 @@ def test_calimpongs_door_reaches_into_its_sail_domes_side() -> None:
               {"opening": {"width": "33 in", "height": "45 in", "across": "-6 in"}})  # fmt: skip
 
 
-def test_a_door_in_a_tubes_side_is_refused_with_its_reason() -> None:
-    # Tamba's doors rise through the springing of the tube's vault (Figs 4-11, 4-15)
+SPRINGING = {"face": "right", "opening": {"width": "24 in", "height": "30 in",
+                                          "each_chamber": True}}  # fmt: skip
+"""A door into each of Tamba's chambers through the vault's springing. Its size is a test's: the
+book's (Fig 4-15) is unreadable, so the example has none (door-openings.md)."""
+
+
+def test_a_door_through_a_tubes_springing_carries_the_vault() -> None:
+    # Tamba's doors rise through the springing of the tube's vault, turned as an arch over each,
+    # behind a supporting wall (Figs 4-11, 4-15)
+    kiln = _kiln("olsen/tamba.yaml", SPRINGING)
+    assert len(door_holes(kiln)) == 7
+    head = door_head(kiln)
+    assert head is not None
+    assert not [f.message for f in head.findings if f.level != "info"]
+    step = next(s for s in head.working if s.name == "The door through the vault's springing")
+    # Half the 5 ft tube vault's weight per foot down on the ring, and its cold thrust out
+    from kilndesigner.vault import vault_on_door
+
+    down, out = vault_on_door(kiln)
+    assert f"{down:.0f} lb/ft down" in step.value
+    # A semicircle's three-hinged H/W: (1 − 2/π)/2, W = 2·down
+    assert out == pytest.approx(down * (1 - 2 / math.pi), rel=1e-6)
+    arch = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert arch.inputs["roof's edge"] == f"{down:.0f} lb/ft"
+    assert "Tamba" in (step.reference or "")
+
+
+def test_a_door_through_a_tubes_springing_is_refused_where_it_cant_stand() -> None:
+    unbuttressed = {"type": "sprung_arch", "rise": "30 in", "tube": True}
     with pytest.raises(ValidationError, match="springing of its vault"):
+        _kiln("olsen/tamba.yaml", SPRINGING, roof=unbuttressed)
+    with pytest.raises(ValidationError, match="past the vault's crown"):
         _kiln("olsen/tamba.yaml", {"face": "left", "opening": {"width": "24 in",
                                                               "height": "36 in"}})  # fmt: skip
+    with pytest.raises(ValidationError, match="no lintel"):
+        _kiln("olsen/tamba.yaml", {"face": "left", "opening": {
+            "width": "24 in", "height": "30 in", "head": "lintel"}})  # fmt: skip
 
 
 def test_spy_holes_go_low_between_burners_up_the_door_sides_and_under_its_arched_head() -> None:

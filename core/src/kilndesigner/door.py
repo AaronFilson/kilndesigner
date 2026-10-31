@@ -231,7 +231,14 @@ def _wall_above(kiln: Kiln, *, crown: bool = False) -> float:
 def _roof_edge(kiln: Kiln) -> tuple[float, str]:
     """The roof's vertical load on the wall over the door (lb/ft) and where it comes from."""
     from kilndesigner.castable import resolve_material
+    from kilndesigner.vault import TAMBA, through_springing, vault_on_door
 
+    if through_springing(kiln):
+        down, _ = vault_on_door(kiln)
+        return down, (
+            "half the tube vault's weight per foot, all its layers: with the wall under it cut "
+            f"away, its foot over the door stands on the door's ring (statics; {TAMBA})"
+        )
     if isinstance(kiln.roof, Dome) and kiln.chamber.shape != "round":
         from kilndesigner.frame import dome_slices
 
@@ -458,6 +465,32 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 note=(
                     "The shell's weight is counted as wall over the ring and again as the "
                     "roof's edge on it: the safe side for the ring's thrust."
+                ),
+            )
+        )
+    from kilndesigner.vault import TAMBA, through_springing, vault_on_door
+
+    if through_springing(kiln):
+        # The vault's own brickwork is turned as an arch over the door (Fig 4-11): the ring over
+        # the door's crown is the vault's, and the vault's foot stands on it (the roof's edge)
+        above = max(above, r) + ring
+        down, out_thrust = vault_on_door(kiln)
+        out.working.append(
+            Step(
+                name="The door through the vault's springing",
+                value=(
+                    f"its ring the vault's own, {ring:g} in over the door's crown; the vault puts "
+                    f"{down:.0f} lb/ft down on it and pushes {out_thrust:.0f} lb/ft out, "
+                    f"{out_thrust * w / 12:.0f} lb over the door's {w:g} in"
+                ),
+                formula="V = W/2, H = W·(sin θ − (1 − cos θ)/θ)/(2(1 − cos θ)), per foot of tube",
+                reference=f"{TAMBA}; {ARCH_REFERENCE}",
+                note=(
+                    "With the wall under it cut away, the vault's foot over the door has nothing "
+                    "to push against: its outward thrust goes along the tube into the brickwork "
+                    "beside the door and the supporting wall in front of it (Fig 4-15), which the "
+                    "design buttresses (roof.buttressed); that buttress isn't sized. The door's "
+                    "ring is checked under the vault's weight as the roof's edge on it."
                 ),
             )
         )

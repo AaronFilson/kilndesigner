@@ -311,12 +311,34 @@ class SprungArch(Spec):
             "arch spanning along the draft, as Olsen's climbing kilns' do (p.94–95)"
         ),
     )
+    along: bool = Field(
+        default=False,
+        description=(
+            "One chamber under an arch spanning its depth, front to back, springing from the "
+            "front and back walls at the chamber's height, the side walls filled up to it: so the "
+            "chamber's section across the width rises from the springline at the ends to the "
+            "crown mid-way, as Olsen's Bowen Mountain salt kiln's (4th ed. Fig 4-153, p.127). "
+            "Chambers in a row (chamber.chambers) have their arches along the draft already"
+        ),
+    )
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
         if self.ties == "springs" and self.spring_rate is None:
             raise ValueError("springs on the tie rods need their spring_rate, from the listing")
+        if self.along and self.tube:
+            raise ValueError("a tube's vault spans the width: leave out along, or tube")
         return self
+
+
+def arches_along(kiln: Kiln) -> bool:
+    """Arches spanning the chambers' depth, along the draft, springing from the front and back
+    walls: each chamber's in a row (Olsen's climbing kilns, p.94–95), or one chamber's
+    (``roof.along``, Bowen Mountain, Fig 4-153)."""
+    roof = kiln.roof
+    return (
+        isinstance(roof, SprungArch) and not roof.tube and (kiln.chamber.chambers > 1 or roof.along)
+    )
 
 
 class CatenaryArch(Spec):
@@ -1164,11 +1186,19 @@ class Kiln(Spec):
                     )
             return self
         if isinstance(self.roof, SprungArch):
-            rise, span = si(self.roof.rise, "in"), si(self.chamber.width, "in")
+            along = arches_along(self)
+            rise = si(self.roof.rise, "in")
+            one = self.roof.along  # one chamber's arch along its depth
+            span = si(self.chamber.depth if one else self.chamber.width, "in")
             if not 0 < rise <= span / 2:
                 raise ValueError(
-                    "a sprung arch's rise must be more than 0 and at most half the chamber's "
-                    f"width, {span / 2:g} in: past that it isn't a segment of a circle"
+                    "a sprung arch's rise must be more than 0 and at most half its span, the "
+                    f"chamber's {'depth' if one else 'width'}, {span / 2:g} in: past that it "
+                    "isn't a segment of a circle"
+                )
+            if one and self.chamber.chambers > 1:
+                raise ValueError(
+                    "chambers in a row have their arches along the draft already: leave out along"
                 )
             layers = len(self.lining.for_face("roof"))
             if self.roof.ring > layers:
@@ -1179,20 +1209,17 @@ class Kiln(Spec):
             # chambers in a row under arches along the draft spring from their front and back
             # walls instead, and take a door in part of a side wall, as climbing kilns do (Olsen
             # Figs 4-36, 4-45; door-openings.md)
-            along = self.chamber.chambers > 1 and not self.roof.tube
-            if (
-                self.roof.tube
-                and self.loading.face in ("left", "right")
-                and self.loading.opening is not None
-            ):
+            side_door = self.loading.face in ("left", "right") and self.loading.opening is not None
+            if self.roof.tube and side_door and not self.roof.buttressed:
                 raise ValueError(
                     "a tube's doors are in its side, through the springing of its vault, which is "
-                    "turned as an arch over each (Tamba, Olsen Figs 4-11, 4-15): that isn't laid "
-                    "out here, and no source gives the vault's load on such a door. Put the door "
-                    "in the front or back wall"
+                    "turned as an arch over each, with a 'supporting wall in front of all doors' "
+                    "(Tamba, Olsen Figs 4-11, 4-15): the vault's thrust over the door has no wall "
+                    "under it, so the masonry must hold it. Buttress the vault (roof.buttressed), "
+                    "or put the door in the front or back wall"
                 )
             if self.loading.face in ("left", "right") and not (
-                along and self.loading.opening is not None
+                (along or self.roof.tube) and side_door
             ):
                 what = "the car" if self.loading.type == "car" else "the door"
                 raise ValueError(
@@ -1353,8 +1380,9 @@ class Kiln(Spec):
                 raise ValueError("a door's ring is an arched head's: leave it out under a lintel")
             if si(door.ring, "in") <= 0:
                 raise ValueError("a door arch's ring must be more than 0 deep")
-        row = self.chamber.chambers > 1
-        if row and isinstance(self.roof, SprungArch) and not self.roof.tube:
+        row = self.chamber.chambers > 1 or arches_along(self)
+        tube = isinstance(self.roof, SprungArch) and self.roof.tube
+        if arches_along(self):
             if face in ("front", "back"):
                 raise ValueError(
                     "each chamber's arch springs from the front and back walls, so a door in part "
@@ -1362,10 +1390,10 @@ class Kiln(Spec):
                     "it in a side wall, as climbing kilns do (Olsen Figs 4-36, 4-45), or leave out "
                     "the opening, so the whole wall is the door"
                 )
-        elif row and face in ("left", "right"):
+        elif row and face in ("left", "right") and not tube:
             raise ValueError(
                 "a door in part of a side wall of chambers in a row is laid out only under arches "
-                "along the draft: put it in the front or back wall"
+                "along the draft or a tube's vault: put it in the front or back wall"
             )
         if door.each_chamber and not (row and face in ("left", "right")):
             raise ValueError(
@@ -1420,6 +1448,35 @@ class Kiln(Spec):
             from kilndesigner.geometry import inside_top
 
             top = min(inside_top(self, face, (across + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
+        elif arches_along(self) and self.chamber.chambers == 1 and face in ("left", "right"):
+            # One chamber's arch along its depth meets the side walls in its own curve, so the
+            # side wall rises from the springline at the ends to the crown mid-way (Bowen
+            # Mountain, Fig 4-153): the door may reach up to it at both its jambs
+            from kilndesigner.geometry import inside_top
+
+            top = min(inside_top(self, face, (across + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
+        elif tube and face in ("left", "right"):
+            # The door rises through the vault's springing, the vault turned as an arch over it
+            # (Tamba, Figs 4-11, 4-15): its ring, laid as the vault's, stays under the crown
+            assert isinstance(self.roof, SprungArch)
+            roof_ring = self.lining.for_face("roof")[: self.roof.ring]
+            depth = (
+                si(door.ring, "in")
+                if door.ring is not None
+                else sum(si(x.thickness, "in") for x in roof_ring)
+            )
+            crown = top + si(self.roof.rise, "in")
+            if door.head != "arch":
+                raise ValueError(
+                    "a door through a tube's springing is arched, the vault turned over it (Tamba, "
+                    "Figs 4-11, 4-15): no lintel can carry the vault's foot"
+                )
+            if sill + h + depth > crown + 1e-9:
+                raise ValueError(
+                    f"the door's top, {sill + h:g} in up, and its {depth:g} in ring reach past the "
+                    f"vault's crown, {crown:g} in: lower the door"
+                )
+            top = crown
         if sill + h > top + 1e-9:
             raise ValueError(
                 f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "

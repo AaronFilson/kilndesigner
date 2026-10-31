@@ -17,8 +17,8 @@ simplification is written into the example's notes:
 | `gulgong-racer`, `hohr-2003` | Cast domes over the chamber (p.118–123) | Dome over a rectangle |
 | `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Not described |
 | `breda-bottle`, `bottle-two-storey`, `sevres` | Round, domed, cone-frustum bottle chimney (p.166–169) | Round chamber; chimney as a straight stack |
-| `bowen-mountain` | Crown curving down along the length (Fig 4-153) | Arch across the width |
-| `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door refused |
+| `bowen-mountain` | Crown curving down along the length (Fig 4-153) | One arch along the length (`roof.along`), since 2026-10-31 |
+| `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door laid out and checked since 2026-10-31; the example has none, its size unreadable |
 | corbel-arched kilns (p.49, Fig 2-23; p.134 is Singh's round downdraft, curved-kilns.md) | Corbelled vaults | Not described |
 
 ## What "complex curves" needs, in layers
@@ -82,7 +82,15 @@ simplification is written into the example's notes:
    (still over the chamber's rectangle), brick course plans round the curve, and the web form's
    point editing.
 4. Revolved profiles: bottle kilns and round domes of conical-brick courses.
-5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing.
+5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing. Done
+   2026-10-31 (vault.py): Bowen's vault, re-read, is one arch along the 5 ft length springing at
+   18 in from both end walls (`roof.along`), laid out, drawn and counted as a row of one, with
+   its section at stations and Heyman's statics (ring factor, hot line, the end wall as a
+   buttress); a door through a buttressed tube's springing is laid out and checked (the door's
+   ring under half the vault's weight; the vault's thrust over the door reported, not sized).
+   Open: Tamba's door size (Fig 4-15 unreadable); Bowen's door height (not printed, 27 in
+   assumed); a tube whose section itself changes (Tamba's segments stepping up the slope,
+   Fig 4-16) waits for printed sizes.
 6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow.
 
 ## Open questions
