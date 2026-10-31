@@ -178,6 +178,67 @@ below has its working and source in the report and plans._
 - **Burners: up the sides of the door, spaced evenly.**
 - **Curves** (for the castable version): shapes picked by choice first, point editing later.
 
+## Firing to a target time (2026-10-30)
+
+On the design as it stands (elements to 1650 °F, then the 452,000 BTU/hr of burners) the
+simulation takes 65 h, $150. Most of that time is the 11.5 kW of elements working alone to the
+hand-over. `kilndesigner simulate <design> --target 4h` (or `firing.target_time` in the design,
+which adds it to the report) works backwards from a target time. It bisects the burner input
+with the firing simulation until the schedule finishes in the target time, then sizes everything
+else from that input (`core/src/kilndesigner/target.py`). The run follows the author's answers
+(2026-10-30):
+
+- **Heat:** elements and burners run together for the whole firing. The burners are lit at the
+  start and the elements stay on to the top, through reduction. The cost is a sourced finding:
+  reduction above about 900 °C attacks the elements' oxide layer and shortens their life.
+- **Load:** the same full load: the design's setting with a ware ratio of 7, about 2,600 lb.
+- **Burners:** the design's count of 8, chosen from the library by the existing sizing rules.
+- **Ports and flue:** the flue starts at 1 : 1 with the ports.
+- **Supply:** checked at the coldest day, 20 °F.
+- **Schedule:** the default (full heat to 100 °C under cone 10, then 60 °C/h). With unlimited
+  heat it takes **1.68 h**, the floor for any target.
+
+| Target | Burner input, BTU/hr (/ft³) | Burners (8) | Flue | Propane | Elements' share | Cost/firing | Fastest heating |
+|---|---|---|---|---|---|---|---|
+| 4 h | 1,002,000 (22,200) | Ransome B4 at 2.0 psi | 142 in² | 10.95 gal/h; 34 gal | 9 % (46 kWh) | $124.65 | 725 °C/h |
+| 6 h | 574,000 (12,700) | Ransome B3 at 1.7 psi | 113 in² | 6.27 gal/h; 34 gal | 12 % (69 kWh) | $128.37 | 466 °C/h |
+| 8 h | 406,000 (9,000) | Ransome B3 at 23 in. w.c. | 113 in² | 4.43 gal/h; 34 gal | 16 % (92 kWh) | $131.49 | 350 °C/h |
+| 12 h | 266,000 (5,900) | Ransome B3 at 11 in. w.c., their lowest published (draw 273,600) | 113 in² | 2.99 gal/h; 35 gal | 22 % (138 kWh) | $138.61 | 247 °C/h |
+
+All four targets are met, and none is limited by the burners: 8 × B5 give up to about 2.0
+million BTU/hr. The faster firing is cheaper, because less heat goes into the walls and out of
+the shell. The car and budget variants come out within 1 % of the bricked-door kiln: the
+budget's 8 h firing needs 403,000 BTU/hr at $130.70, and its 12 h firing 260,000 at $135.94.
+
+**Propane supply options at 20 °F.** The engine lists every option and the user picks one. The
+propane burned, and so the cost per firing, is the same whichever option holds it.
+
+| Target | 100 lb cylinders, full / ¼ full | The design's 11 cylinders | Tanks that work (least fill) |
+|---|---|---|---|
+| 4 h | 9 / 24 | full: yes. ¼ full: no, at any air temperature in the table (to 60 °F) | 1000 gal (47 %) only |
+| 6 h | 6 / 14 | full: yes. ¼ full: from 30 °F of air | 500 gal (51 %), 1000 gal (13 %) |
+| 8 h | 4 / 10 | full: yes. ¼ full: from 13 °F | 250 (59 %), 325 (38 %), 500 (24 %), 1000 gal (10 %) |
+| 12 h | 3 / 7 | yes, both: full from 20 °F, ¼ full from 0 °F | 250 (27 %), 325 (15 %), 500 gal and 1000 gal (10 %) |
+
+A tank's least fill is read between the D × L × K rule's rows. That is derived: K = 45–100 for
+10–60 % full (combustion-and-masonry.md §2.3), with the ⅓-full table read as K = 90.
+
+**What limits it:**
+
+- **The schedule.** Its 1.68 h floor is set by the cone's final rate.
+- **The ware.** The 4 h firing heats the ware at up to 725 °C/h (1,300 °F/h). The fastest
+  sourced schedule is 316 °C/h (Bartlett's Fast Glaze, cone 6; hybrid-firing.md §5). No source
+  sets a maximum, so the engine reports the rate and doesn't refuse it. A 4 h cone 10 with a full
+  2,600 lb load is beyond any sourced practice. Olsen's fast-fire kiln reaches cone 10 in
+  3½–4¾ h, but it is a 12–16 ft³ wood kiln. Even the 8 h firing, at 350 °C/h, is above the
+  fastest sourced schedule.
+- **The elements.** On through reduction, they give 9–22 % of the heat. Their life in reduction
+  isn't quantified by any source (hybrid-firing.md §6).
+- **The 12 h firing.** It needs about 33,000 BTU/hr a burner, under the lowest published B3
+  rating. Fire the burners turned down below their published range, or light fewer of them.
+- **The chimney.** It stays at the kiln's top, 4.4 ft (53 in) above the chamber floor, with a
+  hood and stack (Olsen p.151). The flue grows with the burner ports.
+
 ## Not sourced, left out
 
 Kanthal APM wire price; steel prices; the car's wheels, rails and seal (no source sizes them);
