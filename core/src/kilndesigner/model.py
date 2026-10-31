@@ -213,6 +213,23 @@ class PlanOutline(Spec):
         return self
 
 
+class Foundation(Spec):
+    """What the kiln's walls stand on: a concrete platform or slab, and its strength."""
+
+    material: str = Field(
+        default="concrete", description="What the platform is, for example concrete"
+    )
+    compressive_strength: Pressure = Field(
+        description="Its compressive strength, for example 1800 psi (concrete's f′c)"
+    )
+    strength_source: str = Field(
+        description=(
+            "Where the strength comes from: a test, a mix's specification, or the user's own "
+            "starting value. It is reported with every number worked from it"
+        )
+    )
+
+
 class Chamber(Spec):
     """The inside of the kiln: the space the lining encloses."""
 
@@ -263,6 +280,14 @@ class Chamber(Spec):
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
+        ),
+    )
+    foundation: Foundation | None = Field(
+        default=None,
+        description=(
+            "A platform or slab the walls stand on, with its compressive strength: the bearing "
+            "under the walls is then worked out against it. Its heat loss isn't: no thermal "
+            "conductivity for concrete is sourced"
         ),
     )
     floor_inside: bool = Field(
@@ -433,6 +458,11 @@ class SprungArch(Spec):
             raise ValueError("springs on the tie rods need their spring_rate, from the listing")
         if self.along and self.tube:
             raise ValueError("a tube's vault spans the width: leave out along, or tube")
+        if self.along and self.ties == "springs":
+            raise ValueError(
+                "springs on the rods of an arch along the chamber's depth aren't worked out: tie "
+                "its rods rigid"
+            )
         if self.front_springline is not None and not self.along:
             raise ValueError(
                 "front_springline is for one chamber's arch along its depth (along): a level "
@@ -982,6 +1012,43 @@ class Firebox(Spec):
     )
     inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
     stoke_hole: Port | None = None
+    roof: Literal["flat", "corbel"] = Field(
+        default="flat",
+        description=(
+            "'flat': the walls' layers laid flat over it. 'corbel': its side walls' brick courses "
+            "stepped in over the top of its height until one brick bridges what is left, 6 in or "
+            "less (Rhodes, Kilns p.101–102; TMS 402 per BIA's Corbels brief; Olsen p.49, a corbel "
+            "arch spans up to 24 in)"
+        ),
+    )
+    corbel_step: Length | None = Field(
+        default=None,
+        description=(
+            "With a corbel roof: how far each course steps in. Left out, the most TMS 402 allows, "
+            "min(h/2, d/3) of the course height h and the wall's brick thickness d"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _corbel_fits(self) -> Firebox:
+        if self.roof != "corbel":
+            if self.corbel_step is not None:
+                raise ValueError("corbel_step is for a corbel roof: give roof: corbel")
+            return self
+        if self.position == "under":
+            raise ValueError(
+                "a firebox under the floor is roofed by the chamber's floor: it has no roof of "
+                "its own to corbel"
+            )
+        if si(self.width, "in") > 24.0:
+            raise ValueError(
+                f"a corbel over {si(self.width, 'in'):g} in is past the 24 in Olsen gives for a "
+                "corbel arch (The Kiln Book, 4th ed., p.49), and no source gives one wider: roof "
+                "it flat or with a sprung arch"
+            )
+        if self.corbel_step is not None and si(self.corbel_step, "in") <= 0:
+            raise ValueError("each corbel course must step in by something")
+        return self
 
 
 class Fire(Spec):

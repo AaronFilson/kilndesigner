@@ -56,9 +56,16 @@ export interface KilnDocument {
         ring?: number;
         ties?: "rigid" | "springs";
         spring_rate?: string;
+        buttressed?: boolean;
+        /** Chambers in a row under one vault spanning the width (model.py SprungArch.tube). */
+        tube?: boolean;
+        /** One chamber's arch spanning its depth, along the draft (model.py SprungArch.along). */
+        along?: boolean;
+        /** With along: the front wall's springline, from the floor (model.py SprungArch). */
+        front_springline?: string;
       }
-    | { type: "catenary_arch" }
-    | { type: "dome"; rise: string; crown_at?: string };
+    | { type: "catenary_arch"; buttressed?: boolean }
+    | { type: "dome"; rise: string; crown_at?: string; ring?: number; buttressed?: boolean };
   loading?: {
     /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
     type?: "door" | "car" | "lid";
@@ -98,6 +105,8 @@ export interface KilnDocument {
   site?: {
     ambient?: string;
     coldest_ambient?: string;
+    /** Height above sea level (model.py Site.elevation). */
+    elevation?: string;
     electricity_price?: string;
     propane_price?: string;
     materials_budget?: string;
@@ -232,6 +241,10 @@ export interface Firebox {
   inlet?: Port;
   inlets?: number;
   stoke_hole?: Port;
+  /** "corbel": the side walls' courses stepped in over its top (model.py Firebox.roof). */
+  roof?: "flat" | "corbel";
+  /** With a corbel roof, each course's step; left out, the most TMS 402 allows. */
+  corbel_step?: string;
 }
 
 /** Wood, coal or oil burned in fireboxes (model.py Fire). */
