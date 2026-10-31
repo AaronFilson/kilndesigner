@@ -1048,12 +1048,161 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
     ]
+    working: list[Step] = []
+    thrust = None
     if kiln.heat.electric is not None:
         findings = [_electric_bands(kiln)]
+    elif isinstance(kiln.roof, Dome):
+        ring = round_dome_ring(kiln)
+        if ring is None:
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        "The dome rises more than half the chamber's width, past a hemisphere: "
+                        "its thrust isn't worked out (membrane theory here is checked to a "
+                        "hemisphere only)."
+                    ),
+                    reference=MEMBRANE,
+                )
+            )
+        else:
+            working, thrust = ring.steps, f"{ring.per_foot:.0f} lb per foot of the wall's top"
+            findings.append(ring.finding())
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
-        thrust=None, members=[], working=[], findings=findings,
+        thrust=thrust, members=[], working=working, findings=findings,
     )  # fmt: skip
+
+
+MEMBRANE = (
+    "Timoshenko, Theory of Plates and Shells, §106, eq. (257), membrane forces of a spherical "
+    "dome under its own weight; the edge ring's force H = a₀·N_α·cos α₀ (domes-over-doors.md §D1)"
+)
+NO_TENSION = 51.83
+"""Degrees from the crown past which the membrane state has hoop tension (Timoshenko, 51°50′;
+Lau's no-tension solutions reach α ≤ 51.8°, domes-over-doors.md §D1)."""
+
+
+@dataclass(frozen=True)
+class DomeRing:
+    """A round dome's membrane forces at its springing, imperial: the meridian thrust (lb per ft
+    of the springing circle), its outward part, the ring tension the wall or a band holds (lb),
+    and the hoop force in the shell there (lb per ft; positive is tension)."""
+
+    alpha: float  # degrees, the springing from the crown
+    meridian: float
+    per_foot: float
+    ring: float
+    hoop: float
+    steps: list[Step]
+
+    def finding(self) -> Finding:
+        text = (
+            f"The dome pushes out {self.per_foot:,.0f} lb per foot round the wall's top; the "
+            f"wall's ring, or an iron band round it, holds that as {self.ring:,.0f} lb of ring "
+            "tension (membrane theory, the dome's own weight). No band is sized: no source here "
+            "gives an allowable for a hot kiln's band."
+        )
+        if self.alpha > NO_TENSION:
+            text += (
+                f" The dome springs {self.alpha:.1f}° from its crown, past the {NO_TENSION}° "
+                f"where the membrane state turns to hoop tension ({self.hoop:,.0f} lb per foot "
+                "at the springing), which mortared brick doesn't carry: it cracks along its "
+                "meridians and stands as lunes, and the sliced state thrusts more "
+                "(domes-over-doors.md §D3). So the push and the ring "
+                "tension above are the least it can be, not a design value; a rise of 2½ in per "
+                "foot of span (Olsen p.51) keeps it below."
+            )
+        return Finding(level="info", message=text, reference=MEMBRANE)
+
+
+def membrane(a: float, q: float, alpha: float) -> tuple[float, float, float, float]:
+    """A spherical cap's membrane forces at its edge (Timoshenko §106), in any consistent units:
+    radius a, weight q per unit area, the edge α radians from the crown. The meridian
+    compression N_α = aq/(1 + cos α), its outward part N_α·cos α, the ring force a·sin α ×
+    that, and the hoop force aq(1/(1 + cos α) − cos α), tension when positive."""
+    meridian = a * q / (1 + math.cos(alpha))
+    out = meridian * math.cos(alpha)
+    return (
+        meridian,
+        out,
+        a * math.sin(alpha) * out,
+        a * q * (1 / (1 + math.cos(alpha)) - math.cos(alpha)),
+    )
+
+
+def round_dome_ring(kiln: Kiln) -> DomeRing | None:
+    """The membrane forces at a round dome's springing (Timoshenko §106): a spherical cap of
+    radius a, springing α₀ from its crown, weighing q per unit of its surface. N_α = −aq/(1 +
+    cos α₀) along the meridian, its outward part N_α·cos α₀ per unit of the springing circle,
+    the ring force a₀·N_α·cos α₀ with a₀ = a·sin α₀, and the hoop force aq(1/(1 + cos α₀) −
+    cos α₀). a is the mid-surface's radius; q is Σ density × thickness of the roof's layers."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.shape import RoundDome
+
+    assert isinstance(kiln.roof, Dome)
+    dome = RoundDome(si(kiln.chamber.width, "ft"), si(kiln.roof.rise, "ft"))
+    layers = [
+        (si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3"),
+         si(x.thickness, "ft"))
+        for x in kiln.lining.for_face("roof")
+    ]  # fmt: skip
+    q = sum(rho * t for rho, t in layers)
+    a = dome.radius + sum(t for _, t in layers) / 2
+    if dome.rise > dome.diameter / 2 + 1e-9:
+        return None  # past a hemisphere: the dome leans in over the wall, not checked here
+    alpha = math.asin(min(1.0, dome.diameter / 2 / dome.radius))
+    meridian, per_foot, ring, hoop = membrane(a, q, alpha)
+    steps = [
+        Step(
+            name="Dome: weight per square foot of shell",
+            formula="q = Σ density × thickness, over the roof's layers",
+            inputs={
+                f"layer {i + 1}": f"{rho:.0f} lb/ft³ × {t * 12:.3g} in"
+                for i, (rho, t) in enumerate(layers)
+            },
+            value=f"{q:.1f} lb/ft²",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: its sphere and springing",
+            formula="R = (r_b² + h²) / 2h; a = R + T/2; α₀ = asin(r_b / R)",
+            inputs={
+                "r_b": f"{dome.diameter / 2 * 12:.3g} in",
+                "h": f"{dome.rise * 12:.3g} in",
+            },
+            value=f"a = {a * 12:.3g} in, α₀ = {math.degrees(alpha):.1f}°",
+            reference="sphere geometry",
+        ),
+        Step(
+            name="Dome: meridian thrust at the springing",
+            formula="N_α = a·q / (1 + cos α₀), compression",
+            value=f"{meridian:,.0f} lb/ft",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: outward push on the wall's top",
+            formula="N_α·cos α₀",
+            value=f"{per_foot:,.0f} lb/ft",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: ring tension at the springing",
+            formula="H = a₀·N_α·cos α₀, a₀ = a·sin α₀",
+            value=f"{ring:,.0f} lb",
+            reference=MEMBRANE,
+            note="held by the wall's ring of brick or an iron band round it (Olsen p.167)",
+        ),
+        Step(
+            name="Dome: hoop force in the shell at the springing",
+            formula="N_θ = a·q·(1/(1 + cos α₀) − cos α₀), tension when positive",
+            value=f"{hoop:,.0f} lb/ft",
+            reference=MEMBRANE,
+            note=f"tension past α₀ = {NO_TENSION}°",
+        ),
+    ]
+    return DomeRing(math.degrees(alpha), meridian, per_foot, ring, hoop, steps)
 
 
 SECTION_IN = 9.0
