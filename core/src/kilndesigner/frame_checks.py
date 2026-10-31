@@ -798,6 +798,9 @@ class DoorArchInputs:
     most: float  # lbf, the maximum thrust: a line of thrust from the crown's soffit
     cross: float = 0.0  # in, the cross wall bonded into the jamb's far end (0: none, a door)
     cross_q: float = 0.0  # psi, that wall's weight per square inch of its face
+    # in, the wall counted over the springline on the jamb, where it isn't Z (a head in a vault's
+    # edge, whose jamb's wall drops under the springline along it: 0)
+    over_jamb: float | None = None
 
 
 ARCH_STATICS = (
@@ -894,8 +897,14 @@ def _jamb_base(s: Sheet, da: DoorArchInputs) -> None:
             source=f"{DESIGN}: the door's sill and height, less its radius")  # fmt: skip
     s.given("e", "the jamb's width along the wall", Q_(da.jamb, "in"), source=da.jamb_source)
     s.let("G_1", "the jamb under the springline", "q*e*h_s", "lbf")
+    over = "Z"
+    if da.over_jamb is not None:
+        over = "Z_j"
+        s.given("Z_j", "the wall counted over the springline on the jamb", Q_(da.over_jamb, "in"),
+                source=f"{DESIGN}: the wall drops under the springline along the jamb, so none "
+                "is counted")  # fmt: skip
     s.let("G_2", "the wall over the springline on the jamb, beside the ring",
-          "q*max(e - d, 0*d)*Z", "lbf")  # fmt: skip
+          f"q*max(e - d, 0*d)*{over}", "lbf")  # fmt: skip
     s.given("b_c", "the cross wall bonded into the jamb's far end, its thickness",
             Q_(da.cross, "in"), source=f"{DESIGN}: the wall at the corner; 0 where the jamb "
             "ends at another door")  # fmt: skip
@@ -1013,6 +1022,86 @@ def vault_end_wall(a: ArchInputs, wall: tuple[Layer, ...], springing: float) -> 
     s.let("x_p", "where the line of thrust crosses the springing, in from the wall's inside face",
           "(r + T/2)*sin(φ) - S/2", "in", source="the ring's middle at the skewback")  # fmt: skip
     s.let("y_p", "its height over the floor", "h_s + T/2*cos(φ)", "in")
+    s.let("x_R", "where the resultant meets the wall's base, in from its inside face",
+          "(N*x_p + G*e/2 + H_c*y_p)/(N + G)", "in",
+          source="moments about the base's inside edge: the thrust carries it outward")  # fmt: skip
+    s.require("x_R", "<=", "e")
+    s.let("x_3", "the far edge of the base's middle third", "2*e/3", "in", source=NO_TENSION)
+    s.require("x_R", "<=", "x_3", level="warning")
+    return s
+
+
+UNEVEN_STATICS = (
+    "a three-hinged circular arch, hinges at each springing and the crown, its halves unequal: "
+    "moments of each half about the crown, and the vertical loads summing to its weight (statics, "
+    "as the level arch's H_c)"
+)
+
+
+def vault_end_wall_uneven(
+    r: float,
+    front: float,
+    back: float,
+    layers: tuple[Layer, ...],
+    ring: int,
+    wall: tuple[Layer, ...],
+    springing: float,
+    end: str,
+    source: str,
+) -> Sheet:
+    """An arch along the chamber's depth springing at different heights at its ends: one end
+    wall, as vault_end_wall's, holding the arch's cold thrust and that end's share of its weight.
+    The circle's inside radius r and each springing's angle from the crown, φ_f and φ_b, are the
+    engine's (the circle through both springings, its crown the rise over the back's)."""
+    s = Sheet(f"frame.vault-end-wall-{end}", f"The {end} wall alone holds the arch's thrust, cold",
+              reference=f"{ARCH_STATICS}; {NO_TENSION}; {UNEVEN_STATICS}")  # fmt: skip
+    s.given("r", "inside radius", Q_(r, "in"), source=source)
+    s.given("φ_f", "the front springing's angle from the crown", Q_(front, "degree"), "degree",
+            source=source)  # fmt: skip
+    s.given("φ_b", "the back springing's angle from the crown", Q_(back, "degree"), "degree",
+            source=source)  # fmt: skip
+    for i, x in enumerate(layers, 1):
+        s.given(f"t_{i}", f"layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"ρ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    s.let("T", "the ring: its layers' thickness",
+          " + ".join(f"t_{i}" for i in range(1, ring + 1)), "in")  # fmt: skip
+    below: list[str] = []
+    for i in range(1, len(layers) + 1):
+        inner = " + ".join(["r", *below])
+        s.let(f"w_{i}", f"layer {i}'s weight per foot of arch",
+              f"ρ_{i}*t_{i}*(φ_f + φ_b)*({inner} + t_{i}/2)", "lbf/ft",
+              source="density × thickness × the arc at mid-layer")  # fmt: skip
+        below.append(f"t_{i}")
+    total = " + ".join(f"w_{i}" for i in range(1, len(layers) + 1))
+    s.let("W", "the arch's weight per foot", total, "lbf/ft",
+          source="HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]")  # fmt: skip
+    for e in ("f", "b"):
+        s.let(f"W_{e}", f"the {'front' if e == 'f' else 'back'} half's weight",
+              f"W*φ_{e}/(φ_f + φ_b)", "lbf/ft")  # fmt: skip
+        s.let(f"ℓ_{e}", "its centroid's lever about its springing, over r",
+              f"sin(φ_{e}) - (1 - cos(φ_{e}))/φ_{e}",
+              source="an arc's centroid, r(1 − cos φ)/φ in from the crown")  # fmt: skip
+    s.let("H_c", "thrust, cold",
+          "(W_f*ℓ_f/sin(φ_f) + W_b*ℓ_b/sin(φ_b))/((1 - cos(φ_f))/sin(φ_f) + "
+          "(1 - cos(φ_b))/sin(φ_b))", "lbf/ft", source=UNEVEN_STATICS)  # fmt: skip
+    e = "f" if end == "front" else "b"
+    s.let("N", f"the {end} springing's vertical load",
+          f"(H_c*(1 - cos(φ_{e})) + W_{e}*(sin(φ_{e}) - ℓ_{e}))/sin(φ_{e})", "lbf/ft",
+          source=UNEVEN_STATICS)  # fmt: skip
+    for i, x in enumerate(wall, 1):
+        s.given(f"e_{i}", f"end wall layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"γ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    n = len(wall)
+    s.let("e", "the end wall's thickness", " + ".join(f"e_{i}" for i in range(1, n + 1)), "in")
+    s.given("h_s", "the springline over the floor", Q_(springing, "in"),
+            source=f"{DESIGN}: the {end} wall's springline")  # fmt: skip
+    weight = " + ".join(f"γ_{i}*e_{i}" for i in range(1, n + 1))
+    s.let("G", "the end wall's weight under the springline, per foot", f"({weight})*h_s", "lbf/ft")
+    s.let("x_p", "where the line of thrust crosses the springing, in from the wall's inside face",
+          f"T/2*sin(φ_{e})", "in", source="the ring's middle at the skewback")  # fmt: skip
+    s.let("y_p", "its height over the floor", f"h_s + T/2*cos(φ_{e})", "in")
     s.let("x_R", "where the resultant meets the wall's base, in from its inside face",
           "(N*x_p + G*e/2 + H_c*y_p)/(N + G)", "in",
           source="moments about the base's inside edge: the thrust carries it outward")  # fmt: skip

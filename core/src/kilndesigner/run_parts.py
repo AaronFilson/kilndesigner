@@ -41,7 +41,7 @@ from typing import TYPE_CHECKING, Any
 
 from kilndesigner.geometry import SOLID_KINDS, ArchShape, DomeShape, Part, bulge_fill, thicknesses
 from kilndesigner.model import Dome, FlatRoof, Kiln, SprungArch
-from kilndesigner.shape import Arch, SailDome
+from kilndesigner.shape import Arch, SailDome, along_arch
 from kilndesigner.units import si
 
 if TYPE_CHECKING:
@@ -174,6 +174,15 @@ def run_parts(kiln: Kiln) -> list[Part]:
         back = y1 if i == n - 1 else run.back(i) + (0.0 if stepped else t / 2)
         return front, back
 
+    # One chamber's arch springing lower at the front (roof.front_springline): the front wall
+    # stands to its own springline, the side walls to the lower one, capped up to the arch
+    roof = kiln.roof
+    drop = (
+        along_arch(kiln, "mm").drop
+        if isinstance(roof, SprungArch) and roof.front_springline is not None
+        else 0.0
+    )
+    low = h - max(drop, 0.0)
     floor = thicknesses(kiln, "floor")
     spans = [(i, *stretch(i)) for i in range(n)] if stepped else [(None, y0, y1)]
     for i, a, b in spans:
@@ -193,7 +202,7 @@ def run_parts(kiln: Kiln) -> list[Part]:
             xs = sorted((sign * (w / 2 + reached), sign * (w / 2 + reached + th)))
             base = f"{named(side)}/{k + 1}-{mat}"
             if not stepped:
-                p = box(base, mat, side, (xs[0], y0, 0.0), (xs[1], y1, h), None)
+                p = box(base, mat, side, (xs[0], y0, 0.0), (xs[1], y1, low), None)
                 parts.append(p)
                 walls_up.append((p, None))
             else:
@@ -214,7 +223,7 @@ def run_parts(kiln: Kiln) -> list[Part]:
 
     # The end walls, and the walls between chambers, between the side walls
     ends: list[tuple[str, int, float, int, list[tuple[str, float]], float]] = [
-        ("front", -1, run.front(0), 0, layers["front"], h),
+        ("front", -1, run.front(0), 0, layers["front"], h - drop),
         ("back", 1, run.back(n - 1), n - 1, layers["back"], run.floor(n - 1) + h),
     ]
     for face, sign, at, i, stack, top in ends:
@@ -238,7 +247,6 @@ def run_parts(kiln: Kiln) -> list[Part]:
             walls_up.append((p, i + 1 if stepped else None))
             reached += th
 
-    roof = kiln.roof
     rings = thicknesses(kiln, "roof")
     for i in range(n):
         lo, hi = clip(i)
@@ -281,7 +289,9 @@ def _arch(
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, SprungArch)
-    arch = Arch(run.depth, si(kiln.roof.rise, "mm"))
+    arch = along_arch(kiln, "mm")
+    if arch.drop:
+        return _uneven_arch(kiln, run, arch, ends, xs, rings, walls_up, layers)
     springline = run.floor(i) + run.height
     centre_z = springline + arch.rise - arch.radius
     c = run.centre(i)
@@ -424,6 +434,93 @@ def _tube(
                 profile=tuple((x, z + rise) for x, z in p.profile),
             )
         )  # fmt: skip
+    return parts
+
+
+def _uneven_arc(c: float, centre_z: float, r: float, arch: Arch) -> Outline:
+    """An arch's arc springing unevenly, in the y–z plane, from the front springing to the back:
+    about its centre ``arch.offset`` behind the chamber's middle ``c``."""
+    f, b = arch.front_angle, arch.back_angle
+    angles = [-f + (f + b) * k / STEPS for k in range(STEPS + 1)]
+    return [(c + arch.offset + r * math.sin(t), centre_z + r * math.cos(t)) for t in angles]
+
+
+def _uneven_arch(
+    kiln: Kiln,
+    run: RunLayout,
+    arch: Arch,
+    ends: tuple[float, float],
+    xs: tuple[float, float],
+    rings: list[tuple[str, float]],
+    walls_up: list[tuple[Part, int | None]],
+    layers: dict[str, list[tuple[str, float]]],
+) -> list[Part]:
+    """One chamber's arch along its depth springing at different heights at its ends
+    (roof.front_springline, Bowen Mountain, Fig 4-153): its rings, the side walls' caps up to it
+    from the lower springline, and a skewback on each end wall at its own springline."""
+    from kilndesigner.castable import resolve_material
+
+    back = run.height  # the back's springline; the front's is ``drop`` lower
+    front = back - arch.drop
+    low = min(front, back)
+    centre_z = back + arch.rise - arch.radius
+    c, half = run.centre(0), run.depth / 2
+    lo, hi = ends
+    parts: list[Part] = []
+
+    def part(name: str, mat: str, face: str, outline: Outline, x: tuple[float, float],
+             **extra: Any) -> Part:  # fmt: skip
+        ys, zs = [p[0] for p in outline], [p[1] for p in outline]
+        return Part(
+            name, mat, resolve_material(kiln, mat).kind, (x[0], min(ys), min(zs)),
+            (x[1], max(ys), max(zs)), face=face, profile=tuple(outline), across=True,  # type: ignore[arg-type]
+            chamber=1, **extra,
+        )  # fmt: skip
+
+    cum = 0.0
+    for k, (mat, th) in enumerate(rings):
+        r = arch.radius + cum
+        outline = [*_uneven_arc(c, centre_z, r, arch), *reversed(_uneven_arc(c, centre_z, r + th,
+                                                                           arch))]  # fmt: skip
+        clipped = _clip(outline, lo, hi)
+        ys = [p[0] for p in outline]
+        whole = min(ys) >= lo - 1e-6 and max(ys) <= hi + 1e-6
+        shape = ArchShape(r, th, centre_z, arch.half_angle) if whole else None
+        parts.append(part(f"roof/{k + 1}-{mat}-chamber-1", mat, "roof", clipped, xs, ring=th,
+                          arch=shape))  # fmt: skip
+        cum += th
+    # The side walls closing the arch, from the lower springline up to its inside
+    inside = _uneven_arc(c, centre_z, arch.radius, arch)
+    if back > low + 1e-6:
+        inside.append((c + half, low))
+    if front > low + 1e-6:
+        inside.append((c - half, low))
+    for p, _ in walls_up:
+        if p.wall not in ("left", "right"):
+            continue
+        cap = part(f"{p.name}-chamber-1-arch", p.material, p.wall, inside, (p.lo[0], p.hi[0]),
+                   cap=True)  # fmt: skip
+        parts.append(cap)
+    # A skewback on each end wall at its own springline, along the arch's radius there
+    r_out = arch.radius + cum
+    for face, sign, end, angle, springline in (
+        ("front", -1, lo, arch.front_angle, front),
+        ("back", 1, hi, arch.back_angle, back),
+    ):
+        outer = abs(end - c)
+        mat = _main_solid(kiln, layers[face])
+        if outer <= half + 1e-6 or mat is None:
+            continue
+        u_c = sign * arch.offset  # the centre, out towards this end from the middle
+        corner = (u_c + r_out * math.sin(angle), centre_z + r_out * math.cos(angle))
+        if corner[0] <= outer:
+            local = [(half, springline), corner, (outer, corner[1]), (outer, springline)]
+        else:
+            rho = (outer - u_c) / math.sin(angle)
+            local = [(half, springline), (outer, centre_z + rho * math.cos(angle)),
+                     (outer, springline)]  # fmt: skip
+        outline = [(c + sign * u, z) for u, z in local]
+        parts.append(part(f"{face}/skewback-{mat}-chamber-1", mat, face, outline, xs))
     return parts
 
 

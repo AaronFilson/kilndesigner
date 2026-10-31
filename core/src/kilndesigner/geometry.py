@@ -829,10 +829,15 @@ def inside_top(kiln: Kiln, face: Face, u: float) -> float:
     if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
         # Each chamber's arch spans its depth along the draft (run_parts.py): it meets the side
         # walls, the first chamber's centred on u = 0, and the end walls stand to the springline
+        # (u along y); springing unevenly, the front wall stands to its own springline
+        from kilndesigner.shape import along_arch
+
+        arch = along_arch(kiln, "mm")
+        if face == "front":
+            return h - arch.drop
         if end or abs(u) >= d / 2:
-            return h
-        arch = Arch(d, si(kiln.roof.rise, "mm"))
-        return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
+            return h if u > 0 or end else h - arch.drop
+        return h + arch.height(u)
     if isinstance(kiln.roof, SprungArch) and end:
         arch = Arch(w, si(kiln.roof.rise, "mm"))
         if abs(u) < arch.half_width:  # past a semicircle, the arch is wider than the span
