@@ -7,6 +7,7 @@ from collections.abc import AsyncIterator
 from pathlib import Path, PurePath
 from typing import Annotated, Any
 
+import anyio.to_thread
 import yaml
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse
@@ -20,11 +21,13 @@ from kilndesigner.build import build_key, design_document
 from kilndesigner.castable import CastableError, ingredients, mix_analysis
 from kilndesigner.cones import cone_names, cone_rates
 from kilndesigner.gas import gas_data, named_model
-from kilndesigner.library import alloys, materials
+from kilndesigner.library import UnknownEntryError, alloys, materials
 from kilndesigner.report import Report
 from kilndesigner.results import WallHeatmap, read_summary
-from kilndesigner.simulation import FiringPoint, FiringResult, SwitchOverChart
+from kilndesigner.simulation import FiringPoint, FiringResult, SimulationError, SwitchOverChart
+from kilndesigner.slow import SlowFiring, slow_firing
 from kilndesigner.templates import templates
+from kilndesigner.units import UnitError, parse_quantity, si
 from kilndesigner_api import db, schemas
 from kilndesigner_api.jobs import JobRunner
 from kilndesigner_api.settings import Settings
@@ -411,6 +414,36 @@ async def simulation_switchover(key: str, s: Session, settings: AppSettings) -> 
     if not path.is_file():
         raise HTTPException(status.HTTP_404_NOT_FOUND, "no switch-over chart for this kiln")
     return SwitchOverChart.model_validate_json(path.read_bytes())
+
+
+def _slow(document: dict[str, Any], time: str, soak: str) -> SlowFiring:
+    """Work out a slow firing, without each step's points (the CLI's slow.json leaves them out
+    too): two firings are simulated, so it runs off the event loop."""
+    hours = si(parse_quantity(time, "[time]"), "hour")
+    soak_h = si(parse_quantity(soak, "[time]"), "hour")
+    result = slow_firing(Kiln.model_validate(document), hours, soak_h)
+    return result.model_copy(
+        update={
+            k: f.model_copy(update={"points": []})
+            for k, f in (("firing", result.firing), ("quickest", result.quickest))
+            if f is not None
+        }
+    )
+
+
+@router.post("/simulations/{key}/slow", responses={400: {"description": "Refused, with why"}})
+async def slow_firing_route(key: str, body: schemas.SlowFiringRequest, s: Session) -> SlowFiring:
+    """Fire a design version slowly over a time the user chooses, and see what it takes against
+    the sources' slow firings (``kilndesigner slow``). Worked out on request, not stored."""
+    document = await s.scalar(
+        select(db.DesignVersion.document).where(db.DesignVersion.build_key == key).limit(1)
+    )
+    if document is None:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "no design version has this build key")
+    try:
+        return await anyio.to_thread.run_sync(_slow, document, body.time, body.soak)
+    except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, str(e)) from e
 
 
 @router.get("/builds/{key}/files/{name:path}", response_class=FileResponse)

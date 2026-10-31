@@ -14,7 +14,9 @@ export interface DoorOpening {
   height: string;
   across?: string;
   sill?: string;
-  head?: "arch" | "lintel";
+  head?: "arch" | "lintel" | "flat";
+  /** A flat head's rounded corners' radius (model.DoorOpening.corner). */
+  corner?: string;
   ring?: string;
   each_chamber?: boolean;
 }
@@ -108,8 +110,32 @@ export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
 
 /** A box chamber's plan as a curve (model.py PlanOutline), filling its width and depth. */
 export type PlanOutline =
-  | { shape: "teardrop"; front_width?: string; side_radius?: string }
+  | {
+      shape: "teardrop";
+      front_width?: string;
+      side_radius?: string;
+      /** A neck at the back, the three given together (model.py PlanOutline). */
+      neck_width?: string;
+      neck_length?: string;
+      neck_radius?: string;
+    }
   | { shape: "oval"; end_radius: string };
+
+type Teardrop = Extract<PlanOutline, { shape: "teardrop" }>;
+
+/** A teardrop with its neck added or taken off. Added, it starts at Calimpong's printed neck
+ *  (Olsen, Fig. 4-140; examples/olsen/conrad-teardrop.yaml): sizes to edit, not a rule. */
+export function withNeck(
+  outline: Teardrop,
+  neck: boolean,
+  units: "us" | "metric" | undefined,
+): Teardrop {
+  if (!neck) {
+    return { ...outline, neck_width: undefined, neck_length: undefined, neck_radius: undefined };
+  }
+  const size = (inches: number) => fromMm(inches * 25.4, units);
+  return { ...outline, neck_width: size(12), neck_length: size(19), neck_radius: size(32) };
+}
 
 export type PlanShape = "rectangle" | PlanOutline["shape"];
 

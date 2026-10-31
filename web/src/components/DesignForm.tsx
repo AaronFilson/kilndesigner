@@ -27,6 +27,7 @@ import {
   setIn,
   splitQuantity,
   toMm,
+  withNeck,
   withPlan,
   WALLS,
   type WallFace,
@@ -1436,6 +1437,38 @@ export function DesignForm({
               units={LENGTH}
               onChange={(v) => change(["chamber", "outline", "side_radius"], v)}
             />
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={outline.neck_width !== undefined}
+                disabled={outline.front_width === undefined || outline.side_radius === undefined}
+                onChange={(e) => change(["chamber", "outline"], withNeck(outline, e.target.checked, doc.units))}
+              />
+              A neck at the back, closed by a flat wall (needs the front wall and the sides'
+              radius)
+            </label>
+            {outline.neck_width !== undefined && (
+              <>
+                <p className="muted section-note">
+                  Started at Calimpong's neck (Olsen, Fig. 4-140): sizes to edit, not a rule.
+                </p>
+                {(
+                  [
+                    ["neck_width", "Neck's width"],
+                    ["neck_length", "Neck's straight run, to the back wall"],
+                    ["neck_radius", "Reverse curve's radius, into the neck"],
+                  ] as const
+                ).map(([key, label]) => (
+                  <Quantity
+                    key={key}
+                    label={label}
+                    value={outline[key]}
+                    units={LENGTH}
+                    onChange={(v) => change(["chamber", "outline", key], v)}
+                  />
+                ))}
+              </>
+            )}
           </>
         )}
         {outline?.shape === "oval" && (
@@ -1706,9 +1739,24 @@ export function DesignForm({
               options={[
                 ["arch", "A semicircular brick arch"],
                 ["lintel", "A steel lintel"],
+                ["flat", "Flat, with rounded corners (laid out, not checked)"],
               ]}
-              onChange={(v) => change(["loading", "opening", "head"], v)}
+              onChange={(v) =>
+                change(["loading", "opening"], {
+                  ...loading.opening,
+                  head: v,
+                  corner: v === "flat" ? loading.opening?.corner : undefined,
+                })
+              }
             />
+            {loading.opening.head === "flat" && (
+              <Quantity
+                label="Corners' radius (left out: square)"
+                value={loading.opening.corner}
+                units={LENGTH}
+                onChange={(v) => change(["loading", "opening", "corner"], v)}
+              />
+            )}
             {chambers > 1 && SIDES.includes(loading.face) && (
               <label className="check">
                 <input

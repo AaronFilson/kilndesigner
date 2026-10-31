@@ -3,6 +3,7 @@ each ring, floor and roof, plans and a model."""
 
 import json
 import math
+import re
 from pathlib import Path
 
 import pytest
@@ -126,7 +127,18 @@ def test_each_ring_has_a_plan_of_its_bricks() -> None:
     assert "wedge-shaped joints behind filled with mortar" in inner.description(True)
     assert "the joints open to" in inner.description(True)
     assert "key bricks laid flat" in key.description(True)
-    assert ring_plan_svg(inner, True).count("<polygon") == 2 * inner.ring.total
+    # A mortar ring: each straight square, and its wedge joint drawn open behind it
+    mortared = ring_plan_svg(inner, True)
+    assert mortared.count("<polygon") == 2 * 2 * inner.ring.total
+    assert "wedge joints, filled with mortar" in mortared
+    joints = [
+        [tuple(float(v) for v in p.split(",")) for p in m.split()]
+        for m in re.findall(r'<polygon points="([^"]+)" fill="#b8b2a7"', mortared)
+    ]
+    assert len(joints) == 2 * inner.ring.total
+    widest = max(math.dist(j[1], j[2]) for j in joints)  # across the joint at the outside
+    assert inner.ring.joint is not None
+    assert widest == pytest.approx(inner.ring.joint, abs=0.02)
     svg = ring_plan_svg(key, True)
     assert svg.count("<polygon") == 2 * key.ring.total
     assert "Even courses" in svg

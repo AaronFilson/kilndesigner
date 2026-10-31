@@ -95,6 +95,49 @@ async def test_a_hybrid_gets_its_switch_over_chart(
     assert "cheapest_c" in chart
 
 
+@pytest.mark.slow
+async def test_a_slow_firing_is_worked_out_on_request(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    key = await _key(client, example)
+    r = await client.post(f"/api/simulations/{key}/slow", json={"time": "2 day", "soak": "6 h"})
+    assert r.status_code == 200, r.text
+    slow = r.json()
+    assert slow["hours"] == pytest.approx(48)
+    assert slow["soak_h"] == pytest.approx(6)
+    assert slow["firing"]["completed"]
+    assert slow["firing"]["points"] == []  # left out, as the CLI's slow.json does
+    assert slow["quickest"]["points"] == []
+    assert slow["shell_share"] > 0
+    assert slow["sources"]
+
+
+async def test_a_wood_kiln_s_slow_firing_gives_the_sources_only(client: httpx.AsyncClient) -> None:
+    source = (
+        Path(__file__).parents[2] / "core/src/kilndesigner/data/templates/anagama.yaml"
+    ).read_text(encoding="utf-8")
+    key = await _key(client, source)
+    slow = (await client.post(f"/api/simulations/{key}/slow", json={"time": "120 h"})).json()
+    assert slow["firing"] is None
+    assert slow["soak_h"] == 0
+    assert "aren't simulated" in slow["findings"][0]["message"]
+
+
+async def test_a_slow_firing_that_makes_no_sense_is_refused(
+    client: httpx.AsyncClient, example: str
+) -> None:
+    key = await _key(client, example)
+    url = f"/api/simulations/{key}/slow"
+    soak = await client.post(url, json={"time": "10 h", "soak": "10 h"})
+    assert soak.status_code == 400
+    assert "soak" in soak.json()["detail"]
+    unit = await client.post(url, json={"time": "10 kg"})
+    assert unit.status_code == 400
+    assert (await client.post(url, json={"time": "30 day"})).status_code == 400  # past Bizen's
+    nope = await client.post("/api/simulations/nope/slow", json={"time": "10 h"})
+    assert nope.status_code == 404
+
+
 async def test_an_unknown_key_cannot_be_simulated(client: httpx.AsyncClient) -> None:
     assert (await client.post("/api/simulations/nope")).status_code == 404
 

@@ -11,6 +11,7 @@ import {
   splitQuantity,
   toMm,
   type WallFrame,
+  withNeck,
 } from "../design";
 import { DesignForm } from "./DesignForm";
 import { legend } from "./KilnViewer";
@@ -392,6 +393,14 @@ describe("DesignForm, loading", () => {
       sill: "2 in",
       head: "lintel",
     });
+    // A flat head's rounded corners, dropped when the head changes
+    expect(screen.queryByLabelText("Corners' radius (left out: square)")).toBeNull();
+    set("Door head", "flat");
+    set("Corners' radius (left out: square)", "1");
+    expect(last().loading?.opening).toMatchObject({ head: "flat", corner: "1 in" });
+    set("Door head", "arch");
+    expect(last().loading?.opening?.corner).toBeUndefined();
+    expect(last().loading?.opening?.head).toBe("arch");
     // A door in each chamber only for chambers in a row, in a side wall
     expect(screen.queryByLabelText(/A door into each chamber/)).toBeNull();
     fireEvent.click(screen.getByLabelText(/The door is in part of the wall/));
@@ -971,6 +980,24 @@ describe("shapes, fireboxes and chimneys", () => {
     set("Flat front wall's width (left out: round)", "15");
     set("Sides' radius (left out: straight)", "200");
     expect(last().chamber.outline).toEqual({ shape: "teardrop", front_width: "15 in", side_radius: "200 in" });
+    // A neck, started at Calimpong's printed one, its three sizes edited together
+    fireEvent.click(screen.getByLabelText(/A neck at the back/));
+    expect(last().chamber.outline).toMatchObject({ neck_width: "12 in", neck_length: "19 in", neck_radius: "32 in" });
+    set("Neck's width", "10");
+    set("Neck's straight run, to the back wall", "18");
+    set("Reverse curve's radius, into the neck", "30");
+    expect(last().chamber.outline).toEqual({
+      shape: "teardrop",
+      front_width: "15 in",
+      side_radius: "200 in",
+      neck_width: "10 in",
+      neck_length: "18 in",
+      neck_radius: "30 in",
+    });
+    fireEvent.click(screen.getByLabelText(/A neck at the back/));
+    expect(last().chamber.outline).toEqual({ shape: "teardrop", front_width: "15 in", side_radius: "200 in" });
+    expect(screen.queryByLabelText("Neck's width")).toBeNull();
+    expect(withNeck({ shape: "teardrop" }, true, "metric")).toMatchObject({ neck_width: "305 mm" });
     set("Plan", "oval");
     // Round ends a quarter of the width, to edit
     const quarter = (toMm(last().chamber.width) ?? 0) / 4;

@@ -88,6 +88,14 @@ class Simulation(BaseModel):
     finished_at: datetime | None
 
 
+class SlowFiringRequest(BaseModel):
+    """A slow firing to work out: its time and the soak at the top within it, each a quantity
+    with its unit ("72 h", "5 day")."""
+
+    time: str
+    soak: str = "0 h"
+
+
 class CheckedDesign(BaseModel):
     """A valid design, both ways: the JSON document the forms edit and the YAML the tab shows."""
 
