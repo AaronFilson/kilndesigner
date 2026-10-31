@@ -70,9 +70,11 @@ def test_build_writes_the_report_without_a_model(tmp_path: Path) -> None:
 def test_compare_shows_each_design() -> None:
     door = str(EXAMPLES / "pnw-hybrid-crossdraft.yaml")
     budget = str(EXAMPLES / "pnw-hybrid-crossdraft-budget.yaml")
-    result = runner.invoke(app, ["compare", door, budget])
+    castable = str(EXAMPLES / "pnw-hybrid-crossdraft-castable.yaml")
+    result = runner.invoke(app, ["compare", door, budget, castable])
     assert result.exit_code == 0, result.output
     assert "pnw-hybrid-crossdraft-budget" in result.output
+    assert "pnw-hybrid-crossdraft-castable" in result.output
     assert "Burner input" in result.output
     assert "Materials (priced)" in result.output
 
