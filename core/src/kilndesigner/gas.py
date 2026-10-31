@@ -135,7 +135,7 @@ def wall_class(kiln: Kiln) -> WallClass:
     from kilndesigner.castable import resolve_material
 
     kind = resolve_material(kiln, kiln.lining.walls[0].material).kind
-    if kind in ("dense_firebrick", "dense_castable", "building_brick", "stone"):
+    if kind in ("dense_firebrick", "dense_castable", "building_brick", "stone", "earth"):
         return "hard_brick"
     if kind in ("fibre_blanket", "fibre_board"):
         return "ceramic_fibre"

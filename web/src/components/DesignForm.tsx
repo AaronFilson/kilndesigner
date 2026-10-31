@@ -157,6 +157,7 @@ const KIND_WORDS: Record<string, string> = {
   backup_insulation: "Backup insulation",
   building_brick: "Building brick",
   stone: "Stone",
+  earth: "Clay, straw and earth",
   diy_castable: "Your castables",
 };
 
@@ -1802,12 +1803,32 @@ export function DesignForm({
         </label>
         {doc.lining.conical && (
           <>
+            <Choice
+              label="Conical brick proportions"
+              value={doc.lining.conical.proportions ?? "given"}
+              options={[
+                ["given", "The sizes I give"],
+                ["fig-4-6", "Olsen's drawn brick (Fig. 4-6), scaled to the length"],
+              ]}
+              onChange={(v) =>
+                change(
+                  ["lining", "conical"],
+                  v === "fig-4-6"
+                    ? { length: doc.lining.conical?.length ?? "9 in", proportions: v }
+                    : { length: doc.lining.conical?.length ?? "9 in", wide: "4.5 in", narrow: "2.5 in" },
+                )
+              }
+            />
             {(
-              [
-                ["length", "Conical brick length"],
-                ["wide", "Conical brick, wide end across"],
-                ["narrow", "Conical brick, narrow (hot-face) end across"],
-              ] as const
+              (doc.lining.conical.proportions === "fig-4-6"
+                ? [["length", "Conical brick length"]]
+                : [
+                    ["length", "Conical brick length"],
+                    ["wide", "Conical brick, wide end across"],
+                    ["narrow", "Conical brick, narrow (hot-face) end across"],
+                    ["bore", "Conical brick, bore across"],
+                    ["groove", "Conical brick, spiral groove across"],
+                  ]) as ["length" | "wide" | "narrow" | "bore" | "groove", string][]
             ).map(([key, label]) => (
               <Quantity
                 key={key}
@@ -1820,6 +1841,8 @@ export function DesignForm({
             <p className="muted section-note">
               Hand-rolled in a tatami mat (Olsen, The Kiln Book, p.85, Fig. 4-6) and sized by you:
               an arch or dome layer as deep as the brick is long is laid in them, narrow ends in.
+              The bore and the half-round spiral groove each run ¾ of the way from the wide end
+              and come out of the clay; a dome shows the taper its radius wants.
             </p>
           </>
         )}

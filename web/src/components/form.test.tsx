@@ -950,6 +950,15 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().lining.conical).toEqual({ length: "9 in", wide: "4.5 in", narrow: "2.5 in" });
     set("Conical brick, narrow (hot-face) end across", "3");
     expect(last().lining.conical?.narrow).toBe("3 in");
+    set("Conical brick, bore across", "0.5");
+    expect(last().lining.conical?.bore).toBe("0.5 in");
+    set("Conical brick, spiral groove across", "0.75");
+    expect(last().lining.conical?.groove).toBe("0.75 in");
+    set("Conical brick proportions", "fig-4-6");
+    expect(last().lining.conical).toEqual({ length: "9 in", proportions: "fig-4-6" });
+    expect(screen.queryByLabelText("Conical brick, wide end across")).toBeNull();
+    set("Conical brick proportions", "given");
+    expect(last().lining.conical).toEqual({ length: "9 in", wide: "4.5 in", narrow: "2.5 in" });
     fireEvent.click(screen.getByLabelText("Lay arches and domes in conical (tatami) bricks"));
     expect(last().lining.conical).toBeUndefined();
   });

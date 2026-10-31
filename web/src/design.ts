@@ -73,7 +73,14 @@ export interface KilnDocument {
     /** The tapered shapes arches and rings use (model.py Lining.shapes). */
     shapes?: "olsen" | "apg";
     /** Custom conical (tatami) bricks for arches and domes (model.py ConicalBrick). */
-    conical?: { length?: string; wide?: string; narrow?: string };
+    conical?: {
+      length?: string;
+      wide?: string;
+      narrow?: string;
+      bore?: string;
+      groove?: string;
+      proportions?: "given" | "fig-4-6";
+    };
   };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
   heat: { electric?: Electric; gas?: Gas; fire?: Fire };

@@ -60,6 +60,7 @@ COLOURS: dict[str, tuple[float, float, float]] = {
     "backup_insulation": (0.85, 0.85, 0.90),
     "building_brick": (0.66, 0.31, 0.23),
     "stone": (0.58, 0.57, 0.54),
+    "earth": (0.55, 0.45, 0.33),
     "element": (0.55, 0.55, 0.58),
     "steel": (0.30, 0.32, 0.36),
     "burner": (0.72, 0.55, 0.28),
@@ -74,6 +75,7 @@ KIND_NAMES = {
     "backup_insulation": "Backup insulation",
     "building_brick": "Building brick",
     "stone": "Stone",
+    "earth": "Clay, straw and earth",
     "element": "Elements",
     "steel": "Steel",
     "burner": "Burners",
@@ -86,6 +88,7 @@ SOLID_KINDS = {
     "dense_castable",
     "building_brick",
     "stone",
+    "earth",
 }
 FACE_NAMES = {
     "left": "Left wall",

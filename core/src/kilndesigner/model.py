@@ -77,11 +77,35 @@ class ConicalBrick(Spec):
     narrow: Length = Field(
         default_factory=lambda: Q_(2.5, "in"), description="The hot-face end's diameter"
     )
+    proportions: Literal["given", "fig-4-6"] = Field(
+        default="given",
+        description="'given': the wide and narrow ends as written; 'fig-4-6': the ends scaled "
+        "from the length by the brick Olsen draws (p.85, Fig. 4-6): wide end = length / 2.40, "
+        "narrow end = wide / 1.49 (scaled from the figure; the taper is real, as drawn), with the "
+        "user's ¾ in bore and ¾ in groove (the user, 2026-10-31)",
+    )
+    bore: Length | None = Field(
+        default=None,
+        description="The hole along the brick's axis from the wide end, ¾ of the way in "
+        "(Fig. 4-6; the user's estimate), taken out of its volume",
+    )
+    groove: Length | None = Field(
+        default=None,
+        description="The half-round spiral groove in the side from the wide end, ¾ of the way "
+        "down (Fig. 4-6; the user's estimate), taken out of its volume",
+    )
 
     @model_validator(mode="after")
     def _tapers(self) -> ConicalBrick:
+        given = {"wide", "narrow", "bore", "groove"} & self.model_fields_set
+        if self.proportions == "fig-4-6" and given:
+            raise ValueError(
+                "Fig. 4-6's proportions set the ends, bore and groove: give the length"
+            )
         if not si(self.wide, "m") > si(self.narrow, "m") > 0 or si(self.length, "m") <= 0:
             raise ValueError("a conical brick's wide end is wider than its narrow end")
+        if self.bore is not None and not 0 <= si(self.bore, "m") < si(self.narrow, "m"):
+            raise ValueError("a conical brick's bore is narrower than its narrow end")
         return self
 
 

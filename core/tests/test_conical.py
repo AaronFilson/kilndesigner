@@ -3,7 +3,14 @@ from pathlib import Path
 
 import pytest
 
-from kilndesigner.conical import Brick, course, dome, segment_radius, vault
+from kilndesigner.conical import (
+    Brick,
+    course,
+    dome,
+    lay_conical_dome,
+    segment_radius,
+    vault,
+)
 from kilndesigner.designfile import load_design
 from kilndesigner.geometry import lining_parts
 from kilndesigner.masonry import CONICAL, conical_layer, plan_masonry
@@ -84,6 +91,20 @@ def test_bidai_arches_are_laid_in_conical_bricks() -> None:
 
 
 @pytest.mark.geometry
+def test_hand_made_bricks_are_bought_as_raw_fireclay_by_volume() -> None:
+    kiln = load_design(EXAMPLES / "olsen/bidai.yaml")
+    assert kiln.lining.conical is not None
+    clay = next(q for q in plan_masonry(kiln).result.quantities if CONICAL in q.name)
+    assert clay.material == "fireclay-brick-porous-norton"
+    assert clay.unit == "lb"
+    buy = int(clay.detail.split(" bricks to roll")[0])
+    brick = Brick.of(kiln.lining.conical)
+    lb = buy * brick.volume * (0.0254**3) * 1900 / 0.45359237  # in³ → m³ → kg → lb
+    assert clay.amount == pytest.approx(lb, abs=0.5)
+    assert "shrinkage and water not added" in clay.detail
+
+
+@pytest.mark.geometry
 def test_a_dome_is_laid_in_conical_bricks_when_as_deep_as_one_is_long() -> None:
     assert _conical_count(_with_conical("olsen/miravet.yaml")) > 0
     # A 9 in dome isn't laid in 6 in conical bricks: it falls back to the usual count
@@ -96,6 +117,57 @@ def test_conical_layer_skips_parts_that_are_neither_arch_nor_dome() -> None:
     brick = Brick(wall.thickness / 25.4, 4.5, 2.5)
     assert conical_layer(wall, brick) is None
     assert conical_layer(wall, None) is None
+
+
+def test_fig_4_6_proportions_scale_from_the_length() -> None:
+    b = Brick.of(ConicalBrick.model_validate({"length": "6 in", "proportions": "fig-4-6"}))
+    assert b.wide == pytest.approx(6 * 260 / 625)
+    assert b.narrow == pytest.approx(b.wide * 175 / 260)
+    assert (b.bore, b.groove) == pytest.approx((0.75, 0.75))  # the user's estimates
+    # Its own radius scales with the length alone: L·d / (D − d) = L·175 / (260 − 175) ≈ 2.06 L
+    assert b.own_radius == pytest.approx(6 * 175 / 85)
+    with pytest.raises(ValueError, match="give the length"):
+        ConicalBrick.model_validate({"proportions": "fig-4-6", "wide": "4 in"})
+
+
+def test_bore_and_groove_come_out_of_the_volume() -> None:
+    solid = Brick(9, 4.5, 2.5)
+    bored = Brick(9, 4.5, 2.5, 0.75)
+    grooved = Brick(9, 4.5, 2.5, 0.0, 0.75)
+    assert solid.volume == pytest.approx(math.pi * 9 * (4.5**2 + 4.5 * 2.5 + 2.5**2) / 12)
+    # ¾ of the way in from the wide end
+    assert solid.volume - bored.volume == pytest.approx(math.pi * 0.75**2 / 4 * 6.75)
+    # a half-round groove along a spiral at 57° to the axis
+    path = 6.75 / math.cos(math.atan2(140, 90))
+    assert solid.volume - grooved.volume == pytest.approx(math.pi * 0.75**2 / 8 * path)
+    spec = ConicalBrick.model_validate({"bore": "0.75 in", "groove": "0.75 in"})
+    assert (Brick.of(spec).bore, Brick.of(spec).groove) == pytest.approx((0.75, 0.75))
+    with pytest.raises(ValueError, match="bore"):
+        ConicalBrick.model_validate({"bore": "3 in"})
+    with pytest.raises(ValueError, match="bore"):
+        Brick(9, 4.5, 2.5, 2.5)
+    with pytest.raises(ValueError, match="groove"):
+        Brick(9, 4.5, 2.5, 0.0, 2.5)
+
+
+@pytest.mark.parametrize(
+    ("radius", "touch"),
+    [(11.25, "close-packed"), (24, "wide ends touch"), (8, "narrow ends touch")],
+)
+def test_dome_fit_check(radius: float, touch: str) -> None:
+    laid = lay_conical_dome(radius, radius, TATAMI)
+    fit = {s.name: s for s in laid.steps}
+    wants = fit["Dome: the taper this dome wants"]
+    assert touch in (wants.note or "")
+    assert TATAMI.narrow_for(radius) == pytest.approx(4.5 * radius / (radius + 9))
+    assert fit["Dome: the brick's own radius"].value == "11.2 in"
+    clay = fit["Dome: clay in the bricks"]
+    assert clay.value == f"{laid.total * TATAMI.volume / 1728:.3g} ft³"
+    assert clay.note == "solid: no bore or groove given"
+    bored = lay_conical_dome(radius, radius, Brick(9, 4.5, 2.5, 0.75, 0.75))
+    assert {s.name: s for s in bored.steps}["Dome: clay in the bricks"].note == (
+        "the bore and groove taken out"
+    )
 
 
 def test_model_refuses_a_brick_without_taper() -> None:

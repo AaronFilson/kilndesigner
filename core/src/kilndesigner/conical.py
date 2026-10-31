@@ -29,10 +29,20 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from kilndesigner.model import ConicalBrick
-from kilndesigner.units import si
+from kilndesigner.units import Quantity, si
 from kilndesigner.working import Step
 
 REF = "Olsen, The Kiln Book, 4th ed., p.85, Fig. 4-6; geometry derived in conical.py"
+
+# Fig. 4-6's brick, measured on the page image at 400 dpi (2026-10-31): 625 px long, its wide end
+# 260 px and its narrow end 175 px across, the taper real, as drawn (the user). Its spiral groove
+# runs at about 57° to the axis (scaled from the figure: 140 px across for 90 px along), so its
+# path is the run along the axis ÷ cos 57°.
+FIG_4_6 = {"length/wide": 625 / 260, "wide/narrow": 260 / 175}
+GROOVE_PATH = 1 / math.cos(math.atan2(140, 90))  # path per unit of axial run
+# The user's estimates (2026-10-31): a ¾ in bore and a ¾ in half-round groove, each running ¾ of
+# the way from the wide end
+BORE, GROOVE, REACH = 0.75, 0.75, 0.75
 
 
 @dataclass(frozen=True)
@@ -42,17 +52,54 @@ class Brick:
     length: float
     wide: float
     narrow: float
+    bore: float = 0.0  # the hole along the axis, ¾ of the way in from the wide end
+    groove: float = 0.0  # the half-round spiral groove's width, ¾ of the way down
 
     def __post_init__(self) -> None:
         if not (self.length > 0 and self.wide > self.narrow > 0):
             raise ValueError(
                 "a conical brick has a length and a wide end wider than its narrow end"
             )
+        if not 0 <= self.bore < self.narrow:
+            raise ValueError("a conical brick's bore is narrower than its narrow end")
+        if not 0 <= self.groove < self.narrow:
+            raise ValueError("a conical brick's groove is narrower than its narrow end")
 
     @classmethod
     def of(cls, spec: ConicalBrick) -> Brick:
         """The design's brick, in inches."""
-        return cls(si(spec.length, "in"), si(spec.wide, "in"), si(spec.narrow, "in"))
+        length = si(spec.length, "in")
+        if spec.proportions == "fig-4-6":
+            return cls.fig_4_6(length)
+
+        def opt(q: Quantity | None) -> float:
+            return 0.0 if q is None else si(q, "in")
+
+        return cls(
+            length, si(spec.wide, "in"), si(spec.narrow, "in"), opt(spec.bore), opt(spec.groove)
+        )
+
+    @classmethod
+    def fig_4_6(cls, length: float) -> Brick:
+        """Olsen's drawn brick (p.85, Fig. 4-6) at this length: its ends scaled from the figure
+        (FIG_4_6), the taper real, as drawn; the user's ¾ in bore and groove."""
+        wide = length / FIG_4_6["length/wide"]
+        return cls(length, wide, wide / FIG_4_6["wide/narrow"], BORE, GROOVE)
+
+    @property
+    def volume(self) -> float:
+        """Its fired clay, in³: the frustum π·L·(D² + D·d + d²) / 12, less the bore π·b²·¾L / 4
+        and the half-round groove π·g²/8 along its spiral, ¾L ÷ cos 57°."""
+        d2 = self.wide**2 + self.wide * self.narrow + self.narrow**2
+        run = REACH * self.length
+        bore = math.pi * self.bore**2 / 4 * run
+        groove = math.pi * self.groove**2 / 8 * run * GROOVE_PATH
+        return math.pi * self.length * d2 / 12 - bore - groove
+
+    def narrow_for(self, radius: float) -> float:
+        """The narrow end (in) that would close a ring of this inside radius with no joint, the
+        length and the wide end kept: d = D·r / (r + L)."""
+        return self.wide * radius / (radius + self.length)
 
     @property
     def own_radius(self) -> float:
@@ -314,8 +361,54 @@ def lay_conical_dome(
     θ = max(d / r, D / (r + L)) both round its course and up the meridian."""
     c = course(radius, brick)
     joint = ("hot-face joint between narrow ends", "r·θ − d", c.inside_joint)
-    return lay_dome(radius, rise, c.angle, c.angle, what=what, reference=REF, fraction=fraction,
+    laid = lay_dome(radius, rise, c.angle, c.angle, what=what, reference=REF, fraction=fraction,
                     joint=joint)  # fmt: skip
+    return DomeLaying(laid.courses, laid.crown, laid.steps + dome_fit(radius, brick, laid, what))
+
+
+def dome_fit(radius: float, brick: Brick, laid: DomeLaying, what: str) -> tuple[Step, ...]:
+    """The check of a conical brick against its dome: the radius it closes on with no joint, the
+    narrow end this dome's radius wants, which ends touch, and the clay laid. Shown, not judged:
+    no source gives a largest fireclay joint (Olsen p.94)."""
+
+    def f(x: float) -> str:
+        return f"{x:.3g} in"
+
+    own, wants = brick.own_radius, brick.narrow_for(radius)
+    if abs(radius - own) < 1e-6:
+        touch = "both ends touch: the dome is close-packed"
+    elif radius > own:
+        touch = "the wide ends touch; the narrow ends open fireclay joints on the hot face"
+    else:
+        touch = "the narrow ends touch; the wide ends open joints outside"
+    return (
+        Step(
+            name=f"{what}: the brick's own radius",
+            formula="r₀ = L·d / (D − d)",
+            inputs={"L": f(brick.length), "D": f(brick.wide), "d": f(brick.narrow)},
+            value=f(own),
+            reference=REF,
+            note="a dome of this inside radius closes with no joint both round and up",
+        ),
+        Step(
+            name=f"{what}: the taper this dome wants",
+            formula="d = D·r / (r + L), the length and the wide end kept",
+            inputs={"r": f(radius)},
+            value=f"{f(wants)} narrow end, against the brick's {f(brick.narrow)}",
+            reference=REF,
+            note=touch,
+        ),
+        Step(
+            name=f"{what}: clay in the bricks",
+            formula="n · (π·L·(D² + D·d + d²) / 12 − π·b²·¾L / 4 − π·g²/8 · ¾L / cos 57°)",
+            inputs={"n": str(laid.total), "b": f(brick.bore), "g": f(brick.groove)},
+            value=f"{laid.total * brick.volume / 1728:.3g} ft³",
+            reference=REF + "; bore and groove the user's estimates, the groove's 57° scaled",
+            note="the bore and groove taken out"
+            if brick.bore or brick.groove
+            else "solid: no bore or groove given",
+        ),
+    )
 
 
 def lay_straights_dome(

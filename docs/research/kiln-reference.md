@@ -1709,6 +1709,22 @@ The user remembers springs from the 1st or 2nd edition.
   at 11¼ in inside radius; the Bidai chambers' semicircles (18–23 in radius) leave ½–¾ in fireclay
   joints between the narrow ends on the hot face (derived). Tatami bricks also arch the
   Bidai and Kawaii climbing kilns and their fireboxes (Fig. 4-37, p.97, p.200; `olsen-kilns.md`).
+  - *The drawn brick, measured* (page image at 400 dpi, 2026-10-31): 625 px long, its wide end
+    260 px and narrow end 175 px across, so wide end = length ÷ 2.40 and wide ÷ narrow = 1.49. The
+    taper is real, as drawn, the narrow end laid in (the user, 2026-10-31). Its spiral groove runs
+    at about 57° to the axis (scaled). Option `lining.conical.proportions: fig-4-6`. At 9 in long
+    it is 3.74 in to 2.52 in and closes a ring with no joint at 18.5 in inside radius (2.06 × its
+    length, derived).
+  - *The user's estimates* (2026-10-31): a ¾ in bore along the axis and a ¾ in half-round spiral
+    groove in the side, each running ¾ of the way from the wide end; both come out of the clay.
+  - *Bidai's "6 x ?"* (Fig. 4-37): the 6 is the length, 6 in (the user, 2026-10-31); the other
+    figure stays unread. At 6 in, Fig. 4-6's brick closes its ring at 12.4 in radius.
+  - *As a dome check* (derived): Fig. 4-6's brick at 9 in long, in the 9 in brick domes. Miravet
+    (about 82 in radius) wants a 3.37 in narrow end for no joint: 23 courses, 1,638 bricks,
+    0.85 in hot-face joints. Singh (about 49 in) wants 3.16 in: 16 courses, 743 bricks, 0.64 in.
+    Breda (about 115 in, its rise assumed) wants 3.47 in: 30 courses, 2,663 bricks, 0.95 in. The
+    drawn taper suits small domes, 37 in across; larger ones open fireclay joints on the hot
+    face, which no source limits (p.94: "thick fireclay joints").
 - **Slopes** (Read): a Korean climbing kiln's text says "A 20% slope was used, which is standard for
   most kilns of this style" (p.108), but its drawing prints "20° SLOPE" (p.107); 20 % is about
   11.3° and 20° about 36 % (derived) (Flagged). Other slopes: an anagama drawn at 25° (Fig. 4-5,

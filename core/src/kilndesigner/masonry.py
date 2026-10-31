@@ -56,7 +56,7 @@ type Laying = Literal["stretcher", "on_edge", "header", "flat", "soldier"]
 BRICK_KINDS = {"insulating_firebrick", "dense_firebrick", "building_brick"}
 SHEET_KINDS = {"fibre_blanket", "fibre_board", "backup_insulation"}
 CAST_KINDS = {"insulating_castable", "dense_castable"}
-BULK_KINDS = CAST_KINDS | {"stone"}  # counted by weight from their volume
+BULK_KINDS = CAST_KINDS | {"stone", "earth"}  # counted by weight from their volume
 
 
 @dataclass(frozen=True)
@@ -368,6 +368,34 @@ def arch_ring(part: Part, *, apg: bool = False) -> ArchRing | None:
 
 
 CONICAL = "conical (tatami) brick"
+# Tatami bricks are hand made by the builder (the user, 2026-10-31): bought as raw fireclay, at
+# the density of clay fired in place (masonry-materials.md §4a.3)
+RAW_CLAY = "fireclay-brick-porous-norton"
+
+
+def raw_clay(kiln: Kiln, count: int, buy: int, allowance: str, laid_in: str) -> Quantity:
+    """The raw fireclay to roll the conical bricks: each brick's fired volume (the frustum less
+    its bore and groove, conical.Brick.volume) at the density of clay fired in place. Drying and
+    firing shrinkage and the water in the clay aren't added: no source gives them for this clay."""
+    assert kiln.lining.conical is not None
+    us = kiln.units == "us"
+    brick = conical.Brick.of(kiln.lining.conical)
+    volume = Q_(buy * brick.volume, "in**3")
+    mass = volume * parse_quantity(material(RAW_CLAY).density)
+    shown = f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'}"
+    return Quantity(
+        material=RAW_CLAY,
+        name="Raw fireclay, for the hand-made conical (tatami) bricks",
+        kind=material(RAW_CLAY).kind,
+        amount=round(si(mass, "lb" if us else "kg"), 0),
+        unit="lb" if us else "kg",
+        detail=(
+            f"{buy} bricks to roll ({count} in {laid_in} plus {allowance} for breakage), "
+            f"{brick.volume:.3g} in³ of clay each less the bore and groove, {shown} fired, "
+            "at the density of clay fired in place; shrinkage and water not added"
+        ),
+        priced_amount=si(mass, "lb"),
+    )
 
 
 def conical_layer(
@@ -930,6 +958,9 @@ def buy_quantities(
     for (mid, shape), count in sorted(shapes.items()):
         m = material(mid)
         buy = shaped.buy(count)
+        if shape == CONICAL and kiln.lining.conical is not None:
+            quantities.append(raw_clay(kiln, count, buy, shaped.text, shapes_in))
+            continue
         quantities.append(
             Quantity(
                 material=mid,
