@@ -301,8 +301,7 @@ def floor_and_roof_holes(hw: Hardware) -> list[Hole]:
     return [
         Hole(o.box[0], o.box[1], o.round_axis == 2)
         for o in hw.openings
-        if (o.name.startswith("port/burner-") or o.name == "port/flue")
-        and o.name not in on_walls
+        if (o.name.startswith("port/burner-") or o.name == "port/flue") and o.name not in on_walls
     ]
 
 
