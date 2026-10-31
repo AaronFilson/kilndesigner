@@ -3,6 +3,7 @@ it (door.py; door-openings.md, steel-design.md §S5)."""
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from kilndesigner.designfile import parse_design
+from kilndesigner.designfile import load_design, parse_design
 from kilndesigner.door import (
     cut_door,
     door_across,
@@ -24,6 +25,7 @@ from kilndesigner.frame import design_frame
 from kilndesigner.geometry import lining_parts
 from kilndesigner.hardware import build_hardware
 from kilndesigner.model import Kiln
+from kilndesigner.units import si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 
@@ -338,3 +340,22 @@ def test_a_door_in_a_tubes_side_is_refused_with_its_reason() -> None:
     with pytest.raises(ValidationError, match="springing of its vault"):
         _kiln("olsen/tamba.yaml", {"face": "left", "opening": {"width": "24 in",
                                                               "height": "36 in"}})  # fmt: skip
+
+
+def test_spy_holes_go_low_between_burners_up_the_door_sides_and_under_its_arched_head() -> None:
+    """The author's door: burners in two columns at ±9 in leave the spy holes' column (3 in
+    either side of the middle) clear, so the holes aren't pushed above them (the user: the spy
+    holes go lower); the top hole stays a course under the arched head at its outer edge."""
+    from kilndesigner.gas import design_gas
+
+    kiln = load_design(Path(__file__).parents[2] / "examples" / "pnw-hybrid-crossdraft.yaml")
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    spies = sorted(p.up for p in hw.ports if p.kind == "spy")
+    burners = [p.up for p in hw.ports if p.kind == "burner"]
+    assert len(spies) == 3
+    assert spies[0] < max(burners)  # not stacked above every burner
+    door = kiln.loading.opening
+    assert door is not None
+    r = si(door.width, "in") / 2
+    head = si(door.height, "in") - r + math.sqrt(r * r - (3 + 1.125) ** 2)
+    assert spies[-1] + 1.25 <= head - 2.5 + 1e-6

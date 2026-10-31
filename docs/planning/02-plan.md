@@ -367,11 +367,21 @@ the next round are in [10-30-26.md](10-30-26.md).
 - **Calimpong's teardrop** has its door as built and passes, after two engine fixes for doors
   under domes.
 
+### Status (2026-10-30, round 4, branch `m7`)
+
+- `m6` is merged to `main` (PR #2); work continues on `m7`.
+- **Electric floors** can sit inside the walls (Paragon) or under them (Skutt).
+- **Complex curves** have a research file (`curved-kilns.md`) and a shape model behind every
+  existing type ([complex-curves.md](complex-curves.md) steps 1–2); Calimpong's teardrop is next,
+  in progress. An arch bug (rise over half the span) was found and is being fixed.
+- **The author's kiln** has the author's answers in: door, eight burners in the door, 11
+  cylinders, the shino hand-over, an editable stacking setting (in progress).
+- 1632 tests, coverage over 98 % in Python and web.
+
 ### What's next (2026-10-30)
 
-See [10-30-26.md](10-30-26.md): electric floors inside the walls, unclear figures settled by their
-metric values, the first steps of [complex curves](complex-curves.md), the author's answers, then
-M7.
+See [10-30-26.md](10-30-26.md): the author's castable version, bottle kilns and conical-brick
+domes, the rest of the unclear values, then M7.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce

@@ -8,8 +8,9 @@ weighed at the same density. Advancer (nitride-bonded SiC, 8 lb) is left out: it
 legible in the scan (p.35, "5/16 in (?)"), so its density can't be worked out. No source here
 gives a post's size, so a design's posts are the user's.
 
-The ware's weight is a ratio of the setting's: 6 to 8 times, from the author (the user,
-2026-10-30), not a published source; 7, the middle, by default.
+The ware's weight is a ratio of the setting's, set by the design from 0 (an empty setting) up;
+the author's typical load is 6 to 8 times the setting (the user, 2026-10-30), not a published
+source, so 7, the middle, by default.
 """
 
 from __future__ import annotations
@@ -31,11 +32,11 @@ SHELF_WEIGHT_LB: dict[str, float] = {
 }
 """Olsen's 12 × 24 × 1 in shelf, by material (lb)."""
 
-WARE_RATIO = (6.0, 8.0)
+WARE_RATIO_TYPICAL = (6.0, 8.0)  # the author's typical load, not a limit
 WARE_RATIO_DEFAULT = 7.0
 WARE_RATIO_SOURCE = (
-    "the author (the user, 2026-10-30): ware weighs about 6 to 8 times the setting; not a "
-    "published source"
+    "the author (the user, 2026-10-30): ware typically weighs about 6 to 8 times the setting; "
+    "the design sets its own; not a published source"
 )
 
 

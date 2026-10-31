@@ -53,10 +53,16 @@ def test_posts_are_weighed_at_their_materials_density() -> None:
     assert "Posts" in [s.name for s in steps]
 
 
-@pytest.mark.parametrize("ratio", [5.9, 8.1])
-def test_a_ratio_outside_the_range_is_refused(ratio: float) -> None:
-    with pytest.raises(ValidationError, match="6 to 8"):
-        Setting.model_validate({"shelves": SHELVES, "ware_ratio": ratio})
+@pytest.mark.parametrize("ratio", [0, 2.5, 12])
+def test_any_ratio_from_zero_up_is_taken(ratio: float) -> None:
+    setting = Setting.model_validate({"shelves": SHELVES, "ware_ratio": ratio})
+    furniture, ware, _ = setting_weight(setting)
+    assert ware == pytest.approx(ratio * furniture)
+
+
+def test_a_negative_ratio_is_refused() -> None:
+    with pytest.raises(ValidationError, match="greater than or equal to 0"):
+        Setting.model_validate({"shelves": SHELVES, "ware_ratio": -1})
 
 
 def test_a_material_with_no_sourced_density_is_refused() -> None:

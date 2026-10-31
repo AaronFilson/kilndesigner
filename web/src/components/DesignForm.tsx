@@ -1237,11 +1237,10 @@ function SettingFields({
               />
             </>
           )}
-          <Field label="Ware's weight over the setting's (6–8)">
+          <Field label="Ware's weight over the setting's (typically 6–8)">
             <input
               type="number"
-              min={6}
-              max={8}
+              min={0}
               step="any"
               value={setting.ware_ratio ?? 7}
               onChange={(e) =>

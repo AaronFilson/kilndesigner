@@ -310,7 +310,7 @@ describe("DesignForm, the setting", () => {
     set("Post height", "6");
     set("Post material", "silicon-carbide");
     set("Posts a layer", "3");
-    set("Ware's weight over the setting's (6–8)", "6");
+    set("Ware's weight over the setting's (typically 6–8)", "6");
     expect(last().firing.setting).toEqual({
       shelves: {
         length: "20 in",
@@ -323,7 +323,7 @@ describe("DesignForm, the setting", () => {
       posts: { material: "silicon-carbide", width: "1.5 in", depth: "1.5 in", height: "6 in", per_layer: 3 },
       ware_ratio: 6,
     });
-    set("Ware's weight over the setting's (6–8)", "");
+    set("Ware's weight over the setting's (typically 6–8)", "");
     expect(last().firing.setting?.ware_ratio).toBeUndefined();
     fireEvent.click(screen.getByLabelText("Posts"));
     expect(last().firing.setting?.posts).toBeUndefined();

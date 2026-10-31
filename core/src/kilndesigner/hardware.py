@@ -1169,20 +1169,34 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
             r, edge = arch.radius, 3 + sw / 2
             top = h + math.sqrt(r * r - edge * edge) - (r - arch.rise) - 2 * COURSE
-        # Burners firing through the door: the bottom hole a course clear above their ports
-        above = [
-            p.up + p.height / 2 + COURSE for p in hw.ports if p.kind == "burner" and p.wall == face
-        ]
-        bottom = max([min(8.0, top / 3), *above])
         middle = 0.0
-        if (door := kiln.loading.opening) is not None:
-            # In the door, where it is in part of the wall: a course inside its top and sill
-            sill = si(door.sill, "in")
-            top = min(top, sill + si(door.height, "in") - COURSE)
-            bottom = max(bottom, sill + COURSE)
+        door = kiln.loading.opening
+        if door is not None:
             from kilndesigner.door import door_across
 
             middle = door_across(kiln)  # the first door's, when there's one per chamber
+        # Burners firing through the door: the bottom hole a course clear above the ports in the
+        # holes' column, 3 in either side of the middle; ports up the door's sides, clear of that
+        # column, leave the holes low (the user: the spy holes go lower, between them)
+        reach = 3.0 + sw / 2
+        above = [
+            p.up + p.height / 2 + COURSE
+            for p in hw.ports
+            if p.kind == "burner"
+            and p.wall == face
+            and abs(p.across - Faces.u_of(face, middle)) - p.width / 2 < reach
+        ]
+        bottom = max([min(8.0, top / 3), *above])
+        if door is not None:
+            # In the door, where it is in part of the wall: a course inside its top and sill;
+            # under an arched head, a course under the arch at the holes' outer edge
+            sill = si(door.sill, "in")
+            head = sill + si(door.height, "in")
+            if door.head == "arch":
+                r = si(door.width, "in") / 2
+                head = head - r + math.sqrt(max(r * r - reach * reach, 0.0))
+            top = min(top, head - COURSE - sh)
+            bottom = max(bottom, sill + COURSE)
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]

@@ -475,23 +475,12 @@ class Setting(Spec):
     posts: Posts | None = None
     ware_ratio: float = Field(
         default=7.0,
+        ge=0,
         description=(
-            "The ware's weight over the setting's (shelves and posts): 6 to 8, from the author; "
-            "7 by default"
+            "The ware's weight over the setting's (shelves and posts), any value from 0 (an empty "
+            "setting) up; the author's typical load is 6 to 8, so 7 by default"
         ),
     )
-
-    @model_validator(mode="after")
-    def _ratio_in_range(self) -> Setting:
-        from kilndesigner.furniture import WARE_RATIO, WARE_RATIO_SOURCE
-
-        low, high = WARE_RATIO
-        if not low <= self.ware_ratio <= high:
-            raise ValueError(
-                f"the ware's ratio to the setting must be {low:g} to {high:g} "
-                f"({WARE_RATIO_SOURCE}); {self.ware_ratio:g} is outside the range checked"
-            )
-        return self
 
 
 class Firing(Spec):
