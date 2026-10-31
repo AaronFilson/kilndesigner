@@ -199,7 +199,8 @@ def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quanti
     isosceles triangle between neighbouring straights, ½·d²·sin α per unit of course height,
     summed round the ring (rings.straight_ring), times the wall's height; by weight, that volume
     times the densest of BNZ's mortars as received (DEFAULT_MORTAR); in sacks, that weight over
-    HarbisonWalker's standard 55 lb sack (SACK_SOURCE), rounded up; not priced: the price list has no mortar. Olsen's 300–400 lb per 1000 bricks (p.295) is for
+    HarbisonWalker's standard 55 lb sack (SACK_SOURCE), rounded up; not priced: the price list
+    has no mortar. Olsen's 300–400 lb per 1000 bricks (p.295) is for
     ordinary joints, not wedges, so it isn't used."""
     each = [rp.ring.mortar for rp in rings if rp.series == "mortar" and rp.ring.mortar]
     if not each:
@@ -248,8 +249,8 @@ def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quanti
         detail=(
             f"{round(si(volume, unit), 2 if us else 1):g} {word} of joint × {rho} (BNZ "
             f"{DEFAULT_MORTAR} as received), nothing added for waste; "
-            f"{math.ceil(si(mass, 'lb') / SACK_LB - 1e-9)} sacks of {SACK_LB:g} lb (HarbisonWalker's "
-            "standard sack)"
+            f"{math.ceil(si(mass, 'lb') / SACK_LB - 1e-9)} sacks of {SACK_LB:g} lb "
+            "(HarbisonWalker's standard sack)"
         ),
         priced_amount=0.0,
     )
