@@ -946,6 +946,12 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().lining.shapes).toBe("apg");
     set("Tapered brick shapes", "olsen");
     expect(last().lining.shapes).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Lay arches and domes in conical (tatami) bricks"));
+    expect(last().lining.conical).toEqual({ length: "9 in", wide: "4.5 in", narrow: "2.5 in" });
+    set("Conical brick, narrow (hot-face) end across", "3");
+    expect(last().lining.conical?.narrow).toBe("3 in");
+    fireEvent.click(screen.getByLabelText("Lay arches and domes in conical (tatami) bricks"));
+    expect(last().lining.conical).toBeUndefined();
   });
 
   it("chooses a teardrop or an oval plan, its sizes, and a dome's crown over it", () => {
@@ -1090,6 +1096,26 @@ describe("shapes, fireboxes and chimneys", () => {
     fireEvent.click(screen.getByLabelText("A blower drives the air (forced draft)"));
     set("Fuel", "coal");
     expect(last().heat.fire).toEqual({ fuel: "coal", fireboxes: [{ width: "1 ft", length: "2 ft" }] });
+  });
+
+  it("smokes an electric kiln with a wood firebox that isn't a heat source", () => {
+    const last = live({
+      ...electric,
+      heat: { ...electric.heat, fire: { fuel: "wood", fireboxes: [{ width: "1 ft", length: "2 ft" }] } },
+      draft: { type: "cross" },
+    });
+    expect(field("The fireboxes").value).toBe("heat");
+    set("The fireboxes", "smoke");
+    expect(last().heat.fire?.purpose).toBe("smoke");
+    expect(screen.getByRole("option", { name: "Coal" })).toHaveProperty("disabled", true);
+    // The elements are the only heat now, so they stay; the smoke firebox can go
+    expect(field("Heat with electric elements").disabled).toBe(true);
+    expect(field("Fire with wood, coal or oil in fireboxes").disabled).toBe(false);
+    set("The fireboxes", "heat");
+    expect(last().heat.fire?.purpose).toBeUndefined();
+    // With the fire the only heat, it can't be turned to smoke
+    fireEvent.click(screen.getByLabelText("Heat with electric elements"));
+    expect(screen.getByRole("option", { name: /Only smoke it/ })).toHaveProperty("disabled", true);
   });
 
   it("gives a chimney as built, round or rectangular, and lets the engine size it again", () => {

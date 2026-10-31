@@ -771,6 +771,25 @@ function FireSection({
       {fire && (
         <>
           <Choice
+            label="The fireboxes"
+            value={fire.purpose ?? "heat"}
+            options={[
+              ["heat", "Heat the kiln"],
+              ["smoke", "Only smoke it: wood to reduce a kiln the elements or burners heat"],
+            ]}
+            disabled={
+              fire.purpose !== "smoke" && !doc.heat.electric && !doc.heat.gas ? ["smoke"] : []
+            }
+            onChange={(v) => set({ ...fire, purpose: v === "heat" ? undefined : v })}
+          />
+          {fire.purpose === "smoke" && (
+            <p className="muted section-note">
+              A small firebox stoked with kindling, "not to add heat", to reduce an electric or gas
+              kiln (Olsen, The Kiln Book, p.250, Fig. 9-25). It burns wood, and the heat rules
+              don't apply to it.
+            </p>
+          )}
+          <Choice
             label="Fuel"
             value={fire.fuel ?? "wood"}
             options={[
@@ -778,6 +797,7 @@ function FireSection({
               ["coal", "Coal"],
               ["oil", "Oil"],
             ]}
+            disabled={fire.purpose === "smoke" ? ["coal", "oil"] : []}
             onChange={(v) =>
               set(
                 v === "oil"
@@ -1289,8 +1309,10 @@ export function DesignForm({
   const chambers = doc.chamber.chambers ?? 1;
   const lid = loading.type === "lid";
   const lidOk = round && electric !== undefined && roof.type === "flat";
-  // The last heat source left can't be turned off: a kiln needs one
-  const sources = [electric, gas, fire].filter((h) => h !== undefined).length;
+  // The last heat source left can't be turned off: a kiln needs one. A smoke firebox only
+  // reduces the kiln (Olsen p.250), so it doesn't count.
+  const heater = fire?.purpose === "smoke" ? undefined : fire;
+  const sources = [electric, gas, heater].filter((h) => h !== undefined).length;
 
   return (
     <form className="design-form" aria-label="Design" onSubmit={(e) => e.preventDefault()}>
@@ -1765,6 +1787,42 @@ export function DesignForm({
           shapes; A.P. Green's set adds the No. 1-X wedge for gentle 9 in arches and the 3 in
           series' No. 4 arch and No. 1 wedge (Firebrick Shapes, p.96, p.98).
         </p>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={doc.lining.conical !== undefined}
+            onChange={(e) =>
+              change(
+                ["lining", "conical"],
+                e.target.checked ? { length: "9 in", wide: "4.5 in", narrow: "2.5 in" } : undefined,
+              )
+            }
+          />
+          Lay arches and domes in conical (tatami) bricks
+        </label>
+        {doc.lining.conical && (
+          <>
+            {(
+              [
+                ["length", "Conical brick length"],
+                ["wide", "Conical brick, wide end across"],
+                ["narrow", "Conical brick, narrow (hot-face) end across"],
+              ] as const
+            ).map(([key, label]) => (
+              <Quantity
+                key={key}
+                label={label}
+                value={doc.lining.conical?.[key]}
+                units={LENGTH}
+                onChange={(v) => change(["lining", "conical", key], v)}
+              />
+            ))}
+            <p className="muted section-note">
+              Hand-rolled in a tatami mat (Olsen, The Kiln Book, p.85, Fig. 4-6) and sized by you:
+              an arch or dome layer as deep as the brick is long is laid in them, narrow ends in.
+            </p>
+          </>
+        )}
         <Choice
           label="Outside finish"
           value={doc.shell?.finish ?? "oxidised_steel"}
@@ -2016,7 +2074,7 @@ export function DesignForm({
 
       <FireSection
         doc={doc}
-        disabled={fire !== undefined && sources === 1}
+        disabled={heater !== undefined && sources === 1}
         onChange={onChange}
       />
 

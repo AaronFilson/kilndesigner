@@ -65,6 +65,26 @@ class Layer(Spec):
     )
 
 
+class ConicalBrick(Spec):
+    """A custom conical (tatami) brick, rolled by hand and laid end-on, its narrow end at the hot
+    face (Olsen, The Kiln Book, 4th ed., p.85, Fig. 4-6). No source sizes them: the builder does.
+    The defaults are a starting size, not a sourced one (the user, 2026-10-31)."""
+
+    length: Length = Field(default_factory=lambda: Q_(9, "in"))
+    wide: Length = Field(
+        default_factory=lambda: Q_(4.5, "in"), description="The outer end's diameter"
+    )
+    narrow: Length = Field(
+        default_factory=lambda: Q_(2.5, "in"), description="The hot-face end's diameter"
+    )
+
+    @model_validator(mode="after")
+    def _tapers(self) -> ConicalBrick:
+        if not si(self.wide, "m") > si(self.narrow, "m") > 0 or si(self.length, "m") <= 0:
+            raise ValueError("a conical brick's wide end is wider than its narrow end")
+        return self
+
+
 class Lining(Spec):
     """The layers of each face, hot face first. Unset faces use the walls' layers."""
 
@@ -78,6 +98,10 @@ class Lining(Spec):
         "simpler shapes of Olsen's tables (The Kiln Book, 4th ed., p.303–305), as most studio "
         "potters build; 'apg', A.P. Green's full set, adding the No. 1-X wedge and the 3 in "
         "series' No. 4 arch and No. 1 wedge (Firebrick Shapes, p.96, p.98)",
+    )
+    conical: ConicalBrick | None = Field(
+        default=None,
+        description="Custom conical (tatami) bricks for arches and domes, sized by the builder",
     )
 
     def for_face(self, face: Face, *, door_face: Face | None = None) -> list[Layer]:

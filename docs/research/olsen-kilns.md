@@ -929,7 +929,13 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - End chamber: bisque only, with "chimney open holes" (Figs 4-18, 4-19).
 - Doors: arched, bricked up for firing; "supporting wall in front of all doors" (Fig 4-15; its sizes
   unreadable).
-- **Not given:** tube width and height (except the first chamber's 3½' (?)); slope; walls; chimney.
+- Tatami bricks (Fig 4-6, p.85, Read on the page image 2026-10-30): "The tube kiln construction and
+  Tatami bricks. The bricks are made by being rolled in a Tatami mat"; the drawing's label: "Hand made
+  by rolling in Tatami mat". The drawing shows a rolled brick narrower at one end than the other,
+  conical (the user's reading, 2026-10-30), with a hole along its axis, laid in courses round the
+  tube's arch. No sizes, taper, clay or firing given.
+- **Not given:** tube width and height (except the first chamber's 3½' (?)); slope; walls; chimney;
+  tatami brick sizes.
 
 ### `bae-gilgama`: Mr Bae's Korean gilgama (Silla Dynasty type), NCECA
 

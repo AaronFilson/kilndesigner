@@ -72,6 +72,8 @@ export interface KilnDocument {
     door?: Layer[];
     /** The tapered shapes arches and rings use (model.py Lining.shapes). */
     shapes?: "olsen" | "apg";
+    /** Custom conical (tatami) bricks for arches and domes (model.py ConicalBrick). */
+    conical?: { length?: string; wide?: string; narrow?: string };
   };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
   heat: { electric?: Electric; gas?: Gas; fire?: Fire };
@@ -202,6 +204,8 @@ export interface Firebox {
 /** Wood, coal or oil burned in fireboxes (model.py Fire). */
 export interface Fire {
   fuel?: "wood" | "coal" | "oil";
+  /** 'smoke': wood to reduce a kiln the elements or burners heat (model.py Fire.purpose). */
+  purpose?: "heat" | "smoke";
   fireboxes: Firebox[];
   forced?: boolean;
   oil_burners?: number;

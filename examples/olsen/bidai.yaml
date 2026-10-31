@@ -60,6 +60,12 @@ lining:
   roof:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in # "9"" arch (Fig 4-36)
+  # Tatami arch bricks "6 x ?" (Fig 4-37), unsized: the user's starting size, 9 in long,
+  # 4½ in to 2½ in across (2026-10-31), not the book's
+  conical:
+    length: 9 in
+    wide: 4.5 in
+    narrow: 2.5 in
 heat:
   fire:
     fuel: wood

@@ -1701,6 +1701,14 @@ The user remembers springs from the 1st or 2nd edition.
   anagama-style kiln as one third firebox and two thirds stacking (p.122, Fig. 4-129). An anagama
   can be hard to fire evenly, depending on the tube's length and its side stoking, and is easily
   tipped into reduction and choked (p.178).
+- **Tatami bricks** (p.85, Fig. 4-6, Read): the Tamba tube kilns' arches are of hand-made bricks
+  "made by being rolled in a Tatami mat": conical in the drawing (the user's reading), with a hole
+  along the axis. No dimensions or taper: they are custom, so the builder sizes them
+  (`lining.conical`), starting at 9 in long, 4½ in to 2½ in across (the user, 2026-10-31, not a
+  sourced size). `conical.py` lays them by geometry alone: that brick closes a ring with no joint
+  at 11¼ in inside radius; the Bidai chambers' semicircles (18–23 in radius) leave ½–¾ in fireclay
+  joints between the narrow ends on the hot face (derived). Tatami bricks also arch the
+  Bidai and Kawaii climbing kilns and their fireboxes (Fig. 4-37, p.97, p.200; `olsen-kilns.md`).
 - **Slopes** (Read): a Korean climbing kiln's text says "A 20% slope was used, which is standard for
   most kilns of this style" (p.108), but its drawing prints "20° SLOPE" (p.107); 20 % is about
   11.3° and 20° about 36 % (derived) (Flagged). Other slopes: an anagama drawn at 25° (Fig. 4-5,

@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner import conical
 from kilndesigner.allowance import allowance
 from kilndesigner.bend import bent, developed
 from kilndesigner.bend import note as bend_note
@@ -366,6 +367,37 @@ def arch_ring(part: Part, *, apg: bool = False) -> ArchRing | None:
     return None
 
 
+CONICAL = "conical (tatami) brick"
+
+
+def conical_layer(part: Part, brick: conical.Brick | None) -> tuple[int, str] | None:
+    """A sprung arch's or a dome's layer as deep as the builder's conical brick is long: its
+    bricks and how they lie (conical.py). Arches by the ring and the rows along the run; domes by
+    the layer's area over each brick's square of it at mid-depth."""
+    if brick is None or part.cap or part.is_skewback:
+        return None
+    if abs(part.thickness - brick.length * IN) >= TOL:
+        return None
+    if part.arch is not None:
+        a = part.arch
+        c = conical.course(a.radius / IN, brick)
+        per_row = c.bricks(2 * a.half_angle)
+        rows = math.ceil(part.length_run / (brick.wide * IN) - 1e-9)
+        return per_row * rows, (
+            f"{rows} rows of {per_row} conical bricks, wide ends touching, "
+            f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+        )
+    if part.dome is not None:
+        c = conical.course(part.dome.radius / IN, brick)
+        mid = (part.dome.radius / IN + brick.length / 2) * c.angle
+        count = math.ceil(part.area / IN**2 / mid**2 - 1e-9)
+        return count, (
+            f"about {count} conical bricks in courses, "
+            f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+        )
+    return None
+
+
 @dataclass(frozen=True)
 class Cut:
     length: float  # mm
@@ -477,8 +509,14 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
     row = in_a_row(kiln)
     along = row and not (isinstance(kiln.roof, SprungArch) and kiln.roof.tube)
+    tatami = None if kiln.lining.conical is None else conical.Brick.of(kiln.lining.conical)
     for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
+        laid = conical_layer(part, tatami) if m.kind in BRICK_KINDS else None
+        if laid is not None:
+            shapes[(m.id, CONICAL)] += laid[0]
+            arch_lines.append(f"{layer_name(part)}: {laid[1]}")
+            continue
         if part.across and part.arch is not None and m.kind in BRICK_KINDS:
             # An arch along the draft that stops short of its neighbour: in standard shapes
             ring = arch_ring(part, apg=kiln.lining.shapes == "apg")
