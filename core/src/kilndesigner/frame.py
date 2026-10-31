@@ -1042,10 +1042,15 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
         # Chambers in a row: each arch spans its chamber's depth, along the draft (run_parts.py)
         along = arches_along(kiln)
         span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
-        arch = Arch(span, si(roof.rise, "in"))
+        from kilndesigner.shape import along_arch
+        from kilndesigner.vault import uneven_thrust
+
+        arch = along_arch(kiln, "in") if along else Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
         cold = cold_thrust_factor(span, arch.rise) * load.weight
         heated = heated_thrust_factor(span, arch.rise, load.ring)
+        if arch.drop:  # springing unevenly: no heated factor printed, so the largest is taken
+            cold, heated = uneven_thrust(arch, load.weight)[0], None
         hot = (heated if heated is not None else MAX_PRINTED_HEATED) * cold
         hot = min(hot, MAX_PRINTED_HEATED * cold)
         thrust = f"{hot:.0f} lb per foot of arch, hot ({cold:.0f} cold)"
@@ -1091,27 +1096,51 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     kiln's width, and want bracing (p.97). No source here sizes that bracing, so the thrust is
     worked out and no steel is sized."""
     assert isinstance(kiln.roof, SprungArch)
+    from kilndesigner.shape import along_arch
+    from kilndesigner.vault import UNEVEN, uneven_thrust
+
     depth, width = si(kiln.chamber.depth, "in"), si(kiln.chamber.width, "in")
-    arch = Arch(depth, si(kiln.roof.rise, "in"))
+    arch = along_arch(kiln, "in")
     load = _arch_load(kiln, arch)
-    cold = cold_thrust_factor(depth, arch.rise) * load.weight
-    heated = heated_thrust_factor(depth, arch.rise, load.ring)
+    if arch.drop:
+        # Springing unevenly: the three-hinged arch's statics with its halves unequal; no
+        # heated factor is printed for it, so HarbisonWalker's largest is taken
+        cold = uneven_thrust(arch, load.weight)[0]
+        heated = None
+    else:
+        cold = cold_thrust_factor(depth, arch.rise) * load.weight
+        heated = heated_thrust_factor(depth, arch.rise, load.ring)
     hot = min((heated if heated is not None else MAX_PRINTED_HEATED) * cold,
               MAX_PRINTED_HEATED * cold)  # fmt: skip
     whole = hot * width / 12
     thrust = (
         f"{hot:.0f} lb per foot of arch, hot ({cold:.0f} cold): {whole:,.0f} lb on each end wall"
     )
+    inputs = {"span": f"{depth:g} in", "rise": f"{arch.rise:g} in", "width": f"{width:g} in"}
+    if arch.drop:
+        inputs["front springline below the back's"] = f"{arch.drop:g} in"
     working = [
         Step(
             name="Thrust on each end wall",
             value=thrust,
             formula=(
-                "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's width; "
-                "the arch spans one chamber's depth"
+                "H = (W_f·ℓ_f/s_f + W_b·ℓ_b/s_b)/(f_f/s_f + f_b/s_b), s = sin φ, f = 1 − cos φ, "
+                "ℓ = sin φ − (1 − cos φ)/φ, each half's own angle φ; hot, × HarbisonWalker's "
+                "largest factor; × the kiln's width"
+                if arch.drop
+                else "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's "
+                "width; the arch spans one chamber's depth"
             ),
-            inputs={"span": f"{depth:g} in", "rise": f"{arch.rise:g} in", "width": f"{width:g} in"},
-            reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}",
+            inputs=inputs,
+            reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}"
+            + (f"; {UNEVEN}" if arch.drop else ""),
+            note=(
+                "The arch springs at different heights, outside HarbisonWalker's heated-arch "
+                "method (a level arch's), so its largest printed factor is taken: the cautious "
+                "side."
+                if arch.drop
+                else None
+            ),
         )
     ]
     between = (

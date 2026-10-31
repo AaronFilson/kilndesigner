@@ -15,10 +15,14 @@ As shape.py, a chamber on a slope or turned in plan is taken as laid out straigh
 
 from __future__ import annotations
 
+import itertools
+import math
 from dataclasses import dataclass
 
 from kilndesigner.model import CatenaryArch, Dome, Kiln, OpenTop, SprungArch, arches_along
 from kilndesigner.outline import (
+    Arc,
+    Line,
     Outline,
     Point,
     Run,
@@ -123,6 +127,21 @@ def form_of(kiln: Kiln) -> Form:
     n, one = c.chambers, si(c.depth, "m")
     # Each chamber in a row, centred along y
     centres = [-d / 2 + (i + 0.5) * one for i in range(n)]
+    if isinstance(roof, SprungArch) and roof.front_springline is not None:
+        # One chamber's arch springing lower at one end: over the lower springline, the circle
+        # through both springings, closed down its ends and along that line
+        from kilndesigner.shape import along_arch
+
+        arch = along_arch(kiln, "m")
+        low = h - max(arch.drop, 0.0)
+        back, front = h - low, h - arch.drop - low
+        o = (arch.offset, back + arch.rise - arch.radius)
+        turn = arch.front_angle + arch.back_angle
+        arc = Arc(o, arch.radius, math.pi / 2 - arch.back_angle, turn)
+        ends = [(-one / 2, front), (-one / 2, 0.0), (one / 2, 0.0), (one / 2, back)]
+        lines = [Line(p, q) for p, q in itertools.pairwise(ends) if math.dist(p, q) > 1e-12]
+        section = Outline((arc, *lines))
+        return Form(plan, low, vaults=(prism(section, w, axis=(1.0, 0.0), offset=0.0),))
     if isinstance(roof, SprungArch) and arches_along(kiln):
         # An arch over each chamber, spanning along the draft and running across the kiln
         section = arch_section(one, si(roof.rise, "m"))

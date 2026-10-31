@@ -26,22 +26,90 @@ from kilndesigner.thermal.surface import Orientation
 from kilndesigner.units import si
 
 
+def _uneven_gap(radius: float, span: float, rise: float, drop: float) -> float:
+    """How far the circle of ``radius``, its top ``rise`` over the back springing and
+    ``rise + drop`` over the front's, falls short of reaching both: the springings' horizontal
+    distances from its centre, √(2Ra − a²) + √(2Rb − b²), less the span."""
+    a, b = rise + drop, rise
+    return (
+        math.sqrt(max(2 * radius * a - a * a, 0.0))
+        + math.sqrt(max(2 * radius * b - b * b, 0.0))
+        - span
+    )
+
+
+def uneven_refusal(span: float, rise: float, drop: float) -> str | None:
+    """Why an arch along a chamber's depth can't spring ``drop`` lower at the front than at the
+    back (any unit), or None when it can: both springings below the crown, and each turning no
+    more than a quarter circle from it, the range Heyman's thinnest-arch table and the engine's
+    sections cover."""
+    a, b = rise + drop, rise
+    if a <= 0:
+        return (
+            "the arch's front springline must be below its crown, "
+            f"{rise:g} over the back's springline"
+        )
+    if _uneven_gap(max(a, b), span, rise, drop) > 0:
+        return (
+            "with its springings at different heights the arch would turn past a quarter circle "
+            "at the lower one: no arch past a semicircle is laid out with uneven springings. "
+            "Raise the arch or bring the springlines closer"
+        )
+    return None
+
+
 @dataclass(frozen=True)
 class Arch:
-    """A circular arch of span ``span`` and rise ``rise`` (m)."""
+    """A circular arch of span ``span`` and rise ``rise`` (m). With ``drop``, an arch along a
+    chamber's depth whose front springing stands ``drop`` below the back's (above it when
+    negative; roof.front_springline): the circle through both springings with its top ``rise``
+    over the back's. Its rise, segment and heights are then measured from the back's springline."""
 
     span: float
     rise: float
+    drop: float = 0.0
+
+    @cached_property
+    def radius(self) -> float:
+        if not self.drop:
+            return (self.span**2 / 4 + self.rise**2) / (2 * self.rise)
+        low = max(self.rise, self.rise + self.drop)
+        args = (self.span, self.rise, self.drop)
+        return _float(brentq(_uneven_gap, low, 1e3 * (self.span + low), args=args))
 
     @property
-    def radius(self) -> float:
-        return (self.span**2 / 4 + self.rise**2) / (2 * self.rise)
+    def front_angle(self) -> float:
+        """The angle the front springing turns from the crown, about the centre."""
+        if not self.drop:
+            return self.half_angle
+        return math.asin(min(1.0, math.sqrt(2 * self.radius * self.front_rise - self.front_rise**2)
+                             / self.radius))  # fmt: skip
+
+    @property
+    def back_angle(self) -> float:
+        """The angle the back springing turns from the crown, about the centre."""
+        if not self.drop:
+            return self.half_angle
+        return math.asin(min(1.0, math.sqrt(2 * self.radius * self.rise - self.rise**2)
+                             / self.radius))  # fmt: skip
+
+    @property
+    def front_rise(self) -> float:
+        """The crown over the front's springline."""
+        return self.rise + self.drop
+
+    @property
+    def offset(self) -> float:
+        """How far the crown stands from the span's middle, towards the back."""
+        return self.radius * math.sin(self.front_angle) - self.span / 2 if self.drop else 0.0
 
     @property
     def half_angle(self) -> float:
         """The angle each springing turns from the crown, about the centre: past 90° when the
         arch rises more than half its span (more than a semicircle), as sin = S/(2r) and
-        cos = (r − h)/r give together."""
+        cos = (r − h)/r give together. Springing unevenly, half the whole angle."""
+        if self.drop:
+            return (self.front_angle + self.back_angle) / 2
         return math.atan2(self.span / 2, self.radius - self.rise)
 
     @property
@@ -55,9 +123,28 @@ class Arch:
 
     @property
     def segment_area(self) -> float:
-        """The area between the arch and its springline (m²)."""
+        """The area between the arch and its springline (m²). Springing unevenly, between the arch
+        and the back's springline: the segment over the chord between the springings, less the
+        triangle between the chord and that line, R²(θ − sin θ)/2 − S·δ/2, θ the whole angle."""
         r, theta = self.radius, self.half_angle
+        if self.drop:
+            return r * r * (2 * theta - math.sin(2 * theta)) / 2 - self.span * self.drop / 2
         return r * r * theta - (self.span / 2) * (r - self.rise)
+
+    def height(self, u: float) -> float:
+        """The inside's height over the back's springline at ``u`` from the span's middle,
+        towards the back."""
+        return self.rise - self.radius + math.sqrt(self.radius**2 - (u - self.offset) ** 2)
+
+
+def along_arch(kiln: Kiln, unit: str) -> Arch:
+    """The arch along one chamber's depth (model.arches_along), in ``unit``: springing unevenly
+    when the roof gives its front springline."""
+    roof = kiln.roof
+    assert isinstance(roof, SprungArch)
+    front = roof.front_springline
+    drop = si(kiln.chamber.height, unit) - si(front, unit) if front is not None else 0.0
+    return Arch(si(kiln.chamber.depth, unit), si(roof.rise, unit), drop)
 
 
 def _float(value: object) -> float:
@@ -367,7 +454,8 @@ class ChamberShape:
                 FaceShape("left", "vertical", d * h + seg, d, h),
                 FaceShape("right", "vertical", d * h + seg, d, h),
                 FaceShape("back", "vertical", w * h, w, h),
-                FaceShape("front", "vertical", w * h, w, h),
+                # Springing unevenly, the front wall stands to its own springline
+                FaceShape("front", "vertical", w * (h - arch.drop), w, h - arch.drop),
                 floor,
                 FaceShape("roof", "facing_up", vaults(0.0), n * arch.arc_length, w, grows=vaults),
             ]
@@ -522,8 +610,7 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
         return ChamberShape(w, d, h, None, open_top=True)
     n = c.chambers
     if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
-        return ChamberShape(w, d, h, Arch(si(c.depth, "m"), si(kiln.roof.rise, "m")), chambers=n,
-                            along=True)  # fmt: skip
+        return ChamberShape(w, d, h, along_arch(kiln, "m"), chambers=n, along=True)
     if isinstance(kiln.roof, Dome) and n > 1:
         one = SailDome(w, si(c.depth, "m"), si(kiln.roof.rise, "m"))
         return ChamberShape(w, d, h, None, dome=one, chambers=n)

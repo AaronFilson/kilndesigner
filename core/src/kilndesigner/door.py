@@ -535,6 +535,50 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
             )
         )
     jamb, jamb_source, corner = _jamb(kiln)
+    over_jamb: float | None = None
+    from kilndesigner.vault import INTO_VAULT, SUPERPOSED, THINNER, door_in_vault
+
+    into = door_in_vault(kiln)
+    if into is not None:
+        # The head rises into the vault's edge: the ring is the masonry round it up to the
+        # vault's outside; the vault carries itself to its end walls, so nothing of it is the
+        # ring's load; each jamb runs only as far as the wall stands to the springing, nothing
+        # counted over it, no end wall bonded in (that wall holds the vault)
+        ring = into.ring
+        above = r + ring
+        edge, edge_source = 0.0, f"none: {SUPERPOSED}"
+        jamb = min(min(into.jambs), jamb)
+        jamb_source = (
+            f"{DESIGN_WORD}: from the door's edge along the wall to where the vault comes down "
+            "under the door's springline, the narrower side"
+        )
+        corner, over_jamb = None, 0.0
+        out.working.append(
+            Step(
+                name="The door's head in the vault's edge",
+                value=(
+                    f"its ring {ring:.2f} in, the least masonry round its head up to the vault's "
+                    f"outside; the opening cuts {into.cut:.2f} in into the vault's inside; "
+                    f"jambs {into.jambs[0]:.1f} and {into.jambs[1]:.1f} in to where the wall "
+                    "drops under the springline"
+                ),
+                formula=(
+                    "d = min over the head of the radial depth to the vault's outside, at most "
+                    "the ring; cut = max(z_door − z_vault) over the opening"
+                ),
+                inputs={
+                    "door's springline": f"{into.springing:g} in",
+                    "door's radius": f"{into.radius:g} in",
+                    "vault's ring": f"{into.vault_ring:g} in",
+                },
+                reference=f"{INTO_VAULT}; {SUPERPOSED}",
+                note=(
+                    f"The vault's ring is checked with the cut taken off it ({THINNER}). The "
+                    "jambs are taken standing alone, under the door's springline only: the side "
+                    "wall over them and the end walls aren't counted, the safe side."
+                ),
+            )
+        )
     q = sum(x.density * x.thickness for x in layers) / 1728  # lb per square inch of face
     cross = cross_q = 0.0
     if corner is not None:
@@ -546,7 +590,7 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     least, most = door_thrusts(r, r + ring, max(above, r + ring), q, edge / 12)
     ring_source = RING_SOURCE if door.ring is None else OWN_RING_SOURCE
     da = DoorArchInputs(w, ring, layers, above, edge, edge_source, ring_source, springing, jamb,
-                        jamb_source, least, most, cross, cross_q)  # fmt: skip
+                        jamb_source, least, most, cross, cross_q, over_jamb)  # fmt: skip
     minimum = steel_data()["arch_minimum_thickness"]
     eta = float(np.interp(90.0, minimum["half_angle_deg"], minimum["eta"]))
     standing = door_arch_ring(da, eta, minimum["safety"], minimum["source"])
