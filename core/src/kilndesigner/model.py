@@ -83,6 +83,48 @@ class Lining(Spec):
         return self.walls
 
 
+class PlanOutline(Spec):
+    """A box chamber's plan as a curve rather than a rectangle (docs/planning/complex-curves.md):
+    a teardrop or an oval, chosen by name and a few sizes, filling the chamber's width and depth.
+    The walls stand on the curve; the floor, the walls and a dome over them take their areas and
+    volume from it."""
+
+    shape: Literal["teardrop", "oval"] = Field(
+        description=(
+            "A teardrop: a round end of the chamber's width at the front, two sides tangent to it "
+            "meeting in a point at the back, as Calimpong's kiln (Olsen, 4th ed. Fig 4-140). An "
+            "oval: four arcs, round ends of end_radius on the long axis"
+        )
+    )
+    front_width: Length | None = Field(
+        default=None,
+        description=(
+            "A teardrop's flat front wall, narrower than the chamber: its round end cut square, "
+            "as Calimpong's firebox end (39 in). Left out: the front is round"
+        ),
+    )
+    side_radius: Length | None = Field(
+        default=None,
+        description=(
+            "A teardrop's sides as arcs of this radius, bulging out, rather than straight; more "
+            "than half the chamber's width"
+        ),
+    )
+    end_radius: Length | None = Field(
+        default=None,
+        description="An oval's round ends' radius, less than half the chamber's width",
+    )
+
+    @model_validator(mode="after")
+    def _sizes_for_its_shape(self) -> PlanOutline:
+        if self.shape == "oval" and (self.end_radius is None or self.front_width is not None
+                                     or self.side_radius is not None):  # fmt: skip
+            raise ValueError("an oval takes end_radius only")
+        if self.shape == "teardrop" and self.end_radius is not None:
+            raise ValueError("a teardrop takes front_width and side_radius, not end_radius")
+        return self
+
+
 class Chamber(Spec):
     """The inside of the kiln: the space the lining encloses."""
 
@@ -154,6 +196,13 @@ class Chamber(Spec):
             "the norm in electric kilns; 'featheredge', straights with featheredges among them; "
             "'arch', arch bricks, possible but not recommended (p.45). Left out: 'cut' for an "
             "electric kiln, 'mortar' otherwise"
+        ),
+    )
+    outline: PlanOutline | None = Field(
+        default=None,
+        description=(
+            "A box chamber's plan as a teardrop or an oval inside its width and depth, the walls "
+            "standing on the curve. Left out: a rectangle"
         ),
     )
 
@@ -254,6 +303,14 @@ class Dome(Spec):
 
     type: Literal["dome"] = "dome"
     rise: Length = Field(description="Height of the dome's inside above the springline, mid-dome")
+    crown_at: Length | None = Field(
+        default=None,
+        description=(
+            "Over a curved plan (chamber.outline): how far behind the front wall the crown stands. "
+            "The dome is then the sphere centred over that point through the plan's farthest "
+            "point, rising 'rise' above the springline there. Left out: the plan's middle"
+        ),
+    )
     buttressed: bool = Field(default=False, description=BUTTRESSED)
     ring: int = Field(
         default=1,
@@ -1092,7 +1149,8 @@ class Kiln(Spec):
                 )
             rise = si(self.roof.rise, "in")
             corner = math.hypot(si(self.chamber.width, "in"), si(self.chamber.depth, "in")) / 2
-            if not 0 < rise < corner:
+            # A curved plan's dome is checked against the plan's reach (_a_plan_it_can_build)
+            if self.chamber.outline is None and not 0 < rise < corner:
                 raise ValueError(
                     "a dome's rise must be more than 0 and less than half the chamber's diagonal, "
                     f"{corner:.1f} in, or it would bulge out past the walls"
@@ -1120,6 +1178,58 @@ class Kiln(Spec):
                         f"a catenary arch is its own side walls, so {what} can't go in the {wall} "
                         "wall: use the front or back wall"
                     )
+        return self
+
+    @model_validator(mode="after")
+    def _a_plan_it_can_build(self) -> Kiln:
+        """A curved plan (chamber.outline) is laid out for one level, straight box chamber under
+        a dome or a flat roof, fired with fuel: the shapes that have been checked (ADR 0009)."""
+        c, roof = self.chamber, self.roof
+        if isinstance(roof, Dome) and roof.crown_at is not None and c.outline is None:
+            raise ValueError("a dome's crown_at is for a curved plan (chamber.outline)")
+        if c.outline is None:
+            return self
+        if c.shape != "box" or c.chambers > 1 or c.slope is not None or c.bend is not None:
+            raise ValueError(
+                "a curved plan (chamber.outline) is laid out for one level, straight chamber: "
+                "leave out its shape, chambers, slope and bend"
+            )
+        if not isinstance(roof, Dome | FlatRoof):
+            raise ValueError(
+                "a curved plan takes a dome or a flat roof: an arch or vault over a teardrop or "
+                "an oval isn't described here (docs/planning/complex-curves.md)"
+            )
+        if self.heat.electric is not None:
+            raise ValueError(
+                "elements are laid out along straight walls only, not round a curved plan: fire "
+                "it with gas or fuel"
+            )
+        from kilndesigner.form import crown_of, plan_of
+
+        try:
+            plan = plan_of(self, "in")
+        except ValueError as e:
+            raise ValueError(f"the chamber's {c.outline.shape} can't be drawn: {e}") from e
+        w, d = si(c.width, "in"), si(c.depth, "in")
+        x0, x1, y0, y1 = plan.bounds
+        if x1 - x0 > w * 1.001 or y1 - y0 > d * 1.001:
+            raise ValueError(
+                f"the {c.outline.shape} is {x1 - x0:.1f} × {y1 - y0:.1f} in, larger than the "
+                f"chamber's {w:g} × {d:g} in: make its sides' radius larger"
+            )
+        if isinstance(roof, Dome):
+            crown = crown_of(self, "in")
+            try:
+                far = plan.farthest(crown)
+                plan.reach(0.0, crown)
+            except ValueError:
+                raise ValueError("the dome's crown (crown_at) must stand over the plan") from None
+            rise = si(roof.rise, "in")
+            if not 0 < rise < far:
+                raise ValueError(
+                    f"the dome's rise must be more than 0 and less than {far:.1f} in, the plan's "
+                    "farthest reach from its crown, or it would bulge out past the walls"
+                )
         return self
 
     @model_validator(mode="after")

@@ -19,7 +19,13 @@ from dataclasses import dataclass, replace
 
 import numpy as np
 
-from kilndesigner.firebox_parts import EPS, Opening, carve, site
+from kilndesigner.firebox_parts import (
+    EPS,
+    Opening,
+    _plain,  # pyright: ignore[reportPrivateUsage]
+    carve,
+    site,
+)
 from kilndesigner.geometry import Part, inside_top
 from kilndesigner.model import Dome, Kiln, WallFace
 from kilndesigner.units import Q_, parse_quantity, si
@@ -118,10 +124,31 @@ def _hole(kiln: Kiln, u0: float, u1: float) -> DoorHole:
     sign = -1.0 if face in ("front", "left") else 1.0
     outer = sign * _outside(s, face, *rel)
     inner = _inside_face(s, side, sign, rel)
+    if kiln.chamber.outline is not None:
+        inner = sign * _curve_inside(kiln, face, rel)
     a = (min(outer, inner) - EPS, max(outer, inner) + EPS)
     if face in ("front", "back"):
         return DoorHole(face, (u0, a[0], zs[0]), (u1, a[1], zs[1]), radius)
     return DoorHole(face, (a[0], u0, zs[0]), (a[1], u1, zs[1]), radius)
+
+
+def _curve_inside(kiln: Kiln, face: WallFace, rel: tuple[float, float]) -> float:
+    """A curved plan's inside face behind a door from rel[0] to rel[1] along its wall (mm, from
+    the middle): where the curve comes nearest the middle across the door, so the hole reaches
+    the inside everywhere, as a round wall's does."""
+    from kilndesigner.form import plan_of
+
+    plan = plan_of(kiln, "mm")
+    angle = {"front": -math.pi / 2, "back": math.pi / 2, "left": math.pi, "right": 0.0}[face]
+    side = face in ("left", "right")
+    reaches: list[float] = []
+    for k in range(17):
+        u = rel[0] + (rel[1] - rel[0]) * k / 16
+        try:
+            reaches.append(plan.reach(angle, (0.0, u) if side else (u, 0.0)))
+        except ValueError:
+            reaches.append(0.0)
+    return min(reaches)
 
 
 def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
@@ -136,8 +163,7 @@ def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
     for k, hole in enumerate(holes):
         out: list[Part] = []
         for p in parts:
-            plain = p.arch is None and p.profile is None and p.dome is None and p.revolve is None
-            if p.wall != hole.face or not plain:
+            if p.wall != hole.face or not _plain(p):
                 out.append(p)
                 continue
             lo = tuple(max(a, b) for a, b in zip(p.lo, hole.lo, strict=True))

@@ -483,15 +483,17 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 whole[m.id] += ring.straights
                 arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
                 continue
-        if part.profile is not None or part.dome is not None:
+        if part.profile is not None or part.dome is not None or part.plan is not None:
             # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
-            # closing it; a dome's layer or a wall's top under it. No standard shapes turn these
-            # curves, so brick is counted by volume.
+            # closing it; a dome's layer or a wall's top under it; a curved plan's wall, floor or
+            # roof. No standard shapes turn these curves, so brick is counted by volume.
             skewback = part.is_skewback
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
                 cut = "the arch's angle" if skewback else "the curve"
+                if part.plan is not None and part.dome is None:
+                    cut = "the plan's curve where it needs it"
                 bricks = "brick" if count == 1 else "bricks"
                 arch_lines.append(
                     f"{layer_name(part)}: about {count} {bricks} by volume, cut to {cut}"

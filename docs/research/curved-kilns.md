@@ -51,6 +51,34 @@ Fig 4-140, "ALL DIMENSIONS ARE INTERIOR MEASUREMENTS". Checked on the page image
 - **Not given**: dome thickness (only that the first casting was too thin), crown height,
   wall thickness, castable used.
 
+#### Estimates scaled from the figures (2026-10-30, at the user's request)
+
+These are **estimates**, not printed values: each was measured on the page images and scaled
+against a dimension printed on the same figure. Book p.124 is PDF page 111 of
+`kiln-reference.pdf` (index 110; book page − 13 holds here), p.125 is index 111. Rendered at
+300 dpi; pixel positions found by tracing the drawn lines (the darkest pixels in each column).
+
+| Quantity | Estimate | Photo or figure | Scaled against | Uncertainty |
+|---|---|---|---|---|
+| Crown height, floor to the inside of the crown | **45 in** | Fig 4-140, long section (p.124) | The door's printed 37 in (416 px → 11.24 px/in); checked against the printed 35 in at 24 in from the back (397 px → 11.34 px/in) and the 35½ in front wall (10.8 px/in) | ±2 in: the crown line is 503 px above the floor; the three printed heights give 44.4–46.6 in, as the sketch isn't drawn exactly to scale |
+| Rise above the 35 in springline | **10 in** | as above | as above | ±2 in |
+| Where the crown peaks | **53 in behind the front wall** | as above | The printed 9'9" (1260 px → 10.77 px/in horizontally; the 33 in door gives 10.67) | ±4 in: the crown is flat within a line's width from 50 to 58 in |
+| Dome thickness at its edge, finished | **5½ in** | Fig 4-147 (p.125), the front of the finished kiln | The stoke hole's printed 9 in height (120 px → 13.3 px/in): the cast shell's front edge shows 70–80 px thick over the front wall | ±1½ in: the edge is rough, partly blackened and seen a little from above; the photo shows the thickened shell (4-146: the first casting was too thin and more castable was added over the top), and its thickness over the crown can't be seen |
+
+The plan widths printed in Fig 4-140 (39, 51½, 48, 16 and 12 in) are fitted in
+`examples/olsen/conrad-teardrop.yaml` by a teardrop of tangent arcs with a flat front
+(`chamber.outline`): the 51½ in round end cut square by the 39 in front, sides of 200 in radius
+meeting at the back 117 in from the front. Its area, 4321 in², is 3 % over the 4206 in² of the
+printed widths joined by straight lines; it is narrower than the book at 48 in (38.7 in against 48)
+and wider in the neck, as two arcs and a point can't make the book's concave neck. The widest
+point falls 17 in behind the front (the book's drawing puts it about 37 in back, unprinted). The
+dome is the sphere centred over the estimated crown, through the plan's farthest point (the
+neck's end), 10 in above the 35 in springline there: it meets the front wall 2–3 in higher
+than the book's 35½ in, and stands about 6 in above the book's 35 in at 24 in from the back wall.
+The door's head, drawn flat with rounded corners, stays a semicircular arch in the engine: the
+door statics cover a semicircular ring (Heyman) or a steel lintel, and what spans Calimpong's door
+isn't printed.
+
 ### `bae-gilgama`: Mr Bae's gilgama (p.107, Fig 4-67; p.108)
 
 Checked on the page image (p.107 faded).
@@ -252,10 +280,11 @@ kiln is an assumption the engine must state.
 
 - **No radii anywhere.** Olsen's drawings give stations and heights, not radii or curve
   definitions; a teardrop or crossing-axis outline from these figures is a fitted curve, not a
-  sourced one. Station positions of Calimpong's widest point and crown peak are not printed.
+  sourced one. Station positions of Calimpong's widest point and crown peak are not printed
+  (the crown's is estimated from the figure above).
 - **Cast-dome thickness** is printed only for Kanayama (5–6 in) and Olsen's general rule (6 in
   for 10–12 ft domes, `kiln-reference.md`); not for Calimpong, Gulgong, Höhr or Fireworks.
-- **Crown heights**: Calimpong's peak, Bae's (4½' (?)), Bowen Mountain's cross-section rise,
+- **Crown heights**: Calimpong's peak (estimated above, 45 ± 2 in), Bae's (4½' (?)), Bowen Mountain's cross-section rise,
   Breda's dome rise: not given.
 - **Dome/circle brick tables** (HarbisonWalker, A.P. Green): not obtained. A user copy of the
   Handbook of Refractory Practice or the A.P. Green Pocket Guide is needed.

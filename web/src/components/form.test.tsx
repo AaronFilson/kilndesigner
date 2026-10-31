@@ -935,6 +935,32 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.rings).toBeUndefined();
   });
 
+  it("chooses a teardrop or an oval plan, its sizes, and a dome's crown over it", () => {
+    const last = live(electric);
+    expect(screen.queryByLabelText("Sides' radius (left out: straight)")).toBeNull();
+    set("Plan", "teardrop");
+    expect(last().chamber.outline).toEqual({ shape: "teardrop" });
+    set("Flat front wall's width (left out: round)", "15");
+    set("Sides' radius (left out: straight)", "200");
+    expect(last().chamber.outline).toEqual({ shape: "teardrop", front_width: "15 in", side_radius: "200 in" });
+    set("Plan", "oval");
+    // Round ends a quarter of the width, to edit
+    const quarter = (toMm(last().chamber.width) ?? 0) / 4;
+    expect(last().chamber.outline).toEqual({ shape: "oval", end_radius: fromMm(quarter, "us") });
+    set("Round ends' radius", "5");
+    expect(last().chamber.outline).toEqual({ shape: "oval", end_radius: "5 in" });
+    expect(screen.queryByLabelText("Crown, behind the front wall (left out: the middle)")).toBeNull();
+    set("Roof", "dome");
+    set("Crown, behind the front wall (left out: the middle)", "20");
+    expect(last().roof).toMatchObject({ type: "dome", crown_at: "20 in" });
+    set("Plan", "rectangle");
+    expect(last().chamber.outline).toBeUndefined();
+    set("Plan", "teardrop");
+    set("Chamber shape", "round");
+    expect(last().chamber.outline).toBeUndefined();
+    expect(screen.queryByLabelText("Plan")).toBeNull();
+  });
+
   it("puts a round electric kiln's floor inside its walls, only for round electric kilns", () => {
     const label = "The floor slab sits inside the wall's lowest course, the walls running to the bottom (Paragon), not under the walls (Skutt)";
     const last = live(electric);
