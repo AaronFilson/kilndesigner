@@ -23,20 +23,38 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 
 from pydantic import BaseModel, ConfigDict
 
-from kilndesigner.combustion import PROPANE_HHV_BTU_PER_GAL, PROPANE_LB_PER_GAL
+from kilndesigner.combustion import (
+    OXIDATION_O2,
+    PROPANE_HHV_BTU_PER_GAL,
+    PROPANE_LB_PER_GAL,
+    REDUCTION_AIR,
+    air_ratio_for_flue_oxygen,
+    available_heat_fraction,
+)
+from kilndesigner.electric import design_elements
 from kilndesigner.gas import design_gas, gas_data, interpolate, tank_suggestion
 from kilndesigner.gas_checks import COOLING, LIQUID_COOLING_F
 from kilndesigner.heatloss import heat_loss, top_temperature
 from kilndesigner.model import Cylinders, Kiln, Line
-from kilndesigner.simulation import DT, MAX_HOURS, FiringResult, SimulationError, simulate
+from kilndesigner.simulation import (
+    DT,
+    MAX_HOURS,
+    REDUCTION_START_C,
+    FiringResult,
+    SimulationError,
+    simulate,
+)
 from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, Step, show
 
 W_PER_BTU_HR = si(Q_(1, "BTU/hr"), "W")
 TOLERANCE = 0.01  # the input is found to 1 %
+COARSE_STEPS = 4  # the search's first firings take steps this many times the firing's
+COARSE_TOL = 0.03  # and stop at a 3 % bracket, where the firing's own step takes over
 ELEMENTS_PAST_TOP_C = 100.0  # the hand-over set above the top: the elements never switch off
 UNLIMITED_W = 1e9  # a trial input big enough that only the schedule's pace limits the firing
 WARE_SOURCE = (
@@ -258,6 +276,98 @@ def _with_burner(kiln: Kiln, model: str | None) -> Kiln:
     )
 
 
+def _first_guess(
+    kiln: Kiln,
+    fastest: FiringResult,
+    loss_w: float,
+    element_w: float,
+    target_h: float,
+    shortest_h: float,
+) -> float:
+    """Where the search starts (W): a steady heat balance over the target time.
+
+    The heat the walls and ware took in the fastest firing, plus the shell's loss over the extra
+    time (taken at half the steady loss at the top, the shell warming from cold), spread over the
+    target, less the elements' power, over the burners' available heat at the top. Only a start:
+    the input reported is the simulation's, whatever this gives."""
+    gas = kiln.heat.gas
+    assert gas is not None
+    top_k = si(top_temperature(kiln)[0], "K")
+    lam = (
+        REDUCTION_AIR
+        if gas.reduction and top_k >= REDUCTION_START_C + 273.15
+        else air_ratio_for_flue_oxygen(OXIDATION_O2, gas.fuel)
+    )
+    eta = available_heat_fraction(top_k, lam, fuel=gas.fuel)
+    heat_j = fastest.walls_kwh * 3.6e6 + fastest.ware_kwh * 3.6e6
+    heat_j += 0.5 * loss_w * (target_h - shortest_h) * 3600
+    kept_w = heat_j / (target_h * 3600) - element_w
+    return max(kept_w, 0.05 * loss_w) / max(eta, 0.05)
+
+
+def _search(
+    done_in: Callable[[float], float],
+    target_h: float,
+    shortest_h: float,
+    start: float,
+    ratio: float,
+    tol: float,
+) -> tuple[float, float]:
+    """A bracket (lo, hi) of burner input, hi ≤ lo·(1 + tol), with the firing at ``lo`` longer
+    than the target and at ``hi`` within it.
+
+    From ``start``, stepped out by ``ratio`` (the step doubling, on a log scale) until the target
+    is bracketed; then a secant step on log(duration − shortest) against log(input), which is
+    close to a straight line (the extra time over the schedule's own goes about as 1/input), kept
+    inside the bracket and pushed to close it, with a halving when a step doesn't halve it."""
+    fails: tuple[float, float] | None = None  # (input, duration), longer than the target
+    meets: tuple[float, float] | None = None
+    w, d = start, done_in(start)
+    step = math.log(ratio)
+    while True:
+        if d <= target_h:
+            meets = (w, d)
+        else:
+            fails = (w, d)
+        if fails is not None and meets is not None:
+            break
+        w = w * math.exp(step if meets is None else -step)
+        if w > UNLIMITED_W:  # pragma: no cover - the shortest firing was checked first
+            raise SimulationError("no burner input fires the schedule in the target time")
+        step *= 2
+        d = done_in(w)
+
+    def model(p: tuple[float, float]) -> float | None:
+        excess = p[1] - shortest_h
+        return math.log(excess) if math.isfinite(excess) and excess > 0 else None
+
+    span = math.inf
+    while meets[0] > fails[0] * (1 + tol):
+        lo, hi = math.log(fails[0]), math.log(meets[0])
+        y_lo, y_hi = model(fails), model(meets)
+        x = 0.5 * (lo + hi)
+        if y_lo is not None and y_hi is not None and y_lo != y_hi and target_h > shortest_h:
+            goal = math.log(target_h - shortest_h)
+            guess = lo + (goal - y_lo) * (hi - lo) / (y_hi - y_lo)
+            close = 0.999 * math.log(1 + tol)
+            if hi - close <= guess < hi:
+                x = hi - close  # close the bracket from above
+            elif lo < guess <= lo + close:
+                x = lo + close  # or from below
+            elif lo < guess < hi:
+                x = min(max(guess, lo + 0.05 * (hi - lo)), hi - 0.05 * (hi - lo))
+            if hi - lo > 0.5 * span:  # the last step didn't halve the bracket: halve it
+                x = 0.5 * (lo + hi)
+        span = hi - lo
+        w = math.exp(x)
+        d = done_in(w)
+        if d <= target_h:
+            meets = (w, d)
+        else:
+            fails = (w, d)
+    return fails[0], meets[0]
+
+
 def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -> TargetFiring:
     """The burner input, burners, supply and cost to fire ``kiln`` in ``target_h`` hours (or its
     ``firing.target_time``)."""
@@ -299,21 +409,32 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
             )
         )
 
-    def fire(watts: float, hours: float = cap_h) -> FiringResult:
-        return simulate(
+    loss = heat_loss(kiln).total_watts
+    element_w = design_elements(kiln, loss).installed_watts if hybrid else None
+    runs = {"coarse": 0, "fine": 0}
+    fine: dict[float, FiringResult] = {}
+
+    def fire(watts: float, hours: float = cap_h, step: float = dt) -> FiringResult:
+        runs["fine" if step == dt else "coarse"] += 1
+        r = simulate(
             kiln,
             switch_over_c=off_c,
             gas_from_c=lit_c,
             burner_w=watts,
             max_hours=hours,
-            dt=dt,
+            dt=step,
             record=False,
+            element_w=element_w,
         ).result
+        if step == dt and hours == cap_h:
+            fine[watts] = r
+        return r
 
     def done_in(r: FiringResult) -> float:
         return r.duration_h if r.completed else math.inf
 
-    shortest = fire(UNLIMITED_W).duration_h
+    shortest_run = fire(UNLIMITED_W)
+    shortest = shortest_run.duration_h
     working.append(
         Step(
             name="Shortest firing the schedule allows",
@@ -322,7 +443,6 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
             note="The cone's final rate over the last 100 °C sets most of it.",
         )
     )
-    loss = heat_loss(kiln).total_watts
     plain = _without_named_burners(kiln)
     rule = design_gas(kiln, loss)
     if target_h < shortest - 1e-6:
@@ -331,40 +451,42 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
             f"final rate), longer than the {target_h:g} h asked: no burner input fires it faster"
         )
 
-    # Bisect the input: the duration falls as the input rises
-    hi = si(Q_(rule.design_input_btu_hr, "BTU/hr"), "W")
-    lo = 0.0
-    tries = 0
-    while done_in(fire(hi)) > target_h:
-        lo, hi = hi, hi * 2
-        tries += 1
-        if hi > UNLIMITED_W:  # pragma: no cover - the shortest firing was checked above
-            raise SimulationError("no burner input fires the schedule in the target time")
-    if lo == 0.0:
-        lo = hi / 2
-        while lo > 1.0 and done_in(fire(lo)) <= target_h:
-            hi, lo = lo, lo / 2
-            tries += 1
-    while hi / lo > 1 + TOLERANCE:
-        mid = math.sqrt(lo * hi)
-        tries += 1
-        if done_in(fire(mid)) <= target_h:
-            hi = mid
-        else:
-            lo = mid
+    # The input, searched for at a coarser step first and then at the firing's own: the duration
+    # falls as the input rises
+    start = _first_guess(kiln, shortest_run, loss, element_w or 0.0, target_h, shortest)
+    coarse_dt = dt * COARSE_STEPS
+    near = _search(
+        lambda w: done_in(fire(w, step=coarse_dt)), target_h, shortest, start, 1.25, COARSE_TOL
+    )
+    lo, hi = _search(
+        lambda w: done_in(fire(w)),
+        target_h,
+        shortest,
+        math.sqrt(near[0] * near[1]),
+        1 + TOLERANCE,
+        TOLERANCE,
+    )
     need_w = hi
     need = need_w / W_PER_BTU_HR
-    at_target = fire(need_w)
+    at_target = fine[need_w]
     volume_ft3 = float(rule.ward_volume.split()[0])
     working.append(
         Step(
             name="Burner input for the target",
             value=f"{need:,.0f} BTU/hr ({need / volume_ft3:,.0f} BTU/ft³/hr)",
-            formula="the least input whose simulated firing ends within the target, bisected",
+            formula=(
+                "the least input whose simulated firing ends within the target: a secant search "
+                "on the logarithm of the input, kept inside a bracket"
+            ),
             inputs={
                 "target": f"{target_h:g} h",
-                "simulated firings": str(tries + 3),
-                "to within": f"{TOLERANCE:.0%}",
+                "simulated firings": (
+                    f"{runs['coarse'] + runs['fine']} ({runs['coarse']} at a {coarse_dt:g} s step "
+                    f"while searching, {runs['fine']} at the firing's {dt:g} s)"
+                ),
+                "to within": f"{TOLERANCE:.0%} (between {lo / W_PER_BTU_HR:,.0f} and "
+                f"{hi / W_PER_BTU_HR:,.0f} BTU/hr)",
+                "first guess": f"{start / W_PER_BTU_HR:,.0f} BTU/hr, from the heat balance",
                 **(
                     {"burners lit from": show(Q_(lit_c, "degC"), unit)} if lit_c is not None else {}
                 ),
@@ -375,7 +497,8 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
     )
 
     # The burners at the design's count, from the library, and the most they give
-    design = design_gas(plain, loss, need)
+    # The elements are on to the top: the top check counts them with the burners
+    design = design_gas(plain, loss, need, elements_on_top_w=element_w)
     most = design_gas(plain, loss, UNLIMITED_W / W_PER_BTU_HR).full_fire_btu_hr
     if design.full_fire_btu_hr > need * (1 + TOLERANCE) and gas.burners.type == "venturi":
         # No library burner turns down to its share: the one whose lowest published rating is
@@ -388,7 +511,7 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
         }  # fmt: skip
         big_enough = [n for n in lows if lows[n] * count >= need] or list(lows)
         smallest = min(big_enough, key=lambda n: lows[n])
-        design = design_gas(_with_burner(kiln, smallest), loss, need)
+        design = design_gas(_with_burner(kiln, smallest), loss, need, elements_on_top_w=element_w)
         findings.append(
             Finding(
                 level="info",

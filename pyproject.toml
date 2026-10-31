@@ -37,6 +37,7 @@ testpaths = ["core/tests", "cli/tests", "api/tests", "worker/tests"]
 addopts = "-ra --strict-markers --import-mode=importlib"
 markers = [
     "geometry: builds OpenCascade geometry (slower)",
+    "slow: a long firing simulation or target-time solve (over about 5 s); -m \"not slow\" skips it",
     "db: needs Postgres (KILNDESIGNER_TEST_DATABASE_URL)",
     "compose: needs a running `docker compose up` (KILNDESIGNER_COMPOSE_URL)",
 ]

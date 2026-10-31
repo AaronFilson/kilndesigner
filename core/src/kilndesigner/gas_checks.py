@@ -298,11 +298,19 @@ def holds_top(
     each_btu_hr: float,
     each_source: str,
     temp_unit: str,
+    elements_w: float | None = None,
 ) -> Sheet:
     """The burners at full fire against the heat the kiln loses at its top temperature: only the
     heat that doesn't leave up the flue (the available heat) counts. Below this the kiln can never
-    reach the top, whatever the firing time."""
-    s = Sheet("gas.top", "The burners can hold the top temperature", reference=TOP_SOURCE)
+    reach the top, whatever the firing time. With ``elements_w``, a hybrid's elements on to the
+    top (the target-time solver's firing): their power counts too, all of it kept in the kiln."""
+    s = Sheet(
+        "gas.top",
+        "The burners can hold the top temperature"
+        if elements_w is None
+        else "The burners and elements together can hold the top temperature",
+        reference=TOP_SOURCE,
+    )
     s.given("T_top", "the top temperature", top, temp_unit, source="the design: the firing")
     s.given(
         "Q",
@@ -324,7 +332,18 @@ def holds_top(
         source=eta_source,
     )
     s.let("P_k", "heat the burners leave in the kiln", "η*P", "BTU/hr")
-    s.require("P_k", ">=", "Q")
+    if elements_w is None:
+        s.require("P_k", ">=", "Q")
+    else:
+        s.given(
+            "E",
+            "the elements' installed power, on to the top",
+            Q_(elements_w, "W"),
+            "BTU/hr",
+            source="working: the element design",
+        )
+        s.let("P_t", "heat the burners and elements leave in the kiln", "P_k + E", "BTU/hr")
+        s.require("P_t", ">=", "Q")
     s.lever("n", 1, 4 * MOST_BURNERS, step=1)
     return s
 

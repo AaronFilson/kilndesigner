@@ -97,6 +97,7 @@ def test_a_weight_or_a_setting_not_both() -> None:
         _kiln({"shelves": SHELVES}, ware="300 lb")
 
 
+@pytest.mark.slow
 def test_the_simulation_heats_the_setting_and_ware() -> None:
     from kilndesigner.simulation import simulate
 

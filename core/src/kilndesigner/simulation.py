@@ -258,28 +258,36 @@ def heat_supply(
     *,
     gas_from_c: float | None = None,
     burner_w: float | None = None,
+    element_w: float | None = None,
 ) -> tuple[HeatSupply, list[Step]]:
     """The heat the design has, from the element and burner designs; ``burner_w`` replaces the
     burners' input (W, at the higher heating value), as the target-time solver tries inputs, and
-    ``gas_from_c`` lights a hybrid's burners below its hand-over (both on together)."""
+    ``gas_from_c`` lights a hybrid's burners below its hand-over (both on together).
+    ``element_w`` is the element design's installed power when the caller has it already (the
+    solver, which fires the same kiln many times)."""
     if kiln.heat.fire is not None:
         raise SimulationError("wood, coal and oil firings aren't simulated yet (plan milestone M7)")
     from kilndesigner.electric import design_elements
     from kilndesigner.gas import design_gas
     from kilndesigner.heatloss import heat_loss
 
-    loss = heat_loss(kiln).total_watts
+    @cache
+    def loss() -> float:
+        return heat_loss(kiln).total_watts
+
     steps: list[Step] = []
     electric_w = gas_w = None
     if kiln.heat.electric is not None:
-        electric_w = design_elements(kiln, loss).installed_watts
+        electric_w = (
+            element_w if element_w is not None else design_elements(kiln, loss()).installed_watts
+        )
         steps.append(Step(name="Element power", value=show(Q_(electric_w, "W"), "kW")))
     gas = kiln.heat.gas
     if gas is not None:
         gas_w = (
             burner_w
             if burner_w is not None
-            else si(Q_(design_gas(kiln, loss).design_input_btu_hr, "BTU/hr"), "W")
+            else si(Q_(design_gas(kiln, loss()).design_input_btu_hr, "BTU/hr"), "W")
         )
         steps.append(
             Step(
@@ -369,6 +377,20 @@ class _Controller:
     index: int = 0
     held_for: float = 0.0  # s into the current hold
     holding: bool = False
+    # Each ramp's end (K), rate (K/s) and hold (s), converted once rather than every step
+    _si: list[tuple[float, float | None, float | None]] = field(
+        default_factory=list[tuple[float, float | None, float | None]]
+    )
+
+    def __post_init__(self) -> None:
+        self._si = [
+            (
+                si(r.to, "K"),
+                si(r.rate, "K/s") if r.rate is not None else None,
+                si(r.hold, "s") if r.hold is not None else None,
+            )
+            for r in self.ramps
+        ]
 
     @property
     def done(self) -> bool:
@@ -376,26 +398,24 @@ class _Controller:
 
     def target(self, t_c: float, dt: float) -> tuple[float, bool]:
         """T_c* for the step's end, and whether the schedule sets a pace (False: full heat)."""
-        ramp = self.ramps[self.index]
-        to = si(ramp.to, "K")
+        to, rate, _ = self._si[self.index]
         if self.holding:
             return to, True
-        if ramp.rate is None:
+        if rate is None:
             return to, False
-        step = si(ramp.rate, "K/s") * dt
+        step = rate * dt
         return (min(t_c + step, to) if to >= t_c else max(t_c - step, to)), True
 
     def advance(self, t_start: float, t_c: float, dt: float) -> None:
-        ramp = self.ramps[self.index]
-        to = si(ramp.to, "K")
+        to, _, hold = self._si[self.index]
         if self.holding:
             self.held_for += dt
-            if self.held_for >= si(ramp.hold, "s") - 1e-9:  # pyright: ignore[reportArgumentType]
+            if self.held_for >= (hold or 0.0) - 1e-9:
                 self.index, self.holding, self.held_for = self.index + 1, False, 0.0
             return
         heating = to >= t_start
         if (heating and t_c >= to - 1e-6) or (not heating and t_c <= to + 1e-6):
-            if ramp.hold is not None and si(ramp.hold, "s") > 0:
+            if hold is not None and hold > 0:
                 self.holding = True
             else:
                 self.index += 1
@@ -411,8 +431,10 @@ def simulate(
     max_hours: float | None = None,
     dt: float = DT,
     record: bool = True,
+    element_w: float | None = None,
 ) -> FiringRun:
-    """Fire the kiln along its schedule (or ``schedule``) from the room's temperature."""
+    """Fire the kiln along its schedule (or ``schedule``) from the room's temperature.
+    ``element_w``: the element design's installed power, if the caller has worked it out."""
     us = kiln.units == "us"
     unit = "degF" if us else "degC"
     max_hours = MAX_HOURS if max_hours is None else max_hours
@@ -430,7 +452,7 @@ def simulate(
         schedule, step = default_schedule(kiln)
         working.append(step)
     supply, supply_steps = heat_supply(
-        kiln, switch_over_c, gas_from_c=gas_from_c, burner_w=burner_w
+        kiln, switch_over_c, gas_from_c=gas_from_c, burner_w=burner_w, element_w=element_w
     )
     working += supply_steps
     faces = build_faces(kiln)
@@ -582,18 +604,23 @@ def simulate(
         ):
             if not burners_on and supply.gas_w is not None:
                 # A hybrid's elements have stalled short of the burners: light them
+                together = supply.together
                 supply = (
                     replace(supply, gas_from_k=t_c)
-                    if supply.together
+                    if together
                     else replace(supply, switch_over_k=t_c)
                 )
                 stall_window.clear()
+                at = show(Q_(t_c, "K"), unit)
                 findings.append(
                     Finding(
                         level="info",
                         message=(
-                            f"The elements stall at {show(Q_(t_c, 'K'), unit)}, short of the "
-                            "hand-over, so the burners take over there."
+                            f"The elements stall at {at}, short of where the burners are lit, so "
+                            "the burners are lit there and the elements stay on with them."
+                            if together
+                            else f"The elements stall at {at}, short of the hand-over, so the "
+                            "burners take over there."
                         ),
                     )
                 )
