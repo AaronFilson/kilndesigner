@@ -202,7 +202,9 @@ def test_the_hybrid_hands_over_and_costs_both_fuels() -> None:
 
 
 def test_a_hybrid_hands_over_where_its_elements_stall() -> None:
-    r = simulate(_hybrid(), switch_over_c=1250, dt=300, record=False).result
+    # Empty: with a full setting the elements climb so slowly the firing runs out of hours first
+    r = simulate(_hybrid(**{"firing.setting": None}), switch_over_c=1250, dt=300, record=False)
+    r = r.result
     assert r.completed
     assert r.switch_over_c is not None
     assert r.switch_over_c < 1250
@@ -268,8 +270,10 @@ def test_the_switch_over_chart_marks_stalls(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def test_a_hand_over_above_the_elements_stall_is_marked() -> None:
-    # The PNW kiln's 11.5 kW of elements stall near 1990 °F, short of a 2100 °F hand-over
-    chart = switch_over_chart(_example("pnw-hybrid-crossdraft"), step_f=1700, dt=600)
+    # The PNW kiln's 11.5 kW of elements stall near 1990 °F, short of a 2100 °F hand-over (empty:
+    # with a full setting they climb so slowly the firing runs out of hours before they stall)
+    empty = _example("pnw-hybrid-crossdraft", **{"firing.setting": None})
+    chart = switch_over_chart(empty, step_f=1700, dt=600)
     first, second = chart.points
     assert not first.elements_stalled
     assert first.handed_over_c == pytest.approx(first.switch_over_c)

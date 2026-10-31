@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -40,6 +41,10 @@ def test_simulate_a_hybrid_with_its_chart(tmp_path: Path, monkeypatch: pytest.Mo
         "kast-o-lite-30-li-plus\n      thickness: 3 in\n",
         "kast-o-lite-30-li-plus\n      thickness: 3 in\n      specific_heat: 1 kJ/(kg*K)\n",
     )
+    # Empty: with a full setting the elements climb so slowly the chart's late hand-overs run out
+    # of hours before they stall
+    text = re.sub(r"\n  setting:\n(    [^\n]*\n)+", "\n", text)
+    assert "setting:" not in text
     design = tmp_path / "hybrid.yaml"
     design.write_text(text, encoding="utf-8")
     monkeypatch.setattr("kilndesigner.simulation.DT", 900.0)
