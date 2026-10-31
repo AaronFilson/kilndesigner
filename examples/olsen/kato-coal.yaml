@@ -9,12 +9,14 @@
 # twelve 6 × 6 in floor exit flues (p.131); a round chimney 3 ft across inside at the base, 20 ft
 # tall, tapering to 15½ in (Fig 5-4); coal; 2372 °F (p.131). The 10 in and 15½ in were checked on
 # the page image, 2026-10-31.
-# Assumed: the length isn't printed (the user: it would be added up from the plan's parts): 75 in
-# makes the chamber the printed 7 m³ with the arch below. The arch's rise and thickness aren't
-# printed (it is drawn thick): 9 in, the thickest
-# of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296), at 2.302 in per foot of span, his
-# standard rise for a 9 in arch on standard skews (p.296–297): 15 in, so the springline is 63 in
-# up. The side walls' thickness isn't printed, but the book calls the walls very thick (p.131):
+# The chamber is 7 ft long in the plan (Fig 5-4, the digit under an arrowhead, read by the user, 2026-10-31).
+# The section (Fig 5-4, checked on the page image at 300 dpi, 2026-10-31) draws the walls straight
+# to about 35 in, by scale, then curving in to the crown: a semicircle on the 78 in span, rising
+# 39 in from a 39 in springline. That gives about 264 ft³ (derived), against the printed
+# "approximately 250cu. ft"; a box to the crown would be 296 ft³, and a catenary from the floor
+# about 204 ft³, so the curve is what brings the volume down. The arch's thickness isn't printed
+# (it is drawn thick): 9 in, the thickest of Olsen's usual arch thicknesses (4½, 6¾ and 9 in,
+# p.296). The side walls' thickness isn't printed, but the book calls the walls very thick (p.131):
 # 18 in, the least of the 18–22 in walls that carried the roofs of early domed and downdraft kilns
 # with no steel (p.45). They hold the arch's thrust here too (buttressed); the book doesn't say
 # whether the kiln has steel. The brick isn't named: dense brick (the book: very thick walls, slow
@@ -36,12 +38,12 @@ firing:
   top_temperature: 2372 degF
 chamber:
   width: 78 in
-  depth: 75 in # not printed: the printed 7 m³ (p.131)
-  height: 63 in # to the springline: 6 ft 6 in to the crown, less the 15 in rise
+  depth: 84 in # 7 ft (Fig 5-4)
+  height: 39 in # to the springline: 6 ft 6 in to the crown, less the 39 in rise
   on_ground: true # over flue channels 18 in deep; the firebox floors below ground (Fig 5-4)
 roof:
   type: sprung_arch
-  rise: 15 in # 2.302 in per foot of the 78 in span
+  rise: 39 in # a semicircle on the 78 in span, as the section draws it
   buttressed: true # the very thick walls hold it
 loading:
   type: door
