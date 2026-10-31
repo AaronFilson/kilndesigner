@@ -177,47 +177,79 @@ def straight_ring_text(r: Ring, us: bool) -> str:
 WEDGE_MORTAR = "wedge-joint-mortar"
 """The bill's key for the mortar in a mortar ring's wedge joints: no material in the library."""
 
+BNZ_MORTARS = "BNZ Materials, refractory mortars data sheet (2013); blocked-items.md §6 [K13]"
+MORTAR_DENSITY = {  # lb/ft³: as received, at dipping consistency (BNZ_MORTARS)
+    "Super Blak": (126.0, 124.0),
+    "No. 2986": (129.0, 126.0),
+    "Blakbond": (131.0, 123.0),
+    "Zelie No. 20": (121.0, 116.0),
+}
+DEFAULT_MORTAR = "Blakbond"
+"""The densest of BNZ's four as received: the weight to buy is the mortar as it arrives, and the
+densest errs to more, not less. Another maker's mortar needs its own sheet."""
+SACK_LB = 55.0
+SACK_SOURCE = (
+    "HarbisonWalker, Brick Installation Guide (2008), p.9: 'Standard packaging for monolithic "
+    "refractories are 55 lb. sacks'; blocked-items.md §19 [K28]"
+)
+
 
 def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quantity, Step] | None:
-    """The mortar the rings' wedge joints hold, by volume, for the bill of materials: each joint
-    an isosceles triangle between neighbouring straights, ½·d²·sin α per unit of course height,
-    summed round the ring (rings.straight_ring), times the wall's height. By volume only: no
-    source here gives a mortar's weight per volume or its yield per bag, and Olsen's 300–400 lb
-    per 1000 bricks (p.295) is for ordinary joints, not wedges, so it isn't converted or priced."""
+    """The mortar the rings' wedge joints hold, for the bill of materials: each joint an
+    isosceles triangle between neighbouring straights, ½·d²·sin α per unit of course height,
+    summed round the ring (rings.straight_ring), times the wall's height; by weight, that volume
+    times the densest of BNZ's mortars as received (DEFAULT_MORTAR); in sacks, that weight over
+    HarbisonWalker's standard 55 lb sack (SACK_SOURCE), rounded up; not priced: the price list has no mortar. Olsen's 300–400 lb per 1000 bricks (p.295) is for
+    ordinary joints, not wedges, so it isn't used."""
     each = [rp.ring.mortar for rp in rings if rp.series == "mortar" and rp.ring.mortar]
     if not each:
         return None
     per_mm = sum(each)  # mm² of joint for each mm of wall height, every mortar ring together
     volume = Q_(per_mm * height, "mm**3")
     unit, word = ("ft**3", "ft³") if us else ("L", "L")
-    amount = si(volume, unit)
+    density = Q_(MORTAR_DENSITY[DEFAULT_MORTAR][0], "lb/ft**3")
+    mass = volume * density
+    mass_unit = "lb" if us else "kg"
+    rho = show(density, "lb/ft**3", 3) if us else show(density, "kg/m**3", 4)
     step = Step(
         name="Mortar in the rings' wedge joints",
-        value=show(volume, unit, 3),
-        formula="V = h · Σ ½·d²·sin α (each joint round each mortar ring)",
+        value=f"{show(volume, unit, 3)}, {show(mass, mass_unit, 3)}",
+        formula=(
+            "V = h · Σ ½·d²·sin α (each joint round each mortar ring); m = V · γ, γ the mortar's "
+            "density as received"
+        ),
         inputs={
             "Σ ½·d²·sin α": f"{per_mm / IN**2:.3g} in³ per in of height"
             if us
             else f"{per_mm / 1e6 * 1e3:.3g} L per m of height",
             "h": length_text(height, us),
+            "γ": f"{rho}, BNZ {DEFAULT_MORTAR} as received",
         },
-        reference=MORTAR_SOURCE,
+        reference=f"{MORTAR_SOURCE}; {BNZ_MORTARS}; {SACK_SOURCE}",
         note=(
-            "By volume only. No source here gives a mortar's weight per volume or its yield per "
-            "bag, so it isn't in bags or priced; Olsen's 300–400 lb of mortar per 1000 bricks "
-            "(p.295) is for ordinary joints, not wedge joints. Add the BIA's 15–25 % for waste "
-            "(brick-waste.md [W1])."
+            f"γ: {DEFAULT_MORTAR}, the densest of BNZ's four mortars as received ("
+            + ", ".join(f"{k} {v[0]:g}" for k, v in MORTAR_DENSITY.items())
+            + " lb/ft³; at dipping consistency "
+            + ", ".join(f"{v[1]:g}" for v in MORTAR_DENSITY.values())
+            + " lb/ft³): the weight bought is the mortar as it arrives, and the densest errs to "
+            "more. Another maker's mortar needs its own sheet. Sacks: the weight over "
+            f"HarbisonWalker's standard {SACK_LB:g} lb sack, rounded up ({SACK_SOURCE}); a sack "
+            "of another size changes the count. Not priced: the price list has no mortar. Olsen's "
+            "300–400 lb per 1000 bricks (p.295) and BNZ's 200–400 lb are for ordinary joints, not "
+            "wedge joints. Add the BIA's 15–25 % for waste (brick-waste.md [W1])."
         ),
     )
     quantity = Quantity(
         material=WEDGE_MORTAR,
         name="Refractory mortar for the round wall's wedge joints",
         kind="mortar",
-        amount=round(amount, 2 if us else 1),
-        unit=word,
+        amount=round(si(mass, mass_unit), 0 if us else 1),
+        unit=mass_unit,
         detail=(
-            "the joints' volume, nothing added for waste; by volume only, as no source here "
-            "gives a mortar's weight per volume or per bag"
+            f"{round(si(volume, unit), 2 if us else 1):g} {word} of joint × {rho} (BNZ "
+            f"{DEFAULT_MORTAR} as received), nothing added for waste; "
+            f"{math.ceil(si(mass, 'lb') / SACK_LB - 1e-9)} sacks of {SACK_LB:g} lb (HarbisonWalker's "
+            "standard sack)"
         ),
         priced_amount=0.0,
     )

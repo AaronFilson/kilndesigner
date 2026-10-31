@@ -6,6 +6,8 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+import pytest
+
 from kilndesigner.designfile import load_design, parse_design
 from kilndesigner.geometry import Part
 from kilndesigner.masonry import Hole, plan_layer, plan_masonry, port_findings, punch
@@ -90,11 +92,16 @@ def test_a_mortar_ring_puts_its_mortar_on_the_bill() -> None:
     text = ROUND % "us"
     plan = plan_masonry(parse_design(text))
     [mortar] = [q for q in plan.result.quantities if q.material == WEDGE_MORTAR]
-    assert mortar.unit == "ft³"
+    assert mortar.unit == "lb"
     assert mortar.amount > 0
-    assert "by volume only" in mortar.detail
+    assert "Blakbond" in mortar.detail
+    assert f"{math.ceil(mortar.amount / 55)} sacks of 55 lb" in mortar.detail
     [step] = [s for s in plan.result.working if s.name == "Mortar in the rings' wedge joints"]
     assert "p.295" in (step.note or "")
+    assert "BNZ" in (step.reference or "")
+    # weight = volume × 131 lb/ft³ (BNZ Blakbond as received)
+    volume = float(mortar.detail.split(" ")[0])
+    assert mortar.amount == pytest.approx(volume * 131, abs=1.0)
     report = design_report(parse_design(text))
     assert report.bom is not None
     [line] = [x for x in report.bom.lines if "wedge joints" in x.item]
@@ -105,5 +112,5 @@ def test_a_metric_mortar_ring_is_in_litres_and_none_without_mortar_rings() -> No
     plan = plan_masonry(parse_design(ROUND % "metric"))
     assert wedge_mortar(plan.rings, 914.4, us=False) is not None
     [mortar] = [q for q in plan.result.quantities if q.material == WEDGE_MORTAR]
-    assert mortar.unit == "L"
+    assert mortar.unit == "kg"
     assert wedge_mortar([], 914.4, us=True) is None

@@ -1097,15 +1097,45 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     worked out and no steel is sized."""
     assert isinstance(kiln.roof, SprungArch)
     from kilndesigner.shape import along_arch
-    from kilndesigner.vault import UNEVEN, uneven_thrust
+    from kilndesigner.vault import THRUST_LINE, UNEVEN, thrust_line_thrust, uneven_thrust
 
     depth, width = si(kiln.chamber.depth, "in"), si(kiln.chamber.width, "in")
     arch = along_arch(kiln, "in")
     load = _arch_load(kiln, arch)
+    checks: list[Step] = []
     if arch.drop:
-        # Springing unevenly: the three-hinged arch's statics with its halves unequal; no
-        # heated factor is printed for it, so HarbisonWalker's largest is taken
-        cold = uneven_thrust(arch, load.weight)[0]
+        # Springing unevenly: a line of thrust through both springings at their own heights
+        # (THRUST_LINE), shown beside the halves' moments about the crown it replaces; no heated
+        # factor is printed for it, so HarbisonWalker's largest is taken
+        before, *_ = uneven_thrust(arch, load.weight)
+        cold, front, back = thrust_line_thrust(arch, load.weight)
+        checks.append(
+            Step(
+                name="The uneven arch's cold thrust, by a line of thrust through both springings",
+                value=f"H = {cold:.1f} lb per foot of arch (each half about the crown: "
+                f"{before:.1f}); V = {front:.1f} lb at the front, {back:.1f} lb at the back",
+                formula=(
+                    "V_b·(s_f + s_b) + H·δ = W_f·(s_f − c_f) + W_b·(s_f + c_b) (the whole arch "
+                    "about the front springing); V_b·s_b = H·f_b + W_b·c_b (the back half about "
+                    "the crown); s = sin φ, f = 1 − cos φ, c = (1 − cos φ)/φ, δ = drop/r, all "
+                    "over r"
+                ),
+                inputs={
+                    "W, the arch's weight": f"{load.weight:.1f} lb per foot",
+                    "φ_f, φ_b": f"{math.degrees(arch.front_angle):.2f}°, "
+                    f"{math.degrees(arch.back_angle):.2f}°",
+                    "r": f"{arch.radius:.2f} in",
+                    "drop δ·r, the front springing below the back's": f"{arch.drop:g} in",
+                },
+                reference=f"{THRUST_LINE}; {ARCH_THEORY_SOURCE}; {UNEVEN}",
+                note=(
+                    "The two ways are the same statics written differently and agree; this one "
+                    "takes the springings at their own heights directly. Hot, HarbisonWalker's "
+                    "largest printed factor is kept: no heated factor for unequal springings is "
+                    "sourced (blocked-items.md §9), and the largest is the safe side."
+                ),
+            )
+        )
         heated = None
     else:
         cold = cold_thrust_factor(depth, arch.rise) * load.weight
@@ -1120,13 +1150,13 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     if arch.drop:
         inputs["front springline below the back's"] = f"{arch.drop:g} in"
     working = [
+        *checks,
         Step(
             name="Thrust on each end wall",
             value=thrust,
             formula=(
-                "H = (W_f·ℓ_f/s_f + W_b·ℓ_b/s_b)/(f_f/s_f + f_b/s_b), s = sin φ, f = 1 − cos φ, "
-                "ℓ = sin φ − (1 − cos φ)/φ, each half's own angle φ; hot, × HarbisonWalker's "
-                "largest factor; × the kiln's width"
+                "H, cold, by the line of thrust through both springings (above); hot, × "
+                "HarbisonWalker's largest factor; × the kiln's width"
                 if arch.drop
                 else "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's "
                 "width; the arch spans one chamber's depth"
@@ -1141,7 +1171,7 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
                 if arch.drop
                 else None
             ),
-        )
+        ),
     ]
     between = (
         "The walls between chambers take the arches either side, which push against each other "

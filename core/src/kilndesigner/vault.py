@@ -84,6 +84,34 @@ def uneven_thrust(arch: Arch, weight: float) -> tuple[float, float, float]:
     return h, front, back
 
 
+THRUST_LINE = (
+    "a line of thrust through both springings at their own heights and the crown (Heyman's safe "
+    "theorem: any such line within the masonry is in equilibrium; the hinges fix this one). With "
+    "vertical loads only, H is the same all along the arch, so moments of the whole arch about "
+    "the lower springing and of the higher half about the crown give it (standard statics; "
+    "blocked-items.md §9)"
+)
+
+
+def thrust_line_thrust(arch: Arch, weight: float) -> tuple[float, float, float]:
+    """The same arch as uneven_thrust's, worked the second way (THRUST_LINE): moments of the
+    whole arch about the front (lower) springing, the back springing ``arch.drop`` above it, and
+    of the back half about the crown. Over r, the front springing at (−s_f, −f_f) from the crown,
+    the back at (s_b, −f_b), each half's weight W·φ/(φ_f + φ_b) at c = (1 − cos φ)/φ from it:
+    V_b·(s_f + s_b) + H·δ = W_f·(s_f − c_f) + W_b·(s_f + c_b), δ = drop/r;
+    V_b·s_b = H·f_b + W_b·c_b. Returns H, V_f, V_b."""
+    pf, pb = arch.front_angle, arch.back_angle
+    wf, wb = (weight * p / (pf + pb) for p in (pf, pb))
+    sf, sb = math.sin(pf), math.sin(pb)
+    fb = 1 - math.cos(pb)
+    cf, cb = ((1 - math.cos(p)) / p for p in (pf, pb))
+    delta = arch.drop / arch.radius
+    about = wf * (sf - cf) + wb * (sf + cb)  # the loads' moment about the front springing
+    h = (sb * about / (sf + sb) - wb * cb) / (fb + sb * delta / (sf + sb))
+    back = (h * fb + wb * cb) / sb
+    return h, weight - back, back
+
+
 def along_inputs(kiln: Kiln, cut: float = 0.0) -> ArchInputs:
     """The arch along the chamber's depth, as the frame's sheets take an arch (in). Springing
     unevenly, the level arch on the same circle at the larger angle (TRUNCATED); with ``cut``, the

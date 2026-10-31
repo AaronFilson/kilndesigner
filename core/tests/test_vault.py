@@ -18,7 +18,14 @@ from kilndesigner.geometry import in_a_row, inside_top, lining_parts
 from kilndesigner.model import Kiln, arches_along
 from kilndesigner.shape import Arch, along_arch, chamber_shape
 from kilndesigner.units import Q_, si
-from kilndesigner.vault import along_inputs, along_statics, door_in_vault, stations, uneven_thrust
+from kilndesigner.vault import (
+    along_inputs,
+    along_statics,
+    door_in_vault,
+    stations,
+    thrust_line_thrust,
+    uneven_thrust,
+)
 
 BOWEN = Path(__file__).parents[2] / "examples" / "olsen" / "bowen-mountain.yaml"
 
@@ -116,6 +123,27 @@ def test_the_uneven_arch_is_laid_out_from_each_springline() -> None:
     cap = parts["right/1-ifb-jm28-chamber-1-arch"]
     assert cap.profile is not None
     assert min(z for _, z in cap.profile) == pytest.approx(16 * 25.4)
+
+
+def test_a_thrust_line_through_both_springings_agrees_with_the_halves() -> None:
+    kiln = load_design(BOWEN)
+    arch = along_arch(kiln, "in")
+    assert arch.drop == pytest.approx(2.0)
+    for a in (arch, Arch(arch.span, arch.rise, -3.0), Arch(60.0, 18.0, 4.0)):
+        h, front, back = thrust_line_thrust(a, 100.0)
+        assert (h, front, back) == pytest.approx(uneven_thrust(a, 100.0))
+        assert front + back == pytest.approx(100.0)
+    # by hand, Arch(60, 18, 4): the back half about the crown holds with that H
+    a = Arch(60.0, 18.0, 4.0)
+    h, _, back = thrust_line_thrust(a, 100.0)
+    pb = a.back_angle
+    wb = 100.0 * pb / (a.front_angle + pb)
+    fb = 1 - math.cos(pb)
+    assert back * math.sin(pb) == pytest.approx(h * fb + wb * fb / pb)
+    frame = design_frame(kiln)
+    [step] = [s for s in frame.working if s.name.startswith("The uneven arch's cold thrust")]
+    assert "each half about the crown" in step.value
+    assert "largest printed factor is kept" in (step.note or "")
 
 
 def test_the_uneven_arch_springs_each_end_wall_on_its_own_share() -> None:
