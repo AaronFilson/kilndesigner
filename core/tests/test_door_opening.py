@@ -321,7 +321,9 @@ def test_a_catenary_door_must_fit_under_its_curve() -> None:
 
 def test_calimpongs_door_reaches_into_its_sail_domes_side() -> None:
     # Fig 4-140: a 33 × 37 in door in the side of walls 35 in tall, under a cast dome
-    kiln = _kiln("olsen/conrad-teardrop.yaml", {})
+    # Its head drawn flat isn't checked (test_plan_outline); taken as arched, it is
+    kiln = _kiln("olsen/conrad-teardrop.yaml",
+                 {"opening": {"width": "33 in", "height": "37 in", "across": "-6 in"}})  # fmt: skip
     hole = door_hole(kiln)
     assert hole is not None
     assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(-6 * 25.4)  # 36 to 69 in of the 117

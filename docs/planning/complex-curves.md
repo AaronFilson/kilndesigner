@@ -80,7 +80,14 @@ simplification is written into the example's notes:
    (`curved-kilns.md`). Left: the door's flat head with rounded corners (the door statics cover
    a semicircular ring or a steel lintel only), the book's concave neck, the frame's dome slices
    (still over the chamber's rectangle), brick course plans round the curve, and the web form's
-   point editing.
+   point editing. **Leftovers done 2026-10-31** (but point editing): the neck
+   (`necked_teardrop`: sides, reverse curves, a straight neck and a flat back; the crown must see
+   the whole plan); the dome's slices over the curved plan, each the symmetric arch on its
+   farther springing, their thrust shown for the masonry that holds it, and no steel sized round
+   a curve (refused with a reason); courses round the curve (4½ in stretcher rings: mortar wedge
+   joints on convex arcs, cut to the angle on the reverse curves, lapped corners); and a flat door
+   head with rounded corners, laid out, its statics flagged as unsourced. The new fit is 6 %
+   under the printed widths' area (the widest point sits further forward than the book draws).
 4. Revolved profiles: bottle kilns and round domes of conical-brick courses.
 5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing.
 6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow.

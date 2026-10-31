@@ -49,6 +49,7 @@ class DoorHole:
     lo: tuple[float, float, float]
     hi: tuple[float, float, float]
     radius: float
+    corner: float = 0.0  # a flat head's rounded corners: the box stops this far under the head
 
     @property
     def opening(self) -> Opening:
@@ -112,13 +113,14 @@ def _hole(kiln: Kiln, u0: float, u1: float) -> DoorHole:
     s = site(kiln)
     w, h = si(door.width, "mm"), si(door.height, "mm")
     radius = w / 2 if door.head == "arch" else 0.0
+    corner = si(door.corner, "mm") if door.corner is not None else 0.0
     if face == "front":
         z = s.floors[0]
     elif face == "back":
         z = s.floors[-1]
     else:
         z = s.floor_at((u0 + u1) / 2)
-    zs = (z + si(door.sill, "mm"), z + si(door.sill, "mm") + h - radius)
+    zs = (z + si(door.sill, "mm"), z + si(door.sill, "mm") + h - radius - corner)
     rel = (u0, u1) if face in ("front", "back") else (u0 - s.middle, u1 - s.middle)
     side = {"front": "+y", "back": "-y", "left": "+x", "right": "-x"}[face]
     sign = -1.0 if face in ("front", "left") else 1.0
@@ -128,8 +130,8 @@ def _hole(kiln: Kiln, u0: float, u1: float) -> DoorHole:
         inner = sign * _curve_inside(kiln, face, rel)
     a = (min(outer, inner) - EPS, max(outer, inner) + EPS)
     if face in ("front", "back"):
-        return DoorHole(face, (u0, a[0], zs[0]), (u1, a[1], zs[1]), radius)
-    return DoorHole(face, (a[0], u0, zs[0]), (a[1], u1, zs[1]), radius)
+        return DoorHole(face, (u0, a[0], zs[0]), (u1, a[1], zs[1]), radius, corner)
+    return DoorHole(face, (a[0], u0, zs[0]), (a[1], u1, zs[1]), radius, corner)
 
 
 def _curve_inside(kiln: Kiln, face: WallFace, rel: tuple[float, float]) -> float:
@@ -181,15 +183,31 @@ def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
 
 def model_door_holes(kiln: Kiln) -> list[tuple[tuple[float, ...], tuple[float, ...], object]]:
     """The door's opening as solids, to cut the model's walls: the box to the jambs' top, and an
-    arched head's half-round over it."""
+    arched head's half-round over it, or a flat head's band between its rounded corners and a
+    quarter-round in each."""
     from kilndesigner.geometry import _box, _cylinder  # pyright: ignore[reportPrivateUsage]
 
     out: list[tuple[tuple[float, ...], tuple[float, ...], object]] = []
     for hole in door_holes(kiln):
         out.append((hole.lo, hole.hi, _box(hole.lo, hole.hi)))
+        axis = 1 if hole.face in ("front", "back") else 0
+        if hole.corner > 0:
+            k = 1 - axis  # along the wall
+            c = hole.corner
+            lo, hi = list(hole.lo), list(hole.hi)
+            lo[k], hi[k], lo[2], hi[2] = hole.lo[k] + c, hole.hi[k] - c, hole.hi[2], hole.hi[2] + c
+            out.append((tuple(lo), tuple(hi), _box(tuple(lo), tuple(hi))))  # type: ignore[arg-type]
+            for u in (hole.lo[k] + c, hole.hi[k] - c):
+                centre = [0.0, 0.0, hole.hi[2]]
+                centre[k], centre[axis] = u, (hole.lo[axis] + hole.hi[axis]) / 2
+                clo, chi = list(centre), list(centre)
+                for i in (k, 2):
+                    clo[i], chi[i] = centre[i] - c, centre[i] + c
+                clo[axis], chi[axis] = hole.lo[axis], hole.hi[axis]
+                cyl = _cylinder(axis, tuple(centre), c, hole.hi[axis] - hole.lo[axis])  # type: ignore[arg-type]
+                out.append((tuple(clo), tuple(chi), cyl))
         if hole.radius <= 0:
             continue
-        axis = 1 if hole.face in ("front", "back") else 0
         centre = tuple((a + b) / 2 for a, b in zip(hole.lo, hole.hi, strict=True))
         centre = (centre[0], centre[1], hole.hi[2])
         length = hole.hi[axis] - hole.lo[axis]
@@ -279,12 +297,16 @@ def door_head(kiln: Kiln) -> DoorHead | None:
     w, h = si(door.width, "in"), si(door.height, "in")
     above = _wall_above(kiln)
     out = DoorHead([], [])
+    head = {"arch": "a semicircular arch", "lintel": "a steel lintel"}.get(door.head)
+    if head is None:
+        corner = si(door.corner, "in") if door.corner is not None else 0.0
+        head = f"flat, its corners rounded to {corner:g} in" if corner else "flat, square"
     out.working.append(
         Step(
             name="Door in part of the wall",
             value=(
                 f"{w:g} × {h:g} in in the {face} wall, {above:.1f} in of wall over it, its head "
-                f"{'a semicircular arch' if door.head == 'arch' else 'a steel lintel'}"
+                f"{head}"
             ),
             reference=DOOR_SOURCE,
         )
@@ -301,8 +323,26 @@ def door_head(kiln: Kiln) -> DoorHead | None:
     if door.head == "arch":
         _arch_head(kiln, w, out)
         return out
+    if door.head == "flat":
+        out.findings.append(Finding(level="info", message=FLAT_UNCHECKED, reference=FLAT_SOURCE))
+        return out
     _lintel(kiln, w, above, out)
     return out
+
+
+FLAT_SOURCE = (
+    "curved-kilns.md (Olsen, The Kiln Book, 4th ed., Fig 4-140, p.124); door-headers.md §D3.3, "
+    "§D3.7, §D8, §D9"
+)
+FLAT_UNCHECKED = (
+    "The door's head is flat with rounded corners, as Calimpong's is drawn (Fig 4-140). What "
+    "spans it isn't checked: the book doesn't say what it is, and no source here gives statics "
+    "for it. The engine's door statics are Heyman's for a semicircular ring and AISC's for a steel "
+    "lintel; BIA's jack arch needs tapered voussoirs on skewbacks cut ½ in per foot of span for "
+    "each 4 in of depth, cold building brick only; and a cast shell over the door has no sourced "
+    "strength hot. Use a semicircular arch (head: arch) or a steel lintel (head: lintel) to have "
+    "it checked."
+)
 
 
 # ---- An arched head and its jambs --------------------------------------------------------------

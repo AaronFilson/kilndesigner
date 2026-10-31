@@ -428,17 +428,60 @@ class DomeSlice:
     factor: float  # thickness over the thinnest that stands, cold (Heyman)
     thickest: float  # HarbisonWalker's limit for the slice's rise (in)
     weight: float  # lb per inch of the walls it spans, every layer
+    span: float = 0.0  # in: the symmetric arch's span (a curved plan's; the chamber's otherwise)
+
+
+CURVED_SLICE_SOURCE = (
+    "the engine's own cautious rule over a curved plan: each slice taken as the symmetric arch on "
+    "its farther springing, the larger span, half-angle and weight (derived from the sliced dome, "
+    "domes-over-doors.md §D4)"
+)
+
+
+def _curved_chords(kiln: Kiln, count: int) -> tuple[float, list[tuple[float, float]]]:
+    """A dome over a curved plan (chamber.outline), sliced parallel to the door wall: the
+    sphere's inside radius (in), and for each slice its distance from the sphere's centre and
+    the farther of its two springings along it, from the centre's line (in). Slices with no
+    chord, past the plan's edge, are left out."""
+    from kilndesigner.form import crown_of, plan_of
+    from kilndesigner.outline import SphereDome
+
+    assert isinstance(kiln.roof, Dome)
+    plan, crown = plan_of(kiln, "in"), crown_of(kiln, "in")
+    radius = SphereDome(plan, si(kiln.roof.rise, "in"), crown).radius
+    pts = plan.points(96)
+    across = kiln.door_face in ("front", "back")  # slices across the kiln, at y = constant
+    k, u = (1, 0) if across else (0, 1)  # the coordinate fixing the slice, the one along it
+    lo, hi = min(p[k] for p in pts), max(p[k] for p in pts)
+    out: list[tuple[float, float]] = []
+    for i in range(count):
+        at = lo + (hi - lo) * i / (count - 1)
+        cuts = []
+        for p, q in itertools.pairwise([*pts, pts[0]]):
+            if (p[k] - at) * (q[k] - at) <= 0 and p[k] != q[k]:
+                s = (at - p[k]) / (q[k] - p[k])
+                cuts.append(p[u] + s * (q[u] - p[u]) - crown[u])
+        if len(cuts) >= 2 and max(cuts) - min(cuts) > 1e-6:
+            out.append((at - crown[k], max(abs(c) for c in cuts)))
+    return radius, out
 
 
 def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[DomeSlice]:
     """The dome as arches parallel to the door wall, spanning the two walls either side, from the
-    middle out to the end wall (the dome is symmetric). ``rise`` (in) overrides the design's."""
+    middle out to the end wall (the dome is symmetric). ``rise`` (in) overrides the design's.
+    Over a curved plan the slices run across the whole plan, each taken as the symmetric arch on
+    its farther springing (CURVED_SLICE_SOURCE)."""
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, Dome)
     w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
     span, length = (w, d) if kiln.door_face in ("front", "back") else (d, w)
     dome = SailDome(w, d, si(kiln.roof.rise, "in") if rise is None else rise)
+    radius = dome.radius
+    cuts = [(length / 2 * i / (count - 1), span / 2) for i in range(count)]
+    if kiln.chamber.outline is not None:
+        assert rise is None, "a curved plan's dome has the design's rise"
+        radius, cuts = _curved_chords(kiln, count)
     layers = [
         (si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3") / 1728,
          si(x.thickness, "in"))
@@ -447,14 +490,14 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
     ring = sum(t for _, t in layers[: kiln.roof.ring])
     table = steel_data()["arch_minimum_thickness"]
     slices: list[DomeSlice] = []
-    for i in range(count):
-        y = length / 2 * i / (count - 1)
-        inside = math.sqrt(dome.radius**2 - y**2)
+    for y, half in cuts:
+        span = 2 * half
+        inside = math.sqrt(radius**2 - y**2)
         alpha = math.asin(min(1.0, span / 2 / inside))
         own_rise = inside * (1 - math.cos(alpha))
-        thickness = math.sqrt((dome.radius + ring) ** 2 - y**2) - inside
+        thickness = math.sqrt((radius + ring) ** 2 - y**2) - inside
         eta = float(np.interp(math.degrees(alpha), table["half_angle_deg"], table["eta"]))
-        weight, r = 0.0, dome.radius
+        weight, r = 0.0, radius
         for density, t in layers:  # each layer's slice: its thickness × centre radius × arc
             lo, hi = math.sqrt(r**2 - y**2), math.sqrt((r + t) ** 2 - y**2)
             weight += density * (hi - lo) * (lo + hi) / 2 * 2 * alpha
@@ -462,10 +505,63 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
         slices.append(
             DomeSlice(
                 y, thickness, alpha, own_rise, thickness / (inside + thickness / 2) / eta,
-                (own_rise - span / 48) / math.cos(alpha), weight,
+                (own_rise - span / 48) / math.cos(alpha), weight, span,
             )
         )  # fmt: skip
     return slices
+
+
+def _curved_dome_thrust(kiln: Kiln) -> tuple[str | None, list[Step]]:
+    """A dome over a curved plan, sliced parallel to the door wall (dome_slices): each slice's
+    thrust on the walls it springs from, cold and hot, per foot of wall; the most of them. None
+    when a slice's hot line of thrust leaves it."""
+    slices = dome_slices(kiln)
+    worst: tuple[float, float, DomeSlice] | None = None
+    for s in slices:
+        factor = heated_thrust_factor(s.span, s.rise, s.thickness)
+        if factor is None:
+            return None, [
+                Step(
+                    name="Thrust the masonry holds",
+                    value=(
+                        f"not worked out: hot, the slice {s.at:.1f} in from the crown would push "
+                        "its line of thrust out of the ring"
+                    ),
+                    reference=f"{CURVED_SLICE_SOURCE}; {ARCH_THEORY_SOURCE}",
+                )
+            ]
+        cold = cold_thrust_factor(s.span, s.rise) * s.weight * 12
+        hot = min(factor, MAX_PRINTED_HEATED) * cold
+        if worst is None or hot > worst[1]:
+            worst = (cold, hot, s)
+    assert worst is not None
+    cold, hot, s = worst
+    thrust = f"{hot:.0f} lb per foot of wall, hot ({cold:.0f} cold)"
+    return thrust, [
+        Step(
+            name="Thrust the masonry holds",
+            value=thrust,
+            formula=(
+                "the dome over the curved plan in slices parallel to the door wall, each a "
+                "circular arch of radius √(R² − y²) on its farther springing: H = W·(sin α − "
+                "(1 − cos α)/α) / (2(1 − cos α)), W its weight; hot, × the heated factor (at most "
+                f"{MAX_PRINTED_HEATED:g}, the largest HarbisonWalker prints)"
+            ),
+            inputs={
+                "slices": f"{len(slices)}",
+                "the most": (
+                    f"{s.at:.1f} in from the crown: {s.span:.1f} in span, rising {s.rise:.2f} "
+                    f"in, {s.thickness:.2f} in thick"
+                ),
+            },
+            reference=f"{CURVED_SLICE_SOURCE}; {DOME_SOURCE}; {ARCH_THEORY_SOURCE}; {CAPPED}",
+            note=(
+                "The slices near the walls are short and flat and rest on the walls' tops cast "
+                "up to the dome; the slicing is one way the dome can stand (Heyman's safe "
+                "theorem), not the only one."
+            ),
+        )
+    ]
 
 
 def _dome_frame(kiln: Kiln) -> FrameDesign:
@@ -475,6 +571,7 @@ def _dome_frame(kiln: Kiln) -> FrameDesign:
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, Dome)
+    assert kiln.chamber.outline is None, "a curved plan's dome is held by masonry (model.py)"
     data = steel_data()
     rule, minimum = data["rise_per_foot"], data["arch_minimum_thickness"]
     working: list[Step] = []
@@ -960,6 +1057,9 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
                 reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}",
             )
         )
+    if isinstance(roof, Dome) and kiln.chamber.outline is not None:
+        thrust, steps = _curved_dome_thrust(kiln)
+        working += steps
     findings = [
         Finding(
             level="info",

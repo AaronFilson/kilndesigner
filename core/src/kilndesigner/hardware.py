@@ -1195,6 +1195,12 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             if door.head == "arch":
                 r = si(door.width, "in") / 2
                 head = head - r + math.sqrt(max(r * r - reach * reach, 0.0))
+            elif door.corner is not None:
+                # A flat head's rounded corner, where the holes' outer edge comes under it
+                c = si(door.corner, "in")
+                into = reach - (si(door.width, "in") / 2 - c)
+                if into > 0:
+                    head = head - c + math.sqrt(max(c * c - into * into, 0.0))
             top = min(top, head - COURSE - sh)
             bottom = max(bottom, sill + COURSE)
         top += COURSE - sh  # the top hole's bottom, so its top stays put
