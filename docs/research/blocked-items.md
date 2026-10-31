@@ -138,6 +138,64 @@ fired brick is generally much greater than its crushing strength at higher tempe
 
 ---
 
+## Second round (2026-10-31): rampant arches, door heads in vaults, iron vs steel bands
+
+Web search and fetch only, short round. Short answer: no gap closes. One method paper for
+openings in vaults (Verified title and summary), one steel-at-temperature table (Snippet), nothing
+for rampant-arch thrust, wrought iron when hot, band sizing, chimney diameters or refractory FoS.
+
+### 9. Rampant (unequal-springing) arch thrust
+
+| Item | Finding | Status | Source |
+|---|---|---|---|
+| Hot thrust factor for unequal springings (HarbisonWalker style) | none found | NOT FOUND | search |
+| Three-hinged parabolic arch with supports at different levels | textbook topic (span split into L1, L2 from the two springing heights, H from moment about the crown hinge); seen only as a garbled Scribd extract, no citable text | Snippet; not usable | [K18] |
+| Heyman, *The Stone Skeleton*, "The masonry vault" chapter | exists (Cambridge abstract page); not read | NOT READ | [K19] |
+
+Engine: keep using the largest printed HarbisonWalker factor for the rampant vault. A sourced
+route is the cold statics itself: for vertical loads H is the same everywhere along the arch, and a
+thrust line through the two springings at their own heights gives H by moments (standard statics,
+not a hot factor). The hot factor for unequal springings stays unsourced.
+
+### 10. A door head rising into a vault's edge (opening in a barrel vault)
+
+| Item | Text | Status | Source |
+|---|---|---|---|
+| Barrel vault with lunette, no-tension analysis | M. Monaco, I. Bergamasco, M. Betti, "A no-tension analysis for a brick masonry vault with lunette", *J. Mech. Mater. Struct.* 13(5) (2018) 703–714. Summary read: a rigid no-tension (Heyman) continuum model; the vault as a compression-only membrane between extrados and intrados; admissible stress field from a concave stress function; "particular attention" to singular stresses (line Dirac deltas) along the intersection curves | Verified (title, authors, summary); paper not read; primary | [K20] |
+| Load share between vault and door ring | no source gives a split | NOT FOUND | search |
+
+So the engine's assumption (vault spans to its end walls; door ring carries none of the vault) is
+consistent with the safe-theorem approach these papers use (any admissible compression field is
+safe), but the papers show the load concentrating along the intersection curve, i.e. onto the
+lunette's edge. That edge is the door ring here: the assumption is not confirmed and may be
+unconservative for the ring. Read [K20] in full before relying on it.
+
+### 11. Iron vs steel bands
+
+| Item | Text | Status | Source |
+|---|---|---|---|
+| Carbon steel yield at temperature, EN 1993-1-2 Table 3.1 k_y,θ | 1.00 to 400 °C, 0.93 at 450, 0.78 at 500, 0.63 at 550, 0.47 at 600, 0.33 at 650 °C (worked-example extract); 0.78 at 500 °C confirmed in a Dlubal example | Snippet (two secondary extracts agree; the standard not read) | [K21] |
+| SA-36 in ASME II-D Table 1A | upper temperature for SA-36 plate stated as 900 °F in a forum post; values not read; an NRC filing notes an edition (1974) printed SA-36 values in error, so the edition matters | Snippet | [K7], [K22] |
+| Wrought iron strength when hot | Fairbairn, as told by Pole: tensile resistance "as great at the temperature of zero as it was at 60° or upwards" (cold only). Kirkaldy (1862) tested room-temperature tensile strength; no hot data found | Snippet; no hot numbers | [K23] |
+| Creep of either at band temperature | none | NOT FOUND | |
+| Band temperature on a kiln's outside | none measured | NOT FOUND | |
+| Sizing and tightening | only FAO practice already in §2 (steel band, tighten after building and "regularly", replace corroded parts) | Verified (§2) | [K5] |
+
+Which is better: no source compares them for kilns. The only sourced number for either is the
+steel reduction (Snippet): full yield strength up to 400 °C. A band on the outside of a kiln wall
+is very likely below that, but no measured band temperature was found, so the engine cannot yet
+claim it. Usable once the standard is read: allowable = (yield at 20 °C) × k_y,θ / FoS, refusing above
+the tabulated range (ADR 0009); no FoS for a band was found.
+
+### 12. Other sources still unread
+
+HarbisonWalker *Modern Refractory Practice*, Heyman's two books, Hind (1937), ASME II-D: no free
+copies found this round. Bottle-oven chimney diameters: Stoke listing texts searched (Dolby Pottery,
+Uttoxeter Road, Falcon Works) describe shape only ("square base ... oval and then cylindrical at
+the top"), no dimensions [K24]. Refractory FoS: nothing new beyond §7.
+
+---
+
 ## Sources
 
 - [K1] "The Potteries Bottle Oven: Construction, their different parts, and who built them", bottleoven.blogspot.com (author not named on the page). https://bottleoven.blogspot.com/p/construction.html . Secondary; quotes Hanley Works Committee minutes (14 Feb 1877, extract by Paul Niblett) and Cardew, *A Pioneer Potter*.
@@ -157,3 +215,10 @@ fired brick is generally much greater than its crushing strength at higher tempe
 - [K15] Distribution International, "GREEN PATCH 421 55#". https://shop.distributioninternational.com/refractories/refractories-castable/recagp42155h (search extract).
 - [K16] FAO, as [K5], Appendix 3 "Building and operating the Argentine Half Orange Kiln", 2. Brickwork. https://www.fao.org/4/X5328e/x5328e0i.htm . Read.
 - [K17] Japan MLIT multilingual explanation database, "Tonbai Walls" and "Noborigama". https://www.mlit.go.jp/tagengo-db/en/R2-01934.html (search extract).
+- [K18] "Structural Analysis" (Scribd upload, unattributed), three-hinged parabolic arch at different levels. https://www.scribd.com/document/318257756/Structural-Analysis (search extract).
+- [K19] J. Heyman, *The Stone Skeleton* (Cambridge, 1995), "The masonry vault". https://resolve-he.cambridge.org/core/books/abs/stone-skeleton/masonry-vault/F8FED3C1C0FB0D34DF89CDE03A5E05C1 (abstract only).
+- [K20] M. Monaco, I. Bergamasco, M. Betti, "A no-tension analysis for a brick masonry vault with lunette", *Journal of Mechanics of Materials and Structures* 13(5), 2018, 703–714. https://msp.org/jomms/2018/13-5/p09.xhtml ; PDF https://msp.org/jomms/2018/13-5/jomms-v13-n5-p09-s.pdf (not read).
+- [K21] EN 1993-1-2:2005 Table 3.1 (not read). Extracts: Scribd "Calculation Examples" https://www.scribd.com/document/266876895/Calculation-Examples ; Dlubal knowledge base 001644 https://www.dlubal.com/en/support-and-learning/support/knowledge-base/001644 .
+- [K22] eng-tips, "Upper temp limit SA36" https://eng-tips.com/threads/upper-temp-limit-sa36.376573 (search extract; page 403); NRC ML20069J689 https://www.nrc.gov/docs/ML2006/ML20069J689.pdf (search extract).
+- [K23] W. Pole, *Life of Sir William Fairbairn*, ch. XXII, via Grace's Guide. https://www.gracesguide.co.uk/Life_of_Sir_William_Fairbairn_by_William_Pole:_Chapter_XXII (search extract). Kirkaldy (1862): https://en.wikipedia.org/wiki/David_Kirkaldy .
+- [K24] British Listed Buildings, Bottle oven at former Dolby Pottery. https://britishlistedbuildings.co.uk/101220666-bottle-oven-at-former-dolby-pottery-penkhull-and-stoke-ward (search extract).
