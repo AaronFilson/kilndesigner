@@ -529,15 +529,18 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   collection box, then the chimney.
 - Cone: salting starts at cone 9–10 (p.128).
 - Chamber (drawing): 5' long × 3' wide inside; 36" floor to crown; the arch comes down at the back to
-  18" (?) above the floor. "WIDTH CAN EXTEND TO 4 FEET WITH ADDED FLUES – AND ADJUSTMENT TO WOOD FIRE
+  18" above the floor (Checked on the page image, 2026-10-31). "WIDTH CAN EXTEND TO 4 FEET WITH ADDED FLUES – AND ADJUSTMENT TO WOOD FIRE
   BOX – STOKE BOTH SIDES". "An overall chamber length of at least 48in. (122cm) would help to even up
   the firing" (p.128).
 - Walls: "9" WALLS" (plan). Roof: arch with bracing on its front (drawing); span 3' (derived), rise
   and thickness not given.
-- Firebox: across the front, 12" (?) below the chamber floor; "BURNER OR STOKE HOLE"; bag wall in
-  front of it.
-- Inlet flues: gas 9" × 4½"; oil drip or wood 13½" × 4½"; three (?) drawn across the front.
-- Detail 1, gas: "2 GAS BURNERS PER FLUE", "MR 750 BURNERS", "4½" X 7" FLUES" (the 7 may be 9 (?));
+- Firebox: across the front, 12" below the chamber floor (Checked on the page image, 2026-10-31);
+  "BURNER OR STOKE HOLE"; bag wall in front of it.
+- Inlet flues: gas 9" × 4½"; oil drip or wood 13½" × 4½"; four openings drawn in the plan's front
+  wall (Checked on the page image, 2026-10-31; first read as three). `bowen-mountain.yaml` now has
+  eight burners, two per flue.
+- Detail 1, gas: "2 GAS BURNERS PER FLUE", "MR 750 BURNERS", "4½" X 7" FLUES" (the 7 reads clearly
+  on the page image, 2026-10-31, but the block beside it is drawn 9" × 4½": **Flagged**);
   an IFB block 9" × 4½" with two "2½" HOLES" for the burners.
 - Detail 2, oil: "DRIP PLATES", "13½" X 4½" FLUES".
 - Detail 3, wood: stoke hole 13½" wide and 13½" high; "4½" X 13½" FLUES"; "¾" ROD GRATE FULL WIDTH OF
@@ -1218,8 +1221,8 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Pages: p.153 (text, Fig 6-3); p.154 (text, Figs 6-4 to 6-7).
 - Fuel: heather and any brushwood. Draft: updraft. Still fired in the mid-1970s.
 - Chamber: about 5 ft (150 cm) in diameter (text). Fig 6-3 (drawing): 5' across the top; chamber 4'
-  tall ("pots never past top of kiln"); firebox 3½–4'; a "step"; firebox mouth 27" high × 22" (?)
-  wide (the second figure could be 28").
+  tall ("pots never past top of kiln"); firebox 3½–4'; a "step"; firebox mouth 27" high × 22"
+  wide (Checked on the page image, 2026-10-31).
 - Walls: granite rocks mortared together, 18 to 24 in (46 to 61 cm); firebox and chamber plastered
   with clay inside.
 - Floor: an umbrella floor of spokes on a central trunk over the firebox; shards fill the gaps.
@@ -1244,10 +1247,10 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Firing (p.155): about five hours to warm the firebox, then about six to seven hours; coals shoved
   into a pit under the chamber, so the chamber reaches 500 °F (260 °C) gradually.
 - Section, Fig 6-12 (drawing): setting height 5'; domed floor carried on the inlet flues; firebox 4'
-  long; 2' at the firebox entry (below the ground line (?)); 2'6" from the dome down to the pit floor
-  (?); "pit line (for coals and embers)".
+  long; 2' at the firebox entry, from the ground line down to the pit floor; 2'6" from the domed
+  floor's underside down to the pit floor (both Checked on the page image, 2026-10-31); "pit line (for coals and embers)".
 - Plan, Fig 6-12 (drawing): chamber 5' inside diameter; six rectangular inlet flues, one marked
-  4" × 4", the top pair 10" apart, plus a central round flue; a side opening "10–1?"" (unreadable); a
+  4" × 4", the top pair 10" apart, plus a central round flue; a side opening "10–1?"" (unreadable at 600 dpi, 2026-10-31); a
   note on the round flue diameters cut off at the page edge.
 - Roof: shards and saggar pieces piled in layers over the setting.
 - **Not given:** wall thickness; round-flue sizes; firebox width; temperature reached.
@@ -1275,10 +1278,11 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Layout (p.158): three equal cubes: a domed chamber, a sub-chamber below it (a cube less the floor
   arch, holding the inlet flues and also stacked with pots) and, in front, a firebox cube that is
   firing chamber and ash pit in one. No grates.
-- Fig 6-19 (drawing): chamber 8' × 8' I.D.; 6' high to where the dome starts (?); 9' to the dome crown;
+- Fig 6-19 (drawing): chamber 8' × 8' I.D.; 6' high to where the dome starts (the arrow ends at the dome's lower edge: Checked on the page
+  image, 2026-10-31); 9' to the dome crown;
   dome main flue 15" diameter; four corner flues 5"; walls 3–4' thick, partly buried; floor 13–15"
   thick at the centre; floor flues all 6" × 6", 35 in all; lower cube 8' × 8' I.D., heights 8' and
-  6'6"; firebox mouth 27" high × 18" wide; 3' (from the mouth sill down (?)).
+  6'6"; firebox mouth 27" high × 18" wide; 3' (from the mouth sill down; Checked on the page image, 2026-10-31).
 - Flues: the four corner dome flues are exit and control flues; close some to send heat to others,
   pull a plug over a cold area (p.158).
 - Firing, new kiln (pp.159–160): stacked "plumb full"; glazed target pots on the sub-chamber bag wall
@@ -1519,13 +1523,15 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Plan, Fig 5-4 (drawing): the user reads that the length isn't printed and has to be added up
   from the plan's parts (2026-10-29); the earlier reading was length "7'" (? could be 9'; 7 × 6.5 ×
   about 5.5 ft ≈ 250 ft³ fits the
-  text, derived); width 6'6"; walls 10" at the door end (?); door in one end wall; bag walls about 6"
+  text, derived); width 6'6"; walls 10" at the door end; door in one end wall; bag walls about 6"
   thick along the long sides, "6"" and "9"" from the wall at the end; "12 FLUE HOLES 6" X 6"" in three
   rows over three flue channels; one firebox mouth with a "REMOVABLE GRATE, 1" IRON ROD BUILT INTO
   WALL", the other "ARCHED"; each opening into the chamber 4' long, 2'6" wide at the outer mouth;
-  "30"" (?) at the outer wall; a 20" wide connection to the chimney with a damper (10" wall).
+  "30"" at the outer wall; a 20" wide connection to the chimney with a damper (10" wall). The 10"
+  (door end and chimney wall) and the 30" were checked on the page image, 2026-10-31; the length's
+  digit (7' or 9') is still not legible at 400 dpi.
 - Chimney: round, 3' inside diameter at the base, with an atmosphere damper; "CHIMNEY 20' TALL
-  TAPERING TO 15½"" (? last digit faint).
+  TAPERING TO 15½"" (Checked on the page image, 2026-10-31).
 - Flue areas (pp.131–132): floor exit flues 432 in² (0.28 m²), 12 × 6 × 6 in; inlet flues from the
   fireboxes about 500 in² (0.32 m²), "a bit larger"; damping the air when firing evens them.
 - Proposed redesign (Fig 5-5): 6 × 6 in flue holes in a 9" floor over channels 9–18" deep and 9" wide
@@ -1558,12 +1564,13 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   BETWEEN FIRE BOXES"; arched door; "OUTSIDE COAL PIT AREA (4' X 2')" at each firebox; "FLOOR EXIT FLUE
   HOLES 6" X 6" EVENLY SPACED", 12 drawn, 12" apart along the rows, 10" and 18" across (432 in²,
   derived); "FLUE CHANNEL 24" X 16"" to the chimney; chimney inside "24" X 24"". The chimney height and
-  damper note are unreadable ("LINED … 29' T…" (?)).
+  damper note are unreadable ("LINED … 29' T…" (?); "CHIMNEY … Approximately 2…", the rest washed
+  out at 500 dpi, 2026-10-31).
 - Section, Fig 5-11 (drawing): wall 5' floor to springline; dome rise 2' (about 7' to the crown,
   derived); cooling and vapour holes in the dome; floor 9" thick over a flue collection channel 12"
   deep; floor flue openings drawn 9" wide (the plan says 6" × 6"); firebox 24" wide inside with a 9"
   outer wall, 40" overall; heights 15" + 15" + 36" (which is which unclear); arched over; round grate
-  bars (four drawn); "STOKING HOLE 15" X 1?"" (13" or 23" (?)); "AIR SOURCE AND COAL ASH PIT 36" X 24""
+  bars (four drawn); "STOKING HOLE 15" X 1?"" (13" or 23" (?); still unreadable at 600 dpi, 2026-10-31); "AIR SOURCE AND COAL ASH PIT 36" X 24""
   (?).
 - Bag wall (p.134): no freestanding bag wall; the chamber wall is notched 9 in (23 cm) deep by 2 ft
   (61 cm) wide and 3 ft (91 cm) long at each firebox, with a firebox flue entrance of 15 × 24 in
@@ -1940,3 +1947,27 @@ Also not modelled: the kilns named only, listed under the index (Soldner's caten
 Flat Top, Geil, Rohde, Nabertherm, the corbel-arched kilns, Chien Yao, Seto, Cassel, Newcastle and
 Burlon Craig's kiln).
 
+
+## Unclear figures read again (2026-10-31)
+
+Each read on the page image (`kiln-reference.pdf`, 110–600 dpi). Settled rows are marked
+Checked on the page image, 2026-10-31, where they appear above.
+
+| Kiln, figure, page | Was | Reading | Settled? |
+|---|---|---|---|
+| Kato, Fig 5-4, p.131 | walls "10"" (?) at the door end and by the chimney | "10"" at both | yes |
+| Kato, Fig 5-4, p.131 | "TAPERING TO 15½"" (?) | "15½"" | yes |
+| Kato, Fig 5-4, p.131 | "30"" (?) at the outer wall | "30"" | yes |
+| Kato, Fig 5-4, p.131 | length "7'" (?) | the digit runs under an arrowhead: 7 or 9 | no |
+| Moveros, Fig 6-3, p.153 | mouth 22" (?) wide, maybe 28" | "22"" | yes |
+| Miravet, Fig 6-19, p.158 | 6' to where the dome starts (?) | the 6' arrow ends at the dome's lower edge | yes |
+| Miravet, Fig 6-19, p.158 | 3' from the mouth sill down (?) | the 3' arrow runs down from the 27" mouth | yes |
+| Singh low-fire, Fig 6-12, p.156 | 2' below the ground line (?); 2'6" dome to pit floor (?) | both arrows end on the pit floor; 2' from the ground line, 2'6" from the domed floor's underside | yes |
+| Singh low-fire, Fig 6-12, p.156 | side opening "10–1?"" | washed out at 600 dpi | no |
+| Singh coal, Fig 5-10, p.134 | chimney height "29' T…" (?) | "CHIMNEY … Approximately 2…", rest washed out at 500 dpi | no |
+| Singh coal, Fig 5-11, p.134 | "STOKING HOLE 15" X 1?"" ; "AIR SOURCE … 36" X 24"" (?) | not legible at 600 dpi | no |
+| Bowen Mountain, Fig 4-153, p.127 | arch down to 18" (?) at the back | "18"" | yes |
+| Bowen Mountain, Fig 4-153, p.127 | firebox 12" (?) below the floor | "12"" | yes |
+| Bowen Mountain, Fig 4-153, p.127 | three (?) inlet flues across the front | four openings drawn in the plan's front wall | yes: `bowen-mountain.yaml` goes from 6 to 8 burners |
+| Bowen Mountain, Fig 4-153, p.127 | "4½" X 7" FLUES" (7 may be 9) | "7"" reads clearly; the block is drawn 9" × 4½" | the reading, yes; it disagrees with the drawing (Flagged) |
+| Chappell, Fig 4-149, p.126 | second chamber "5½' TALL" (?) | "5'½" TALL" faint, the fraction not certain | no |

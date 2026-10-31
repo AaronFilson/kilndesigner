@@ -4,7 +4,7 @@
 # chamber and ash pit in one. The new kiln fired in 28 to 32 hours (p.159–160).
 #
 # From the book (Fig 6-19 unless noted): chamber 8 × 8 ft inside, 6 ft up to where the dome starts
-# (?) and 9 ft to its crown, so a 3 ft rise (derived); walls 3–4 ft thick, partly buried (3 ft
+# (the 6' arrow ends at the dome's lower edge; checked on the page image, 2026-10-31) and 9 ft to its crown, so a 3 ft rise (derived); walls 3–4 ft thick, partly buried (3 ft
 # used); floor 13–15 in thick at the centre (13½ in used: whole bricks); 35 floor flues, all 6 × 6
 # in; a 15 in main flue in the dome and four 5 in corner flues; the firebox mouth 27 in high and
 # 18 in wide; no grates (p.158); wood.
@@ -29,7 +29,7 @@ firing:
 chamber:
   width: 96 in
   depth: 96 in
-  height: 72 in # up to where the dome starts (?)
+  height: 72 in # up to where the dome starts (Fig 6-19)
   on_ground: true # partly buried, the chamber on the sub-chamber (Fig 6-19)
 roof:
   type: dome

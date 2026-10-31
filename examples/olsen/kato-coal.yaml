@@ -4,10 +4,11 @@
 #
 # From the book: the chamber 6 ft 6 in wide and 6 ft 6 in from the floor to the crown (Fig 5-4);
 # "approximately 250cu. ft (7cu. m)", fired "in over 50 hours to 2372F" (p.131, the hours read by
-# the user); walls 10 in (?) at the door end, the door in an end wall (Fig 5-4); two fireboxes, one
+# the user); walls 10 in at the door end, the door in an end wall (Fig 5-4); two fireboxes, one
 # each side, 2 ft 6 in wide at the outer mouth, each grate drawn 30 × 22 in, "5 sq ft" (Fig 8-18);
 # twelve 6 × 6 in floor exit flues (p.131); a round chimney 3 ft across inside at the base, 20 ft
-# tall, tapering to 15½ in (?) (Fig 5-4); coal; 2372 °F (p.131).
+# tall, tapering to 15½ in (Fig 5-4); coal; 2372 °F (p.131). The 10 in and 15½ in were checked on
+# the page image, 2026-10-31.
 # Assumed: the length isn't printed (the user: it would be added up from the plan's parts): 75 in
 # makes the chamber the printed 7 m³ with the arch below. The arch's rise and thickness aren't
 # printed (it is drawn thick): 9 in, the thickest
@@ -23,7 +24,7 @@
 # the firebox floors are below ground (Fig 5-4). Each firebox's length from its mouth isn't
 # printed: its grate's 22 in. The chimney stands at the back, opposite the door, its run from the
 # kiln an engine default (9 in). The spy holes and the air: engine defaults.
-# Not modelled: the back wall, by the chimney, is marked 10 in (?) too (Fig 5-4), but the engine
+# Not modelled: the back wall, by the chimney, is marked 10 in too (Fig 5-4), but the engine
 # gives it the side walls' 18 in; the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
 # 8 in apart; the flue channels under the floor and the collection box, and the floor's loss into
 # them and the ground; the 20 in connection to the chimney and its damper; the inlet flues from
@@ -52,7 +53,7 @@ lining:
       thickness: 18 in
   door:
     - material: firebrick-medium-duty-smithfield
-      thickness: 10 in # "10"" (?) at the door end
+      thickness: 10 in # "10"" at the door end (Fig 5-4)
   floor:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in
@@ -83,4 +84,4 @@ draft:
     inside:
       diameter: 36 in
     top:
-      diameter: 15.5 in # "15½" (?)
+      diameter: 15.5 in # "TAPERING TO 15½"" (Fig 5-4)
