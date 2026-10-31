@@ -26,6 +26,8 @@ export type FiringPoint = Schemas["FiringPoint"];
 export type WallHeatmap = Schemas["WallHeatmap"];
 export type SwitchOverChart = Schemas["SwitchOverChart"];
 export type SwitchPoint = Schemas["SwitchPoint"];
+export type SlowFiring = Schemas["SlowFiring"];
+export type SourcedFiring = Schemas["SourcedFiring"];
 
 export function createClient(baseUrl = "") {
   return createFetchClient<paths>({ baseUrl });

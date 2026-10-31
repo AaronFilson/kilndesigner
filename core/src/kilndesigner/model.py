@@ -378,6 +378,16 @@ class SprungArch(Spec):
             "Chambers in a row (chamber.chambers) have their arches along the draft already"
         ),
     )
+    front_springline: Length | None = Field(
+        default=None,
+        description=(
+            "With along: the arch's springline on the front wall, from the floor, where it isn't "
+            "the back wall's (the chamber's height), as Bowen Mountain's front springing reads "
+            "about 16 in to the back's 18 in (Fig 4-153). The arch is then the circle through "
+            "both springings with its crown the rise above the back's springline. Left out, it "
+            "springs level"
+        ),
+    )
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
@@ -385,6 +395,11 @@ class SprungArch(Spec):
             raise ValueError("springs on the tie rods need their spring_rate, from the listing")
         if self.along and self.tube:
             raise ValueError("a tube's vault spans the width: leave out along, or tube")
+        if self.front_springline is not None and not self.along:
+            raise ValueError(
+                "front_springline is for one chamber's arch along its depth (along): a level "
+                "arch's springings are the side walls' tops, the chamber's height"
+            )
         return self
 
 
@@ -1266,6 +1281,17 @@ class Kiln(Spec):
                 raise ValueError(
                     "chambers in a row have their arches along the draft already: leave out along"
                 )
+            if self.roof.front_springline is not None:
+                from kilndesigner.shape import uneven_refusal
+
+                front = si(self.roof.front_springline, "in")
+                if front <= 0:
+                    raise ValueError(
+                        "the arch's front springline must be above the floor, more than 0"
+                    )
+                why = uneven_refusal(span, rise, si(self.chamber.height, "in") - front)
+                if why is not None:
+                    raise ValueError(why)
             layers = len(self.lining.for_face("roof"))
             if self.roof.ring > layers:
                 raise ValueError(
@@ -1551,8 +1577,32 @@ class Kiln(Spec):
             # side wall rises from the springline at the ends to the crown mid-way (Bowen
             # Mountain, Fig 4-153): the door may reach up to it at both its jambs
             from kilndesigner.geometry import inside_top
+            from kilndesigner.vault import door_in_vault
 
-            top = min(inside_top(self, face, (across + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
+            u = across if face == "right" else -across  # along y
+            top = min(inside_top(self, face, (u + e) * 25.4) for e in (-w / 2, w / 2)) / 25.4
+            into = door_in_vault(self)
+            if into is None and sill + h > top + 1e-9 and door.head != "arch":
+                raise ValueError(
+                    f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "
+                    f"{top:.1f} in, into the vault: a door whose head rises into the vault is "
+                    "laid out arched (head: arch), its ring turned in the vault's edge. Lower it "
+                    "or arch it"
+                )
+            if into is not None:
+                if into.springing > min(into.jamb_tops) + 1e-9:
+                    raise ValueError(
+                        f"the door's jambs, {into.springing:g} in up to its springing, rise past "
+                        f"the vault's inside there, {min(into.jamb_tops):.1f} in: only its arched "
+                        "head may rise into the vault. Lower the door or narrow it"
+                    )
+                if into.cut >= into.vault_ring - 1e-9 or into.ring <= 0:
+                    raise ValueError(
+                        f"the door's head, {sill + h:g} in up, would cut through the vault's "
+                        f"{into.vault_ring:g} in ring: lower the door"
+                    )
+            if door.head == "arch":
+                top = math.inf  # the arched head is checked against the vault itself, above
         elif tube and face in ("left", "right"):
             # The door rises through the vault's springing, the vault turned as an arch over it
             # (Tamba, Figs 4-11, 4-15): its ring, laid as the vault's, stays under the crown

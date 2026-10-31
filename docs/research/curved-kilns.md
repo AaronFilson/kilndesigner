@@ -287,7 +287,7 @@ Checked on the page image.
 
 | Source | Quote | Status |
 |---|---|---|
-| Brick Industry Association, *Corbels* bulletin (2025), https://www.gobrick.com/media/file/BB%20Corbels_082025.pdf (p.2, citing TMS 402) | "The maximum projection of a single unit/course must not exceed the smaller of: One-half the nominal height of the unit; One-third the nominal thickness of the unit or wythe". Total projection also limited (formula, half the wall thickness per the search summary). | Sourced (per course); partial (total) |
+| Brick Industry Association, *Corbels* bulletin (2025), https://www.gobrick.com/media/file/BB%20Corbels_082025.pdf (p.2, citing TMS 402) | "The maximum projection of a single unit/course must not exceed the smaller of: One-half the nominal height of the unit; One-third the nominal thickness of the unit or wythe" (p.2). p.3: "The maximum projection of the entire corbel beyond the face of the wall must not exceed either: One-half the overall wall thickness for multi-wythe composite solid masonry; One-half the nominal unit thickness for walls with an air space". Nominal = specified size plus one mortar joint. Prescriptive only for **non-loadbearing** corbels (p.2). | Sourced (PDF text read 2026-10-31) |
 | Pitelka, in `door-headers.md` [H12] | A 9 in flue roofed by a corbel, "the third course projects 2 in each side". | Verified there |
 | Rhodes, in `door-headers.md` [H10] | "Corbel arches are not practical for openings more than about 18 inches across." | Excerpt there |
 | Olsen p.49 | Corbel arch up to 24 in; corbel roofs poor practice. | Checked on the page image |
@@ -312,7 +312,13 @@ kiln is an assumption the engine must state.
 - **Conical/dome brick shapes**: no maker's catalogue found; ASTM C909 (paywalled) covers only
   arch, wedge and key shapes.
 - **How far a course may lean before it needs a form** (layer 4 of the plan): no source found.
-- **Corbel limit at temperature**: only the ambient masonry rule (TMS 402) is sourced.
+- **Corbel limit at temperature**: only the ambient masonry rule (TMS 402) is sourced; the engine
+  (`corbel.py`) uses it as it stands and says so. With Rhodes's 6 in lintel brick on top, the
+  whole-corbel limit (half the wall) caps a corbel at 6 in + the wall's thickness: 15 in in a 9 in
+  wall, under Rhodes's 18 and Olsen's 24 in.
+- **Crossing-axis plans** (Fireworks, Church, Kanayama): Fig 7-2 dimensions only the fire zone's
+  diagonal; no arm widths, curve radii or vault sections for the two crossing tubes (Fig 7-1 is
+  undimensioned). Kanayama prints none at all.
 - **Castable makers' forming guidance**: only general release-agent and watertight-mould
   statements, from snippets; no maker's guide on sand or lath dome forms.
 - **Corbel kilns**: the book names them (p.49) but draws none; p.134 is a round dome.

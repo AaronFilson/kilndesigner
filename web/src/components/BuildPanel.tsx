@@ -11,6 +11,7 @@ import { FiringPanel } from "./FiringPanel";
 import { KilnViewer } from "./KilnViewer";
 import { Materials } from "./Materials";
 import { ReportView } from "./ReportView";
+import { SlowFiringPanel } from "./SlowFiringPanel";
 
 const DOWNLOADS: [string, string][] = [
   ["plans.pdf", "Plans (PDF)"],
@@ -86,7 +87,12 @@ function Built({ build, draft, onEdit }: { build: Build } & Editing) {
             <p className="muted">This build has no 3D model.</p>
           ))}
         {tab === "drawings" && <Drawings build={build} />}
-        {tab === "firing" && <FiringPanel simKey={build.key} />}
+        {tab === "firing" && (
+          <>
+            <FiringPanel simKey={build.key} />
+            <SlowFiringPanel simKey={build.key} />
+          </>
+        )}
         {/* A query that isn't run counts as pending, so a build without a report says so */}
         {needsReport(tab) && !hasReport(build) && <p className="muted">This build has no report.</p>}
         {needsReport(tab) && hasReport(build) && report.isPending && (

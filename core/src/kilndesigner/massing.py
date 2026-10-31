@@ -231,6 +231,19 @@ def _cavity(kiln: Kiln, run: Run, cell: Cell, r: float) -> Any:
     body = Pos(0, 0, (top - r) / 2) * Box(w + 2 * r, length, top + r)
     if isinstance(roof, CatenaryArch):
         return _parabola(w / 2 + r, run.height + r, length, -r)
+    if isinstance(roof, SprungArch) and cell.along and roof.front_springline is not None:
+        # Springing lower at one end (roof.front_springline): the box to the lower springline,
+        # and the circle through both springings over it, its centre off the middle
+        from kilndesigner.shape import along_arch
+
+        arch = along_arch(kiln, "mm")
+        low = run.height - max(arch.drop, 0.0)
+        body = Pos(0, 0, (low - r) / 2) * Box(w + 2 * r, length, low + r)
+        centre = run.height + arch.rise - arch.radius
+        vault = Cylinder(arch.radius + r, w + 2 * r).rotate(_axis("y"), 90)
+        top = run.height + arch.rise + r
+        above = Pos(0, 0, (low + top) / 2) * Box(w + 2 * r, length, top - low)
+        return body + ((Pos(0, arch.offset, centre) * vault) & above)
     if isinstance(roof, SprungArch):
         span = run.depth if cell.along else w
         rise = _roof_top(kiln, run)

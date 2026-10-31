@@ -7,6 +7,7 @@ Model units are millimetres; dimensions are labelled in the design's units.
 
 from __future__ import annotations
 
+import itertools
 import math
 from dataclasses import dataclass
 from typing import Literal
@@ -25,7 +26,7 @@ from kilndesigner.geometry import (
 )
 from kilndesigner.masonry import IN, LayerPlan
 from kilndesigner.model import CatenaryArch, Kiln
-from kilndesigner.rings import CLOSER, FAMILIES
+from kilndesigner.rings import CLOSER, FAMILIES, STRAIGHT
 from kilndesigner.round_masonry import RingPlan
 from kilndesigner.shape import CatenaryCurve
 from kilndesigner.units import si
@@ -598,12 +599,53 @@ def course_plan_svg(plan: LayerPlan, us: bool) -> str:
 SHAPE_TONES = ("#9a6fb0", "#5f8fc4", "#5ba88a", "#d1a23f")
 """Tapered shapes in a ring plan, tightest first; straights take the material's colour."""
 
+WEDGE_JOINTS = "wedge joints, filled with mortar"
+MORTAR_TONE = "#b8b2a7"
+
+
+def _mortar_course(
+    plan: RingPlan, order: list[str], cx: float, shift: float, tone: dict[str, str]
+) -> list[str]:
+    """One course of a mortar ring as it is laid (rings.straight_ring; Olsen p.45, Fig. 2-13):
+    each straight, or the closer, a rectangle whose inside face is a chord of the inside circle,
+    and between each two the wedge-shaped joint that opens behind them, drawn as its triangle.
+    ``shift`` turns the course by that part of a straight's angle."""
+    r, d = plan.inside_radius, plan.depth
+
+    def chord(shape: str) -> float:  # the angle a brick's inside face turns
+        length = plan.ring.length if shape == CLOSER and plan.ring.length else STRAIGHT * IN
+        return 2 * math.asin(length / (2 * r))
+
+    def at(radius: float, angle: float) -> tuple[float, float]:
+        return radius * math.cos(angle), radius * math.sin(angle)
+
+    def svg(pts: list[tuple[float, float]], fill: str) -> str:
+        points = " ".join(f"{cx + x:.2f},{-y:.2f}" for x, y in pts)
+        return f'<polygon points="{points}" fill="{fill}"/>'
+
+    bricks: list[tuple[tuple[float, float], ...]] = []
+    out: list[str] = []
+    b0 = shift * chord(FAMILIES["mortar"].straight)
+    for shape in order:
+        b1 = b0 + chord(shape)
+        mid = (b0 + b1) / 2
+        nx, ny = math.cos(mid), math.sin(mid)  # the chord's outward normal
+        p0, p1 = at(r, b0), at(r, b1)
+        q0, q1 = (p0[0] + d * nx, p0[1] + d * ny), (p1[0] + d * nx, p1[1] + d * ny)
+        bricks.append((p0, p1, q1, q0))
+        out.append(svg([p0, p1, q1, q0], tone[shape]))
+        b0 = b1
+    for (_, p1, q1, _), (_, _, _, q0) in itertools.pairwise([*bricks, bricks[0]]):
+        out.append(svg([p1, q1, q0], tone[WEDGE_JOINTS]))
+    return out
+
 
 def ring_plan_svg(plan: RingPlan, us: bool) -> str:
     """One ring of a round wall seen from above: every brick of an odd course and of an even one,
     which starts half a brick round so that the joints don't line up; a cut ring's courses are
-    stacked in line, so it shows one. Each brick's thick end is
-    on the outside circle and its thin end on the inside, laid in turn round the ring."""
+    stacked in line, so it shows one. A tapered or cut brick's thick end is on the outside circle
+    and its thin end on the inside, laid in turn round the ring; a mortar ring's straights are
+    drawn square, their inside faces on the curve, with the wedge joints open between them."""
     r_in, r_out = plan.inside_radius, plan.inside_radius + plan.depth
     family = FAMILIES[plan.series]
     thin = {t.name: t.thin * IN for t in family.tapers} | {family.straight: family.thick * IN}
@@ -620,7 +662,10 @@ def ring_plan_svg(plan: RingPlan, us: bool) -> str:
     size = 4 * r_out + gap
     font = size * 0.02
     stroke = size * 0.0008
-    legend = [(name, n) for name, n in plan.ring.counts if n]
+    legend = [(name, f"{n} {name}") for name, n in plan.ring.counts if n]
+    if plan.series == "mortar":  # the joints open behind the straights, drawn as they are
+        tone[WEDGE_JOINTS] = MORTAR_TONE
+        legend.append((WEDGE_JOINTS, WEDGE_JOINTS))
     vx, vy = -r_out - font, -(r_out + font * 3)
     vw, vh = size + 2 * font, 2 * r_out + font * (7 + 1.6 * len(legend))
     out = [
@@ -631,11 +676,14 @@ def ring_plan_svg(plan: RingPlan, us: bool) -> str:
     # kilns, electric especially, smooth walls matter more than staggered joints)
     staggered = (("Odd courses", 0.0), ("Even courses", 0.5))
     courses = (("Every course", 0.0),) if plan.series.startswith("cut") else staggered
+    mortared = plan.series == "mortar"
     for k, (label, shift) in enumerate(courses):
         cx = k * (2 * r_out + gap)
+        if mortared:
+            out += _mortar_course(plan, order, cx, shift, tone)
         step = 2 * math.pi / len(order)  # round the outside, every brick shows its thick end
         inner = 0.0
-        for j, shape in enumerate(order):
+        for j, shape in enumerate([] if mortared else order):
             a0, a1 = (j + shift) * step, (j + 1 + shift) * step
             b0 = (inner + shift * thin[order[0]]) / inner_total * 2 * math.pi
             inner += thin[shape]
@@ -655,14 +703,14 @@ def ring_plan_svg(plan: RingPlan, us: bool) -> str:
         )
     out.append("</g>")
     y = r_out + font * 2.5
-    for name, n in legend:
+    for name, text in legend:
         out.append(
             f'<rect x="{-r_out:.2f}" y="{y - font * 0.8:.2f}" width="{font:.2f}" '
             f'height="{font:.2f}" fill="{tone[name]}" stroke="#222" stroke-width="{stroke:.2f}"/>'
         )
         out.append(
             f'<text x="{-r_out + font * 1.5:.2f}" y="{y:.2f}" font-size="{font:.2f}" '
-            f'font-family="sans-serif" fill="#444">{escape(f"{n} {name}")}</text>'
+            f'font-family="sans-serif" fill="#444">{escape(text)}</text>'
         )
         y += font * 1.6
     out.append(
