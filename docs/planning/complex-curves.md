@@ -54,7 +54,12 @@ simplification is written into the example's notes:
    not found (HarbisonWalker's *Modern Refractory Practice* is borrow-only on the Archive, not
    read); mortar density found (BNZ: 116–131 lb/ft³, 200–400 lb per 1000 brick), so wedge-joint
    mortar can go on the bill by weight; no largest joint for tatami bricks ("keep the joints
-   thin", FAO, no number).
+   thin", FAO, no number). Third round (`blocked-items.md` §13–14): dome bricks now sourced from
+   Norton, *Refractories* (1949) pp. 730–732: Table 155 radial dome brick for 9 in domes (inside
+   radius 4 to 40 ft) and a ring-by-ring count of straights, No. 1 wedges and No. 1 keys (worked
+   example: 10 ft radius, 60°, 1,230 nine-inch equivalents); mortar per 1000 9 in brick from
+   HarbisonWalker (2008): 250–300 lb dipped, 350–450 lb trowelled, 55 lb sacks; heat-setting wants
+   thin dipped joints, air-setting "somewhat thicker". HW's *Modern Refractory Practice* still unread.
 5. **Statics.** For a revolved shell (bottle domes, round domes): membrane theory or a thrust
    network, the hoop tension at the base carried by a band or the wall (the existing sliced-dome
    and band logic generalised). For a vault of changing section: Heyman's thrust-line method at
@@ -68,6 +73,14 @@ simplification is written into the example's notes:
    Second round (`blocked-items.md` §9–12): no hot factor for rampant arches; a vault-with-lunette
    no-tension paper (Monaco et al. 2018) to read for door heads in vaults; steel keeps full yield
    to 400 °C per EN 1993-1-2 (Snippet only), no hot wrought-iron data, no band temperature.
+   Third round (`bands-and-bottle-kilns.md`, `blocked-items.md` §15–16): the band check is
+   unblocked: EN 1993-1-2 Table 3.1 now Verified (k_y,θ 1.0 to 400 °C, 0.78 at 500, 0.47 at 600),
+   Norton's "factor of safety of at least 5" for a dome's tension band, HW's 12,000 psi; historic
+   hot tests of wrought iron and steel (Kent 1916) give iron no advantage. Still open: the band's
+   measured temperature on a brick kiln, long-term creep, a hovel's top diameter (secondary chamber
+   sizes 11–20 ft and one 60 ft × 33 ft 3 in hovel found), and a general hot bearing allowable
+   (Norton gives a creep-based method only). Concrete under the kiln: EN 1992-1-2 strength and
+   conductivity tables and ACI 349's 150/200 °F limits (as quoted by the NRC).
 6. **The form.** Shapes edited in the web form by choices first (teardrop, oval, bottle, crossing
    axes), with point editing later (the "drag to stretch" milestone).
 
