@@ -10,6 +10,9 @@ import {
   type Fire,
   type Firebox,
   type FireboxPosition,
+  FURNITURE,
+  type FurnitureMaterial,
+  freshSetting,
   fromMm,
   type Gas,
   joinQuantity,
@@ -1082,6 +1085,178 @@ const DEFAULT_GAS: Gas = {
   reduction: true,
 };
 
+const furnitureOptions = FURNITURE.map((m): [FurnitureMaterial, string] => [
+  m,
+  { mullite: "Mullite", "silicon-carbide": "Silicon carbide", cordierite: "Cordierite" }[m],
+]);
+
+function Whole({
+  label,
+  value,
+  min,
+  onChange,
+}: {
+  label: string;
+  value: number | undefined;
+  min: number;
+  onChange: (value: number | undefined) => void;
+}) {
+  return (
+    <Field label={label}>
+      <input
+        type="number"
+        min={min}
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))}
+      />
+    </Field>
+  );
+}
+
+/** The setting: the shelves and posts the engine weighs, and the ware as a multiple of them
+ * (furniture.py). A design with a single ware weight keeps it until the setting is described. */
+function SettingFields({
+  doc,
+  change,
+  onChange,
+}: {
+  doc: KilnDocument;
+  change: Change;
+  onChange: (document: KilnDocument) => void;
+}) {
+  const setting = doc.firing.setting;
+  const posts = setting?.posts;
+  return (
+    <>
+      <Choice
+        label="Ware for the firing simulation"
+        value={setting ? "setting" : doc.firing.ware ? "weight" : "none"}
+        options={[
+          ["none", "None: an empty kiln"],
+          ["weight", "A weight, as given"],
+          ["setting", "Shelves and posts, weighed"],
+        ]}
+        onChange={(v) => {
+          const { ware: _w, setting: _s, ...firing } = doc.firing;
+          if (v === "setting") onChange(setIn(doc, ["firing"], { ...firing, setting: freshSetting() }));
+          else if (v === "weight") onChange(setIn(doc, ["firing"], { ...firing, ware: "0 lb" }));
+          else onChange(setIn(doc, ["firing"], firing));
+        }}
+      />
+      {doc.firing.ware !== undefined && !setting && (
+        <Quantity
+          label="Ware and furniture"
+          value={doc.firing.ware}
+          units={["lb", "kg"]}
+          onChange={(v) => change(["firing", "ware"], v)}
+        />
+      )}
+      {setting && (
+        <>
+          <Quantity
+            label="Shelf length"
+            value={setting.shelves.length}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "length"], v)}
+          />
+          <Quantity
+            label="Shelf width"
+            value={setting.shelves.width}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "width"], v)}
+          />
+          <Quantity
+            label="Shelf thickness"
+            value={setting.shelves.thickness}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "thickness"], v)}
+          />
+          <Choice
+            label="Shelf material"
+            value={setting.shelves.material}
+            options={furnitureOptions}
+            onChange={(v) => change(["firing", "setting", "shelves", "material"], v)}
+          />
+          <Whole
+            label="Shelves a layer"
+            value={setting.shelves.per_layer}
+            min={1}
+            onChange={(v) => change(["firing", "setting", "shelves", "per_layer"], v)}
+          />
+          <Whole
+            label="Layers of shelves"
+            value={setting.shelves.layers}
+            min={1}
+            onChange={(v) => change(["firing", "setting", "shelves", "layers"], v)}
+          />
+          <Field label="Posts">
+            <input
+              type="checkbox"
+              checked={posts !== undefined}
+              onChange={(e) =>
+                change(
+                  ["firing", "setting", "posts"],
+                  // No source gives a post's size: the user's own, so the fields start blank
+                  e.target.checked ? { material: "mullite" } : undefined,
+                )
+              }
+            />
+          </Field>
+          {posts && (
+            <>
+              <Quantity
+                label="Post width"
+                value={posts.width}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "width"], v)}
+              />
+              <Quantity
+                label="Post depth"
+                value={posts.depth}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "depth"], v)}
+              />
+              <Quantity
+                label="Post height"
+                value={posts.height}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "height"], v)}
+              />
+              <Choice
+                label="Post material"
+                value={posts.material}
+                options={furnitureOptions}
+                onChange={(v) => change(["firing", "setting", "posts", "material"], v)}
+              />
+              <Whole
+                label="Posts a layer"
+                value={posts.per_layer}
+                min={1}
+                onChange={(v) => change(["firing", "setting", "posts", "per_layer"], v)}
+              />
+            </>
+          )}
+          <Field label="Ware's weight over the setting's (6–8)">
+            <input
+              type="number"
+              min={6}
+              max={8}
+              step="any"
+              value={setting.ware_ratio ?? 7}
+              onChange={(e) =>
+                change(
+                  ["firing", "setting", "ware_ratio"],
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+            />
+          </Field>
+        </>
+      )}
+    </>
+  );
+}
+
 export function DesignForm({
   document: doc,
   library,
@@ -1153,6 +1328,7 @@ export function DesignForm({
           units={TEMPERATURE}
           onChange={(v) => change(["firing", "top_temperature"], v)}
         />
+        <SettingFields doc={doc} change={change} onChange={onChange} />
       </Section>
 
       <Section title="Chamber (inside)">

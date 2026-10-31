@@ -374,6 +374,69 @@ class Ramp(Spec):
         return self
 
 
+class Shelves(Spec):
+    """The kiln shelves in a full setting."""
+
+    length: Length
+    width: Length
+    thickness: Length
+    material: str = Field(
+        description="mullite, silicon-carbide or cordierite: the shelves Olsen weighs (p.33–35)"
+    )
+    per_layer: int = Field(ge=1, description="Shelves in each layer")
+    layers: int = Field(ge=1, description="Layers of shelves")
+
+    @model_validator(mode="after")
+    def _weighable(self) -> Shelves:
+        from kilndesigner.furniture import density_lb_in3
+
+        density_lb_in3(self.material)  # refuses a material with no sourced density
+        return self
+
+
+class Posts(Spec):
+    """The posts under each layer of shelves."""
+
+    width: Length
+    depth: Length
+    height: Length
+    material: str = Field(description="mullite, silicon-carbide or cordierite, as the shelves")
+    per_layer: int = Field(ge=1, description="Posts under each layer of shelves")
+
+    @model_validator(mode="after")
+    def _weighable(self) -> Posts:
+        from kilndesigner.furniture import density_lb_in3
+
+        density_lb_in3(self.material)
+        return self
+
+
+class Setting(Spec):
+    """The kiln furniture in a full setting, and the ware as a multiple of its weight."""
+
+    shelves: Shelves
+    posts: Posts | None = None
+    ware_ratio: float = Field(
+        default=7.0,
+        description=(
+            "The ware's weight over the setting's (shelves and posts): 6 to 8, from the author; "
+            "7 by default"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _ratio_in_range(self) -> Setting:
+        from kilndesigner.furniture import WARE_RATIO, WARE_RATIO_SOURCE
+
+        low, high = WARE_RATIO
+        if not low <= self.ware_ratio <= high:
+            raise ValueError(
+                f"the ware's ratio to the setting must be {low:g} to {high:g} "
+                f"({WARE_RATIO_SOURCE}); {self.ware_ratio:g} is outside the range checked"
+            )
+        return self
+
+
 class Firing(Spec):
     """The hottest the kiln must reach: a cone, a temperature, or both (the temperature wins)."""
 
@@ -397,9 +460,21 @@ class Firing(Spec):
     ware: Mass | None = Field(
         default=None, description="Ware and kiln furniture set in the kiln, for the simulation"
     )
+    setting: Setting | None = Field(
+        default=None,
+        description=(
+            "The shelves and posts, weighed by the engine, and the ware as a multiple of them: "
+            "instead of a single ware weight"
+        ),
+    )
 
     @model_validator(mode="after")
     def _one_target(self) -> Firing:
+        if self.ware is not None and self.setting is not None:
+            raise ValueError(
+                "give the firing a ware weight or a setting to weigh, not both: the setting "
+                "works out the weight the ware gives"
+            )
         if self.cone is None and self.top_temperature is None:
             raise ValueError("give the firing a cone or a top_temperature")
         if self.cone is not None:
@@ -927,6 +1002,23 @@ class Kiln(Spec):
                 f"a floor inside the walls sits in their lowest {FLOOR_COURSE_IN:g} in course, so "
                 f"it can be at most {FLOOR_COURSE_IN:g} in thick; this one is {floor:g} in"
             )
+
+    @model_validator(mode="after")
+    def _a_setting_that_fits(self) -> Kiln:
+        setting = self.firing.setting
+        if setting is None:
+            return self
+        sh = setting.shelves
+        layer = si(sh.thickness, "in") + (
+            si(setting.posts.height, "in") if setting.posts is not None else 0.0
+        )
+        stack, height = sh.layers * layer, si(self.chamber.height, "in")
+        if stack > height + 1e-9:
+            raise ValueError(
+                f"{sh.layers} layers of shelves, each {layer:g} in with its posts, stand "
+                f"{stack:g} in high: more than the chamber's {height:g} in"
+            )
+        return self
 
     @model_validator(mode="after")
     def _a_roof_it_can_build(self) -> Kiln:

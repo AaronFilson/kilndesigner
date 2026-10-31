@@ -22,7 +22,13 @@ export interface KilnDocument {
   schema?: number;
   name: string;
   units?: "us" | "metric";
-  firing: { cone?: string; final_rate?: 60 | 100 | 150 | 600; top_temperature?: string };
+  firing: {
+    cone?: string;
+    final_rate?: 60 | 100 | 150 | 600;
+    top_temperature?: string;
+    ware?: string;
+    setting?: Setting;
+  };
   chamber: {
     shape?: "box" | "round";
     width: string;
@@ -180,6 +186,44 @@ export interface Gas {
     | { type: "line"; pressure?: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
+}
+
+/** Kiln furniture Olsen weighs (p.33–35): the materials a setting can be made of. */
+export const FURNITURE = ["mullite", "silicon-carbide", "cordierite"] as const;
+export type FurnitureMaterial = (typeof FURNITURE)[number];
+
+/** The shelves and posts in a full setting; the engine weighs them (furniture.py). */
+export interface Setting {
+  shelves: {
+    length?: string;
+    width?: string;
+    thickness?: string;
+    material: FurnitureMaterial;
+    per_layer?: number;
+    layers?: number;
+  };
+  posts?: {
+    width?: string;
+    depth?: string;
+    height?: string;
+    material: FurnitureMaterial;
+    per_layer?: number;
+  };
+  ware_ratio?: number;
+}
+
+/** The setting a form starts from: one 12 × 24 × 1 in mullite shelf, no posts. */
+export function freshSetting(): Setting {
+  return {
+    shelves: {
+      length: "24 in",
+      width: "12 in",
+      thickness: "1 in",
+      material: "mullite",
+      per_layer: 1,
+      layers: 1,
+    },
+  };
 }
 
 /** "22.5 in" → [22.5, "in"]; the API writes temperatures as "70 °F". */

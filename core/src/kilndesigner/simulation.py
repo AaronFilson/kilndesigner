@@ -36,6 +36,7 @@ from kilndesigner.combustion import (
     available_heat_fraction,
 )
 from kilndesigner.combustion import SOURCE as COMBUSTION_SOURCE
+from kilndesigner.furniture import setting_weight
 from kilndesigner.heatloss import EMISSIVITY, GROUND_SOURCE, SOIL_K, top_temperature
 from kilndesigner.model import Kiln, Ramp
 from kilndesigner.shape import chamber_shape
@@ -377,7 +378,12 @@ def simulate(
     working += supply_steps
     faces = build_faces(kiln)
     t_air = si(kiln.site.ambient, "K")
-    ware_kg = si(kiln.firing.ware, "kg") if kiln.firing.ware is not None else 0.0
+    setting_steps: list[Step] = []
+    if kiln.firing.setting is not None:
+        furniture_kg, ware_only_kg, setting_steps = setting_weight(kiln.firing.setting)
+        ware_kg = furniture_kg + ware_only_kg
+    else:
+        ware_kg = si(kiln.firing.ware, "kg") if kiln.firing.ware is not None else 0.0
     ware_cap = ware_kg * WARE_CP
     e_price = (
         si(kiln.site.electricity_price, "USD/kWh")
@@ -594,10 +600,11 @@ def simulate(
         ),
     ]
     if ware_kg:
+        working += setting_steps
         working.append(
             Step(
                 name="Ware and furniture",
-                value=show(kiln.firing.ware, "lb" if us else "kg"),  # pyright: ignore[reportArgumentType]
+                value=show(Q_(ware_kg, "kg"), "lb" if us else "kg"),
                 inputs={"specific heat": f"{WARE_CP:g} J/(kg·K)"},
                 reference=WARE_SOURCE,
                 note="Lumped at the chamber's temperature; fired clay's room-temperature c_p.",

@@ -286,6 +286,52 @@ describe("DesignForm, the kiln", () => {
   });
 });
 
+describe("DesignForm, the setting", () => {
+  it("weighs the ware as given, or as shelves and posts the engine weighs", () => {
+    const last = live(electric);
+    expect(field("Ware for the firing simulation").value).toBe("none");
+    set("Ware for the firing simulation", "weight");
+    set("Ware and furniture", "300");
+    expect(last().firing.ware).toBe("300 lb");
+    set("Ware for the firing simulation", "setting");
+    expect(last().firing.ware).toBeUndefined();
+    expect(last().firing.setting?.shelves.material).toBe("mullite");
+    set("Shelf length", "20");
+    set("Shelf width", "10");
+    set("Shelf thickness", "0.75");
+    set("Shelf material", "cordierite");
+    set("Shelves a layer", "4");
+    set("Layers of shelves", "3");
+    set("Layers of shelves", "");
+    set("Layers of shelves", "4");
+    fireEvent.click(screen.getByLabelText("Posts"));
+    set("Post width", "1.5");
+    set("Post depth", "1.5");
+    set("Post height", "6");
+    set("Post material", "silicon-carbide");
+    set("Posts a layer", "3");
+    set("Ware's weight over the setting's (6–8)", "6");
+    expect(last().firing.setting).toEqual({
+      shelves: {
+        length: "20 in",
+        width: "10 in",
+        thickness: "0.75 in",
+        material: "cordierite",
+        per_layer: 4,
+        layers: 4,
+      },
+      posts: { material: "silicon-carbide", width: "1.5 in", depth: "1.5 in", height: "6 in", per_layer: 3 },
+      ware_ratio: 6,
+    });
+    set("Ware's weight over the setting's (6–8)", "");
+    expect(last().firing.setting?.ware_ratio).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Posts"));
+    expect(last().firing.setting?.posts).toBeUndefined();
+    set("Ware for the firing simulation", "none");
+    expect(last().firing.setting).toBeUndefined();
+  });
+});
+
 describe("DesignForm, loading", () => {
   it("loads through a door in a wall, hinged in an electric kiln, or a car with its hardware's cost", () => {
     const last = live(electric);
