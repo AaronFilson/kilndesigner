@@ -106,7 +106,17 @@ simplification is written into the example's notes:
    Open: Tamba's door size (Fig 4-15 unreadable); Bowen's door height (not printed, 27 in
    assumed); a tube whose section itself changes (Tamba's segments stepping up the slope,
    Fig 4-16) waits for printed sizes.
-6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow.
+6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow. Done as far
+   as they allow, 2026-10-31. Corbels (`corbel.py`): laid out over a span (courses stepped in
+   until one brick bridges the rest, Rhodes's 6 in), each step against TMS 402's min(h/2, d/3) and
+   the whole against half the wall (BIA's Corbels brief, PDF read), refused past Olsen's 24 in,
+   flagged past Rhodes's 18 in; its stepped section and course count given. Not yet a roof type
+   of the design file: that touches every roof consumer and no built kiln of Olsen's is corbelled.
+   Crossing axes: blocked on the sources. Fig 7-2 gives only the fire zone (9 ft, "diagonal" in the
+   figure, "both directions" in the text) and Fig 7-1 is an undimensioned sketch of two tubes in a
+   groin; no arm widths, curve radii or tube sections. `fireworks-edmonton` stays a dome over its
+   9 × 9 ft fire zone (builds, no failed checks); `kanayama-multi` prints no fire-zone size and
+   stays unmodelled.
 
 ## Open questions
 
