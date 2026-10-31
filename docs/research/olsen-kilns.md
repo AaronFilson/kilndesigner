@@ -87,7 +87,7 @@ Data classes in the index:
 | `meaders-cheever` | Cheever Meaders's groundhog, Mossy Creek, Georgia | 112–113 | wood | cross-draft | half-cylinder | 48" to crown, 12' long | partial |
 | `hart-square` | Hart Square groundhog (Kim Ellington, 1987), Vale, NC | 112–113 | wood | cross-draft | half-cylinder | not given | none |
 | `ellington-new-hog` | Kim Ellington's "new hog" | 114–115 | wood (salt) | cross-draft | half-cylinder, tapering to the chimney | 24' overall, 10' wide | partial |
-| `meaders-david` | David Meaders's groundhog | 115 | wood | cross-draft | half-cylinder | 5' × 6' (?), 30" to crown | full |
+| `meaders-david` | David Meaders's groundhog | 115 | wood | cross-draft | half-cylinder | 5' × 6', 30" to crown | full |
 | `hollyweird` | Olsen's Hollyweird Tube, 1985 | 116–117, 124, 194 | wood | cross-draft | two chambers in a tube | about 249 in to the chimney (derived) | partial |
 | `gulgong-racer` | Olsen's Gulgong racer, Australia | 76, 118–121 | wood | cross-draft (groundhog) | cast dome | 106 cu ft; stacking 5 × 5 × 3½ ft | partial |
 | `hohr-2003` | Anagama-style and fast-fire kilns, Höhr-Grenzhausen, 2003 | 122–123 | wood | cross-draft and downdraft | cast dome | not given | none |
@@ -1017,10 +1017,11 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 
 - Pages: p.112 (Figs 4-86 to 4-89); p.113 (text).
 - Fuel: wood. Draft: cross-draft, shallow-firebox groundhog. His last kiln (Fig 4-87).
-- Fig 4-89 (drawing, view from the chimney end): floor to crown 48"; a central post or opening 30"
-  high (?); "FLUE HOLES – 5 x 9 – TOTAL 6" in the back wall; "18"–20"" (?) along the flue row; width 5'
-  (?) across the base at that end; length 12' along the arch; walls "RUBBLE BRICK"; chimney top "2'"
-  (?) and "1'" (?).
+- Fig 4-89 (drawing, view from the chimney end): floor to crown 48"; a central T-shaped post, 30"
+  from the floor to the underside of its top; "FLUE HOLES – 5 x 9 – TOTAL 6" in the back wall;
+  "18"–20"" along the flue row; width 5' across the base at that end (the 30", 18"–20" and 5'
+  Checked on the page image, 2026-10-31); length 12' along the arch; walls "RUBBLE BRICK"; chimney top "2'"
+  (?) and "1'" (?) (cut at the page edge, 2026-10-31).
 - **Not given:** firebox; full width (if 5' isn't it); chimney height; wall thickness.
 
 ### `hart-square`: Hart Square groundhog, Vale, North Carolina, 1987
@@ -1059,9 +1060,10 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 
 - Page: p.115 (text, Figs 4-105 to 4-107). Adapted from his grandfather Cheever Meaders's design.
 - Fuel: wood. Draft: cross-draft (groundhog).
-- Fig 4-105 (drawing): ware chamber 5' wide, 6' long (? the "6'" runs along the side from the
+- Fig 4-105 (drawing): ware chamber 5' wide, 6' long (the "6'" runs along the side from the
   firebox wall to the back); 30" floor to crown; firebox 4' long (front arch to the low wall); low
-  firebox (bag) wall 18" high (?); door (dashed) in the front arch.
+  firebox (bag) wall, "18"" printed beside it (the 6' and 18" Checked on the page image,
+  2026-10-31); door (dashed) in the front arch.
 - Flues: inlet flue box drawn 9 × 4½ (in); exit flue box drawn 7½ (?) × 4½ (in). Counts not stated.
 - Chimney: 8' tall, "9" INSIDE" (presumably 9 × 9 in).
 - **Not given:** wall and arch thickness; flue counts; grate; ash pit; cone; firing time.
@@ -1084,8 +1086,8 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   18" step; second chamber ware platform 55"; 9" grate; 6" step; back ware platform 66"; chimney
   inside "15 X 24". Shelves drawn 12 × 24 (in), one 12 × 18 (?). About 249 in (20¾ ft) to the
   chimney (derived). The caption list and the figure labels swap the numbers 4-109 and 4-110.
-- Fig 4-108 (sketch): "12'" and "8'" along the two chambers; "55" (?) and "10" (?) at the far end,
-  meaning unclear.
+- Fig 4-108 (sketch): "12'" and "8'" along the two chambers; "55" (Checked on the page image,
+  2026-10-31; no unit mark) and "10" (?, faint) at the far end, meaning unclear.
 - Front firebox (p.117): the ash pit is the walkway into the chamber, so the grate bars come out
   after every firing; bars ¾ in (2 cm) apart, spaced with broken shelf and wedged with wadding. One
   inlet flue 15 × 18 in (38 × 46 cm); one stoke hole 9 × 13½ in (23 × 34.5 cm) in the door bricking;
@@ -1152,11 +1154,12 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   grate; chimney at the back.
 - Fig 4-140, "ALL DIMENSIONS ARE INTERIOR MEASUREMENTS". Plan: front (firebox) width 39"; grate 15"
   wide at the front centre; widest 51½" (? faint); 48" wide at a station 33" further back; then 16"
-  (?) wide, 12" further on 12" wide, then 19" to the end (last width unreadable).
+  wide (Checked on the page image, 2026-10-31), 12" further on 12" wide, then 19" to the end (last width unreadable).
 - Elevation: inside length 9'9"; front height 35½" (?); stoke hole 9" high, its sill 14" above the
   floor; ash pit 12" deep below the floor, 24" long; side door 37" high × 33" wide, its far jamb 48"
   from the chimney wall; height 35" at 24" in front of the chimney wall; exit opening 12" high under
-  a 13" block; 8" + 11" (?) = 19" to the back at the base.
+  a 13" block; 8" + 11" = 19" to the back at the base (the 11" faint, but the printed 19" below agrees:
+  Checked on the page image, 2026-10-31).
 - Chimney: "only 9 x 9in./23 x 23cm square", which Olsen notes fires well (p.124); passive damper
   2½ × 4 (in); marks from the floor 16", 24", 33", 15" (?) up to a damper slot (faint).
 - Walls and roof: double side walls (caption 4-144); buttressed with stones and concrete (4-145); a
