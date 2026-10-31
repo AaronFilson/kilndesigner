@@ -1752,6 +1752,20 @@ export function DesignForm({
           );
         })}
         <Choice
+          label="Tapered brick shapes"
+          value={doc.lining.shapes ?? "olsen"}
+          options={[
+            ["olsen", "The simpler shapes, as in Olsen's tables"],
+            ["apg", "A.P. Green's full set, with the No. 1-X wedge"],
+          ]}
+          onChange={(v) => change(["lining", "shapes"], v === "olsen" ? undefined : v)}
+        />
+        <p className="muted section-note">
+          The arches and rings are turned from these. Most studio potters keep to the simpler
+          shapes; A.P. Green's set adds the No. 1-X wedge for gentle 9 in arches and the 3 in
+          series' No. 4 arch and No. 1 wedge (Firebrick Shapes, p.96, p.98).
+        </p>
+        <Choice
           label="Outside finish"
           value={doc.shell?.finish ?? "oxidised_steel"}
           options={[

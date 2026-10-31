@@ -394,7 +394,19 @@ the next round are in [10-30-26.md](10-30-26.md).
 See [10-30-26.md](10-30-26.md): the author's castable version to the solver's firing targets, a
 faster solver, A.P. Green's tables (being scanned) into the research, bottle kilns and
 conical-brick domes, sourced fast-firing limits for ware, then Calimpong's leftovers, the unclear
-values and M7.
+values and M7. Round 5 is queued there: the A.P. Green scans are in (`docs/research/brick-shapes/`),
+and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a ware limit.
+
+### Status (2026-10-30, round 5)
+
+- **A.P. Green's catalogue** is transcribed (`docs/research/brick-shapes.md`) and its tables are
+  tests: 681 complete circles and 551 sprung-arch courses, the engine within a brick of each.
+- **Tapered shapes** are a design setting (`lining.shapes`), Olsen's simpler set by default, A.P.
+  Green's full set (No. 1-X wedge, 3 in No. 4 arch and No. 1 wedge) as an option, in the form too.
+- **A smoke firebox** (`fire.purpose: smoke`, Olsen Fig. 9-25) for reducing an electric or gas
+  kiln: no heat rules, Olsen's sizes, the element-life note.
+- **Firing time** is the user's choice, not limited by ware (the author).
+- Blocked: conical-brick domes (complex curves step 4) have no dome-brick source yet.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce

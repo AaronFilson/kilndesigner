@@ -8,7 +8,7 @@ import pytest
 
 from kilndesigner import Kiln, load_design, parse_design
 from kilndesigner.library import materials
-from kilndesigner.model import Ramp
+from kilndesigner.model import Fire, Ramp
 from kilndesigner.results import heatmap, read_summary, series, write_run
 from kilndesigner.simulation import (
     SimulationError,
@@ -361,3 +361,13 @@ def test_results_round_trip_through_parquet(electric: Kiln, tmp_path: Path) -> N
     assert hm.min_c == pytest.approx(21.1, abs=0.1)
     assert hm.max_c > 1200
     assert hm.layers[0][0] == "ifb-jm26"
+
+
+def test_a_smoke_firebox_adds_no_heat_so_the_kiln_still_fires() -> None:
+    """Olsen p.250: the smoke firebox is 'not to add heat', so the elements' firing is simulated."""
+    kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
+    box = {"position": "back", "width": "9 in", "length": "18 in"}
+    fire = Fire.model_validate({"purpose": "smoke", "fireboxes": [box]})
+    smoked = kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": fire})})
+    plain = simulate(kiln, dt=600, record=False).result
+    assert simulate(smoked, dt=600, record=False).result.reached_c == pytest.approx(plain.reached_c)

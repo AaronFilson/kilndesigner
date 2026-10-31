@@ -265,7 +265,7 @@ def heat_supply(
     ``gas_from_c`` lights a hybrid's burners below its hand-over (both on together).
     ``element_w`` is the element design's installed power when the caller has it already (the
     solver, which fires the same kiln many times)."""
-    if kiln.heat.fire is not None:
+    if kiln.heat.fire is not None and kiln.heat.fire.purpose == "heat":
         raise SimulationError("wood, coal and oil firings aren't simulated yet (plan milestone M7)")
     from kilndesigner.electric import design_elements
     from kilndesigner.gas import design_gas

@@ -2192,7 +2192,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "The ware heats at up to 367 °C/h (661 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
+      "message": "The ware heats at up to 368 °C/h (662 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
       "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]"
     },
     {
@@ -4812,26 +4812,26 @@
   },
   "name": "PNW hybrid cross-draft, cone 10, castable",
   "target": {
-    "burner_each_btu_hr": 66824.30620006511,
+    "burner_each_btu_hr": 67032.87622584632,
     "burners": "8 × Ransome B3 at 1.5 psi",
     "burners_most_btu_hr": 1998842.5781312576,
     "chimney_height": "5.6 ft (67 in) above the chamber floor",
-    "cost": "$170.14",
-    "cost_usd": 170.1432054630957,
+    "cost": "$170.17",
+    "cost_usd": 170.1656401455654,
     "cylinders_full": 5,
     "cylinders_quarter": 13,
     "draft": [
       "0.054 in. w.c. (14 Pa) with flue gas at 1000 °F",
       "0.068 in. w.c. (17 Pa) with flue gas at top temperature"
     ],
-    "duration_h": 8.0,
-    "electricity_kwh": 92.16,
-    "elements_share": 0.12423674791958518,
+    "duration_h": 7.983333333333333,
+    "electricity_kwh": 91.96799999999999,
+    "elements_share": 0.12400490006319362,
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "The ware heats at up to 367 °C/h (661 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
+        "message": "The ware heats at up to 368 °C/h (662 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
         "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]"
       },
       {
@@ -4867,7 +4867,7 @@
               "symbol": "b",
               "text": null,
               "unit": "british_thermal_unit / foot ** 3 / hour",
-              "value": 100188.37711238276
+              "value": 100501.08207836843
             },
             {
               "expr": "b*V",
@@ -4880,7 +4880,7 @@
               "symbol": "D",
               "text": null,
               "unit": "BTU/hr",
-              "value": 156674.18933825754
+              "value": 157163.19613185892
             },
             {
               "expr": "D",
@@ -4893,7 +4893,7 @@
               "symbol": "P",
               "text": null,
               "unit": "BTU/hr",
-              "value": 156674.18933825754
+              "value": 157163.19613185892
             },
             {
               "expr": null,
@@ -5014,7 +5014,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = 476,300 Btu/h, 89.1 % of P = 534,594 Btu/h",
+              "margin": "C = 476,300 Btu/h, 88.82 % of P = 536,263 Btu/h",
               "op": ">=",
               "right": "P"
             }
@@ -5027,87 +5027,87 @@
           "title": "Propane supply: 11 × 100 lb cylinders, ¼ full, keeping 10 psi"
         },
         "level": "warning",
-        "message": "The propane supply meets the 534,594 BTU/hr the burners draw when full but not in the conservative case (11 × 100 lb cylinders, ¼ full, keeping 10 psi: 476,300 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "message": "The propane supply meets the 536,263 BTU/hr the burners draw when full but not in the conservative case (11 × 100 lb cylinders, ¼ full, keeping 10 psi: 476,300 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       }
     ],
     "flue_area_in2": 113.49003461093129,
     "inlet_area_in2": 113.49003461093129,
-    "input_btu_hr": 534594.4496005209,
-    "input_per_ft3_btu_hr": 9684.68205798045,
+    "input_btu_hr": 536263.0098067706,
+    "input_per_ft3_btu_hr": 9714.909597948743,
     "limits": [],
     "met": true,
-    "peak_rate_c_per_h": 367.06666566183884,
-    "propane_gal_hr": 5.84243458722783,
-    "propane_gallons": 45.45257298945591,
+    "peak_rate_c_per_h": 368.0484296717464,
+    "propane_gal_hr": 5.860669819312918,
+    "propane_gallons": 45.46556575587588,
     "shortest_h": 1.6833333333333333,
     "supply_meets": true,
     "supply_options": [
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "5 cylinders at 20 °F",
         "option": "100 lb cylinders, full",
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3] (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
         "works": true
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "13 cylinders at 20 °F",
         "option": "100 lb cylinders, down to ¼ full keeping 10 psi",
         "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "works": true
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "air at 20 °F or warmer",
         "option": "The design's 11 cylinders, full",
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "works": true
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "air at 26 °F or warmer",
         "option": "The design's 11 cylinders, ¼ full",
         "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "works": false
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "too small even 60 % full at 20 °F (209,600 BTU/hr)",
         "option": "120 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "too small even 60 % full at 20 °F (237,544 BTU/hr)",
         "option": "150 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "too small even 60 % full at 20 °F (410,444 BTU/hr)",
         "option": "250 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "too small even 60 % full at 20 °F (519,633 BTU/hr)",
         "option": "325 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "kept at least 45 % full at 20 °F",
         "option": "500 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": true
       },
       {
-        "cost": "$170.14",
+        "cost": "$170.17",
         "needs": "kept at least 11 % full at 20 °F",
         "option": "1000 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
@@ -5134,23 +5134,24 @@
         "value": "1.68 h"
       },
       {
-        "formula": "the least input whose simulated firing ends within the target, bisected",
+        "formula": "the least input whose simulated firing ends within the target: a secant search on the logarithm of the input, kept inside a bracket",
         "inputs": {
           "burners lit from": "50 °F",
+          "first guess": "766,140 BTU/hr, from the heat balance",
           "rule of thumb, for comparison": "552,249 BTU/hr",
-          "simulated firings": "10",
+          "simulated firings": "11 (8 at a 240 s step while searching, 3 at the firing's 60 s)",
           "target": "8 h",
-          "to within": "1%"
+          "to within": "1% (between 530,953 and 536,263 BTU/hr)"
         },
         "name": "Burner input for the target",
         "note": null,
         "reference": "simulation.py (ADR 0015)",
-        "value": "534,594 BTU/hr (9,685 BTU/ft³/hr)"
+        "value": "536,263 BTU/hr (9,715 BTU/ft³/hr)"
       },
       {
         "formula": "⌈draw ÷ each cylinder's vaporization⌉",
         "inputs": {
-          "draw": "534,594 BTU/hr",
+          "draw": "536,263 BTU/hr",
           "each": "113,000 BTU/hr"
         },
         "name": "100 lb cylinders for the draw, full",
@@ -5161,7 +5162,7 @@
       {
         "formula": "⌈draw ÷ each cylinder's vaporization⌉",
         "inputs": {
-          "draw": "534,594 BTU/hr",
+          "draw": "536,263 BTU/hr",
           "each": "43,300 BTU/hr"
         },
         "name": "100 lb cylinders for the draw, ¼ full keeping 10 psi",
@@ -5173,7 +5174,7 @@
         "formula": null,
         "inputs": {
           "coldest air": "20 °F",
-          "draw": "534,594 BTU/hr"
+          "draw": "536,263 BTU/hr"
         },
         "name": "Propane supply options",
         "note": "Each costs the same per firing: the propane burned is the same whatever holds it. A tank's fill is interpolated between the D × L × K rule's rows (derived).",
@@ -5186,7 +5187,7 @@
         "name": "Fastest heating over an hour",
         "note": null,
         "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]",
-        "value": "367 °C/h (661 °F/h)"
+        "value": "368 °C/h (662 °F/h)"
       },
       {
         "formula": null,
@@ -5233,7 +5234,7 @@
         "name": "Burner input for the target firing time",
         "note": "Found with the firing simulation, in place of the rule of thumb above.",
         "reference": "simulation.py (ADR 0015); target.py",
-        "value": "534,594 BTU/hr (9,680 BTU/ft³/hr)"
+        "value": "536,263 BTU/hr (9,711 BTU/ft³/hr)"
       },
       {
         "formula": "0.8 × min(20 psi, p_v − 20 psi)",
@@ -5251,7 +5252,7 @@
         "formula": null,
         "inputs": {
           "cost": "$1,960.00",
-          "each": "66,824 BTU/hr"
+          "each": "67,033 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
@@ -5264,7 +5265,7 @@
         "name": "Propane at full fire",
         "note": null,
         "reference": "combustion-and-masonry.md §1.1 [S1, S2]",
-        "value": "5.84 gal/hr (24.5 lb/hr)"
+        "value": "5.86 gal/hr (24.6 lb/hr)"
       },
       {
         "formula": "(HHV − heat in the flue gas at T_top) ÷ HHV",
@@ -5279,12 +5280,12 @@
         "value": "0.316"
       },
       {
-        "formula": "η × burner input at full fire ≥ steady heat loss",
+        "formula": "η × burner input at full fire + element power ≥ steady heat loss",
         "inputs": {},
-        "name": "Burners against the heat lost at the top",
+        "name": "Burners and elements against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "169,184 BTU/hr kept against 69,217 BTU/hr lost"
+        "value": "169,712 + 39,308 BTU/hr kept against 69,217 BTU/hr lost"
       },
       {
         "formula": null,
@@ -5322,12 +5323,12 @@
         "name": "Propane on hand",
         "note": null,
         "reference": null,
-        "value": "262 gal: 44.8 hours at full fire"
+        "value": "262 gal: 44.7 hours at full fire"
       },
       {
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
-          "Olsen's other methods": "138 in² (2½ in² per ft³), 76 in² (1 in² per 7000 BTU/hr)",
+          "Olsen's other methods": "138 in² (2½ in² per ft³), 77 in² (1 in² per 7000 BTU/hr)",
           "burner ports together": "113 in²"
         },
         "name": "Exit flue, to start",

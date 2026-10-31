@@ -250,7 +250,6 @@ THIN_END = {
     "No. 1 arch": 2.125,
     "No. 2 arch": 1.75,
     "No. 3 arch": 1.0,
-    "No. 1-X wedge": 2.25,
     "No. 1 wedge": 1.875,
     "No. 2 wedge": 1.5,
 }
@@ -391,3 +390,12 @@ def test_the_arch_counts_match_pitelkas_published_arches(span: float, straights:
         18,
         straights,
     )
+
+
+def test_a_p_greens_1x_wedge_only_with_its_shapes() -> None:
+    """A.P. Green's worked arch (Firebrick Shapes, p.206): a 10 ft span rising 17½ in, 9 in
+    thick, takes 41 No. 1-X wedges and 14 straights a course. With Olsen's simpler shapes, the
+    default, No. 1 wedges turn it."""
+    part = arch_layer(120, 17.5, 9, 4.5)
+    assert arch_ring(part, apg=True) == ArchRing("No. 1-X wedge", 41, 14, 1)
+    assert arch_ring(part) == ArchRing("No. 1 wedge", 17, 38, 1)

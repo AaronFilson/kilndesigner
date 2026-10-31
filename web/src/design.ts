@@ -65,7 +65,14 @@ export interface KilnDocument {
     opening?: DoorOpening;
     car_hardware_cost?: string;
   };
-  lining: { walls: Layer[]; floor?: Layer[]; roof?: Layer[]; door?: Layer[] };
+  lining: {
+    walls: Layer[];
+    floor?: Layer[];
+    roof?: Layer[];
+    door?: Layer[];
+    /** The tapered shapes arches and rings use (model.py Lining.shapes). */
+    shapes?: "olsen" | "apg";
+  };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
   heat: { electric?: Electric; gas?: Gas; fire?: Fire };
   draft?: {

@@ -308,8 +308,11 @@ BRICK_VOLUME = BRICK[0] * BRICK[1] * BRICK[2]
 ARCH_SOURCE = "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
 # Arch bricks taper across the 2½ in face along their 4½ in depth (for 4½ in rings); wedges taper
 # along their 9 in length (for 9 in rings). Thin end, in inches (electric-and-thermal.md §5).
+# Gentlest first. The No. 1-X wedge is A.P. Green's (Firebrick Shapes, p.96), used only with
+# lining.shapes 'apg': Olsen's tables turn arches with the simpler No. 1 and No. 2 (p.303–305).
 ARCHES = {"No. 1 arch": 2.125, "No. 2 arch": 1.75, "No. 3 arch": 1.0}
-WEDGES = {"No. 1-X wedge": 2.25, "No. 1 wedge": 1.875, "No. 2 wedge": 1.5}
+WEDGES = {"No. 1 wedge": 1.875, "No. 2 wedge": 1.5}
+APG_WEDGES = {"No. 1-X wedge": 2.25, **WEDGES}
 
 
 @dataclass(frozen=True)
@@ -330,7 +333,7 @@ class ArchRing:
         )
 
 
-def arch_ring(part: Part) -> ArchRing | None:
+def arch_ring(part: Part, *, apg: bool = False) -> ArchRing | None:
     """The standard arch-brick count: enough tapered bricks to turn the ring's curve.
 
     Around a ring of radial depth L, the outer arc is longer than the inner by 2θ·L; each tapered
@@ -344,7 +347,8 @@ def arch_ring(part: Part) -> ArchRing | None:
     if abs(depth - BRICK[1]) < TOL:
         tapers, along = ARCHES, BRICK[0]  # bricks 4½ in deep, 9 in along the kiln
     elif abs(depth - BRICK[0]) < TOL:
-        tapers, along = WEDGES, BRICK[1]  # bricks 9 in deep, 4½ in along the kiln
+        tapers = APG_WEDGES if apg else WEDGES
+        along = BRICK[1]  # bricks 9 in deep, 4½ in along the kiln
     else:
         return None
     gain = 2 * a.half_angle * depth  # outer arc minus inner arc, mm
@@ -477,7 +481,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         m = resolve_material(kiln, part.material)
         if part.across and part.arch is not None and m.kind in BRICK_KINDS:
             # An arch along the draft that stops short of its neighbour: in standard shapes
-            ring = arch_ring(part)
+            ring = arch_ring(part, apg=kiln.lining.shapes == "apg")
             if ring is not None:
                 shapes[(m.id, ring.shape)] += ring.shaped
                 whole[m.id] += ring.straights
@@ -514,7 +518,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                     f"{layer_name(part)}: about {count} bricks by volume, cut to the arch's curve"
                 )
                 continue
-            ring = arch_ring(part)
+            ring = arch_ring(part, apg=kiln.lining.shapes == "apg")
             if ring is None:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count

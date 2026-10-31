@@ -2170,6 +2170,14 @@ The user remembers springs from the 1st or 2nd edition.
   kindling, let the smoke clear a little, repeat. In the drawing the floor flue holes grow away from
   the firebox (¾, 1¼ and 1½ in). Reduction shortens element life: alternate reduction and oxidation
   firings, or bisque between reduction firings, to rebuild the oxide coat.
+- **Fig. 9-25, the smoke firebox's sizes** (p.250, read from the author's photo of the page,
+  2026-10-30): a firebox 18 in deep (drawn at 45° against the kiln's end wall) with a grate, an
+  ash pit under it 18 in wide, a 4½ in stoke hole and a 9 × 12 in air inlet; a 5 in channel flue
+  under the floor at the ground line; two flue channels 4½ in wide along the floor, joining at the
+  end away from the firebox, with four inlet holes each, the largest farthest from the firebox
+  ("1½" dia. 1¼" dia. ¾" dia." printed in that order); an exit flue 4 × 6 in high in the far wall
+  into a 6 × 6 in chimney with a damper; vent holes in the roof. No kiln size, chimney height or
+  fuel rate is printed.
 - Frames and flat roofs: §2.
 
 ### Power

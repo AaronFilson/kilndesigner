@@ -314,7 +314,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         course = family.height * IN
         courses = math.ceil(height / course - TOL / course)
         try:
-            one = ring(2 * r, series)
+            one = ring(2 * r, series, apg=kiln.lining.shapes == "apg")
         except RingError as e:
             findings.append(Finding(level="warning", message=f"Round wall: {e}.", reference=SOURCE))
             return ""

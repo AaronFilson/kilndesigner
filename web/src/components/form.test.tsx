@@ -939,6 +939,15 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.rings).toBeUndefined();
   });
 
+  it("chooses A.P. Green's full set of tapered shapes, Olsen's simpler ones by default", () => {
+    const last = live(electric);
+    expect(field("Tapered brick shapes").value).toBe("olsen");
+    set("Tapered brick shapes", "apg");
+    expect(last().lining.shapes).toBe("apg");
+    set("Tapered brick shapes", "olsen");
+    expect(last().lining.shapes).toBeUndefined();
+  });
+
   it("chooses a teardrop or an oval plan, its sizes, and a dome's crown over it", () => {
     const last = live(electric);
     expect(screen.queryByLabelText("Sides' radius (left out: straight)")).toBeNull();

@@ -144,6 +144,28 @@ FAMILIES: dict[Series, Family] = {
 }  # fmt: skip
 CLOSER = "closer, a straight cut short"
 
+APG_SOURCE = (
+    "A. P. Green, Firebrick Shapes, Standard and Special, p.96 (No. 1-X wedge, 9 × 4½ × (2½ − 2¼) "
+    "in) and p.98 (3 in series No. 4 arch (3 − 1) and No. 1 wedge (3 − 2¾)); brick-shapes.md"
+)
+APG_EXTRA: dict[Series, Taper] = {
+    # A.P. Green's shapes beyond Olsen's tables, an option: rare for studio potters, who keep to
+    # the simpler shapes (the user, 2026-10-30), so Olsen's families above stay the default
+    "wedge": Taper("No. 1-X wedge", 2.25),
+    "arch3": Taper("No. 4 arch, 3 in series", 1.0),
+    "wedge3": Taper("No. 1 wedge, 3 in series", 2.75),
+}
+
+
+def apg_family(series: Series) -> Family:
+    """``series`` with A.P. Green's extra shape among its tapers (tightest first), if it has one."""
+    f = FAMILIES[series]
+    extra = APG_EXTRA.get(series)
+    if extra is None:
+        return f
+    return replace(f, tapers=tuple(sorted((*f.tapers, extra), key=lambda t: t.thin)))
+
+
 FLOOR_COURSE_IN = 4.5
 """An electric kiln's wall course (in): a floor slab inside the walls sits in the lowest one."""
 FLOOR_INSIDE_SOURCE = (
@@ -187,14 +209,15 @@ class Ring:
         return ", ".join(f"{n} {name}" for name, n in self.counts if n)
 
 
-def ring(inside_diameter_mm: float, series: Series) -> Ring:
-    """The bricks for one ring of the given inside diameter (mm)."""
+def ring(inside_diameter_mm: float, series: Series, *, apg: bool = False) -> Ring:
+    """The bricks for one ring of the given inside diameter (mm); ``apg`` adds A.P. Green's extra
+    shape to the series (APG_EXTRA)."""
     if series in ("mortar", "cut", "cut2.5", "cut3"):
         method = "mortar" if series == "mortar" else "cut"
         return replace(
             straight_ring(inside_diameter_mm, method, FAMILIES[series].depth * IN), series=series
         )
-    f = FAMILIES[series]
+    f = apg_family(series) if apg else FAMILIES[series]
     d = inside_diameter_mm / IN
     exact = math.pi * (d + 2 * f.depth) / f.thick
     inner = math.pi * d

@@ -72,6 +72,13 @@ class Lining(Spec):
     floor: list[Layer] | None = Field(default=None, min_length=1)
     roof: list[Layer] | None = Field(default=None, min_length=1)
     door: list[Layer] | None = Field(default=None, min_length=1)
+    shapes: Literal["olsen", "apg"] = Field(
+        default="olsen",
+        description="The tapered brick shapes arches and rings are turned from: 'olsen', the "
+        "simpler shapes of Olsen's tables (The Kiln Book, 4th ed., p.303–305), as most studio "
+        "potters build; 'apg', A.P. Green's full set, adding the No. 1-X wedge and the 3 in "
+        "series' No. 4 arch and No. 1 wedge (Firebrick Shapes, p.96, p.98)",
+    )
 
     def for_face(self, face: Face, *, door_face: Face | None = None) -> list[Layer]:
         if face == door_face and self.door is not None:
@@ -817,6 +824,11 @@ class Fire(Spec):
     a blower drives the burners (forced draft)."""
 
     fuel: Literal["wood", "coal", "oil"] = "wood"
+    purpose: Literal["heat", "smoke"] = Field(
+        default="heat",
+        description="'smoke': a small firebox stoked with kindling to reduce a kiln the elements "
+        "or burners heat, 'not to add heat' (Olsen, The Kiln Book, 4th ed., p.250, Fig. 9-25)",
+    )
     fireboxes: list[Firebox] = Field(min_length=1)
     forced: bool = Field(
         default=False, description="A blower drives the air, as forced-oil burners do"
@@ -830,6 +842,8 @@ class Fire(Spec):
     def _oil_with_oil(self) -> Fire:
         if self.fuel != "oil" and (self.oil_burners is not None or self.oil_rate is not None):
             raise ValueError("oil burners and their rate are for oil firing")
+        if self.purpose == "smoke" and self.fuel != "wood":
+            raise ValueError("a smoke firebox burns wood (Olsen p.250)")
         return self
 
 
@@ -842,6 +856,13 @@ class Heat(Spec):
     def _some_heat(self) -> Heat:
         if self.electric is None and self.gas is None and self.fire is None:
             raise ValueError("give the kiln a heat source: electric, gas, a fire, or more than one")
+        if (
+            self.fire is not None
+            and self.fire.purpose == "smoke"
+            and self.electric is None
+            and self.gas is None
+        ):
+            raise ValueError("a smoke firebox doesn't heat the kiln: give it elements or burners")
         return self
 
 

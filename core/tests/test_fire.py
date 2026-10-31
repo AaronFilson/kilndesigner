@@ -11,7 +11,7 @@ import pytest
 
 from kilndesigner import load_design
 from kilndesigner.fire import design_fire, pull
-from kilndesigner.model import Kiln
+from kilndesigner.model import Fire, Kiln
 
 
 def _kiln(**changes: Any) -> Kiln:
@@ -289,3 +289,44 @@ def test_a_kiln_with_no_fire_has_no_fire_design() -> None:
     gasless = kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": None})})
     with pytest.raises(ValueError, match="no fireboxes"):
         design_fire(gasless)
+
+
+GAS = {"fuel": "natural_gas", "supply": {"type": "line", "pressure": "7 inch_H2O"}}
+
+
+def _smoked() -> Kiln:
+    """The electric front-loader with Olsen's smoke firebox beside it (p.250, Fig. 9-25): 18 in
+    deep with a grate; his drawing gives no width, so the 9 in air inlet's width is used."""
+    kiln = load_design(Path(__file__).parents[2] / "examples" / "electric-front-loader.yaml")
+    box = {
+        "position": "back",
+        "width": "9 in",
+        "length": "18 in",
+        "grate": {"width": "9 in", "length": "18 in"},
+    }
+    fire = Fire.model_validate({"purpose": "smoke", "fireboxes": [box]})
+    return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": fire})})
+
+
+def test_a_smoke_firebox_reduces_an_electric_kiln_without_heat_rules() -> None:
+    """Olsen p.250: the firebox fills the kiln with smoke, 'not to add heat', so no grate ratio
+    or chimney height is checked; his sizes are reported, and the elements' shorter life."""
+    fire = design_fire(_smoked())
+    assert fire.chimney_height is None
+    assert all(f.check is None for f in fire.findings)
+    text = " ".join(f.message for f in fire.findings)
+    assert "6 × 6 in chimney" in text
+    assert "oxide coat" in text
+    assert "M7" not in text
+
+
+def test_a_smoke_firebox_without_elements_says_nothing_of_them() -> None:
+    kiln = _kiln(heat__fire__purpose="smoke", heat__gas=GAS)
+    assert not any("oxide coat" in f.message for f in design_fire(kiln).findings)
+
+
+def test_a_smoke_firebox_burns_wood_beside_another_heat() -> None:
+    with pytest.raises(ValueError, match="burns wood"):
+        _kiln(heat__fire__purpose="smoke", heat__fire__fuel="coal")
+    with pytest.raises(ValueError, match="give it elements or burners"):
+        _kiln(heat__fire__purpose="smoke")
