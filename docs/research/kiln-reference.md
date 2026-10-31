@@ -1825,7 +1825,7 @@ The user remembers springs from the 1st or 2nd edition.
   single chimney the larger firebox, the slow starting firebox with the most stacking; give the
   groundhog a smaller-entrance firebox leading straight into the chamber, for blasting. Fig. 7-3:
   firebox and grate "3–4' NORMAL" long; a 12–15 in step up to the ware platform; ash pit and walkway
-  about 14 in (?) wide and 18 in deep (p.179).
+  14 in wide and 18 in deep (p.179; Checked on the page image, 2026-10-31).
 - **Air at three levels** (p.180, Fig. 7-4, Read): below the grate, at the grate and at the stoke
   hole, each openable and closable, for blasting, choking and holding temperature and atmosphere;
   build the openings into the door when it is bricked up.
@@ -2003,7 +2003,7 @@ The user remembers springs from the 1st or 2nd edition.
   (2:9 to 2.5:9 is excellent for diesel; the slope depends on the oil's viscosity); a side lip, or
   flat plates if they are horizontal; iron, with welded-on pegs. Set them in loosely laid dense or
   insulating brick, with loose firebricks spanning the channels, so they can be removed and
-  adjusted. The stack is about 16 in tall in a channel about 6 in (?) wide. Side-firing units:
+  adjusted. The stack is about 16 in tall in a channel 6 in wide (Fig 8-20, p.207; Checked on the page image, 2026-10-31). Side-firing units:
   12 × 15 in iron plates spot-welded to an iron frame, the drip angle set by tilting.
 - **Ports** (p.208, Read): at most one per 9 in (one brick) of inlet-flue wall, at least one per
   18 in. Starting 4½ in from the corner instead of 9 in fits one or two more. More burners fire
