@@ -216,10 +216,8 @@ class Outline:
             d = math.dist(p, centre)
             if d < 1e-12:
                 continue
-            try:
-                far = self.reach(math.atan2(p[1] - centre[1], p[0] - centre[0]), centre)
-            except ValueError:
-                return False
+            # The ray towards a point of the outline always meets it there, so reach finds a hit
+            far = self.reach(math.atan2(p[1] - centre[1], p[0] - centre[0]), centre)
             if far > d * (1 + 1e-6) + 1e-9 * self.perimeter:
                 return False
         return True
@@ -413,7 +411,10 @@ def necked_teardrop(
     t0 = math.atan2(-cc[1], -cc[0])  # the side touches the round end, seen from C
     t1 = math.atan2(fc[1] - cc[1], fc[0] - cc[0])  # and the reverse curve
     a0 = math.atan2(cc[1] - fc[1], cc[0] - fc[0])  # the touching point, seen from F
-    if not -math.pi / 2 < t0 < t1 < math.pi / 2 or not -math.pi < a0 < -math.pi / 2:
+    begin, stop = math.pi - t0, 2 * math.pi + t0
+    low, high = math.pi + math.asin(c / r), 2 * math.pi - math.asin(c / r)
+    meets = -math.pi / 2 < t0 < t1 < math.pi / 2 and -math.pi < a0 < -math.pi / 2
+    if not meets or not begin < low < high < stop:
         raise ValueError("the sides and the neck's curve don't meet: change their radii")
     if t0 < 0:
         raise ValueError(
@@ -432,10 +433,6 @@ def necked_teardrop(
     )
     # The round end, from the left side's touching point round the front to the right side's,
     # cut square by the front wall
-    begin, stop = math.pi - t0, 2 * math.pi + t0
-    low, high = math.pi + math.asin(c / r), 2 * math.pi - math.asin(c / r)
-    if not begin < low < high < stop:
-        raise ValueError("the teardrop's sides meet its round end in front of its flat front")
     o = (0.0, 0.0)
     end = Arc(o, r, begin, stop - begin)
     cut = (

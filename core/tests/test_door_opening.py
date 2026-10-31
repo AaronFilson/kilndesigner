@@ -363,6 +363,27 @@ def test_spy_holes_go_low_between_burners_up_the_door_sides_and_under_its_arched
     assert spies[-1] + 1.25 <= head - 2.5 + 1e-6
 
 
+@pytest.mark.parametrize("corner", [1.0, 10.0])
+def test_spy_holes_under_a_flat_heads_rounded_corner(corner: float) -> None:
+    """Under a flat head the top hole stays a course under it; a corner rounded far enough in to
+    come over the holes' outer edge brings that down to the corner's curve there."""
+    from kilndesigner.gas import design_gas
+
+    path = Path(__file__).parents[2] / "examples" / "pnw-hybrid-crossdraft.yaml"
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data["loading"]["opening"].update(head="flat", corner=f"{corner} in")
+    kiln = Kiln.model_validate(data)
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    door = kiln.loading.opening
+    assert door is not None
+    head = si(door.height, "in")
+    into = 3 + 1.125 - (si(door.width, "in") / 2 - corner)
+    if into > 0:
+        head = head - corner + math.sqrt(corner * corner - into * into)
+    top = max(p.up for p in hw.ports if p.kind == "spy")
+    assert top + 1.25 <= head - 2.5 + 1e-6
+
+
 CASTABLE = "pnw-hybrid-crossdraft-castable.yaml"
 
 

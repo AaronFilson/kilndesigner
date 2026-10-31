@@ -274,6 +274,8 @@ def test_a_teardrop_with_a_neck() -> None:
     assert drop.sees_all((0.0, -5.5))
     assert not drop.sees_all((0.0, 50.0))
     assert not drop.sees_all((0.0, 80.0))  # outside it
+    # From a point of the outline itself (that point skipped): a rectangle's corner sees it all
+    assert rectangle(2.0, 1.0).sees_all((-1.0, -0.5))
 
 
 @pytest.mark.parametrize(

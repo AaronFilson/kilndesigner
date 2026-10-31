@@ -100,7 +100,8 @@ def ring_runs(inside: Outline, reach: float) -> tuple[Run, ...]:
     for s in inside.segments:
         if isinstance(s, Line):
             runs.append(_straight_run(s.length))
-        elif isinstance(s, Arc):
+        else:
+            assert isinstance(s, Arc), "a curved plan is lines and arcs (outline.offset)"
             runs.append(_arc_run(s, reach > 0 and abs(s.radius - reach) < 1e-6))
     return tuple(runs)
 
