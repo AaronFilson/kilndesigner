@@ -359,3 +359,55 @@ def test_spy_holes_go_low_between_burners_up_the_door_sides_and_under_its_arched
     r = si(door.width, "in") / 2
     head = si(door.height, "in") - r + math.sqrt(r * r - (3 + 1.125) ** 2)
     assert spies[-1] + 1.25 <= head - 2.5 + 1e-6
+
+
+CASTABLE = "pnw-hybrid-crossdraft-castable.yaml"
+
+
+def _castable_door(**opening: Any) -> dict[str, Any]:
+    door = {"width": "24 in", "height": "40 in", "sill": "0 in", "head": "arch", **opening}
+    return {"opening": door}
+
+
+def test_a_door_ring_of_its_own_under_a_cast_dome() -> None:
+    """The castable PNW kiln: its dome's 2 in shell is too thin a ring for the 24 in door, so the
+    door has a 4½ in brick ring arch of its own, laid first and the dome cast over it (Olsen's
+    Kanayama and Höhr-Grenzhausen); the dome over it still counts its own shell."""
+    kiln = load_design(EXAMPLES / CASTABLE)
+    head = door_head(kiln)
+    assert head is not None
+    assert not [f for f in head.findings if f.level != "info"]
+    step = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert step.value.startswith("a 4.5 in ring over 24 in")
+    shell = next(s for s in head.working if s.name == "The dome over the door's arch")
+    assert "2 in higher" in shell.value  # the dome's shell, not the door's ring
+
+    def depth_source(found: Any) -> str:
+        assert found.check is not None
+        return next(c.source or "" for c in found.check.cells if c.symbol == "d")
+
+    # Left out, the ring is the roof's: the dome's 2 in shell, too thin for the door
+    roofs = door_head(_kiln(CASTABLE, _castable_door()))
+    assert roofs is not None
+    refused = next(f for f in roofs.findings if f.level == "error")
+    assert "thicken the roof's ring" in refused.message
+    assert "in exactly the same way as" in depth_source(refused)
+    thin = door_head(_kiln(CASTABLE, _castable_door(ring="2 in")))
+    assert thin is not None
+    refused = next(f for f in thin.findings if f.level == "error")
+    assert "deepen the door's ring" in refused.message
+    assert "Kanayama" in depth_source(refused)
+
+
+@pytest.mark.parametrize(
+    ("opening", "message"),
+    [
+        ({"head": "lintel", "ring": "4.5 in"}, "an arched head's"),
+        ({"ring": "0 in"}, "more than 0 deep"),
+    ],
+)
+def test_a_door_ring_is_an_arched_heads_and_has_depth(
+    opening: dict[str, str], message: str
+) -> None:
+    with pytest.raises(ValidationError, match=message):
+        _kiln(CASTABLE, _castable_door(**opening))

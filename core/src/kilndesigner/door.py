@@ -348,8 +348,19 @@ def door_thrusts(r: float, outer: float, top: float, q: float, edge: float) -> t
     return least, most
 
 
+OWN_RING_SOURCE = (
+    "the design's door ring: under a cast dome Olsen lays the door's brick ring arch first and "
+    "casts the shell over it (Kanayama Figs 7-17, 7-25; Höhr-Grenzhausen Figs 4-135, 4-137), "
+    "and lays 'another ring arch, resting on top of the door arch' (door-headers.md [H11])"
+)
+
+
 def _ring_depth(kiln: Kiln) -> float | None:
-    """The door arch's ring depth (in): the roof's ring, when the roof is an arch or dome."""
+    """The door arch's ring depth (in): the design's own, else the roof's ring when the roof is
+    an arch or dome."""
+    door = kiln.loading.opening
+    if door is not None and door.ring is not None:
+        return si(door.ring, "in")
     ring = getattr(kiln.roof, "ring", None)
     if ring is None or kiln.roof.type not in ("sprung_arch", "catenary_arch", "dome"):
         return None
@@ -434,11 +445,12 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
         # (Olsen Figs 4-135, 4-137, Höhr-Grenzhausen), so the masonry over the ring runs on into
         # the shell; its weight is counted twice, as wall here and as the roof's edge, the safe
         # side for the ring's thrust
-        above += ring
+        shell = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof")[: kiln.roof.ring])
+        above += shell
         out.working.append(
             Step(
                 name="The dome over the door's arch",
-                value=f"the wall over the door taken {ring:g} in higher, the dome's shell",
+                value=f"the wall over the door taken {shell:g} in higher, the dome's shell",
                 reference=(
                     "Olsen Figs 4-135, 4-137 (p.123): the entry door's arch is laid, then the "
                     "dome cast over it; door-openings.md"
@@ -459,7 +471,8 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
             cross += t
             cross_q += si(parse_quantity(m.density), "lb/ft**3") * t / 1728
     least, most = door_thrusts(r, r + ring, max(above, r + ring), q, edge / 12)
-    da = DoorArchInputs(w, ring, layers, above, edge, edge_source, RING_SOURCE, springing, jamb,
+    ring_source = RING_SOURCE if door.ring is None else OWN_RING_SOURCE
+    da = DoorArchInputs(w, ring, layers, above, edge, edge_source, ring_source, springing, jamb,
                         jamb_source, least, most, cross, cross_q)  # fmt: skip
     minimum = steel_data()["arch_minimum_thickness"]
     eta = float(np.interp(90.0, minimum["half_angle_deg"], minimum["eta"]))
@@ -528,7 +541,11 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                         else f"The door's {ring:g} in ring is {k:.1f} times the thinnest "
                         f"semicircle that stands (Heyman's {minimum['safety']}), and under the "
                         f"wall over it its least thrust is {least:.0f} lb, its most {most:.0f} "
-                        "lb: thicken the roof's ring or narrow the door."
+                        + (
+                            "lb: thicken the roof's ring or narrow the door."
+                            if door.ring is None
+                            else "lb: deepen the door's ring or narrow the door."
+                        )
                         if sheet is standing
                         else f"The door arch's least thrust, {least:.0f} lb, over its "
                         f"{sliding.env['N'] / 4.4482216:.0f} lb load at the springing needs "

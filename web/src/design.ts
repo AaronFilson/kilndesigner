@@ -15,6 +15,7 @@ export interface DoorOpening {
   across?: string;
   sill?: string;
   head?: "arch" | "lintel";
+  ring?: string;
   each_chamber?: boolean;
 }
 

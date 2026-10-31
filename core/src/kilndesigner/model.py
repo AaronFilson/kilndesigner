@@ -365,6 +365,16 @@ class DoorOpening(Spec):
             "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5)"
         ),
     )
+    ring: Length | None = Field(
+        default=None,
+        description=(
+            "An arched head's ring depth, when the door's ring isn't laid as the roof's: under a "
+            "cast dome Olsen lays the door's brick ring arch first and casts the shell over it "
+            "(Kanayama Figs 7-17, 7-25; Höhr-Grenzhausen Figs 4-135, 4-137), and lays 'another "
+            "ring arch, resting on top of the door arch' (door-headers.md [H11]). Left out: the "
+            "roof's ring"
+        ),
+    )
     each_chamber: bool = Field(
         default=False,
         description=(
@@ -1293,6 +1303,11 @@ class Kiln(Spec):
                 f"an arched door's height takes its semicircular head, {w / 2:g} in: make it at "
                 "least that tall"
             )
+        if door.ring is not None:
+            if door.head != "arch":
+                raise ValueError("a door's ring is an arched head's: leave it out under a lintel")
+            if si(door.ring, "in") <= 0:
+                raise ValueError("a door arch's ring must be more than 0 deep")
         row = self.chamber.chambers > 1
         if row and isinstance(self.roof, SprungArch) and not self.roof.tube:
             if face in ("front", "back"):
