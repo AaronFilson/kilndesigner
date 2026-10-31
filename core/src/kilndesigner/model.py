@@ -506,6 +506,13 @@ class Firing(Spec):
     ware: Mass | None = Field(
         default=None, description="Ware and kiln furniture set in the kiln, for the simulation"
     )
+    target_time: Duration | None = Field(
+        default=None,
+        description=(
+            "A firing time to solve the burners for, for example '4 h': the burner input, the "
+            "burners, the propane supply and the cost it takes, found with the firing simulation"
+        ),
+    )
     setting: Setting | None = Field(
         default=None,
         description=(
@@ -727,6 +734,14 @@ class Gas(Spec):
     burners: Burners = Field(default_factory=Burners)
     supply: GasSupply
     reduction: bool = Field(default=True, description="Whether the kiln is fired in reduction")
+    on_from: Temperature | None = Field(
+        default=None,
+        description=(
+            "In a hybrid kiln, the temperature from which the burners are lit while the elements "
+            "are still on: both heat together up to the elements' off_above. Left out: the burners "
+            "take over at off_above"
+        ),
+    )
     firing_speed: Literal["fast", "slow"] = Field(
         default="slow",
         description=(
