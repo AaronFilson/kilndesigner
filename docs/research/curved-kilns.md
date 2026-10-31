@@ -153,6 +153,14 @@ Checked on the page image.
 - Arch thickness drawn about as thick as the 9" walls, but not dimensioned. The cross-section
   (across the 3' width) is not drawn.
 - **Not given**: rise across the width, the curve's shape, arch brick.
+- Re-read at 300 dpi, 2026-10-31: the front wall stands upright from the floor to about the
+  height of the back wall's "18"", where the drawing puts "BRACING" on its face, and the arch
+  springs from it there; the crown's "36"" arrow stands near the middle of the 5' (about 0.43 of
+  the way back by scale). So the vault is one arch spanning the length, front to back, springing
+  from both end walls at about 18", rising 18" (3.6 in/ft of the 60" span): the section across
+  the width is a rectangle rising from 18" at the end walls to 36" mid-way. The front springing's
+  height is drawn, not printed. The salt hole "built into door" is drawn about 30" up (by scale);
+  the door's height isn't printed. Used in `bowen-mountain.yaml` (`roof.along`).
 
 ### `tamba` (p.86, Figs 4-11 to 4-13; p.87, Figs 4-14 to 4-16)
 

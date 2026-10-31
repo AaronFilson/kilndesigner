@@ -808,6 +808,18 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
 
     run = run_layout(kiln)
     n = run.chambers
+    if n == 1:
+        return Finding(
+            level="info",
+            message=(
+                "The chamber's arch spans along the draft, over its depth, springing from the "
+                "front and back walls, and the side walls are filled up to it, as in Olsen's "
+                "Bowen Mountain salt kiln (Fig 4-153): its section across the width rises from "
+                "the springline at the end walls to the crown mid-way. The side walls above the "
+                "springline are cut to the arch's curve and counted by volume."
+            ),
+            reference="run_parts.py; Olsen, The Kiln Book, 4th ed., Fig 4-153, p.127",
+        )
     text = (
         f"The {n} chambers stand in a row, each wall between them "
         f"{length_text(run.between, us)} thick, as thick as the side walls. "

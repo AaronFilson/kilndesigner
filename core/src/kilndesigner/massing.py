@@ -21,7 +21,15 @@ import math
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any, Literal
 
-from kilndesigner.model import CatenaryArch, Dome, Firebox, Kiln, OpenTop, SprungArch
+from kilndesigner.model import (
+    CatenaryArch,
+    Dome,
+    Firebox,
+    Kiln,
+    OpenTop,
+    SprungArch,
+    arches_along,
+)
 from kilndesigner.units import si
 
 if TYPE_CHECKING:
@@ -132,7 +140,7 @@ def cells(kiln: Kiln, run: Run) -> list[Cell]:
     if run.round:
         out.append(Cell("round", 0.0, run.width, width=run.width, z1=run.height))
     else:
-        many = run.chambers > 1
+        many = run.chambers > 1 or arches_along(kiln)
         tube = isinstance(kiln.roof, SprungArch) and kiln.roof.tube
         if many:
             for i in range(run.chambers):

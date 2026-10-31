@@ -61,7 +61,7 @@ from kilndesigner.frame_checks import (
     thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch, arches_along
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step
@@ -1040,7 +1040,7 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
     roof = kiln.roof
     if isinstance(roof, SprungArch) and kiln.chamber.shape == "box":
         # Chambers in a row: each arch spans its chamber's depth, along the draft (run_parts.py)
-        along = kiln.chamber.chambers > 1 and not roof.tube
+        along = arches_along(kiln)
         span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
         arch = Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
@@ -1114,21 +1114,32 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
             reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}",
         )
     ]
+    between = (
+        "The walls between chambers take the arches either side, which push against each other "
+        "(Olsen p.94–95); the "
+        if kiln.chamber.chambers > 1
+        else "The "
+    )
     findings = [
         Finding(
             level="info",
             message=(
-                "Each chamber's arch spans its depth, along the draft, so its thrust falls on the "
-                "walls before and behind it, not on the side walls. The walls between chambers "
-                "take the arches either side, which push against each other (Olsen p.94–95); the "
-                f"front and back walls each take one arch's thrust, {whole:,.0f} lb hot across the "
-                "kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front "
-                "chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is "
-                "sized; or hold the ends with masonry (roof.buttressed)."
+                f"{'Each chamber' if kiln.chamber.chambers > 1 else 'The chamber'}'s arch spans "
+                "its depth, along the draft, so its thrust falls on the walls before and behind "
+                f"it, not on the side walls. {between}front and back walls each take one arch's "
+                f"thrust, {whole:,.0f} lb hot across the kiln's width. Brace them: Olsen calls "
+                "bracing a chamber kiln's firebox and front chamber 'a must' (p.97). No source "
+                "here sizes that bracing, so no steel frame is sized; or hold the ends with "
+                "masonry (roof.buttressed)."
             ),
             reference=ROW_SOURCE,
         )
     ]
+    from kilndesigner.vault import along_statics
+
+    steps, found = along_statics(kiln)
+    working += steps
+    findings += found
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1398,7 +1409,7 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
-    if isinstance(kiln.roof, SprungArch) and kiln.chamber.chambers > 1 and not kiln.roof.tube:
+    if arches_along(kiln):
         return _row_arches(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)
