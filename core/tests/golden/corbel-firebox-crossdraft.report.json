@@ -1,0 +1,1108 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "No price found for: steel.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "717 bricks",
+        "cost": 3907.65,
+        "item": "HarbisonWalker KX-99 super-duty firebrick",
+        "needed": "717 bricks (468 whole, 214 cut into 228 pieces; 682 in the kiln plus 5 % for breakage)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery (a comparable product)",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      },
+      {
+        "buy": "510 bricks",
+        "cost": 3182.4,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "needed": "510 bricks (294 whole, 191 cut into 205 pieces; 485 in the kiln plus 5 % for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "63 bricks",
+        "cost": 393.12,
+        "item": "Morgan Thermal Ceramics K-23 insulating firebrick, No. 1 arch",
+        "needed": "63 bricks (60 in the arch plus 5 % for breakage)",
+        "priced_as": "K-23 insulating firebrick, 9 × 4½ × 2½ in (10-pack price), High Temp Refractory Store (eBay, Portland)",
+        "source": "combustion-and-masonry.md §9 [S71]",
+        "unit_price": "$6.24"
+      },
+      {
+        "buy": "467 bricks",
+        "cost": 2545.15,
+        "item": "Chimney and flue duct: hard firebrick",
+        "needed": "467 straights (with 5 % for cuts and breakage)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      },
+      {
+        "buy": "26 ft",
+        "cost": null,
+        "item": "L3×3×3/16",
+        "needed": "23.3 ft (corner posts, buttresses behind the skewbacks)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "29 ft",
+        "cost": null,
+        "item": "¼ × 2 in flat bar",
+        "needed": "25.5 ft (top cross-members, front and back, bottom cross-members, front and back, bottom cross-members, sides)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "11 ft",
+        "cost": null,
+        "item": "1/2-13 threaded rod",
+        "needed": "9.2 ft (tie rods)",
+        "priced_as": null,
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "unit_price": null
+      },
+      {
+        "buy": "20 ft",
+        "cost": null,
+        "item": "Grate bars: ¾ in round steel bar",
+        "needed": "18.0 ft (Firebox 1, grate, 8 bars of ¾ in round steel, 27 in long, ¾ in apart (Olsen p.199–200: rods ¾–1 in))",
+        "priced_as": null,
+        "source": "Olsen, The Kiln Book, 4th ed., p.199–200 (grate bars ¾–1 in rods)",
+        "unit_price": null
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 10028.32
+  },
+  "castables": [],
+  "chamber_volume": "16.1 ft³",
+  "electric": null,
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick's hot side",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the kiln's top temperature: this layer is the hot face",
+            "symbol": "T_hot",
+            "text": null,
+            "unit": "degF",
+            "value": 1558.15
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick's service limit",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]",
+            "symbol": "T_max",
+            "text": null,
+            "unit": "degF",
+            "value": 1533.15
+          }
+        ],
+        "id": "heatloss.service.roof.1",
+        "label": "W1",
+        "lever": {
+          "hi": 2273.15,
+          "lo": 473.15,
+          "step": null,
+          "symbol": "T_hot"
+        },
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "T_hot",
+            "level": "warning",
+            "margin": "T_hot = 2,345 °F, 45 °F over T_max = 2,300 °F",
+            "op": "<=",
+            "right": "T_max"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": "Passes when T_hot ≤ 2,300 °F",
+        "status": "warning",
+        "title": "roof: Morgan Thermal Ceramics K-23 insulating firebrick against its rating"
+      },
+      "level": "warning",
+      "message": "left, right, back, front, roof: Morgan Thermal Ceramics K-23 insulating firebrick would run at 2345 °F on its hot side, above its 2300 °F rating: past it a brick shrinks and wears faster. A higher-rated material, or this one further out, would last longer.",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "HarbisonWalker KX-99 super-duty firebrick runs down to 210 °F (data from 400 °F) and up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.2, HWI KX-99 product data [S35]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 254.1 °F (data from 500 °F) and up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker KX-99 super-duty firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The chimney, 14.0 ft, is taller than the 11.3 ft Olsen's rules give as the most (Rule 5): too tall a chimney pulls heat out and fires unevenly (p.80–81). Damper it, or take some off.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.80 (Principle 5): 3 ft of chimney per ft of downward pull plus 1 ft per 3 ft of horizontal pull, inside the kiln; p.130 (Fig. 5-2): the early Far-East proportions, a chimney twice the chamber's height (4 m on a 2 m cube), are the least and Rule 5 the most"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Fireboxes are laid out in brick in the masonry, plans and 3D model; their wood use per firing waits for the client's kiln (plan milestone M7).",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "This arch's 4.5 in ring is too thick for its rise for HarbisonWalker's heated-arch method, which has no finite hot thrust for it in a rigid frame and marks such arches 'stress excessive'. Olsen builds arches like it, No. 1 arches of 4½ in insulating brick at 1½ in/ft, in light frames that give (his fast-fire kiln's is 2 × 2 × 3/16 in angle, bolted), so the frame's give limits the thrust. The steel is sized for 5.34 × the cold thrust, the most HarbisonWalker tabulates. Leave the frame its expansion allowance (Olsen p.52).",
+      "reference": "HarbisonWalker's largest printed heated-arch factor, used where its method gives no finite hot thrust (the ring too thick for its rise): the frame's give limits it instead, as in Olsen's light bolted frames (4th ed. p.139); arch-thrust-theory.md §8"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The cold line of thrust drops 3.51 in from the ring's corner to the side wall's outside, past the L3×3×3/16 buttress's 2.81 in of upright leg: HarbisonWalker, for industrial furnaces, wants it through or just above the steel's corner. Olsen's built kilns stand with it lower, so this is a note; a longer-legged angle, thinner walls at the skewback or more rise would bring it up.",
+      "reference": "HarbisonWalker: \"When the skewback is carried on a channel or angle, the line of thrust should pass through, or slightly above, the corner of the supporting steel\"; kiln-hardware.md §4.1 [S20]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+      "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "reference": "kiln-hardware.md §6.1 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "reference": "kiln-hardware.md §3.2–3.3 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "reference": "kiln-hardware.md §2 [S4] [S13]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Roof, layer 1 from the inside: 5 rings, each of 12 No. 1 arch bricks and 2 straights; Left wall, the skewback and fill on top: about 15 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 15 bricks by volume, cut to the arch's angle.",
+      "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 62° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+      "reference": "kiln-hardware.md §5.2 [S20]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "HarbisonWalker, for industrial furnaces: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, as in Olsen's insulating-brick kilns, whose featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where you can, lay the course under each skewback as headers.",
+      "reference": "kiln-hardware.md §4.1 [S20]; Olsen, The Kiln Book, 4th ed., p.176"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Fireboxes are built of the kiln's own layers, the walls' round their sides and over their roofs, the floor's under them; no source here gives a firebox its own lining. Against a wall, the grate sits its step below the chamber floor, so smouldering coals fall into the front stacking (p.188), and the inlet flues are cut at the floor's level in the wall between; below the kiln's floor the firebox has walls of its own. Stoke holes are cut with their foot at the grate (p.188), and ash pits are left open at the mouth (p.188). The roofs are drawn of the walls' layers laid flat: span a flat one with an arch, bricks or kiln shelves as Olsen does (p.145), or give it a corbel roof. Firebox 1, against the left wall, its 1 inlet flues don't fit side by side across it, so one opening its whole width is cut, roofed with a corbel, its courses stepped in over the top of its height, drawn with its grate level with the chamber floor, as no step is given.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.92, p.141, p.145, p.188"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Firebox 1: 18 in above the grate and an ash pit 9 in below it (33% of its height below the grate), the grate 0 in below the chamber floor. How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 16 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "No price found for: steel.",
+      "reference": null
+    }
+  ],
+  "fire": {
+    "chimney_area_in2": 81.0,
+    "chimney_height": "14.0 ft (168 in) above the chamber floor",
+    "chimney_height_in": 168.0,
+    "chimney_range": "6.6–11.3 ft",
+    "draft": [
+      "0.129 in. w.c. (32 Pa) with flue gas at 1000 °F",
+      "0.164 in. w.c. (41 Pa) with flue gas at top"
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "The chimney, 14.0 ft, is taller than the 11.3 ft Olsen's rules give as the most (Rule 5): too tall a chimney pulls heat out and fires unevenly (p.80–81). Damper it, or take some off.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.80 (Principle 5): 3 ft of chimney per ft of downward pull plus 1 ft per 3 ft of horizontal pull, inside the kiln; p.130 (Fig. 5-2): the early Far-East proportions, a chimney twice the chamber's height (4 m on a 2 m cube), are the least and Rule 5 the most"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Fireboxes are laid out in brick in the masonry, plans and 3D model; their wood use per firing waits for the client's kiln (plan milestone M7).",
+        "reference": null
+      }
+    ],
+    "fireboxes": [
+      "1 × 13.5 × 27 in at the left wall, a 12 × 27 in grate"
+    ],
+    "flue_area": "68 in²",
+    "flue_area_in2": 67.5,
+    "fuel": "wood",
+    "full_fire_btu_hr": 0.0,
+    "grate_area": "324 in²",
+    "grate_area_in2": 324.0,
+    "inlet_area_in2": 60.75,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "floor, all fireboxes": "364 in²",
+          "grate, all fireboxes": "324 in²",
+          "inlet flues into the chamber": "61 in²"
+        },
+        "name": "Fireboxes",
+        "note": null,
+        "reference": null,
+        "value": "1 × 13.5 × 27 in at the left wall, a 12 × 27 in grate"
+      },
+      {
+        "formula": "n = ⌈(S − g_max)/2p⌉, p ≤ min(h/2, d/3), n·p ≤ d/2, g = S − 2n·p ≤ 6 in",
+        "inputs": {
+          "course h": "2.5 in",
+          "span S": "13.5 in",
+          "wall d": "9 in"
+        },
+        "name": "1 × 13.5 × 27 in at the left wall, a 12 × 27 in grate: Corbel: courses stepped in",
+        "note": "TMS 402's limits are for non-loadbearing building masonry at room temperature; no source gives a corbel limit for refractory at heat, so they are used here as they stand",
+        "reference": "TMS 402 prescriptive corbels, per Brick Industry Association, Corbels (Brick Brief, Aug 2025) p.2–3, https://www.gobrick.com/media/file/BB%20Corbels_082025.pdf; curved-kilns.md; Rhodes, Kilns (1968) p.101–102; door-headers.md [H10]; a 9 × 4½ × 2½ in brick's 2½ in course, combustion-and-masonry.md §5; d is the walls' brick from the hot face out",
+        "value": "3 course(s) a side, 1.25 in each, 3.75 in in all; a lintel brick over the 6 in left, 7.5 in above the springing"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "how": "as built"
+        },
+        "name": "Chimney's section at the base",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, 4th ed., p.76: wood grate 10 × the chimney's section at its base; p.77: he now uses about 7 : 1, and groundhogs run about 4 : 1",
+        "value": "81 in²"
+      },
+      {
+        "formula": "least 2 × downward pull (p.130, Fig. 5-2); most 3 × downward pull + ⅓ × horizontal pull (Rule 5, p.80)",
+        "inputs": {
+          "downward pull": "39.4 in",
+          "horizontal pull": "54.0 in",
+          "range": "6.6–11.3 ft"
+        },
+        "name": "Chimney height",
+        "note": "Build it to be tuned: add or take off brick, and damper it. 'If the chimney seems too tall, it probably is' (p.80). The height is measured from the chamber floor. Sources disagree on horizontal pull: Olsen and Ward add ⅓ ft of chimney per foot, Rhodes 2 ft (kiln-hardware.md, conflict on horizontal pull); Olsen's is used, as ADR 0014 takes his built kilns as the reference.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.80 (Principle 5): 3 ft of chimney per ft of downward pull plus 1 ft per 3 ft of horizontal pull, inside the kiln; p.130 (Fig. 5-2): the early Far-East proportions, a chimney twice the chamber's height (4 m on a 2 m cube), are the least and Rule 5 the most",
+        "value": "14.0 ft (168 in) above the chamber floor"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "70 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.129 in. w.c. (32 Pa) with flue gas at 1000 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "70 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.164 in. w.c. (41 Pa) with flue gas at top"
+      }
+    ]
+  },
+  "frame": {
+    "angle": "L3×3×3/16",
+    "angle_leg_in": 3.0,
+    "angle_t_in": 0.1875,
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "This arch's 4.5 in ring is too thick for its rise for HarbisonWalker's heated-arch method, which has no finite hot thrust for it in a rigid frame and marks such arches 'stress excessive'. Olsen builds arches like it, No. 1 arches of 4½ in insulating brick at 1½ in/ft, in light frames that give (his fast-fire kiln's is 2 × 2 × 3/16 in angle, bolted), so the frame's give limits the thrust. The steel is sized for 5.34 × the cold thrust, the most HarbisonWalker tabulates. Leave the frame its expansion allowance (Olsen p.52).",
+        "reference": "HarbisonWalker's largest printed heated-arch factor, used where its method gives no finite hot thrust (the ring too thick for its rise): the frame's give limits it instead, as in Olsen's light bolted frames (4th ed. p.139); arch-thrust-theory.md §8"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The cold line of thrust drops 3.51 in from the ring's corner to the side wall's outside, past the L3×3×3/16 buttress's 2.81 in of upright leg: HarbisonWalker, for industrial furnaces, wants it through or just above the steel's corner. Olsen's built kilns stand with it lower, so this is a note; a longer-legged angle, thinner walls at the skewback or more rise would bring it up.",
+        "reference": "HarbisonWalker: \"When the skewback is carried on a channel or angle, the line of thrust should pass through, or slightly above, the corner of the supporting steel\"; kiln-hardware.md §4.1 [S20]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
+        "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+      }
+    ],
+    "kind": "arch frame",
+    "members": [
+      {
+        "count": 4,
+        "length_in": 44.470588235294116,
+        "part": "corner posts",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L3×3×3/16"
+      },
+      {
+        "count": 2,
+        "length_in": 51.0,
+        "part": "buttresses behind the skewbacks",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "L3×3×3/16"
+      },
+      {
+        "count": 2,
+        "length_in": 51.0,
+        "part": "top cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 51.0,
+        "part": "bottom cross-members, front and back",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 51.0,
+        "part": "bottom cross-members, sides",
+        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
+        "steel": "¼ × 2 in flat bar"
+      },
+      {
+        "count": 2,
+        "length_in": 55.0,
+        "part": "tie rods",
+        "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
+        "steel": "1/2-13 threaded rod"
+      }
+    ],
+    "posts": 2,
+    "rod": "1/2-13",
+    "rod_d_in": 0.5,
+    "thrust": "159 lb per foot of arch",
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "because": "52 ft³ outside: Olsen's bolted fast-fire frame; smaller kilns can use 3/16 in angle"
+        },
+        "name": "Smallest frame angle",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, 4th ed., p.139 (the fast-fire kiln's bolted 2 × 2 × 3/16 in angle) and p.174 (an updraft 5 × 5 × 6 ft outside: corners 3 × 3 × ¼ in; smaller kilns 3/16 in)",
+        "value": "L2×2×3/16"
+      },
+      {
+        "formula": "Σ density × thickness × mean arc, over the roof's layers",
+        "inputs": {
+          "layer 1": "Morgan Thermal Ceramics K-23 insulating firebrick: 32 lb/ft³ × 4.5 in × 2.53 ft = 30.3"
+        },
+        "name": "Arch weight per foot of length",
+        "note": "Includes insulation laid on the arch, which HarbisonWalker's tables leave out.",
+        "reference": "HarbisonWalker W, exact form; kiln-hardware.md §4.6 [S20]",
+        "value": "30.3 lb/ft"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "layers from the inside": "1"
+        },
+        "name": "Arch ring",
+        "note": "The layers laid over the ring are its load, not part of it.",
+        "reference": null,
+        "value": "4.5 in, T/S 16.7 %"
+      },
+      {
+        "formula": "T ≤ (h − S/48) ÷ cos ½θ",
+        "inputs": {
+          "S": "27 in",
+          "h": "3.38 in",
+          "½θ": "28.1°"
+        },
+        "name": "Thickest ring for HarbisonWalker's heated-arch method",
+        "note": null,
+        "reference": "HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "3.19 in"
+      },
+      {
+        "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)), θ = 2·atan(2h/S)",
+        "inputs": {
+          "H / W": "0.980",
+          "rise per foot of span, d": "1.500 in/ft"
+        },
+        "name": "Cold horizontal thrust",
+        "note": null,
+        "reference": "statics of a three-hinged circular arch; checked against HarbisonWalker Brick Installation Guide, arch tables; kiln-hardware.md §4.3 [S20]",
+        "value": "29.7 lb per foot of arch"
+      },
+      {
+        "formula": "H = 5.34 × H_c, the most HarbisonWalker tabulates",
+        "inputs": {
+          "T/S": "16.7 %",
+          "the thickest ring its method takes": "3.19 in"
+        },
+        "name": "Thrust of the heated arch",
+        "note": null,
+        "reference": "HarbisonWalker's largest printed heated-arch factor, used where its method gives no finite hot thrust (the ring too thick for its rise): the frame's give limits it instead, as in Olsen's light bolted frames (4th ed. p.139); arch-thrust-theory.md §8",
+        "value": "158.7 lb per foot of arch"
+      },
+      {
+        "formula": "M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the posts)",
+        "inputs": {
+          "L": "45.0 in",
+          "M": "3,348 lb·in",
+          "w": "13.22 lb/in"
+        },
+        "name": "Buttress angle, bending",
+        "note": "A cautious first check, derived in kiln-hardware.md §4.5; not a sourced design rule. Sx is about a geometric axis, bending parallel to a leg. An angle free to twist bends about its principal axis instead, where its Sz is 0.324 in³: 10,332 psi. Which applies depends on how the brickwork holds the angle, which no source here says.",
+        "reference": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]; AISC Sx and Sz, kiln-hardware.md §4.7.1 [S28]",
+        "value": "needs Sx ≥ 0.279 in³; L3×3×3/16 has 0.433 in³"
+      },
+      {
+        "formula": "thrust × length ÷ 2 rods ÷ tensile stress area",
+        "inputs": {
+          "load on the busiest rod": "298 lb",
+          "stress area": "0.1419 in²"
+        },
+        "name": "Tie rods, one at the front and one at the back",
+        "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
+        "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
+        "value": "1/2-13: 2,097 psi"
+      }
+    ]
+  },
+  "gas": null,
+  "heat_loss": {
+    "ambient": "70 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "1497 W",
+        "inside_area": "6.75 ft²",
+        "layers": [
+          {
+            "cold_side": "382 °F",
+            "cold_side_k": 467.57107095322243,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.149999999999,
+            "material": "ifb-k23",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "210 °F",
+            "cold_side_k": 372.0141542152359,
+            "hot_side": "382 °F",
+            "hot_side_k": 467.57107095322243,
+            "material": "hard-firebrick-kx99",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "16.88 ft²",
+        "surface_temperature": "210 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "1497 W",
+        "inside_area": "6.75 ft²",
+        "layers": [
+          {
+            "cold_side": "382 °F",
+            "cold_side_k": 467.57107095322243,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.149999999999,
+            "material": "ifb-k23",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "210 °F",
+            "cold_side_k": 372.0141542152359,
+            "hot_side": "382 °F",
+            "hot_side_k": 467.57107095322243,
+            "material": "hard-firebrick-kx99",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "16.88 ft²",
+        "surface_temperature": "210 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "1569 W",
+        "inside_area": "7.177 ft²",
+        "layers": [
+          {
+            "cold_side": "387.1 °F",
+            "cold_side_k": 470.4353331914311,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999999,
+            "material": "ifb-k23",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "212.3 °F",
+            "cold_side_k": 373.3249042509781,
+            "hot_side": "387.1 °F",
+            "hot_side_k": 470.4353331914311,
+            "material": "hard-firebrick-kx99",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "17.3 ft²",
+        "surface_temperature": "212.3 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "1569 W",
+        "inside_area": "7.177 ft²",
+        "layers": [
+          {
+            "cold_side": "387.1 °F",
+            "cold_side_k": 470.4353331914311,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999999,
+            "material": "ifb-k23",
+            "thickness": "4.5 in"
+          },
+          {
+            "cold_side": "212.3 °F",
+            "cold_side_k": 373.3249042509781,
+            "hot_side": "387.1 °F",
+            "hot_side_k": 470.4353331914311,
+            "material": "hard-firebrick-kx99",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "17.3 ft²",
+        "surface_temperature": "212.3 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "7426 W",
+        "inside_area": "5.062 ft²",
+        "layers": [
+          {
+            "cold_side": "705.8 °F",
+            "cold_side_k": 647.5100952218701,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.1499999999808,
+            "material": "hard-firebrick-kx99",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "9 ft²",
+        "surface_temperature": "705.8 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "1175 W",
+        "inside_area": "5.271 ft²",
+        "layers": [
+          {
+            "cold_side": "254.1 °F",
+            "cold_side_k": 396.5166562550885,
+            "hot_side": "2345 °F",
+            "hot_side_k": 1558.15,
+            "material": "ifb-k23",
+            "thickness": "4.5 in"
+          }
+        ],
+        "outside_area": "8.13 ft²",
+        "surface_temperature": "254.1 °F"
+      }
+    ],
+    "findings": [
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick's hot side",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the kiln's top temperature: this layer is the hot face",
+              "symbol": "T_hot",
+              "text": null,
+              "unit": "degF",
+              "value": 1558.15
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "Morgan Thermal Ceramics K-23 insulating firebrick's service limit",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]",
+              "symbol": "T_max",
+              "text": null,
+              "unit": "degF",
+              "value": 1533.15
+            }
+          ],
+          "id": "heatloss.service.roof.1",
+          "label": null,
+          "lever": {
+            "hi": 2273.15,
+            "lo": 473.15,
+            "step": null,
+            "symbol": "T_hot"
+          },
+          "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "T_hot",
+              "level": "warning",
+              "margin": "T_hot = 2,345 °F, 45 °F over T_max = 2,300 °F",
+              "op": "<=",
+              "right": "T_max"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": "Passes when T_hot ≤ 2,300 °F",
+          "status": "warning",
+          "title": "roof: Morgan Thermal Ceramics K-23 insulating firebrick against its rating"
+        },
+        "level": "warning",
+        "message": "left, right, back, front, roof: Morgan Thermal Ceramics K-23 insulating firebrick would run at 2345 °F on its hot side, above its 2300 °F rating: past it a brick shrinks and wears faster. A higher-rated material, or this one further out, would last longer.",
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "HarbisonWalker KX-99 super-duty firebrick runs down to 210 °F (data from 400 °F) and up to 2345 °F (data to 2000 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.2, HWI KX-99 product data [S35]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 254.1 °F (data from 500 °F) and up to 2345 °F (data to 2012 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Some material data comes from extracts of the makers' data sheets and should be checked against the sheets themselves: HarbisonWalker KX-99 super-duty firebrick, Morgan Thermal Ceramics K-23 insulating firebrick",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2345 °F",
+    "total": "14.73 kW",
+    "total_watts": 14733.999281471435,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "10",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
+        "value": "1285 °C (2345 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "70 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "oxidised_steel"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.79"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "16.88 ft²",
+          "outside surface": "210 °F",
+          "surface coefficient h": "12.28 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1497 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "16.88 ft²",
+          "outside surface": "210 °F",
+          "surface coefficient h": "12.28 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1497 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "17.3 ft²",
+          "outside surface": "212.3 °F",
+          "surface coefficient h": "12.35 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1569 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "17.3 ft²",
+          "outside surface": "212.3 °F",
+          "surface coefficient h": "12.35 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1569 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "9 ft²",
+          "outside surface": "705.8 °F",
+          "surface coefficient h": "25.14 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "7426 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "8.13 ft²",
+          "outside surface": "254.1 °F",
+          "surface coefficient h": "15.21 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1175 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
+        "reference": null,
+        "value": "14.73 kW (5.03e+04 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 14,
+        "cut": "cut to 2.25 in long",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 152,
+        "cut": "cut to 4.5 in long",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 0.5 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 1.5 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 9,
+        "cut": "cut to 4.5 in long, ripped to 2 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 6.75 in long",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 6.75 in long, ripped to 1 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 1,
+        "cut": "ripped to 0.5 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 15,
+        "cut": "ripped to 1 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 10,
+        "cut": "ripped to 1.5 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 9,
+        "cut": "ripped to 2 in",
+        "material": "hard-firebrick-kx99"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 2.25 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2.25 in long, ripped to 1 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 124,
+        "cut": "cut to 4.5 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 0.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 1.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 7,
+        "cut": "cut to 4.5 in long, ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 14,
+        "cut": "cut to 6.75 in long",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 1,
+        "cut": "ripped to 0.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 12,
+        "cut": "ripped to 1 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 1.25 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 5,
+        "cut": "ripped to 1.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 2 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 2.5 in",
+        "material": "ifb-k23"
+      },
+      {
+        "count": 6,
+        "cut": "ripped to 3.75 in",
+        "material": "ifb-k23"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Back wall, layer 2 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Door, layer 2 from the inside, above the springline: about 3 bricks by volume, cut to the arch's curve; Roof, layer 1 from the inside: 5 rings, each of 12 No. 1 arch bricks and 2 straights; Left wall, the skewback and fill on top: about 15 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 15 bricks by volume, cut to the arch's angle.",
+        "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 62° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The steel that takes the arch's thrust is in the frame.",
+        "reference": "kiln-hardware.md §5.2 [S20]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "HarbisonWalker, for industrial furnaces: \"A stretcher course should never be used immediately below the skewback.\" Brick in these side walls is laid as stretchers, as in Olsen's insulating-brick kilns, whose featheredge skewbacks sit on a stretcher hot face (p.176, p.140). Where you can, lay the course under each skewback as headers.",
+        "reference": "kiln-hardware.md §4.1 [S20]; Olsen, The Kiln Book, 4th ed., p.176"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. At the corners the side walls run through and the back and door fit between them, layer by layer.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Fireboxes are built of the kiln's own layers, the walls' round their sides and over their roofs, the floor's under them; no source here gives a firebox its own lining. Against a wall, the grate sits its step below the chamber floor, so smouldering coals fall into the front stacking (p.188), and the inlet flues are cut at the floor's level in the wall between; below the kiln's floor the firebox has walls of its own. Stoke holes are cut with their foot at the grate (p.188), and ash pits are left open at the mouth (p.188). The roofs are drawn of the walls' layers laid flat: span a flat one with an arch, bricks or kiln shelves as Olsen does (p.145), or give it a corbel roof. Firebox 1, against the left wall, its 1 inlet flues don't fit side by side across it, so one opening its whole width is cut, roofed with a corbel, its courses stepped in over the top of its height, drawn with its grate level with the chamber floor, as no step is given.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.92, p.141, p.145, p.188"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Firebox 1: 18 in above the grate and an ash pit 9 in below it (33% of its height below the grate), the grate 0 in below the chamber floor. How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 16 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 717.0,
+        "detail": "468 whole, 214 cut into 228 pieces; 682 in the kiln plus 5 % for breakage",
+        "kind": "dense_firebrick",
+        "material": "hard-firebrick-kx99",
+        "name": "HarbisonWalker KX-99 super-duty firebrick",
+        "priced_amount": 717.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 510.0,
+        "detail": "294 whole, 191 cut into 205 pieces; 485 in the kiln plus 5 % for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick",
+        "priced_amount": 510.0,
+        "unit": "bricks"
+      },
+      {
+        "amount": 63.0,
+        "detail": "60 in the arch plus 5 % for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k23",
+        "name": "Morgan Thermal Ceramics K-23 insulating firebrick, No. 1 arch",
+        "priced_amount": 63.0,
+        "unit": "bricks"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      },
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: arch and wedge bricks",
+        "note": "the default; set allowances.shaped in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]; brick-waste.md §2",
+        "value": "5 %"
+      }
+    ]
+  },
+  "name": "Corbel-roofed firebox, small wood cross-draft",
+  "target": null
+}

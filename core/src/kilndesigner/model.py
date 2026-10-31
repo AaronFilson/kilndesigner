@@ -944,6 +944,43 @@ class Firebox(Spec):
     )
     inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
     stoke_hole: Port | None = None
+    roof: Literal["flat", "corbel"] = Field(
+        default="flat",
+        description=(
+            "'flat': the walls' layers laid flat over it. 'corbel': its side walls' brick courses "
+            "stepped in over the top of its height until one brick bridges what is left, 6 in or "
+            "less (Rhodes, Kilns p.101–102; TMS 402 per BIA's Corbels brief; Olsen p.49, a corbel "
+            "arch spans up to 24 in)"
+        ),
+    )
+    corbel_step: Length | None = Field(
+        default=None,
+        description=(
+            "With a corbel roof: how far each course steps in. Left out, the most TMS 402 allows, "
+            "min(h/2, d/3) of the course height h and the wall's brick thickness d"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _corbel_fits(self) -> Firebox:
+        if self.roof != "corbel":
+            if self.corbel_step is not None:
+                raise ValueError("corbel_step is for a corbel roof: give roof: corbel")
+            return self
+        if self.position == "under":
+            raise ValueError(
+                "a firebox under the floor is roofed by the chamber's floor: it has no roof of "
+                "its own to corbel"
+            )
+        if si(self.width, "in") > 24.0:
+            raise ValueError(
+                f"a corbel over {si(self.width, 'in'):g} in is past the 24 in Olsen gives for a "
+                "corbel arch (The Kiln Book, 4th ed., p.49), and no source gives one wider: roof "
+                "it flat or with a sprung arch"
+            )
+        if self.corbel_step is not None and si(self.corbel_step, "in") <= 0:
+            raise ValueError("each corbel course must step in by something")
+        return self
 
 
 class Fire(Spec):

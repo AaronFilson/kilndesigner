@@ -39,6 +39,7 @@ import math
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Literal
 
+from kilndesigner.corbel import Corbel, corbel
 from kilndesigner.model import Firebox, Kiln
 from kilndesigner.shape import chamber_shape
 from kilndesigner.sheet import Sheet
@@ -361,12 +362,87 @@ def _trough_floor(kiln: Kiln, tag: str, b: FireboxBox) -> list[Part]:
     return out
 
 
+COURSE_IN = 2.5  # a 9 × 4½ × 2½ in brick's course (combustion-and-masonry.md §5)
+COURSE_SOURCE = "a 9 × 4½ × 2½ in brick's 2½ in course, combustion-and-masonry.md §5"
+
+
+def brick_wall_in(kiln: Kiln) -> float:
+    """The walls' brick from the hot face out, before the first layer that isn't brick (in): the
+    masonry a corbel is laid in."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.shape import BRICK
+
+    total = 0.0
+    for x in kiln.lining.walls:
+        if resolve_material(kiln, x.material).kind not in BRICK:
+            break
+        total += si(x.thickness, "in")
+    return total
+
+
+def firebox_corbel(kiln: Kiln, fb: Firebox) -> Corbel | None:
+    """A corbel-roofed firebox's corbel over its width, laid in the walls' brick; None for a flat
+    roof, or where the walls have no brick to corbel."""
+    if fb.roof != "corbel":
+        return None
+    wall = brick_wall_in(kiln)
+    if wall <= 0:
+        return None
+    return corbel(fb.width, Q_(COURSE_IN, "in"), Q_(wall, "in"), fb.corbel_step)
+
+
+def corbel_refusal(kiln: Kiln, b: FireboxBox) -> str | None:
+    """Why a corbel-roofed firebox is drawn flat instead, or None when its corbel is drawn."""
+    fb = b.box
+    if fb.roof != "corbel":
+        return None
+    if b.trough:
+        return "it is a trough open to the chamber, with no roof of its own to corbel"
+    c = firebox_corbel(kiln, fb)
+    if c is None:
+        return "the walls' hot face isn't brick, and a corbel is laid in brick courses"
+    fh = grate_heights(fb)[0]
+    if c.rise * IN >= fh - 1e-6:
+        return (
+            f"its {c.courses} stepped course(s), {c.rise:g} in, don't fit under its "
+            f"{fh / IN:g} in height: make it taller"
+        )
+    return None
+
+
+def _corbel_parts(kiln: Kiln, tag: str, b: FireboxBox, c: Corbel) -> list[Part]:
+    """The corbel's courses inside the firebox's top: course k up from the bottom one projecting
+    k steps out from each side wall, running the firebox's length; the roof over them bridges
+    what is left."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.geometry import Part
+
+    mat = kiln.lining.walls[0].material
+    kind = resolve_material(kiln, mat).kind
+    (x0, y0, _), (x1, y1, z1) = b.lo, b.hi
+    base = z1 - c.rise * IN
+    parts: list[Part] = []
+    for k in range(1, c.courses + 1):
+        za, zb, p = base + (k - 1) * c.course * IN, base + k * c.course * IN, k * c.step * IN
+        if b.along_y:
+            sides = (((x0, y0, za), (x0 + p, y1, zb)), ((x1 - p, y0, za), (x1, y1, zb)))
+        else:
+            sides = (((x0, y0, za), (x1, y0 + p, zb)), ((x0, y1 - p, za), (x1, y1, zb)))
+        for side, (lo, hi) in zip(("a", "b"), sides, strict=True):
+            parts.append(Part(f"{tag}/corbel-{k}{side}-{mat}", mat, kind, lo, hi,
+                              face="roof", chamber=b.chamber))  # fmt: skip
+    return parts
+
+
 def firebox_parts(kiln: Kiln) -> list[Part]:
-    """Every firebox's walls, floor and roof, as boxes."""
+    """Every firebox's walls, floor and roof, as boxes; a corbel roof's courses inside its top."""
     s = site(kiln)
     parts: list[Part] = []
     for b in firebox_boxes(kiln):
         tag = f"firebox-{b.index}"
+        c = firebox_corbel(kiln, b.box) if corbel_refusal(kiln, b) is None else None
+        if c is not None:
+            parts += _corbel_parts(kiln, tag, b, c)
         if b.trough:
             bottom = b.level - s.floor_t
             if b.lo[2] < bottom - 1e-6:
@@ -659,6 +735,11 @@ def firebox_findings(kiln: Kiln) -> list[Finding]:
         if not inlets_fit(b):
             bits.append(f"its {fb.inlets} inlet flues don't fit side by side across it, so one "
                         "opening its whole width is cut")  # fmt: skip
+        refused = corbel_refusal(kiln, b)
+        if refused is not None:
+            bits.append(f"its corbel roof refused and drawn flat, as {refused}")
+        elif fb.roof == "corbel":
+            bits.append("roofed with a corbel, its courses stepped in over the top of its height")
         if fb.grate is not None and fb.grate.gap is None:
             bits.append("its grate's bar spacing isn't given, so no bars are drawn or listed")
         if fb.grate is not None:
@@ -680,8 +761,10 @@ def firebox_findings(kiln: Kiln) -> list[Finding]:
         "fall into the front stacking (p.188), and the inlet flues are cut at the floor's level "
         "in the wall between; below the kiln's floor the firebox has walls of its own. Stoke "
         "holes are cut with their foot at the grate (p.188), and ash pits are left open at the "
-        "mouth (p.188). The flat roofs are drawn of the walls' layers: span them with an arch, "
-        "bricks or kiln shelves as Olsen does (p.145). " + "; ".join(notes) + "."
+        "mouth (p.188). The roofs are drawn of the walls' layers laid flat: span a flat one with "
+        "an arch, bricks or kiln shelves as Olsen does (p.145), or give it a corbel roof. "
+        + "; ".join(notes)
+        + "."
     )
     return [Finding(level="info", message=message, reference=FIREBOX_SOURCE),
             *grate_findings(kiln, boxes)]  # fmt: skip
