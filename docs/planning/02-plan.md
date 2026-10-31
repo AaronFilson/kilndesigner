@@ -378,10 +378,23 @@ the next round are in [10-30-26.md](10-30-26.md).
   cylinders, the shino hand-over, an editable stacking setting (in progress).
 - 1632 tests, coverage over 98 % in Python and web.
 
+### Status (2026-10-30, round 4 done)
+
+- Arches over a semicircle are drawn right (Bidai, Kyoto).
+- **The author's kiln** has its arched door head, burners up the door's sides, low spy holes and
+  an editable setting (shelves, posts, ware ratio). Loaded it fires in about 65 h, mostly on the
+  elements, far from the author's 8–12 h (4–6 h when needed).
+- **Calimpong's teardrop** builds as a teardrop plan under a dome (complex curves step 3).
+- All checks green on `m7` (1662 tests). The hybrid-firing upgrade is done: elements and burners together, and a target-time
+  solver (the author's kiln at 4 h needs about 1,000,000 BTU/hr and 9 full cylinders, $124.65); the author is scanning A.P.
+  Green's brick tables for bottle kilns and brick domes.
+
 ### What's next (2026-10-30)
 
-See [10-30-26.md](10-30-26.md): the author's castable version, bottle kilns and conical-brick
-domes, the rest of the unclear values, then M7.
+See [10-30-26.md](10-30-26.md): the author's castable version to the solver's firing targets, a
+faster solver, A.P. Green's tables (being scanned) into the research, bottle kilns and
+conical-brick domes, sourced fast-firing limits for ware, then Calimpong's leftovers, the unclear
+values and M7.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
