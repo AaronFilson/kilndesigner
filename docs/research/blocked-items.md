@@ -196,6 +196,24 @@ the top"), no dimensions [K24]. Refractory FoS: nothing new beyond §7.
 
 ---
 
+## Third round (2026-10-31): statics, in `masonry-statics.md`
+
+### 13. What the third round settled
+
+Full findings, quotes and sources in `masonry-statics.md` ([M1]–[M6]). In short:
+
+| Item here | Third round | Status |
+|---|---|---|
+| §10 lunette (door head in a vault) | [K20] read in full: a compression-only line force gathers along the intersection curve, larger than in a free arch of the lunette's shape; no load share printed | Partial (method Verified; no number) |
+| §9 rampant arch | nothing beyond the cold statics | NOT FOUND |
+| §3 dome past 51.8° | [K11] read in full: lune base thrust h = H/[aθ(sin α − sin δ)]; H/W ≈ −0.583α + 1.123 (α ≥ π/3, ±20 %); statics estimate Eq. 3.6; no-hoop minimum t/R 0.069 for a hemisphere; TNA hemisphere (T/W)min 19.8 % | Verified (Lau; Heyman via Lau) |
+| Groin vaults (new) | TNA worked example, 10 × 7.5 m cross vault, t/R = 0.10: corner thrust 67.5–96.7 % of W, forces "accumulate along the diagonals" | Verified |
+| §5 catenary at a step | | NOT FOUND |
+| Corbels hot | only a cold 1 in per course chimney rule | NOT FOUND (Snippet) |
+| §7 refractory bearing | Trinks Vol. II read, no value; Vol. I not online | NOT FOUND |
+
+---
+
 ## Sources
 
 - [K1] "The Potteries Bottle Oven: Construction, their different parts, and who built them", bottleoven.blogspot.com (author not named on the page). https://bottleoven.blogspot.com/p/construction.html . Secondary; quotes Hanley Works Committee minutes (14 Feb 1877, extract by Paul Niblett) and Cardew, *A Pioneer Potter*.
