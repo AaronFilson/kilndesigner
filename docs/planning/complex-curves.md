@@ -68,6 +68,14 @@ simplification is written into the example's notes:
    Second round (`blocked-items.md` §9–12): no hot factor for rampant arches; a vault-with-lunette
    no-tension paper (Monaco et al. 2018) to read for door heads in vaults; steel keeps full yield
    to 400 °C per EN 1993-1-2 (Snippet only), no hot wrought-iron data, no band temperature.
+   Third round (`masonry-statics.md`): the dome past 51.8° now has sourced lune formulas (Lau
+   2006 read in full: base thrust per length, H/W ≈ −0.583α + 1.123 for α ≥ 60°, a statics
+   estimate, all minimum thrusts) to replace "the least it can be" in `frame.py`; groin vaults
+   have a check method (Heyman's slicing onto the diagonals, lower bound) and one worked TNA
+   example to test against (Maia Avelino et al. 2020); Monaco et al. read in full gives no load
+   share for a door in a vault, only that the load gathers along the intersection curve (the
+   door ring's assumption stays unconfirmed). Still not found: rampant hot factor, a catenary at
+   a step, hot corbel limits, refractory bearing allowable (Trinks Vol. I not online).
 6. **The form.** Shapes edited in the web form by choices first (teardrop, oval, bottle, crossing
    axes), with point editing later (the "drag to stretch" milestone).
 
