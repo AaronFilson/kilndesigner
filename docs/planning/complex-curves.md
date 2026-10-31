@@ -50,13 +50,21 @@ simplification is written into the example's notes:
    dome kilns, HarbisonWalker's dome and circle-brick tables, beehive-kiln practice), the
    conical-brick shapes makers sell, and how far a course may lean before it needs a form.
    Corbelled vaults: each course stepped in, with the limit on overhang per course (source
-   needed).
+   needed). Research 2026-10-31 (`docs/research/blocked-items.md`): dome and circle brick tables
+   not found (HarbisonWalker's *Modern Refractory Practice* is borrow-only on the Archive, not
+   read); mortar density found (BNZ: 116–131 lb/ft³, 200–400 lb per 1000 brick), so wedge-joint
+   mortar can go on the bill by weight; no largest joint for tatami bricks ("keep the joints
+   thin", FAO, no number).
 5. **Statics.** For a revolved shell (bottle domes, round domes): membrane theory or a thrust
    network, the hoop tension at the base carried by a band or the wall (the existing sliced-dome
    and band logic generalised). For a vault of changing section: Heyman's thrust-line method at
    each station (as door arches now), with the springing and buttress checks. Cast domes over odd
    outlines: the sliced-arch method along the worst slices. Olsen's built kilns are the check:
-   each must pass.
+   each must pass. Sources (2026-10-31, `blocked-items.md`): the lune method for a dome past
+   51.8° is Eddy's (1877) as described by MIT's masonry group, partial until Heyman (1977, 1995)
+   is read; still no allowable stress for a hot band (ASME II-D Table 1A identified, not read),
+   no allowable bearing for refractory, no bottle-kiln top diameter (a secondary 60 ft hovel
+   minimum and ~12 in oven wall only), and nothing on a catenary meeting the next at a step.
 6. **The form.** Shapes edited in the web form by choices first (teardrop, oval, bottle, crossing
    axes), with point editing later (the "drag to stretch" milestone).
 
