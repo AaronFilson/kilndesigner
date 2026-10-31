@@ -239,6 +239,117 @@ A tank's least fill is read between the D × L × K rule's rows. That is derived
 - **The chimney.** It stays at the kiln's top, 4.4 ft (53 in) above the chamber floor, with a
   hood and stack (Olsen p.151). The flue grows with the burner ports.
 
+## The castable version (2026-10-30)
+
+`examples/pnw-hybrid-crossdraft-castable.yaml`, built on the author's answers: the same chamber
+(28 × 60 in, 44 in to the springline), door (24 × 40 in, sill at the floor, arched head), eight
+burners up the door's sides, 11 × 100 lb cylinders, setting (ware 7 × the shelves) and site. It
+builds with **no errors**. Rebuild with `uv run kilndesigner build
+examples/pnw-hybrid-crossdraft-castable.yaml --out out/pnw-castable`.
+
+- **The dome: a sail dome, 2 in of Kast-O-Lite 30 LI Plus under 3 in of 6 pcf blanket, rising
+  18 in.** With the door in the 28 in front wall the dome stands as arches spanning the side walls
+  (domes-over-doors.md §D4). HarbisonWalker's limit on a ring's thickness for its rise, applied to
+  those slices, sets both numbers: a 3 in shell passes at no rise up to the corners' 33.1 in, a
+  2½ in shell from 23 in, a 2 in shell from 17 in; the slices stay inside HarbisonWalker's
+  1–3 in/ft up to a 24 in rise. 18 in is the least with a margin. It is 3.3 in per foot of the
+  66.2 in diagonal, a little over Olsen's 2½–3 in/ft for domes (p.51; 13.8–16.6 in here, where a
+  2 in shell fails). **Olsen casts domes 5–6 in thick** ("a 6in. thickness is best", p.59;
+  Kanayama 5–6 in, p.187). Over a door in the short wall of this long chamber, that is too thick for
+  the slices' rise. A door in a side wall would let the slices span 60 in and take a thicker shell
+  (the engine says so), but the door is the author's.
+- **The door's arch: a 4½ in brick ring of its own** (`loading.opening.ring`, new). A 2 in ring
+  from the dome would be 1.4 times the thinnest semicircle that stands (Heyman's 2). Olsen lays the
+  door's brick ring arch first and casts the dome over it (Kanayama Figs 7-17, 7-25; Höhr Figs
+  4-135, 4-137). The 4½ in ring is 2.9 times the thinnest. The 10 in jamb holds its least thrust,
+  22 lb, 6.3 in from the door's edge, inside its middle third (to 6.7 in). It needs friction 0.22 of
+  0.6. Bearing is 12.1 psi at the springing and 5.8 psi at the jamb's toe, shown and not checked.
+- **Walls: 3¼ in of Kast-O-Lite cast as one layer, on 4¾ in of 6 pcf blanket** (8 in, as before:
+  44 in outside). 3¼ in is the least that keeps the blanket under its 2000 °F rating; at 3 in it
+  runs at 2008 °F. **Floor: 2½ in of the castable on 2½ in of K-23**, so the 2,600 lb load sits
+  on brick, not on blanket.
+- **The DIY mixes don't pass** (castables.md §11a): no service limit and no fired shrinkage are
+  sourced, and three of their ingredients are unpriced. They stay in the test kiln.
+
+### Side by side
+
+Firing costs are for the full load (2,624 lb), elements on the whole firing in the target runs
+(`simulate --target`). Lining weight is the bricks in the kiln at 9 × 4½ × 2½ in, the castable
+placed at 98 lb/ft³ (dried, HWI) and the blanket, each at its library density. The chimney isn't
+included.
+
+| | Bricked door | Car | Budget lining | **Castable** |
+|---|---|---|---|---|
+| Chamber | 45.2 ft³ | 45.2 ft³ | 45.2 ft³ | **55.2 ft³** (the dome's 18 in rise) |
+| Roof | 3 in cast sprung arch, 3¾ in rise | same | same | 2 in cast sail dome, 18 in rise |
+| Walls | 4½ JM 26, 2½ K-23, 1 in 8 pcf | same | 4½ JM 26, 3½ in 6 pcf | 3¼ Kast-O-Lite, 4¾ in 6 pcf |
+| Lining weight | 2,962 lb | 2,950 lb | 2,520 lb | 3,012 lb (2,636 lb of it castable) |
+| Heat loss at cone 10 / hottest face | 14.31 kW / 281 °F | same | 14.33 kW / 281 °F | **20.29 kW / 329 °F** |
+| Burner input (Olsen Rule 1) | 452,083 BTU/hr, 8 × B3 at 1.0 psi | same | same | 552,249, 8 × B3 at 1.6 psi |
+| Cylinders at 20 °F (11) | full, ½, ¼ all pass | same | same | full passes; **¼ full doesn't** (476,300) |
+| Priced materials | $11,606 | $11,566 + the car | $9,859 | **$10,088** |
+| Errors / warnings | 0 / 1 | 0 / 1 | 0 / 1 | 0 / 3 (cylinders ¼ full, dome T/S, budget) |
+| Plain firing, elements to 1650 °F | 65 h 12 min, $150.03 | same | 59 h 13 min, $140.95 | **not finished in the 96 h the simulation runs**: 999 °C at 96 h, $143.57 so far |
+| 4 h target | $124.65, 1,002,000 BTU/hr | $124.65 | $124.59 | **not met** on 11 cylinders at 20 °F (needs 1,299,000; 4.1 h on their 1,243,000), $166.83; 12 full cylinders would do |
+| 6 h | $128.37, 574,000 | $128.37 | $127.96 | $168.76, 760,000 (8 × B4 at 1.1 psi) |
+| 8 h (the castable's `target_time`) | $131.49, 406,000 | $131.49 | $130.70 | $170.14, 535,000 (8 × B3 at 1.5 psi) |
+| 12 h | $138.61, 266,000 | $138.61 | $135.94 | $176.18, 349,000 (8 × B3 at 17 in. w.c.) |
+| Fastest heating, 4 / 8 / 12 h | 725 / 350 / 247 °C/h | same | 725 / 349 / 243 | 738 / 367 / 254 °C/h |
+| Dome or arch steel | arch frame: L4×4×5/16 posts and buttresses, ¼ × 2 in flat bar, two ½-13 rods; 231 lb/ft | same | same | dome frame: L4×4×5/16 along the side walls and round the springline (43 ft), two ½-13 rods across the door's head and the back at 741 lb hot; 234 lb/ft hot (59 cold) on the side walls, the angle at 14,076 of 29,989 lb·in allowed at 216 °F (AISC F10) |
+
+**The budget isn't met.** The castable version comes to **$10,088**. That is $1,500 under the
+bricked door and $230 over the budget lining, and still twice the $5,000. What drives it:
+
+- **Kast-O-Lite, $5,530**: 48 bags for 26.9 ft³ placed. At $115.21 a bag (Refractory West
+  [S51]) and 92 lb/ft³ to place, a cubic foot costs $193. A cubic foot of JM 26 brick costs $122
+  and K-23 $106. **Cast lining costs more than brick per cubic foot**, so casting the walls saves
+  nothing. It is cheaper here only because the cast wall is thinner (3¼ in against 4½ + 2½ in of
+  brick) and blanket is cheap ($1.40 per ft²·in for 6 pcf). The same castable is $98.18 a bag at
+  L&M ([S52], combustion-and-masonry.md §9), which would take about $820 off. The library prices
+  the higher listing.
+- **Fixed by the author's choices, $3,366**: eight B3 burners ($1,960), and the chimney's 258 hard
+  bricks ($1,406, 29 more than the brick kiln's because the dome is taller). These alone are 67 %
+  of $5,000.
+- The rest: blanket $630, K-23 under the floor $562.
+- **Unpriced** (not in the total): Kanthal APM wire (16 lb); the steel (43 ft L4×4×5/16, 25 ft
+  ¼ × 2 in flat bar, 11 ft ½-13 rod); the door's 4½ in brick ring (its arch bricks aren't counted:
+  the bill counts the wall's own layers); the door plug (the bill counts it as the wall's castable,
+  about 1.8 ft³; a plug of IFB, or a cast block, isn't priced); the burners' rack; cylinders;
+  shelves; the dome's form (dirt, sand and plastic, Olsen pp.58–59, 186–187).
+
+**The cost per firing is higher**, $167–176 against $125–139. The castable lining stores and
+loses more heat: 20.3 kW lost at the top against 14.3, and about 2,600 lb of castable at 98 lb/ft³
+to heat against IFB at 32–50. **Elements alone can't bring it to the 1650 °F hand-over in a
+working time.** The plain firing is still short of the top at the 96 h the simulation allows. So
+the castable version only makes sense fired to a target, with the burners on from the start.
+
+**Dry-out.** HWI Schedule 4 for Kast-O-Lite 30 LI Plus (castables.md §14.2) is for a single
+castable layer, one-sided, under 12 in. Cure at least 24 h at 70–100 °F. Heat at 100 °F/h to
+1200 °F, measured at the gas ½ in off the face, and hold 1 h per inch: 3¼ h for the walls, the
+thickest layer. Then cool, or heat on at 100 °F/h. That is about 14½ h from 70 °F to the end of
+the hold. Every castable here is one layer, but each sits on blanket or K-23. HWI says to ask
+about "multi-layer linings", and doesn't say whether a castable on blanket counts as one.
+**Confirm with HWI.** The engine still prints its generic castable note (Mizzou's 75 °F/h); this
+schedule is from the research notes, not the engine. Water leaves through the cold face, so the
+blanket should let it out (IC-1). Keep the steel shell's weep holes open.
+
+**Open items for the author (castable version):**
+
+1. **The budget.** It can't be met with this castable at the sourced prices, and the brick-wall
+   versions don't meet it either. Choose what gives: the burners (eight B3s, $1,960), a cheaper
+   seller of the same castable (L&M, $98.18), or a smaller kiln. The engine won't resize the
+   kiln on its own.
+2. **A 2 in dome** against Olsen's 5–6 in. It passes the engine's checks only that thin, because
+   the door is in the short wall. Accept it, move the door to a side wall (which allows a thicker
+   shell), or build a sprung arch, as the brick versions have.
+3. **The plain firing doesn't finish.** Fire to a target (8 h is in the design) or hand over
+   earlier.
+4. **Cylinders:** 11 meet the 552,000 BTU/hr full, but not ¼ full at 20 °F. 13 would, or fire
+   them fuller. The 4 h target needs 12 full.
+5. **The door's brick ring and plug:** what they're made of and how they're priced (above).
+6. **Dry-out of a castable on blanket:** HWI to confirm (above).
+7. As for the brick versions: the burners' rack, the setting's layers and posts.
+
 ## Not sourced, left out
 
 Kanthal APM wire price; steel prices; the car's wheels, rails and seal (no source sizes them);
