@@ -145,14 +145,40 @@ class PlanOutline(Spec):
         default=None,
         description="An oval's round ends' radius, less than half the chamber's width",
     )
+    neck_width: Length | None = Field(
+        default=None,
+        description=(
+            "A teardrop whose sides turn in a reverse (concave) curve into a straight, "
+            "parallel-sided neck this wide, closed by a flat back wall, rather than meeting in a "
+            "point: Calimpong's plan as the book draws it (12 in, Fig 4-140). Takes front_width, "
+            "side_radius, neck_length and neck_radius with it"
+        ),
+    )
+    neck_length: Length | None = Field(
+        default=None,
+        description="The neck's straight run, to the back wall (Calimpong's 19 in)",
+    )
+    neck_radius: Length | None = Field(
+        default=None,
+        description="The radius of the reverse curve that turns each side into the neck",
+    )
 
     @model_validator(mode="after")
     def _sizes_for_its_shape(self) -> PlanOutline:
+        neck = (self.neck_width, self.neck_length, self.neck_radius)
         if self.shape == "oval" and (self.end_radius is None or self.front_width is not None
-                                     or self.side_radius is not None):  # fmt: skip
+                                     or self.side_radius is not None
+                                     or any(x is not None for x in neck)):  # fmt: skip
             raise ValueError("an oval takes end_radius only")
         if self.shape == "teardrop" and self.end_radius is not None:
             raise ValueError("a teardrop takes front_width and side_radius, not end_radius")
+        if any(x is not None for x in neck) and (
+            any(x is None for x in neck) or self.front_width is None or self.side_radius is None
+        ):
+            raise ValueError(
+                "a teardrop's neck takes neck_width, neck_length and neck_radius together, with "
+                "front_width and side_radius"
+            )
         return self
 
 
@@ -389,11 +415,20 @@ class DoorOpening(Spec):
     sill: Length = Field(
         default_factory=lambda: Q_(0, "in"), description="From the chamber floor up to the sill"
     )
-    head: Literal["arch", "lintel"] = Field(
+    head: Literal["arch", "lintel", "flat"] = Field(
         default="arch",
         description=(
-            "A semicircular brick arch on the jambs (Olsen Figs 4-15, 5-42, 7-18), or a steel "
-            "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5)"
+            "A semicircular brick arch on the jambs (Olsen Figs 4-15, 5-42, 7-18), a steel "
+            "lintel over a rectangular opening (Fig 6-69; steel-design.md §S5), or 'flat': a flat "
+            "head with rounded corners, as Calimpong's door is drawn (Fig 4-140), laid out but not "
+            "checked, as no source gives what spans it"
+        ),
+    )
+    corner: Length | None = Field(
+        default=None,
+        description=(
+            "A flat head's rounded corners' radius, less than half the door's width. Left out: "
+            "square corners"
         ),
     )
     ring: Length | None = Field(
@@ -1276,13 +1311,34 @@ class Kiln(Spec):
                 f"the {c.outline.shape} is {x1 - x0:.1f} × {y1 - y0:.1f} in, larger than the "
                 f"chamber's {w:g} × {d:g} in: make its sides' radius larger"
             )
+        from kilndesigner.outline import offset
+
+        walls = sum(si(x.thickness, "in") for x in self.lining.walls)
+        try:
+            offset(plan, walls)
+        except ValueError as e:
+            raise ValueError(f"the walls can't follow the {c.outline.shape}: {e}") from e
         if isinstance(roof, Dome):
+            if not roof.buttressed:
+                raise ValueError(
+                    "a dome over a curved plan is held by masonry here (roof.buttressed: true), as "
+                    "Olsen's cast domes are, the walls buttressed with stones and concrete "
+                    "(Calimpong, Fig 4-145; Gulgong, Fig 4-124; p.186): the frame's buttress "
+                    "angles run along straight walls (steel-design.md §S5), and no source sizes "
+                    "steel round a teardrop or an oval"
+                )
             crown = crown_of(self, "in")
             try:
                 far = plan.farthest(crown)
                 plan.reach(0.0, crown)
             except ValueError:
                 raise ValueError("the dome's crown (crown_at) must stand over the plan") from None
+            if not plan.sees_all(crown):
+                raise ValueError(
+                    "the dome's crown (crown_at) must see the whole plan: from where it stands, "
+                    "the neck's reverse curve hides part of the wall, and the dome is laid out as "
+                    "a surface over each direction from the crown"
+                )
             rise = si(roof.rise, "in")
             if not 0 < rise < far:
                 raise ValueError(
@@ -1348,9 +1404,20 @@ class Kiln(Spec):
                 f"an arched door's height takes its semicircular head, {w / 2:g} in: make it at "
                 "least that tall"
             )
+        if door.corner is not None:
+            corner = si(door.corner, "in")
+            if door.head != "flat":
+                raise ValueError("a door's corner is a flat head's: set head to 'flat'")
+            if not 0 <= corner < min(w / 2, h):
+                raise ValueError(
+                    "a flat head's corners must be rounded to less than half the door's width and "
+                    "its height"
+                )
         if door.ring is not None:
             if door.head != "arch":
-                raise ValueError("a door's ring is an arched head's: leave it out under a lintel")
+                raise ValueError(
+                    "a door's ring is an arched head's: leave it out under a lintel or a flat head"
+                )
             if si(door.ring, "in") <= 0:
                 raise ValueError("a door arch's ring must be more than 0 deep")
         row = self.chamber.chambers > 1

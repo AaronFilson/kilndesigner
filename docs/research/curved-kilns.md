@@ -66,18 +66,31 @@ against a dimension printed on the same figure. Book p.124 is PDF page 111 of
 | Dome thickness at its edge, finished | **5½ in** | Fig 4-147 (p.125), the front of the finished kiln | The stoke hole's printed 9 in height (120 px → 13.3 px/in): the cast shell's front edge shows 70–80 px thick over the front wall | ±1½ in: the edge is rough, partly blackened and seen a little from above; the photo shows the thickened shell (4-146: the first casting was too thin and more castable was added over the top), and its thickness over the crown can't be seen |
 
 The plan widths printed in Fig 4-140 (39, 51½, 48, 16 and 12 in) are fitted in
-`examples/olsen/conrad-teardrop.yaml` by a teardrop of tangent arcs with a flat front
-(`chamber.outline`): the 51½ in round end cut square by the 39 in front, sides of 200 in radius
-meeting at the back 117 in from the front. Its area, 4321 in², is 3 % over the 4206 in² of the
-printed widths joined by straight lines; it is narrower than the book at 48 in (38.7 in against 48)
-and wider in the neck, as two arcs and a point can't make the book's concave neck. The widest
-point falls 17 in behind the front (the book's drawing puts it about 37 in back, unprinted). The
-dome is the sphere centred over the estimated crown, through the plan's farthest point (the
-neck's end), 10 in above the 35 in springline there: it meets the front wall 2–3 in higher
-than the book's 35½ in, and stands about 6 in above the book's 35 in at 24 in from the back wall.
-The door's head, drawn flat with rounded corners, stays a semicircular arch in the engine: the
-door statics cover a semicircular ring (Heyman) or a steel lintel, and what spans Calimpong's door
-isn't printed.
+`examples/olsen/conrad-teardrop.yaml` by a teardrop of tangent arcs with a flat front and the
+book's neck (`chamber.outline`, 2026-10-31): the 51½ in round end cut square by the 39 in front,
+sides of 145 in radius, each turning in a reverse curve of 32 in radius into a 12 in neck that
+runs straight for its last 19 in to the back wall, 117 in from the front (`outline.necked_teardrop`).
+The two radii were fitted by a grid search to the 48 in and 16 in widths: the plan is 16.7 in wide
+12 in before the neck (the book's 16), but only 43.9 in 33 in behind the widest point (the
+book's 48), as the round end, fixed by the 51½ and 39 in, puts the widest point 17 in behind the
+front where the drawing puts it about 37 in back (unprinted), and fuller sides would bulge past
+the round end. Its area, 3962 in², is 6 % under the 4206 in² of the printed widths joined by
+straight lines. (The earlier fit, sides of 200 in meeting in a point, had 4321 in² but no neck.)
+The dome is the sphere centred over the estimated crown, through the plan's farthest points (the
+neck's back corners), 10 in above the 35 in springline there.
+
+**The door's head**, measured on the page image at 600 dpi (2026-10-31; 20.8 px/in from the
+printed 33 in width): the jambs stand about 33 in, the head rises about 4 in to its crown at the
+printed 37 in in a shallow curve, and its corners are rounded to about ¾ in, so **1 ± ½ in** (an
+estimate). The example lays it out flat at 37 in with 1 in corners (`head: flat`, `corner`).
+What spans it isn't printed, and no source gives statics for a flat or near-flat head over a
+door in hot refractory: the engine's door statics are Heyman's for a semicircular ring and
+AISC's for a steel lintel; BIA's jack and segmental minor arches (door-headers.md §D3.3, §D3.4)
+are cold building brick, need an allowable crushing stress no refractory maker gives (§D8), and
+a jack arch needs tapered voussoirs on cut skewbacks. So the head is laid out and reported as not
+checked. Drawn as a segmental head (rise 4 in on 33 in, S/r ≈ 8) it would fall inside BIA's
+Fig. 3 range, so its thrust could be worked out by §D3.4; what blocks the check is the
+allowable stress.
 
 ### `bae-gilgama`: Mr Bae's gilgama (p.107, Fig 4-67; p.108)
 

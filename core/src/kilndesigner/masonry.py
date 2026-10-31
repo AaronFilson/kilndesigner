@@ -506,6 +506,25 @@ class MasonryPlan:
         return [*floor, *self.rings, *rest, *fireboxes]
 
 
+def curve_courses(kiln: Kiln, part: Part) -> tuple[int, str] | None:
+    """A curved plan's wall layer (to the springline) laid in 4½ in stretcher rings round the
+    curve (curve_masonry.py): its bricks, every course, and their description; None for any other
+    part, or a layer that isn't whole rings."""
+    from kilndesigner.curve_masonry import courses, curve_rings, describe
+    from kilndesigner.geometry import thicknesses
+
+    if part.plan is None or part.dome is not None or part.wall != "walls":
+        return None
+    index = int(part.name.split("/", 1)[1].split("-", 1)[0])
+    walls = thicknesses(kiln, "left")
+    inner = sum(t for _, t in walls[: index - 1]) / IN
+    rings = curve_rings(kiln, inner, part.thickness / IN)
+    if rings is None:
+        return None
+    n = courses((part.hi[2] - part.lo[2]) / IN)
+    return n * sum(r.bricks for r in rings), describe(rings, n)
+
+
 def plan_masonry(kiln: Kiln) -> MasonryPlan:
     if kiln.chamber.shape == "round":
         from kilndesigner.round_masonry import plan_round_masonry
@@ -523,6 +542,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     cast_volume: defaultdict[str, float] = defaultdict(float)
 
     arch_lines: list[str] = []
+    curve_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
     row = in_a_row(kiln)
@@ -550,6 +570,11 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             # closing it; a dome's layer or a wall's top under it; a curved plan's wall, floor or
             # roof. No standard shapes turn these curves, so brick is counted by volume.
             skewback = part.is_skewback
+            laid_round = curve_courses(kiln, part) if m.kind in BRICK_KINDS else None
+            if laid_round is not None:
+                whole[m.id] += laid_round[0]
+                curve_lines.append(f"{layer_name(part)}: {laid_round[1]}")
+                continue
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
@@ -619,6 +644,16 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     brick = allowance(kiln, "brick")
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
+    if curve_lines:
+        from kilndesigner.curve_masonry import SOURCE as CURVE_SOURCE
+
+        findings.append(
+            Finding(
+                level="info",
+                message="Courses round the curve: " + "; ".join(curve_lines) + ".",
+                reference=CURVE_SOURCE,
+            )
+        )
     if arch_lines:
         findings.append(
             Finding(

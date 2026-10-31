@@ -27,6 +27,7 @@ from kilndesigner.outline import (
     circle,
     curve_section,
     flat_teardrop,
+    necked_teardrop,
     oval,
     prism,
     rectangle,
@@ -72,6 +73,13 @@ def plan_of(kiln: Kiln, unit: str = "m") -> Outline:
         return oval(w, d, si(o.end_radius, unit))
     front = si(o.front_width, unit) if o.front_width is not None else None
     side = si(o.side_radius, unit) if o.side_radius is not None else None
+    if o.neck_width is not None:
+        assert front is not None
+        assert side is not None
+        assert o.neck_length is not None
+        assert o.neck_radius is not None
+        return necked_teardrop(w, d, front, side, si(o.neck_width, unit),
+                               si(o.neck_length, unit), si(o.neck_radius, unit))  # fmt: skip
     return flat_teardrop(w, d, front, side)
 
 

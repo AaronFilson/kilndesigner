@@ -207,6 +207,21 @@ class Outline:
             raise ValueError(f"the centre {centre} isn't inside the outline")
         return max(found)
 
+    def sees_all(self, centre: Point = (0.0, 0.0)) -> bool:
+        """Whether every point of the outline can be seen from ``centre`` along a ray inside it
+        (the outline is star-shaped about it), so that ``reach`` is its distance every way: a
+        convex outline from any point inside, a reverse curve only from where it doesn't hide
+        what lies behind it."""
+        for p in self.points(96):
+            d = math.dist(p, centre)
+            if d < 1e-12:
+                continue
+            # The ray towards a point of the outline always meets it there, so reach finds a hit
+            far = self.reach(math.atan2(p[1] - centre[1], p[0] - centre[0]), centre)
+            if far > d * (1 + 1e-6) + 1e-9 * self.perimeter:
+                return False
+        return True
+
     def farthest(self, centre: Point = (0.0, 0.0)) -> float:
         """The farthest the outline reaches from ``centre``: arcs at their farthest point."""
         far = 0.0
@@ -346,6 +361,88 @@ def flat_teardrop(
     return moved(Outline((*sides, *cut)), 0.0, -length / 2 + c)
 
 
+def necked_teardrop(
+    width: float,
+    length: float,
+    front_width: float,
+    side_radius: float,
+    neck_width: float,
+    neck_length: float,
+    neck_radius: float,
+) -> Outline:
+    """A teardrop with a flat front, as flat_teardrop, whose sides don't meet in a point but turn
+    in a reverse (concave) curve into a straight, parallel-sided neck ``neck_width`` across and
+    ``neck_length`` long, closed by a flat back wall: Calimpong's plan as the book draws it (Fig
+    4-140, curved-kilns.md). Centred on its length, the front at −y.
+
+    Each side is an arc of ``side_radius`` tangent inside the round end (its centre C at
+    R_s − r from the round end's centre O), then an arc of ``neck_radius`` bending the other way,
+    tangent outside the side's circle (|F − C| = R_s + ρ) and to the neck's straight side, which it
+    meets where the neck begins. The side's centre is turned about O until both hold: one
+    unknown, found by bisection, the side's circle growing towards the neck as it turns."""
+    r, f, n = width / 2, front_width, neck_width / 2
+    rs, rho = side_radius, neck_radius
+    if not 0 < f < width:
+        raise ValueError("a teardrop's flat front must be narrower than its widest point")
+    if not 0 < neck_width < front_width or neck_length <= 0 or rho <= 0:
+        raise ValueError("a neck must be narrower than the flat front, with a length and a radius")
+    if rs <= r:
+        raise ValueError("the sides' radius must be more than the round end's")
+    c = math.sqrt(r * r - (f / 2) ** 2)  # the front, behind the round end's centre
+    start = length - c - neck_length  # where the neck's straight sides begin, from O
+    if start <= 0:
+        raise ValueError("the neck is too long: it reaches the round end")
+    fc = (n + rho, start)  # the reverse curve's centre, beside the neck's start
+
+    def centre(psi: float) -> Point:
+        """The right side's centre, R_s − r from O, ψ round from −x towards +y."""
+        return (-(rs - r) * math.cos(psi), (rs - r) * math.sin(psi))
+
+    def gap(psi: float) -> float:
+        return math.dist(fc, centre(psi)) - (rs + rho)
+
+    lo, hi = -math.pi / 2, math.pi / 2
+    if not gap(lo) > 0 > gap(hi):
+        raise ValueError("the sides and the neck's curve don't meet: change their radii")
+    for _ in range(100):
+        mid = (lo + hi) / 2
+        lo, hi = (mid, hi) if gap(mid) > 0 else (lo, mid)
+    cc = centre((lo + hi) / 2)
+    t0 = math.atan2(-cc[1], -cc[0])  # the side touches the round end, seen from C
+    t1 = math.atan2(fc[1] - cc[1], fc[0] - cc[0])  # and the reverse curve
+    a0 = math.atan2(cc[1] - fc[1], cc[0] - fc[0])  # the touching point, seen from F
+    begin, stop = math.pi - t0, 2 * math.pi + t0
+    low, high = math.pi + math.asin(c / r), 2 * math.pi - math.asin(c / r)
+    meets = -math.pi / 2 < t0 < t1 < math.pi / 2 and -math.pi < a0 < -math.pi / 2
+    if not meets or not begin < low < high < stop:
+        raise ValueError("the sides and the neck's curve don't meet: change their radii")
+    if t0 < 0:
+        raise ValueError(
+            "the sides would bulge wider than the round end: make their radius smaller or the "
+            "neck's larger"
+        )
+    back = length - c
+    side = Arc(cc, rs, t0, t1 - t0)
+    turn = Arc(fc, rho, a0, -math.pi - a0)  # clockwise, round to −x: the neck's start
+    right = (side, turn, Line((n, start), (n, back)))
+    # The left half, mirrored: x → −x reverses each piece's direction
+    left = (
+        Line((-n, back), (-n, start)),
+        Arc((-fc[0], fc[1]), rho, 0.0, turn.sweep),
+        Arc((-cc[0], cc[1]), rs, math.pi - t1, t1 - t0),
+    )
+    # The round end, from the left side's touching point round the front to the right side's,
+    # cut square by the front wall
+    o = (0.0, 0.0)
+    end = Arc(o, r, begin, stop - begin)
+    cut = (
+        Arc(o, r, begin, low - begin),
+        Line(end.at(low), end.at(high)),
+        Arc(o, r, high, stop - high),
+    )
+    return moved(Outline((*right, Line((n, back), (-n, back)), *left, *cut)), 0.0, -length / 2 + c)
+
+
 def _normal(s: Line | Arc, end: bool) -> Point:
     """The outward normal of an anticlockwise outline's line or arc at its start or end."""
     if isinstance(s, Arc):
@@ -372,6 +469,11 @@ def offset(outline: Outline, t: float) -> Outline:
     for s, nxt in zip(segs, segs[1:] + segs[:1], strict=True):
         if isinstance(s, Arc):
             grow = t if s.sweep > 0 else -t
+            if s.radius + grow <= 0:
+                raise ValueError(
+                    f"a reverse curve of {s.radius:g} radius is tighter than the {t:g} the outline "
+                    "is moved out: it would close up"
+                )
             out.append(Arc(s.centre, s.radius + grow, s.start, s.sweep))
         else:
             nx, ny = _normal(s, False)

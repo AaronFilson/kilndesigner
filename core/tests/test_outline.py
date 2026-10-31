@@ -23,6 +23,7 @@ from kilndesigner.outline import (
     flat_teardrop,
     half_width,
     moved,
+    necked_teardrop,
     offset,
     oval,
     prism,
@@ -243,6 +244,55 @@ def test_a_sphere_dome_over_a_rectangle_or_circle() -> None:
     drop = SphereDome(teardrop(1.0, 4.0), 0.5)
     assert drop.radius == pytest.approx((9 + 0.25) / 1.0)
     assert 0 < drop.volume < teardrop(1.0, 4.0).area * 0.5
+
+
+def _shoelace(points: list[tuple[float, float]]) -> float:
+    nxt = points[1:] + points[:1]
+    return sum(x0 * y1 - x1 * y0 for (x0, y0), (x1, y1) in zip(points, nxt, strict=True)) / 2
+
+
+def test_a_teardrop_with_a_neck() -> None:
+    # Calimpong's: 51½ in, 117 in long, a 39 in front, a 12 in neck 19 in long
+    drop = necked_teardrop(51.5, 117, 39, 145, 12, 19, 32)
+    x0, x1, y0, y1 = drop.bounds
+    assert (x1 - x0, y1 - y0) == pytest.approx((51.5, 117), abs=1e-3)
+    assert drop.area == pytest.approx(_shoelace(drop.points(4000)), rel=1e-5)
+    # Every join is tangent but the four square corners (front and back)
+    for y in (40.0, 45.0, 58.4):
+        assert 2 * half_width(drop, y) == pytest.approx(12)
+    widths = [2 * half_width(drop, -58.5 + k) for k in range(1, 117)]
+    assert max(widths) == pytest.approx(51.5, abs=0.01)
+    # The reverse curves bend the other way: arcs turning clockwise
+    assert sum(1 for s in drop.segments if isinstance(s, Arc) and s.sweep < 0) == 2
+    # Moved out, the reverse curves tighten and the Steiner area still holds
+    grown = offset(drop, 9)
+    assert grown.area == pytest.approx(drop.area + drop.perimeter * 9 + math.pi * 81, rel=1e-9)
+    assert grown.area == pytest.approx(_shoelace(grown.points(4000)), rel=1e-5)
+    with pytest.raises(ValueError, match="close up"):
+        offset(drop, 40)
+    # From the round end it sees the whole outline; from inside the neck the curves hide some
+    assert drop.sees_all((0.0, -5.5))
+    assert not drop.sees_all((0.0, 50.0))
+    assert not drop.sees_all((0.0, 80.0))  # outside it
+    # From a point of the outline itself (that point skipped): a rectangle's corner sees it all
+    assert rectangle(2.0, 1.0).sees_all((-1.0, -0.5))
+
+
+@pytest.mark.parametrize(
+    ("sizes", "why"),
+    [
+        ((51.5, 117, 60, 145, 12, 19, 32), "narrower than its widest"),
+        ((51.5, 117, 39, 145, 40, 19, 32), "narrower than the flat front"),
+        ((51.5, 117, 39, 20, 12, 19, 32), "more than the round end's"),
+        ((51.5, 117, 39, 145, 12, 110, 32), "too long"),
+        ((51.5, 117, 39, 95, 12, 19, 36), "bulge wider"),
+        ((51.5, 117, 39, 145, 12, 19, 400), "don't meet"),
+        ((51.5, 60, 39, 145, 12, 19, 3), "don't meet|in front of"),
+    ],
+)
+def test_necks_it_refuses(sizes: tuple[float, ...], why: str) -> None:
+    with pytest.raises(ValueError, match=why):
+        necked_teardrop(*sizes)
 
 
 def test_a_revolved_shell() -> None:
