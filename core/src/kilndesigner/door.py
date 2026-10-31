@@ -19,7 +19,13 @@ from dataclasses import dataclass, replace
 
 import numpy as np
 
-from kilndesigner.firebox_parts import EPS, Opening, carve, site
+from kilndesigner.firebox_parts import (
+    EPS,
+    Opening,
+    _plain,  # pyright: ignore[reportPrivateUsage]
+    carve,
+    site,
+)
 from kilndesigner.geometry import Part, inside_top
 from kilndesigner.model import Dome, Kiln, WallFace
 from kilndesigner.units import Q_, parse_quantity, si
@@ -43,6 +49,7 @@ class DoorHole:
     lo: tuple[float, float, float]
     hi: tuple[float, float, float]
     radius: float
+    corner: float = 0.0  # a flat head's rounded corners: the box stops this far under the head
 
     @property
     def opening(self) -> Opening:
@@ -106,22 +113,44 @@ def _hole(kiln: Kiln, u0: float, u1: float) -> DoorHole:
     s = site(kiln)
     w, h = si(door.width, "mm"), si(door.height, "mm")
     radius = w / 2 if door.head == "arch" else 0.0
+    corner = si(door.corner, "mm") if door.corner is not None else 0.0
     if face == "front":
         z = s.floors[0]
     elif face == "back":
         z = s.floors[-1]
     else:
         z = s.floor_at((u0 + u1) / 2)
-    zs = (z + si(door.sill, "mm"), z + si(door.sill, "mm") + h - radius)
+    zs = (z + si(door.sill, "mm"), z + si(door.sill, "mm") + h - radius - corner)
     rel = (u0, u1) if face in ("front", "back") else (u0 - s.middle, u1 - s.middle)
     side = {"front": "+y", "back": "-y", "left": "+x", "right": "-x"}[face]
     sign = -1.0 if face in ("front", "left") else 1.0
     outer = sign * _outside(s, face, *rel)
     inner = _inside_face(s, side, sign, rel)
+    if kiln.chamber.outline is not None:
+        inner = sign * _curve_inside(kiln, face, rel)
     a = (min(outer, inner) - EPS, max(outer, inner) + EPS)
     if face in ("front", "back"):
-        return DoorHole(face, (u0, a[0], zs[0]), (u1, a[1], zs[1]), radius)
-    return DoorHole(face, (a[0], u0, zs[0]), (a[1], u1, zs[1]), radius)
+        return DoorHole(face, (u0, a[0], zs[0]), (u1, a[1], zs[1]), radius, corner)
+    return DoorHole(face, (a[0], u0, zs[0]), (a[1], u1, zs[1]), radius, corner)
+
+
+def _curve_inside(kiln: Kiln, face: WallFace, rel: tuple[float, float]) -> float:
+    """A curved plan's inside face behind a door from rel[0] to rel[1] along its wall (mm, from
+    the middle): where the curve comes nearest the middle across the door, so the hole reaches
+    the inside everywhere, as a round wall's does."""
+    from kilndesigner.form import plan_of
+
+    plan = plan_of(kiln, "mm")
+    angle = {"front": -math.pi / 2, "back": math.pi / 2, "left": math.pi, "right": 0.0}[face]
+    side = face in ("left", "right")
+    reaches: list[float] = []
+    for k in range(17):
+        u = rel[0] + (rel[1] - rel[0]) * k / 16
+        try:
+            reaches.append(plan.reach(angle, (0.0, u) if side else (u, 0.0)))
+        except ValueError:
+            reaches.append(0.0)
+    return min(reaches)
 
 
 def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
@@ -136,8 +165,7 @@ def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
     for k, hole in enumerate(holes):
         out: list[Part] = []
         for p in parts:
-            plain = p.arch is None and p.profile is None and p.dome is None and p.revolve is None
-            if p.wall != hole.face or not plain:
+            if p.wall != hole.face or not _plain(p):
                 out.append(p)
                 continue
             lo = tuple(max(a, b) for a, b in zip(p.lo, hole.lo, strict=True))
@@ -155,15 +183,31 @@ def cut_door(kiln: Kiln, parts: list[Part]) -> list[Part]:
 
 def model_door_holes(kiln: Kiln) -> list[tuple[tuple[float, ...], tuple[float, ...], object]]:
     """The door's opening as solids, to cut the model's walls: the box to the jambs' top, and an
-    arched head's half-round over it."""
+    arched head's half-round over it, or a flat head's band between its rounded corners and a
+    quarter-round in each."""
     from kilndesigner.geometry import _box, _cylinder  # pyright: ignore[reportPrivateUsage]
 
     out: list[tuple[tuple[float, ...], tuple[float, ...], object]] = []
     for hole in door_holes(kiln):
         out.append((hole.lo, hole.hi, _box(hole.lo, hole.hi)))
+        axis = 1 if hole.face in ("front", "back") else 0
+        if hole.corner > 0:
+            k = 1 - axis  # along the wall
+            c = hole.corner
+            lo, hi = list(hole.lo), list(hole.hi)
+            lo[k], hi[k], lo[2], hi[2] = hole.lo[k] + c, hole.hi[k] - c, hole.hi[2], hole.hi[2] + c
+            out.append((tuple(lo), tuple(hi), _box(tuple(lo), tuple(hi))))  # type: ignore[arg-type]
+            for u in (hole.lo[k] + c, hole.hi[k] - c):
+                centre = [0.0, 0.0, hole.hi[2]]
+                centre[k], centre[axis] = u, (hole.lo[axis] + hole.hi[axis]) / 2
+                clo, chi = list(centre), list(centre)
+                for i in (k, 2):
+                    clo[i], chi[i] = centre[i] - c, centre[i] + c
+                clo[axis], chi[axis] = hole.lo[axis], hole.hi[axis]
+                cyl = _cylinder(axis, tuple(centre), c, hole.hi[axis] - hole.lo[axis])  # type: ignore[arg-type]
+                out.append((tuple(clo), tuple(chi), cyl))
         if hole.radius <= 0:
             continue
-        axis = 1 if hole.face in ("front", "back") else 0
         centre = tuple((a + b) / 2 for a, b in zip(hole.lo, hole.hi, strict=True))
         centre = (centre[0], centre[1], hole.hi[2])
         length = hole.hi[axis] - hole.lo[axis]
@@ -205,7 +249,14 @@ def _wall_above(kiln: Kiln, *, crown: bool = False) -> float:
 def _roof_edge(kiln: Kiln) -> tuple[float, str]:
     """The roof's vertical load on the wall over the door (lb/ft) and where it comes from."""
     from kilndesigner.castable import resolve_material
+    from kilndesigner.vault import TAMBA, through_springing, vault_on_door
 
+    if through_springing(kiln):
+        down, _ = vault_on_door(kiln)
+        return down, (
+            "half the tube vault's weight per foot, all its layers: with the wall under it cut "
+            f"away, its foot over the door stands on the door's ring (statics; {TAMBA})"
+        )
     if isinstance(kiln.roof, Dome) and kiln.chamber.shape != "round":
         from kilndesigner.frame import dome_slices
 
@@ -253,12 +304,16 @@ def door_head(kiln: Kiln) -> DoorHead | None:
     w, h = si(door.width, "in"), si(door.height, "in")
     above = _wall_above(kiln)
     out = DoorHead([], [])
+    head = {"arch": "a semicircular arch", "lintel": "a steel lintel"}.get(door.head)
+    if head is None:
+        corner = si(door.corner, "in") if door.corner is not None else 0.0
+        head = f"flat, its corners rounded to {corner:g} in" if corner else "flat, square"
     out.working.append(
         Step(
             name="Door in part of the wall",
             value=(
                 f"{w:g} × {h:g} in in the {face} wall, {above:.1f} in of wall over it, its head "
-                f"{'a semicircular arch' if door.head == 'arch' else 'a steel lintel'}"
+                f"{head}"
             ),
             reference=DOOR_SOURCE,
         )
@@ -275,8 +330,26 @@ def door_head(kiln: Kiln) -> DoorHead | None:
     if door.head == "arch":
         _arch_head(kiln, w, out)
         return out
+    if door.head == "flat":
+        out.findings.append(Finding(level="info", message=FLAT_UNCHECKED, reference=FLAT_SOURCE))
+        return out
     _lintel(kiln, w, above, out)
     return out
+
+
+FLAT_SOURCE = (
+    "curved-kilns.md (Olsen, The Kiln Book, 4th ed., Fig 4-140, p.124); door-headers.md §D3.3, "
+    "§D3.7, §D8, §D9"
+)
+FLAT_UNCHECKED = (
+    "The door's head is flat with rounded corners, as Calimpong's is drawn (Fig 4-140). What "
+    "spans it isn't checked: the book doesn't say what it is, and no source here gives statics "
+    "for it. The engine's door statics are Heyman's for a semicircular ring and AISC's for a steel "
+    "lintel; BIA's jack arch needs tapered voussoirs on skewbacks cut ½ in per foot of span for "
+    "each 4 in of depth, cold building brick only; and a cast shell over the door has no sourced "
+    "strength hot. Use a semicircular arch (head: arch) or a steel lintel (head: lintel) to have "
+    "it checked."
+)
 
 
 # ---- An arched head and its jambs --------------------------------------------------------------
@@ -322,8 +395,19 @@ def door_thrusts(r: float, outer: float, top: float, q: float, edge: float) -> t
     return least, most
 
 
+OWN_RING_SOURCE = (
+    "the design's door ring: under a cast dome Olsen lays the door's brick ring arch first and "
+    "casts the shell over it (Kanayama Figs 7-17, 7-25; Höhr-Grenzhausen Figs 4-135, 4-137), "
+    "and lays 'another ring arch, resting on top of the door arch' (door-headers.md [H11])"
+)
+
+
 def _ring_depth(kiln: Kiln) -> float | None:
-    """The door arch's ring depth (in): the roof's ring, when the roof is an arch or dome."""
+    """The door arch's ring depth (in): the design's own, else the roof's ring when the roof is
+    an arch or dome."""
+    door = kiln.loading.opening
+    if door is not None and door.ring is not None:
+        return si(door.ring, "in")
     ring = getattr(kiln.roof, "ring", None)
     if ring is None or kiln.roof.type not in ("sprung_arch", "catenary_arch", "dome"):
         return None
@@ -408,11 +492,12 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
         # (Olsen Figs 4-135, 4-137, Höhr-Grenzhausen), so the masonry over the ring runs on into
         # the shell; its weight is counted twice, as wall here and as the roof's edge, the safe
         # side for the ring's thrust
-        above += ring
+        shell = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof")[: kiln.roof.ring])
+        above += shell
         out.working.append(
             Step(
                 name="The dome over the door's arch",
-                value=f"the wall over the door taken {ring:g} in higher, the dome's shell",
+                value=f"the wall over the door taken {shell:g} in higher, the dome's shell",
                 reference=(
                     "Olsen Figs 4-135, 4-137 (p.123): the entry door's arch is laid, then the "
                     "dome cast over it; door-openings.md"
@@ -420,6 +505,32 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 note=(
                     "The shell's weight is counted as wall over the ring and again as the "
                     "roof's edge on it: the safe side for the ring's thrust."
+                ),
+            )
+        )
+    from kilndesigner.vault import TAMBA, through_springing, vault_on_door
+
+    if through_springing(kiln):
+        # The vault's own brickwork is turned as an arch over the door (Fig 4-11): the ring over
+        # the door's crown is the vault's, and the vault's foot stands on it (the roof's edge)
+        above = max(above, r) + ring
+        down, out_thrust = vault_on_door(kiln)
+        out.working.append(
+            Step(
+                name="The door through the vault's springing",
+                value=(
+                    f"its ring the vault's own, {ring:g} in over the door's crown; the vault puts "
+                    f"{down:.0f} lb/ft down on it and pushes {out_thrust:.0f} lb/ft out, "
+                    f"{out_thrust * w / 12:.0f} lb over the door's {w:g} in"
+                ),
+                formula="V = W/2, H = W·(sin θ − (1 − cos θ)/θ)/(2(1 − cos θ)), per foot of tube",
+                reference=f"{TAMBA}; {ARCH_REFERENCE}",
+                note=(
+                    "With the wall under it cut away, the vault's foot over the door has nothing "
+                    "to push against: its outward thrust goes along the tube into the brickwork "
+                    "beside the door and the supporting wall in front of it (Fig 4-15), which the "
+                    "design buttresses (roof.buttressed); that buttress isn't sized. The door's "
+                    "ring is checked under the vault's weight as the roof's edge on it."
                 ),
             )
         )
@@ -433,7 +544,8 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
             cross += t
             cross_q += si(parse_quantity(m.density), "lb/ft**3") * t / 1728
     least, most = door_thrusts(r, r + ring, max(above, r + ring), q, edge / 12)
-    da = DoorArchInputs(w, ring, layers, above, edge, edge_source, RING_SOURCE, springing, jamb,
+    ring_source = RING_SOURCE if door.ring is None else OWN_RING_SOURCE
+    da = DoorArchInputs(w, ring, layers, above, edge, edge_source, ring_source, springing, jamb,
                         jamb_source, least, most, cross, cross_q)  # fmt: skip
     minimum = steel_data()["arch_minimum_thickness"]
     eta = float(np.interp(90.0, minimum["half_angle_deg"], minimum["eta"]))
@@ -502,7 +614,11 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                         else f"The door's {ring:g} in ring is {k:.1f} times the thinnest "
                         f"semicircle that stands (Heyman's {minimum['safety']}), and under the "
                         f"wall over it its least thrust is {least:.0f} lb, its most {most:.0f} "
-                        "lb: thicken the roof's ring or narrow the door."
+                        + (
+                            "lb: thicken the roof's ring or narrow the door."
+                            if door.ring is None
+                            else "lb: deepen the door's ring or narrow the door."
+                        )
                         if sheet is standing
                         else f"The door arch's least thrust, {least:.0f} lb, over its "
                         f"{sliding.env['N'] / 4.4482216:.0f} lb load at the springing needs "

@@ -278,7 +278,15 @@ def build_plans(
 ) -> Plans:
     """The PDF plans, the DXF if a path is given, and PNG pages if ``preview_ppi`` is set."""
     us = kiln.units == "us"
-    masonry = plan_masonry(kiln)
+    from kilndesigner.geometry import not_drawn
+    from kilndesigner.hardware import build_hardware, floor_and_roof_holes
+
+    holes = (
+        floor_and_roof_holes(build_hardware(kiln, report.frame, report.gas, report.fire))
+        if not_drawn(kiln) is None
+        else []
+    )
+    masonry = plan_masonry(kiln, holes)
     bom = report.bom or bill_of_materials(kiln, masonry.result, report.electric)
     data = plan_data(kiln, report, masonry, bom)
     rows, coil = 0, 0.0

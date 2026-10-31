@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner import conical
 from kilndesigner.allowance import allowance
 from kilndesigner.bend import bent, developed
 from kilndesigner.bend import note as bend_note
@@ -41,6 +42,8 @@ from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step, length_text, show
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from kilndesigner.round_masonry import RingPlan
 
 IN = 25.4  # mm
@@ -55,7 +58,7 @@ type Laying = Literal["stretcher", "on_edge", "header", "flat", "soldier"]
 BRICK_KINDS = {"insulating_firebrick", "dense_firebrick", "building_brick"}
 SHEET_KINDS = {"fibre_blanket", "fibre_board", "backup_insulation"}
 CAST_KINDS = {"insulating_castable", "dense_castable"}
-BULK_KINDS = CAST_KINDS | {"stone"}  # counted by weight from their volume
+BULK_KINDS = CAST_KINDS | {"stone", "earth"}  # counted by weight from their volume
 
 
 @dataclass(frozen=True)
@@ -304,12 +307,85 @@ def _side_by_side(built: list[tuple[Part, list[LayerPlan]]], us: bool) -> Findin
     )
 
 
+@dataclass(frozen=True)
+class Hole:
+    """A port cut up through the floor or a flue through the roof (hardware.floor_and_roof_holes):
+    its bounding box (mm, the model's coordinates) and whether it's round about the vertical."""
+
+    lo: tuple[float, float, float]
+    hi: tuple[float, float, float]
+    round: bool = False
+
+    def holds(self, x0: float, x1: float, y0: float, y1: float) -> bool:
+        """Whether the rectangle lies wholly inside the hole, in plan."""
+        if self.round:
+            cx, cy = (self.lo[0] + self.hi[0]) / 2, (self.lo[1] + self.hi[1]) / 2
+            rx, ry = (self.hi[0] - self.lo[0]) / 2, (self.hi[1] - self.lo[1]) / 2
+            return all(
+                ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1 + 1e-9
+                for x in (x0, x1)
+                for y in (y0, y1)
+            )
+        return (
+            self.lo[0] <= x0 + TOL
+            and x1 <= self.hi[0] + TOL
+            and self.lo[1] <= y0 + TOL
+            and y1 <= self.hi[1] + TOL
+        )
+
+    def through(self, part: Part) -> float:
+        """The volume of the hole inside a box part (mm³): a round hole's is π/4 of its box's."""
+        share = math.pi / 4 if self.round else 1.0
+        return share * math.prod(
+            max(0.0, min(a1, b1) - max(a0, b0))
+            for a0, a1, b0, b1 in zip(part.lo, part.hi, self.lo, self.hi, strict=True)
+        )
+
+
+def _flat(part: Part) -> bool:
+    """A floor or flat roof layer laid in courses, which a hole up through it can cut."""
+    return (
+        part.wall in ("floor", "roof")
+        and part.arch is None
+        and part.profile is None
+        and part.dome is None
+        and part.revolve is None
+        and part.plan is None
+    )
+
+
+def punch(plan: LayerPlan, holes: list[Hole]) -> int:
+    """Take out of a floor or flat roof's courses each brick wholly inside a hole through it; the
+    bricks a hole's edge crosses stay in, to be cut on site. Returns how many were taken out."""
+    part = plan.part
+    through = [h for h in holes if h.through(part) > 0]
+    if not through:
+        return 0
+    taken = 0
+    for i, course in enumerate(plan.courses):
+        y0 = part.lo[1] + course.offset
+        kept = tuple(
+            p
+            for p in course.pieces
+            if not any(
+                h.holds(part.lo[0] + p.start, part.lo[0] + p.start + p.length, y0, y0 + p.height)
+                for h in through
+            )
+        )
+        taken += len(course.pieces) - len(kept)
+        plan.courses[i] = replace(course, pieces=kept)
+    return taken
+
+
 BRICK_VOLUME = BRICK[0] * BRICK[1] * BRICK[2]
 ARCH_SOURCE = "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
 # Arch bricks taper across the 2½ in face along their 4½ in depth (for 4½ in rings); wedges taper
 # along their 9 in length (for 9 in rings). Thin end, in inches (electric-and-thermal.md §5).
+# Gentlest first. The No. 1-X wedge is A.P. Green's (Firebrick Shapes, p.96), used only with
+# lining.shapes 'apg': Olsen's tables turn arches with the simpler No. 1 and No. 2 (p.303–305).
 ARCHES = {"No. 1 arch": 2.125, "No. 2 arch": 1.75, "No. 3 arch": 1.0}
-WEDGES = {"No. 1-X wedge": 2.25, "No. 1 wedge": 1.875, "No. 2 wedge": 1.5}
+WEDGES = {"No. 1 wedge": 1.875, "No. 2 wedge": 1.5}
+APG_WEDGES = {"No. 1-X wedge": 2.25, **WEDGES}
 
 
 @dataclass(frozen=True)
@@ -330,7 +406,7 @@ class ArchRing:
         )
 
 
-def arch_ring(part: Part) -> ArchRing | None:
+def arch_ring(part: Part, *, apg: bool = False) -> ArchRing | None:
     """The standard arch-brick count: enough tapered bricks to turn the ring's curve.
 
     Around a ring of radial depth L, the outer arc is longer than the inner by 2θ·L; each tapered
@@ -344,7 +420,8 @@ def arch_ring(part: Part) -> ArchRing | None:
     if abs(depth - BRICK[1]) < TOL:
         tapers, along = ARCHES, BRICK[0]  # bricks 4½ in deep, 9 in along the kiln
     elif abs(depth - BRICK[0]) < TOL:
-        tapers, along = WEDGES, BRICK[1]  # bricks 9 in deep, 4½ in along the kiln
+        tapers = APG_WEDGES if apg else WEDGES
+        along = BRICK[1]  # bricks 9 in deep, 4½ in along the kiln
     else:
         return None
     gain = 2 * a.half_angle * depth  # outer arc minus inner arc, mm
@@ -359,6 +436,83 @@ def arch_ring(part: Part) -> ArchRing | None:
             per_ring = math.ceil((inner_arc + gain) / BRICK[2] - 1e-9)
             per_ring_straight = max(0, per_ring - per_ring_shaped)
             return ArchRing(shape, per_ring_shaped * rings, per_ring_straight * rings, rings)
+    return None
+
+
+CONICAL = "conical (tatami) brick"
+# Tatami bricks are hand made by the builder (the user, 2026-10-31): bought as raw fireclay, at
+# the density of clay fired in place (masonry-materials.md §4a.3)
+RAW_CLAY = "fireclay-brick-porous-norton"
+
+
+def raw_clay(kiln: Kiln, count: int, buy: int, allowance: str, laid_in: str) -> Quantity:
+    """The raw fireclay to roll the conical bricks: each brick's fired volume (the frustum less
+    its bore and groove, conical.Brick.volume) at the density of clay fired in place. Drying and
+    firing shrinkage and the water in the clay aren't added: no source gives them for this clay."""
+    assert kiln.lining.conical is not None
+    us = kiln.units == "us"
+    brick = conical.Brick.of(kiln.lining.conical)
+    volume = Q_(buy * brick.volume, "in**3")
+    mass = volume * parse_quantity(material(RAW_CLAY).density)
+    shown = f"{si(volume, 'ft**3' if us else 'm**3'):.3g} {'ft³' if us else 'm³'}"
+    return Quantity(
+        material=RAW_CLAY,
+        name="Raw fireclay, for the hand-made conical (tatami) bricks",
+        kind=material(RAW_CLAY).kind,
+        amount=round(si(mass, "lb" if us else "kg"), 0),
+        unit="lb" if us else "kg",
+        detail=(
+            f"{buy} bricks to roll ({count} in {laid_in} plus {allowance} for breakage), "
+            f"{brick.volume:.3g} in³ of clay each less the bore and groove, {shown} fired, "
+            "at the density of clay fired in place; shrinkage and water not added"
+        ),
+        priced_amount=si(mass, "lb"),
+    )
+
+
+def conical_layer(
+    part: Part, brick: conical.Brick | None
+) -> tuple[int, str, tuple[Step, ...]] | None:
+    """A sprung arch's or a dome's layer as deep as the builder's conical brick is long: its
+    bricks, how they lie and the working (conical.py). Arches by the ring and the rows along the
+    run; domes course by course up the sphere, each course's ring cut off where it leaves the
+    layer's plan."""
+    if brick is None or part.cap or part.is_skewback:
+        return None
+    if abs(part.thickness - brick.length * IN) >= TOL:
+        return None
+    if part.arch is not None:
+        a = part.arch
+        c = conical.course(a.radius / IN, brick)
+        per_row = c.bricks(2 * a.half_angle)
+        rows = math.ceil(part.length_run / (brick.wide * IN) - 1e-9)
+        return (
+            per_row * rows,
+            (
+                f"{rows} rows of {per_row} conical bricks, wide ends touching, "
+                f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+            ),
+            (),
+        )
+    if part.dome is not None:
+        d = part.dome
+        radius = d.radius / IN
+        rise = (d.radius + d.centre_z - part.lo[2]) / IN
+        over = conical.rectangle(
+            max(abs(part.lo[0]), abs(part.hi[0])) / IN,
+            max(abs(part.lo[1] - d.centre_y), abs(part.hi[1] - d.centre_y)) / IN,
+        )
+        laid = conical.lay_conical_dome(radius, rise, brick, over, layer_name(part))
+        c = conical.course(radius, brick)
+        return (
+            laid.total,
+            (
+                f"{len(laid.courses)} courses of conical bricks, {laid.total} in all, the low "
+                f"courses cut off by the walls, {c.inside_joint:.2g} in fireclay between the "
+                f"narrow ends, a plug {laid.crown:.3g} in across at the crown"
+            ),
+            laid.steps,
+        )
     return None
 
 
@@ -452,12 +606,39 @@ class MasonryPlan:
         return [*floor, *self.rings, *rest, *fireboxes]
 
 
-def plan_masonry(kiln: Kiln) -> MasonryPlan:
+def curve_courses(kiln: Kiln, part: Part) -> tuple[int, str] | None:
+    """A curved plan's wall layer (to the springline) laid in 4½ in stretcher rings round the
+    curve (curve_masonry.py): its bricks, every course, and their description; None for any other
+    part, or a layer that isn't whole rings."""
+    from kilndesigner.curve_masonry import courses, curve_rings, describe
+    from kilndesigner.geometry import thicknesses
+
+    if part.plan is None or part.dome is not None or part.wall != "walls":
+        return None
+    index = int(part.name.split("/", 1)[1].split("-", 1)[0])
+    walls = thicknesses(kiln, "left")
+    inner = sum(t for _, t in walls[: index - 1]) / IN
+    rings = curve_rings(kiln, inner, part.thickness / IN)
+    if rings is None:
+        return None
+    n = courses((part.hi[2] - part.lo[2]) / IN)
+    return n * sum(r.bricks for r in rings), describe(rings, n)
+
+
+def plan_masonry(kiln: Kiln, holes: Sequence[Hole] = ()) -> MasonryPlan:
+    """The course plans and what to buy. ``holes`` are the burner ports up through the floor and
+    an updraft's flue through the roof (hardware.floor_and_roof_holes): the bricks wholly inside
+    them are taken out of a box kiln's floor and flat roof, and their volume out of any fibre or
+    castable layer there."""
     if kiln.chamber.shape == "round":
         from kilndesigner.round_masonry import plan_round_masonry
 
         return plan_round_masonry(kiln)
     us = kiln.units == "us"
+    holes = [] if bent(kiln) else list(holes)
+    punched: list[tuple[Part, int]] = []  # each layer a hole cuts, and the bricks it takes out
+    thinned: list[str] = []  # the fibre and castable layers a hole cuts, counted less it
+    unpunched: set[str] = set()  # the curved layers a hole cuts, counted whole
     findings: list[Finding] = []
     layers: list[LayerPlan] = []
     whole: Counter[str] = Counter()
@@ -469,29 +650,49 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     cast_volume: defaultdict[str, float] = defaultdict(float)
 
     arch_lines: list[str] = []
+    curve_lines: list[str] = []
     side_by_side: list[tuple[Part, list[LayerPlan]]] = []
     under_skewbacks: list[Laying] = []  # how the side walls' brick is laid, under a sprung arch
     row = in_a_row(kiln)
     along = row and not (isinstance(kiln.roof, SprungArch) and kiln.roof.tube)
+    tatami = None if kiln.lining.conical is None else conical.Brick.of(kiln.lining.conical)
+    laid_steps: list[Step] = []
     for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
+        flat = _flat(part)
+        cut_out = sum(h.through(part) for h in holes) if flat else 0.0
+        if not flat and part.wall == "roof" and any(h.through(part) > 0 for h in holes):
+            unpunched.add(layer_name(part))
+        laid = conical_layer(part, tatami) if m.kind in BRICK_KINDS else None
+        if laid is not None:
+            shapes[(m.id, CONICAL)] += laid[0]
+            arch_lines.append(f"{layer_name(part)}: {laid[1]}")
+            laid_steps.extend(laid[2])
+            continue
         if part.across and part.arch is not None and m.kind in BRICK_KINDS:
             # An arch along the draft that stops short of its neighbour: in standard shapes
-            ring = arch_ring(part)
+            ring = arch_ring(part, apg=kiln.lining.shapes == "apg")
             if ring is not None:
                 shapes[(m.id, ring.shape)] += ring.shaped
                 whole[m.id] += ring.straights
                 arch_lines.append(f"{layer_name(part)}: {ring.describe()}")
                 continue
-        if part.profile is not None or part.dome is not None:
+        if part.profile is not None or part.dome is not None or part.plan is not None:
             # A skewback and the fill beside a sprung arch; a catenary's ring or an end wall
-            # closing it; a dome's layer or a wall's top under it. No standard shapes turn these
-            # curves, so brick is counted by volume.
+            # closing it; a dome's layer or a wall's top under it; a curved plan's wall, floor or
+            # roof. No standard shapes turn these curves, so brick is counted by volume.
             skewback = part.is_skewback
+            laid_round = curve_courses(kiln, part) if m.kind in BRICK_KINDS else None
+            if laid_round is not None:
+                whole[m.id] += laid_round[0]
+                curve_lines.append(f"{layer_name(part)}: {laid_round[1]}")
+                continue
             if m.kind in BRICK_KINDS:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
                 cut = "the arch's angle" if skewback else "the curve"
+                if part.plan is not None and part.dome is None:
+                    cut = "the plan's curve where it needs it"
                 bricks = "brick" if count == 1 else "bricks"
                 arch_lines.append(
                     f"{layer_name(part)}: about {count} {bricks} by volume, cut to {cut}"
@@ -512,7 +713,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                     f"{layer_name(part)}: about {count} bricks by volume, cut to the arch's curve"
                 )
                 continue
-            ring = arch_ring(part)
+            ring = arch_ring(part, apg=kiln.lining.shapes == "apg")
             if ring is None:
                 count = math.ceil(part.volume / BRICK_VOLUME)
                 whole[m.id] += count
@@ -527,6 +728,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             if plans is None:
                 findings.append(_not_buildable(part, us))
                 continue
+            if cut_out > 0:
+                punched.append((part, sum(punch(plan, holes) for plan in plans)))
             if len(plans) > 1:
                 side_by_side.append((part, plans))
             springs = ("front", "back") if along else ("left", "right")
@@ -541,19 +744,32 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                         Cut(piece.length, piece.height, piece.full_length, piece.full_height)
                     )
         elif m.kind in SHEET_KINDS:
-            sheet_area[m.id] += part.area
-            sheet_area_thickness[m.id] += part.volume
+            sheet_area[m.id] += (part.volume - cut_out) / part.thickness
+            sheet_area_thickness[m.id] += part.volume - cut_out
             if not part.cap:
                 sheet_thickness.setdefault(m.id, set()).add(round(part.thickness, 2))
         elif m.kind in BULK_KINDS:
-            cast_volume[m.id] += part.volume
+            cast_volume[m.id] += part.volume - cut_out
+        if cut_out > 0 and m.kind not in BRICK_KINDS:
+            thinned.append(layer_name(part))
 
     quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
     )
+    working = laid_steps + working
     brick = allowance(kiln, "brick")
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
+    if curve_lines:
+        from kilndesigner.curve_masonry import SOURCE as CURVE_SOURCE
+
+        findings.append(
+            Finding(
+                level="info",
+                message="Courses round the curve: " + "; ".join(curve_lines) + ".",
+                reference=CURVE_SOURCE,
+            )
+        )
     if arch_lines:
         findings.append(
             Finding(
@@ -566,15 +782,22 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
         span = kiln.chamber.depth if along else kiln.chamber.width
         arch = Arch(si(span, "in"), si(kiln.roof.rise, "in"))
         skew = 90 - math.degrees(arch.half_angle)
+        skewback = (
+            "The skewbacks and the fill beside the arch are drawn along the arch's radius at the "
+            "springline and counted by volume. The skewback's face must match the arch: "
+            f"{skew:.0f}° to the horizontal here, 90° less half the arch's central angle "
+            "(HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). "
+            if skew >= 0.5
+            else "The arch rises half its span or more: a semicircle or past one, its radius at "
+            "each springing level or turned below it, so it springs from the wall's top with no "
+            "skewback, and the fill beside its bulge, up to its widest, is counted by volume "
+            "(HarbisonWalker's skewbacks are for arches under a semicircle). "
+        )
         findings.append(
             Finding(
                 level="info",
                 message=(
-                    "The skewbacks and the fill beside the arch are drawn along the arch's radius "
-                    "at the springline and counted by volume. The skewback's face must match the "
-                    f"arch: {skew:.0f}° to the horizontal here, 90° less half the arch's central "
-                    "angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at "
-                    "2.302 in/ft). "
+                    skewback
                     + (
                         "The arch's thrust is held by the kiln's masonry, as the design says."
                         if kiln.roof.buttressed
@@ -643,7 +866,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
             )
         )
-    findings += firebox_findings(kiln) + port_findings(kiln)
+    findings += firebox_findings(kiln) + port_findings(
+        kiln, bool(holes), punched, thinned, unpunched
+    )
     if bent(kiln):
         findings.append(Finding(level="info", message=bend_note(kiln), reference="bend.py"))
     if row:
@@ -669,9 +894,17 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     )
 
 
-def port_findings(kiln: Kiln) -> list[Finding]:
-    """What the brick count leaves in for the holes the burners and an updraft's flue need: they
-    are placed with the burners (hardware.py), after the masonry is counted."""
+def port_findings(
+    kiln: Kiln,
+    placed: bool = False,
+    punched: Sequence[tuple[Part, int]] = (),
+    thinned: Sequence[str] = (),
+    unpunched: set[str] | None = None,
+) -> list[Finding]:
+    """How the brick count allows for the burner ports up through the floor and an updraft's flue
+    through the roof (placed with the burners, hardware.py): ``punched`` is each brick layer they
+    cut and the bricks taken out of it, ``thinned`` the fibre and castable layers counted less the
+    holes, ``unpunched`` the curved roof layers counted whole."""
     gas = kiln.heat.gas
     through: list[str] = []
     if gas is not None and gas.burners.wall == "floor":
@@ -681,18 +914,32 @@ def port_findings(kiln: Kiln) -> list[Finding]:
         through.append("the flue through the roof")
     if not through:
         return []
-    return [
-        Finding(
-            level="info",
-            message=(
-                " and ".join(through).capitalize()
-                + (" are" if len(through) > 1 or "ports" in through[0] else " is")
-                + " cut in the 3D model where the burners "
-                "and flue are placed; the brick count leaves those bricks in, to be cut on site, "
-                "as the side walls' ports are."
-            ),
+    what = " and ".join(through).capitalize() + (
+        " are" if len(through) > 1 or "ports" in through[0] else " is"
+    )
+    if not placed:
+        text = (
+            f"{what} cut in the 3D model where the burners and flue are placed; this brick count "
+            "leaves those bricks in, to be cut on site, as the side walls' ports are."
         )
-    ]
+    else:
+        out = [f"{n} from {layer_name(p).lower()}" for p, n in punched if n]
+        text = f"{what} cut in the 3D model and taken out of the count: " + (
+            "the bricks wholly inside a hole are left out (" + "; ".join(out) + "), "
+            if out
+            else "no brick lies wholly inside a hole, "
+        )
+        text += "and those its edge crosses are counted whole, to be cut on site."
+        if thinned:
+            text += f" {', '.join(thinned)}: counted less the holes' volume."
+        text += " The side walls' ports are cut on site from bricks counted whole."
+        if unpunched:
+            text += (
+                " The flue goes through the curved roof ("
+                + ", ".join(sorted(unpunched))
+                + "), counted by its shapes or volume without the hole: cut it on site."
+            )
+    return [Finding(level="info", message=text)]
 
 
 def _row_note(kiln: Kiln, us: bool) -> Finding:
@@ -701,6 +948,18 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
 
     run = run_layout(kiln)
     n = run.chambers
+    if n == 1:
+        return Finding(
+            level="info",
+            message=(
+                "The chamber's arch spans along the draft, over its depth, springing from the "
+                "front and back walls, and the side walls are filled up to it, as in Olsen's "
+                "Bowen Mountain salt kiln (Fig 4-153): its section across the width rises from "
+                "the springline at the end walls to the crown mid-way. The side walls above the "
+                "springline are cut to the arch's curve and counted by volume."
+            ),
+            reference="run_parts.py; Olsen, The Kiln Book, 4th ed., Fig 4-153, p.127",
+        )
     text = (
         f"The {n} chambers stand in a row, each wall between them "
         f"{length_text(run.between, us)} thick, as thick as the side walls. "
@@ -811,6 +1070,9 @@ def buy_quantities(
     for (mid, shape), count in sorted(shapes.items()):
         m = material(mid)
         buy = shaped.buy(count)
+        if shape == CONICAL and kiln.lining.conical is not None:
+            quantities.append(raw_clay(kiln, count, buy, shaped.text, shapes_in))
+            continue
         quantities.append(
             Quantity(
                 material=mid,

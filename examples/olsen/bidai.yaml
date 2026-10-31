@@ -25,7 +25,7 @@
 # built kilns are (door-openings.md).
 # Not modelled: each arch is peaked toward the back (p.91–92, p.95); the engine's is a circular
 # arch from the front wall to the back. Also left out: the floor's loss into the ground (the
-# engine doesn't work it out), the firebox's semicircular front, the 3 in overcoat of fireclay, dirt and straw (p.95), the vapour
+# engine doesn't work it out), the firebox's semicircular front, the vapour
 # and spy holes, the steps between chambers, and the chimney's grid of 9 × 9 in flues across the
 # 73 in width (Fig 4-36).
 schema: 1
@@ -58,8 +58,18 @@ lining:
     - material: firebrick-medium-duty-smithfield # local firebrick, grade not given
       thickness: 9.5 in
   roof:
-    - material: firebrick-medium-duty-smithfield
-      thickness: 9 in # "9"" arch (Fig 4-36)
+    # The "9"" arch (Fig 4-36) is the 6 in tatami bricks under the 3 in overcoat of fireclay,
+    # dirt and straw (p.94–95; the user, 2026-10-31). The overcoat is the user's rule: 75 % of the
+    # density of clay fired in place, and that 25 % as more insulation (clay-straw-earth-overcoat).
+    - material: firebrick-medium-duty-smithfield # local clay, grade not given
+      thickness: 6 in
+    - material: clay-straw-earth-overcoat
+      thickness: 3 in # p.94–95
+  # Tatami arch bricks "6 x ?" (Fig 4-37): 6 in long (the user, 2026-10-31); the other figure
+  # unread, so Olsen's drawn brick (Fig. 4-6) scaled to 6 in, with the user's ¾ in bore and groove
+  conical:
+    length: 6 in
+    proportions: fig-4-6
 heat:
   fire:
     fuel: wood

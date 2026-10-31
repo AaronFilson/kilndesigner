@@ -7,6 +7,10 @@ name: PNW hybrid cross-draft, cone 10, car
 units: us
 firing:
   cone: "10"
+  setting: # as in pnw-hybrid-crossdraft.yaml: four layers (an ASSUMPTION) of four mullite
+    # shelves, no posts (unsourced), the ware 7 times the setting (the author's 6 to 8)
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 4}
+    ware_ratio: 7
 chamber:
   width: 28 in
   depth: 60 in
@@ -45,14 +49,15 @@ heat:
       breaker: 60 A
     alloy: kanthal-apm
     walls: [left]
-    off_above: 1650 degF
+    off_above: 1650 degF # the start of shino reduction, cone 012–010 (cones.yaml)
   gas:
     burners:
       type: venturi
+      count: 8 # the author's: slow flame movement at high volume
       wall: right # not on the car, which rolls out the front
     supply:
       type: cylinders
-      count: 4
+      count: 11 # meets the burners' draw at 20 °F even ¼ full keeping 10 psi
     reduction: true
 draft:
   type: cross

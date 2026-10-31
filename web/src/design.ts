@@ -15,6 +15,7 @@ export interface DoorOpening {
   across?: string;
   sill?: string;
   head?: "arch" | "lintel";
+  ring?: string;
   each_chamber?: boolean;
 }
 
@@ -22,7 +23,15 @@ export interface KilnDocument {
   schema?: number;
   name: string;
   units?: "us" | "metric";
-  firing: { cone?: string; final_rate?: 60 | 100 | 150 | 600; top_temperature?: string };
+  firing: {
+    cone?: string;
+    final_rate?: 60 | 100 | 150 | 600;
+    top_temperature?: string;
+    ware?: string;
+    /** A firing time to solve the burners for (model.py Firing.target_time). */
+    target_time?: string;
+    setting?: Setting;
+  };
   chamber: {
     shape?: "box" | "round";
     width: string;
@@ -32,7 +41,9 @@ export interface KilnDocument {
     slope?: string;
     bend?: string;
     on_ground?: boolean;
+    floor_inside?: boolean;
     rings?: RingMethod;
+    outline?: PlanOutline;
   };
   roof?:
     | { type: "flat" }
@@ -45,7 +56,7 @@ export interface KilnDocument {
         spring_rate?: string;
       }
     | { type: "catenary_arch" }
-    | { type: "dome"; rise: string };
+    | { type: "dome"; rise: string; crown_at?: string };
   loading?: {
     /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
     type?: "door" | "car" | "lid";
@@ -54,7 +65,23 @@ export interface KilnDocument {
     opening?: DoorOpening;
     car_hardware_cost?: string;
   };
-  lining: { walls: Layer[]; floor?: Layer[]; roof?: Layer[]; door?: Layer[] };
+  lining: {
+    walls: Layer[];
+    floor?: Layer[];
+    roof?: Layer[];
+    door?: Layer[];
+    /** The tapered shapes arches and rings use (model.py Lining.shapes). */
+    shapes?: "olsen" | "apg";
+    /** Custom conical (tatami) bricks for arches and domes (model.py ConicalBrick). */
+    conical?: {
+      length?: string;
+      wide?: string;
+      narrow?: string;
+      bore?: string;
+      groove?: string;
+      proportions?: "given" | "fig-4-6";
+    };
+  };
   shell?: { finish?: "painted" | "oxidised_steel" | "rolled_steel_sheet" };
   heat: { electric?: Electric; gas?: Gas; fire?: Fire };
   draft?: {
@@ -78,6 +105,26 @@ export interface KilnDocument {
 
 /** How a round wall's brick rings are turned (model.py Chamber.rings). */
 export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
+
+/** A box chamber's plan as a curve (model.py PlanOutline), filling its width and depth. */
+export type PlanOutline =
+  | { shape: "teardrop"; front_width?: string; side_radius?: string }
+  | { shape: "oval"; end_radius: string };
+
+export type PlanShape = "rectangle" | PlanOutline["shape"];
+
+/** The chamber with its plan chosen: a rectangle drops the outline; an oval starts with round
+ *  ends a quarter of the width in radius, a size to edit, not a rule. */
+export function withPlan(
+  chamber: KilnDocument["chamber"],
+  plan: PlanShape,
+  units: "us" | "metric" | undefined,
+): KilnDocument["chamber"] {
+  if (plan === "rectangle") return { ...chamber, outline: undefined };
+  if (plan === "teardrop") return { ...chamber, outline: { shape: "teardrop" } };
+  const width = toMm(chamber.width) ?? 0;
+  return { ...chamber, outline: { shape: "oval", end_radius: fromMm(width / 4, units) } };
+}
 
 export interface MixPart {
   ingredient: string;
@@ -164,6 +211,8 @@ export interface Firebox {
 /** Wood, coal or oil burned in fireboxes (model.py Fire). */
 export interface Fire {
   fuel?: "wood" | "coal" | "oil";
+  /** 'smoke': wood to reduce a kiln the elements or burners heat (model.py Fire.purpose). */
+  purpose?: "heat" | "smoke";
   fireboxes: Firebox[];
   forced?: boolean;
   oil_burners?: number;
@@ -179,6 +228,46 @@ export interface Gas {
     | { type: "line"; pressure?: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
+  /** A hybrid's burners lit from here with the elements still on (model.py Gas.on_from). */
+  on_from?: string;
+}
+
+/** Kiln furniture Olsen weighs (p.33–35): the materials a setting can be made of. */
+export const FURNITURE = ["mullite", "silicon-carbide", "cordierite"] as const;
+export type FurnitureMaterial = (typeof FURNITURE)[number];
+
+/** The shelves and posts in a full setting; the engine weighs them (furniture.py). */
+export interface Setting {
+  shelves: {
+    length?: string;
+    width?: string;
+    thickness?: string;
+    material: FurnitureMaterial;
+    per_layer?: number;
+    layers?: number;
+  };
+  posts?: {
+    width?: string;
+    depth?: string;
+    height?: string;
+    material: FurnitureMaterial;
+    per_layer?: number;
+  };
+  ware_ratio?: number;
+}
+
+/** The setting a form starts from: one 12 × 24 × 1 in mullite shelf, no posts. */
+export function freshSetting(): Setting {
+  return {
+    shelves: {
+      length: "24 in",
+      width: "12 in",
+      thickness: "1 in",
+      material: "mullite",
+      per_layer: 1,
+      layers: 1,
+    },
+  };
 }
 
 /** "22.5 in" → [22.5, "in"]; the API writes temperatures as "70 °F". */

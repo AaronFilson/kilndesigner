@@ -10,8 +10,11 @@ discs of straights cut to the circle, its dome counted by volume.
 - The floor runs under the whole kiln, out to the wall's outside, as the box kiln's does; a flat
   roof sits on the wall. Each is laid in rows of straights, as a box kiln's floor is (masonry.py),
   the rows' ends cut to the circle.
-- A dome over a round chamber is a sphere through the springline circle (shape.RoundDome); its
-  layers are counted by volume, as the box kiln's dome is: no standard shape turns a dome.
+- A dome over a round chamber is a sphere through the springline circle (shape.RoundDome). A
+  brick layer is laid course by course (conical.py): in the builder's conical bricks when it is
+  as deep as one is long; else 9 in deep in header courses or 4½ in deep in stretcher courses of
+  straights, each brick pitched to the dome's radius (Olsen p.51, Hendo's gauge). Any other
+  depth, or a dome past a hemisphere, is counted by volume.
 
 Coordinates in mm; the chamber's axis is z.
 """
@@ -22,6 +25,7 @@ import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
+from kilndesigner import conical
 from kilndesigner.castable import resolve_material
 from kilndesigner.firebox_parts import firebox_findings
 from kilndesigner.geometry import Part, lining_parts
@@ -31,6 +35,7 @@ from kilndesigner.masonry import (
     BRICK_SOURCE,
     BRICK_VOLUME,
     BULK_KINDS,
+    CONICAL,
     SHEET_KINDS,
     TOL,
     Course,
@@ -38,6 +43,7 @@ from kilndesigner.masonry import (
     LayerPlan,
     Masonry,
     MasonryPlan,
+    Quantity,
     _not_buildable,  # pyright: ignore[reportPrivateUsage]
     brick_sizes,
     buildable_near,
@@ -53,6 +59,7 @@ from kilndesigner.rings import (
     CUT_SLACK,
     FAMILIES,
     FEATHEREDGE_SOURCE,
+    FLOOR_COURSE_IN,
     IN,
     MORTAR_SOURCE,
     SOURCE,
@@ -70,7 +77,7 @@ from kilndesigner.rings import (
 from kilndesigner.shape import RoundDome, facets
 from kilndesigner.sheet import Sheet
 from kilndesigner.units import Q_, si
-from kilndesigner.working import Finding, length_text
+from kilndesigner.working import Finding, Step, length_text, show
 
 RINGS = "whole 9 and 4½ in rings: a·9 + b·4½ in (Olsen, The Kiln Book, 4th ed., p.45)"
 
@@ -167,6 +174,56 @@ def straight_ring_text(r: Ring, us: bool) -> str:
     return out
 
 
+WEDGE_MORTAR = "wedge-joint-mortar"
+"""The bill's key for the mortar in a mortar ring's wedge joints: no material in the library."""
+
+
+def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quantity, Step] | None:
+    """The mortar the rings' wedge joints hold, by volume, for the bill of materials: each joint
+    an isosceles triangle between neighbouring straights, ½·d²·sin α per unit of course height,
+    summed round the ring (rings.straight_ring), times the wall's height. By volume only: no
+    source here gives a mortar's weight per volume or its yield per bag, and Olsen's 300–400 lb
+    per 1000 bricks (p.295) is for ordinary joints, not wedges, so it isn't converted or priced."""
+    each = [rp.ring.mortar for rp in rings if rp.series == "mortar" and rp.ring.mortar]
+    if not each:
+        return None
+    per_mm = sum(each)  # mm² of joint for each mm of wall height, every mortar ring together
+    volume = Q_(per_mm * height, "mm**3")
+    unit, word = ("ft**3", "ft³") if us else ("L", "L")
+    amount = si(volume, unit)
+    step = Step(
+        name="Mortar in the rings' wedge joints",
+        value=show(volume, unit, 3),
+        formula="V = h · Σ ½·d²·sin α (each joint round each mortar ring)",
+        inputs={
+            "Σ ½·d²·sin α": f"{per_mm / IN**2:.3g} in³ per in of height"
+            if us
+            else f"{per_mm / 1e6 * 1e3:.3g} L per m of height",
+            "h": length_text(height, us),
+        },
+        reference=MORTAR_SOURCE,
+        note=(
+            "By volume only. No source here gives a mortar's weight per volume or its yield per "
+            "bag, so it isn't in bags or priced; Olsen's 300–400 lb of mortar per 1000 bricks "
+            "(p.295) is for ordinary joints, not wedge joints. Add the BIA's 15–25 % for waste "
+            "(brick-waste.md [W1])."
+        ),
+    )
+    quantity = Quantity(
+        material=WEDGE_MORTAR,
+        name="Refractory mortar for the round wall's wedge joints",
+        kind="mortar",
+        amount=round(amount, 2 if us else 1),
+        unit=word,
+        detail=(
+            "the joints' volume, nothing added for waste; by volume only, as no source here "
+            "gives a mortar's weight per volume or per bag"
+        ),
+        priced_amount=0.0,
+    )
+    return quantity, step
+
+
 def cut_ring_sheet(inside_diameter: float, depth: float) -> Sheet:
     """Whether full 9 in straights cut to the angle turn this ring exactly (mm in): the ring of
     the nearest whole number of bricks that has this inside diameter (the mean of its flats and
@@ -251,11 +308,50 @@ def cap_volume(rho: float, below: float) -> float:
     return math.pi * h * h * (3 * rho - h) / 3 if h > 0 else 0.0
 
 
+def _dome_courses(
+    kiln: Kiln, radius: float, rise: float, depth: float, where: str
+) -> tuple[conical.DomeLaying, str, bool] | None:
+    """A round dome's brick layer laid course by course (inches): in the builder's conical
+    bricks when the layer is as deep as one is long, else in header (9 in) or stretcher (4½ in)
+    courses of straights (Olsen p.51). Whether it is conical, and what to tell the builder. None
+    for any other depth, or a dome past a hemisphere, which is counted by volume."""
+    spec = kiln.lining.conical
+    try:
+        if spec is not None and abs(depth - (brick := conical.Brick.of(spec)).length) < 0.05:
+            laid = conical.lay_conical_dome(radius, rise, brick, what=where)
+            c = conical.course(radius, brick)
+            return (
+                laid,
+                (
+                    f"{len(laid.courses)} courses of conical bricks, {laid.total} in all, "
+                    f"{c.inside_joint:.2g} in fireclay between the narrow ends, a plug "
+                    f"{laid.crown:.3g} in across at the crown"
+                ),
+                True,
+            )
+        laid = conical.lay_straights_dome(radius, rise, depth, what=where)
+    except ValueError:
+        return None
+    if laid is None:
+        return None
+    kind = "header" if abs(depth - 9) < 0.05 else "stretcher"
+    return (
+        laid,
+        (
+            f"{len(laid.courses)} {kind} courses of straights, {laid.total} in all, each brick "
+            f"pitched to the dome's radius (Olsen p.51), the joints behind filled with mortar, a "
+            f"plug {laid.crown:.3g} in across at the crown"
+        ),
+        False,
+    )
+
+
 def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     us = kiln.units == "us"
     c = kiln.chamber
     inside = si(c.width, "mm") / 2
-    height = si(c.height, "mm")
+    # The wall's height: a floor inside the walls sits in an extra course at their foot
+    height = si(c.height, "mm") + (FLOOR_COURSE_IN * IN if c.floor_inside else 0.0)
     method = ring_method(c.rings, kiln.heat.electric is not None)
     findings: list[Finding] = []
     whole: Counter[str] = Counter()
@@ -269,6 +365,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     parts = {p.name: p for p in lining_parts(kiln)}
     layers: list[LayerPlan] = []
     ring_plans: list[RingPlan] = []
+    dome_steps: list[Step] = []
 
     def sheet(mid: str, area: float, thickness: float) -> None:
         sheet_area[mid] += area
@@ -312,7 +409,7 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         course = family.height * IN
         courses = math.ceil(height / course - TOL / course)
         try:
-            one = ring(2 * r, series)
+            one = ring(2 * r, series, apg=kiln.lining.shapes == "apg")
         except RingError as e:
             findings.append(Finding(level="warning", message=f"Round wall: {e}.", reference=SOURCE))
             return ""
@@ -433,13 +530,27 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                         f"{length_text(2 * radius, us)} across its corners, {n_whole} whole and "
                         f"{len(pieces) - n_whole} cut to the kiln's profile, a steel band round it"
                         + (" carrying the lid's hinge" if lid else ", not hinged")
+                        + (
+                            ", inside the wall's lowest course"
+                            if not lid and c.floor_inside
+                            else ""
+                        )
                     )
             elif m.kind in SHEET_KINDS:
                 sheet(m.id, area, th)
             elif m.kind in BULK_KINDS:
                 cast_volume[m.id] += area * th
 
-    disc("floor", outside)
+    if c.floor_inside:
+        # Inside the wall's lowest course: the slab is the inside outline, out to its corners
+        corner = (
+            inside
+            if sides is None
+            else inside_apothem(2 * inside, sides) / math.cos(math.pi / sides)
+        )
+        disc("floor", corner)
+    else:
+        disc("floor", outside)
     roof = kiln.roof
     if isinstance(roof, FlatRoof):
         disc("roof", outside)
@@ -451,13 +562,24 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             m = resolve_material(kiln, layer.material)
             th = si(layer.thickness, "mm")
             volume = cap_volume(rho + th, below) - cap_volume(rho, below)
-            if m.kind in BRICK_KINDS:
+            where = f"Dome, layer {i + 1} from the inside"
+            laid = (
+                _dome_courses(kiln, rho / IN, (rho - below) / IN, th / IN, where)
+                if m.kind in BRICK_KINDS
+                else None
+            )
+            if laid is not None:
+                laying, text, is_conical = laid
+                if is_conical:
+                    shapes[(m.id, CONICAL)] += laying.total
+                else:
+                    whole[m.id] += laying.total
+                dome_steps.extend(laying.steps)
+                lines.append(f"{where}: {text}")
+            elif m.kind in BRICK_KINDS:
                 count = math.ceil(volume / BRICK_VOLUME)
                 whole[m.id] += count
-                lines.append(
-                    f"Dome, layer {i + 1} from the inside: about {count} bricks by volume, cut to "
-                    "the curve"
-                )
+                lines.append(f"{where}: about {count} bricks by volume, cut to the curve")
             elif m.kind in SHEET_KINDS:
                 sheet(m.id, volume / th, th)
             elif m.kind in BULK_KINDS:
@@ -513,5 +635,11 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume,
         shapes_in="the round wall",
     )  # fmt: skip
-    result = Masonry(quantities=quantities, cut_list=cut_list, findings=findings, working=working)
+    mortar = wedge_mortar(ring_plans, height, us)
+    if mortar is not None:
+        quantities.append(mortar[0])
+        working.append(mortar[1])
+    result = Masonry(
+        quantities=quantities, cut_list=cut_list, findings=findings, working=dome_steps + working
+    )
     return MasonryPlan(layers, result, ring_plans)

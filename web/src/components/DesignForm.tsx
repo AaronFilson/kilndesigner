@@ -10,6 +10,9 @@ import {
   type Fire,
   type Firebox,
   type FireboxPosition,
+  FURNITURE,
+  type FurnitureMaterial,
+  freshSetting,
   fromMm,
   type Gas,
   joinQuantity,
@@ -24,6 +27,7 @@ import {
   setIn,
   splitQuantity,
   toMm,
+  withPlan,
   WALLS,
   type WallFace,
 } from "../design";
@@ -153,6 +157,7 @@ const KIND_WORDS: Record<string, string> = {
   backup_insulation: "Backup insulation",
   building_brick: "Building brick",
   stone: "Stone",
+  earth: "Clay, straw and earth",
   diy_castable: "Your castables",
 };
 
@@ -767,6 +772,25 @@ function FireSection({
       {fire && (
         <>
           <Choice
+            label="The fireboxes"
+            value={fire.purpose ?? "heat"}
+            options={[
+              ["heat", "Heat the kiln"],
+              ["smoke", "Only smoke it: wood to reduce a kiln the elements or burners heat"],
+            ]}
+            disabled={
+              fire.purpose !== "smoke" && !doc.heat.electric && !doc.heat.gas ? ["smoke"] : []
+            }
+            onChange={(v) => set({ ...fire, purpose: v === "heat" ? undefined : v })}
+          />
+          {fire.purpose === "smoke" && (
+            <p className="muted section-note">
+              A small firebox stoked with kindling, "not to add heat", to reduce an electric or gas
+              kiln (Olsen, The Kiln Book, p.250, Fig. 9-25). It burns wood, and the heat rules
+              don't apply to it.
+            </p>
+          )}
+          <Choice
             label="Fuel"
             value={fire.fuel ?? "wood"}
             options={[
@@ -774,6 +798,7 @@ function FireSection({
               ["coal", "Coal"],
               ["oil", "Oil"],
             ]}
+            disabled={fire.purpose === "smoke" ? ["coal", "oil"] : []}
             onChange={(v) =>
               set(
                 v === "oil"
@@ -1082,6 +1107,185 @@ const DEFAULT_GAS: Gas = {
   reduction: true,
 };
 
+const furnitureOptions = FURNITURE.map((m): [FurnitureMaterial, string] => [
+  m,
+  { mullite: "Mullite", "silicon-carbide": "Silicon carbide", cordierite: "Cordierite" }[m],
+]);
+
+function Whole({
+  label,
+  value,
+  min,
+  onChange,
+}: {
+  label: string;
+  value: number | undefined;
+  min: number;
+  onChange: (value: number | undefined) => void;
+}) {
+  return (
+    <Field label={label}>
+      <input
+        type="number"
+        min={min}
+        value={value ?? ""}
+        onChange={(e) => onChange(e.target.value === "" ? undefined : Number(e.target.value))}
+      />
+    </Field>
+  );
+}
+
+/** The setting: the shelves and posts the engine weighs, and the ware as a multiple of them
+ * (furniture.py). A design with a single ware weight keeps it until the setting is described. */
+function SettingFields({
+  doc,
+  change,
+  onChange,
+}: {
+  doc: KilnDocument;
+  change: Change;
+  onChange: (document: KilnDocument) => void;
+}) {
+  const setting = doc.firing.setting;
+  const posts = setting?.posts;
+  return (
+    <>
+      <Choice
+        label="Ware for the firing simulation"
+        value={setting ? "setting" : doc.firing.ware ? "weight" : "none"}
+        options={[
+          ["none", "None: an empty kiln"],
+          ["weight", "A weight, as given"],
+          ["setting", "Shelves and posts, weighed"],
+        ]}
+        onChange={(v) => {
+          const { ware: _w, setting: _s, ...firing } = doc.firing;
+          if (v === "setting") onChange(setIn(doc, ["firing"], { ...firing, setting: freshSetting() }));
+          else if (v === "weight") onChange(setIn(doc, ["firing"], { ...firing, ware: "0 lb" }));
+          else onChange(setIn(doc, ["firing"], firing));
+        }}
+      />
+      {doc.firing.ware !== undefined && !setting && (
+        <Quantity
+          label="Ware and furniture"
+          value={doc.firing.ware}
+          units={["lb", "kg"]}
+          onChange={(v) => change(["firing", "ware"], v)}
+        />
+      )}
+      {doc.heat.gas && (
+        <Quantity
+          label="Target firing time"
+          value={doc.firing.target_time}
+          units={["hour", "minute"]}
+          onChange={(v) => change(["firing", "target_time"], v)}
+        />
+      )}
+      {setting && (
+        <>
+          <Quantity
+            label="Shelf length"
+            value={setting.shelves.length}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "length"], v)}
+          />
+          <Quantity
+            label="Shelf width"
+            value={setting.shelves.width}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "width"], v)}
+          />
+          <Quantity
+            label="Shelf thickness"
+            value={setting.shelves.thickness}
+            units={LENGTH}
+            onChange={(v) => change(["firing", "setting", "shelves", "thickness"], v)}
+          />
+          <Choice
+            label="Shelf material"
+            value={setting.shelves.material}
+            options={furnitureOptions}
+            onChange={(v) => change(["firing", "setting", "shelves", "material"], v)}
+          />
+          <Whole
+            label="Shelves a layer"
+            value={setting.shelves.per_layer}
+            min={1}
+            onChange={(v) => change(["firing", "setting", "shelves", "per_layer"], v)}
+          />
+          <Whole
+            label="Layers of shelves"
+            value={setting.shelves.layers}
+            min={1}
+            onChange={(v) => change(["firing", "setting", "shelves", "layers"], v)}
+          />
+          <Field label="Posts">
+            <input
+              type="checkbox"
+              checked={posts !== undefined}
+              onChange={(e) =>
+                change(
+                  ["firing", "setting", "posts"],
+                  // No source gives a post's size: the user's own, so the fields start blank
+                  e.target.checked ? { material: "mullite" } : undefined,
+                )
+              }
+            />
+          </Field>
+          {posts && (
+            <>
+              <Quantity
+                label="Post width"
+                value={posts.width}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "width"], v)}
+              />
+              <Quantity
+                label="Post depth"
+                value={posts.depth}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "depth"], v)}
+              />
+              <Quantity
+                label="Post height"
+                value={posts.height}
+                units={LENGTH}
+                onChange={(v) => change(["firing", "setting", "posts", "height"], v)}
+              />
+              <Choice
+                label="Post material"
+                value={posts.material}
+                options={furnitureOptions}
+                onChange={(v) => change(["firing", "setting", "posts", "material"], v)}
+              />
+              <Whole
+                label="Posts a layer"
+                value={posts.per_layer}
+                min={1}
+                onChange={(v) => change(["firing", "setting", "posts", "per_layer"], v)}
+              />
+            </>
+          )}
+          <Field label="Ware's weight over the setting's (typically 6–8)">
+            <input
+              type="number"
+              min={0}
+              step="any"
+              value={setting.ware_ratio ?? 7}
+              onChange={(e) =>
+                change(
+                  ["firing", "setting", "ware_ratio"],
+                  e.target.value === "" ? undefined : Number(e.target.value),
+                )
+              }
+            />
+          </Field>
+        </>
+      )}
+    </>
+  );
+}
+
 export function DesignForm({
   document: doc,
   library,
@@ -1102,11 +1306,14 @@ export function DesignForm({
   const fire = doc.heat.fire;
   const mixes = (doc.castables ?? []).map((c) => ({ id: c.id, name: c.name }));
   const round = doc.chamber.shape === "round";
+  const outline = doc.chamber.outline;
   const chambers = doc.chamber.chambers ?? 1;
   const lid = loading.type === "lid";
   const lidOk = round && electric !== undefined && roof.type === "flat";
-  // The last heat source left can't be turned off: a kiln needs one
-  const sources = [electric, gas, fire].filter((h) => h !== undefined).length;
+  // The last heat source left can't be turned off: a kiln needs one. A smoke firebox only
+  // reduces the kiln (Olsen p.250), so it doesn't count.
+  const heater = fire?.purpose === "smoke" ? undefined : fire;
+  const sources = [electric, gas, heater].filter((h) => h !== undefined).length;
 
   return (
     <form className="design-form" aria-label="Design" onSubmit={(e) => e.preventDefault()}>
@@ -1153,6 +1360,7 @@ export function DesignForm({
           units={TEMPERATURE}
           onChange={(v) => change(["firing", "top_temperature"], v)}
         />
+        <SettingFields doc={doc} change={change} onChange={onChange} />
       </Section>
 
       <Section title="Chamber (inside)">
@@ -1167,8 +1375,15 @@ export function DesignForm({
             change(
               ["chamber"],
               v === "round"
-                ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
-                : { ...doc.chamber, shape: undefined, rings: undefined },
+                ? {
+                    ...doc.chamber,
+                    shape: v,
+                    depth: doc.chamber.width,
+                    chambers: undefined,
+                    bend: undefined,
+                    outline: undefined,
+                  }
+                : { ...doc.chamber, shape: undefined, rings: undefined, floor_inside: undefined },
             )
           }
         />
@@ -1194,6 +1409,48 @@ export function DesignForm({
               recommended.
             </p>
           </>
+        )}
+        {!round && (
+          <Choice
+            label="Plan"
+            value={outline?.shape ?? "rectangle"}
+            options={[
+              ["rectangle", "A rectangle"],
+              ["teardrop", "A teardrop, round at the front (Calimpong's kiln)"],
+              ["oval", "An oval"],
+            ]}
+            onChange={(v) => change(["chamber"], withPlan(doc.chamber, v, doc.units))}
+          />
+        )}
+        {outline?.shape === "teardrop" && (
+          <>
+            <Quantity
+              label="Flat front wall's width (left out: round)"
+              value={outline.front_width}
+              units={LENGTH}
+              onChange={(v) => change(["chamber", "outline", "front_width"], v)}
+            />
+            <Quantity
+              label="Sides' radius (left out: straight)"
+              value={outline.side_radius}
+              units={LENGTH}
+              onChange={(v) => change(["chamber", "outline", "side_radius"], v)}
+            />
+          </>
+        )}
+        {outline?.shape === "oval" && (
+          <Quantity
+            label="Round ends' radius"
+            value={outline.end_radius}
+            units={LENGTH}
+            onChange={(v) => change(["chamber", "outline", "end_radius"], v)}
+          />
+        )}
+        {outline !== undefined && (
+          <p className="muted section-note">
+            The plan fills the width (its widest) and the depth (front to back). One level chamber
+            under a dome or a flat roof, fired with gas or fuel.
+          </p>
         )}
         {(round ? (["width", "height"] as const) : (["width", "depth", "height"] as const)).map((k) => (
           <Quantity
@@ -1273,6 +1530,17 @@ export function DesignForm({
           />
           The floor is on the ground (not raised on a stand)
         </label>
+        {round && electric && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={doc.chamber.floor_inside ?? false}
+              onChange={(e) => change(["chamber", "floor_inside"], e.target.checked || undefined)}
+            />
+            {"The floor slab sits inside the wall's lowest course, the walls running to the " +
+              "bottom (Paragon), not under the walls (Skutt)"}
+          </label>
+        )}
         <Choice
           label="Roof"
           value={roof.type}
@@ -1337,10 +1605,19 @@ export function DesignForm({
             gas: elements in its curved walls aren't designed here.
           </p>
         )}
+        {roof.type === "dome" && outline !== undefined && (
+          <Quantity
+            label="Crown, behind the front wall (left out: the middle)"
+            value={roof.crown_at}
+            units={LENGTH}
+            onChange={(v) => change(["roof", "crown_at"], v)}
+          />
+        )}
         {roof.type === "dome" && (
           <p className="muted section-note">
-            A dome on all four walls: a sphere through the chamber's top corners, rising to the
-            rise at its centre.
+            {outline === undefined
+              ? "A dome on all four walls: a sphere through the chamber's top corners, rising to the rise at its centre."
+              : "A sphere centred over the crown through the plan's farthest point, rising to the rise there."}
           </p>
         )}
       </Section>
@@ -1498,6 +1775,78 @@ export function DesignForm({
           );
         })}
         <Choice
+          label="Tapered brick shapes"
+          value={doc.lining.shapes ?? "olsen"}
+          options={[
+            ["olsen", "The simpler shapes, as in Olsen's tables"],
+            ["apg", "A.P. Green's full set, with the No. 1-X wedge"],
+          ]}
+          onChange={(v) => change(["lining", "shapes"], v === "olsen" ? undefined : v)}
+        />
+        <p className="muted section-note">
+          The arches and rings are turned from these. Most studio potters keep to the simpler
+          shapes; A.P. Green's set adds the No. 1-X wedge for gentle 9 in arches and the 3 in
+          series' No. 4 arch and No. 1 wedge (Firebrick Shapes, p.96, p.98).
+        </p>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={doc.lining.conical !== undefined}
+            onChange={(e) =>
+              change(
+                ["lining", "conical"],
+                e.target.checked ? { length: "9 in", wide: "4.5 in", narrow: "2.5 in" } : undefined,
+              )
+            }
+          />
+          Lay arches and domes in conical (tatami) bricks
+        </label>
+        {doc.lining.conical && (
+          <>
+            <Choice
+              label="Conical brick proportions"
+              value={doc.lining.conical.proportions ?? "given"}
+              options={[
+                ["given", "The sizes I give"],
+                ["fig-4-6", "Olsen's drawn brick (Fig. 4-6), scaled to the length"],
+              ]}
+              onChange={(v) =>
+                change(
+                  ["lining", "conical"],
+                  v === "fig-4-6"
+                    ? { length: doc.lining.conical?.length ?? "9 in", proportions: v }
+                    : { length: doc.lining.conical?.length ?? "9 in", wide: "4.5 in", narrow: "2.5 in" },
+                )
+              }
+            />
+            {(
+              (doc.lining.conical.proportions === "fig-4-6"
+                ? [["length", "Conical brick length"]]
+                : [
+                    ["length", "Conical brick length"],
+                    ["wide", "Conical brick, wide end across"],
+                    ["narrow", "Conical brick, narrow (hot-face) end across"],
+                    ["bore", "Conical brick, bore across"],
+                    ["groove", "Conical brick, spiral groove across"],
+                  ]) as ["length" | "wide" | "narrow" | "bore" | "groove", string][]
+            ).map(([key, label]) => (
+              <Quantity
+                key={key}
+                label={label}
+                value={doc.lining.conical?.[key]}
+                units={LENGTH}
+                onChange={(v) => change(["lining", "conical", key], v)}
+              />
+            ))}
+            <p className="muted section-note">
+              Hand-rolled in a tatami mat (Olsen, The Kiln Book, p.85, Fig. 4-6) and sized by you:
+              an arch or dome layer as deep as the brick is long is laid in them, narrow ends in.
+              The bore and the half-round spiral groove each run ¾ of the way from the wide end
+              and come out of the clay; a dome shows the taper its radius wants.
+            </p>
+          </>
+        )}
+        <Choice
           label="Outside finish"
           value={doc.shell?.finish ?? "oxidised_steel"}
           options={[
@@ -1580,6 +1929,14 @@ export function DesignForm({
                 value={electric.off_above}
                 units={TEMPERATURE}
                 onChange={(v) => change(["heat", "electric", "off_above"], v)}
+              />
+            )}
+            {gas && (
+              <Quantity
+                label="Burners lit, elements still on, from"
+                value={gas.on_from}
+                units={TEMPERATURE}
+                onChange={(v) => change(["heat", "gas", "on_from"], v)}
               />
             )}
           </>
@@ -1740,7 +2097,7 @@ export function DesignForm({
 
       <FireSection
         doc={doc}
-        disabled={fire !== undefined && sources === 1}
+        disabled={heater !== undefined && sources === 1}
         onChange={onChange}
       />
 

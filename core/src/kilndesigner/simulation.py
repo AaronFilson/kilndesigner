@@ -36,6 +36,7 @@ from kilndesigner.combustion import (
     available_heat_fraction,
 )
 from kilndesigner.combustion import SOURCE as COMBUSTION_SOURCE
+from kilndesigner.furniture import setting_weight
 from kilndesigner.heatloss import EMISSIVITY, GROUND_SOURCE, SOIL_K, top_temperature
 from kilndesigner.model import Kiln, Ramp
 from kilndesigner.shape import chamber_shape
@@ -46,7 +47,12 @@ from kilndesigner.working import Finding, Step, show
 
 DT = 60.0  # s, one step
 RECORD_EVERY = 5  # steps between the wall profiles kept for the heatmap
-MAX_HOURS = 96.0  # a firing longer than this is stopped and reported
+MAX_HOURS = 96.0  # full-heat time allowed beyond a schedule's paced segments, then stopped
+# The longest sourced firing: Fujiwara's Bizen kiln, "a seven-day firing period" (Olsen p.99,
+# pp.103–104), then about three days' cooling (p.105). A schedule's ramps and holds may take no
+# longer (slow-firing.md).
+LONGEST_FIRING_H = 240.0
+LONGEST_FIRING_SOURCE = "Olsen, The Kiln Book, 4th ed., p.99, pp.103–105"
 STALL_HOURS = 1.0  # power-limited with less than STALL_RISE over this long: the kiln has stalled
 STALL_RISE = 1.0  # K
 BTU_PER_KWH = 3412.14
@@ -69,6 +75,20 @@ type Heat = Literal["electric", "gas"]
 
 class SimulationError(ValueError):
     """A firing the engine can't simulate, with the reason."""
+
+
+def paced_hours(schedule: Sequence[Ramp], start_k: float) -> float:
+    """The least time a schedule takes (h): each paced ramp from the last one's end at its rate,
+    and every hold; a full-heat ramp counts nothing."""
+    total, at = 0.0, start_k
+    for r in schedule:
+        to = si(r.to, "K")
+        if r.rate is not None:
+            total += abs(to - at) / si(r.rate, "K/hour")
+        if r.hold is not None:
+            total += si(r.hold, "hour")
+        at = to
+    return total
 
 
 class FiringPoint(BaseModel):
@@ -113,6 +133,7 @@ class FiringResult(BaseModel):
     name: str
     heat: str  # "electric", "gas", or "electric then gas at …"
     switch_over_c: float | None
+    gas_from_c: float | None = None  # a hybrid's burners lit below the hand-over
     reached_c: float
     target_c: float
     duration_h: float
@@ -233,33 +254,70 @@ class HeatSupply:
     fuel: Fuel = "propane"
     reduction: bool = False
     switch_over_k: float | None = None  # a hybrid: elements below it, burners from it
+    gas_from_k: float | None = None  # a hybrid's burners lit lower: both on from it to the switch
+
+    @property
+    def lit_k(self) -> float | None:
+        """Where a hybrid's burners are lit: ``gas_from_k``, or the hand-over."""
+        return self.gas_from_k if self.gas_from_k is not None else self.switch_over_k
+
+    @property
+    def together(self) -> bool:
+        """A hybrid whose burners are lit before its elements switch off."""
+        return (
+            self.gas_from_k is not None
+            and self.switch_over_k is not None
+            and self.gas_from_k < self.switch_over_k
+        )
 
 
-def heat_supply(kiln: Kiln, switch_over_c: float | None = None) -> tuple[HeatSupply, list[Step]]:
-    """The heat the design has, from the element and burner designs."""
-    if kiln.heat.fire is not None:
+def heat_supply(
+    kiln: Kiln,
+    switch_over_c: float | None = None,
+    *,
+    gas_from_c: float | None = None,
+    burner_w: float | None = None,
+    element_w: float | None = None,
+) -> tuple[HeatSupply, list[Step]]:
+    """The heat the design has, from the element and burner designs; ``burner_w`` replaces the
+    burners' input (W, at the higher heating value), as the target-time solver tries inputs, and
+    ``gas_from_c`` lights a hybrid's burners below its hand-over (both on together).
+    ``element_w`` is the element design's installed power when the caller has it already (the
+    solver, which fires the same kiln many times)."""
+    if kiln.heat.fire is not None and kiln.heat.fire.purpose == "heat":
         raise SimulationError("wood, coal and oil firings aren't simulated yet (plan milestone M7)")
     from kilndesigner.electric import design_elements
     from kilndesigner.gas import design_gas
     from kilndesigner.heatloss import heat_loss
 
-    loss = heat_loss(kiln).total_watts
+    @cache
+    def loss() -> float:
+        return heat_loss(kiln).total_watts
+
     steps: list[Step] = []
     electric_w = gas_w = None
     if kiln.heat.electric is not None:
-        electric_w = design_elements(kiln, loss).installed_watts
+        electric_w = (
+            element_w if element_w is not None else design_elements(kiln, loss()).installed_watts
+        )
         steps.append(Step(name="Element power", value=show(Q_(electric_w, "W"), "kW")))
     gas = kiln.heat.gas
     if gas is not None:
-        gas_w = si(Q_(design_gas(kiln, loss).design_input_btu_hr, "BTU/hr"), "W")
+        gas_w = (
+            burner_w
+            if burner_w is not None
+            else si(Q_(design_gas(kiln, loss()).design_input_btu_hr, "BTU/hr"), "W")
+        )
         steps.append(
             Step(
                 name="Burner input",
                 value=f"{show(Q_(gas_w, 'W'), 'kW')} ({show(Q_(gas_w, 'W'), 'BTU/hr', 3)})",
-                note="At its higher heating value; the kiln keeps the available heat of it.",
+                note="At its higher heating value; the kiln keeps the available heat of it."
+                + (" The input tried for the target firing time." if burner_w is not None else ""),
             )
         )
     switch: float | None = None
+    lit: float | None = None
     if electric_w is not None and gas is not None:
         electric = kiln.heat.electric
         assert electric is not None
@@ -282,6 +340,23 @@ def heat_supply(kiln: Kiln, switch_over_c: float | None = None) -> tuple[HeatSup
                 ),
             )
         )
+        assert gas is not None
+        lit_c = gas_from_c if gas_from_c is not None else None
+        if lit_c is None and gas.on_from is not None:
+            lit_c = si(gas.on_from, "degC")
+        if lit_c is not None and lit_c + 273.15 < switch:
+            lit = lit_c + 273.15
+            steps.append(
+                Step(
+                    name="Burners lit, the elements still on",
+                    value=show(Q_(lit, "K"), "degF" if kiln.units == "us" else "degC"),
+                    note=(
+                        ("as asked" if gas_from_c is not None else "the design's gas.on_from")
+                        + ": both heat together up to the hand-over, the elements' power first "
+                        "and the burners for the rest"
+                    ),
+                )
+            )
     return (
         HeatSupply(
             electric_w,
@@ -289,18 +364,22 @@ def heat_supply(kiln: Kiln, switch_over_c: float | None = None) -> tuple[HeatSup
             gas.fuel if gas is not None else "propane",
             bool(gas is not None and gas.reduction),
             switch,
+            lit,
         ),
         steps,
     )
 
 
-def _source_at(supply: HeatSupply, t_k: float) -> Heat:
+def _sources_at(supply: HeatSupply, t_k: float) -> tuple[bool, bool]:
+    """Whether the elements, and the burners, are on at ``t_k``."""
     if supply.gas_w is None:
-        return "electric"
+        return True, False
     if supply.electric_w is None:
-        return "gas"
+        return False, True
     assert supply.switch_over_k is not None
-    return "electric" if t_k < supply.switch_over_k else "gas"
+    lit = supply.lit_k
+    assert lit is not None
+    return t_k < supply.switch_over_k, t_k >= lit
 
 
 def _air_ratio(supply: HeatSupply, t_k: float) -> float:
@@ -317,6 +396,20 @@ class _Controller:
     index: int = 0
     held_for: float = 0.0  # s into the current hold
     holding: bool = False
+    # Each ramp's end (K), rate (K/s) and hold (s), converted once rather than every step
+    _si: list[tuple[float, float | None, float | None]] = field(
+        default_factory=list[tuple[float, float | None, float | None]]
+    )
+
+    def __post_init__(self) -> None:
+        self._si = [
+            (
+                si(r.to, "K"),
+                si(r.rate, "K/s") if r.rate is not None else None,
+                si(r.hold, "s") if r.hold is not None else None,
+            )
+            for r in self.ramps
+        ]
 
     @property
     def done(self) -> bool:
@@ -324,26 +417,24 @@ class _Controller:
 
     def target(self, t_c: float, dt: float) -> tuple[float, bool]:
         """T_c* for the step's end, and whether the schedule sets a pace (False: full heat)."""
-        ramp = self.ramps[self.index]
-        to = si(ramp.to, "K")
+        to, rate, _ = self._si[self.index]
         if self.holding:
             return to, True
-        if ramp.rate is None:
+        if rate is None:
             return to, False
-        step = si(ramp.rate, "K/s") * dt
+        step = rate * dt
         return (min(t_c + step, to) if to >= t_c else max(t_c - step, to)), True
 
     def advance(self, t_start: float, t_c: float, dt: float) -> None:
-        ramp = self.ramps[self.index]
-        to = si(ramp.to, "K")
+        to, _, hold = self._si[self.index]
         if self.holding:
             self.held_for += dt
-            if self.held_for >= si(ramp.hold, "s") - 1e-9:  # pyright: ignore[reportArgumentType]
+            if self.held_for >= (hold or 0.0) - 1e-9:
                 self.index, self.holding, self.held_for = self.index + 1, False, 0.0
             return
         heating = to >= t_start
         if (heating and t_c >= to - 1e-6) or (not heating and t_c <= to + 1e-6):
-            if ramp.hold is not None and si(ramp.hold, "s") > 0:
+            if hold is not None and hold > 0:
                 self.holding = True
             else:
                 self.index += 1
@@ -354,10 +445,15 @@ def simulate(
     *,
     schedule: Sequence[Ramp] | None = None,
     switch_over_c: float | None = None,
+    gas_from_c: float | None = None,
+    burner_w: float | None = None,
+    max_hours: float | None = None,
     dt: float = DT,
     record: bool = True,
+    element_w: float | None = None,
 ) -> FiringRun:
-    """Fire the kiln along its schedule (or ``schedule``) from the room's temperature."""
+    """Fire the kiln along its schedule (or ``schedule``) from the room's temperature.
+    ``element_w``: the element design's installed power, if the caller has worked it out."""
     us = kiln.units == "us"
     unit = "degF" if us else "degC"
     working: list[Step] = []
@@ -373,11 +469,28 @@ def simulate(
     elif schedule is None:
         schedule, step = default_schedule(kiln)
         working.append(step)
-    supply, supply_steps = heat_supply(kiln, switch_over_c)
+    t_air = si(kiln.site.ambient, "K")
+    paced = paced_hours(schedule, t_air)
+    if paced > LONGEST_FIRING_H + 1e-6:
+        raise SimulationError(
+            f"the schedule's ramps and holds take {paced:.0f} h, longer than any sourced firing: "
+            f"the longest is Bizen's, seven days and about three days' cooling, "
+            f"{LONGEST_FIRING_H:g} h ({LONGEST_FIRING_SOURCE})"
+        )
+    if max_hours is None:
+        # Time for the full-heat segments beyond the paced ones, as for any firing
+        max_hours = MAX_HOURS + paced
+    supply, supply_steps = heat_supply(
+        kiln, switch_over_c, gas_from_c=gas_from_c, burner_w=burner_w, element_w=element_w
+    )
     working += supply_steps
     faces = build_faces(kiln)
-    t_air = si(kiln.site.ambient, "K")
-    ware_kg = si(kiln.firing.ware, "kg") if kiln.firing.ware is not None else 0.0
+    setting_steps: list[Step] = []
+    if kiln.firing.setting is not None:
+        furniture_kg, ware_only_kg, setting_steps = setting_weight(kiln.firing.setting)
+        ware_kg = furniture_kg + ware_only_kg
+    else:
+        ware_kg = si(kiln.firing.ware, "kg") if kiln.firing.ware is not None else 0.0
     ware_cap = ware_kg * WARE_CP
     e_price = (
         si(kiln.site.electricity_price, "USD/kWh")
@@ -401,6 +514,7 @@ def simulate(
     points: list[FiringPoint] = []
     run = FiringRun(result=None)  # pyright: ignore[reportArgumentType]  # filled in below
     stall_window: list[tuple[float, float]] = []
+    into_reduction = False
 
     def keep(step: int, setpoint: float, kw: dict[str, float], shell_max: float) -> None:
         to_kwh = 1 / 3.6e6
@@ -433,12 +547,13 @@ def simulate(
     keep(0, t_c, zero, t_air)
     step = 0
     while not ctl.done:
-        if time >= MAX_HOURS * 3600:
+        if time >= max_hours * 3600:
             findings.append(
                 Finding(
                     level="info",
                     message=(
-                        f"The firing was stopped at {MAX_HOURS:g} hours, before the schedule's end."
+                        f"The firing was stopped at {max_hours:.4g} hours, before the "
+                        "schedule's end."
                     ),
                 )
             )
@@ -450,14 +565,16 @@ def simulate(
         lines = [f.wall.heat_in_line(dt) for f in faces]
         a = sum(x[0] for x in lines) - ware_cap * t_c
         b = sum(x[1] for x in lines) + ware_cap
-        source = _source_at(supply, t_c)
-        if source == "electric":
-            assert supply.electric_w is not None
-            fraction, available_w = 1.0, supply.electric_w
-        else:
+        elements_on, burners_on = _sources_at(supply, t_c)
+        elements_w = (supply.electric_w or 0.0) if elements_on else 0.0
+        fraction, burners_kept_w = 1.0, 0.0
+        if burners_on:
             assert supply.gas_w is not None
             fraction = _fraction(round(t_c), _air_ratio(supply, t_c), supply.fuel)
-            available_w = supply.gas_w * max(fraction, 0.0)
+            burners_kept_w = supply.gas_w * max(fraction, 0.0)
+        available_w = elements_w + burners_kept_w
+        if elements_on and burners_on and supply.reduction and t_c >= REDUCTION_START_C + 273.15:
+            into_reduction = True
         e_max = available_w * dt
         need = a + b * target
         limited = False
@@ -476,8 +593,10 @@ def simulate(
         ware = ware_cap * (t_new - t_c)
         t_c = t_new
         time += dt
-        electric_j = heat if source == "electric" else 0.0
-        fuel_j = heat / fraction if source == "gas" and heat > 0 else 0.0
+        # The elements' power first (it all stays in the kiln), the burners for the rest
+        electric_j = min(max(heat, 0.0), elements_w * dt)
+        burnt = heat - electric_j
+        fuel_j = burnt / fraction if burners_on and burnt > 0 else 0.0
         totals["energy"] += heat
         totals["electricity"] += electric_j
         totals["fuel"] += fuel_j
@@ -512,16 +631,25 @@ def simulate(
             and t_c - stall_window[0][1] < STALL_RISE
             and target > t_c + STALL_RISE
         ):
-            if source == "electric" and supply.gas_w is not None:
-                # A hybrid's elements have stalled short of the hand-over: light the burners
-                supply = replace(supply, switch_over_k=t_c)
+            if not burners_on and supply.gas_w is not None:
+                # A hybrid's elements have stalled short of the burners: light them
+                together = supply.together
+                supply = (
+                    replace(supply, gas_from_k=t_c)
+                    if together
+                    else replace(supply, switch_over_k=t_c)
+                )
                 stall_window.clear()
+                at = show(Q_(t_c, "K"), unit)
                 findings.append(
                     Finding(
                         level="info",
                         message=(
-                            f"The elements stall at {show(Q_(t_c, 'K'), unit)}, short of the "
-                            "hand-over, so the burners take over there."
+                            f"The elements stall at {at}, short of where the burners are lit, so "
+                            "the burners are lit there and the elements stay on with them."
+                            if together
+                            else f"The elements stall at {at}, short of the hand-over, so the "
+                            "burners take over there."
                         ),
                     )
                 )
@@ -560,11 +688,25 @@ def simulate(
         else None
     )
     cost = totals["cost"] if priced else None
+    if into_reduction:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The elements stay on into reduction (from about 900 °C), which attacks their "
+                    "oxide layer and shortens their life: the price of the faster firing."
+                ),
+                reference=f"{COMBUSTION_SOURCE}; hybrid-firing.md §1",
+            )
+        )
     heat_name = (
         "electric"
         if supply.gas_w is None
         else "gas"
         if supply.electric_w is None
+        else f"electric to {show(Q_(supply.switch_over_k or 0.0, 'K'), unit, 4)}, with gas from "
+        f"{show(Q_(supply.lit_k or 0.0, 'K'), unit, 4)}"
+        if supply.together
         else f"electric, then gas from {show(Q_(supply.switch_over_k or 0.0, 'K'), unit, 4)}"
     )
     working += [
@@ -594,10 +736,11 @@ def simulate(
         ),
     ]
     if ware_kg:
+        working += setting_steps
         working.append(
             Step(
                 name="Ware and furniture",
-                value=show(kiln.firing.ware, "lb" if us else "kg"),  # pyright: ignore[reportArgumentType]
+                value=show(Q_(ware_kg, "kg"), "lb" if us else "kg"),
                 inputs={"specific heat": f"{WARE_CP:g} J/(kg·K)"},
                 reference=WARE_SOURCE,
                 note="Lumped at the chamber's temperature; fired clay's room-temperature c_p.",
@@ -682,6 +825,7 @@ def simulate(
         name=kiln.name,
         heat=heat_name,
         switch_over_c=(supply.switch_over_k - 273.15) if supply.switch_over_k else None,
+        gas_from_c=(supply.lit_k or 0.0) - 273.15 if supply.together else None,
         reached_c=max(p.chamber_c for p in points),
         target_c=target_k - 273.15,
         duration_h=duration,

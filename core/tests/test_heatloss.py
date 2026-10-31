@@ -37,7 +37,7 @@ def test_every_library_material_loads_with_increasing_k_points() -> None:
     """Every refractory has its maker's service limit. Building brick, stone and clay fired in place
     have none: no maker or standard rates them for kiln heat (masonry-materials.md §1.2, §3.3,
     §4a)."""
-    unrated = {"building_brick", "stone"}
+    unrated = {"building_brick", "stone", "earth"}
     for m in materials().values():
         k = m.k
         assert all(v > 0 for v in k.values)

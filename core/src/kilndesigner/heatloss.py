@@ -121,6 +121,23 @@ def heat_loss(
             reference=EMISSIVITY_SOURCE,
         ),
     ]
+    if kiln.chamber.floor_inside:
+        from kilndesigner.rings import FLOOR_COURSE_IN, FLOOR_INSIDE_SOURCE
+
+        working.append(
+            Step(
+                name="Floor inside the walls",
+                value="the floor's area stays the inside outline through the slab",
+                formula="A_floor(x) = A_inside",
+                inputs={"wall's lowest course": f"{FLOOR_COURSE_IN:g} in"},
+                reference=FLOOR_INSIDE_SOURCE,
+                note=(
+                    "The slab sits inside the wall's lowest course, so it doesn't spread out under "
+                    "the walls; the walls' area grows round the inside as before. The heat the "
+                    "slab's edge passes into that course is counted only through that growth."
+                ),
+            )
+        )
     findings: list[Finding] = []
     faces: list[FaceResult] = []
     total = 0.0

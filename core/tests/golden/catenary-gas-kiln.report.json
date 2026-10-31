@@ -1770,5 +1770,6 @@
       }
     ]
   },
-  "name": "Catenary gas kiln, cone 10"
+  "name": "Catenary gas kiln, cone 10",
+  "target": null
 }

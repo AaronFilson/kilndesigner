@@ -815,6 +815,8 @@ export interface components {
             heat: string;
             /** Switch Over C */
             switch_over_c: number | null;
+            /** Gas From C */
+            gas_from_c?: number | null;
             /** Reached C */
             reached_c: number;
             /** Target C */
@@ -1211,6 +1213,7 @@ export interface components {
             bom: components["schemas"]["Bom"] | null;
             /** Findings */
             findings: components["schemas"]["Finding"][];
+            target?: components["schemas"]["TargetFiring"] | null;
         };
         /** Requirement */
         Requirement: {
@@ -1297,6 +1300,22 @@ export interface components {
             source: string;
         };
         /**
+         * SupplyOption
+         * @description One way to supply the propane for the firing: a row of the options table.
+         */
+        SupplyOption: {
+            /** Option */
+            option: string;
+            /** Works */
+            works: boolean;
+            /** Needs */
+            needs: string;
+            /** Cost */
+            cost: string | null;
+            /** Source */
+            source: string;
+        };
+        /**
          * SwitchOverChart
          * @description A hybrid's firing time and cost against where it hands over from elements to burners.
          */
@@ -1337,6 +1356,68 @@ export interface components {
              * @default false
              */
             elements_stalled: boolean;
+        };
+        /**
+         * TargetFiring
+         * @description What a target firing time needs, and what limits it.
+         */
+        TargetFiring: {
+            /** Target H */
+            target_h: number;
+            /** Met */
+            met: boolean;
+            /** Shortest H */
+            shortest_h: number;
+            /** Input Btu Hr */
+            input_btu_hr: number;
+            /** Input Per Ft3 Btu Hr */
+            input_per_ft3_btu_hr: number;
+            /** Duration H */
+            duration_h: number;
+            /** Limits */
+            limits: string[];
+            /** Burners */
+            burners: string | null;
+            /** Burner Each Btu Hr */
+            burner_each_btu_hr: number | null;
+            /** Burners Most Btu Hr */
+            burners_most_btu_hr: number | null;
+            /** Propane Gal Hr */
+            propane_gal_hr: number | null;
+            /** Cylinders Full */
+            cylinders_full: number | null;
+            /** Cylinders Quarter */
+            cylinders_quarter: number | null;
+            /** Tank */
+            tank: string | null;
+            /** Supply Meets */
+            supply_meets: boolean | null;
+            /** Propane Gallons */
+            propane_gallons: number | null;
+            /** Electricity Kwh */
+            electricity_kwh: number;
+            /** Elements Share */
+            elements_share: number;
+            /** Cost Usd */
+            cost_usd: number | null;
+            /** Cost */
+            cost: string | null;
+            /** Flue Area In2 */
+            flue_area_in2: number;
+            /** Inlet Area In2 */
+            inlet_area_in2: number | null;
+            /** Chimney Height */
+            chimney_height: string | null;
+            /** Draft */
+            draft: string[];
+            /** Peak Rate C Per H */
+            peak_rate_c_per_h: number;
+            /** Supply Options */
+            supply_options: components["schemas"]["SupplyOption"][];
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
         };
         /**
          * Template

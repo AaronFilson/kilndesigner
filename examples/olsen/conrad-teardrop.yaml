@@ -4,40 +4,59 @@
 #
 # From the book (Fig 4-140, "all dimensions are interior measurements"): 9 ft 9 in long inside;
 # widths 39 in at the front, 51½ in (faint) at the widest, 48 in 33 in further back, then 16 in
-# (faint), 12 in a foot further on, and 19 in to the end; 35½ in (faint) high at the front and 35 in
+# (checked on the page image, 2026-10-31), 12 in a foot further on, and 19 in to the end; 35½ in (faint) high at the front and 35 in
 # high 24 in from the back wall, taken as the walls' height under the dome; side door 37 in high ×
 # 33 in wide; grate 15 in wide; ash pit 12 in deep and 24 in long. Chimney "only 9 x 9in.", which
 # fires well (p.124). Double side walls (caption 4-144); buttressed with stones and concrete
 # (4-145); a cast dome, first cast too thin and thickened (4-146).
 # Assumed: the grate 24 in long, over the ash pit, and the firebox the front's 39 in by that 24 in.
 # Walls and floor 9 in of K-26 insulating brick: the double walls as two 4½ in courses, in the
-# 2500–2600 °F brick Olsen sets under a cast dome (p.58). The dome 6 in of Kast-O-Lite 26 LI Plus:
-# Olsen casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"), and "a 6in.
-# thickness is best" (p.59). Its rise, 2¾ in per foot of the 36 in span, 8¼ in: the middle of his
-# 2½–3 in/ft for domes (p.51). Cone 10, from the Gulgong racer, Olsen's cast-dome wood cross-draft
-# (gulgong-racer, p.119). The door in the right wall: the book doesn't say which side. Its 37 in
-# reaches 2 in above the 35 in walls, into the dome's sides, which the sail dome allows. Its head
-# is drawn with rounded corners and a flatter top than a semicircle, and what spans it isn't
-# printed: it is taken as arched in the dome's 6 in ring, as Olsen's other built doors are
-# (door-openings.md).
-# Not modelled: the teardrop, as a box of its mean width, 36 in: widths 39, 51½, 48, 16 and 12 in
-# at 0, 36, 69, 86 and 98 in from the front, averaged along the 117 in with 12 in carried to the
-# end. The widest is placed at the side door's near jamb, which puts the 48 in at its far jamb;
-# the plan doesn't fix it. The chimney's height isn't printed, so the chimney isn't entered: the
-# engine sizes it (its section comes out 9 × 9 in). The exit opening (12 in high, its width not
-# printed), the 9 in high stoke hole and the 2½ × 4 in passive damper.
+# 2500–2600 °F brick Olsen sets under a cast dome (p.58). The dome of Kast-O-Lite 26 LI Plus:
+# Olsen casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"). Cone 10, from
+# the Gulgong racer, Olsen's cast-dome wood cross-draft (gulgong-racer, p.119). The door in the
+# right wall: the book doesn't say which side.
+# The plan (chamber.outline): a teardrop, its 51½ in round end cut square by the 39 in front wall,
+# its sides arcs of 145 in radius turning in reverse curves of 32 in radius into the book's 12 in
+# neck, which runs straight for its last 19 in to the chimney wall, 117 in from the front. The two
+# radii are fitted to the printed widths, as no radius is printed: 16.7 in 12 in before the neck
+# (the book's 16), but 43.9 in 33 in behind the widest point (the book's 48), as the round end,
+# fixed by the 51½ and 39 in, puts the widest point 17 in behind the front where the book draws
+# it about 37 in back, and sides any fuller would bulge past it; 3962 in², 6 % under the printed
+# widths joined by straight lines (curved-kilns.md).
+# ESTIMATES, scaled from the book's figures (curved-kilns.md, "Estimates scaled from the figures"):
+# the crown 45 ± 2 in up, so 10 in above the 35 in springline, 53 ± 4 in behind the front wall
+# (Fig 4-140, scaled against the printed 37 in door); the dome 5½ ± 1½ in thick (Fig 4-147, scaled
+# against the printed 9 in stoke hole). The dome is the sphere over the crown through the plan's
+# farthest point, the neck's end. The door's 37 in reaches above the 35 in springline into the
+# dome's side. Its head is drawn flattish, crowned about 4 in over the jambs' tops, its corners
+# rounded to about 1 in (scaled from the figure, curved-kilns.md): laid out flat at the printed
+# 37 in with 1 in corners. What spans it isn't printed and no source gives its statics, so it is
+# laid out and not checked (the report says so); head: arch would check it as a semicircular
+# ring in the dome's ring, as Olsen's other built doors are (door-openings.md).
+# Not modelled: the chimney's height
+# isn't printed, so the chimney isn't entered: the engine sizes it (its section comes out 9 × 9
+# in). The exit opening (12 in high, its width not printed), the 9 in high stoke hole and the
+# 2½ × 4 in passive damper.
 schema: 1
 name: Conrad Calimpong's teardrop kiln
 units: us
 firing:
   cone: "10"
 chamber:
-  width: 36 in # the teardrop's mean width
+  width: 51.5 in # the widest, 51½ in (Fig 4-140)
   depth: 117 in # 9 ft 9 in
   height: 35 in # to the dome's springline
+  outline:
+    shape: teardrop
+    front_width: 39 in # the firebox end's straight front wall (Fig 4-140)
+    side_radius: 145 in # fitted to the printed widths: see the notes
+    neck_width: 12 in # the neck, 12 in (Fig 4-140)
+    neck_length: 19 in # its straight run to the chimney wall, 19 in (Fig 4-140)
+    neck_radius: 32 in # the reverse curve into it, fitted: see the notes
 roof:
   type: dome
-  rise: 8.25 in
+  rise: 10 in # estimated from Fig 4-140's elevation: the crown ~45 in up (curved-kilns.md)
+  crown_at: 53 in # estimated, the same way: the crown ~53 in behind the front wall
   buttressed: true
 loading:
   type: door
@@ -47,13 +66,15 @@ loading:
     width: 33 in # "KILN DOOR" 33 in (Fig 4-140)
     height: 37 in # 37 in (Fig 4-140), from the floor
     across: -6 in # its far jamb 48 in from the back wall (Fig 4-140): from 36 to 69 in of 117
+    head: flat # drawn flattish with rounded corners (Fig 4-140): not checked, see the notes
+    corner: 1 in # estimated from the figure, 1 ± ½ in (curved-kilns.md)
 lining:
   walls:
     - material: ifb-k26
       thickness: 9 in
   roof:
     - material: kast-o-lite-26-li-plus
-      thickness: 6 in
+      thickness: 5.5 in # estimated from Fig 4-147 against the 9 in stoke hole (curved-kilns.md)
 heat:
   fire:
     fuel: wood

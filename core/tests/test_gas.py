@@ -255,12 +255,33 @@ def _fast(kiln):  # type: ignore[no-untyped-def]
     return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"gas": gas})})
 
 
+def _cylinders(kiln, n: int):  # type: ignore[no-untyped-def]
+    supply = kiln.heat.gas.supply.model_copy(update={"count": n})
+    gas = kiln.heat.gas.model_copy(update={"supply": supply})
+    return kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"gas": gas})})
+
+
+def test_eleven_cylinders_are_the_fewest_that_meet_the_cold_day(pnw) -> None:  # type: ignore[no-untyped-def]
+    """The author's answer: more 100 lb cylinders until the 20 °F check passes. Eleven meet the
+    452,083 BTU/hr even ¼ full keeping 10 psi (11 × 43,300); ten fall short there (a warning)."""
+    assert pnw.heat.gas.supply.count == 11
+    gas = design_gas(pnw)
+    assert all(s.meets_demand for s in gas.supply)
+    assert not [f for f in gas.findings if f.level in ("error", "warning")]
+    ten = design_gas(_cylinders(pnw, 10))
+    assert [f.check.id for f in ten.findings if f.check and f.level == "warning"] == [
+        "gas.supply-low"
+    ]
+    five = design_gas(_cylinders(pnw, 5))
+    assert not [f for f in five.findings if f.level == "error"]
+
+
 def test_four_cylinders_at_20f_are_read_by_the_liquids_temperature(pnw) -> None:  # type: ignore[no-untyped-def]
     """The 100 lb table is by the liquid's temperature, which runs 20 °F under the air under draw
     (combustion-and-masonry.md §2.3, §2.8; review G5): at 20 °F air it is read at 0 °F, 113,000
     each full and 64,000 half full, not the 20 °F row's 167,000. The conservative ¼-full case
     stays by air, 43,300. Against a fast firing's 16,000 BTU/ft³/hr."""
-    gas = design_gas(_fast(pnw))
+    gas = design_gas(_fast(_cylinders(pnw, 4)))
     capacities = [s.capacity_btu_hr for s in gas.supply]
     assert capacities == pytest.approx([4 * 113_000, 4 * 64_000, 4 * 43_300])
     assert not any(s.meets_demand for s in gas.supply)
@@ -278,7 +299,7 @@ def test_a_cold_day_that_passed_now_stalls(pnw) -> None:  # type: ignore[no-unty
     """Review fix 4: the PNW kiln on four cylinders at 20 °F, slow firing (452,083 BTU/hr), passed
     against the 20 °F row (4 × 167,000 = 668,000). Read at the liquid's 0 °F it gets 452,000 and
     stalls; the regulator leaves the burners 2.96 psi (0.8 × (23.7 − 20))."""
-    gas = design_gas(pnw)
+    gas = design_gas(_cylinders(pnw, 4))
     step = next(s for s in gas.working if s.name == "Propane pressure available")
     assert step.inputs["burners limited to"] == "2.96 psi"
     [stall] = [f for f in gas.findings if f.level == "error"]
@@ -496,6 +517,27 @@ def test_burners_that_cant_hold_the_top_are_an_error() -> None:
     assert top.check is not None
     assert top.check.solve is not None
     assert top.check.solve.startswith("Passes when n ≥ ")
+
+
+def test_elements_on_to_the_top_count_in_the_top_check() -> None:
+    """The target-time solver keeps a hybrid's elements on to the top: their power, all of it kept
+    in the kiln, counts with the burners' available heat against the loss there. Without it the
+    burners are checked alone, as when the elements hand over below the top."""
+    one_b1 = "wall: front\n      model: Ransome B1\n      count: 1\n    supply"
+    text = GAS.replace("wall: front\n    supply", one_b1)
+    loss = _loss(text)
+    alone = design_gas(parse_design(text), loss)
+    [top] = [f for f in alone.findings if f.check and f.check.id == "gas.top"]
+    assert top.level == "error"
+    both = design_gas(parse_design(text), loss, elements_on_top_w=loss)
+    assert not [f for f in both.findings if f.check and f.check.id == "gas.top"]
+    [step] = [s for s in both.working if s.name.startswith("Burners and elements")]
+    assert "+ element power" in (step.formula or "")
+    short = design_gas(parse_design(text), loss, elements_on_top_w=0.1 * loss)
+    [top] = [f for f in short.findings if f.check and f.check.id == "gas.top"]
+    assert "the elements on to the top add" in top.message
+    assert top.check is not None
+    assert top.check.title == "The burners and elements together can hold the top temperature"
 
 
 def test_named_burners_under_the_rule_fire_more_slowly() -> None:

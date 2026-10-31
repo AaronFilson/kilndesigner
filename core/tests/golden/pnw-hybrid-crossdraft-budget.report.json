@@ -27,7 +27,7 @@
               "symbol": "c_1",
               "text": null,
               "unit": "USD",
-              "value": 4696.35
+              "value": 4667.67
             },
             {
               "expr": null,
@@ -85,14 +85,14 @@
               "expr": null,
               "formula": null,
               "label": "$",
-              "meaning": "Ransome B5 burner",
+              "meaning": "Ransome B3 burner",
               "offset": 0.0,
               "scale": 1.0,
-              "source": "Ransome B5, Ward Burner Systems",
+              "source": "Ransome B3, Ward Burner Systems",
               "symbol": "c_6",
               "text": null,
               "unit": "USD",
-              "value": 790.0
+              "value": 1960.0
             },
             {
               "expr": null,
@@ -105,7 +105,7 @@
               "symbol": "c_7",
               "text": null,
               "unit": "USD",
-              "value": 1030.05
+              "value": 1248.05
             },
             {
               "expr": null,
@@ -131,13 +131,13 @@
               "symbol": "C",
               "text": null,
               "unit": "USD",
-              "value": 8499.68
+              "value": 9859.0
             }
           ],
           "id": "bom.budget",
           "label": null,
           "lever": {
-            "hi": 16999.36,
+            "hi": 19718.0,
             "lo": 0.0,
             "step": null,
             "symbol": "B"
@@ -148,7 +148,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = $8,500, 170 % of B = $5,000",
+              "margin": "C = $9,859, 197.2 % of B = $5,000",
               "op": "<=",
               "right": "B"
             }
@@ -156,21 +156,21 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when B ≥ $8,500",
+          "solve": "Passes when B ≥ $9,859",
           "status": "warning",
           "title": "The priced materials against the budget"
         },
         "level": "warning",
-        "message": "The priced materials come to $8,500, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $9,859, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
     "lines": [
       {
-        "buy": "655 bricks",
-        "cost": 4696.35,
+        "buy": "651 bricks",
+        "cost": 4667.67,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "655 bricks (496 whole, 127 cut into 176 pieces; 623 in the kiln plus 5 % for breakage)",
+        "needed": "651 bricks (487 whole, 133 cut into 215 pieces; 620 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
@@ -221,19 +221,19 @@
         "unit_price": null
       },
       {
-        "buy": "2 burners",
-        "cost": 790.0,
-        "item": "Ransome B5 burner",
-        "needed": "2 burners at 2.4 psi, 226,042 BTU/hr each",
-        "priced_as": "Ransome B5, Ward Burner Systems",
+        "buy": "8 burners",
+        "cost": 1960.0,
+        "item": "Ransome B3 burner",
+        "needed": "8 burners at 1.0 psi, 56,510 BTU/hr each",
+        "priced_as": "Ransome B3, Ward Burner Systems",
         "source": "combustion-and-masonry.md §3.2, §3.3 [S22, S27]",
-        "unit_price": "$395.00"
+        "unit_price": "$245.00"
       },
       {
-        "buy": "189 bricks",
-        "cost": 1030.05,
+        "buy": "229 bricks",
+        "cost": 1248.05,
         "item": "Chimney and flue duct: hard firebrick",
-        "needed": "189 straights (with 5 % for cuts and breakage)",
+        "needed": "229 straights (with 5 % for cuts and breakage)",
         "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$5.45"
@@ -267,7 +267,7 @@
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 8499.68
+    "total": 9859.0
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -476,7 +476,7 @@
             "symbol": "c_1",
             "text": null,
             "unit": "USD",
-            "value": 4696.35
+            "value": 4667.67
           },
           {
             "expr": null,
@@ -534,14 +534,14 @@
             "expr": null,
             "formula": null,
             "label": "$",
-            "meaning": "Ransome B5 burner",
+            "meaning": "Ransome B3 burner",
             "offset": 0.0,
             "scale": 1.0,
-            "source": "Ransome B5, Ward Burner Systems",
+            "source": "Ransome B3, Ward Burner Systems",
             "symbol": "c_6",
             "text": null,
             "unit": "USD",
-            "value": 790.0
+            "value": 1960.0
           },
           {
             "expr": null,
@@ -554,7 +554,7 @@
             "symbol": "c_7",
             "text": null,
             "unit": "USD",
-            "value": 1030.05
+            "value": 1248.05
           },
           {
             "expr": null,
@@ -580,13 +580,13 @@
             "symbol": "C",
             "text": null,
             "unit": "USD",
-            "value": 8499.68
+            "value": 9859.0
           }
         ],
         "id": "bom.budget",
         "label": "W1",
         "lever": {
-          "hi": 16999.36,
+          "hi": 19718.0,
           "lo": 0.0,
           "step": null,
           "symbol": "B"
@@ -597,7 +597,7 @@
             "holds": false,
             "left": "C",
             "level": "warning",
-            "margin": "C = $8,500, 170 % of B = $5,000",
+            "margin": "C = $9,859, 197.2 % of B = $5,000",
             "op": "<=",
             "right": "B"
           }
@@ -605,12 +605,12 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when B ≥ $8,500",
+        "solve": "Passes when B ≥ $9,859",
         "status": "warning",
         "title": "The priced materials against the budget"
       },
       "level": "warning",
-      "message": "The priced materials come to $8,500, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $9,859, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
@@ -688,8 +688,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
-      "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+      "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+      "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
     },
     {
       "check": null,
@@ -730,8 +730,14 @@
     {
       "check": null,
       "level": "info",
-      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
-      "reference": "kiln-hardware.md §6.1 [S4]"
+      "message": "The door is arched, as Olsen's built kilns' are: brick jambs and a semicircular ring arch laid on a form (Tamba Figs 4-11, 4-15; Kanayama Figs 7-17, 7-18; Kecskemét, Fig 5-42). Its 3 in ring is 2.1 times the thinnest that holds a line of thrust, and the 10.0 in jamb holds its least thrust, 7 lb, its resultant 6.1 in in from the door (Heyman's statics).",
+      "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18); arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The door is a 24 × 40 in opening in the front wall, bricked up dry for each firing in the wall's own layers, as Olsen's Tamba and Kanayama doors are (Figs 4-14, 7-18).",
+      "reference": "door-openings.md; kiln-hardware.md §6.1 [S4]"
     },
     {
       "check": null,
@@ -742,7 +748,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Damper: a kiln shelf in a slot 12 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "message": "Damper: a kiln shelf in a slot 16.5 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
       "reference": "kiln-hardware.md §3.2–3.3 [S4]"
     },
     {
@@ -754,7 +760,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
+      "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
       "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
     },
     {
@@ -811,6 +817,12 @@
         "level": "info",
         "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The door is arched, as Olsen's built kilns' are: brick jambs and a semicircular ring arch laid on a form (Tamba Figs 4-11, 4-15; Kanayama Figs 7-17, 7-18; Kecskemét, Fig 5-42). Its 3 in ring is 2.1 times the thinnest that holds a line of thrust, and the 10.0 in jamb holds its least thrust, 7 lb, its resultant 6.1 in in from the door (Heyman's statics).",
+        "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18); arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
       }
     ],
     "kind": "arch frame",
@@ -950,6 +962,35 @@
         "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
         "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
         "value": "1/2-13: 5,146 psi"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Door in part of the wall",
+        "note": null,
+        "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18)",
+        "value": "24 × 40 in in the front wall, 7.8 in of wall over it, its head a semicircular arch"
+      },
+      {
+        "formula": "k = d/(r + d/2) ÷ η(90°) ≥ 2; H_min ≤ H_max, each the loads' moment about the touching point over its height to the crown's line; x_R = (N·x_p + G₁·e/2 + G₂·(d + e)/2 + G₃·(e − b_c/2) + H_min·h_s)/ΣV ≤ e; H_min/N ≤ μ",
+        "inputs": {
+          "ring depth": "3 in",
+          "roof's edge": "0 lb/ft",
+          "springline": "28 in",
+          "wall over the springline": "19.8 in"
+        },
+        "name": "The door's arch and jambs",
+        "note": "HarbisonWalker's arch method covers roof arches of T/S 4–10 %, and this door arch's ring is 12% of its span: so the statics here are Heyman's, from the geometry and the loads alone, which need no range. A jamb that gives a little lets the arch settle to its least thrust, so that is what it must hold (Heyman). A hot arch held rigidly would push towards the most; a door arch's hot thrust is not sourced (door-headers.md §D8). The whole wall over the arch is taken to bear on it, BIA's safe side. Sliding uses BIA's friction between brick masonry units, 0.6: for clay brick, none is sourced for insulating firebrick or refractory joints (refractory-bearing.md §B4.1). The left wall bonded into the jamb's end is counted for a length of the jamb wall's thickness only (a design rule, door-headers.md §D9). A partition wall bonded in between doors isn't counted.",
+        "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the minimum thrust, the line of thrust from the crown's extrados touching the intrados: 'an arch on spreading supports will act in a state of minimum thrust' (Heyman, The Stone Skeleton; arch-thrust-theory.md §2 [A1], [A3]), the least it pushes on its neighbours (domes-over-doors.md §D3 [D7]); the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress; Couplet–Heyman minimum thickness, Rizzi et al. 2010; domes-over-doors.md §D3 [D5]",
+        "value": "a 3 in ring over 24 in, 2.1 times the thinnest that stands; its thrust 7 lb at least, 13 lb at most; on the 10.0 in jamb the resultant 6.1 in in from the door's edge (its middle third to 6.7 in); at the springing it needs friction 0.25 of 0.6"
+      },
+      {
+        "formula": "σ = 2N/(3·b·a), a the resultant's distance to the nearer edge",
+        "inputs": {},
+        "name": "Bearing stress under the door's arch",
+        "note": "Reported, not checked: no maker, standard or handbook found gives an allowable bearing stress or a factor of safety for refractory brick or castable, cold or hot (one search extract, unread, gives a factor of 2 on the crushing strength at temperature for refractory-lined vessels: refractory-bearing.md §B4); ASTM C133 says cold crushing strength is not a measure of performance hot, and the ASTM C16 load (25 psi) is a test condition, not a limit (refractory-bearing.md). Compare it with the brick's cold crushing strength and hot-load data there.",
+        "reference": "refractory-bearing.md",
+        "value": "2.7 psi at the springing, 3.0 psi at the jamb's toe"
       }
     ]
   },
@@ -1021,11 +1062,11 @@
       }
     ],
     "burners": {
-      "count": 2,
-      "each": "226,042 BTU/hr",
-      "model": "Ransome B5",
-      "pressure": "2.4 psi",
-      "total_cost": 790.0,
+      "count": 8,
+      "each": "56,510 BTU/hr",
+      "model": "Ransome B3",
+      "pressure": "1.0 psi",
+      "total_cost": 1960.0,
       "type": "venturi"
     },
     "chimney_height": "4.4 ft (53 in) above the chamber floor",
@@ -1048,8 +1089,8 @@
       {
         "check": null,
         "level": "info",
-        "message": "The tool chose the fewest burners that carry the input (2 × Ransome B5). Olsen's builds use several: a 20 ft³ cross-draft on four, a 36 ft³ cross-draft on six and an IFB updraft that size on at least ten (p.226–228). No source gives a rule for the count; set burners.count to spread the heat over more.",
-        "reference": "Olsen, The Kiln Book, 4th ed., p.226–228; kiln-reference.md"
+        "message": "Cylinders joined in parallel are assumed to add their capacities. That is a reasonable inference at the same temperature and fill, but no source states it. Never warm a cylinder with a flame or heater.",
+        "reference": "combustion-and-masonry.md §2.6 [S23, S24]"
       },
       {
         "check": null,
@@ -1064,19 +1105,33 @@
         "reference": null
       }
     ],
-    "flue_area": "57 in²",
-    "flue_area_in2": 56.548667764616276,
+    "flue_area": "113 in²",
+    "flue_area_in2": 113.49003461093129,
     "fuel": "propane",
     "full_fire_btu_hr": 452083.3333333334,
-    "inlet_area_in2": 56.548667764616276,
+    "inlet_area_in2": 113.49003461093129,
     "propane_at_full_fire": "4.94 gal/hr",
     "supply": [
       {
-        "capacity": "462,360 BTU/hr",
-        "capacity_btu_hr": 462360.11111111107,
-        "case": "500 gal tank, ⅓ full",
+        "capacity": "1,243,000 BTU/hr (113,000 each)",
+        "capacity_btu_hr": 1243000.0,
+        "case": "11 × 100 lb cylinders, full",
         "meets_demand": true,
-        "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], × 73.3/90 for ⅓ full (§2.3, §2.8)"
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
+      },
+      {
+        "capacity": "704,000 BTU/hr (64,000 each)",
+        "capacity_btu_hr": 704000.0,
+        "case": "11 × 100 lb cylinders, half full",
+        "meets_demand": true,
+        "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)"
+      },
+      {
+        "capacity": "476,300 BTU/hr (43,300 each)",
+        "capacity_btu_hr": 476300.0,
+        "case": "11 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "meets_demand": true,
+        "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       }
     ],
     "supply_temperature": "20 °F",
@@ -1129,13 +1184,13 @@
       {
         "formula": null,
         "inputs": {
-          "cost": "$790.00",
-          "each": "226,042 BTU/hr"
+          "cost": "$1,960.00",
+          "each": "56,510 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "2 × Ransome B5 at 2.4 psi"
+        "value": "8 × Ransome B3 at 1.0 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -1170,29 +1225,49 @@
         "inputs": {
           "air temperature": "20 °F"
         },
-        "name": "Supply: 500 gal tank, ⅓ full",
+        "name": "Supply: 11 × 100 lb cylinders, full",
         "note": "meets the burners' draw",
-        "reference": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], × 73.3/90 for ⅓ full (§2.3, §2.8)",
-        "value": "462,360 BTU/hr"
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "1,243,000 BTU/hr (113,000 each)"
       },
       {
-        "formula": "⅓ of the tank",
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 11 × 100 lb cylinders, half full",
+        "note": "meets the burners' draw",
+        "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
+        "value": "704,000 BTU/hr (64,000 each)"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air temperature": "20 °F"
+        },
+        "name": "Supply: 11 × 100 lb cylinders, ¼ full, keeping 10 psi",
+        "note": "meets the burners' draw",
+        "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
+        "value": "476,300 BTU/hr (43,300 each)"
+      },
+      {
+        "formula": "cylinders × 100 lb ÷ 4.20 lb/gal",
         "inputs": {},
         "name": "Propane on hand",
         "note": null,
         "reference": null,
-        "value": "167 gal: 33.7 hours at full fire"
+        "value": "262 gal: 53.0 hours at full fire"
       },
       {
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
           "Olsen's other methods": "113 in² (2½ in² per ft³), 65 in² (1 in² per 7000 BTU/hr)",
-          "burner ports together": "57 in²"
+          "burner ports together": "113 in²"
         },
         "name": "Exit flue, to start",
         "note": "Build it this size and brick it down to tune the kiln: it is much easier to restrict than to enlarge (p.151, p.236). Size the damper to close it fully.",
         "reference": "Olsen, The Kiln Book, 4th ed., p.151 (the exit flue as large as the burner ports, then restricted), p.173–174 (updrafts), p.236 (his three methods)",
-        "value": "57 in²"
+        "value": "113 in²"
       },
       {
         "formula": "at least the kiln's top, outside; a hood and stack take the gases on",
@@ -1785,18 +1860,33 @@
   "masonry": {
     "cut_list": [
       {
-        "count": 18,
+        "count": 9,
         "cut": "cut to 1 in long",
         "material": "ifb-jm26"
       },
       {
-        "count": 16,
+        "count": 24,
         "cut": "cut to 1.5 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 1.5 in long, ripped to 0.5 in",
         "material": "ifb-jm26"
       },
       {
         "count": 2,
         "cut": "cut to 1.5 in long, ripped to 1.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 34,
+        "cut": "cut to 2 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2 in long, ripped to 1.5 in",
         "material": "ifb-jm26"
       },
       {
@@ -1810,23 +1900,33 @@
         "material": "ifb-jm26"
       },
       {
-        "count": 4,
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 0.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 3,
         "cut": "cut to 4.5 in long, ripped to 1.5 in",
         "material": "ifb-jm26"
       },
       {
-        "count": 16,
+        "count": 8,
         "cut": "cut to 5.5 in long",
         "material": "ifb-jm26"
       },
       {
-        "count": 2,
+        "count": 1,
         "cut": "cut to 5.5 in long, ripped to 1.5 in",
         "material": "ifb-jm26"
       },
       {
-        "count": 18,
+        "count": 27,
         "cut": "cut to 6 in long",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 6 in long, ripped to 1 in",
         "material": "ifb-jm26"
       },
       {
@@ -1840,12 +1940,17 @@
         "material": "ifb-jm26"
       },
       {
-        "count": 4,
+        "count": 2,
+        "cut": "ripped to 0.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 6,
         "cut": "ripped to 1 in",
         "material": "ifb-jm26"
       },
       {
-        "count": 18,
+        "count": 16,
         "cut": "ripped to 1.5 in",
         "material": "ifb-jm26"
       },
@@ -1879,7 +1984,7 @@
       {
         "check": null,
         "level": "info",
-        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Door, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
+        "message": "Arch bricks: Back wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Front wall, layer 1 from the inside, above the springline: about 4 bricks by volume, cut to the arch's curve; Left wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle; Right wall, the skewback and fill on top: about 22 bricks by volume, cut to the arch's angle.",
         "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
       },
       {
@@ -1909,12 +2014,12 @@
     ],
     "quantities": [
       {
-        "amount": 655.0,
-        "detail": "496 whole, 127 cut into 176 pieces; 623 in the kiln plus 5 % for breakage",
+        "amount": 651.0,
+        "detail": "487 whole, 133 cut into 215 pieces; 620 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 655.0,
+        "priced_amount": 651.0,
         "unit": "bricks"
       },
       {
@@ -1987,5 +2092,6 @@
       }
     ]
   },
-  "name": "PNW hybrid cross-draft, cone 10, budget lining"
+  "name": "PNW hybrid cross-draft, cone 10, budget lining",
+  "target": null
 }

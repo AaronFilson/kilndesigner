@@ -232,6 +232,9 @@ test-results/
 playwright-report/
 /scratch/
 docs/research/*.pdf
+# Page scans and photos of sources stay local; the transcriptions are committed
+docs/research/brick-shapes/
+docs/research/*.jpg
 
 # Claude Code: agent worktrees and scratch patches
 .claude/worktrees/

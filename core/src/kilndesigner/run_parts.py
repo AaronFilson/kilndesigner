@@ -39,7 +39,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
-from kilndesigner.geometry import SOLID_KINDS, ArchShape, DomeShape, Part, thicknesses
+from kilndesigner.geometry import SOLID_KINDS, ArchShape, DomeShape, Part, bulge_fill, thicknesses
 from kilndesigner.model import Dome, FlatRoof, Kiln, SprungArch
 from kilndesigner.shape import Arch, SailDome
 from kilndesigner.units import si
@@ -308,7 +308,8 @@ def _arch(
         outline = [*_arc(c, centre_z, r, a), *reversed(_arc(c, centre_z, r + th, a))]
         clipped = _clip(outline, lo, hi)
         # A ring whole between where the roof stops keeps its arch, to be counted in shapes
-        whole = c - (r + th) * math.sin(a) >= lo - 1e-6 and c + (r + th) * math.sin(a) <= hi + 1e-6
+        reach = (r + th) * (1.0 if a > math.pi / 2 else math.sin(a))  # widest past a semicircle
+        whole = c - reach >= lo - 1e-6 and c + reach <= hi + 1e-6
         shape = ArchShape(r, th, centre_z, a) if whole else None
         parts.append(
             part(f"roof/{k + 1}-{mat}{tag}", mat, "roof", clipped, xs, ring=th, arch=shape)
@@ -338,7 +339,11 @@ def _arch(
         if mat is None:
             continue  # nothing to spring an arch from
         top = (r_out * math.sin(a), centre_z + r_out * math.cos(a))
-        if top[0] <= outer:
+        if a > math.pi / 2:  # past a semicircle: the fill beside the ring's bulge
+            half = bulge_fill(r_out, centre_z, springline, outer)
+            if not half:
+                continue  # the ring bulges past where the roof stops
+        elif top[0] <= outer:
             half = [(run.depth / 2, springline), top, (outer, top[1]), (outer, springline)]
         else:
             r = outer / math.sin(a)
@@ -389,18 +394,19 @@ def _tube(
         name = p.name.rsplit("-chamber-", 1)[0] if "-chamber-" in p.name else p.name
         parts.append(
             Part(
-                f"{name}{tag}-arch", p.material, p.kind, (-w / 2, p.lo[1], springline),
-                (w / 2, p.hi[1], springline + arch.rise), arch=shape, cap=True, face=p.face,
-                chamber=p.chamber or i + 1,
+                f"{name}{tag}-arch", p.material, p.kind, (-arch.half_width, p.lo[1], springline),
+                (arch.half_width, p.hi[1], springline + arch.rise), arch=shape, cap=True,
+                face=p.face, chamber=p.chamber or i + 1,
             )
         )  # fmt: skip
     cum = 0.0
     for k, (mat, th) in enumerate(rings):
         r_in = arch.radius + cum
-        half = (r_in + th) * math.sin(arch.half_angle)
+        half = (r_in + th) * (1.0 if arch.half_angle > math.pi / 2 else math.sin(arch.half_angle))
+        low = min(springline, centre_z + (r_in + th) * math.cos(arch.half_angle))
         parts.append(
             Part(
-                f"roof/{k + 1}-{mat}{tag}", mat, kind(mat), (-half, lo, springline),
+                f"roof/{k + 1}-{mat}{tag}", mat, kind(mat), (-half, lo, low),
                 (half, hi, centre_z + r_in + th), face="roof", chamber=i + 1,
                 arch=ArchShape(r_in, th, centre_z, arch.half_angle),
             )

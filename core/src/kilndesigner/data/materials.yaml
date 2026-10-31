@@ -224,6 +224,28 @@
     source: "masonry-materials.md §2.3, VDI Heat Atlas 2nd ed., fireclay, via ht [M2]"
     status: verified
 
+- id: clay-straw-earth-overcoat
+  name: Overcoat of fireclay, dirt and straw (3/4 the density of clay fired in place)
+  kind: earth
+  # The overcoat over a climbing kiln's arches (Olsen p.94–95, p.100). No source measures it: the
+  # user's rule (2026-10-31) takes it as 75 % of the density of raw clay fired in place
+  # (fireclay-brick-porous-norton, 1900 kg/m³) and its conductivity 25 % lower, the straw's
+  # porosity as that much more insulation. Derived, not measured; no service limit.
+  density: 1425 kg/m**3
+  max_service: null
+  conductivity:
+    unit: BTU*in/(hr*ft**2*degF)
+    temperature_unit: degF
+    points: [[400, 5.25], [800, 5.85], [1200, 6.525], [1600, 6.975], [2000, 7.65], [2400, 7.875]]
+  source: "0.75 × fireclay-brick-porous-norton (masonry-materials.md §4a.3, Norton Table 76 [M27]); the user's rule, 2026-10-31"
+  status: derived
+  specific_heat:
+    unit: J/(kg*K)
+    temperature_unit: degC
+    points: [[400, 956], [600, 997], [800, 1021], [1000, 1037], [1200, 1054]]
+    source: "masonry-materials.md §2.3, VDI Heat Atlas 2nd ed., fireclay, via ht [M2]"
+    status: verified
+
 - id: building-brick-common
   name: Common clay building brick (red brick)
   kind: building_brick

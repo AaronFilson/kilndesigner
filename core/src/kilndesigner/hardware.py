@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from kilndesigner.allowance import allowance
 from kilndesigner.fire import FireDesign
@@ -36,6 +36,9 @@ from kilndesigner.model import CatenaryArch, Dome, Kiln, Port, SprungArch, SpyHo
 from kilndesigner.shape import Arch, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, show
+
+if TYPE_CHECKING:
+    from kilndesigner.masonry import Hole
 
 MM = 25.4
 COURSE = 2.5  # in, a 2½ in brick course
@@ -287,6 +290,19 @@ def layout(kiln: Kiln, hw: Hardware) -> dict[str, object]:
         for p, cut in spots
     ]
     return {"units": kiln.units, "walls": walls, "ports": ports}
+
+
+def floor_and_roof_holes(hw: Hardware) -> list[Hole]:
+    """The burner ports up through the floor and an updraft's flue through the roof, for the
+    brick count to take out (masonry.plan_masonry); the ports on walls are cut on site."""
+    from kilndesigner.masonry import Hole
+
+    on_walls = {p.name for p in hw.ports}
+    return [
+        Hole(o.box[0], o.box[1], o.round_axis == 2)
+        for o in hw.openings
+        if (o.name.startswith("port/burner-") or o.name == "port/flue") and o.name not in on_walls
+    ]
 
 
 def build_hardware(
@@ -1150,7 +1166,10 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     if asked.places is not None:
         places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
     elif lid:
-        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n)]
+        from kilndesigner.rings import FLOOR_COURSE_IN
+
+        below = FLOOR_COURSE_IN if kiln.chamber.floor_inside else 0.0
+        places = [(face, 0.0, z) for z in lid_peephole_heights(h, n, below)]
     elif electric:
         places = [(face, 0.0, h * (i + 1) / (n + 1)) for i in range(n)]  # spaced evenly
     else:
@@ -1166,20 +1185,40 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             arch = Arch(si(kiln.chamber.width, "in"), si(kiln.roof.rise, "in"))
             r, edge = arch.radius, 3 + sw / 2
             top = h + math.sqrt(r * r - edge * edge) - (r - arch.rise) - 2 * COURSE
-        # Burners firing through the door: the bottom hole a course clear above their ports
-        above = [
-            p.up + p.height / 2 + COURSE for p in hw.ports if p.kind == "burner" and p.wall == face
-        ]
-        bottom = max([min(8.0, top / 3), *above])
         middle = 0.0
-        if (door := kiln.loading.opening) is not None:
-            # In the door, where it is in part of the wall: a course inside its top and sill
-            sill = si(door.sill, "in")
-            top = min(top, sill + si(door.height, "in") - COURSE)
-            bottom = max(bottom, sill + COURSE)
+        door = kiln.loading.opening
+        if door is not None:
             from kilndesigner.door import door_across
 
             middle = door_across(kiln)  # the first door's, when there's one per chamber
+        # Burners firing through the door: the bottom hole a course clear above the ports in the
+        # holes' column, 3 in either side of the middle; ports up the door's sides, clear of that
+        # column, leave the holes low (the user: the spy holes go lower, between them)
+        reach = 3.0 + sw / 2
+        above = [
+            p.up + p.height / 2 + COURSE
+            for p in hw.ports
+            if p.kind == "burner"
+            and p.wall == face
+            and abs(p.across - Faces.u_of(face, middle)) - p.width / 2 < reach
+        ]
+        bottom = max([min(8.0, top / 3), *above])
+        if door is not None:
+            # In the door, where it is in part of the wall: a course inside its top and sill;
+            # under an arched head, a course under the arch at the holes' outer edge
+            sill = si(door.sill, "in")
+            head = sill + si(door.height, "in")
+            if door.head == "arch":
+                r = si(door.width, "in") / 2
+                head = head - r + math.sqrt(max(r * r - reach * reach, 0.0))
+            elif door.corner is not None:
+                # A flat head's rounded corner, where the holes' outer edge comes under it
+                c = si(door.corner, "in")
+                into = reach - (si(door.width, "in") / 2 - c)
+                if into > 0:
+                    head = head - c + math.sqrt(max(c * c - into * into, 0.0))
+            top = min(top, head - COURSE - sh)
+            bottom = max(bottom, sill + COURSE)
         top += COURSE - sh  # the top hole's bottom, so its top stays put
         bottoms = (
             [bottom + (top - bottom) * i / (n - 1) for i in range(n)]
@@ -1203,18 +1242,23 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
     )  # fmt: skip
 
 
-def lid_peephole_heights(height_in: float, n: int) -> list[float]:
+def lid_peephole_heights(height_in: float, n: int, below: float = 0.0) -> list[float]:
     """A top-loader's peepholes (in up from the floor): in the wall, each in the middle of a 9 in
     section (frame.SECTION_IN), between its two courses' element grooves, as L&L drills a two-row
     section square to the case (electric-kiln-hardware.md §4.1 [S8]); with more holes than
-    sections, spaced evenly."""
+    sections, spaced evenly. The wall starts ``below`` in under the floor when the floor slab is
+    inside its lowest course: the sections count from there, each hole in the middle of the part
+    of its section above the floor."""
     from kilndesigner.frame import SECTION_IN
 
-    sections = math.ceil(height_in / SECTION_IN - 1e-6)
+    sections = math.ceil((height_in + below) / SECTION_IN - 1e-6)
     if n > sections:
         return [height_in * (i + 1) / (n + 1) for i in range(n)]
     picks = [math.floor((i + 0.5) * sections / n) for i in range(n)]
-    return [(k * SECTION_IN + min((k + 1) * SECTION_IN, height_in)) / 2 for k in picks]
+    return [
+        (max(k * SECTION_IN - below, 0.0) + min((k + 1) * SECTION_IN - below, height_in)) / 2
+        for k in picks
+    ]
 
 
 def _spy_hole_note(

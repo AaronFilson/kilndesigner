@@ -61,7 +61,7 @@ from kilndesigner.frame_checks import (
     thrust_through_steel,
 )
 from kilndesigner.heatloss import top_temperature
-from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch
+from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, SprungArch, arches_along
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step
@@ -428,17 +428,60 @@ class DomeSlice:
     factor: float  # thickness over the thinnest that stands, cold (Heyman)
     thickest: float  # HarbisonWalker's limit for the slice's rise (in)
     weight: float  # lb per inch of the walls it spans, every layer
+    span: float = 0.0  # in: the symmetric arch's span (a curved plan's; the chamber's otherwise)
+
+
+CURVED_SLICE_SOURCE = (
+    "the engine's own cautious rule over a curved plan: each slice taken as the symmetric arch on "
+    "its farther springing, the larger span, half-angle and weight (derived from the sliced dome, "
+    "domes-over-doors.md §D4)"
+)
+
+
+def _curved_chords(kiln: Kiln, count: int) -> tuple[float, list[tuple[float, float]]]:
+    """A dome over a curved plan (chamber.outline), sliced parallel to the door wall: the
+    sphere's inside radius (in), and for each slice its distance from the sphere's centre and
+    the farther of its two springings along it, from the centre's line (in). Slices with no
+    chord, past the plan's edge, are left out."""
+    from kilndesigner.form import crown_of, plan_of
+    from kilndesigner.outline import SphereDome
+
+    assert isinstance(kiln.roof, Dome)
+    plan, crown = plan_of(kiln, "in"), crown_of(kiln, "in")
+    radius = SphereDome(plan, si(kiln.roof.rise, "in"), crown).radius
+    pts = plan.points(96)
+    across = kiln.door_face in ("front", "back")  # slices across the kiln, at y = constant
+    k, u = (1, 0) if across else (0, 1)  # the coordinate fixing the slice, the one along it
+    lo, hi = min(p[k] for p in pts), max(p[k] for p in pts)
+    out: list[tuple[float, float]] = []
+    for i in range(count):
+        at = lo + (hi - lo) * i / (count - 1)
+        cuts = []
+        for p, q in itertools.pairwise([*pts, pts[0]]):
+            if (p[k] - at) * (q[k] - at) <= 0 and p[k] != q[k]:
+                s = (at - p[k]) / (q[k] - p[k])
+                cuts.append(p[u] + s * (q[u] - p[u]) - crown[u])
+        if len(cuts) >= 2 and max(cuts) - min(cuts) > 1e-6:
+            out.append((at - crown[k], max(abs(c) for c in cuts)))
+    return radius, out
 
 
 def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[DomeSlice]:
     """The dome as arches parallel to the door wall, spanning the two walls either side, from the
-    middle out to the end wall (the dome is symmetric). ``rise`` (in) overrides the design's."""
+    middle out to the end wall (the dome is symmetric). ``rise`` (in) overrides the design's.
+    Over a curved plan the slices run across the whole plan, each taken as the symmetric arch on
+    its farther springing (CURVED_SLICE_SOURCE)."""
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, Dome)
     w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
     span, length = (w, d) if kiln.door_face in ("front", "back") else (d, w)
     dome = SailDome(w, d, si(kiln.roof.rise, "in") if rise is None else rise)
+    radius = dome.radius
+    cuts = [(length / 2 * i / (count - 1), span / 2) for i in range(count)]
+    if kiln.chamber.outline is not None:
+        assert rise is None, "a curved plan's dome has the design's rise"
+        radius, cuts = _curved_chords(kiln, count)
     layers = [
         (si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3") / 1728,
          si(x.thickness, "in"))
@@ -447,14 +490,14 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
     ring = sum(t for _, t in layers[: kiln.roof.ring])
     table = steel_data()["arch_minimum_thickness"]
     slices: list[DomeSlice] = []
-    for i in range(count):
-        y = length / 2 * i / (count - 1)
-        inside = math.sqrt(dome.radius**2 - y**2)
+    for y, half in cuts:
+        span = 2 * half
+        inside = math.sqrt(radius**2 - y**2)
         alpha = math.asin(min(1.0, span / 2 / inside))
         own_rise = inside * (1 - math.cos(alpha))
-        thickness = math.sqrt((dome.radius + ring) ** 2 - y**2) - inside
+        thickness = math.sqrt((radius + ring) ** 2 - y**2) - inside
         eta = float(np.interp(math.degrees(alpha), table["half_angle_deg"], table["eta"]))
-        weight, r = 0.0, dome.radius
+        weight, r = 0.0, radius
         for density, t in layers:  # each layer's slice: its thickness × centre radius × arc
             lo, hi = math.sqrt(r**2 - y**2), math.sqrt((r + t) ** 2 - y**2)
             weight += density * (hi - lo) * (lo + hi) / 2 * 2 * alpha
@@ -462,10 +505,63 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
         slices.append(
             DomeSlice(
                 y, thickness, alpha, own_rise, thickness / (inside + thickness / 2) / eta,
-                (own_rise - span / 48) / math.cos(alpha), weight,
+                (own_rise - span / 48) / math.cos(alpha), weight, span,
             )
         )  # fmt: skip
     return slices
+
+
+def _curved_dome_thrust(kiln: Kiln) -> tuple[str | None, list[Step]]:
+    """A dome over a curved plan, sliced parallel to the door wall (dome_slices): each slice's
+    thrust on the walls it springs from, cold and hot, per foot of wall; the most of them. None
+    when a slice's hot line of thrust leaves it."""
+    slices = dome_slices(kiln)
+    worst: tuple[float, float, DomeSlice] | None = None
+    for s in slices:
+        factor = heated_thrust_factor(s.span, s.rise, s.thickness)
+        if factor is None:
+            return None, [
+                Step(
+                    name="Thrust the masonry holds",
+                    value=(
+                        f"not worked out: hot, the slice {s.at:.1f} in from the crown would push "
+                        "its line of thrust out of the ring"
+                    ),
+                    reference=f"{CURVED_SLICE_SOURCE}; {ARCH_THEORY_SOURCE}",
+                )
+            ]
+        cold = cold_thrust_factor(s.span, s.rise) * s.weight * 12
+        hot = min(factor, MAX_PRINTED_HEATED) * cold
+        if worst is None or hot > worst[1]:
+            worst = (cold, hot, s)
+    assert worst is not None
+    cold, hot, s = worst
+    thrust = f"{hot:.0f} lb per foot of wall, hot ({cold:.0f} cold)"
+    return thrust, [
+        Step(
+            name="Thrust the masonry holds",
+            value=thrust,
+            formula=(
+                "the dome over the curved plan in slices parallel to the door wall, each a "
+                "circular arch of radius √(R² − y²) on its farther springing: H = W·(sin α − "
+                "(1 − cos α)/α) / (2(1 − cos α)), W its weight; hot, × the heated factor (at most "
+                f"{MAX_PRINTED_HEATED:g}, the largest HarbisonWalker prints)"
+            ),
+            inputs={
+                "slices": f"{len(slices)}",
+                "the most": (
+                    f"{s.at:.1f} in from the crown: {s.span:.1f} in span, rising {s.rise:.2f} "
+                    f"in, {s.thickness:.2f} in thick"
+                ),
+            },
+            reference=f"{CURVED_SLICE_SOURCE}; {DOME_SOURCE}; {ARCH_THEORY_SOURCE}; {CAPPED}",
+            note=(
+                "The slices near the walls are short and flat and rest on the walls' tops cast "
+                "up to the dome; the slicing is one way the dome can stand (Heyman's safe "
+                "theorem), not the only one."
+            ),
+        )
+    ]
 
 
 def _dome_frame(kiln: Kiln) -> FrameDesign:
@@ -475,6 +571,7 @@ def _dome_frame(kiln: Kiln) -> FrameDesign:
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, Dome)
+    assert kiln.chamber.outline is None, "a curved plan's dome is held by masonry (model.py)"
     data = steel_data()
     rule, minimum = data["rise_per_foot"], data["arch_minimum_thickness"]
     working: list[Step] = []
@@ -943,7 +1040,7 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
     roof = kiln.roof
     if isinstance(roof, SprungArch) and kiln.chamber.shape == "box":
         # Chambers in a row: each arch spans its chamber's depth, along the draft (run_parts.py)
-        along = kiln.chamber.chambers > 1 and not roof.tube
+        along = arches_along(kiln)
         span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
         arch = Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
@@ -960,6 +1057,9 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
                 reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}",
             )
         )
+    if isinstance(roof, Dome) and kiln.chamber.outline is not None:
+        thrust, steps = _curved_dome_thrust(kiln)
+        working += steps
     findings = [
         Finding(
             level="info",
@@ -1014,21 +1114,32 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
             reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}; {ROW_SOURCE}",
         )
     ]
+    between = (
+        "The walls between chambers take the arches either side, which push against each other "
+        "(Olsen p.94–95); the "
+        if kiln.chamber.chambers > 1
+        else "The "
+    )
     findings = [
         Finding(
             level="info",
             message=(
-                "Each chamber's arch spans its depth, along the draft, so its thrust falls on the "
-                "walls before and behind it, not on the side walls. The walls between chambers "
-                "take the arches either side, which push against each other (Olsen p.94–95); the "
-                f"front and back walls each take one arch's thrust, {whole:,.0f} lb hot across the "
-                "kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front "
-                "chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is "
-                "sized; or hold the ends with masonry (roof.buttressed)."
+                f"{'Each chamber' if kiln.chamber.chambers > 1 else 'The chamber'}'s arch spans "
+                "its depth, along the draft, so its thrust falls on the walls before and behind "
+                f"it, not on the side walls. {between}front and back walls each take one arch's "
+                f"thrust, {whole:,.0f} lb hot across the kiln's width. Brace them: Olsen calls "
+                "bracing a chamber kiln's firebox and front chamber 'a must' (p.97). No source "
+                "here sizes that bracing, so no steel frame is sized; or hold the ends with "
+                "masonry (roof.buttressed)."
             ),
             reference=ROW_SOURCE,
         )
     ]
+    from kilndesigner.vault import along_statics
+
+    steps, found = along_statics(kiln)
+    working += steps
+    findings += found
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1048,12 +1159,161 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
     ]
+    working: list[Step] = []
+    thrust = None
     if kiln.heat.electric is not None:
         findings = [_electric_bands(kiln)]
+    elif isinstance(kiln.roof, Dome):
+        ring = round_dome_ring(kiln)
+        if ring is None:
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        "The dome rises more than half the chamber's width, past a hemisphere: "
+                        "its thrust isn't worked out (membrane theory here is checked to a "
+                        "hemisphere only)."
+                    ),
+                    reference=MEMBRANE,
+                )
+            )
+        else:
+            working, thrust = ring.steps, f"{ring.per_foot:.0f} lb per foot of the wall's top"
+            findings.append(ring.finding())
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
-        thrust=None, members=[], working=[], findings=findings,
+        thrust=thrust, members=[], working=working, findings=findings,
     )  # fmt: skip
+
+
+MEMBRANE = (
+    "Timoshenko, Theory of Plates and Shells, §106, eq. (257), membrane forces of a spherical "
+    "dome under its own weight; the edge ring's force H = a₀·N_α·cos α₀ (domes-over-doors.md §D1)"
+)
+NO_TENSION = 51.83
+"""Degrees from the crown past which the membrane state has hoop tension (Timoshenko, 51°50′;
+Lau's no-tension solutions reach α ≤ 51.8°, domes-over-doors.md §D1)."""
+
+
+@dataclass(frozen=True)
+class DomeRing:
+    """A round dome's membrane forces at its springing, imperial: the meridian thrust (lb per ft
+    of the springing circle), its outward part, the ring tension the wall or a band holds (lb),
+    and the hoop force in the shell there (lb per ft; positive is tension)."""
+
+    alpha: float  # degrees, the springing from the crown
+    meridian: float
+    per_foot: float
+    ring: float
+    hoop: float
+    steps: list[Step]
+
+    def finding(self) -> Finding:
+        text = (
+            f"The dome pushes out {self.per_foot:,.0f} lb per foot round the wall's top; the "
+            f"wall's ring, or an iron band round it, holds that as {self.ring:,.0f} lb of ring "
+            "tension (membrane theory, the dome's own weight). No band is sized: no source here "
+            "gives an allowable for a hot kiln's band."
+        )
+        if self.alpha > NO_TENSION:
+            text += (
+                f" The dome springs {self.alpha:.1f}° from its crown, past the {NO_TENSION}° "
+                f"where the membrane state turns to hoop tension ({self.hoop:,.0f} lb per foot "
+                "at the springing), which mortared brick doesn't carry: it cracks along its "
+                "meridians and stands as lunes, and the sliced state thrusts more "
+                "(domes-over-doors.md §D3). So the push and the ring "
+                "tension above are the least it can be, not a design value; a rise of 2½ in per "
+                "foot of span (Olsen p.51) keeps it below."
+            )
+        return Finding(level="info", message=text, reference=MEMBRANE)
+
+
+def membrane(a: float, q: float, alpha: float) -> tuple[float, float, float, float]:
+    """A spherical cap's membrane forces at its edge (Timoshenko §106), in any consistent units:
+    radius a, weight q per unit area, the edge α radians from the crown. The meridian
+    compression N_α = aq/(1 + cos α), its outward part N_α·cos α, the ring force a·sin α ×
+    that, and the hoop force aq(1/(1 + cos α) − cos α), tension when positive."""
+    meridian = a * q / (1 + math.cos(alpha))
+    out = meridian * math.cos(alpha)
+    return (
+        meridian,
+        out,
+        a * math.sin(alpha) * out,
+        a * q * (1 / (1 + math.cos(alpha)) - math.cos(alpha)),
+    )
+
+
+def round_dome_ring(kiln: Kiln) -> DomeRing | None:
+    """The membrane forces at a round dome's springing (Timoshenko §106): a spherical cap of
+    radius a, springing α₀ from its crown, weighing q per unit of its surface. N_α = −aq/(1 +
+    cos α₀) along the meridian, its outward part N_α·cos α₀ per unit of the springing circle,
+    the ring force a₀·N_α·cos α₀ with a₀ = a·sin α₀, and the hoop force aq(1/(1 + cos α₀) −
+    cos α₀). a is the mid-surface's radius; q is Σ density × thickness of the roof's layers."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.shape import RoundDome
+
+    assert isinstance(kiln.roof, Dome)
+    dome = RoundDome(si(kiln.chamber.width, "ft"), si(kiln.roof.rise, "ft"))
+    layers = [
+        (si(parse_quantity(resolve_material(kiln, x.material).density), "lb/ft**3"),
+         si(x.thickness, "ft"))
+        for x in kiln.lining.for_face("roof")
+    ]  # fmt: skip
+    q = sum(rho * t for rho, t in layers)
+    a = dome.radius + sum(t for _, t in layers) / 2
+    if dome.rise > dome.diameter / 2 + 1e-9:
+        return None  # past a hemisphere: the dome leans in over the wall, not checked here
+    alpha = math.asin(min(1.0, dome.diameter / 2 / dome.radius))
+    meridian, per_foot, ring, hoop = membrane(a, q, alpha)
+    steps = [
+        Step(
+            name="Dome: weight per square foot of shell",
+            formula="q = Σ density × thickness, over the roof's layers",
+            inputs={
+                f"layer {i + 1}": f"{rho:.0f} lb/ft³ × {t * 12:.3g} in"
+                for i, (rho, t) in enumerate(layers)
+            },
+            value=f"{q:.1f} lb/ft²",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: its sphere and springing",
+            formula="R = (r_b² + h²) / 2h; a = R + T/2; α₀ = asin(r_b / R)",
+            inputs={
+                "r_b": f"{dome.diameter / 2 * 12:.3g} in",
+                "h": f"{dome.rise * 12:.3g} in",
+            },
+            value=f"a = {a * 12:.3g} in, α₀ = {math.degrees(alpha):.1f}°",
+            reference="sphere geometry",
+        ),
+        Step(
+            name="Dome: meridian thrust at the springing",
+            formula="N_α = a·q / (1 + cos α₀), compression",
+            value=f"{meridian:,.0f} lb/ft",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: outward push on the wall's top",
+            formula="N_α·cos α₀",
+            value=f"{per_foot:,.0f} lb/ft",
+            reference=MEMBRANE,
+        ),
+        Step(
+            name="Dome: ring tension at the springing",
+            formula="H = a₀·N_α·cos α₀, a₀ = a·sin α₀",
+            value=f"{ring:,.0f} lb",
+            reference=MEMBRANE,
+            note="held by the wall's ring of brick or an iron band round it (Olsen p.167)",
+        ),
+        Step(
+            name="Dome: hoop force in the shell at the springing",
+            formula="N_θ = a·q·(1/(1 + cos α₀) − cos α₀), tension when positive",
+            value=f"{hoop:,.0f} lb/ft",
+            reference=MEMBRANE,
+            note=f"tension past α₀ = {NO_TENSION}°",
+        ),
+    ]
+    return DomeRing(math.degrees(alpha), meridian, per_foot, ring, hoop, steps)
 
 
 SECTION_IN = 9.0
@@ -1068,11 +1328,15 @@ BANDS_SOURCE = (
 def _electric_bands(kiln: Kiln) -> Finding:
     """A round electric kiln's steel bands, listed but not sized: one round each section, the
     floor slab and the lid. No source gives a band's width, thickness or tension."""
-    height = si(kiln.chamber.height, "in")
+    from kilndesigner.rings import wall_height
+
+    inside = kiln.chamber.floor_inside
+    height = wall_height(si(kiln.chamber.height, "in"), inside)
     sections = math.ceil(height / SECTION_IN - 1e-6)
     lid = "the lid" if isinstance(kiln.roof, FlatRoof) else None
-    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section", "one round "
-             "the floor slab"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
+    slab = "the floor slab" + (", inside the wall's lowest course" if inside else "")
+    parts = [f"{sections} round the wall, one round each {SECTION_IN:g} in section",
+             f"one round {slab}"] + ([f"one round {lid}"] if lid else [])  # fmt: skip
     return Finding(
         level="info",
         message=(
@@ -1145,7 +1409,7 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
-    if isinstance(kiln.roof, SprungArch) and kiln.chamber.chambers > 1 and not kiln.roof.tube:
+    if arches_along(kiln):
         return _row_arches(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)

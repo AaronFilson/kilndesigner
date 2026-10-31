@@ -3985,5 +3985,6 @@
       }
     ]
   },
-  "name": "DIY castable test kiln, cone 10"
+  "name": "DIY castable test kiln, cone 10",
+  "target": null
 }

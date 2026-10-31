@@ -59,6 +59,7 @@ class Material(_Entry):
         "backup_insulation",
         "building_brick",
         "stone",
+        "earth",
     ]
     density: str
     max_service: str | None  # None: no source gives one

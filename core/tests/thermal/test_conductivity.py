@@ -13,6 +13,20 @@ def linear(a: float, b: float) -> Conductivity:
     return Conductivity((300.0, 1500.0), (a + b * 300.0, a + b * 1500.0))
 
 
+def test_k_many_is_k_at_each_point() -> None:
+    """The vectorised k gives k's values exactly: on the points, between, below and past them."""
+    import numpy as np
+
+    t = np.array([100.0, 299.0, 300.0, 650.0, 900.0, 1200.0, 1500.0, 2500.0, 1e5])
+    for c in (
+        Conductivity((300.0, 900.0, 1500.0), (0.2, 0.25, 0.4)),
+        Conductivity((300.0, 1500.0), (0.5, 0.01)),  # falling: the floor past the data
+        Conductivity.constant(1.3),
+        material("ifb-k23").k,
+    ):
+        assert c.k_many(t).tolist() == [c.k(float(x)) for x in t]
+
+
 def closed_form(a: float, b: float, t0: float, t1: float) -> float:
     """∫ (a + bT) dT from t0 to t1."""
     return a * (t1 - t0) + b / 2 * (t1**2 - t0**2)

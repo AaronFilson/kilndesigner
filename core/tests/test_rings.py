@@ -14,10 +14,12 @@ from kilndesigner.rings import (
     cut_bricks,
     cut_count,
     cut_diameter,
+    floor_inside_depth,
     nominal_diameter,
     ring,
     ring_method,
     ring_series,
+    wall_height,
     wall_rings,
 )
 
@@ -202,6 +204,19 @@ def test_cut_rings_match_published_electric_kilns(kiln: tuple[str, int, float, f
     _, sides, brick, published = kiln
     assert nominal_diameter(sides, brick * IN) == pytest.approx(published * IN, abs=0.15 * IN)
     assert round(cut_bricks(published * IN, brick * IN)) == sides
+
+
+def test_paragon_tnf_27_3_floor_inside_the_walls() -> None:
+    """Paragon's TnF-27-3 (electric-kiln-survey.md). Status: a dealer snippet, search summaries
+    only, Paragon's own sheet not reached: "12-sided", "3" thick firebrick", "Firing Opening 28"
+    Depth - 22-1/4"". Its 27 in of wall holds the floor slab inside the lowest 4½ in course (the
+    user, 2026-10-30), so it is 27 − 4½ = 22½ in deep inside, 22¼ printed."""
+    assert nominal_diameter(12, 3 * IN) == pytest.approx(28 * IN, abs=0.15 * IN)
+    assert round(cut_bricks(28 * IN, 3 * IN)) == 12
+    assert floor_inside_depth(27) == pytest.approx(22.5)
+    assert floor_inside_depth(27) == pytest.approx(22.25, abs=0.25)
+    assert wall_height(22.5, floor_inside=True) == pytest.approx(27)
+    assert wall_height(27, floor_inside=False) == pytest.approx(27)  # Skutt's KM-1227-3
 
 
 def test_electric_walls_are_one_cut_ring_of_2_and_a_half_or_3_inch_brick() -> None:

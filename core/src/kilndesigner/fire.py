@@ -55,6 +55,10 @@ STACK_C = 0.0342  # K/m, stack-effect equation [S42]
 PA_PER_IN_WC = 249.09
 DRAFT_SOURCE = "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]"
 FUEL_WORDS = {"wood": "wood", "coal": "coal", "oil": "oil"}
+SMOKE = (
+    "Olsen, The Kiln Book, 4th ed., p.250, Reduction-kiln adjustments and Fig. 9-25: an outside "
+    "wood firebox fills an electric kiln with smoke; 'The intention is not to add heat to the kiln'"
+)
 
 
 class FireDesign(BaseModel):
@@ -259,7 +263,38 @@ def design_fire(kiln: Kiln) -> FireDesign:
     # The grate's ratio is for draft kilns (p.77, Fig. 3-8): an updraft's chimney, such as a
     # bottle kiln's hood over its whole dome, isn't the throat the fire draws through
     pulled = draft is not None and draft.type != "up"
-    if fire.fuel == "wood" and pulled and built is not None and built.inside is not None:
+    smoke = fire.purpose == "smoke"
+    if smoke:
+        # Olsen's smoke firebox adds no heat (p.250), so the grate's ratio and the chimney's
+        # height, both for a fire that heats the kiln, don't apply; his drawing is the reference
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "A smoke firebox for reduction: stoke kindling to fill the kiln with smoke, "
+                    "let it clear a little, repeat; it adds no heat, so the grate and chimney "
+                    "rules for a fire that heats the kiln aren't applied. Olsen's Fig. 9-25 for "
+                    "comparison: an 18 in deep firebox with a grate and ash pit, a 9 × 12 in air "
+                    "inlet, a 5 in channel flue under the floor feeding 4½ in flue channels with "
+                    "inlet holes of ¾, 1¼ and 1½ in, the largest farthest from the firebox, a "
+                    "4 × 6 in exit flue and a 6 × 6 in chimney with a damper (p.250)."
+                ),
+                reference=SMOKE,
+            )
+        )
+        if kiln.heat.electric is not None:
+            findings.append(
+                Finding(
+                    level="info",
+                    message=(
+                        "Reduction shortens the elements' life. Alternate reduction and "
+                        "oxidation firings, or bisque between reduction firings, so the elements "
+                        "rebuild their oxide coat (p.250)."
+                    ),
+                    reference=SMOKE,
+                )
+            )
+    elif fire.fuel == "wood" and pulled and built is not None and built.inside is not None:
         what = "the grate, all fireboxes" if grate_in2 else "the firebox floor, all fireboxes"
         sheet = grate_ratio(feed, chimney_in2, what, GRATE_RANGE)
         if (check := sheet.check()).status != "pass":
@@ -309,7 +344,9 @@ def design_fire(kiln: Kiln) -> FireDesign:
     chimney_in: float | None = None
     span_text: str | None = None
     lines: list[str] = []
-    if draft is not None and draft.type in ("cross", "down"):
+    if smoke:
+        pass  # no chimney height for a fire that adds no heat (above)
+    elif draft is not None and draft.type in ("cross", "down"):
         p = pull(kiln, fire.fireboxes, fire.forced, chimney_along)
         allow = (0.75 if p.forced else 1) * (1.3 if p.high else 1)
         if p.rise > 0:
@@ -416,15 +453,16 @@ def design_fire(kiln: Kiln) -> FireDesign:
                 reference=RULE_5,
             )
         )
-    findings.append(
-        Finding(
-            level="info",
-            message=(
-                "Fireboxes are laid out in brick in the masonry, plans and 3D model; their "
-                f"{fuel} use per firing waits for the client's kiln (plan milestone M7)."
-            ),
+    if not smoke:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Fireboxes are laid out in brick in the masonry, plans and 3D model; their "
+                    f"{fuel} use per firing waits for the client's kiln (plan milestone M7)."
+                ),
+            )
         )
-    )
     return FireDesign(
         fuel=fuel,
         fireboxes=boxes,

@@ -1,0 +1,107 @@
+# The castable version of pnw-hybrid-crossdraft.yaml (docs/kilns/pnw-hybrid-crossdraft.md): the
+# author's first note was a "cast dome arch (castable, not brick)", and the author planned this
+# version to meet the $5,000 budget. Same chamber, door, burners, cylinders, setting and site; a
+# sail dome cast in Kast-O-Lite 30 LI Plus over a lining cast in the same castable.
+#
+# The dome. A door in the 28 in front wall: the dome stands as arches spanning the side walls
+# (domes-over-doors.md §D4, the engine's frame.dome-* checks). HarbisonWalker's limit on a ring's
+# thickness for its rise, applied to those slices, decides both the shell and the rise: a 3 in
+# shell passes at no rise under the corners' 33.1 in, 2½ in from 23 in, and 2 in from 17 in; the
+# slices stay within HarbisonWalker's 1–3 in/ft up to 24 in. 18 in is the
+# least rise with a margin, 3.3 in per foot of the dome's 66.2 in diagonal, just over Olsen's
+# 2½–3 in/ft for domes (p.51, 13.8–16.6 in here, which a 2 in shell fails). Olsen casts his domes
+# thicker, 5–6 in ("a 6in. thickness is best", p.59; Kanayama p.187): over a door in the short
+# wall of this long chamber the engine finds that too thick for the slices' rise.
+# The door's arch: a 4½ in brick ring laid first on a form and the dome cast over it, as Olsen
+# does under his cast domes (Kanayama Figs 7-17, 7-25; Höhr-Grenzhausen Figs 4-135, 4-137). The
+# dome's 2 in shell is too thin a ring for a 24 in semicircle (1.4 times the thinnest, Heyman's 2).
+#
+# The lining. Walls 3¼ in of Kast-O-Lite 30 LI Plus cast as one layer, backed by 4¾ in of 6 pcf
+# blanket: 8 in, as the brick versions, keeping the outside to 44 in. 3¼ in is the least that keeps
+# the blanket's hot side under its 2000 °F rating (3 in puts it at 2008 °F). The floor 2½ in of the
+# castable on 2½ in of K-23 brick, the ware's 2,600 lb on brick, not on blanket. The dome 2 in of
+# castable under 3 in of 6 pcf blanket.
+schema: 1
+name: PNW hybrid cross-draft, cone 10, castable
+units: us
+firing:
+  cone: "10"
+  setting: # as in pnw-hybrid-crossdraft.yaml: four layers (an ASSUMPTION) of four mullite
+    # shelves, no posts (unsourced), the ware 7 times the setting (the author's 6 to 8)
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 4}
+    ware_ratio: 7
+  # Solved for (target.py): elements on with the burners the whole firing, the same full load. 8 h
+  # of the 4, 6, 8 and 12 h the solver meets (pnw-hybrid-crossdraft.md); every one heats faster
+  # than any sourced schedule
+  target_time: 8 h
+chamber:
+  width: 28 in
+  depth: 60 in # along the draft, from the burners to the flue
+  height: 44 in # to the dome's springline
+roof:
+  type: dome
+  rise: 18 in # see above: the least, with a margin, at which a 2 in shell's slices pass
+loading:
+  type: door
+  face: front
+  opening: # the author's door (docs/kilns/pnw-hybrid-crossdraft.md, 2026-10-30)
+    width: 24 in
+    height: 40 in
+    sill: 0 in # at floor level
+    head: arch
+    ring: 4.5 in # a brick ring arch laid first, the dome cast over it (above)
+lining:
+  walls:
+    - material: kast-o-lite-30-li-plus
+      thickness: 3.25 in
+    - material: kaowool-blanket-6pcf
+      thickness: 4.75 in
+  floor:
+    - material: kast-o-lite-30-li-plus
+      thickness: 2.5 in
+    - material: ifb-k23
+      thickness: 2.5 in
+  roof:
+    - material: kast-o-lite-30-li-plus
+      thickness: 2 in
+    - material: kaowool-blanket-6pcf
+      thickness: 3 in
+shell:
+  finish: painted
+heat:
+  electric:
+    supply:
+      voltage: 240 V
+      phase: 1
+      breaker: 60 A # 48 A continuous
+    alloy: kanthal-apm
+    walls: [left]
+    off_above: 1650 degF # the start of shino reduction, cone 012–010 (cones.yaml)
+  gas:
+    burners:
+      type: venturi
+      count: 8 # the author's, through the door as in pnw-hybrid-crossdraft.yaml
+      wall: front
+      places: # two columns of four up the sides of the 24 in door, every three courses from one
+        # course up (Pitelka [S4]); each 4¼ in port 0.9 in in from its jamb and 3 in under the head
+        - {wall: front, across: -9 in, up: 4.625 in}
+        - {wall: front, across: -9 in, up: 12.125 in}
+        - {wall: front, across: -9 in, up: 19.625 in}
+        - {wall: front, across: -9 in, up: 27.125 in}
+        - {wall: front, across: 9 in, up: 4.625 in}
+        - {wall: front, across: 9 in, up: 12.125 in}
+        - {wall: front, across: 9 in, up: 19.625 in}
+        - {wall: front, across: 9 in, up: 27.125 in}
+    supply: # the author's choice: 100 lb cylinders, not a tank
+      type: cylinders
+      count: 11
+    reduction: true
+draft:
+  type: cross
+  flue_wall: back
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  electricity_price: 0.12 USD/kWh
+  propane_price: 3.50 USD/gallon
+  materials_budget: 5000 USD

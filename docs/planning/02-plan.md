@@ -367,11 +367,46 @@ the next round are in [10-30-26.md](10-30-26.md).
 - **Calimpong's teardrop** has its door as built and passes, after two engine fixes for doors
   under domes.
 
+### Status (2026-10-30, round 4, branch `m7`)
+
+- `m6` is merged to `main` (PR #2); work continues on `m7`.
+- **Electric floors** can sit inside the walls (Paragon) or under them (Skutt).
+- **Complex curves** have a research file (`curved-kilns.md`) and a shape model behind every
+  existing type ([complex-curves.md](complex-curves.md) steps 1–2); Calimpong's teardrop is next,
+  in progress. An arch bug (rise over half the span) was found and is being fixed.
+- **The author's kiln** has the author's answers in: door, eight burners in the door, 11
+  cylinders, the shino hand-over, an editable stacking setting (in progress).
+- 1632 tests, coverage over 98 % in Python and web.
+
+### Status (2026-10-30, round 4 done)
+
+- Arches over a semicircle are drawn right (Bidai, Kyoto).
+- **The author's kiln** has its arched door head, burners up the door's sides, low spy holes and
+  an editable setting (shelves, posts, ware ratio). Loaded it fires in about 65 h, mostly on the
+  elements, far from the author's 8–12 h (4–6 h when needed).
+- **Calimpong's teardrop** builds as a teardrop plan under a dome (complex curves step 3).
+- All checks green on `m7` (1662 tests). The hybrid-firing upgrade is done: elements and burners together, and a target-time
+  solver (the author's kiln at 4 h needs about 1,000,000 BTU/hr and 9 full cylinders, $124.65); the author is scanning A.P.
+  Green's brick tables for bottle kilns and brick domes.
+
 ### What's next (2026-10-30)
 
-See [10-30-26.md](10-30-26.md): electric floors inside the walls, unclear figures settled by their
-metric values, the first steps of [complex curves](complex-curves.md), the author's answers, then
-M7.
+See [10-30-26.md](10-30-26.md): the author's castable version to the solver's firing targets, a
+faster solver, A.P. Green's tables (being scanned) into the research, bottle kilns and
+conical-brick domes, sourced fast-firing limits for ware, then Calimpong's leftovers, the unclear
+values and M7. Round 5 is queued there: the A.P. Green scans are in (`docs/research/brick-shapes/`),
+and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a ware limit.
+
+### Status (2026-10-30, round 5)
+
+- **A.P. Green's catalogue** is transcribed (`docs/research/brick-shapes.md`) and its tables are
+  tests: 681 complete circles and 551 sprung-arch courses, the engine within a brick of each.
+- **Tapered shapes** are a design setting (`lining.shapes`), Olsen's simpler set by default, A.P.
+  Green's full set (No. 1-X wedge, 3 in No. 4 arch and No. 1 wedge) as an option, in the form too.
+- **A smoke firebox** (`fire.purpose: smoke`, Olsen Fig. 9-25) for reducing an electric or gas
+  kiln: no heat rules, Olsen's sizes, the element-life note.
+- **Firing time** is the user's choice, not limited by ware (the author).
+- Blocked: conical-brick domes (complex curves step 4) have no dome-brick source yet.
 
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce

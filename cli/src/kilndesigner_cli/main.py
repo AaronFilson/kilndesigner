@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Annotated
@@ -18,6 +19,8 @@ from kilndesigner.report import Report, design_report
 from kilndesigner.results import write_run
 from kilndesigner.simulation import FiringResult, SimulationError, switch_over_chart
 from kilndesigner.simulation import simulate as simulate_firing
+from kilndesigner.slow import SlowFiring, slow_firing
+from kilndesigner.target import TargetFiring, solve_target
 from kilndesigner.units import UnitError, parse_quantity, si
 
 app = typer.Typer(no_args_is_help=True, help="Design kilns from YAML design files.")
@@ -178,6 +181,95 @@ def firing_summary(result: FiringResult) -> str:
     return "\n".join(lines)
 
 
+def target_summary(name: str, t: TargetFiring) -> str:
+    gal = f", {t.propane_gal_hr:.2f} gal/hr of propane" if t.propane_gal_hr is not None else ""
+    lines = [
+        f"{name}: a {t.target_h:g} h firing",
+        f"  Met:              {'yes' if t.met else 'no: ' + '; '.join(t.limits)}",
+        f"  Firing time:      {t.duration_h:.2f} h (the schedule alone: {t.shortest_h:.2f} h)",
+        f"  Burner input:     {t.input_btu_hr:,.0f} BTU/hr "
+        f"({t.input_per_ft3_btu_hr:,.0f} BTU/ft³/hr){gal}",
+        f"  Burners:          {t.burners or 'none in the library'}",
+        f"  Flue, to start:   {t.flue_area_in2:.0f} in²",
+    ]
+    if t.supply_options:
+        width = max(len(o.option) for o in t.supply_options) + 2
+        lines.append("  Propane supply options (pick one):")
+        lines.extend(
+            f"    {o.option.ljust(width)}{'works' if o.works else 'no   '}  {o.needs}"
+            + (f"  {o.cost}/firing" if o.cost is not None and o.works else "")
+            for o in t.supply_options
+        )
+    if t.chimney_height is not None:
+        lines.append(f"  Chimney:          {t.chimney_height}")
+    lines.append(f"  Elements:         {t.elements_share:.0%} of the heat")
+    if t.cost is not None:
+        lines.append(f"  Cost:             {t.cost}")
+    lines.append(f"  Fastest heating:  {t.peak_rate_c_per_h:.0f} °C/h")
+    lines.extend(f"  [{f.level}] {f.message}" for f in t.findings)
+    return "\n".join(lines)
+
+
+def slow_summary(name: str, s: SlowFiring) -> str:
+    lines = [
+        f"{name}: a slow firing, {s.hours:g} h"
+        + (f" with {s.soak_h:g} h at the top" if s.soak_h else ""),
+        f"  Pace:             {s.rate_c_per_h:.1f} °C/h to {s.top_c:.0f} °C",
+    ]
+    f, q = s.firing, s.quickest
+    if f is not None and q is not None:
+        lines += [
+            f"  Firing time:      {f.duration}"
+            + ("" if f.completed else " (doesn't reach the top)"),
+            f"  Heat put in:      {f.energy_kwh:,.0f} kWh (walls {f.walls_kwh:,.0f}, ware "
+            f"{f.ware_kwh:,.0f}; shell lost {f.shell_kwh:,.0f})",
+            f"  Quickest firing:  {q.duration}, {q.energy_kwh:,.0f} kWh "
+            f"(shell lost {q.shell_kwh:,.0f})",
+        ]
+        if f.propane_gallons:
+            lines.append(f"  Propane:          {f.propane_gallons:,.1f} gal")
+        if f.electricity_kwh:
+            lines.append(f"  Electricity:      {f.electricity_kwh:,.0f} kWh")
+        if f.cost is not None:
+            lines.append(f"  Cost:             {f.cost} (quickest {q.cost})")
+    lines.append("  Slow firings in the sources (to compare, not rules):")
+    for x in s.sources:
+        used = f"; {x.used}" if x.used else ""
+        lines.append(f"    {x.kiln} ({x.fuel}): {x.time}{used}. [{x.reference}]")
+    lines.extend(f"  [{f.level}] {f.message}" for f in s.findings)
+    return "\n".join(lines)
+
+
+def _hours(text: str) -> float:
+    """'4h', '6 hour' or '7 day' as hours."""
+    short = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*h\s*", text)
+    return si(parse_quantity(f"{short.group(1)} hour" if short else text, "[time]"), "hour")
+
+
+@app.command()
+def slow(
+    design: DesignPath,
+    time: Annotated[str, typer.Argument(help="The firing time, for example '72h' or '5 day'")],
+    soak: Annotated[
+        str, typer.Option(help="Time held at the top, within the firing time, e.g. '12h'")
+    ] = "0h",
+    out: Annotated[Path, typer.Option(help="Folder for the results")] = Path("out/firing"),
+) -> None:
+    """Fire the kiln slowly over a time you choose, and see what it takes against the sources'."""
+    kiln = _load(design)
+    try:
+        result = slow_firing(kiln, _hours(time), _hours(soak))
+    except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
+        typer.echo(f"{design}: {e}", err=True)
+        raise typer.Exit(code=2) from e
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / "slow.json"
+    no_points = {"firing": {"points"}, "quickest": {"points"}}
+    path.write_text(result.model_dump_json(indent=2, exclude=no_points), encoding="utf-8")
+    typer.echo(slow_summary(kiln.name, result))
+    typer.echo(f"Wrote {path}")
+
+
 @app.command()
 def simulate(
     design: DesignPath,
@@ -189,9 +281,25 @@ def simulate(
     chart: Annotated[
         bool, typer.Option(help="Also chart a hybrid's cost and time against its hand-over")
     ] = False,
+    target: Annotated[
+        str | None,
+        typer.Option(help="Solve the burners for a firing time, for example '4h' or '6 hour'"),
+    ] = None,
 ) -> None:
     """Simulate a firing along the design's schedule; write Parquet results (ADR 0007)."""
     kiln = _load(design)
+    if target is not None:
+        try:
+            solved = solve_target(kiln, _hours(target))
+        except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
+            typer.echo(f"{design}: {e}", err=True)
+            raise typer.Exit(code=2) from e
+        out.mkdir(parents=True, exist_ok=True)
+        path = out / "target.json"
+        path.write_text(solved.model_dump_json(indent=2), encoding="utf-8")
+        typer.echo(target_summary(kiln.name, solved))
+        typer.echo(f"Wrote {path}")
+        return
     try:
         switch_c = si(parse_quantity(switch_over, "[temperature]"), "degC") if switch_over else None
         run = simulate_firing(kiln, switch_over_c=switch_c)

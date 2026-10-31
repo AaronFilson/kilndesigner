@@ -1742,5 +1742,6 @@
       }
     ]
   },
-  "name": "Gas cross-draft, cone 10"
+  "name": "Gas cross-draft, cone 10",
+  "target": null
 }

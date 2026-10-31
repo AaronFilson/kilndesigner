@@ -286,6 +286,52 @@ describe("DesignForm, the kiln", () => {
   });
 });
 
+describe("DesignForm, the setting", () => {
+  it("weighs the ware as given, or as shelves and posts the engine weighs", () => {
+    const last = live(electric);
+    expect(field("Ware for the firing simulation").value).toBe("none");
+    set("Ware for the firing simulation", "weight");
+    set("Ware and furniture", "300");
+    expect(last().firing.ware).toBe("300 lb");
+    set("Ware for the firing simulation", "setting");
+    expect(last().firing.ware).toBeUndefined();
+    expect(last().firing.setting?.shelves.material).toBe("mullite");
+    set("Shelf length", "20");
+    set("Shelf width", "10");
+    set("Shelf thickness", "0.75");
+    set("Shelf material", "cordierite");
+    set("Shelves a layer", "4");
+    set("Layers of shelves", "3");
+    set("Layers of shelves", "");
+    set("Layers of shelves", "4");
+    fireEvent.click(screen.getByLabelText("Posts"));
+    set("Post width", "1.5");
+    set("Post depth", "1.5");
+    set("Post height", "6");
+    set("Post material", "silicon-carbide");
+    set("Posts a layer", "3");
+    set("Ware's weight over the setting's (typically 6–8)", "6");
+    expect(last().firing.setting).toEqual({
+      shelves: {
+        length: "20 in",
+        width: "10 in",
+        thickness: "0.75 in",
+        material: "cordierite",
+        per_layer: 4,
+        layers: 4,
+      },
+      posts: { material: "silicon-carbide", width: "1.5 in", depth: "1.5 in", height: "6 in", per_layer: 3 },
+      ware_ratio: 6,
+    });
+    set("Ware's weight over the setting's (typically 6–8)", "");
+    expect(last().firing.setting?.ware_ratio).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Posts"));
+    expect(last().firing.setting?.posts).toBeUndefined();
+    set("Ware for the firing simulation", "none");
+    expect(last().firing.setting).toBeUndefined();
+  });
+});
+
 describe("DesignForm, loading", () => {
   it("loads through a door in a wall, hinged in an electric kiln, or a car with its hardware's cost", () => {
     const last = live(electric);
@@ -537,6 +583,10 @@ describe("DesignForm, electric elements", () => {
     const last = live(hybrid);
     set("Elements hand over to gas above", "1800");
     expect(last().heat.electric?.off_above).toBe("1800 degF");
+    set("Burners lit, elements still on, from", "400");
+    expect(last().heat.gas?.on_from).toBe("400 degF");
+    set("Target firing time", "4");
+    expect(last().firing.target_time).toBe("4 hour");
     fireEvent.click(screen.getByLabelText("Heat with electric elements"));
     expect(last().heat.electric).toBeUndefined();
     expect(field("Fire with gas").disabled).toBe(true);
@@ -889,6 +939,71 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.rings).toBeUndefined();
   });
 
+  it("chooses A.P. Green's full set of tapered shapes, Olsen's simpler ones by default", () => {
+    const last = live(electric);
+    expect(field("Tapered brick shapes").value).toBe("olsen");
+    set("Tapered brick shapes", "apg");
+    expect(last().lining.shapes).toBe("apg");
+    set("Tapered brick shapes", "olsen");
+    expect(last().lining.shapes).toBeUndefined();
+    fireEvent.click(screen.getByLabelText("Lay arches and domes in conical (tatami) bricks"));
+    expect(last().lining.conical).toEqual({ length: "9 in", wide: "4.5 in", narrow: "2.5 in" });
+    set("Conical brick, narrow (hot-face) end across", "3");
+    expect(last().lining.conical?.narrow).toBe("3 in");
+    set("Conical brick, bore across", "0.5");
+    expect(last().lining.conical?.bore).toBe("0.5 in");
+    set("Conical brick, spiral groove across", "0.75");
+    expect(last().lining.conical?.groove).toBe("0.75 in");
+    set("Conical brick proportions", "fig-4-6");
+    expect(last().lining.conical).toEqual({ length: "9 in", proportions: "fig-4-6" });
+    expect(screen.queryByLabelText("Conical brick, wide end across")).toBeNull();
+    set("Conical brick proportions", "given");
+    expect(last().lining.conical).toEqual({ length: "9 in", wide: "4.5 in", narrow: "2.5 in" });
+    fireEvent.click(screen.getByLabelText("Lay arches and domes in conical (tatami) bricks"));
+    expect(last().lining.conical).toBeUndefined();
+  });
+
+  it("chooses a teardrop or an oval plan, its sizes, and a dome's crown over it", () => {
+    const last = live(electric);
+    expect(screen.queryByLabelText("Sides' radius (left out: straight)")).toBeNull();
+    set("Plan", "teardrop");
+    expect(last().chamber.outline).toEqual({ shape: "teardrop" });
+    set("Flat front wall's width (left out: round)", "15");
+    set("Sides' radius (left out: straight)", "200");
+    expect(last().chamber.outline).toEqual({ shape: "teardrop", front_width: "15 in", side_radius: "200 in" });
+    set("Plan", "oval");
+    // Round ends a quarter of the width, to edit
+    const quarter = (toMm(last().chamber.width) ?? 0) / 4;
+    expect(last().chamber.outline).toEqual({ shape: "oval", end_radius: fromMm(quarter, "us") });
+    set("Round ends' radius", "5");
+    expect(last().chamber.outline).toEqual({ shape: "oval", end_radius: "5 in" });
+    expect(screen.queryByLabelText("Crown, behind the front wall (left out: the middle)")).toBeNull();
+    set("Roof", "dome");
+    set("Crown, behind the front wall (left out: the middle)", "20");
+    expect(last().roof).toMatchObject({ type: "dome", crown_at: "20 in" });
+    set("Plan", "rectangle");
+    expect(last().chamber.outline).toBeUndefined();
+    set("Plan", "teardrop");
+    set("Chamber shape", "round");
+    expect(last().chamber.outline).toBeUndefined();
+    expect(screen.queryByLabelText("Plan")).toBeNull();
+  });
+
+  it("puts a round electric kiln's floor inside its walls, only for round electric kilns", () => {
+    const label = "The floor slab sits inside the wall's lowest course, the walls running to the bottom (Paragon), not under the walls (Skutt)";
+    const last = live(electric);
+    expect(screen.queryByLabelText(label)).toBeNull();
+    set("Chamber shape", "round");
+    fireEvent.click(screen.getByLabelText(label));
+    expect(last().chamber.floor_inside).toBe(true);
+    fireEvent.click(screen.getByLabelText(label));
+    expect(last().chamber.floor_inside).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(label));
+    set("Chamber shape", "box");
+    expect(last().chamber.floor_inside).toBeUndefined();
+    expect(screen.queryByLabelText(label)).toBeNull();
+  });
+
   it("adds and removes chambers in a row, with a slope and a floor on the ground", () => {
     const last = live(electric);
     expect(disabled("Remove a chamber")).toBe(true);
@@ -990,6 +1105,26 @@ describe("shapes, fireboxes and chimneys", () => {
     fireEvent.click(screen.getByLabelText("A blower drives the air (forced draft)"));
     set("Fuel", "coal");
     expect(last().heat.fire).toEqual({ fuel: "coal", fireboxes: [{ width: "1 ft", length: "2 ft" }] });
+  });
+
+  it("smokes an electric kiln with a wood firebox that isn't a heat source", () => {
+    const last = live({
+      ...electric,
+      heat: { ...electric.heat, fire: { fuel: "wood", fireboxes: [{ width: "1 ft", length: "2 ft" }] } },
+      draft: { type: "cross" },
+    });
+    expect(field("The fireboxes").value).toBe("heat");
+    set("The fireboxes", "smoke");
+    expect(last().heat.fire?.purpose).toBe("smoke");
+    expect(screen.getByRole("option", { name: "Coal" })).toHaveProperty("disabled", true);
+    // The elements are the only heat now, so they stay; the smoke firebox can go
+    expect(field("Heat with electric elements").disabled).toBe(true);
+    expect(field("Fire with wood, coal or oil in fireboxes").disabled).toBe(false);
+    set("The fireboxes", "heat");
+    expect(last().heat.fire?.purpose).toBeUndefined();
+    // With the fire the only heat, it can't be turned to smoke
+    fireEvent.click(screen.getByLabelText("Heat with electric elements"));
+    expect(screen.getByRole("option", { name: /Only smoke it/ })).toHaveProperty("disabled", true);
   });
 
   it("gives a chimney as built, round or rectangular, and lets the engine size it again", () => {

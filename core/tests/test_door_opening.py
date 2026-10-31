@@ -3,6 +3,7 @@ it (door.py; door-openings.md, steel-design.md §S5)."""
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +11,7 @@ import pytest
 import yaml
 from pydantic import ValidationError
 
-from kilndesigner.designfile import parse_design
+from kilndesigner.designfile import load_design, parse_design
 from kilndesigner.door import (
     cut_door,
     door_across,
@@ -24,6 +25,7 @@ from kilndesigner.frame import design_frame
 from kilndesigner.geometry import lining_parts
 from kilndesigner.hardware import build_hardware
 from kilndesigner.model import Kiln
+from kilndesigner.units import si
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
 
@@ -222,6 +224,35 @@ def test_a_door_lining_or_electric_kiln_is_refused() -> None:
         _kiln("electric-front-loader.yaml", LINTEL)
 
 
+def test_a_hybrids_door_takes_burner_ports_through_its_bricks() -> None:
+    # The author's kiln: a 24 × 40 in door in the front wall, eight burner ports in the door
+    kiln = parse_design((EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8"))
+    assert kiln.loading.opening is not None
+    assert kiln.heat.electric is not None
+    assert [p for p in lining_parts(kiln) if p.name.startswith("door/")]
+    from kilndesigner.gas import design_gas
+
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    assert not hw.refused
+    burners = [p for p in hw.ports if p.kind == "burner"]
+    assert len(burners) == 8
+    hole = door_hole(kiln)
+    assert hole is not None
+    for p in burners:
+        # Each port lies inside the door, so it is cut through the door's bricks
+        assert p.wall == "front"
+        assert hole.lo[0] / 25.4 <= p.across - p.width / 2
+        assert p.across + p.width / 2 <= hole.hi[0] / 25.4
+        assert p.up + p.height / 2 <= 40
+    # Elements can't share the door's wall: their grooves run its whole length
+    with pytest.raises(ValidationError, match="grooves run the whole front wall"):
+        _kiln("pnw-hybrid-crossdraft.yaml", {},
+              heat={**yaml.safe_load((EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(
+                  encoding="utf-8"))["heat"], "electric": {
+                  "supply": {"voltage": "240 V", "breaker": "60 A"},
+                  "alloy": "kanthal-apm", "walls": ["front"]}})  # fmt: skip
+
+
 def test_climbing_kilns_take_doors_in_their_side_walls() -> None:
     door = {"width": "20 in", "height": "36 in"}
     side: dict[str, Any] = {"face": "left", "opening": door}
@@ -290,7 +321,9 @@ def test_a_catenary_door_must_fit_under_its_curve() -> None:
 
 def test_calimpongs_door_reaches_into_its_sail_domes_side() -> None:
     # Fig 4-140: a 33 × 37 in door in the side of walls 35 in tall, under a cast dome
-    kiln = _kiln("olsen/conrad-teardrop.yaml", {})
+    # Its head drawn flat isn't checked (test_plan_outline); taken as arched, it is
+    kiln = _kiln("olsen/conrad-teardrop.yaml",
+                 {"opening": {"width": "33 in", "height": "37 in", "across": "-6 in"}})  # fmt: skip
     hole = door_hole(kiln)
     assert hole is not None
     assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(-6 * 25.4)  # 36 to 69 in of the 117
@@ -304,8 +337,132 @@ def test_calimpongs_door_reaches_into_its_sail_domes_side() -> None:
               {"opening": {"width": "33 in", "height": "45 in", "across": "-6 in"}})  # fmt: skip
 
 
-def test_a_door_in_a_tubes_side_is_refused_with_its_reason() -> None:
-    # Tamba's doors rise through the springing of the tube's vault (Figs 4-11, 4-15)
+SPRINGING = {"face": "right", "opening": {"width": "24 in", "height": "30 in",
+                                          "each_chamber": True}}  # fmt: skip
+"""A door into each of Tamba's chambers through the vault's springing. Its size is a test's: the
+book's (Fig 4-15) is unreadable, so the example has none (door-openings.md)."""
+
+
+def test_a_door_through_a_tubes_springing_carries_the_vault() -> None:
+    # Tamba's doors rise through the springing of the tube's vault, turned as an arch over each,
+    # behind a supporting wall (Figs 4-11, 4-15)
+    kiln = _kiln("olsen/tamba.yaml", SPRINGING)
+    assert len(door_holes(kiln)) == 7
+    head = door_head(kiln)
+    assert head is not None
+    assert not [f.message for f in head.findings if f.level != "info"]
+    step = next(s for s in head.working if s.name == "The door through the vault's springing")
+    # Half the 5 ft tube vault's weight per foot down on the ring, and its cold thrust out
+    from kilndesigner.vault import vault_on_door
+
+    down, out = vault_on_door(kiln)
+    assert f"{down:.0f} lb/ft down" in step.value
+    # A semicircle's three-hinged H/W: (1 − 2/π)/2, W = 2·down
+    assert out == pytest.approx(down * (1 - 2 / math.pi), rel=1e-6)
+    arch = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert arch.inputs["roof's edge"] == f"{down:.0f} lb/ft"
+    assert "Tamba" in (step.reference or "")
+
+
+def test_a_door_through_a_tubes_springing_is_refused_where_it_cant_stand() -> None:
+    unbuttressed = {"type": "sprung_arch", "rise": "30 in", "tube": True}
     with pytest.raises(ValidationError, match="springing of its vault"):
+        _kiln("olsen/tamba.yaml", SPRINGING, roof=unbuttressed)
+    with pytest.raises(ValidationError, match="past the vault's crown"):
         _kiln("olsen/tamba.yaml", {"face": "left", "opening": {"width": "24 in",
                                                               "height": "36 in"}})  # fmt: skip
+    with pytest.raises(ValidationError, match="no lintel"):
+        _kiln("olsen/tamba.yaml", {"face": "left", "opening": {
+            "width": "24 in", "height": "30 in", "head": "lintel"}})  # fmt: skip
+
+
+def test_spy_holes_go_low_between_burners_up_the_door_sides_and_under_its_arched_head() -> None:
+    """The author's door: burners in two columns at ±9 in leave the spy holes' column (3 in
+    either side of the middle) clear, so the holes aren't pushed above them (the user: the spy
+    holes go lower); the top hole stays a course under the arched head at its outer edge."""
+    from kilndesigner.gas import design_gas
+
+    kiln = load_design(Path(__file__).parents[2] / "examples" / "pnw-hybrid-crossdraft.yaml")
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    spies = sorted(p.up for p in hw.ports if p.kind == "spy")
+    burners = [p.up for p in hw.ports if p.kind == "burner"]
+    assert len(spies) == 3
+    assert spies[0] < max(burners)  # not stacked above every burner
+    door = kiln.loading.opening
+    assert door is not None
+    r = si(door.width, "in") / 2
+    head = si(door.height, "in") - r + math.sqrt(r * r - (3 + 1.125) ** 2)
+    assert spies[-1] + 1.25 <= head - 2.5 + 1e-6
+
+
+@pytest.mark.parametrize("corner", [1.0, 10.0])
+def test_spy_holes_under_a_flat_heads_rounded_corner(corner: float) -> None:
+    """Under a flat head the top hole stays a course under it; a corner rounded far enough in to
+    come over the holes' outer edge brings that down to the corner's curve there."""
+    from kilndesigner.gas import design_gas
+
+    path = Path(__file__).parents[2] / "examples" / "pnw-hybrid-crossdraft.yaml"
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    data["loading"]["opening"].update(head="flat", corner=f"{corner} in")
+    kiln = Kiln.model_validate(data)
+    hw = build_hardware(kiln, design_frame(kiln), design_gas(kiln))
+    door = kiln.loading.opening
+    assert door is not None
+    head = si(door.height, "in")
+    into = 3 + 1.125 - (si(door.width, "in") / 2 - corner)
+    if into > 0:
+        head = head - corner + math.sqrt(corner * corner - into * into)
+    top = max(p.up for p in hw.ports if p.kind == "spy")
+    assert top + 1.25 <= head - 2.5 + 1e-6
+
+
+CASTABLE = "pnw-hybrid-crossdraft-castable.yaml"
+
+
+def _castable_door(**opening: Any) -> dict[str, Any]:
+    door = {"width": "24 in", "height": "40 in", "sill": "0 in", "head": "arch", **opening}
+    return {"opening": door}
+
+
+def test_a_door_ring_of_its_own_under_a_cast_dome() -> None:
+    """The castable PNW kiln: its dome's 2 in shell is too thin a ring for the 24 in door, so the
+    door has a 4½ in brick ring arch of its own, laid first and the dome cast over it (Olsen's
+    Kanayama and Höhr-Grenzhausen); the dome over it still counts its own shell."""
+    kiln = load_design(EXAMPLES / CASTABLE)
+    head = door_head(kiln)
+    assert head is not None
+    assert not [f for f in head.findings if f.level != "info"]
+    step = next(s for s in head.working if s.name == "The door's arch and jambs")
+    assert step.value.startswith("a 4.5 in ring over 24 in")
+    shell = next(s for s in head.working if s.name == "The dome over the door's arch")
+    assert "2 in higher" in shell.value  # the dome's shell, not the door's ring
+
+    def depth_source(found: Any) -> str:
+        assert found.check is not None
+        return next(c.source or "" for c in found.check.cells if c.symbol == "d")
+
+    # Left out, the ring is the roof's: the dome's 2 in shell, too thin for the door
+    roofs = door_head(_kiln(CASTABLE, _castable_door()))
+    assert roofs is not None
+    refused = next(f for f in roofs.findings if f.level == "error")
+    assert "thicken the roof's ring" in refused.message
+    assert "in exactly the same way as" in depth_source(refused)
+    thin = door_head(_kiln(CASTABLE, _castable_door(ring="2 in")))
+    assert thin is not None
+    refused = next(f for f in thin.findings if f.level == "error")
+    assert "deepen the door's ring" in refused.message
+    assert "Kanayama" in depth_source(refused)
+
+
+@pytest.mark.parametrize(
+    ("opening", "message"),
+    [
+        ({"head": "lintel", "ring": "4.5 in"}, "an arched head's"),
+        ({"ring": "0 in"}, "more than 0 deep"),
+    ],
+)
+def test_a_door_ring_is_an_arched_heads_and_has_depth(
+    opening: dict[str, str], message: str
+) -> None:
+    with pytest.raises(ValidationError, match=message):
+        _kiln(CASTABLE, _castable_door(**opening))

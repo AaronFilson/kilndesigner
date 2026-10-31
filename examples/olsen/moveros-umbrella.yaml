@@ -4,8 +4,8 @@
 #
 # From the book: chamber about 5 ft (150 cm) across (text; 5 ft across the top, Fig 6-3) and 4 ft
 # tall, the pots never past its top (Fig 6-3); the firebox 3½–4 ft (Fig 6-3), under the umbrella
-# floor of spokes on a central trunk (p.154); the firebox mouth 27 in high and 22 in (?) wide
-# (Fig 6-3; the 22 could read 28); walls of granite rocks mortared together, 18–24 in thick (21 in
+# floor of spokes on a central trunk (p.154); the firebox mouth 27 in high and 22 in wide
+# (Fig 6-3; checked on the page image, 2026-10-31); walls of granite rocks mortared together, 18–24 in thick (21 in
 # used, the middle), plastered with clay inside; no roof built, shards stacked over the pots;
 # heather and brushwood (all p.153–154).
 # Assumed: the temperature isn't given (it is fired until flames come out of the top, p.154):
@@ -44,7 +44,7 @@ heat:
         length: 60 in
         height: 48 in # 3½–4 ft
         stoke_hole: # the firebox mouth
-          width: 22 in # (?)
+          width: 22 in # "22"" (Fig 6-3)
           height: 27 in
 draft:
   type: up

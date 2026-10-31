@@ -12,14 +12,14 @@ simplification is written into the example's notes:
 
 | Kiln (`examples/olsen/`) | Shape as built | How the engine has it now |
 |---|---|---|
-| `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | A box under a sail dome; the door's head as a semicircle |
+| `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | Done (step 3): a teardrop plan (`chamber.outline`) under a sphere through it (`roof.crown_at`), crown and thickness estimated from the figures; the door's head still a semicircle |
 | `bae-gilgama` | Teardrop tube on a slope (p.107–108) | A sloping box |
 | `gulgong-racer`, `hohr-2003` | Cast domes over the chamber (p.118–123) | Dome over a rectangle |
 | `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Not described |
 | `breda-bottle`, `bottle-two-storey`, `sevres` | Round, domed, cone-frustum bottle chimney (p.166–169) | Round chamber; chimney as a straight stack |
-| `bowen-mountain` | Crown curving down along the length (Fig 4-153) | Arch across the width |
-| `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door refused |
-| corbel-arched kilns (p.134) | Corbelled vaults | Not described |
+| `bowen-mountain` | Crown curving down along the length (Fig 4-153) | One arch along the length (`roof.along`), since 2026-10-31 |
+| `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door laid out and checked since 2026-10-31; the example has none, its size unreadable |
+| corbel-arched kilns (p.49, Fig 2-23; p.134 is Singh's round downdraft, curved-kilns.md) | Corbelled vaults | Not described |
 
 ## What "complex curves" needs, in layers
 
@@ -68,9 +68,36 @@ simplification is written into the example's notes:
 2. The shape description (layer 1) behind the existing types, with no output change; tests that
    every example builds the same.
 3. Calimpong first: teardrop plan, cast dome over it, flattened door head; its numbers against
-   the book (inside length 9'9", the door 33 × 37 in).
+   the book (inside length 9'9", the door 33 × 37 in). **Done 2026-10-30.** `chamber.outline`
+   chooses a teardrop (flat front, arc sides) or an oval filling the chamber's width and depth,
+   for one level chamber under a dome or a flat roof, fired with fuel or gas (other cases
+   refused with reasons). The dome is the sphere over `roof.crown_at` through the plan's
+   farthest point. Areas, volume and heat loss come from the form (Steiner growth with depth);
+   the lining is laid out as rings on the plan moved out layer by layer (`outline.offset`), its
+   volumes (castables, brick by volume) and solids (build123d: the plan extruded, cut to the
+   sphere) from the same outline; the sections draw it. Calimpong's crown (45 ± 2 in, 53 ± 4 in
+   back) and dome thickness (5½ ± 1½ in) are estimates scaled from the figures
+   (`curved-kilns.md`). Left: the door's flat head with rounded corners (the door statics cover
+   a semicircular ring or a steel lintel only), the book's concave neck, the frame's dome slices
+   (still over the chamber's rectangle), brick course plans round the curve, and the web form's
+   point editing. **Leftovers done 2026-10-31** (but point editing): the neck
+   (`necked_teardrop`: sides, reverse curves, a straight neck and a flat back; the crown must see
+   the whole plan); the dome's slices over the curved plan, each the symmetric arch on its
+   farther springing, their thrust shown for the masonry that holds it, and no steel sized round
+   a curve (refused with a reason); courses round the curve (4½ in stretcher rings: mortar wedge
+   joints on convex arcs, cut to the angle on the reverse curves, lapped corners); and a flat door
+   head with rounded corners, laid out, its statics flagged as unsourced. The new fit is 6 %
+   under the printed widths' area (the widest point sits further forward than the book draws).
 4. Revolved profiles: bottle kilns and round domes of conical-brick courses.
-5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing.
+5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing. Done
+   2026-10-31 (vault.py): Bowen's vault, re-read, is one arch along the 5 ft length springing at
+   18 in from both end walls (`roof.along`), laid out, drawn and counted as a row of one, with
+   its section at stations and Heyman's statics (ring factor, hot line, the end wall as a
+   buttress); a door through a buttressed tube's springing is laid out and checked (the door's
+   ring under half the vault's weight; the vault's thrust over the door reported, not sized).
+   Open: Tamba's door size (Fig 4-15 unreadable); Bowen's door height (not printed, 27 in
+   assumed); a tube whose section itself changes (Tamba's segments stepping up the slope,
+   Fig 4-16) waits for printed sizes.
 6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow.
 
 ## Open questions

@@ -25,7 +25,7 @@ Data: data/gas.yaml, from docs/research/combustion-and-masonry.md and kiln-refer
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cache
 from importlib import resources
 from typing import Any, Literal
@@ -135,7 +135,7 @@ def wall_class(kiln: Kiln) -> WallClass:
     from kilndesigner.castable import resolve_material
 
     kind = resolve_material(kiln, kiln.lining.walls[0].material).kind
-    if kind in ("dense_firebrick", "dense_castable", "building_brick", "stone"):
+    if kind in ("dense_firebrick", "dense_castable", "building_brick", "stone", "earth"):
         return "hard_brick"
     if kind in ("fibre_blanket", "fibre_board"):
         return "ceramic_fibre"
@@ -493,7 +493,7 @@ def _demand(kiln: Kiln, per_ft3: float, volume_ft3: float, what: str, source: st
     )
 
 
-def _tank_suggestion(demand: float, t_f: float) -> str | None:
+def tank_suggestion(demand: float, t_f: float) -> str | None:
     table = gas_data()["tanks_one_third_full"]
     t = min(max(t_f, 0.0), 70.0)
     for gallons, row in table["gallons"].items():
@@ -997,9 +997,19 @@ def _draft_lines(
     return lines
 
 
-def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
+def design_gas(
+    kiln: Kiln,
+    loss_watts: float | None = None,
+    input_btu_hr: float | None = None,
+    *,
+    elements_on_top_w: float | None = None,
+) -> GasDesign:
     """The burners, supply, flue and chimney of a gas kiln. With ``loss_watts``, the kiln's steady
-    heat loss at its top temperature, the burners are also checked against it."""
+    heat loss at its top temperature, the burners are also checked against it. ``input_btu_hr``
+    replaces the rule-of-thumb input: the one the target-time solver found.
+    ``elements_on_top_w`` is a hybrid's element power when the elements stay on to the top (the
+    solver's firing): the top check counts it with the burners'. Without it a hybrid's burners are
+    checked alone, as the elements hand over below the top."""
     gas = kiln.heat.gas
     if gas is None:
         raise ValueError("the kiln has no gas heat")
@@ -1096,7 +1106,23 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             inputs={"firing speed": gas.firing_speed},
         ),
     ]
-    if kiln.heat.electric is not None:
+    if input_btu_hr is not None:
+        demand = input_btu_hr
+        need = replace(
+            need,
+            btu_per_ft3_hr=demand / volume_ft3,
+            what="the input the firing simulation found for the target firing time",
+            source="the firing simulation (simulation.py, ADR 0015)",
+        )
+        working.append(
+            Step(
+                name="Burner input for the target firing time",
+                value=f"{demand:,.0f} BTU/hr ({demand / volume_ft3:,.0f} BTU/ft³/hr)",
+                note="Found with the firing simulation, in place of the rule of thumb above.",
+                reference="simulation.py (ADR 0015); target.py",
+            )
+        )
+    if kiln.heat.electric is not None and elements_on_top_w is None:
         findings.append(
             Finding(
                 level="info",
@@ -1200,19 +1226,29 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
         )
         sheet = holds_top(
             loss_watts, top, eta, f"{COMBUSTION_SOURCE}: {fuel}, {air}", burning.count,
-            burning.each, burning.source, temp_unit,
+            burning.each, burning.source, temp_unit, elements_on_top_w,
         )  # fmt: skip
         sheet.agrees("P", Q_(draw, "BTU/hr"))
         check = sheet.check()
         kept = eta * draw
+        lost = si(Q_(loss_watts, "W"), "BTU/hr")
+        elements = (
+            si(Q_(elements_on_top_w, "W"), "BTU/hr") if elements_on_top_w is not None else None
+        )
         working.append(
             Step(
-                name="Burners against the heat lost at the top",
+                name="Burners against the heat lost at the top"
+                if elements is None
+                else "Burners and elements against the heat lost at the top",
                 value=(
-                    f"{kept:,.0f} BTU/hr kept against "
-                    f"{si(Q_(loss_watts, 'W'), 'BTU/hr'):,.0f} BTU/hr lost"
+                    f"{kept:,.0f} BTU/hr kept against {lost:,.0f} BTU/hr lost"
+                    if elements is None
+                    else f"{kept:,.0f} + {elements:,.0f} BTU/hr kept against {lost:,.0f} BTU/hr "
+                    "lost"
                 ),
-                formula="η × burner input at full fire ≥ steady heat loss",
+                formula="η × burner input at full fire ≥ steady heat loss"
+                if elements is None
+                else "η × burner input at full fire + element power ≥ steady heat loss",
                 reference=sheet.reference,
             )
         )
@@ -1223,8 +1259,13 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
                     message=(
                         f"At full fire the burners leave {kept:,.0f} BTU/hr in the kiln at "
                         f"{show(top, temp_unit)} (only {eta:.0%} of their {draw:,.0f} BTU/hr: the "
-                        "rest leaves with the flue gas), less than the "
-                        f"{si(Q_(loss_watts, 'W'), 'BTU/hr'):,.0f} BTU/hr the lining loses there. "
+                        "rest leaves with the flue gas)"
+                        + (
+                            ""
+                            if elements is None
+                            else f", and the elements on to the top add {elements:,.0f} BTU/hr"
+                        )
+                        + f", less than the {lost:,.0f} BTU/hr the lining loses there. "
                         "The kiln can't reach its top temperature. Add burners or insulation."
                     ),
                 )
@@ -1259,7 +1300,7 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
                 ),
             )
         )  # fmt: skip
-        tank = _tank_suggestion(draw, t_f)
+        tank = tank_suggestion(draw, t_f)
 
     if gas.burners.type == "power":
         findings.append(

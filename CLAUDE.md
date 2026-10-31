@@ -12,7 +12,7 @@ uv is installed for the user but is not on PATH. Call it by its full path,
 | Task | Command |
 |---|---|
 | Install or update the environment | `uv sync` |
-| Tests | `uv run pytest` (`-m "not geometry"` skips the slower OpenCascade tests) |
+| Tests | `uv run pytest` (`-m "not geometry"` skips the slower OpenCascade tests, `-m "not slow"` the long firing simulations and target-time solves; `-m "not geometry and not slow"` both. CI and the coverage run keep them all) |
 | Coverage | `uv run pytest --cov` (branch coverage; fails under 98%). Use `--cov`, not `--cov=kilndesigner.module`: numpy can't be loaded twice in one process. The web: `npm run coverage --workspace @kilndesigner/web` (lines; fails under 98%) |
 | Lint and format | `uv run ruff check --fix .` then `uv run ruff format .` |
 | Types (strict) | `uv run pyright` |

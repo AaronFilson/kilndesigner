@@ -8,6 +8,7 @@ the surface coefficient.
 
 from __future__ import annotations
 
+from bisect import bisect_right
 from dataclasses import dataclass
 
 import numpy as np
@@ -42,14 +43,21 @@ class Air:
         return self.specific_heat * self.viscosity / self.conductivity
 
 
+_TL: list[float] = _T.tolist()
+_COLUMNS: list[list[float]] = [_RHO.tolist(), _CP.tolist(), _K.tolist(), _MU.tolist()]
+
+
 def air(temperature: float) -> Air:
-    """Air at ``temperature`` (K), which must lie within the table."""
+    """Air at ``temperature`` (K), which must lie within the table.
+
+    Linear between rows, with numpy.interp's arithmetic (the same values) without its overhead:
+    the firing simulation asks for air several times a step."""
     if not T_MIN <= temperature <= T_MAX:
         raise ValueError(f"air properties are tabulated from {T_MIN} K to {T_MAX} K")
-    return Air(
-        temperature,
-        float(np.interp(temperature, _T, _RHO)),
-        float(np.interp(temperature, _T, _CP)),
-        float(np.interp(temperature, _T, _K)),
-        float(np.interp(temperature, _T, _MU)),
-    )
+    j = bisect_right(_TL, temperature) - 1
+    if j >= len(_TL) - 1 or _TL[j] == temperature:
+        values = [col[j] for col in _COLUMNS]
+    else:
+        x0, x1 = _TL[j], _TL[j + 1]
+        values = [(c[j + 1] - c[j]) / (x1 - x0) * (temperature - x0) + c[j] for c in _COLUMNS]
+    return Air(temperature, *values)

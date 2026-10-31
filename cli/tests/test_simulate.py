@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -40,6 +41,10 @@ def test_simulate_a_hybrid_with_its_chart(tmp_path: Path, monkeypatch: pytest.Mo
         "kast-o-lite-30-li-plus\n      thickness: 3 in\n",
         "kast-o-lite-30-li-plus\n      thickness: 3 in\n      specific_heat: 1 kJ/(kg*K)\n",
     )
+    # Empty: with a full setting the elements climb so slowly the chart's late hand-overs run out
+    # of hours before they stall
+    text = re.sub(r"\n  setting:\n(    [^\n]*\n)+", "\n", text)
+    assert "setting:" not in text
     design = tmp_path / "hybrid.yaml"
     design.write_text(text, encoding="utf-8")
     monkeypatch.setattr("kilndesigner.simulation.DT", 900.0)
@@ -64,3 +69,50 @@ def test_simulate_a_hybrid_with_its_chart(tmp_path: Path, monkeypatch: pytest.Mo
     assert "elements stall; burners from" in result.output
     assert "[info] The elements stall at about" in result.output
     assert (out / "switchover.json").is_file()
+
+
+def test_simulate_solves_a_target_time(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "pnw-hybrid-crossdraft.yaml")
+    result = runner.invoke(app, ["simulate", design, "--target", "6h", "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "a 6 h firing" in result.output
+    assert "Propane supply options (pick one):" in result.output
+    assert "1000 gal tank" in result.output
+    assert (tmp_path / "target.json").is_file()
+    worded = runner.invoke(
+        app, ["simulate", design, "--target", "0.5 hour", "--out", str(tmp_path)]
+    )
+    assert worded.exit_code == 2
+    assert "the schedule alone" in worded.output
+
+
+@pytest.mark.slow
+def test_slow_fires_a_kiln_over_days(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "electric-front-loader.yaml")
+    result = runner.invoke(app, ["slow", design, "2 day", "--soak", "6h", "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "a slow firing, 48 h with 6 h at the top" in result.output
+    assert "Quickest firing:" in result.output
+    assert "Electricity:" in result.output
+    assert "Bizen" in result.output
+    assert (tmp_path / "slow.json").is_file()
+    gas = runner.invoke(
+        app, ["slow", str(EXAMPLES / "gas-crossdraft.yaml"), "30h", "--out", str(tmp_path)]
+    )
+    assert gas.exit_code == 0, gas.output
+    assert "Propane:" in gas.output
+
+
+def test_slow_refuses_a_firing_past_the_sources(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "electric-front-loader.yaml")
+    result = runner.invoke(app, ["slow", design, "11 day", "--out", str(tmp_path)])
+    assert result.exit_code == 2
+    assert "longer than any sourced firing" in result.output
+
+
+def test_slow_on_a_wood_kiln_lists_the_sources(tmp_path: Path) -> None:
+    design = str(Path(__file__).parents[2] / "core/src/kilndesigner/data/templates/anagama.yaml")
+    result = runner.invoke(app, ["slow", design, "5 day", "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "cords" in result.output
+    assert "Firing time:" not in result.output

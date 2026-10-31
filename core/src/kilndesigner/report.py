@@ -11,12 +11,14 @@ from kilndesigner.fire import FireDesign, design_fire
 from kilndesigner.frame import FrameDesign, design_frame
 from kilndesigner.gas import GasDesign, design_gas
 from kilndesigner.geometry import GeometryNotSupportedError, lining_parts, not_drawn
-from kilndesigner.hardware import build_hardware
+from kilndesigner.hardware import build_hardware, floor_and_roof_holes
 from kilndesigner.heatloss import HeatLoss, heat_loss
 from kilndesigner.hybrid import HybridAnalysis, analyse_hybrid
 from kilndesigner.masonry import Masonry, plan_masonry
 from kilndesigner.model import Kiln
 from kilndesigner.shape import chamber_shape
+from kilndesigner.simulation import SimulationError
+from kilndesigner.target import TargetFiring, solve_target
 from kilndesigner.units import Q_, si
 from kilndesigner.working import Finding, show
 
@@ -39,6 +41,7 @@ class Report(BaseModel):
     masonry: Masonry | None
     bom: Bom | None
     findings: list[Finding]
+    target: TargetFiring | None = None
 
     @property
     def errors(self) -> list[Finding]:
@@ -123,13 +126,23 @@ def design_report(kiln: Kiln) -> Report:
     masonry: Masonry | None = None
     bom: Bom | None = None
     try:
-        masonry = plan_masonry(kiln).result
+        holes = floor_and_roof_holes(hardware) if hardware is not None else []
+        masonry = plan_masonry(kiln, holes).result
     except GeometryNotSupportedError as e:
         findings.append(Finding(level="info", message=f"No masonry plan or bill of materials: {e}"))
     if masonry is not None:
         bricks = hardware.chimney_bricks if hardware is not None else 0
         bom = bill_of_materials(kiln, masonry, electric, gas, frame, bricks, castables)
         findings += [*masonry.findings, *bom.findings]
+    target: TargetFiring | None = None
+    if kiln.firing.target_time is not None:
+        try:
+            target = solve_target(kiln)
+            findings += [f for f in target.findings if f.level == "info"]
+        except SimulationError as e:
+            findings.append(
+                Finding(level="info", message=f"The target firing time isn't worked out: {e}.")
+            )
     order = {"error": 0, "warning": 1, "info": 2}
     findings = list({(f.level, f.message): f for f in findings}.values())  # once each
     findings.sort(key=lambda f: order[f.level])
@@ -149,4 +162,5 @@ def design_report(kiln: Kiln) -> Report:
         masonry=masonry,
         bom=bom,
         findings=findings,
+        target=target,
     )

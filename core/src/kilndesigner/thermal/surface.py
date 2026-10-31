@@ -13,7 +13,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
-from kilndesigner.thermal.air import air
+from kilndesigner.thermal.air import Air, air
 
 STEFAN_BOLTZMANN = 5.670374e-8  # W/(m²·K⁴)
 GRAVITY = 9.80665  # m/s²
@@ -39,7 +39,10 @@ class FixedSurface:
 
 def rayleigh(t_surface: float, t_ambient: float, length: float) -> tuple[float, float]:
     """Rayleigh and Prandtl numbers for still air, properties at the film temperature."""
-    film = air(0.5 * (t_surface + t_ambient))
+    return _rayleigh(air(0.5 * (t_surface + t_ambient)), t_surface, t_ambient, length)
+
+
+def _rayleigh(film: Air, t_surface: float, t_ambient: float, length: float) -> tuple[float, float]:
     beta = 1.0 / film.temperature
     ra = (
         GRAVITY
@@ -66,8 +69,8 @@ def convection_coefficient(
 ) -> float:
     if t_surface == t_ambient:
         return 0.0
-    ra, pr = rayleigh(t_surface, t_ambient, length)
     film = air(0.5 * (t_surface + t_ambient))
+    ra, pr = _rayleigh(film, t_surface, t_ambient, length)
     return nusselt(orientation, ra, pr) * film.conductivity / length
 
 

@@ -8,7 +8,7 @@ import pytest
 
 from kilndesigner import Kiln, load_design, parse_design
 from kilndesigner.library import materials
-from kilndesigner.model import Ramp
+from kilndesigner.model import Fire, Ramp
 from kilndesigner.results import heatmap, read_summary, series, write_run
 from kilndesigner.simulation import (
     SimulationError,
@@ -149,7 +149,11 @@ def test_a_firing_that_runs_too_long(electric: Kiln, monkeypatch: pytest.MonkeyP
     monkeypatch.setattr("kilndesigner.simulation.MAX_HOURS", 0.5)
     r = simulate(electric, record=False).result
     assert not r.completed
-    assert any("stopped at 0.5 hours" in f.message for f in r.findings)
+    # The limit is full-heat time beyond the schedule's paced segments (slow-firing.md)
+    stops = [f.message for f in r.findings if "The firing was stopped at" in f.message]
+    assert len(stops) == 1
+    hours = float(stops[0].split("stopped at ")[1].split(" hours")[0])
+    assert hours > 0.5
 
 
 def test_a_castable_without_a_sourced_specific_heat_is_refused() -> None:
@@ -202,7 +206,9 @@ def test_the_hybrid_hands_over_and_costs_both_fuels() -> None:
 
 
 def test_a_hybrid_hands_over_where_its_elements_stall() -> None:
-    r = simulate(_hybrid(), switch_over_c=1250, dt=300, record=False).result
+    # Empty: with a full setting the elements climb so slowly the firing runs out of hours first
+    r = simulate(_hybrid(**{"firing.setting": None}), switch_over_c=1250, dt=300, record=False)
+    r = r.result
     assert r.completed
     assert r.switch_over_c is not None
     assert r.switch_over_c < 1250
@@ -268,8 +274,10 @@ def test_the_switch_over_chart_marks_stalls(monkeypatch: pytest.MonkeyPatch) -> 
 
 
 def test_a_hand_over_above_the_elements_stall_is_marked() -> None:
-    # The PNW kiln's 11.5 kW of elements stall near 1990 °F, short of a 2100 °F hand-over
-    chart = switch_over_chart(_example("pnw-hybrid-crossdraft"), step_f=1700, dt=600)
+    # The PNW kiln's 11.5 kW of elements stall near 1990 °F, short of a 2100 °F hand-over (empty:
+    # with a full setting they climb so slowly the firing runs out of hours before they stall)
+    empty = _example("pnw-hybrid-crossdraft", **{"firing.setting": None})
+    chart = switch_over_chart(empty, step_f=1700, dt=600)
     first, second = chart.points
     assert not first.elements_stalled
     assert first.handed_over_c == pytest.approx(first.switch_over_c)
@@ -357,3 +365,13 @@ def test_results_round_trip_through_parquet(electric: Kiln, tmp_path: Path) -> N
     assert hm.min_c == pytest.approx(21.1, abs=0.1)
     assert hm.max_c > 1200
     assert hm.layers[0][0] == "ifb-jm26"
+
+
+def test_a_smoke_firebox_adds_no_heat_so_the_kiln_still_fires() -> None:
+    """Olsen p.250: the smoke firebox is 'not to add heat', so the elements' firing is simulated."""
+    kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
+    box = {"position": "back", "width": "9 in", "length": "18 in"}
+    fire = Fire.model_validate({"purpose": "smoke", "fireboxes": [box]})
+    smoked = kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": fire})})
+    plain = simulate(kiln, dt=600, record=False).result
+    assert simulate(smoked, dt=600, record=False).result.reached_c == pytest.approx(plain.reached_c)

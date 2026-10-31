@@ -27,7 +27,18 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
-from kilndesigner.model import CatenaryArch, Dome, Face, FlatRoof, Kiln, OpenTop, SprungArch
+from kilndesigner.model import (
+    CatenaryArch,
+    Dome,
+    Face,
+    FlatRoof,
+    Kiln,
+    OpenTop,
+    SprungArch,
+    arches_along,
+)
+from kilndesigner.outline import Revolved, shell_profile
+from kilndesigner.rings import FLOOR_COURSE_IN, IN
 from kilndesigner.shape import Arch, CatenaryCurve, SailDome
 from kilndesigner.units import si
 from kilndesigner.working import length_text
@@ -49,6 +60,7 @@ COLOURS: dict[str, tuple[float, float, float]] = {
     "backup_insulation": (0.85, 0.85, 0.90),
     "building_brick": (0.66, 0.31, 0.23),
     "stone": (0.58, 0.57, 0.54),
+    "earth": (0.55, 0.45, 0.33),
     "element": (0.55, 0.55, 0.58),
     "steel": (0.30, 0.32, 0.36),
     "burner": (0.72, 0.55, 0.28),
@@ -63,6 +75,7 @@ KIND_NAMES = {
     "backup_insulation": "Backup insulation",
     "building_brick": "Building brick",
     "stone": "Stone",
+    "earth": "Clay, straw and earth",
     "element": "Elements",
     "steel": "Steel",
     "burner": "Burners",
@@ -75,6 +88,7 @@ SOLID_KINDS = {
     "dense_castable",
     "building_brick",
     "stone",
+    "earth",
 }
 FACE_NAMES = {
     "left": "Left wall",
@@ -86,6 +100,7 @@ FACE_NAMES = {
     "roof": "Roof",
     "arch": "Catenary arch",
     "wall": "Round wall",
+    "walls": "Walls",
 }
 
 
@@ -125,6 +140,27 @@ class DomeShape:
         y = y - self.centre_y
         under = r * r - x * x - y * y
         return np.where(under > 0, self.centre_z + np.sqrt(np.maximum(under, 0.0)), -np.inf)
+
+
+type PlanPoints = tuple[tuple[float, float], ...]
+"""A closed outline in plan, as points (mm)."""
+
+
+def _shoelace(pts: tuple[tuple[float, float], ...]) -> float:
+    nxt = pts[1:] + pts[:1]
+    return abs(sum(x0 * y1 - x1 * y0 for (x0, y0), (x1, y1) in zip(pts, nxt, strict=True))) / 2
+
+
+def _inside(pts: tuple[tuple[float, float], ...], x: np.ndarray, y: np.ndarray) -> np.ndarray:
+    """Which of the points (x, y) lie inside the polygon: the even–odd rule, a ray along +x."""
+    out = np.zeros(x.shape, dtype=bool)
+    for (xa, ya), (xb, yb) in zip(pts, pts[1:] + pts[:1], strict=True):
+        if ya == yb:
+            continue
+        crosses = (ya > y) != (yb > y)
+        at = xa + (y - ya) * (xb - xa) / (yb - ya)
+        out ^= crosses & (x < at)
+    return out
 
 
 def polygon_fraction(sides: int) -> float:
@@ -186,6 +222,12 @@ class Part:
     # x axis through the foot of its front face, at y = ``pivot``: its courses follow the floor
     tilt: float = 0.0
     pivot: float = 0.0
+    # A curved plan's layer (chamber.outline): an outline in plan (x, y, mm, anticlockwise),
+    # less ``inner`` for a wall's ring, from lo z to hi z; with ``dome``, up to the dome's sphere
+    # (a wall's cap) or between its spheres (a layer of the dome) over it. ``ring`` is then its
+    # thickness.
+    plan: tuple[tuple[float, float], ...] | None = None
+    inner: tuple[tuple[float, float], ...] | None = None
 
     def tilted(self, y: float, z: float) -> tuple[float, float]:
         """Where a point (y, z) of the part, laid out level, stands on the slope."""
@@ -236,14 +278,11 @@ class Part:
     @property
     def volume(self) -> float:
         if self.revolve is not None:
-            # Pappus: 2π × the outline's area × its centroid's radius, by the shoelace sums
-            pts, nxt = self.revolve, self.revolve[1:] + self.revolve[:1]
-            moment = sum(
-                (r0 + r1) * (r0 * z1 - r1 * z0) for (r0, z0), (r1, z1) in zip(pts, nxt, strict=True)
-            )
             # A polygon through the corners has N·sin(2π/N)/(2π) of the circle's area, at every r
             scale = 1.0 if self.sides is None else polygon_fraction(self.sides)
-            return math.pi * abs(moment) / 3 * scale
+            return Revolved(self.revolve).volume * scale
+        if self.plan is not None:
+            return self._plan_volume(self.plan)
         if self.profile is not None:
             pts, nxt = self.profile, self.profile[1:] + self.profile[:1]
             area = abs(sum(x0 * z1 - x1 * z0 for (x0, z0), (x1, z1) in zip(pts, nxt, strict=True)))
@@ -256,6 +295,26 @@ class Part:
             return self.arch.segment_area * self.length_run
         r, t, a = self.arch.radius, self.arch.thickness, self.arch.half_angle
         return a * ((r + t) ** 2 - r**2) * self.length_run
+
+    def _plan_volume(self, plan: tuple[tuple[float, float], ...], n: int = 400) -> float:
+        """A prism on the plan (less ``inner``): its area by the shoelace formula times its
+        height. Under or within a dome: the dome's heights over the plan, summed on a fine grid
+        (the midpoint rule), as _dome_volume's."""
+        if self.dome is None:
+            area = _shoelace(plan) - (_shoelace(self.inner) if self.inner else 0.0)
+            return area * (self.hi[2] - self.lo[2])
+        (x0, y0, springline), (x1, y1, _) = self.lo, self.hi
+        xs = x0 + (np.arange(n) + 0.5) / n * (x1 - x0)
+        ys = y0 + (np.arange(n) + 0.5) / n * (y1 - y0)
+        x, y = np.meshgrid(xs, ys)
+        inside = _inside(plan, x, y)
+        if self.inner:
+            inside &= ~_inside(self.inner, x, y)
+        d = self.dome
+        top = d.heights(x, y, d.radius + d.thickness)
+        bottom = springline if self.cap else np.maximum(d.heights(x, y, d.radius), springline)
+        cell = (x1 - x0) * (y1 - y0) / n / n
+        return float(np.sum(np.where(inside, np.maximum(top - bottom, 0.0), 0.0)) * cell)
 
     def _dome_volume(self, d: DomeShape, n: int = 500) -> float:
         """Between the springline (or the shell's inside) and the sphere, over the part's plan,
@@ -326,8 +385,9 @@ def not_drawn(kiln: Kiln) -> str | None:
 
 
 def in_a_row(kiln: Kiln) -> bool:
-    """Chambers in a row, laid out by run_parts.py."""
-    return kiln.chamber.chambers > 1
+    """Chambers in a row, laid out by run_parts.py; and one chamber under an arch along its depth
+    (roof.along), laid out as a row of one."""
+    return kiln.chamber.chambers > 1 or arches_along(kiln)
 
 
 def on_a_stand(kiln: Kiln) -> bool:
@@ -394,6 +454,8 @@ def _level_parts(kiln: Kiln) -> list[Part]:
 
     if kiln.chamber.shape == "round":
         return _round_parts(kiln)
+    if kiln.chamber.outline is not None:
+        return _outline_parts(kiln)
     if in_a_row(kiln) and isinstance(kiln.roof, CatenaryArch):
         return _catenary_parts(kiln)
     if in_a_row(kiln):
@@ -468,7 +530,7 @@ def _level_parts(kiln: Kiln) -> list[Part]:
                 parts.append(
                     Part(
                         name, mat, resolve_material(kiln, mat).kind,
-                        (-w / 2, ys[0], h), (w / 2, ys[1], h + arch.rise),
+                        (-arch.half_width, ys[0], h), (arch.half_width, ys[1], h + arch.rise),
                         arch=shape, cap=True, face=face,
                     )
                 )  # fmt: skip
@@ -476,8 +538,12 @@ def _level_parts(kiln: Kiln) -> list[Part]:
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
             r_in = arch.radius + cum
             shape = ArchShape(r_in, th, centre_z, arch.half_angle)
-            half_width = (r_in + th) * math.sin(arch.half_angle)
-            lo = (-half_width, y0, h)
+            # Past a semicircle the ring is widest at its centre's height, and its outer corner at
+            # each springing turns down below the springline
+            half_width = (r_in + th) * (
+                1.0 if arch.half_angle > math.pi / 2 else math.sin(arch.half_angle)
+            )
+            lo = (-half_width, y0, min(h, centre_z + (r_in + th) * math.cos(arch.half_angle)))
             hi = (half_width, y1, centre_z + r_in + th)
             parts.append(
                 Part(
@@ -610,15 +676,20 @@ def _round_parts(kiln: Kiln) -> list[Part]:
 
     flat = True
     cum = 0.0
+    # A floor inside the walls (Paragon's) is the inside outline, in the wall's lowest course,
+    # the wall running a course below the inside floor; else it runs under the walls (Skutt's)
+    inside = kiln.chamber.floor_inside
+    floor_reach = radius * corner if inside else outside
+    foot = -FLOOR_COURSE_IN * IN if inside else 0.0
     for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
         z0, z1 = -cum - th, -cum
-        add(f"floor/{i + 1}-{mat}", mat, [(0.0, z0), (outside, z0), (outside, z1), (0.0, z1)],
-            th, "floor")  # fmt: skip
+        add(f"floor/{i + 1}-{mat}", mat,
+            [(0.0, z0), (floor_reach, z0), (floor_reach, z1), (0.0, z1)], th, "floor")  # fmt: skip
         cum += th
     r = radius
     for i, (mat, th) in enumerate(walls):
         r0, r1 = r * corner, (r + th) * corner
-        add(f"wall/{i + 1}-{mat}", mat, [(r0, 0.0), (r1, 0.0), (r1, h), (r0, h)], th, None)
+        add(f"wall/{i + 1}-{mat}", mat, [(r0, foot), (r1, foot), (r1, h), (r0, h)], th, None)
         r += th
     roof = kiln.roof
     cum = 0.0
@@ -631,7 +702,7 @@ def _round_parts(kiln: Kiln) -> list[Part]:
         centre = h - below
         rho = dome.radius
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
-            add(f"roof/{i + 1}-{mat}", mat, _dome_outline(rho, rho + th, centre, h), th, "roof")
+            add(f"roof/{i + 1}-{mat}", mat, shell_profile(rho, rho + th, centre, h), th, "roof")
             rho += th
     elif isinstance(roof, FlatRoof):
         for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
@@ -642,20 +713,63 @@ def _round_parts(kiln: Kiln) -> list[Part]:
     return parts
 
 
-def _dome_outline(
-    inner: float, outer: float, centre: float, springline: float, steps: int = 48
-) -> list[tuple[float, float]]:
-    """The part of a spherical shell (radii ``inner`` to ``outer``, centred on the axis at height
-    ``centre``) above the springline, in the r–z plane: up the inside from the springline to the
-    crown, down the outside, and back along the springline."""
+def _outline_parts(kiln: Kiln) -> list[Part]:
+    """A curved plan (chamber.outline, form.py): the floor under the whole kiln, out to the
+    walls' outside; each wall layer a ring on the plan moved out by the layers inside it
+    (outline.offset), from the floor to the springline, its top filled up to a dome's sphere; and
+    the dome's layers (or a flat roof's slabs) over the whole kiln, as on a box (_dome_parts)."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.form import crown_of, plan_of
+    from kilndesigner.outline import SphereDome, offset
 
-    def arc(rho: float, rising: bool) -> list[tuple[float, float]]:
-        end = math.acos(max(-1.0, min(1.0, (springline - centre) / rho)))  # from the vertical
-        angles = [end * (1 - k / steps) for k in range(steps + 1)]
-        pts = [(rho * math.sin(a), centre + rho * math.cos(a)) for a in angles]
-        return pts if rising else pts[::-1]
+    plan, h = plan_of(kiln, "mm"), si(kiln.chamber.height, "mm")
+    walls = _thicknesses(kiln, "left")
+    out_t = sum(t for _, t in walls)
 
-    return [*arc(inner, True), *arc(outer, False)]
+    def pts(t: float) -> tuple[tuple[float, float], ...]:
+        return tuple(offset(plan, t).points(48))
+
+    outside = pts(out_t)
+    parts: list[Part] = []
+
+    def add(name: str, mat: str, th: float, z: tuple[float, float], plan_: PlanPoints,
+            inner: PlanPoints | None = None, **more: Any) -> None:  # fmt: skip
+        px, py = [x for x, _ in plan_], [y for _, y in plan_]
+        parts.append(
+            Part(
+                name, mat, resolve_material(kiln, mat).kind, (min(px), min(py), z[0]),
+                (max(px), max(py), z[1]), ring=th, plan=plan_, inner=inner, **more,
+            )
+        )  # fmt: skip
+
+    cum = 0.0
+    for i, (mat, th) in enumerate(_thicknesses(kiln, "floor")):
+        add(f"floor/{i + 1}-{mat}", mat, th, (-cum - th, -cum), outside, face="floor")
+        cum += th
+    roof = kiln.roof
+    dome: DomeShape | None = None
+    crown = crown_of(kiln, "mm")
+    if isinstance(roof, Dome):
+        sphere = SphereDome(plan, si(roof.rise, "mm"), crown)
+        dome = DomeShape(sphere.radius, 0.0, h + sphere.rise - sphere.radius, crown[1])
+    reach = 0.0
+    for i, (mat, th) in enumerate(walls):
+        ring, inner = pts(reach + th), pts(reach)
+        add(f"walls/{i + 1}-{mat}", mat, th, (0.0, h), ring, inner)
+        if dome is not None:
+            top = dome.centre_z + dome.radius
+            add(f"walls/{i + 1}-{mat}-dome", mat, th, (h, top), ring, inner, cap=True, dome=dome)
+        reach += th
+    cum = 0.0
+    for i, (mat, th) in enumerate(_thicknesses(kiln, "roof")):
+        if dome is None:
+            add(f"roof/{i + 1}-{mat}", mat, th, (h + cum, h + cum + th), outside, face="roof")
+        else:
+            shell = DomeShape(dome.radius + cum, th, dome.centre_z, dome.centre_y)
+            top = dome.centre_z + dome.radius + cum + th
+            add(f"roof/{i + 1}-{mat}", mat, th, (h, top), outside, face="roof", dome=shell)
+        cum += th
+    return parts
 
 
 def _dome_parts(
@@ -708,23 +822,71 @@ def inside_top(kiln: Kiln, face: Face, u: float) -> float:
     end = face in ("front", "back")
     if kiln.chamber.shape == "round":
         return h  # the round wall stands to the springline all the way round
+    if kiln.chamber.outline is not None:
+        return _outline_top(kiln, face, u, h)
     if isinstance(kiln.roof, CatenaryArch):
         return CatenaryCurve(w, h).z(u) if end and abs(u) < w / 2 else 0.0
-    if isinstance(kiln.roof, SprungArch) and in_a_row(kiln) and not kiln.roof.tube:
+    if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
         # Each chamber's arch spans its depth along the draft (run_parts.py): it meets the side
         # walls, the first chamber's centred on u = 0, and the end walls stand to the springline
         if end or abs(u) >= d / 2:
             return h
         arch = Arch(d, si(kiln.roof.rise, "mm"))
         return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
-    if isinstance(kiln.roof, SprungArch) and end and abs(u) < w / 2:
+    if isinstance(kiln.roof, SprungArch) and end:
         arch = Arch(w, si(kiln.roof.rise, "mm"))
-        return h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2)
+        if abs(u) < arch.half_width:  # past a semicircle, the arch is wider than the span
+            return max(h, h + arch.rise - arch.radius + math.sqrt(arch.radius**2 - u**2))
     if isinstance(kiln.roof, Dome) and abs(u) < (w if end else d) / 2:
         dome = SailDome(w, d, si(kiln.roof.rise, "mm"))
         off = d / 2 if end else w / 2  # the wall's distance from the centre line
         return h + max(0.0, dome.centre + math.sqrt(dome.radius**2 - off**2 - u**2))
     return h
+
+
+def bulge_fill(
+    r_out: float, centre_z: float, h: float, outer: float, steps: int = 16
+) -> list[tuple[float, float]]:
+    """The fill beside an arch more than a semicircle (its centre above the springline ``h``):
+    from the ring's outside at the springline up to its widest, at ``centre_z``, out to the wall's
+    outer face at ``outer``; empty where the ring reaches past that face at the springline."""
+    foot = math.sqrt(r_out**2 - (h - centre_z) ** 2)
+    if foot >= outer:
+        return []
+    outline: list[tuple[float, float]] = []
+    for i in range(steps + 1):
+        z = h + (centre_z - h) * i / steps
+        point = (min(outer, math.sqrt(r_out**2 - (z - centre_z) ** 2)), z)
+        if not outline or outline[-1] != point:
+            outline.append(point)
+    if outline[-1][0] < outer:
+        outline.append((outer, centre_z))
+    return [*outline, (outer, h)]
+
+
+def _outline_top(kiln: Kiln, face: Face, u: float, h: float) -> float:
+    """A curved plan's wall top at ``u`` along the face (mm): where the dome's sphere meets the
+    wall, at the outline's point there. A side wall's u is along y from the middle, the curve's
+    half-width across; the front's along x, at the front's straight; the back is the plan's far
+    end, standing to the springline."""
+    from kilndesigner.form import crown_of, plan_of
+    from kilndesigner.outline import SphereDome, half_width
+
+    roof = kiln.roof
+    if not isinstance(roof, Dome) or face == "back":
+        return h
+    plan = plan_of(kiln, "mm")
+    if face in ("left", "right"):
+        x, y = half_width(plan, u), u
+    else:
+        y = plan.bounds[2] + 1e-6
+        if abs(u) >= half_width(plan, y):
+            return h
+        x = u
+    crown = crown_of(kiln, "mm")
+    dome = SphereDome(plan, si(roof.rise, "mm"), crown)
+    under = dome.radius**2 - x * x - (y - crown[1]) ** 2
+    return h + max(0.0, dome.rise - dome.radius + math.sqrt(max(under, 0.0)))
 
 
 def _skewbacks(
@@ -753,7 +915,14 @@ def _skewbacks(
             continue  # nothing to spring an arch from
         outer = w / 2 + sum(t for _, t in wall)
         top = (r_out * math.sin(a), centre_z + r_out * math.cos(a))  # the arch's outer corner
-        if top[0] <= outer:
+        if a > math.pi / 2:
+            # Past a semicircle the arch springs from the wall's top, its radius there turned
+            # below the level, and bulges out above it: the fill is what lies between the ring's
+            # outside and the wall's outer face, from the springline up to the ring's widest
+            outline = bulge_fill(r_out, centre_z, h, outer)
+            if not outline:
+                continue  # the ring bulges past the wall's outer face: nothing to fill
+        elif top[0] <= outer:
             outline = [(w / 2, h), top, (outer, top[1]), (outer, h)]
         else:  # the arch reaches past the wall: the fill ends where the radius leaves it
             r = outer / math.sin(a)
@@ -983,7 +1152,29 @@ def part_solid(part: Part) -> Any | None:
     return solid.rotate(Axis((0, part.pivot, 0), (1, 0, 0)), math.degrees(part.tilt))
 
 
+def _plan_solid(part: Part) -> Any:
+    """A curved plan's layer: its outline (less the inner one) extruded from lo z to hi z, cut
+    to the dome's sphere (a wall's cap) or to the shell between its spheres."""
+    from build123d import Plane, Polygon, Pos, Sphere, extrude
+
+    assert part.plan is not None
+    plane = Plane.XY.offset(part.lo[2])
+    face: Any = plane * Polygon(*part.plan, align=None)
+    if part.inner is not None:
+        face -= plane * Polygon(*part.inner, align=None)
+    d = part.dome
+    solid: Any = extrude(face, part.hi[2] - part.lo[2] + (1.0 if d is not None else 0.0))
+    if d is None:
+        return solid
+    solid &= Pos(0, d.centre_y, d.centre_z) * Sphere(d.radius + d.thickness)
+    if not part.cap:
+        solid -= Pos(0, d.centre_y, d.centre_z) * Sphere(d.radius)
+    return solid
+
+
 def _level_solid(part: Part) -> Any | None:
+    if part.plan is not None:
+        return _plan_solid(part)
     if part.revolve is not None:
         return _revolved_solid(part)
     if part.dome is not None:
