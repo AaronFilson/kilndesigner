@@ -42,6 +42,8 @@ from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step, length_text, show
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from kilndesigner.round_masonry import RingPlan
 
 IN = 25.4  # mm
@@ -305,6 +307,76 @@ def _side_by_side(built: list[tuple[Part, list[LayerPlan]]], us: bool) -> Findin
     )
 
 
+@dataclass(frozen=True)
+class Hole:
+    """A port cut up through the floor or a flue through the roof (hardware.floor_and_roof_holes):
+    its bounding box (mm, the model's coordinates) and whether it's round about the vertical."""
+
+    lo: tuple[float, float, float]
+    hi: tuple[float, float, float]
+    round: bool = False
+
+    def holds(self, x0: float, x1: float, y0: float, y1: float) -> bool:
+        """Whether the rectangle lies wholly inside the hole, in plan."""
+        if self.round:
+            cx, cy = (self.lo[0] + self.hi[0]) / 2, (self.lo[1] + self.hi[1]) / 2
+            rx, ry = (self.hi[0] - self.lo[0]) / 2, (self.hi[1] - self.lo[1]) / 2
+            return all(
+                ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1 + 1e-9
+                for x in (x0, x1)
+                for y in (y0, y1)
+            )
+        return (
+            self.lo[0] <= x0 + TOL
+            and x1 <= self.hi[0] + TOL
+            and self.lo[1] <= y0 + TOL
+            and y1 <= self.hi[1] + TOL
+        )
+
+    def through(self, part: Part) -> float:
+        """The volume of the hole inside a box part (mm³): a round hole's is π/4 of its box's."""
+        share = math.pi / 4 if self.round else 1.0
+        return share * math.prod(
+            max(0.0, min(a1, b1) - max(a0, b0))
+            for a0, a1, b0, b1 in zip(part.lo, part.hi, self.lo, self.hi, strict=True)
+        )
+
+
+def _flat(part: Part) -> bool:
+    """A floor or flat roof layer laid in courses, which a hole up through it can cut."""
+    return (
+        part.wall in ("floor", "roof")
+        and part.arch is None
+        and part.profile is None
+        and part.dome is None
+        and part.revolve is None
+        and part.plan is None
+    )
+
+
+def punch(plan: LayerPlan, holes: list[Hole]) -> int:
+    """Take out of a floor or flat roof's courses each brick wholly inside a hole through it; the
+    bricks a hole's edge crosses stay in, to be cut on site. Returns how many were taken out."""
+    part = plan.part
+    through = [h for h in holes if h.through(part) > 0]
+    if not through:
+        return 0
+    taken = 0
+    for i, course in enumerate(plan.courses):
+        y0 = part.lo[1] + course.offset
+        kept = tuple(
+            p
+            for p in course.pieces
+            if not any(
+                h.holds(part.lo[0] + p.start, part.lo[0] + p.start + p.length, y0, y0 + p.height)
+                for h in through
+            )
+        )
+        taken += len(course.pieces) - len(kept)
+        plan.courses[i] = replace(course, pieces=kept)
+    return taken
+
+
 BRICK_VOLUME = BRICK[0] * BRICK[1] * BRICK[2]
 ARCH_SOURCE = "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
 # Arch bricks taper across the 2½ in face along their 4½ in depth (for 4½ in rings); wedges taper
@@ -525,12 +597,20 @@ def curve_courses(kiln: Kiln, part: Part) -> tuple[int, str] | None:
     return n * sum(r.bricks for r in rings), describe(rings, n)
 
 
-def plan_masonry(kiln: Kiln) -> MasonryPlan:
+def plan_masonry(kiln: Kiln, holes: Sequence[Hole] = ()) -> MasonryPlan:
+    """The course plans and what to buy. ``holes`` are the burner ports up through the floor and
+    an updraft's flue through the roof (hardware.floor_and_roof_holes): the bricks wholly inside
+    them are taken out of a box kiln's floor and flat roof, and their volume out of any fibre or
+    castable layer there."""
     if kiln.chamber.shape == "round":
         from kilndesigner.round_masonry import plan_round_masonry
 
         return plan_round_masonry(kiln)
     us = kiln.units == "us"
+    holes = [] if bent(kiln) else list(holes)
+    punched: list[tuple[Part, int]] = []  # each layer a hole cuts, and the bricks it takes out
+    thinned: list[str] = []  # the fibre and castable layers a hole cuts, counted less it
+    unpunched: set[str] = set()  # the curved layers a hole cuts, counted whole
     findings: list[Finding] = []
     layers: list[LayerPlan] = []
     whole: Counter[str] = Counter()
@@ -551,6 +631,10 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     laid_steps: list[Step] = []
     for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
+        flat = _flat(part)
+        cut_out = sum(h.through(part) for h in holes) if flat else 0.0
+        if not flat and part.wall == "roof" and any(h.through(part) > 0 for h in holes):
+            unpunched.add(layer_name(part))
         laid = conical_layer(part, tatami) if m.kind in BRICK_KINDS else None
         if laid is not None:
             shapes[(m.id, CONICAL)] += laid[0]
@@ -616,6 +700,8 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
             if plans is None:
                 findings.append(_not_buildable(part, us))
                 continue
+            if cut_out > 0:
+                punched.append((part, sum(punch(plan, holes) for plan in plans)))
             if len(plans) > 1:
                 side_by_side.append((part, plans))
             springs = ("front", "back") if along else ("left", "right")
@@ -630,12 +716,14 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                         Cut(piece.length, piece.height, piece.full_length, piece.full_height)
                     )
         elif m.kind in SHEET_KINDS:
-            sheet_area[m.id] += part.area
-            sheet_area_thickness[m.id] += part.volume
+            sheet_area[m.id] += (part.volume - cut_out) / part.thickness
+            sheet_area_thickness[m.id] += part.volume - cut_out
             if not part.cap:
                 sheet_thickness.setdefault(m.id, set()).add(round(part.thickness, 2))
         elif m.kind in BULK_KINDS:
-            cast_volume[m.id] += part.volume
+            cast_volume[m.id] += part.volume - cut_out
+        if cut_out > 0 and m.kind not in BRICK_KINDS:
+            thinned.append(layer_name(part))
 
     quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
@@ -750,7 +838,9 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
                 reference=f"{BRICK_SOURCE}; kerf assumed; {brick.reference}",
             )
         )
-    findings += firebox_findings(kiln) + port_findings(kiln)
+    findings += firebox_findings(kiln) + port_findings(
+        kiln, bool(holes), punched, thinned, unpunched
+    )
     if bent(kiln):
         findings.append(Finding(level="info", message=bend_note(kiln), reference="bend.py"))
     if row:
@@ -776,9 +866,17 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     )
 
 
-def port_findings(kiln: Kiln) -> list[Finding]:
-    """What the brick count leaves in for the holes the burners and an updraft's flue need: they
-    are placed with the burners (hardware.py), after the masonry is counted."""
+def port_findings(
+    kiln: Kiln,
+    placed: bool = False,
+    punched: Sequence[tuple[Part, int]] = (),
+    thinned: Sequence[str] = (),
+    unpunched: set[str] | None = None,
+) -> list[Finding]:
+    """How the brick count allows for the burner ports up through the floor and an updraft's flue
+    through the roof (placed with the burners, hardware.py): ``punched`` is each brick layer they
+    cut and the bricks taken out of it, ``thinned`` the fibre and castable layers counted less the
+    holes, ``unpunched`` the curved roof layers counted whole."""
     gas = kiln.heat.gas
     through: list[str] = []
     if gas is not None and gas.burners.wall == "floor":
@@ -788,18 +886,32 @@ def port_findings(kiln: Kiln) -> list[Finding]:
         through.append("the flue through the roof")
     if not through:
         return []
-    return [
-        Finding(
-            level="info",
-            message=(
-                " and ".join(through).capitalize()
-                + (" are" if len(through) > 1 or "ports" in through[0] else " is")
-                + " cut in the 3D model where the burners "
-                "and flue are placed; the brick count leaves those bricks in, to be cut on site, "
-                "as the side walls' ports are."
-            ),
+    what = " and ".join(through).capitalize() + (
+        " are" if len(through) > 1 or "ports" in through[0] else " is"
+    )
+    if not placed:
+        text = (
+            f"{what} cut in the 3D model where the burners and flue are placed; this brick count "
+            "leaves those bricks in, to be cut on site, as the side walls' ports are."
         )
-    ]
+    else:
+        out = [f"{n} from {layer_name(p).lower()}" for p, n in punched if n]
+        text = f"{what} cut in the 3D model and taken out of the count: " + (
+            "the bricks wholly inside a hole are left out (" + "; ".join(out) + "), "
+            if out
+            else "no brick lies wholly inside a hole, "
+        )
+        text += "and those its edge crosses are counted whole, to be cut on site."
+        if thinned:
+            text += f" {', '.join(thinned)}: counted less the holes' volume."
+        text += " The side walls' ports are cut on site from bricks counted whole."
+        if unpunched:
+            text += (
+                " The flue goes through the curved roof ("
+                + ", ".join(sorted(unpunched))
+                + "), counted by its shapes or volume without the hole: cut it on site."
+            )
+    return [Finding(level="info", message=text)]
 
 
 def _row_note(kiln: Kiln, us: bool) -> Finding:
