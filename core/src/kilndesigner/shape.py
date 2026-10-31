@@ -18,6 +18,7 @@ from itertools import pairwise
 import numpy as np
 from scipy.optimize import brentq
 
+from kilndesigner.form import Form
 from kilndesigner.library import materials
 from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch
 from kilndesigner.rings import IN, cut_facets, inside_apothem, ring_method
@@ -262,9 +263,13 @@ class ChamberShape:
     chambers: int = 1
     """Chambers in a row along ``depth``: an arch or dome over each, spanning along the draft
     (run_parts.py); ``arch`` and ``dome`` are then one chamber's."""
+    form: Form | None = None
+    """A curved plan (chamber.outline): its walls, floor and dome from the form (form.py)."""
 
     @property
     def volume(self) -> float:
+        if self.form is not None:
+            return self.form.volume
         n = self.chambers
         if n > 1 and self.arch is not None:
             return (self.width * self.height * self.depth) + n * self.arch.segment_area * self.width
@@ -291,6 +296,8 @@ class ChamberShape:
 
     def _faces(self) -> list[FaceShape]:
         w, d, h = self.width, self.depth, self.height
+        if self.form is not None:
+            return form_faces(self.form, w, d)
         if self.round:
             return self._round_faces()
         if self.catenary is not None:
@@ -426,11 +433,69 @@ class ChamberShape:
         ]
 
 
+def form_faces(form: Form, width: float, depth: float) -> list[FaceShape]:
+    """A curved plan's faces (a teardrop's or an oval's, convex): its wall in four quarters, as a
+    round chamber's (so a door can be one of them), the floor, and the dome or a flat roof.
+
+    Each grows with the lining as a convex outline does, moved out by t: area A + P·t + π·t² and
+    perimeter P + 2π·t (Steiner's formula), the wall's height h + 2t as a box's. The dome is the
+    sphere moved out by t over the plan's reach from the crown moved out by t, ∫ R(R − √(R² − ρ²))
+    dθ, as shape.SailDome's; the wall above the springline rises to the sphere at each point of
+    the outline, ∮ z ds. Moving the reach out by t along the ray, not along the outline's normal,
+    takes a little less area where the wall runs oblique to the ray."""
+    plan, h = form.plan, form.height
+    area, perimeter = plan.area, plan.perimeter
+    dome = form.domes[0] if form.domes else None
+    n = 720
+    angles = (np.arange(n) + 0.5) / n * 2 * math.pi
+    centre = dome.centre if dome is not None else (0.0, 0.0)
+    reach = np.array([plan.reach(float(a), centre) for a in angles])
+    pts = np.array(plan.points(96))
+    nxt = np.roll(pts, -1, axis=0)
+    ds = np.hypot(*(nxt - pts).T)
+    rho = np.hypot(*((pts + nxt) / 2 - np.array(centre)).T)
+
+    def above(t: float) -> float:
+        """The wall above the springline, up to the sphere, t out (0 under a flat roof)."""
+        if dome is None:
+            return 0.0
+        big, below = dome.radius + t, dome.radius - dome.rise  # the centre under the springline
+        z = np.sqrt(np.maximum(big * big - (rho + t) ** 2, 0.0)) - below
+        return float(np.sum(np.maximum(z, 0.0) * ds)) * (perimeter + 2 * math.pi * t) / perimeter
+
+    def quarter(t: float) -> float:
+        return ((perimeter + 2 * math.pi * t) * (h + 2 * t) + above(t)) / 4
+
+    def floor(t: float) -> float:
+        return area + perimeter * t + math.pi * t * t
+
+    def sphere(t: float) -> float:
+        assert dome is not None
+        big = dome.radius + t
+        springline = math.sqrt(max(big * big - (dome.radius - dome.rise) ** 2, 0.0))
+        r = np.minimum(reach + t, springline)
+        strip = big * (big - np.sqrt(np.maximum(big * big - r * r, 0.0)))
+        return float(np.sum(strip) * 2 * math.pi / n)
+
+    walls = [
+        FaceShape(face, "vertical", quarter(0.0), perimeter / 4, h, grows=quarter)
+        for face in ("left", "right", "back", "front")
+    ]
+    bottom = FaceShape("floor", "facing_down", area, width, depth, grows=floor)
+    top = sphere if dome is not None else floor
+    roof = FaceShape("roof", "facing_up", top(0.0), width, depth, grows=top)
+    return [*walls, bottom, roof]
+
+
 def chamber_shape(kiln: Kiln) -> ChamberShape:
     """The chamber's shape: chambers in a row count as one long chamber, the walls between them
     losing no heat outside, each under its own arch or dome as it is built (run_parts.py)."""
     c = kiln.chamber
     w, d, h = si(c.width, "m"), si(c.length, "m"), si(c.height, "m")
+    if c.outline is not None:
+        from kilndesigner.form import form_of
+
+        return ChamberShape(w, d, h, None, form=form_of(kiln))
     open_top = isinstance(kiln.roof, OpenTop)
     if c.shape == "round":
         dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None

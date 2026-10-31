@@ -536,7 +536,10 @@ def _through(
 
 
 def _plain(p: Part) -> bool:
-    return p.arch is None and p.profile is None and p.dome is None and p.revolve is None
+    return (
+        p.arch is None and p.profile is None and p.dome is None and p.revolve is None
+        and p.plan is None
+    )  # fmt: skip
 
 
 def carve(parts: list[Part], holes: list[Opening]) -> list[Part]:

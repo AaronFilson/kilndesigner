@@ -20,6 +20,10 @@ from kilndesigner.outline import (
     arch_section,
     circle,
     curve_section,
+    flat_teardrop,
+    half_width,
+    moved,
+    offset,
     oval,
     prism,
     rectangle,
@@ -122,6 +126,55 @@ def test_a_teardrop_with_curved_sides() -> None:
         teardrop(1.0, 4.0, 0.5)
     with pytest.raises(ValueError, match="too small"):
         teardrop(1.0, 4.0, 1.5)
+
+
+def test_a_teardrop_with_a_flat_front() -> None:
+    whole = flat_teardrop(2.0, 5.0)  # round all round, centred on its length
+    assert whole.bounds == pytest.approx((-1, 1, -2.5, 2.5), abs=1e-4)
+    assert whole.area == pytest.approx(teardrop(1.0, 5.0).area)
+    cut = flat_teardrop(2.0, 5.0, 1.2, 8.0)
+    _, _, y0, y1 = cut.bounds
+    assert (y0, y1) == pytest.approx((-2.5, 2.5), abs=1e-6)
+    assert half_width(cut, -2.5 + 1e-9) == pytest.approx(0.6)  # the flat front
+    assert half_width(cut, -2.5 + 0.8) >= 1.0  # at the round end's centre, or the sides' bulge
+    assert half_width(cut, 9.0) == 0.0
+    # The cut takes off the circle's segment beyond the chord, 0.8 from its centre
+    seg = math.acos(0.8) - 0.8 * 0.6
+    assert cut.area == pytest.approx(teardrop(1.0, 5.2, 8.0).area - seg)
+    with pytest.raises(ValueError, match="narrower"):
+        flat_teardrop(2.0, 5.0, 2.0)
+    # Tight sides touch the round end below where a wide front would cut it
+    with pytest.raises(ValueError, match="in front of"):
+        flat_teardrop(2.0, 2.1, 1.6, 1.3)
+
+
+def test_an_outline_moved_out() -> None:
+    # A rectangle moved out by t: its corners rounded, Steiner's A + P·t + π·t²
+    r = rectangle(2.0, 1.0)
+    assert offset(r, 0.0) is r
+    assert offset(r, 0.25).area == pytest.approx(2 + 6 * 0.25 + math.pi * 0.0625)
+    assert offset(r, 0.25).perimeter == pytest.approx(6 + 2 * math.pi * 0.25)
+    drop = flat_teardrop(1.0, 3.0, 0.6, 5.0)
+    grown = offset(drop, 0.1)
+    assert grown.area == pytest.approx(drop.area + drop.perimeter * 0.1 + math.pi * 0.01)
+    assert offset(oval(2.0, 3.0, 0.6), 0.5).bounds == pytest.approx((-1.5, 1.5, -2, 2), abs=1e-4)
+    with pytest.raises(ValueError, match="points"):
+        offset(curve_section([(1.0, 0.0), (0.0, 1.0), (-1.0, 0.0)]), 0.1)
+    # An arc turning clockwise (a hollow in the outline) shrinks as the outline grows
+    notch = Outline(
+        (
+            Line((-2.0, -1.0), (2.0, -1.0)),
+            Line((2.0, -1.0), (2.0, 1.0)),
+            Arc((0.0, 2.0), math.sqrt(5), -math.atan2(1, 2), -(math.pi - 2 * math.atan2(1, 2))),
+            Line((-2.0, 1.0), (-2.0, -1.0)),
+        )
+    )
+    grown_notch = offset(notch, 0.1)
+    arc = next(s for s in grown_notch.segments if isinstance(s, Arc) and s.radius > 1)
+    assert arc.radius == pytest.approx(math.sqrt(5) - 0.1)
+    assert moved(circle(1.0), 1.0, 2.0).bounds == pytest.approx((0.5, 1.5, 1.5, 2.5), abs=1e-4)
+    poly = moved(Outline((Polyline(((0, 0), (1, 0), (0, 1))), Line((0, 1), (0, 0)))), 1, 1)
+    assert poly.area == pytest.approx(0.5)
 
 
 def test_an_outline_is_closed_anticlockwise_and_not_empty() -> None:

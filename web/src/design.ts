@@ -34,6 +34,7 @@ export interface KilnDocument {
     on_ground?: boolean;
     floor_inside?: boolean;
     rings?: RingMethod;
+    outline?: PlanOutline;
   };
   roof?:
     | { type: "flat" }
@@ -46,7 +47,7 @@ export interface KilnDocument {
         spring_rate?: string;
       }
     | { type: "catenary_arch" }
-    | { type: "dome"; rise: string };
+    | { type: "dome"; rise: string; crown_at?: string };
   loading?: {
     /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
     type?: "door" | "car" | "lid";
@@ -79,6 +80,26 @@ export interface KilnDocument {
 
 /** How a round wall's brick rings are turned (model.py Chamber.rings). */
 export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
+
+/** A box chamber's plan as a curve (model.py PlanOutline), filling its width and depth. */
+export type PlanOutline =
+  | { shape: "teardrop"; front_width?: string; side_radius?: string }
+  | { shape: "oval"; end_radius: string };
+
+export type PlanShape = "rectangle" | PlanOutline["shape"];
+
+/** The chamber with its plan chosen: a rectangle drops the outline; an oval starts with round
+ *  ends a quarter of the width in radius, a size to edit, not a rule. */
+export function withPlan(
+  chamber: KilnDocument["chamber"],
+  plan: PlanShape,
+  units: "us" | "metric" | undefined,
+): KilnDocument["chamber"] {
+  if (plan === "rectangle") return { ...chamber, outline: undefined };
+  if (plan === "teardrop") return { ...chamber, outline: { shape: "teardrop" } };
+  const width = toMm(chamber.width) ?? 0;
+  return { ...chamber, outline: { shape: "oval", end_radius: fromMm(width / 4, units) } };
+}
 
 export interface MixPart {
   ingredient: string;

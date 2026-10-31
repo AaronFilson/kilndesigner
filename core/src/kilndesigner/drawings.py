@@ -192,10 +192,46 @@ def _revolved_cut(p: Part, axis: Axis, at: float) -> list[Rect]:
     return [_bounded(outline, fill, p.name), _bounded(mirror, fill, p.name)]
 
 
+def _plan_cut(p: Part, axis: Axis, at: float, steps: int = 96) -> list[Rect]:
+    """A curved plan's layer (Part.plan) cut: seen from above at z = at, its outline less the
+    inner one; or across (y = at) or along (x = at), each span of it between its bottom and top,
+    a dome's sphere where it has one."""
+    assert p.plan is not None
+    fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+    if axis == 2:
+        if p.dome is not None or not p.lo[2] <= at <= p.hi[2]:
+            return []
+        return [_bounded(p.plan, fill, p.name, (p.inner,) if p.inner else ())]
+    along: Literal[0, 1] = 0 if axis == 0 else 1
+    ends = [e for a, b in _crossings(p.plan, along, at) for e in (a, b)]
+    ends += [e for a, b in _crossings(p.inner or (), along, at) for e in (a, b)]
+    ends.sort()
+    rects: list[Rect] = []
+    for a, b in zip(ends[::2], ends[1::2], strict=False):
+        if p.dome is None:
+            rects.append(Rect(a, p.lo[2], b - a, p.hi[2] - p.lo[2], fill, p.name))
+            continue
+        d, s = p.dome, np.linspace(a, b, steps + 1)
+        x, y = (np.full_like(s, at), s) if axis == 0 else (s, np.full_like(s, at))
+        top = d.heights(x, y, d.radius + d.thickness)
+        floor = np.full_like(s, p.lo[2])
+        bottom = floor if p.cap else np.maximum(d.heights(x, y, d.radius), floor)
+        keep = top > bottom + 1e-6
+        if not keep.any():
+            continue
+        lower = [(float(u), float(z)) for u, z in zip(s[keep], bottom[keep], strict=True)]
+        upper = [(float(u), float(z)) for u, z in zip(s[keep], top[keep], strict=True)]
+        rects.append(_bounded((*lower, *reversed(upper)), fill, p.name))
+    return rects
+
+
 def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rect]:
     rects: list[Rect] = []
     for p in parts:
         fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+        if p.plan is not None:
+            rects += _plan_cut(p, axis, at)
+            continue
         if p.revolve is not None:
             rects += _revolved_cut(p, axis, at)
             continue

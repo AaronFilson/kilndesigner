@@ -11,33 +11,43 @@
 # (4-145); a cast dome, first cast too thin and thickened (4-146).
 # Assumed: the grate 24 in long, over the ash pit, and the firebox the front's 39 in by that 24 in.
 # Walls and floor 9 in of K-26 insulating brick: the double walls as two 4½ in courses, in the
-# 2500–2600 °F brick Olsen sets under a cast dome (p.58). The dome 6 in of Kast-O-Lite 26 LI Plus:
-# Olsen casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"), and "a 6in.
-# thickness is best" (p.59). Its rise, 2¾ in per foot of the 36 in span, 8¼ in: the middle of his
-# 2½–3 in/ft for domes (p.51). Cone 10, from the Gulgong racer, Olsen's cast-dome wood cross-draft
-# (gulgong-racer, p.119). The door in the right wall: the book doesn't say which side. Its 37 in
-# reaches 2 in above the 35 in walls, into the dome's sides, which the sail dome allows. Its head
-# is drawn with rounded corners and a flatter top than a semicircle, and what spans it isn't
-# printed: it is taken as arched in the dome's 6 in ring, as Olsen's other built doors are
-# (door-openings.md).
-# Not modelled: the teardrop, as a box of its mean width, 36 in: widths 39, 51½, 48, 16 and 12 in
-# at 0, 36, 69, 86 and 98 in from the front, averaged along the 117 in with 12 in carried to the
-# end. The widest is placed at the side door's near jamb, which puts the 48 in at its far jamb;
-# the plan doesn't fix it. The chimney's height isn't printed, so the chimney isn't entered: the
-# engine sizes it (its section comes out 9 × 9 in). The exit opening (12 in high, its width not
-# printed), the 9 in high stoke hole and the 2½ × 4 in passive damper.
+# 2500–2600 °F brick Olsen sets under a cast dome (p.58). The dome of Kast-O-Lite 26 LI Plus:
+# Olsen casts domes in insulating castable (p.51, p.58: "Kast-O-Lite 2600 LI Plus"). Cone 10, from
+# the Gulgong racer, Olsen's cast-dome wood cross-draft (gulgong-racer, p.119). The door in the
+# right wall: the book doesn't say which side.
+# The plan (chamber.outline): a teardrop, its 51½ in round end cut square by the 39 in front wall,
+# its sides arcs of 200 in radius meeting at the back, 117 in from the front. Fitted to the printed
+# widths, as no radius is printed: 4321 in², 3 % over the printed widths joined by straight lines
+# (curved-kilns.md); narrower than the book's 48 in at 69 in from the front, and wider in the neck.
+# ESTIMATES, scaled from the book's figures (curved-kilns.md, "Estimates scaled from the figures"):
+# the crown 45 ± 2 in up, so 10 in above the 35 in springline, 53 ± 4 in behind the front wall
+# (Fig 4-140, scaled against the printed 37 in door); the dome 5½ ± 1½ in thick (Fig 4-147, scaled
+# against the printed 9 in stoke hole). The dome is the sphere over the crown through the plan's
+# farthest point, the neck's end. The door's 37 in reaches above the 35 in springline into the
+# dome's side. Its head is drawn flat with rounded corners; what spans it isn't printed, and the
+# engine's door statics cover a semicircular ring or a steel lintel, so it is taken as arched in
+# the dome's ring, as Olsen's other built doors are (door-openings.md).
+# Not modelled: the book's concave neck (two arcs and a point can't make it). The chimney's height
+# isn't printed, so the chimney isn't entered: the engine sizes it (its section comes out 9 × 9
+# in). The exit opening (12 in high, its width not printed), the 9 in high stoke hole and the
+# 2½ × 4 in passive damper.
 schema: 1
 name: Conrad Calimpong's teardrop kiln
 units: us
 firing:
   cone: "10"
 chamber:
-  width: 36 in # the teardrop's mean width
+  width: 51.5 in # the widest, 51½ in (Fig 4-140)
   depth: 117 in # 9 ft 9 in
   height: 35 in # to the dome's springline
+  outline:
+    shape: teardrop
+    front_width: 39 in # the firebox end's straight front wall (Fig 4-140)
+    side_radius: 200 in # fitted to the printed widths: see the notes
 roof:
   type: dome
-  rise: 8.25 in
+  rise: 10 in # estimated from Fig 4-140's elevation: the crown ~45 in up (curved-kilns.md)
+  crown_at: 53 in # estimated, the same way: the crown ~53 in behind the front wall
   buttressed: true
 loading:
   type: door
@@ -53,7 +63,7 @@ lining:
       thickness: 9 in
   roof:
     - material: kast-o-lite-26-li-plus
-      thickness: 6 in
+      thickness: 5.5 in # estimated from Fig 4-147 against the 9 in stoke hole (curved-kilns.md)
 heat:
   fire:
     fuel: wood

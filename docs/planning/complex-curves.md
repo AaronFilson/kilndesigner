@@ -12,7 +12,7 @@ simplification is written into the example's notes:
 
 | Kiln (`examples/olsen/`) | Shape as built | How the engine has it now |
 |---|---|---|
-| `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | A box under a sail dome; the door's head as a semicircle |
+| `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | Done (step 3): a teardrop plan (`chamber.outline`) under a sphere through it (`roof.crown_at`), crown and thickness estimated from the figures; the door's head still a semicircle |
 | `bae-gilgama` | Teardrop tube on a slope (p.107–108) | A sloping box |
 | `gulgong-racer`, `hohr-2003` | Cast domes over the chamber (p.118–123) | Dome over a rectangle |
 | `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Not described |
@@ -68,7 +68,19 @@ simplification is written into the example's notes:
 2. The shape description (layer 1) behind the existing types, with no output change; tests that
    every example builds the same.
 3. Calimpong first: teardrop plan, cast dome over it, flattened door head; its numbers against
-   the book (inside length 9'9", the door 33 × 37 in).
+   the book (inside length 9'9", the door 33 × 37 in). **Done 2026-10-30.** `chamber.outline`
+   chooses a teardrop (flat front, arc sides) or an oval filling the chamber's width and depth,
+   for one level chamber under a dome or a flat roof, fired with fuel or gas (other cases
+   refused with reasons). The dome is the sphere over `roof.crown_at` through the plan's
+   farthest point. Areas, volume and heat loss come from the form (Steiner growth with depth);
+   the lining is laid out as rings on the plan moved out layer by layer (`outline.offset`), its
+   volumes (castables, brick by volume) and solids (build123d: the plan extruded, cut to the
+   sphere) from the same outline; the sections draw it. Calimpong's crown (45 ± 2 in, 53 ± 4 in
+   back) and dome thickness (5½ ± 1½ in) are estimates scaled from the figures
+   (`curved-kilns.md`). Left: the door's flat head with rounded corners (the door statics cover
+   a semicircular ring or a steel lintel only), the book's concave neck, the frame's dome slices
+   (still over the chamber's rectangle), brick course plans round the curve, and the web form's
+   point editing.
 4. Revolved profiles: bottle kilns and round domes of conical-brick courses.
 5. Vaults of changing section: Bowen Mountain, Tamba's doors through the springing.
 6. Crossing-axis domes (Fireworks, Kanayama) and corbelled vaults, as sources allow.

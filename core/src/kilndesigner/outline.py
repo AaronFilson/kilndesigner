@@ -305,6 +305,95 @@ def teardrop(radius: float, length: float, side_radius: float | None = None) -> 
     )
 
 
+def _moved(s: Segment, dx: float, dy: float) -> Segment:
+    if isinstance(s, Arc):
+        return Arc((s.centre[0] + dx, s.centre[1] + dy), s.radius, s.start, s.sweep)
+    if isinstance(s, Line):
+        return Line((s.start[0] + dx, s.start[1] + dy), (s.end[0] + dx, s.end[1] + dy))
+    return Polyline(tuple((x + dx, y + dy) for x, y in s.vertices))
+
+
+def moved(outline: Outline, dx: float, dy: float) -> Outline:
+    return Outline(tuple(_moved(s, dx, dy) for s in outline.segments))
+
+
+def flat_teardrop(
+    width: float, length: float, front_width: float | None = None, side_radius: float | None = None
+) -> Outline:
+    """A teardrop ``width`` across at its round end and ``length`` from its front to its point,
+    along +y, centred on its length: the round end cut square by a flat front wall
+    ``front_width`` wide (a firebox's wall, as Calimpong's), or whole when that is left out. The
+    widest point then lies √(r² − (f/2)²) behind the front."""
+    r = width / 2
+    if front_width is None:
+        whole = teardrop(r, length, side_radius)
+        return moved(whole, 0.0, -length / 2 + r)
+    if not 0 < front_width < width:
+        raise ValueError("a teardrop's flat front must be narrower than its widest point")
+    c = math.sqrt(r * r - (front_width / 2) ** 2)  # the front, behind the round end's centre
+    whole = teardrop(r, length - c + r, side_radius)
+    *sides, end = whole.segments
+    assert isinstance(end, Arc)
+    left, right = math.pi + math.asin(c / r), 2 * math.pi - math.asin(c / r)
+    stop = end.start + end.sweep
+    if not end.start < left < right < stop:
+        raise ValueError("the teardrop's sides meet its round end in front of its flat front")
+    cut = (
+        Arc(end.centre, r, end.start, left - end.start),
+        Line(end.at(left), end.at(right)),
+        Arc(end.centre, r, right, stop - right),
+    )
+    return moved(Outline((*sides, *cut)), 0.0, -length / 2 + c)
+
+
+def _normal(s: Line | Arc, end: bool) -> Point:
+    """The outward normal of an anticlockwise outline's line or arc at its start or end."""
+    if isinstance(s, Arc):
+        a = s.start + (s.sweep if end else 0.0)
+        sign = 1.0 if s.sweep > 0 else -1.0
+        return (sign * math.cos(a), sign * math.sin(a))
+    (x0, y0), (x1, y1) = s.start, s.end
+    n = math.dist(s.start, s.end)
+    return ((y1 - y0) / n, -(x1 - x0) / n)
+
+
+def offset(outline: Outline, t: float) -> Outline:
+    """A convex outline of lines and arcs moved out by ``t``: each line moved along its normal,
+    each arc's radius grown, and an arc of radius ``t`` round each corner (the Minkowski sum with
+    a disc, whose area is A + P·t + π·t², Steiner's formula). Tangent joins need no corner."""
+    if t <= 0:
+        return outline
+    out: list[Segment] = []
+    segs: list[Line | Arc] = []
+    for s in outline.segments:
+        if isinstance(s, Polyline):
+            raise ValueError("a curve given as points isn't offset here")
+        segs.append(s)
+    for s, nxt in zip(segs, segs[1:] + segs[:1], strict=True):
+        if isinstance(s, Arc):
+            grow = t if s.sweep > 0 else -t
+            out.append(Arc(s.centre, s.radius + grow, s.start, s.sweep))
+        else:
+            nx, ny = _normal(s, False)
+            out.append(Line((s.start[0] + t * nx, s.start[1] + t * ny),
+                            (s.end[0] + t * nx, s.end[1] + t * ny)))  # fmt: skip
+        a, b = _normal(s, True), _normal(nxt, False)
+        turn = math.atan2(a[0] * b[1] - a[1] * b[0], a[0] * b[0] + a[1] * b[1])
+        if turn > 1e-9:
+            corner = _ends(s)[1]
+            out.append(Arc(corner, t, math.atan2(a[1], a[0]), turn))
+    return Outline(tuple(out))
+
+
+def half_width(outline: Outline, y: float) -> float:
+    """Half the outline's width at ``y``, about x = 0 (a convex plan symmetric about its long
+    axis); 0 beyond its ends."""
+    try:
+        return outline.reach(0.0, (0.0, y))
+    except ValueError:
+        return 0.0
+
+
 @dataclass(frozen=True)
 class Station:
     """A vault's section at ``at`` along its run: a closed outline in (across, up), up from the

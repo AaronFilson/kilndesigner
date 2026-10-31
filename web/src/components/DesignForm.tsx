@@ -24,6 +24,7 @@ import {
   setIn,
   splitQuantity,
   toMm,
+  withPlan,
   WALLS,
   type WallFace,
 } from "../design";
@@ -1102,6 +1103,7 @@ export function DesignForm({
   const fire = doc.heat.fire;
   const mixes = (doc.castables ?? []).map((c) => ({ id: c.id, name: c.name }));
   const round = doc.chamber.shape === "round";
+  const outline = doc.chamber.outline;
   const chambers = doc.chamber.chambers ?? 1;
   const lid = loading.type === "lid";
   const lidOk = round && electric !== undefined && roof.type === "flat";
@@ -1167,7 +1169,14 @@ export function DesignForm({
             change(
               ["chamber"],
               v === "round"
-                ? { ...doc.chamber, shape: v, depth: doc.chamber.width, chambers: undefined, bend: undefined }
+                ? {
+                    ...doc.chamber,
+                    shape: v,
+                    depth: doc.chamber.width,
+                    chambers: undefined,
+                    bend: undefined,
+                    outline: undefined,
+                  }
                 : { ...doc.chamber, shape: undefined, rings: undefined, floor_inside: undefined },
             )
           }
@@ -1194,6 +1203,48 @@ export function DesignForm({
               recommended.
             </p>
           </>
+        )}
+        {!round && (
+          <Choice
+            label="Plan"
+            value={outline?.shape ?? "rectangle"}
+            options={[
+              ["rectangle", "A rectangle"],
+              ["teardrop", "A teardrop, round at the front (Calimpong's kiln)"],
+              ["oval", "An oval"],
+            ]}
+            onChange={(v) => change(["chamber"], withPlan(doc.chamber, v, doc.units))}
+          />
+        )}
+        {outline?.shape === "teardrop" && (
+          <>
+            <Quantity
+              label="Flat front wall's width (left out: round)"
+              value={outline.front_width}
+              units={LENGTH}
+              onChange={(v) => change(["chamber", "outline", "front_width"], v)}
+            />
+            <Quantity
+              label="Sides' radius (left out: straight)"
+              value={outline.side_radius}
+              units={LENGTH}
+              onChange={(v) => change(["chamber", "outline", "side_radius"], v)}
+            />
+          </>
+        )}
+        {outline?.shape === "oval" && (
+          <Quantity
+            label="Round ends' radius"
+            value={outline.end_radius}
+            units={LENGTH}
+            onChange={(v) => change(["chamber", "outline", "end_radius"], v)}
+          />
+        )}
+        {outline !== undefined && (
+          <p className="muted section-note">
+            The plan fills the width (its widest) and the depth (front to back). One level chamber
+            under a dome or a flat roof, fired with gas or fuel.
+          </p>
         )}
         {(round ? (["width", "height"] as const) : (["width", "depth", "height"] as const)).map((k) => (
           <Quantity
@@ -1348,10 +1399,19 @@ export function DesignForm({
             gas: elements in its curved walls aren't designed here.
           </p>
         )}
+        {roof.type === "dome" && outline !== undefined && (
+          <Quantity
+            label="Crown, behind the front wall (left out: the middle)"
+            value={roof.crown_at}
+            units={LENGTH}
+            onChange={(v) => change(["roof", "crown_at"], v)}
+          />
+        )}
         {roof.type === "dome" && (
           <p className="muted section-note">
-            A dome on all four walls: a sphere through the chamber's top corners, rising to the
-            rise at its centre.
+            {outline === undefined
+              ? "A dome on all four walls: a sphere through the chamber's top corners, rising to the rise at its centre."
+              : "A sphere centred over the crown through the plan's farthest point, rising to the rise there."}
           </p>
         )}
       </Section>
