@@ -25,6 +25,7 @@ joint for fireclay-set tatami bricks (Olsen p.94: "thick fireclay joints").
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from kilndesigner.model import ConicalBrick
@@ -180,19 +181,181 @@ def dome(radius: float, rise: float, brick: Brick) -> list[tuple[float, int]]:
     """A spherical dome of inside ``radius`` rising ``rise`` (in): each course's height of its
     narrow ends above the springing and its bricks, from the springing up to the crown, which a
     plug closes. Each course steps up the meridian by its brick's angle."""
+    laid = lay_conical_dome(radius, rise, brick)
+    return [(c.height, c.bricks) for c in laid.courses]
+
+
+STRAIGHTS_REF = (
+    "Olsen, The Kiln Book, 4th ed., p.51 (a dome is part of one sphere; standard bricks laid in "
+    "header or stretcher courses, each pitched to the dome's radius by Hendo's gauge, Fig. 2-28A) "
+    "and p.45 (straights round a curve, their inside faces touching, the wedge joints behind "
+    "filled with mortar, Fig. 2-13); geometry derived in conical.py"
+)
+
+
+@dataclass(frozen=True)
+class DomeCourse:
+    """One horizontal course of a dome, inches: the height of its hot face's middle above the
+    springing, the ring's inside diameter there, and its bricks."""
+
+    height: float
+    across: float
+    bricks: int
+
+
+@dataclass(frozen=True)
+class DomeLaying:
+    """A dome laid course by course from the springing to the crown, its plug's opening left."""
+
+    courses: tuple[DomeCourse, ...]
+    crown: float  # in, across the opening above the top course, closed by a plug
+    steps: tuple[Step, ...]
+
+    @property
+    def total(self) -> int:
+        return sum(c.bricks for c in self.courses)
+
+
+type Fraction = Callable[[float], float]
+"""The part (0 to 1) of a course's ring, of this inside radius in inches about the dome's axis,
+that lies over the kiln's plan: 1 everywhere over a round kiln; less over a rectangle, whose
+walls cut a sail dome's low courses into arcs."""
+
+
+def _whole(_: float) -> float:
+    return 1.0
+
+
+def lay_dome(
+    radius: float,
+    rise: float,
+    along: float,
+    up: float,
+    *,
+    what: str,
+    reference: str,
+    fraction: Fraction = _whole,
+    joint: tuple[str, str, float] | None = None,
+) -> DomeLaying:
+    """A spherical dome of inside ``radius`` rising ``rise`` above its springing (in), laid in
+    horizontal courses: each brick takes ``along`` radians of the sphere round its course and
+    each course ``up`` radians up the meridian, measured from the sphere's centre (each brick
+    on a radius of the dome, as Hendo's gauge sets it, Olsen p.51). A course at latitude λ is a
+    ring of inside radius r·cos λ, so it takes 2π·cos λ / along bricks, times the part of it
+    over the plan. Courses run from the springing up while a whole course fits; the opening
+    above is the crown's plug. ``joint`` is a note on the joints: its name, formula and size."""
     if not (0 < rise <= radius + 1e-9):
         raise ValueError("a spherical dome rises more than nothing and at most its radius")
-    c = course(radius, brick)
     start = math.asin(max(0.0, (radius - rise) / radius))  # springing, up from the equator
-    out: list[tuple[float, int]] = []
-    lat = start + c.angle / 2
-    while lat < math.pi / 2 - c.angle / 2 + 1e-9:
-        # The course's circle is cos(lat) of the sphere's; each brick takes r·θ of it
-        out.append(
-            (
-                radius * (math.sin(lat) - math.sin(start)),
-                math.ceil(2 * math.pi * math.cos(lat) / c.angle - 1e-9),
-            )
-        )
-        lat += c.angle
-    return out
+    courses: list[DomeCourse] = []
+    lat = start + up / 2
+    while lat < math.pi / 2 - up / 2 + 1e-9:
+        ring = radius * math.cos(lat)
+        n = math.ceil(2 * math.pi * math.cos(lat) * fraction(ring) / along - 1e-9)
+        if n > 0:
+            courses.append(DomeCourse(radius * (math.sin(lat) - math.sin(start)), 2 * ring, n))
+        lat += up
+    crown = 2 * radius * math.cos(lat - up / 2)
+
+    def f(x: float) -> str:
+        return f"{x:.3g} in"
+
+    span = (
+        f", from {courses[0].bricks} round the lowest to {courses[-1].bricks} at the top"
+        if courses
+        else ""
+    )
+    steps = [
+        Step(
+            name=f"{what}: the dome's sphere",
+            formula="springing at λ₀ = asin((r − h) / r) above the sphere's equator",
+            inputs={"r": f(radius), "h": f(rise)},
+            value=f"λ₀ = {math.degrees(start):.3g}°",
+            reference="sphere geometry",
+        ),
+        Step(
+            name=f"{what}: each brick's angle round and up",
+            formula="round its course and up the meridian, from the sphere's centre",
+            inputs={"round": f"{math.degrees(along):.3g}°"},
+            value=f"{math.degrees(up):.3g}° a course",
+            reference=reference,
+        ),
+        Step(
+            name=f"{what}: courses",
+            formula="from λ₀ up a course angle at a time while a whole course fits; "
+            "n = ⌈2π·cos λ·p / round⌉",
+            inputs={
+                "p": "the part of each ring over the plan"
+                if fraction is not _whole
+                else "1, a round kiln",
+            },
+            value=f"{len(courses)} courses, {sum(c.bricks for c in courses)} bricks{span}",
+            reference=reference,
+        ),
+        Step(
+            name=f"{what}: the crown's opening",
+            formula="2r·cos λ, λ at the top course's upper edge",
+            value=f(crown),
+            reference=reference,
+            note="closed by a plug or keystone, as beehive crowns are (curved-kilns.md, NPS)",
+        ),
+    ]
+    if joint is not None:
+        steps.append(Step(name=f"{what}: {joint[0]}", formula=joint[1], value=f(joint[2]),
+                          reference=reference,
+                          note="no source gives a largest joint"))  # fmt: skip
+    return DomeLaying(tuple(courses), crown, tuple(steps))
+
+
+def lay_conical_dome(
+    radius: float, rise: float, brick: Brick, fraction: Fraction = _whole, what: str = "Dome"
+) -> DomeLaying:
+    """A dome of conical bricks, their narrow ends on the inside sphere: each brick's angle
+    θ = max(d / r, D / (r + L)) both round its course and up the meridian."""
+    c = course(radius, brick)
+    joint = ("hot-face joint between narrow ends", "r·θ − d", c.inside_joint)
+    return lay_dome(radius, rise, c.angle, c.angle, what=what, reference=REF, fraction=fraction,
+                    joint=joint)  # fmt: skip
+
+
+def lay_straights_dome(
+    radius: float,
+    rise: float,
+    depth: float,
+    fraction: Fraction = _whole,
+    what: str = "Dome",
+) -> DomeLaying | None:
+    """A dome of 9 × 4½ × 2½ in straights (Olsen p.51): 9 in deep in header courses, each brick's
+    4½ in end on the hot face; 4½ in deep in stretcher courses, its 9 in side on the hot face.
+    Either way 2½ in up the meridian, the inside faces touching and the joints opening behind
+    as in a curved wall (p.45). None for any other depth."""
+    if abs(depth - 9) < 0.05:
+        face, kind = 4.5, "header"
+    elif abs(depth - 4.5) < 0.05:
+        face, kind = 9.0, "stretcher"
+    else:
+        return None
+    along, up = face / radius, 2.5 / radius
+    joint = (
+        f"{kind} courses: the joint behind, between the bricks' outer ends",
+        "(r + t)·w / r − w",
+        (radius + depth) * face / radius - face,
+    )
+    return lay_dome(radius, rise, along, up, what=what, reference=STRAIGHTS_REF,
+                    fraction=fraction, joint=joint)  # fmt: skip
+
+
+def rectangle(half_width: float, half_depth: float) -> Fraction:
+    """The part of a ring centred on a rectangle's centre that lies over it (inches), sampled
+    round the ring finely enough for a course count."""
+
+    def part(ring: float) -> float:
+        n = 720
+        inside = 0
+        for k in range(n):
+            t = (k + 0.5) / n * 2 * math.pi
+            if abs(ring * math.cos(t)) <= half_width and abs(ring * math.sin(t)) <= half_depth:
+                inside += 1
+        return inside / n
+
+    return part

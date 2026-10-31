@@ -370,10 +370,13 @@ def arch_ring(part: Part, *, apg: bool = False) -> ArchRing | None:
 CONICAL = "conical (tatami) brick"
 
 
-def conical_layer(part: Part, brick: conical.Brick | None) -> tuple[int, str] | None:
+def conical_layer(
+    part: Part, brick: conical.Brick | None
+) -> tuple[int, str, tuple[Step, ...]] | None:
     """A sprung arch's or a dome's layer as deep as the builder's conical brick is long: its
-    bricks and how they lie (conical.py). Arches by the ring and the rows along the run; domes by
-    the layer's area over each brick's square of it at mid-depth."""
+    bricks, how they lie and the working (conical.py). Arches by the ring and the rows along the
+    run; domes course by course up the sphere, each course's ring cut off where it leaves the
+    layer's plan."""
     if brick is None or part.cap or part.is_skewback:
         return None
     if abs(part.thickness - brick.length * IN) >= TOL:
@@ -383,17 +386,32 @@ def conical_layer(part: Part, brick: conical.Brick | None) -> tuple[int, str] | 
         c = conical.course(a.radius / IN, brick)
         per_row = c.bricks(2 * a.half_angle)
         rows = math.ceil(part.length_run / (brick.wide * IN) - 1e-9)
-        return per_row * rows, (
-            f"{rows} rows of {per_row} conical bricks, wide ends touching, "
-            f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+        return (
+            per_row * rows,
+            (
+                f"{rows} rows of {per_row} conical bricks, wide ends touching, "
+                f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+            ),
+            (),
         )
     if part.dome is not None:
-        c = conical.course(part.dome.radius / IN, brick)
-        mid = (part.dome.radius / IN + brick.length / 2) * c.angle
-        count = math.ceil(part.area / IN**2 / mid**2 - 1e-9)
-        return count, (
-            f"about {count} conical bricks in courses, "
-            f"{c.inside_joint:.2g} in fireclay between the narrow ends"
+        d = part.dome
+        radius = d.radius / IN
+        rise = (d.radius + d.centre_z - part.lo[2]) / IN
+        over = conical.rectangle(
+            max(abs(part.lo[0]), abs(part.hi[0])) / IN,
+            max(abs(part.lo[1] - d.centre_y), abs(part.hi[1] - d.centre_y)) / IN,
+        )
+        laid = conical.lay_conical_dome(radius, rise, brick, over, layer_name(part))
+        c = conical.course(radius, brick)
+        return (
+            laid.total,
+            (
+                f"{len(laid.courses)} courses of conical bricks, {laid.total} in all, the low "
+                f"courses cut off by the walls, {c.inside_joint:.2g} in fireclay between the "
+                f"narrow ends, a plug {laid.crown:.3g} in across at the crown"
+            ),
+            laid.steps,
         )
     return None
 
@@ -530,12 +548,14 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     row = in_a_row(kiln)
     along = row and not (isinstance(kiln.roof, SprungArch) and kiln.roof.tube)
     tatami = None if kiln.lining.conical is None else conical.Brick.of(kiln.lining.conical)
+    laid_steps: list[Step] = []
     for part in developed(kiln, lining_parts(kiln)):
         m = resolve_material(kiln, part.material)
         laid = conical_layer(part, tatami) if m.kind in BRICK_KINDS else None
         if laid is not None:
             shapes[(m.id, CONICAL)] += laid[0]
             arch_lines.append(f"{layer_name(part)}: {laid[1]}")
+            laid_steps.extend(laid[2])
             continue
         if part.across and part.arch is not None and m.kind in BRICK_KINDS:
             # An arch along the draft that stops short of its neighbour: in standard shapes
@@ -620,6 +640,7 @@ def plan_masonry(kiln: Kiln) -> MasonryPlan:
     quantities, cut_list, working = buy_quantities(
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume
     )
+    working = laid_steps + working
     brick = allowance(kiln, "brick")
     if side_by_side:
         findings.append(_side_by_side(side_by_side, us))
