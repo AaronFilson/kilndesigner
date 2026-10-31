@@ -19,6 +19,7 @@ from kilndesigner.report import Report, design_report
 from kilndesigner.results import write_run
 from kilndesigner.simulation import FiringResult, SimulationError, switch_over_chart
 from kilndesigner.simulation import simulate as simulate_firing
+from kilndesigner.slow import SlowFiring, slow_firing
 from kilndesigner.target import TargetFiring, solve_target
 from kilndesigner.units import UnitError, parse_quantity, si
 
@@ -209,6 +210,66 @@ def target_summary(name: str, t: TargetFiring) -> str:
     return "\n".join(lines)
 
 
+def slow_summary(name: str, s: SlowFiring) -> str:
+    lines = [
+        f"{name}: a slow firing, {s.hours:g} h"
+        + (f" with {s.soak_h:g} h at the top" if s.soak_h else ""),
+        f"  Pace:             {s.rate_c_per_h:.1f} °C/h to {s.top_c:.0f} °C",
+    ]
+    f, q = s.firing, s.quickest
+    if f is not None and q is not None:
+        lines += [
+            f"  Firing time:      {f.duration}"
+            + ("" if f.completed else " (doesn't reach the top)"),
+            f"  Heat put in:      {f.energy_kwh:,.0f} kWh (walls {f.walls_kwh:,.0f}, ware "
+            f"{f.ware_kwh:,.0f}; shell lost {f.shell_kwh:,.0f})",
+            f"  Quickest firing:  {q.duration}, {q.energy_kwh:,.0f} kWh "
+            f"(shell lost {q.shell_kwh:,.0f})",
+        ]
+        if f.propane_gallons:
+            lines.append(f"  Propane:          {f.propane_gallons:,.1f} gal")
+        if f.electricity_kwh:
+            lines.append(f"  Electricity:      {f.electricity_kwh:,.0f} kWh")
+        if f.cost is not None:
+            lines.append(f"  Cost:             {f.cost} (quickest {q.cost})")
+    lines.append("  Slow firings in the sources (to compare, not rules):")
+    for x in s.sources:
+        used = f"; {x.used}" if x.used else ""
+        lines.append(f"    {x.kiln} ({x.fuel}): {x.time}{used}. [{x.reference}]")
+    lines.extend(f"  [{f.level}] {f.message}" for f in s.findings)
+    return "\n".join(lines)
+
+
+def _hours(text: str) -> float:
+    """'4h', '6 hour' or '7 day' as hours."""
+    short = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*h\s*", text)
+    return si(parse_quantity(f"{short.group(1)} hour" if short else text, "[time]"), "hour")
+
+
+@app.command()
+def slow(
+    design: DesignPath,
+    time: Annotated[str, typer.Argument(help="The firing time, for example '72h' or '5 day'")],
+    soak: Annotated[
+        str, typer.Option(help="Time held at the top, within the firing time, e.g. '12h'")
+    ] = "0h",
+    out: Annotated[Path, typer.Option(help="Folder for the results")] = Path("out/firing"),
+) -> None:
+    """Fire the kiln slowly over a time you choose, and see what it takes against the sources'."""
+    kiln = _load(design)
+    try:
+        result = slow_firing(kiln, _hours(time), _hours(soak))
+    except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
+        typer.echo(f"{design}: {e}", err=True)
+        raise typer.Exit(code=2) from e
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / "slow.json"
+    no_points = {"firing": {"points"}, "quickest": {"points"}}
+    path.write_text(result.model_dump_json(indent=2, exclude=no_points), encoding="utf-8")
+    typer.echo(slow_summary(kiln.name, result))
+    typer.echo(f"Wrote {path}")
+
+
 @app.command()
 def simulate(
     design: DesignPath,
@@ -229,10 +290,7 @@ def simulate(
     kiln = _load(design)
     if target is not None:
         try:
-            short = re.fullmatch(r"\s*(\d+(?:\.\d+)?)\s*h\s*", target)
-            text = f"{short.group(1)} hour" if short else target
-            hours = si(parse_quantity(text, "[time]"), "hour")
-            solved = solve_target(kiln, hours)
+            solved = solve_target(kiln, _hours(target))
         except (UnknownEntryError, CastableError, SimulationError, UnitError) as e:
             typer.echo(f"{design}: {e}", err=True)
             raise typer.Exit(code=2) from e

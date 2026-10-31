@@ -11,7 +11,7 @@ from kilndesigner.fire import FireDesign, design_fire
 from kilndesigner.frame import FrameDesign, design_frame
 from kilndesigner.gas import GasDesign, design_gas
 from kilndesigner.geometry import GeometryNotSupportedError, lining_parts, not_drawn
-from kilndesigner.hardware import build_hardware
+from kilndesigner.hardware import build_hardware, floor_and_roof_holes
 from kilndesigner.heatloss import HeatLoss, heat_loss
 from kilndesigner.hybrid import HybridAnalysis, analyse_hybrid
 from kilndesigner.masonry import Masonry, plan_masonry
@@ -126,7 +126,8 @@ def design_report(kiln: Kiln) -> Report:
     masonry: Masonry | None = None
     bom: Bom | None = None
     try:
-        masonry = plan_masonry(kiln).result
+        holes = floor_and_roof_holes(hardware) if hardware is not None else []
+        masonry = plan_masonry(kiln, holes).result
     except GeometryNotSupportedError as e:
         findings.append(Finding(level="info", message=f"No masonry plan or bill of materials: {e}"))
     if masonry is not None:

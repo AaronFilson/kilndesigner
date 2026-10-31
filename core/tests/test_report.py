@@ -87,7 +87,7 @@ def test_findings_are_listed_once_each_errors_first() -> None:
 def test_a_shape_without_a_masonry_plan_still_gets_a_report(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    def no_plan(kiln: Kiln) -> object:
+    def no_plan(kiln: Kiln, holes: object = ()) -> object:
         raise GeometryNotSupportedError("no brick plan for this roof yet")
 
     monkeypatch.setattr("kilndesigner.report.plan_masonry", no_plan)

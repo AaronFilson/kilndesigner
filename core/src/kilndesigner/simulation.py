@@ -47,7 +47,12 @@ from kilndesigner.working import Finding, Step, show
 
 DT = 60.0  # s, one step
 RECORD_EVERY = 5  # steps between the wall profiles kept for the heatmap
-MAX_HOURS = 96.0  # a firing longer than this is stopped and reported
+MAX_HOURS = 96.0  # full-heat time allowed beyond a schedule's paced segments, then stopped
+# The longest sourced firing: Fujiwara's Bizen kiln, "a seven-day firing period" (Olsen p.99,
+# pp.103–104), then about three days' cooling (p.105). A schedule's ramps and holds may take no
+# longer (slow-firing.md).
+LONGEST_FIRING_H = 240.0
+LONGEST_FIRING_SOURCE = "Olsen, The Kiln Book, 4th ed., p.99, pp.103–105"
 STALL_HOURS = 1.0  # power-limited with less than STALL_RISE over this long: the kiln has stalled
 STALL_RISE = 1.0  # K
 BTU_PER_KWH = 3412.14
@@ -70,6 +75,20 @@ type Heat = Literal["electric", "gas"]
 
 class SimulationError(ValueError):
     """A firing the engine can't simulate, with the reason."""
+
+
+def paced_hours(schedule: Sequence[Ramp], start_k: float) -> float:
+    """The least time a schedule takes (h): each paced ramp from the last one's end at its rate,
+    and every hold; a full-heat ramp counts nothing."""
+    total, at = 0.0, start_k
+    for r in schedule:
+        to = si(r.to, "K")
+        if r.rate is not None:
+            total += abs(to - at) / si(r.rate, "K/hour")
+        if r.hold is not None:
+            total += si(r.hold, "hour")
+        at = to
+    return total
 
 
 class FiringPoint(BaseModel):
@@ -437,7 +456,6 @@ def simulate(
     ``element_w``: the element design's installed power, if the caller has worked it out."""
     us = kiln.units == "us"
     unit = "degF" if us else "degC"
-    max_hours = MAX_HOURS if max_hours is None else max_hours
     working: list[Step] = []
     findings: list[Finding] = []
     if schedule is None and kiln.firing.schedule is not None:
@@ -451,12 +469,22 @@ def simulate(
     elif schedule is None:
         schedule, step = default_schedule(kiln)
         working.append(step)
+    t_air = si(kiln.site.ambient, "K")
+    paced = paced_hours(schedule, t_air)
+    if paced > LONGEST_FIRING_H + 1e-6:
+        raise SimulationError(
+            f"the schedule's ramps and holds take {paced:.0f} h, longer than any sourced firing: "
+            f"the longest is Bizen's, seven days and about three days' cooling, "
+            f"{LONGEST_FIRING_H:g} h ({LONGEST_FIRING_SOURCE})"
+        )
+    if max_hours is None:
+        # Time for the full-heat segments beyond the paced ones, as for any firing
+        max_hours = MAX_HOURS + paced
     supply, supply_steps = heat_supply(
         kiln, switch_over_c, gas_from_c=gas_from_c, burner_w=burner_w, element_w=element_w
     )
     working += supply_steps
     faces = build_faces(kiln)
-    t_air = si(kiln.site.ambient, "K")
     setting_steps: list[Step] = []
     if kiln.firing.setting is not None:
         furniture_kg, ware_only_kg, setting_steps = setting_weight(kiln.firing.setting)
@@ -524,7 +552,8 @@ def simulate(
                 Finding(
                     level="info",
                     message=(
-                        f"The firing was stopped at {max_hours:g} hours, before the schedule's end."
+                        f"The firing was stopped at {max_hours:.4g} hours, before the "
+                        "schedule's end."
                     ),
                 )
             )

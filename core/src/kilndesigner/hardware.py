@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import TYPE_CHECKING, Literal
 
 from kilndesigner.allowance import allowance
 from kilndesigner.fire import FireDesign
@@ -36,6 +36,9 @@ from kilndesigner.model import CatenaryArch, Dome, Kiln, Port, SprungArch, SpyHo
 from kilndesigner.shape import Arch, chamber_shape
 from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, show
+
+if TYPE_CHECKING:
+    from kilndesigner.masonry import Hole
 
 MM = 25.4
 COURSE = 2.5  # in, a 2½ in brick course
@@ -287,6 +290,19 @@ def layout(kiln: Kiln, hw: Hardware) -> dict[str, object]:
         for p, cut in spots
     ]
     return {"units": kiln.units, "walls": walls, "ports": ports}
+
+
+def floor_and_roof_holes(hw: Hardware) -> list[Hole]:
+    """The burner ports up through the floor and an updraft's flue through the roof, for the
+    brick count to take out (masonry.plan_masonry); the ports on walls are cut on site."""
+    from kilndesigner.masonry import Hole
+
+    on_walls = {p.name for p in hw.ports}
+    return [
+        Hole(o.box[0], o.box[1], o.round_axis == 2)
+        for o in hw.openings
+        if (o.name.startswith("port/burner-") or o.name == "port/flue") and o.name not in on_walls
+    ]
 
 
 def build_hardware(

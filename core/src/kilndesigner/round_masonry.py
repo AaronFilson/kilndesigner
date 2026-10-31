@@ -43,6 +43,7 @@ from kilndesigner.masonry import (
     LayerPlan,
     Masonry,
     MasonryPlan,
+    Quantity,
     _not_buildable,  # pyright: ignore[reportPrivateUsage]
     brick_sizes,
     buildable_near,
@@ -76,7 +77,7 @@ from kilndesigner.rings import (
 from kilndesigner.shape import RoundDome, facets
 from kilndesigner.sheet import Sheet
 from kilndesigner.units import Q_, si
-from kilndesigner.working import Finding, Step, length_text
+from kilndesigner.working import Finding, Step, length_text, show
 
 RINGS = "whole 9 and 4½ in rings: a·9 + b·4½ in (Olsen, The Kiln Book, 4th ed., p.45)"
 
@@ -171,6 +172,56 @@ def straight_ring_text(r: Ring, us: bool) -> str:
         if r.length is not None:
             out += f"; the closer cut to {length_text(r.length, us)} along its outside face"
     return out
+
+
+WEDGE_MORTAR = "wedge-joint-mortar"
+"""The bill's key for the mortar in a mortar ring's wedge joints: no material in the library."""
+
+
+def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quantity, Step] | None:
+    """The mortar the rings' wedge joints hold, by volume, for the bill of materials: each joint
+    an isosceles triangle between neighbouring straights, ½·d²·sin α per unit of course height,
+    summed round the ring (rings.straight_ring), times the wall's height. By volume only: no
+    source here gives a mortar's weight per volume or its yield per bag, and Olsen's 300–400 lb
+    per 1000 bricks (p.295) is for ordinary joints, not wedges, so it isn't converted or priced."""
+    each = [rp.ring.mortar for rp in rings if rp.series == "mortar" and rp.ring.mortar]
+    if not each:
+        return None
+    per_mm = sum(each)  # mm² of joint for each mm of wall height, every mortar ring together
+    volume = Q_(per_mm * height, "mm**3")
+    unit, word = ("ft**3", "ft³") if us else ("L", "L")
+    amount = si(volume, unit)
+    step = Step(
+        name="Mortar in the rings' wedge joints",
+        value=show(volume, unit, 3),
+        formula="V = h · Σ ½·d²·sin α (each joint round each mortar ring)",
+        inputs={
+            "Σ ½·d²·sin α": f"{per_mm / IN**2:.3g} in³ per in of height"
+            if us
+            else f"{per_mm / 1e6 * 1e3:.3g} L per m of height",
+            "h": length_text(height, us),
+        },
+        reference=MORTAR_SOURCE,
+        note=(
+            "By volume only. No source here gives a mortar's weight per volume or its yield per "
+            "bag, so it isn't in bags or priced; Olsen's 300–400 lb of mortar per 1000 bricks "
+            "(p.295) is for ordinary joints, not wedge joints. Add the BIA's 15–25 % for waste "
+            "(brick-waste.md [W1])."
+        ),
+    )
+    quantity = Quantity(
+        material=WEDGE_MORTAR,
+        name="Refractory mortar for the round wall's wedge joints",
+        kind="mortar",
+        amount=round(amount, 2 if us else 1),
+        unit=word,
+        detail=(
+            "the joints' volume, nothing added for waste; by volume only, as no source here "
+            "gives a mortar's weight per volume or per bag"
+        ),
+        priced_amount=0.0,
+    )
+    return quantity, step
 
 
 def cut_ring_sheet(inside_diameter: float, depth: float) -> Sheet:
@@ -584,6 +635,10 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         kiln, whole, shapes, cuts, sheet_area, sheet_area_thickness, sheet_thickness, cast_volume,
         shapes_in="the round wall",
     )  # fmt: skip
+    mortar = wedge_mortar(ring_plans, height, us)
+    if mortar is not None:
+        quantities.append(mortar[0])
+        working.append(mortar[1])
     result = Masonry(
         quantities=quantities, cut_list=cut_list, findings=findings, working=dome_steps + working
     )

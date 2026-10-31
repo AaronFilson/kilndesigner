@@ -42,6 +42,8 @@ from kilndesigner.heatloss import heat_loss, top_temperature
 from kilndesigner.model import Cylinders, Kiln, Line
 from kilndesigner.simulation import (
     DT,
+    LONGEST_FIRING_H,
+    LONGEST_FIRING_SOURCE,
     MAX_HOURS,
     REDUCTION_START_C,
     FiringResult,
@@ -380,6 +382,12 @@ def solve_target(kiln: Kiln, target_h: float | None = None, *, dt: float = DT) -
         target_h = si(kiln.firing.target_time, "hour")
     if target_h <= 0:
         raise SimulationError("the target firing time must be more than zero")
+    if target_h > LONGEST_FIRING_H + 1e-9:
+        raise SimulationError(
+            f"{target_h:g} h is longer than any sourced firing ({LONGEST_FIRING_H:g} h, Bizen's "
+            f"seven days and three days' cooling, {LONGEST_FIRING_SOURCE}); for a slow firing "
+            "on the design's own burners, fire it slow (slow.py) rather than solve the burners"
+        )
     us = kiln.units == "us"
     unit = "degF" if us else "degC"
     hybrid = kiln.heat.electric is not None
