@@ -216,6 +216,19 @@ export function useStartSimulation() {
   });
 }
 
+/** A slow firing over a time the user chooses (`kilndesigner slow`), worked out on request. */
+export function useSlowFiring() {
+  return useMutation({
+    mutationFn: async ({ key, time, soak }: { key: string; time: string; soak: string }) => {
+      const { data, error, response } = await api.POST("/api/simulations/{key}/slow", {
+        params: { path: { key } },
+        body: { time, soak },
+      });
+      return data ?? fail(response, error);
+    },
+  });
+}
+
 /** A finished firing's results: its summary, its series, the walls' heatmap and, for a hybrid, the
  * switch-over chart (null when the kiln has none). A finished run never changes. */
 export function useFiring(key: string) {

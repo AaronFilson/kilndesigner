@@ -790,6 +790,59 @@
         }
       }
     },
+    "/api/simulations/{key}/slow": {
+      "post": {
+        "summary": "Slow Firing Route",
+        "description": "Fire a design version slowly over a time the user chooses, and see what it takes against\nthe sources' slow firings (``kilndesigner slow``). Worked out on request, not stored.",
+        "operationId": "slow_firing_route_api_simulations__key__slow_post",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SlowFiringRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SlowFiring"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "The design is not valid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvalidDesign"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Refused, with why"
+          }
+        }
+      }
+    },
     "/api/builds/{key}/files/{name}": {
       "get": {
         "summary": "Build File",
@@ -3561,6 +3614,187 @@
         ],
         "title": "Simulation",
         "description": "A simulated firing's status. When done, its results are under /simulations/{key}/…"
+      },
+      "SlowFiring": {
+        "properties": {
+          "hours": {
+            "type": "number",
+            "title": "Hours"
+          },
+          "soak_h": {
+            "type": "number",
+            "title": "Soak H"
+          },
+          "top_c": {
+            "type": "number",
+            "title": "Top C"
+          },
+          "rate_c_per_h": {
+            "type": "number",
+            "title": "Rate C Per H"
+          },
+          "firing": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FiringResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "quickest": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FiringResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "walls_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Walls Share"
+          },
+          "ware_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ware Share"
+          },
+          "shell_share": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shell Share"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/SourcedFiring"
+            },
+            "type": "array",
+            "title": "Sources"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hours",
+          "soak_h",
+          "top_c",
+          "rate_c_per_h",
+          "firing",
+          "quickest",
+          "walls_share",
+          "ware_share",
+          "shell_share",
+          "sources",
+          "working",
+          "findings"
+        ],
+        "title": "SlowFiring",
+        "description": "A firing over the time the user chose, and the sources' slow firings beside it."
+      },
+      "SlowFiringRequest": {
+        "properties": {
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "soak": {
+            "type": "string",
+            "title": "Soak",
+            "default": "0 h"
+          }
+        },
+        "type": "object",
+        "required": [
+          "time"
+        ],
+        "title": "SlowFiringRequest",
+        "description": "A slow firing to work out: its time and the soak at the top within it, each a quantity\nwith its unit (\"72 h\", \"5 day\")."
+      },
+      "SourcedFiring": {
+        "properties": {
+          "kiln": {
+            "type": "string",
+            "title": "Kiln"
+          },
+          "fuel": {
+            "type": "string",
+            "title": "Fuel"
+          },
+          "time": {
+            "type": "string",
+            "title": "Time"
+          },
+          "used": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Used"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "reference": {
+            "type": "string",
+            "title": "Reference"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kiln",
+          "fuel",
+          "time",
+          "reference"
+        ],
+        "title": "SourcedFiring",
+        "description": "One slow firing as a source reports it: no engine number, an option to compare."
       },
       "Step": {
         "properties": {

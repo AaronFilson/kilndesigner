@@ -317,6 +317,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/simulations/{key}/slow": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Slow Firing Route
+         * @description Fire a design version slowly over a time the user chooses, and see what it takes against
+         *     the sources' slow firings (``kilndesigner slow``). Worked out on request, not stored.
+         */
+        post: operations["slow_firing_route_api_simulations__key__slow_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/builds/{key}/files/{name}": {
         parameters: {
             query?: never;
@@ -1269,6 +1290,66 @@ export interface components {
             /** Finished At */
             finished_at: string | null;
         };
+        /**
+         * SlowFiring
+         * @description A firing over the time the user chose, and the sources' slow firings beside it.
+         */
+        SlowFiring: {
+            /** Hours */
+            hours: number;
+            /** Soak H */
+            soak_h: number;
+            /** Top C */
+            top_c: number;
+            /** Rate C Per H */
+            rate_c_per_h: number;
+            firing: components["schemas"]["FiringResult"] | null;
+            quickest: components["schemas"]["FiringResult"] | null;
+            /** Walls Share */
+            walls_share: number | null;
+            /** Ware Share */
+            ware_share: number | null;
+            /** Shell Share */
+            shell_share: number | null;
+            /** Sources */
+            sources: components["schemas"]["SourcedFiring"][];
+            /** Working */
+            working: components["schemas"]["Step"][];
+            /** Findings */
+            findings: components["schemas"]["Finding"][];
+        };
+        /**
+         * SlowFiringRequest
+         * @description A slow firing to work out: its time and the soak at the top within it, each a quantity
+         *     with its unit ("72 h", "5 day").
+         */
+        SlowFiringRequest: {
+            /** Time */
+            time: string;
+            /**
+             * Soak
+             * @default 0 h
+             */
+            soak: string;
+        };
+        /**
+         * SourcedFiring
+         * @description One slow firing as a source reports it: no engine number, an option to compare.
+         */
+        SourcedFiring: {
+            /** Kiln */
+            kiln: string;
+            /** Fuel */
+            fuel: string;
+            /** Time */
+            time: string;
+            /** Used */
+            used?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Reference */
+            reference: string;
+        };
         /** Step */
         Step: {
             /** Name */
@@ -2111,6 +2192,48 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SwitchOverChart"];
                 };
+            };
+            /** @description The design is not valid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InvalidDesign"];
+                };
+            };
+        };
+    };
+    slow_firing_route_api_simulations__key__slow_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                key: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SlowFiringRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SlowFiring"];
+                };
+            };
+            /** @description Refused, with why */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description The design is not valid */
             422: {
