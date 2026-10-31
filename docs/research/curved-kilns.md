@@ -207,7 +207,10 @@ Checked on the page image.
 Checked on the page image.
 
 - Fig 7-1: two arched tubes at right angles, a groundhog crossing an anagama, their vaults
-  meeting in a groin.
+  meeting in a groin. A concept, not a built kiln: the section shows how the fire and ash travel
+  through the two systems, and gives no height for either arch (the user, 2026-10-31). The
+  heights are the designer's choice; about 5 ft for the anagama and 6 ft for the groundhog is a
+  reasonable start (the user's estimate, not printed).
 - Fig 7-2 (plan): a cross: four arms (two fireboxes, the anagama chimney, the groundhog
   chimney) with the walls between the arms curving inward (concave) round an oval "FIRE ZONE";
   "DIAGONAL – 9' (FIREWORKS)".

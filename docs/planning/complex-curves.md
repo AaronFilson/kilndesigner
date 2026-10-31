@@ -112,9 +112,12 @@ simplification is written into the example's notes:
    the whole against half the wall (BIA's Corbels brief, PDF read), refused past Olsen's 24 in,
    flagged past Rhodes's 18 in; its stepped section and course count given. Not yet a roof type
    of the design file: that touches every roof consumer and no built kiln of Olsen's is corbelled.
-   Crossing axes: blocked on the sources. Fig 7-2 gives only the fire zone (9 ft, "diagonal" in the
-   figure, "both directions" in the text) and Fig 7-1 is an undimensioned sketch of two tubes in a
-   groin; no arm widths, curve radii or tube sections. `fireworks-edmonton` stays a dome over its
+   Crossing axes: no longer blocked on the sources, since the sizes are the designer's. Fig 7-1
+   (p.178) is a concept, not a built kiln: it shows how the fire and ash travel, with no arch
+   heights (the user, 2026-10-31). The engine should take the two tubes' spans and heights as
+   design inputs, starting about 5 ft for the anagama and 6 ft for the groundhog (the user's
+   estimate), over Fig 7-2's 9 ft fire zone. Not yet built: two crossing vaults meeting in a
+   groin, their geometry and statics. `fireworks-edmonton` stays a dome over its
    9 × 9 ft fire zone (builds, no failed checks); `kanayama-multi` prints no fire-zone size and
    stays unmodelled.
 
