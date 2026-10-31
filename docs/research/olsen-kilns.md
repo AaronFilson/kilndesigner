@@ -1404,7 +1404,7 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   equal height and slightly tapered.
 - Fig 7-2 (drawing): "FOREZONE AREA: DIAGONAL – 7' (CHURCH); DIAGONAL – 9' (FIREWORKS)".
 - Fig 7-3, firebox (drawing): "STEP UP TO WARE PLATFORM 12–15""; firebox/grate "3–4' NORMAL" long;
-  "ASH PIT AND WALKWAY" 14" (?) wide, 18" deep; chamber width and door size optional; triangular
+  "ASH PIT AND WALKWAY" 14" wide, 18" deep (Checked on the page image, 2026-10-31); chamber width and door size optional; triangular
   posts and "¼" thick shards" for spacing.
 - Fig 7-4: air at three adjustable levels: ash pit below the grate, at the grate, and the stoke hole
   above it, built into the bricked-up door.
@@ -1630,7 +1630,7 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Drip units: three inlet port flues, three plates per channel, nine plates (p.207). Plates 9 × 5 in
   (23 × 12.5 cm), parallel, each 3 in (7.5 cm) below the one above, overlapping it 2 in (5 cm), sloped
   about 2 in 9 (2:9 to 2.5:9 for diesel); iron with welded pegs and a side lip. Stack about 16" tall,
-  channel about 6" wide (?), port flue 9" (drawing). Set in loosely laid brick so they can be
+  channel 6" wide (Checked on the page image, 2026-10-31), port flue 9" (drawing). Set in loosely laid brick so they can be
   adjusted. Side-firing units: 12" × 15" iron plates on an iron frame, tilted (drawing).
 - Drip ports: at most one per 9 in (23 cm) of inlet-flue wall, at least one per 18 in (46 cm);
   starting 4½ in (11.5 cm) from the corner fits one or two more (p.208).
@@ -1792,7 +1792,7 @@ These are not whole kilns, or are kilns drawn only to show a rule. They make goo
   - Eclipse standard injector (p.222), for 530–1200 BTU/ft³ gas: on natural gas at most 7 in. WC, a
     2 in (5 cm) outlet passes 83 CF/hr = 91,300 BTU/hr, a 3 in (7.5 cm) outlet 185 ft³ (5.24 m³)/hr =
     203,500 BTU/hr. Compound injector: 1200–3300 BTU/ft³ gas (p.224).
-  - Polidoro tubular burner (p.223, Fig 8-46): stainless tube 24½" long; venturi 7½" (?) long,
+  - Polidoro tubular burner (p.223, Fig 8-46): stainless tube 24½" long; venturi 7½" long (printed "7½" ID"; Checked on the page image, 2026-10-31),
     1 5/16" I.D.; deflector 1⅛"; 3" from the orifice bracket.
   - Rohde pot burner (p.223): kilns up to 2552 °F / 1400 °C; 20 kW = 68,242 BTU; 0 to 1.5 bar of
     propane.
@@ -1829,7 +1829,8 @@ These are not whole kilns, or are kilns drawn only to show a rule. They make goo
   130 psi; a hot nozzle flows about 6 % less. Drawing: motor ⅛ HP, 1725 RPM; ignition transformer
   10,000 V; nozzle 5–8" long; pump 100–150 psi.
 - **W23. Alternate oil-drip unit** (p.209, Fig 8-22): two drip plates in a 6 in (15 cm) channel iron set
-  in the flue channel; side 14" long × 12" (?) high; front 6" wide. Carbon is hard to clean, the iron
+  in the flue channel; side 14" long × 12" high (the front view's height also reads 12": Checked on the page image,
+  2026-10-31); front 6" wide. Carbon is hard to clean, the iron
   burns away, the plates are too small; good only for pre-firing.
 
 ### Electric (Chapter 9)
