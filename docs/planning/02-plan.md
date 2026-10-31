@@ -232,7 +232,7 @@ references used. The plans print the working, so a builder can check it.
 | **M4** | **A kiln you can design in the app** | `docker compose up`, then: (1) the model is a kiln you could build: the arch on skewbacks over the full walls, the steel frame, a door or a car, burner and flue ports, the chimney and spy holes, coloured by material; (2) dimensioned drawings, course plans, the bill of materials and the cut list shown in the page (files still downloadable); (3) a viewer with front, side, top and section views, a cutaway and named parts; (4) a design started from a kiln type and edited with choices, not YAML (YAML stays as a tab); (5) castables you mix yourself: a batch recipe in the design gives its wet, dried and fired densities, a conductivity checked against published firebricks, what the temperatures in the wall do to it (kyanite, quartz, burnout), the batches and ingredients the lining needs, and the first firing (water, organics, heat, a dry-out schedule), refusing mixes outside the checked range. Each point has browser tests | FastAPI + SQLAlchemy 2 + Alembic, a job queue, an OpenAPI-generated client, React Three Fiber, Playwright |
 | **M5** | **Hosted app** | Accounts, design sharing by link, deploys with approval to AWS, tracing and metrics | Multi-tenant Postgres (row-level security), OIDC with PKCE, CDK in Python, keyless deploys with rollback, OpenTelemetry |
 | **M6** | **Firing simulation** | Transient heat-up along a schedule, results in Parquet, charts and a wall heatmap in the viewer | Finite-volume numerics, DuckDB analytics, GPU shaders for the heatmap |
-| **M7** | **Wood and off-grid: the client's kiln** | A firebox, natural-draft burners, the chimney and draft, fuel per firing, and plans for a site with no mains power | Natural-draft modelling, multi-fuel designs, plans that stand alone |
+| **M7** | **Wood and off-grid: the client's kiln** (on hold, 2026-10-31) | A firebox, natural-draft burners, the chimney and draft, fuel per firing, and plans for a site with no mains power | Natural-draft modelling, multi-fuel designs, plans that stand alone |
 | **M8** | **AI assistants** | An MCP server: "design a cone 10 gas kiln for 12 cubic feet, under $3,000" | MCP in Python, with tools that return the working |
 | **M9** | **Real firings** | Import firing logs from the author's controller, compare them with the simulation, and fit wall properties to them | Parameter estimation (SciPy), data ingestion, model-versus-measurement reports |
 | Later | **Glass** | Templates, top-element layouts, annealing schedules | |
@@ -408,9 +408,25 @@ and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a war
 - **Firing time** is the user's choice, not limited by ware (the author).
 - Blocked: conical-brick domes (complex curves step 4) have no dome-brick source yet.
 
+### Status (2026-10-31, round 6)
+
+- **Conical (tatami) bricks**, sized by the builder or scaled from Olsen's Fig. 4-6, with the
+  author's bore and groove; domes laid course by course with a fit check; the bricks bought as
+  raw fireclay. Bidai's arch is 6 in tatami bricks under a 3 in clay, straw and earth overcoat.
+- **Complex curves** steps 4–5: revolved domes and their membrane forces, vaults of changing
+  section (Bowen Mountain, Tamba's side doors), Calimpong's neck, slices and course plans.
+- **Slow firings** (`kilndesigner slow`), ports out of the brick count, wedge mortar on the bill.
+- About 60 unclear values settled, 12 of them read by the author; Kato's chamber is 7 ft long
+  under the semicircular arch its section draws.
+- All checks green on `m7` (2,995 tests, 98.43 %).
+
+**M7 is on hold (2026-10-31).** The client is dealing with real estate trouble and is
+distracted; open question 3 waits until they come back to it. Nothing is built for M7 until
+then: the work that would serve it (fireboxes, natural draft, wood) stays general, for any user.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
-full-stack story. M7 moves earlier if the client's timeline needs it, since the CLI can produce
-the client's plans before the app exists.
+full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
+client is ready, since the CLI can produce the client's plans before the app exists.
 
 ## Quality bar
 
@@ -446,7 +462,8 @@ the client's plans before the app exists.
    cited (Glazecalc ADR 0009 is the model).
 2. **Cone tables.** Orton publishes temperatures by heating rate; check the terms before
    shipping the table, or store user-entered values only.
-3. **The client's kiln:** gas, wood or both; its size and cone; the timeline; and whether any
-   solar power is planned (for a blower or a controller).
+3. **The client's kiln** (on hold, 2026-10-31: the client is busy with real estate trouble;
+   don't ask again until they return to it): gas, wood or both; its size and cone; the
+   timeline; and whether any solar power is planned (for a blower or a controller).
 4. **Liability for client work.** Plans given to a paying client need a clear statement of what
    is checked and what is the builder's responsibility, and possibly a review by a gas fitter.
