@@ -14,9 +14,10 @@
 # medium-duty firebrick (Olsen's intermediate duty, p.18). The dome is 9 in
 # thick, the thickest of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296). The floor is
 # built on the ground (on_ground): it stands on a flue collection channel 12 in deep (Fig 5-11),
-# not on a stand. Each firebox's length is taken as its grate's 24 in. The chimney's height is a
-# faint "29' T…" (?) on Fig 5-10: 29 ft is used. The run from the kiln to the chimney, the door
-# and the air: engine defaults (9 in, a bricked door, 70 °F).
+# not on a stand. Each firebox's length is taken as its grate's 24 in. The chimney is 30 ft tall,
+# about 25–30 ft from the chamber (Fig 5-10, read by the user, 2026-10-31): the run is taken as
+# 27½ ft, the middle. Stoking holes 15 × 13 in (Fig 5-11, read by the user, 2026-10-31). The door
+# and the air: engine defaults (a bricked door, 70 °F).
 # Not modelled: the fireboxes are spaced evenly round the wall, the door between two of them; the
 # engine puts one on each of its four faces. The 12 in deep flue channel under the floor, and the
 # floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
@@ -58,6 +59,9 @@ heat:
         inlet:
           width: 24 in
           height: 15 in
+        stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
+          width: 15 in
+          height: 13 in
       - position: right
         width: 24 in
         length: 24 in
@@ -67,6 +71,9 @@ heat:
         inlet:
           width: 24 in
           height: 15 in
+        stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
+          width: 15 in
+          height: 13 in
       - position: back
         width: 24 in
         length: 24 in
@@ -76,6 +83,9 @@ heat:
         inlet:
           width: 24 in
           height: 15 in
+        stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
+          width: 15 in
+          height: 13 in
       - position: front
         width: 24 in
         length: 24 in
@@ -85,14 +95,18 @@ heat:
         inlet:
           width: 24 in
           height: 15 in
+        stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
+          width: 15 in
+          height: 13 in
 draft:
   type: down
   flue_wall: back
   flue_port: # the flue channel to the chimney
     width: 24 in
     height: 16 in
+  run_to_chimney: 27.5 ft # "Approximately 25–30'" away (Fig 5-10)
   chimney:
-    height: 29 ft # "29' T…" (?)
+    height: 30 ft # Fig 5-10, read by the user, 2026-10-31
     inside:
       width: 24 in
       depth: 24 in

@@ -149,7 +149,11 @@ def test_a_firing_that_runs_too_long(electric: Kiln, monkeypatch: pytest.MonkeyP
     monkeypatch.setattr("kilndesigner.simulation.MAX_HOURS", 0.5)
     r = simulate(electric, record=False).result
     assert not r.completed
-    assert any("stopped at 0.5 hours" in f.message for f in r.findings)
+    # The limit is full-heat time beyond the schedule's paced segments (slow-firing.md)
+    stops = [f.message for f in r.findings if "The firing was stopped at" in f.message]
+    assert len(stops) == 1
+    hours = float(stops[0].split("stopped at ")[1].split(" hours")[0])
+    assert hours > 0.5
 
 
 def test_a_castable_without_a_sourced_specific_heat_is_refused() -> None:

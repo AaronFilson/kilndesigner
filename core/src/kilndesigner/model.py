@@ -97,8 +97,15 @@ class ConicalBrick(Spec):
 
     @model_validator(mode="after")
     def _tapers(self) -> ConicalBrick:
-        given = {"wide", "narrow", "bore", "groove"} & self.model_fields_set
-        if self.proportions == "fig-4-6" and given:
+        # Fig. 4-6 sets the ends, bore and groove. A saved design writes the defaults back, so
+        # only sizes other than the defaults are refused.
+        own = (
+            si(self.wide, "in") != 4.5
+            or si(self.narrow, "in") != 2.5
+            or self.bore is not None
+            or self.groove is not None
+        )
+        if self.proportions == "fig-4-6" and own:
             raise ValueError(
                 "Fig. 4-6's proportions set the ends, bore and groove: give the length"
             )

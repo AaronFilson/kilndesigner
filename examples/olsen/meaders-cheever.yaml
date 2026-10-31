@@ -16,8 +16,8 @@
 # racer, Olsen's wood cross-draft after the groundhog (gulgong-racer, p.119). Shallow-firebox
 # groundhogs load from the front (p.112). The exit flues as 5 in wide and 9 in high. The chimney's
 # height isn't printed: 8 ft, inside Olsen's 5–10 ft for groundhogs (p.112), the height of David
-# Meaders's chimney on the kiln adapted from this one (meaders-david, p.115). Its section: engine
-# default (the top is marked "2'" and "1'", both faint).
+# Meaders's chimney on the kiln adapted from this one (meaders-david, p.115). Its section 9 in × 5 ft,
+# the kiln's width (p.112, read by the user, 2026-10-31).
 # Not modelled: the engine takes one exit flue, so one of the six is entered. The central post or
 # opening, 30 in (faint) high. No grate is printed: the wood burns on the firebox floor. The
 # floor's loss into the ground, which the engine doesn't work out. Common brick has no rating for
@@ -60,3 +60,6 @@ draft:
     height: 9 in
   chimney:
     height: 8 ft # Olsen's 5–10 ft for groundhogs (p.112); David Meaders's 8 ft (p.115)
+    inside: # 9 in × 5 ft (p.112)
+      width: 5 ft
+      depth: 9 in
