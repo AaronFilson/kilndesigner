@@ -65,6 +65,9 @@ simplification is written into the example's notes:
    is read; still no allowable stress for a hot band (ASME II-D Table 1A identified, not read),
    no allowable bearing for refractory, no bottle-kiln top diameter (a secondary 60 ft hovel
    minimum and ~12 in oven wall only), and nothing on a catenary meeting the next at a step.
+   Second round (`blocked-items.md` §9–12): no hot factor for rampant arches; a vault-with-lunette
+   no-tension paper (Monaco et al. 2018) to read for door heads in vaults; steel keeps full yield
+   to 400 °C per EN 1993-1-2 (Snippet only), no hot wrought-iron data, no band temperature.
 6. **The form.** Shapes edited in the web form by choices first (teardrop, oval, bottle, crossing
    axes), with point editing later (the "drag to stretch" milestone).
 
