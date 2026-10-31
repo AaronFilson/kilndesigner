@@ -998,11 +998,18 @@ def _draft_lines(
 
 
 def design_gas(
-    kiln: Kiln, loss_watts: float | None = None, input_btu_hr: float | None = None
+    kiln: Kiln,
+    loss_watts: float | None = None,
+    input_btu_hr: float | None = None,
+    *,
+    elements_on_top_w: float | None = None,
 ) -> GasDesign:
     """The burners, supply, flue and chimney of a gas kiln. With ``loss_watts``, the kiln's steady
     heat loss at its top temperature, the burners are also checked against it. ``input_btu_hr``
-    replaces the rule-of-thumb input: the one the target-time solver found."""
+    replaces the rule-of-thumb input: the one the target-time solver found.
+    ``elements_on_top_w`` is a hybrid's element power when the elements stay on to the top (the
+    solver's firing): the top check counts it with the burners'. Without it a hybrid's burners are
+    checked alone, as the elements hand over below the top."""
     gas = kiln.heat.gas
     if gas is None:
         raise ValueError("the kiln has no gas heat")
@@ -1115,7 +1122,7 @@ def design_gas(
                 reference="simulation.py (ADR 0015); target.py",
             )
         )
-    if kiln.heat.electric is not None:
+    if kiln.heat.electric is not None and elements_on_top_w is None:
         findings.append(
             Finding(
                 level="info",
@@ -1219,19 +1226,29 @@ def design_gas(
         )
         sheet = holds_top(
             loss_watts, top, eta, f"{COMBUSTION_SOURCE}: {fuel}, {air}", burning.count,
-            burning.each, burning.source, temp_unit,
+            burning.each, burning.source, temp_unit, elements_on_top_w,
         )  # fmt: skip
         sheet.agrees("P", Q_(draw, "BTU/hr"))
         check = sheet.check()
         kept = eta * draw
+        lost = si(Q_(loss_watts, "W"), "BTU/hr")
+        elements = (
+            si(Q_(elements_on_top_w, "W"), "BTU/hr") if elements_on_top_w is not None else None
+        )
         working.append(
             Step(
-                name="Burners against the heat lost at the top",
+                name="Burners against the heat lost at the top"
+                if elements is None
+                else "Burners and elements against the heat lost at the top",
                 value=(
-                    f"{kept:,.0f} BTU/hr kept against "
-                    f"{si(Q_(loss_watts, 'W'), 'BTU/hr'):,.0f} BTU/hr lost"
+                    f"{kept:,.0f} BTU/hr kept against {lost:,.0f} BTU/hr lost"
+                    if elements is None
+                    else f"{kept:,.0f} + {elements:,.0f} BTU/hr kept against {lost:,.0f} BTU/hr "
+                    "lost"
                 ),
-                formula="η × burner input at full fire ≥ steady heat loss",
+                formula="η × burner input at full fire ≥ steady heat loss"
+                if elements is None
+                else "η × burner input at full fire + element power ≥ steady heat loss",
                 reference=sheet.reference,
             )
         )
@@ -1242,8 +1259,13 @@ def design_gas(
                     message=(
                         f"At full fire the burners leave {kept:,.0f} BTU/hr in the kiln at "
                         f"{show(top, temp_unit)} (only {eta:.0%} of their {draw:,.0f} BTU/hr: the "
-                        "rest leaves with the flue gas), less than the "
-                        f"{si(Q_(loss_watts, 'W'), 'BTU/hr'):,.0f} BTU/hr the lining loses there. "
+                        "rest leaves with the flue gas)"
+                        + (
+                            ""
+                            if elements is None
+                            else f", and the elements on to the top add {elements:,.0f} BTU/hr"
+                        )
+                        + f", less than the {lost:,.0f} BTU/hr the lining loses there. "
                         "The kiln can't reach its top temperature. Add burners or insulation."
                     ),
                 )

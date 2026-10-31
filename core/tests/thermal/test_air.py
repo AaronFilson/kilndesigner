@@ -1,5 +1,6 @@
 """Air at 1 atm against the Neutrium table (electric-and-thermal.md §6.3, [S63])."""
 
+import numpy as np
 import pytest
 
 from kilndesigner.thermal.air import T_MAX, T_MIN, air
@@ -32,6 +33,18 @@ def test_derived_properties_at_300_k() -> None:
     assert a.kinematic_viscosity == pytest.approx(1.850e-5 / 1.177)
     assert a.diffusivity == pytest.approx(0.0261 / (1.177 * 1005))
     assert a.prandtl == pytest.approx(a.kinematic_viscosity / a.diffusivity)
+
+
+def test_air_is_numpy_interp_to_the_bit() -> None:
+    """The quick interpolation gives numpy.interp's values exactly, on rows and between them."""
+    from kilndesigner.thermal import air as table
+
+    for t in [*np.linspace(250.0, 1000.0, 301), 300.0, 777.7, 1000.0]:
+        a = air(float(t))
+        assert (a.density, a.specific_heat, a.conductivity, a.viscosity) == tuple(
+            float(np.interp(t, table._T, col))  # pyright: ignore[reportPrivateUsage]
+            for col in (table._RHO, table._CP, table._K, table._MU)  # pyright: ignore[reportPrivateUsage]
+        )
 
 
 @pytest.mark.parametrize("temperature", [249.9, 1000.1, 1500.0])

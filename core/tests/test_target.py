@@ -28,6 +28,7 @@ def _example(changes: dict[str, object] | None = None) -> Kiln:
     return Kiln.model_validate(doc)
 
 
+@pytest.mark.slow
 def test_burners_lit_at_the_hand_over_is_the_hand_over() -> None:
     kiln = _example()
     plain = simulate(kiln, dt=DT, record=False).result
@@ -68,6 +69,19 @@ def test_stalled_elements_light_the_burners_early() -> None:
     assert any("stall" in f.message for f in r.findings)
 
 
+def test_a_stall_before_the_burners_are_lit_lights_them_not_hands_over() -> None:
+    """Run together, the burners are lit at the stall and the elements stay on: not a hand-over."""
+    kiln = _example({"heat.electric.power": "1 kW"})
+    both = simulate(kiln, switch_over_c=1000.0, gas_from_c=800.0, dt=DT, record=False).result
+    [stall] = [f for f in both.findings if "stall" in f.message]
+    assert "the burners are lit there and the elements stay on" in stall.message
+    assert "take over" not in stall.message
+    alone = simulate(kiln, switch_over_c=800.0, dt=DT, record=False).result
+    [stall] = [f for f in alone.findings if "stall" in f.message]
+    assert "short of the hand-over, so the burners take over there" in stall.message
+
+
+@pytest.mark.slow
 def test_a_6_hour_target() -> None:
     t = solve_target(_example(), 6.0, dt=DT)
     assert t.met
@@ -102,6 +116,9 @@ def test_a_slow_target_below_the_first_guess() -> None:
     t = solve_target(_example(), 20.0, dt=DT)
     assert t.met
     assert t.input_btu_hr < 452_000
+    # The elements are on to the top: the top check counts them with the burners
+    assert any(s.name == "Burners and elements against the heat lost at the top" for s in t.working)
+    assert not any("sized to fire the kiln on their own" in f.message for f in t.findings)
 
 
 def test_the_supply_limits_a_fast_target() -> None:
@@ -132,6 +149,7 @@ def test_a_target_faster_than_the_schedule_is_refused() -> None:
         solve_target(load_design(EXAMPLES / "electric-front-loader.yaml"), 6.0)
 
 
+@pytest.mark.slow
 def test_the_report_solves_the_design_target() -> None:
     report = design_report(_example({"firing.target_time": "8 hour"}))
     assert report.target is not None

@@ -76,6 +76,7 @@ async def test_a_simulation_the_engine_refuses_fails_with_why(
     await runner.wait()
 
 
+@pytest.mark.slow
 async def test_a_hybrid_gets_its_switch_over_chart(
     client: httpx.AsyncClient, runner: InlineRunner, monkeypatch: pytest.MonkeyPatch
 ) -> None:

@@ -107,6 +107,8 @@ class TransientWall:
         self.centres = 0.5 * (edges[:-1] + edges[1:])
         self.face_area = np.array([self.area(float(x)) for x in edges])
         self.volume = np.array([self.area(float(x)) for x in self.centres]) * self.dx
+        self._masks = [self.owner == i for i in range(len(self.layers))]
+        self._volumes = [self.volume[m] for m in self._masks]
         self.temperatures = np.full(len(self.dx), self.t_initial, dtype=np.float64)
         self.t_surface = self.t_initial
 
@@ -124,17 +126,15 @@ class TransientWall:
 
     def _k(self, t: Vector) -> Vector:
         out = np.empty_like(t)
-        for i, layer in enumerate(self.layers):
-            mask = self.owner == i
-            out[mask] = [layer.conductivity.k(float(x)) for x in t[mask]]
+        for layer, mask in zip(self.layers, self._masks, strict=True):
+            out[mask] = layer.conductivity.k_many(t[mask])
         return out
 
     def _capacity(self, t: Vector) -> Vector:
         """ρ·c_p·V of each cell, J/K."""
         out = np.empty_like(t)
-        for i, layer in enumerate(self.layers):
-            mask = self.owner == i
-            out[mask] = layer.density * layer.heat_capacity.cp(t[mask]) * self.volume[mask]
+        for layer, mask, volume in zip(self.layers, self._masks, self._volumes, strict=True):
+            out[mask] = layer.density * layer.heat_capacity.cp(t[mask]) * volume
         return out
 
     def stored_energy(self, reference: float) -> float:
@@ -184,7 +184,7 @@ class TransientWall:
         rhs0[-1] += g_out * self.t_ambient
         rhs1 = np.zeros(n)
         rhs1[0] = g_hot
-        solved = solve_banded((1, 1), bands, np.column_stack((rhs0, rhs1)))
+        solved = solve_banded((1, 1), bands, np.column_stack((rhs0, rhs1)), check_finite=False)
         u, v = solved[:, 0], solved[:, 1]
         self._pending = (u, v, cap, g_hot, g_out, r_half_out)
 

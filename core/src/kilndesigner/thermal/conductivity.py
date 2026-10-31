@@ -9,6 +9,10 @@ from __future__ import annotations
 
 import itertools
 from dataclasses import dataclass
+from functools import cached_property
+
+import numpy as np
+from numpy.typing import NDArray
 
 from kilndesigner.numeric import find_root
 
@@ -56,6 +60,25 @@ class Conductivity:
         if t < self.temperatures[0]:
             k = max(k, self.values[0])
         return max(k, _K_FLOOR)
+
+    @cached_property
+    def _pieces(self) -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64]]:
+        """Each linear piece's slope and intercept, and the inner points that pick the piece."""
+        ts, ks = self.temperatures, self.values
+        slopes = [(ks[i + 1] - ks[i]) / (ts[i + 1] - ts[i]) for i in range(len(ts) - 1)]
+        intercepts = [ks[i] - s * ts[i] for i, s in enumerate(slopes)]
+        return np.array(slopes), np.array(intercepts), np.array(ts[1:-1])
+
+    def k_many(self, t: NDArray[np.float64]) -> NDArray[np.float64]:
+        """:meth:`k` at each of ``t`` at once: the same arithmetic, so the same values."""
+        ts, ks = self.temperatures, self.values
+        if len(ts) == 1:
+            return np.maximum(np.full_like(t, ks[0]), _K_FLOOR)
+        slopes, intercepts, inner = self._pieces
+        i = np.searchsorted(inner, t, side="left")
+        k = slopes[i] * t + intercepts[i]
+        k = np.where(t < ts[0], np.maximum(k, ks[0]), k)
+        return np.maximum(k, _K_FLOOR)
 
     def integral(self, t0: float, t1: float) -> float:
         """∫ k dT from t0 to t1 (W/m), exact for the piecewise-linear k."""

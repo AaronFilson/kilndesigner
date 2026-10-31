@@ -519,6 +519,27 @@ def test_burners_that_cant_hold_the_top_are_an_error() -> None:
     assert top.check.solve.startswith("Passes when n ≥ ")
 
 
+def test_elements_on_to_the_top_count_in_the_top_check() -> None:
+    """The target-time solver keeps a hybrid's elements on to the top: their power, all of it kept
+    in the kiln, counts with the burners' available heat against the loss there. Without it the
+    burners are checked alone, as when the elements hand over below the top."""
+    one_b1 = "wall: front\n      model: Ransome B1\n      count: 1\n    supply"
+    text = GAS.replace("wall: front\n    supply", one_b1)
+    loss = _loss(text)
+    alone = design_gas(parse_design(text), loss)
+    [top] = [f for f in alone.findings if f.check and f.check.id == "gas.top"]
+    assert top.level == "error"
+    both = design_gas(parse_design(text), loss, elements_on_top_w=loss)
+    assert not [f for f in both.findings if f.check and f.check.id == "gas.top"]
+    [step] = [s for s in both.working if s.name.startswith("Burners and elements")]
+    assert "+ element power" in (step.formula or "")
+    short = design_gas(parse_design(text), loss, elements_on_top_w=0.1 * loss)
+    [top] = [f for f in short.findings if f.check and f.check.id == "gas.top"]
+    assert "the elements on to the top add" in top.message
+    assert top.check is not None
+    assert top.check.title == "The burners and elements together can hold the top temperature"
+
+
 def test_named_burners_under_the_rule_fire_more_slowly() -> None:
     """One Ransome B4 gives 286,600 BTU/hr at 10 psi [S27], under the 330,556 of the rule: a
     slower firing, as Olsen's 36 ft³ kiln on 6,000 BTU/ft³/hr (p.226), and a note, not an error.
