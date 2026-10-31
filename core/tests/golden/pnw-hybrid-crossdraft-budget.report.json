@@ -27,7 +27,7 @@
               "symbol": "c_1",
               "text": null,
               "unit": "USD",
-              "value": 4646.16
+              "value": 4667.67
             },
             {
               "expr": null,
@@ -131,13 +131,13 @@
               "symbol": "C",
               "text": null,
               "unit": "USD",
-              "value": 9837.49
+              "value": 9859.0
             }
           ],
           "id": "bom.budget",
           "label": null,
           "lever": {
-            "hi": 19674.98,
+            "hi": 19718.0,
             "lo": 0.0,
             "step": null,
             "symbol": "B"
@@ -148,7 +148,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = $9,837, 196.7 % of B = $5,000",
+              "margin": "C = $9,859, 197.2 % of B = $5,000",
               "op": "<=",
               "right": "B"
             }
@@ -156,21 +156,21 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when B ≥ $9,837",
+          "solve": "Passes when B ≥ $9,859",
           "status": "warning",
           "title": "The priced materials against the budget"
         },
         "level": "warning",
-        "message": "The priced materials come to $9,837, over the $5,000 budget, before steel, hardware and shipping.",
+        "message": "The priced materials come to $9,859, over the $5,000 budget, before steel, hardware and shipping.",
         "reference": null
       }
     ],
     "lines": [
       {
-        "buy": "648 bricks",
-        "cost": 4646.16,
+        "buy": "651 bricks",
+        "cost": 4667.67,
         "item": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "needed": "648 bricks (487 whole, 130 cut into 212 pieces; 617 in the kiln plus 5 % for breakage)",
+        "needed": "651 bricks (487 whole, 133 cut into 215 pieces; 620 in the kiln plus 5 % for breakage)",
         "priced_as": "G-26 insulating firebrick, 9 × 4½ × 2½ in (out of stock when checked), Sheffield Pottery (a comparable product)",
         "source": "combustion-and-masonry.md §9 [S70]",
         "unit_price": "$7.17"
@@ -264,19 +264,10 @@
         "priced_as": null,
         "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
         "unit_price": null
-      },
-      {
-        "buy": "3 ft",
-        "cost": null,
-        "item": "L4×4×1/4",
-        "needed": "2.7 ft (door lintel)",
-        "priced_as": null,
-        "source": "Pitelka, sprung-arch frames; kiln-hardware.md §4.2 [S11]",
-        "unit_price": null
       }
     ],
     "prices_checked": "2026-10-21",
-    "total": 9837.49
+    "total": 9859.0
   },
   "castables": [],
   "chamber_volume": "45.2 ft³",
@@ -485,7 +476,7 @@
             "symbol": "c_1",
             "text": null,
             "unit": "USD",
-            "value": 4646.16
+            "value": 4667.67
           },
           {
             "expr": null,
@@ -589,13 +580,13 @@
             "symbol": "C",
             "text": null,
             "unit": "USD",
-            "value": 9837.49
+            "value": 9859.0
           }
         ],
         "id": "bom.budget",
         "label": "W1",
         "lever": {
-          "hi": 19674.98,
+          "hi": 19718.0,
           "lo": 0.0,
           "step": null,
           "symbol": "B"
@@ -606,7 +597,7 @@
             "holds": false,
             "left": "C",
             "level": "warning",
-            "margin": "C = $9,837, 196.7 % of B = $5,000",
+            "margin": "C = $9,859, 197.2 % of B = $5,000",
             "op": "<=",
             "right": "B"
           }
@@ -614,12 +605,12 @@
         "rule": null,
         "rule_holds": true,
         "rule_level": "error",
-        "solve": "Passes when B ≥ $9,837",
+        "solve": "Passes when B ≥ $9,859",
         "status": "warning",
         "title": "The priced materials against the budget"
       },
       "level": "warning",
-      "message": "The priced materials come to $9,837, over the $5,000 budget, before steel, hardware and shipping.",
+      "message": "The priced materials come to $9,859, over the $5,000 budget, before steel, hardware and shipping.",
       "reference": null
     },
     {
@@ -737,616 +728,10 @@
       "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
     },
     {
-      "check": {
-        "cells": [
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "the opening's width",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design: the door",
-            "symbol": "L_c",
-            "text": null,
-            "unit": "inch",
-            "value": 0.6095999999999999
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "the widest opening a steel angle lintel spans",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "BIA TN 31B: steel angle lintels for openings up to 8 ft; door-headers.md §D1.5",
-            "symbol": "L_max",
-            "text": null,
-            "unit": "inch",
-            "value": 2.4383999999999997
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "bearing at each end",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "TMS 402-16 §5.2.1.3, at least 4 in; door-headers.md §D1.5 [H6]",
-            "symbol": "b_e",
-            "text": null,
-            "unit": "inch",
-            "value": 0.1016
-          },
-          {
-            "expr": "L_c + b_e",
-            "formula": "L_c + b_e",
-            "label": "in",
-            "meaning": "span, centre to centre of the bearings",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-            "symbol": "L",
-            "text": null,
-            "unit": "in",
-            "value": 0.7111999999999999
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "the wall over the opening, at its highest",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design: the wall's inside top less the door's top",
-            "symbol": "h_a",
-            "text": null,
-            "unit": "inch",
-            "value": 0.19685
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "layer 1, Morgan Thermal Ceramics JM 26 insulating firebrick",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "t_1",
-            "text": null,
-            "unit": "inch",
-            "value": 0.1143
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "lbf/ft³",
-            "meaning": "Morgan Thermal Ceramics JM 26 insulating firebrick, weight per cubic foot",
-            "offset": 0.0,
-            "scale": 0.006365880354264158,
-            "source": "the material's data sheet",
-            "symbol": "ρ_1",
-            "text": null,
-            "unit": "force_pound / foot ** 3",
-            "value": 7845.320000000002
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 6 pcf",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "the design",
-            "symbol": "t_2",
-            "text": null,
-            "unit": "inch",
-            "value": 0.08889999999999999
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "lbf/ft³",
-            "meaning": "Morgan Kaowool ceramic fibre blanket, 6 pcf, weight per cubic foot",
-            "offset": 0.0,
-            "scale": 0.006365880354264158,
-            "source": "the material's data sheet",
-            "symbol": "ρ_2",
-            "text": null,
-            "unit": "force_pound / foot ** 3",
-            "value": 942.5247830774774
-          },
-          {
-            "expr": "(ρ_1*t_1 + ρ_2*t_2)*h_a",
-            "formula": "(ρ_1·t_1 + ρ_2·t_2)·h_a",
-            "label": "lbf/ft",
-            "meaning": "the wall over the opening, all of it, per foot",
-            "offset": 0.0,
-            "scale": 0.06852176585679173,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]: with no arching, the full weight above the opening",
-            "symbol": "w_m",
-            "text": null,
-            "unit": "lbf/ft",
-            "value": 193.0134976760885
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "lbf/ft",
-            "meaning": "the roof's edge load on the wall over the opening",
-            "offset": 0.0,
-            "scale": 0.06852176585679173,
-            "source": "none: the roof spans between the walls either side of the door, or stands on its own (door-headers.md §D7)",
-            "symbol": "V",
-            "text": null,
-            "unit": "force_pound / foot",
-            "value": 0.0
-          },
-          {
-            "expr": "w_m + V",
-            "formula": "w_m + V",
-            "label": "lbf/ft",
-            "meaning": "load on the lintel",
-            "offset": 0.0,
-            "scale": 0.06852176585679173,
-            "source": null,
-            "symbol": "w",
-            "text": null,
-            "unit": "lbf/ft",
-            "value": 193.0134976760885
-          },
-          {
-            "expr": "w*L^2/8",
-            "formula": "w·L²/8",
-            "label": "lbf⋅in",
-            "meaning": "bending moment, a simple beam",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-            "symbol": "M",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 12.203409639749113
-          },
-          {
-            "expr": "L",
-            "formula": "L",
-            "label": "in",
-            "meaning": "unbraced length, AISC L_b: the span",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": null,
-            "symbol": "L_b",
-            "text": null,
-            "unit": "in",
-            "value": 0.7111999999999999
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "L4×4×1/4's leg",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-            "symbol": "b",
-            "text": null,
-            "unit": "inch",
-            "value": 0.1016
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "L4×4×1/4's thickness",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-            "symbol": "t_a",
-            "text": null,
-            "unit": "inch",
-            "value": 0.00635
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in³",
-            "meaning": "L4×4×1/4's section modulus, geometric axis",
-            "offset": 0.0,
-            "scale": 61023.74409473229,
-            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-            "symbol": "S_x",
-            "text": null,
-            "unit": "inch ** 3",
-            "value": 1.6878675919999997e-05
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "°F",
-            "meaning": "the steel's temperature",
-            "offset": -459.67,
-            "scale": 1.8000000000000114,
-            "source": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6)",
-            "symbol": "T_s",
-            "text": null,
-            "unit": "degF",
-            "value": 351.9863582784579
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "psi",
-            "meaning": "A36 yield stress, cold",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "F_y0",
-            "text": null,
-            "unit": "pound_force_per_square_inch",
-            "value": 248211262.55406108
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "psi",
-            "meaning": "steel's modulus, cold",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "E_0",
-            "text": null,
-            "unit": "pound_force_per_square_inch",
-            "value": 199947961501.88254
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "",
-            "meaning": "Fy(T)/Fy at T_s",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
-            "symbol": "k_y",
-            "text": null,
-            "unit": "",
-            "value": 1.0
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "",
-            "meaning": "E(T)/E at T_s",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
-            "symbol": "k_E",
-            "text": null,
-            "unit": "",
-            "value": 1.0
-          },
-          {
-            "expr": "k_y*F_y0",
-            "formula": "k_y·F_y0",
-            "label": "psi",
-            "meaning": "yield stress, hot",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": null,
-            "symbol": "F_y",
-            "text": null,
-            "unit": "psi",
-            "value": 248211262.55406108
-          },
-          {
-            "expr": "k_E*E_0",
-            "formula": "k_E·E_0",
-            "label": "psi",
-            "meaning": "modulus, hot",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": null,
-            "symbol": "E",
-            "text": null,
-            "unit": "psi",
-            "value": 199947961501.88254
-          },
-          {
-            "expr": "0.8*F_y*S_x",
-            "formula": "0.8·F_y·S_x",
-            "label": "lbf⋅in",
-            "meaning": "yield moment: 0.80 × the geometric one (F10)",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": null,
-            "symbol": "M_y",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 3351.5819682752226
-          },
-          {
-            "expr": "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
-            "formula": "0.58·E·b⁴·t_a/L_b²·(√(1 + 0.88·(L_b·t_a/b²)²) − 1)",
-            "label": "lbf⋅in",
-            "meaning": "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "M_cr",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 12557.080082090533
-          },
-          {
-            "expr": "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
-            "formula": "min((1.92 − 1.17·√(M_y/M_cr))·M_y, 1.5·M_y)",
-            "label": "lbf⋅in",
-            "meaning": "lateral-torsional buckling strength (F10-2)",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "M_ltb",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 4409.145341126762
-          },
-          {
-            "expr": "b/t_a",
-            "formula": "b/t_a",
-            "label": "",
-            "meaning": "leg slenderness",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": null,
-            "symbol": "λ",
-            "text": null,
-            "unit": "",
-            "value": 16.0
-          },
-          {
-            "expr": "0.54*sqrt(E/F_y)",
-            "formula": "0.54·√(E/F_y)",
-            "label": "",
-            "meaning": "compact limit (Table B4.1b, case 12)",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": null,
-            "symbol": "λ_p",
-            "text": null,
-            "unit": "",
-            "value": 15.326447729333763
-          },
-          {
-            "expr": "0.91*sqrt(E/F_y)",
-            "formula": "0.91·√(E/F_y)",
-            "label": "",
-            "meaning": "noncompact limit",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": null,
-            "symbol": "λ_r",
-            "text": null,
-            "unit": "",
-            "value": 25.827902654988378
-          },
-          {
-            "expr": "0.8*S_x",
-            "formula": "0.8·S_x",
-            "label": "in³",
-            "meaning": "section modulus to the toe: 0.80 S_x (F10)",
-            "offset": 0.0,
-            "scale": 61023.74409473229,
-            "source": null,
-            "symbol": "S_c",
-            "text": null,
-            "unit": "in**3",
-            "value": 1.3502940735999998e-05
-          },
-          {
-            "expr": "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))",
-            "formula": "F_y·S_c·(2.43 − 1.72·λ·√(F_y/E))",
-            "label": "lbf⋅in",
-            "meaning": "leg local buckling, noncompact leg (F10-6)",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "M_lb",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 4894.58988930187
-          },
-          {
-            "expr": "min(1.5*M_y, M_ltb, M_lb)",
-            "formula": "min(1.5·M_y, M_ltb, M_lb)",
-            "label": "lbf⋅in",
-            "meaning": "nominal moment: the least of F10-1, LTB and leg buckling",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "M_n",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 4409.145341126762
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "",
-            "meaning": "ASD safety factor for bending (F1)",
-            "offset": 0.0,
-            "scale": 1.0,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "Ω_b",
-            "text": null,
-            "unit": "",
-            "value": 1.67
-          },
-          {
-            "expr": "M_n/Ω_b",
-            "formula": "M_n/Ω_b",
-            "label": "lbf⋅in",
-            "meaning": "allowable moment, hot",
-            "offset": 0.0,
-            "scale": 8.850745791327187,
-            "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-            "symbol": "M_a",
-            "text": null,
-            "unit": "lbf*in",
-            "value": 2640.2067910938695
-          },
-          {
-            "expr": "M/S_x",
-            "formula": "M/S_x",
-            "label": "psi",
-            "meaning": "bending stress",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": null,
-            "symbol": "σ_b",
-            "text": null,
-            "unit": "psi",
-            "value": 723007.5213002322
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "psi",
-            "meaning": "allowed in steel that may run hot",
-            "offset": 0.0,
-            "scale": 0.0001450377377302092,
-            "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
-            "symbol": "σ_allow",
-            "text": null,
-            "unit": "pound_force_per_square_inch",
-            "value": 82737087.51802036
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in⁴",
-            "meaning": "L4×4×1/4's moment of inertia, geometric axis",
-            "offset": 0.0,
-            "scale": 2402509.610028831,
-            "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-            "symbol": "I_x",
-            "text": null,
-            "unit": "inch ** 4",
-            "value": 1.2486942768e-06
-          },
-          {
-            "expr": "1.56*5*w*L^4/(384*E*I_x)",
-            "formula": "1.56·5·w·L⁴/(384·E·I_x)",
-            "label": "in",
-            "meaning": "deflection, hot, the angle free to twist",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]: 5wL⁴/384EI; AISC 360-16 Commentary F10, × 1.56",
-            "symbol": "Δ",
-            "text": null,
-            "unit": "in",
-            "value": 4.017398832317029e-06
-          },
-          {
-            "expr": "L_c/600",
-            "formula": "L_c/600",
-            "label": "in",
-            "meaning": "BIA's limit: the clear span over 600",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-            "symbol": "Δ_600",
-            "text": null,
-            "unit": "in",
-            "value": 0.0010159999999999998
-          },
-          {
-            "expr": null,
-            "formula": null,
-            "label": "in",
-            "meaning": "BIA's limit, at most",
-            "offset": 0.0,
-            "scale": 39.37007874015748,
-            "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-            "symbol": "Δ_max",
-            "text": null,
-            "unit": "inch",
-            "value": 0.007619999999999999
-          },
-          {
-            "expr": "w*L/2",
-            "formula": "w·L/2",
-            "label": "lbf",
-            "meaning": "each end's reaction on the brick",
-            "offset": 0.0,
-            "scale": 0.22480894309971053,
-            "source": "statics; its bearing stress is not checked: no allowable stress for refractory brick is found (door-openings.md)",
-            "symbol": "R",
-            "text": null,
-            "unit": "lbf",
-            "value": 68.63559977361706
-          }
-        ],
-        "id": "frame.door-lintel",
-        "label": null,
-        "lever": {
-          "hi": 0.00016387063999999995,
-          "lo": 8.193531999999998e-07,
-          "step": null,
-          "symbol": "S_x"
-        },
-        "reference": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]; AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; steel-design.md §S5",
-        "requirements": [
-          {
-            "holds": true,
-            "left": "L_c",
-            "level": "error",
-            "margin": "L_c = 24 in, 25 % of L_max = 96 in",
-            "op": "<=",
-            "right": "L_max"
-          },
-          {
-            "holds": true,
-            "left": "M",
-            "level": "error",
-            "margin": "M = 108 lbf⋅in, 0.4622 % of M_a = 23,368 lbf⋅in",
-            "op": "<=",
-            "right": "M_a"
-          },
-          {
-            "holds": true,
-            "left": "σ_b",
-            "level": "error",
-            "margin": "σ_b = 104.9 psi, 0.8739 % of σ_allow = 12,000 psi",
-            "op": "<=",
-            "right": "σ_allow"
-          },
-          {
-            "holds": true,
-            "left": "Δ",
-            "level": "error",
-            "margin": "Δ = 1.582 × 10⁻⁴ in, 0.3954 % of Δ_600 = 0.04 in",
-            "op": "<=",
-            "right": "Δ_600"
-          },
-          {
-            "holds": true,
-            "left": "Δ",
-            "level": "error",
-            "margin": "Δ = 1.582 × 10⁻⁴ in, 0.05272 % of Δ_max = 0.3 in",
-            "op": "<=",
-            "right": "Δ_max"
-          }
-        ],
-        "rule": null,
-        "rule_holds": true,
-        "rule_level": "error",
-        "solve": "Passes for any S_x from 0.05 in³ to 10 in³",
-        "status": "pass",
-        "title": "Steel lintel over the door, L4×4×1/4, hot"
-      },
+      "check": null,
       "level": "info",
-      "message": "The door's lintel: L4×4×1/4, 32 in long, 4 in bearing each end, about 174 °F. Each end puts 15 lb on the brick, 1 psi over 4 in by its 4 in leg; that bearing isn't checked, as no allowable stress for refractory brick is published (refractory-bearing.md). The wall is 8 in thick: BIA puts an angle under each wythe of a solid wall, so more than one is likely; how many isn't sized here.",
-      "reference": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]; AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; steel-design.md §S5; door-openings.md"
+      "message": "The door is arched, as Olsen's built kilns' are: brick jambs and a semicircular ring arch laid on a form (Tamba Figs 4-11, 4-15; Kanayama Figs 7-17, 7-18; Kecskemét, Fig 5-42). Its 3 in ring is 2.1 times the thinnest that holds a line of thrust, and the 10.0 in jamb holds its least thrust, 7 lb, its resultant 6.1 in in from the door (Heyman's statics).",
+      "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18); arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
     },
     {
       "check": null,
@@ -1434,616 +819,10 @@
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
       },
       {
-        "check": {
-          "cells": [
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "the opening's width",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design: the door",
-              "symbol": "L_c",
-              "text": null,
-              "unit": "inch",
-              "value": 0.6095999999999999
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "the widest opening a steel angle lintel spans",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "BIA TN 31B: steel angle lintels for openings up to 8 ft; door-headers.md §D1.5",
-              "symbol": "L_max",
-              "text": null,
-              "unit": "inch",
-              "value": 2.4383999999999997
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "bearing at each end",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "TMS 402-16 §5.2.1.3, at least 4 in; door-headers.md §D1.5 [H6]",
-              "symbol": "b_e",
-              "text": null,
-              "unit": "inch",
-              "value": 0.1016
-            },
-            {
-              "expr": "L_c + b_e",
-              "formula": "L_c + b_e",
-              "label": "in",
-              "meaning": "span, centre to centre of the bearings",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-              "symbol": "L",
-              "text": null,
-              "unit": "in",
-              "value": 0.7111999999999999
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "the wall over the opening, at its highest",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design: the wall's inside top less the door's top",
-              "symbol": "h_a",
-              "text": null,
-              "unit": "inch",
-              "value": 0.19685
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "layer 1, Morgan Thermal Ceramics JM 26 insulating firebrick",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "t_1",
-              "text": null,
-              "unit": "inch",
-              "value": 0.1143
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "lbf/ft³",
-              "meaning": "Morgan Thermal Ceramics JM 26 insulating firebrick, weight per cubic foot",
-              "offset": 0.0,
-              "scale": 0.006365880354264158,
-              "source": "the material's data sheet",
-              "symbol": "ρ_1",
-              "text": null,
-              "unit": "force_pound / foot ** 3",
-              "value": 7845.320000000002
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "layer 2, Morgan Kaowool ceramic fibre blanket, 6 pcf",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "the design",
-              "symbol": "t_2",
-              "text": null,
-              "unit": "inch",
-              "value": 0.08889999999999999
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "lbf/ft³",
-              "meaning": "Morgan Kaowool ceramic fibre blanket, 6 pcf, weight per cubic foot",
-              "offset": 0.0,
-              "scale": 0.006365880354264158,
-              "source": "the material's data sheet",
-              "symbol": "ρ_2",
-              "text": null,
-              "unit": "force_pound / foot ** 3",
-              "value": 942.5247830774774
-            },
-            {
-              "expr": "(ρ_1*t_1 + ρ_2*t_2)*h_a",
-              "formula": "(ρ_1·t_1 + ρ_2·t_2)·h_a",
-              "label": "lbf/ft",
-              "meaning": "the wall over the opening, all of it, per foot",
-              "offset": 0.0,
-              "scale": 0.06852176585679173,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]: with no arching, the full weight above the opening",
-              "symbol": "w_m",
-              "text": null,
-              "unit": "lbf/ft",
-              "value": 193.0134976760885
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "lbf/ft",
-              "meaning": "the roof's edge load on the wall over the opening",
-              "offset": 0.0,
-              "scale": 0.06852176585679173,
-              "source": "none: the roof spans between the walls either side of the door, or stands on its own (door-headers.md §D7)",
-              "symbol": "V",
-              "text": null,
-              "unit": "force_pound / foot",
-              "value": 0.0
-            },
-            {
-              "expr": "w_m + V",
-              "formula": "w_m + V",
-              "label": "lbf/ft",
-              "meaning": "load on the lintel",
-              "offset": 0.0,
-              "scale": 0.06852176585679173,
-              "source": null,
-              "symbol": "w",
-              "text": null,
-              "unit": "lbf/ft",
-              "value": 193.0134976760885
-            },
-            {
-              "expr": "w*L^2/8",
-              "formula": "w·L²/8",
-              "label": "lbf⋅in",
-              "meaning": "bending moment, a simple beam",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-              "symbol": "M",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 12.203409639749113
-            },
-            {
-              "expr": "L",
-              "formula": "L",
-              "label": "in",
-              "meaning": "unbraced length, AISC L_b: the span",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": null,
-              "symbol": "L_b",
-              "text": null,
-              "unit": "in",
-              "value": 0.7111999999999999
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "L4×4×1/4's leg",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-              "symbol": "b",
-              "text": null,
-              "unit": "inch",
-              "value": 0.1016
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "L4×4×1/4's thickness",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-              "symbol": "t_a",
-              "text": null,
-              "unit": "inch",
-              "value": 0.00635
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in³",
-              "meaning": "L4×4×1/4's section modulus, geometric axis",
-              "offset": 0.0,
-              "scale": 61023.74409473229,
-              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-              "symbol": "S_x",
-              "text": null,
-              "unit": "inch ** 3",
-              "value": 1.6878675919999997e-05
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "°F",
-              "meaning": "the steel's temperature",
-              "offset": -459.67,
-              "scale": 1.8000000000000114,
-              "source": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6)",
-              "symbol": "T_s",
-              "text": null,
-              "unit": "degF",
-              "value": 351.9863582784579
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "psi",
-              "meaning": "A36 yield stress, cold",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "F_y0",
-              "text": null,
-              "unit": "pound_force_per_square_inch",
-              "value": 248211262.55406108
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "psi",
-              "meaning": "steel's modulus, cold",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "E_0",
-              "text": null,
-              "unit": "pound_force_per_square_inch",
-              "value": 199947961501.88254
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "",
-              "meaning": "Fy(T)/Fy at T_s",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
-              "symbol": "k_y",
-              "text": null,
-              "unit": "",
-              "value": 1.0
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "",
-              "meaning": "E(T)/E at T_s",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]: Table A-4.2.1, interpolated",
-              "symbol": "k_E",
-              "text": null,
-              "unit": "",
-              "value": 1.0
-            },
-            {
-              "expr": "k_y*F_y0",
-              "formula": "k_y·F_y0",
-              "label": "psi",
-              "meaning": "yield stress, hot",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": null,
-              "symbol": "F_y",
-              "text": null,
-              "unit": "psi",
-              "value": 248211262.55406108
-            },
-            {
-              "expr": "k_E*E_0",
-              "formula": "k_E·E_0",
-              "label": "psi",
-              "meaning": "modulus, hot",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": null,
-              "symbol": "E",
-              "text": null,
-              "unit": "psi",
-              "value": 199947961501.88254
-            },
-            {
-              "expr": "0.8*F_y*S_x",
-              "formula": "0.8·F_y·S_x",
-              "label": "lbf⋅in",
-              "meaning": "yield moment: 0.80 × the geometric one (F10)",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": null,
-              "symbol": "M_y",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 3351.5819682752226
-            },
-            {
-              "expr": "0.58*E*b^4*t_a/L_b^2*(sqrt(1 + 0.88*(L_b*t_a/b^2)^2) - 1)",
-              "formula": "0.58·E·b⁴·t_a/L_b²·(√(1 + 0.88·(L_b·t_a/b²)²) − 1)",
-              "label": "lbf⋅in",
-              "meaning": "elastic lateral-torsional buckling moment, toe in compression (F10-5a)",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "M_cr",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 12557.080082090533
-            },
-            {
-              "expr": "min((1.92 - 1.17*sqrt(M_y/M_cr))*M_y, 1.5*M_y)",
-              "formula": "min((1.92 − 1.17·√(M_y/M_cr))·M_y, 1.5·M_y)",
-              "label": "lbf⋅in",
-              "meaning": "lateral-torsional buckling strength (F10-2)",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "M_ltb",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 4409.145341126762
-            },
-            {
-              "expr": "b/t_a",
-              "formula": "b/t_a",
-              "label": "",
-              "meaning": "leg slenderness",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": null,
-              "symbol": "λ",
-              "text": null,
-              "unit": "",
-              "value": 16.0
-            },
-            {
-              "expr": "0.54*sqrt(E/F_y)",
-              "formula": "0.54·√(E/F_y)",
-              "label": "",
-              "meaning": "compact limit (Table B4.1b, case 12)",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": null,
-              "symbol": "λ_p",
-              "text": null,
-              "unit": "",
-              "value": 15.326447729333763
-            },
-            {
-              "expr": "0.91*sqrt(E/F_y)",
-              "formula": "0.91·√(E/F_y)",
-              "label": "",
-              "meaning": "noncompact limit",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": null,
-              "symbol": "λ_r",
-              "text": null,
-              "unit": "",
-              "value": 25.827902654988378
-            },
-            {
-              "expr": "0.8*S_x",
-              "formula": "0.8·S_x",
-              "label": "in³",
-              "meaning": "section modulus to the toe: 0.80 S_x (F10)",
-              "offset": 0.0,
-              "scale": 61023.74409473229,
-              "source": null,
-              "symbol": "S_c",
-              "text": null,
-              "unit": "in**3",
-              "value": 1.3502940735999998e-05
-            },
-            {
-              "expr": "F_y*S_c*(2.43 - 1.72*λ*sqrt(F_y/E))",
-              "formula": "F_y·S_c·(2.43 − 1.72·λ·√(F_y/E))",
-              "label": "lbf⋅in",
-              "meaning": "leg local buckling, noncompact leg (F10-6)",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "M_lb",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 4894.58988930187
-            },
-            {
-              "expr": "min(1.5*M_y, M_ltb, M_lb)",
-              "formula": "min(1.5·M_y, M_ltb, M_lb)",
-              "label": "lbf⋅in",
-              "meaning": "nominal moment: the least of F10-1, LTB and leg buckling",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "M_n",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 4409.145341126762
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "",
-              "meaning": "ASD safety factor for bending (F1)",
-              "offset": 0.0,
-              "scale": 1.0,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "Ω_b",
-              "text": null,
-              "unit": "",
-              "value": 1.67
-            },
-            {
-              "expr": "M_n/Ω_b",
-              "formula": "M_n/Ω_b",
-              "label": "lbf⋅in",
-              "meaning": "allowable moment, hot",
-              "offset": 0.0,
-              "scale": 8.850745791327187,
-              "source": "AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-              "symbol": "M_a",
-              "text": null,
-              "unit": "lbf*in",
-              "value": 2640.2067910938695
-            },
-            {
-              "expr": "M/S_x",
-              "formula": "M/S_x",
-              "label": "psi",
-              "meaning": "bending stress",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": null,
-              "symbol": "σ_b",
-              "text": null,
-              "unit": "psi",
-              "value": 723007.5213002322
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "psi",
-              "meaning": "allowed in steel that may run hot",
-              "offset": 0.0,
-              "scale": 0.0001450377377302092,
-              "source": "HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
-              "symbol": "σ_allow",
-              "text": null,
-              "unit": "pound_force_per_square_inch",
-              "value": 82737087.51802036
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in⁴",
-              "meaning": "L4×4×1/4's moment of inertia, geometric axis",
-              "offset": 0.0,
-              "scale": 2402509.610028831,
-              "source": "AISC Shapes Database v16.0; kiln-hardware.md §4.7.1 [S28]",
-              "symbol": "I_x",
-              "text": null,
-              "unit": "inch ** 4",
-              "value": 1.2486942768e-06
-            },
-            {
-              "expr": "1.56*5*w*L^4/(384*E*I_x)",
-              "formula": "1.56·5·w·L⁴/(384·E·I_x)",
-              "label": "in",
-              "meaning": "deflection, hot, the angle free to twist",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]: 5wL⁴/384EI; AISC 360-16 Commentary F10, × 1.56",
-              "symbol": "Δ",
-              "text": null,
-              "unit": "in",
-              "value": 4.017398832317029e-06
-            },
-            {
-              "expr": "L_c/600",
-              "formula": "L_c/600",
-              "label": "in",
-              "meaning": "BIA's limit: the clear span over 600",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-              "symbol": "Δ_600",
-              "text": null,
-              "unit": "in",
-              "value": 0.0010159999999999998
-            },
-            {
-              "expr": null,
-              "formula": null,
-              "label": "in",
-              "meaning": "BIA's limit, at most",
-              "offset": 0.0,
-              "scale": 39.37007874015748,
-              "source": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]",
-              "symbol": "Δ_max",
-              "text": null,
-              "unit": "inch",
-              "value": 0.007619999999999999
-            },
-            {
-              "expr": "w*L/2",
-              "formula": "w·L/2",
-              "label": "lbf",
-              "meaning": "each end's reaction on the brick",
-              "offset": 0.0,
-              "scale": 0.22480894309971053,
-              "source": "statics; its bearing stress is not checked: no allowable stress for refractory brick is found (door-openings.md)",
-              "symbol": "R",
-              "text": null,
-              "unit": "lbf",
-              "value": 68.63559977361706
-            }
-          ],
-          "id": "frame.door-lintel",
-          "label": null,
-          "lever": {
-            "hi": 0.00016387063999999995,
-            "lo": 8.193531999999998e-07,
-            "step": null,
-            "symbol": "S_x"
-          },
-          "reference": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]; AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; steel-design.md §S5",
-          "requirements": [
-            {
-              "holds": true,
-              "left": "L_c",
-              "level": "error",
-              "margin": "L_c = 24 in, 25 % of L_max = 96 in",
-              "op": "<=",
-              "right": "L_max"
-            },
-            {
-              "holds": true,
-              "left": "M",
-              "level": "error",
-              "margin": "M = 108 lbf⋅in, 0.4622 % of M_a = 23,368 lbf⋅in",
-              "op": "<=",
-              "right": "M_a"
-            },
-            {
-              "holds": true,
-              "left": "σ_b",
-              "level": "error",
-              "margin": "σ_b = 104.9 psi, 0.8739 % of σ_allow = 12,000 psi",
-              "op": "<=",
-              "right": "σ_allow"
-            },
-            {
-              "holds": true,
-              "left": "Δ",
-              "level": "error",
-              "margin": "Δ = 1.582 × 10⁻⁴ in, 0.3954 % of Δ_600 = 0.04 in",
-              "op": "<=",
-              "right": "Δ_600"
-            },
-            {
-              "holds": true,
-              "left": "Δ",
-              "level": "error",
-              "margin": "Δ = 1.582 × 10⁻⁴ in, 0.05272 % of Δ_max = 0.3 in",
-              "op": "<=",
-              "right": "Δ_max"
-            }
-          ],
-          "rule": null,
-          "rule_holds": true,
-          "rule_level": "error",
-          "solve": "Passes for any S_x from 0.05 in³ to 10 in³",
-          "status": "pass",
-          "title": "Steel lintel over the door, L4×4×1/4, hot"
-        },
+        "check": null,
         "level": "info",
-        "message": "The door's lintel: L4×4×1/4, 32 in long, 4 in bearing each end, about 174 °F. Each end puts 15 lb on the brick, 1 psi over 4 in by its 4 in leg; that bearing isn't checked, as no allowable stress for refractory brick is published (refractory-bearing.md). The wall is 8 in thick: BIA puts an angle under each wythe of a solid wall, so more than one is likely; how many isn't sized here.",
-        "reference": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]; AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; steel-design.md §S5; door-openings.md"
+        "message": "The door is arched, as Olsen's built kilns' are: brick jambs and a semicircular ring arch laid on a form (Tamba Figs 4-11, 4-15; Kanayama Figs 7-17, 7-18; Kecskemét, Fig 5-42). Its 3 in ring is 2.1 times the thinnest that holds a line of thrust, and the 10.0 in jamb holds its least thrust, 7 lb, its resultant 6.1 in in from the door (Heyman's statics).",
+        "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18); arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
       }
     ],
     "kind": "arch frame",
@@ -2089,13 +868,6 @@
         "part": "tie rods",
         "source": "length: Merrill flat-top kiln; kiln-hardware.md §4.2 [S16]",
         "steel": "1/2-13 threaded rod"
-      },
-      {
-        "count": 1,
-        "length_in": 32.0,
-        "part": "door lintel",
-        "source": "steel-design.md §S5; door-openings.md",
-        "steel": "L4×4×1/4"
       }
     ],
     "posts": 2,
@@ -2197,27 +969,28 @@
         "name": "Door in part of the wall",
         "note": null,
         "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18)",
-        "value": "24 × 40 in in the front wall, 7.8 in of wall over it, its head a steel lintel"
+        "value": "24 × 40 in in the front wall, 7.8 in of wall over it, its head a semicircular arch"
       },
       {
-        "formula": "the door wall's outside face; AISC Table A-4.2.1 interpolated",
-        "inputs": {},
-        "name": "Lintel's temperature",
-        "note": "Taken at the wall's outside face, as the frame's steel is (steel-design.md §S3). Steel reaching into the hot inner layers would run hotter, past every limit (door-headers.md §D7, example 2); how the inner layers over the opening sit on the lintel is the builder's detail, not checked.",
-        "reference": "the engine's heat-loss solve: the bearing walls' outside face, steady at the top temperature (heatloss.py; electric-and-thermal.md §6); AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]",
-        "value": "174 °F: Fy × 1.00, E × 1.00"
-      },
-      {
-        "formula": "w = Σρt × the wall over the opening + the roof's edge; M = wL²/8, L the clear span + 4 in; M_a by AISC F10 hot (as the dome's buttress); Δ = 1.56·5wL⁴/384EI ≤ L/600 and 0.3 in; σ = M/S_x ≤ 12,000 psi",
+        "formula": "k = d/(r + d/2) ÷ η(90°) ≥ 2; H_min ≤ H_max, each the loads' moment about the touching point over its height to the crown's line; x_R = (N·x_p + G₁·e/2 + G₂·(d + e)/2 + G₃·(e − b_c/2) + H_min·h_s)/ΣV ≤ e; H_min/N ≤ μ",
         "inputs": {
+          "ring depth": "3 in",
           "roof's edge": "0 lb/ft",
-          "span L": "28 in",
-          "the wall over it": "7.8 in"
+          "springline": "28 in",
+          "wall over the springline": "19.8 in"
         },
-        "name": "Steel lintel over the door, hot",
-        "note": "No arching is counted (BIA, with no shoring): the steel carries everything over the opening. Unbraced, toe in compression: F10's cautious case. The bearing stress of each end on refractory brick is NOT checked: no allowable stress is found (door-openings.md). BIA's least angle, a 3½ in leg ¼ in thick, sets the smallest.",
-        "reference": "BIA Technical Note 31B (1987); door-headers.md §D1 [H1]; AISC 360-16 §F1, §F10, Appendix 4 Table A-4.2.1; door-headers.md §D2, §D6 [H7]; steel-design.md §S5; BIA TN 31B: steel angle lintels for openings up to 8 ft; door-headers.md §D1.5",
-        "value": "L4×4×1/4: w = 13 lb/ft, M = 108 lb·in against AISC's 23,368 lb·in; deflects 0.000 in against 0.040 in; each end 15 lb on the brick"
+        "name": "The door's arch and jambs",
+        "note": "HarbisonWalker's arch method covers roof arches of T/S 4–10 %, and this door arch's ring is 12% of its span: so the statics here are Heyman's, from the geometry and the loads alone, which need no range. A jamb that gives a little lets the arch settle to its least thrust, so that is what it must hold (Heyman). A hot arch held rigidly would push towards the most; a door arch's hot thrust is not sourced (door-headers.md §D8). The whole wall over the arch is taken to bear on it, BIA's safe side. Sliding uses BIA's friction between brick masonry units, 0.6: for clay brick, none is sourced for insulating firebrick or refractory joints (refractory-bearing.md §B4.1). The left wall bonded into the jamb's end is counted for a length of the jamb wall's thickness only (a design rule, door-headers.md §D9). A partition wall bonded in between doors isn't counted.",
+        "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the minimum thrust, the line of thrust from the crown's extrados touching the intrados: 'an arch on spreading supports will act in a state of minimum thrust' (Heyman, The Stone Skeleton; arch-thrust-theory.md §2 [A1], [A3]), the least it pushes on its neighbours (domes-over-doors.md §D3 [D7]); the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress; Couplet–Heyman minimum thickness, Rizzi et al. 2010; domes-over-doors.md §D3 [D5]",
+        "value": "a 3 in ring over 24 in, 2.1 times the thinnest that stands; its thrust 7 lb at least, 13 lb at most; on the 10.0 in jamb the resultant 6.1 in in from the door's edge (its middle third to 6.7 in); at the springing it needs friction 0.25 of 0.6"
+      },
+      {
+        "formula": "σ = 2N/(3·b·a), a the resultant's distance to the nearer edge",
+        "inputs": {},
+        "name": "Bearing stress under the door's arch",
+        "note": "Reported, not checked: no maker, standard or handbook found gives an allowable bearing stress or a factor of safety for refractory brick or castable, cold or hot (one search extract, unread, gives a factor of 2 on the crushing strength at temperature for refractory-lined vessels: refractory-bearing.md §B4); ASTM C133 says cold crushing strength is not a measure of performance hot, and the ASTM C16 load (25 psi) is a test condition, not a limit (refractory-bearing.md). Compare it with the brick's cold crushing strength and hot-load data there.",
+        "reference": "refractory-bearing.md",
+        "value": "2.7 psi at the springing, 3.0 psi at the jamb's toe"
       }
     ]
   },
@@ -3097,7 +1870,12 @@
         "material": "ifb-jm26"
       },
       {
-        "count": 3,
+        "count": 1,
+        "cut": "cut to 1.5 in long, ripped to 0.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 2,
         "cut": "cut to 1.5 in long, ripped to 1.5 in",
         "material": "ifb-jm26"
       },
@@ -3122,7 +1900,12 @@
         "material": "ifb-jm26"
       },
       {
-        "count": 4,
+        "count": 1,
+        "cut": "cut to 4.5 in long, ripped to 0.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 3,
         "cut": "cut to 4.5 in long, ripped to 1.5 in",
         "material": "ifb-jm26"
       },
@@ -3142,6 +1925,11 @@
         "material": "ifb-jm26"
       },
       {
+        "count": 1,
+        "cut": "cut to 6 in long, ripped to 1 in",
+        "material": "ifb-jm26"
+      },
+      {
         "count": 15,
         "cut": "cut to 8 in long",
         "material": "ifb-jm26"
@@ -3152,12 +1940,17 @@
         "material": "ifb-jm26"
       },
       {
-        "count": 4,
+        "count": 2,
+        "cut": "ripped to 0.5 in",
+        "material": "ifb-jm26"
+      },
+      {
+        "count": 6,
         "cut": "ripped to 1 in",
         "material": "ifb-jm26"
       },
       {
-        "count": 18,
+        "count": 16,
         "cut": "ripped to 1.5 in",
         "material": "ifb-jm26"
       },
@@ -3221,12 +2014,12 @@
     ],
     "quantities": [
       {
-        "amount": 648.0,
-        "detail": "487 whole, 130 cut into 212 pieces; 617 in the kiln plus 5 % for breakage",
+        "amount": 651.0,
+        "detail": "487 whole, 133 cut into 215 pieces; 620 in the kiln plus 5 % for breakage",
         "kind": "insulating_firebrick",
         "material": "ifb-jm26",
         "name": "Morgan Thermal Ceramics JM 26 insulating firebrick",
-        "priced_amount": 648.0,
+        "priced_amount": 651.0,
         "unit": "bricks"
       },
       {

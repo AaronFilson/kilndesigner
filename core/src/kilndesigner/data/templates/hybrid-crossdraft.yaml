@@ -6,11 +6,14 @@ name: PNW hybrid cross-draft, cone 10, bricked door
 units: us
 firing:
   cone: "10"
-  # An ESTIMATE of the kiln furniture in a full stack, for the simulation (pnw-hybrid-crossdraft.md):
-  # four 12 × 24 × 1 in mullite shelves a layer (24 in across, 12 in along; 4 in in front, 1 in
-  # between and at the back: Olsen p.142, p.151) at 20.5 lb each (Olsen p.33–35), four layers
-  # (an assumption, not sourced). The ware itself and the posts have no sourced mass: left out.
-  ware: 328 lb
+  # The setting (pnw-hybrid-crossdraft.md), weighed by the engine (furniture.py): four 12 × 24 ×
+  # 1 in mullite shelves a layer (24 in across, 12 in along; 4 in in front, 1 in between and at the
+  # back: Olsen p.142, p.151), weighed from Olsen's 20.5 lb shelf (p.33–35). Four layers is an
+  # ASSUMPTION, not sourced or confirmed. No posts: no source gives a post's size or weight, so
+  # they are left out. The ware weighs 7 times the setting, the middle of the author's 6 to 8.
+  setting:
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 4}
+    ware_ratio: 7 # the author (the user, 2026-10-30): ware is 6 to 8 times the setting
 chamber:
   width: 28 in
   depth: 60 in # along the draft, from the burners to the flue
@@ -25,7 +28,7 @@ loading:
     width: 24 in
     height: 40 in
     sill: 0 in # at floor level
-    head: lintel
+    head: arch # an arched brick head, the author's choice
 lining:
   walls:
     - material: ifb-jm26
@@ -62,15 +65,16 @@ heat:
       type: venturi
       count: 8 # the author's: slow flame movement at high volume
       wall: front # through the bricked door, from a removable welded-steel rack
-      places: # two rows of four, inside the 24 in door; the rows three courses apart
+      places: # two columns of four up the sides of the 24 in door, every three courses from one
+        # course up (Pitelka [S4]); each 4¼ in port 0.9 in in from its jamb and 3 in under the head
         - {wall: front, across: -9 in, up: 4.625 in}
-        - {wall: front, across: -3 in, up: 4.625 in}
-        - {wall: front, across: 3 in, up: 4.625 in}
-        - {wall: front, across: 9 in, up: 4.625 in}
         - {wall: front, across: -9 in, up: 12.125 in}
-        - {wall: front, across: -3 in, up: 12.125 in}
-        - {wall: front, across: 3 in, up: 12.125 in}
+        - {wall: front, across: -9 in, up: 19.625 in}
+        - {wall: front, across: -9 in, up: 27.125 in}
+        - {wall: front, across: 9 in, up: 4.625 in}
         - {wall: front, across: 9 in, up: 12.125 in}
+        - {wall: front, across: 9 in, up: 19.625 in}
+        - {wall: front, across: 9 in, up: 27.125 in}
     supply:
       type: cylinders
       # The author's choice, more 100 lb cylinders: 11 meets the burners' draw at 20 °F even ¼

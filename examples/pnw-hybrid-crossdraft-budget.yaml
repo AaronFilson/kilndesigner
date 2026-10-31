@@ -6,7 +6,10 @@ name: PNW hybrid cross-draft, cone 10, budget lining
 units: us
 firing:
   cone: "10"
-  ware: 328 lb # an ESTIMATE of the shelves only, as in pnw-hybrid-crossdraft.yaml
+  setting: # as in pnw-hybrid-crossdraft.yaml: four layers (an ASSUMPTION) of four mullite
+    # shelves, no posts (unsourced), the ware 7 times the setting (the author's 6 to 8)
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 4}
+    ware_ratio: 7
 chamber:
   width: 28 in
   depth: 60 in
@@ -17,7 +20,7 @@ roof:
 loading:
   type: door
   face: front # an end wall: the arch springs from the sides
-  opening: {width: 24 in, height: 40 in, sill: 0 in, head: lintel} # the author's door
+  opening: {width: 24 in, height: 40 in, sill: 0 in, head: arch} # the author's door
 lining:
   walls:
     - material: ifb-jm26
@@ -50,15 +53,16 @@ heat:
       type: venturi
       count: 8 # the author's, through the door as in pnw-hybrid-crossdraft.yaml
       wall: front
-      places:
+      places: # two columns of four up the sides of the 24 in door, every three courses from one
+        # course up (Pitelka [S4]); each 4¼ in port 0.9 in in from its jamb and 3 in under the head
         - {wall: front, across: -9 in, up: 4.625 in}
-        - {wall: front, across: -3 in, up: 4.625 in}
-        - {wall: front, across: 3 in, up: 4.625 in}
-        - {wall: front, across: 9 in, up: 4.625 in}
         - {wall: front, across: -9 in, up: 12.125 in}
-        - {wall: front, across: -3 in, up: 12.125 in}
-        - {wall: front, across: 3 in, up: 12.125 in}
+        - {wall: front, across: -9 in, up: 19.625 in}
+        - {wall: front, across: -9 in, up: 27.125 in}
+        - {wall: front, across: 9 in, up: 4.625 in}
         - {wall: front, across: 9 in, up: 12.125 in}
+        - {wall: front, across: 9 in, up: 19.625 in}
+        - {wall: front, across: 9 in, up: 27.125 in}
     supply: # the author's choice: more 100 lb cylinders, not a tank
       type: cylinders
       count: 11

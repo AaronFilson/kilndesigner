@@ -22,36 +22,42 @@ below has its working and source in the report and plans._
 
 | | Bricked door | Car | Budget lining |
 |---|---|---|---|
-| Door | 24 × 40 in, sill at the floor, steel lintel L4×4×¼ | the car's end | as the bricked door |
-| Burners | 8 × Ransome B3 at 1.0 psi, 56,510 BTU/hr each, 452,083 in all, through the door | same, through the right wall | as the bricked door |
+| Door | 24 × 40 in, sill at the floor, **arched brick head** (semicircular, springing at 28 in) | the car's end | as the bricked door |
+| Burners | 8 × Ransome B3 at 1.0 psi, 56,510 BTU/hr each, 452,083 in all, through the door, two columns of four up its sides | same, through the right wall | as the bricked door |
 | Burner ports / exit flue | 8 × 4¼ in round, 113 in² / 113 in² (1:1) | same | same |
 | Propane | 11 × 100 lb cylinders: meets 452,083 at 20 °F full (1,243,000), half (704,000), ¼ keeping 10 psi (476,300) | same | same (the tank is gone) |
-| Priced materials | **$11,560** | $11,566 + the car's hardware | **$9,837** |
+| Priced materials | **$11,606** | $11,566 + the car's hardware | **$9,859** |
 | Errors / warnings | 0 / 1 (the budget) | 0 / 1 | 0 / 1 |
-| Simulated firing, 328 lb of shelves, hand-over 1650 °F | 33 h 09 min, $72.30 | same | 29 h 15 min, $66.49 |
-| Electricity / propane per firing | 356.2 kWh / 8.4 gal | same | 311.4 kWh / 8.3 gal |
-| Cheapest hand-over (chart) | 1200 °F: $65.81, 18.1 h | same | 1400 °F: $63.89, 21.6 h |
+| Simulated firing, setting and ware 2,624 lb (ware 7 × the setting), hand-over 1650 °F | 65 h 12 min, $150.03 | same | 59 h 13 min, $140.95 |
+| Electricity / propane per firing | 705.4 kWh / 18.7 gal | same | 636.9 kWh / 18.4 gal |
 
-1. **The door** (`loading.opening`: 24 × 40 in, sill 0, `head: lintel`). The roof of all three
-   variants is a **sprung arch, not a dome**: the author's answer speaks of "the dome" supporting
-   itself over the door. The arch springs from the side walls and runs front to back, so it puts
-   nothing on the front wall (door-headers.md §D7), and the door's 40 in top leaves 4 in of wall
-   under the springline. The roof type is unchanged; tell us if the kiln is to have a dome.
-   - With a steel lintel (the "steel bracing"): `frame.door-lintel` passes with an **L4×4×¼**,
-     32 in long, 4 in bearing each end, about 174 °F at the wall's face; each end puts about 20 lb
-     on the brick (1 psi, not checked: no allowable bearing stress for refractory brick is
-     published, refractory-bearing.md). The wall is 8 in thick and BIA puts an angle under each
-     wythe, so more than one angle is likely; how many isn't sized.
-   - Checked as an arched head instead, it passes too: the 3 in ring is 2.1 times the thinnest
-     that holds a line of thrust, and the 10 in jamb holds its least thrust (8 lb) 6.1 in from the
-     door (Heyman's statics; `frame.door-arch`, `frame.door-jamb`, `frame.door-slide`).
-   - The car variant keeps no opening: a car's door is its whole end.
+1. **The door** (`loading.opening`: 24 × 40 in, sill 0, `head: arch`): **an arched brick head**,
+   the author's choice. It passes: the 3 in ring is 2.1 times the thinnest that holds a line of
+   thrust, and the 10 in jamb holds its least thrust (8 lb; 7 lb in the budget lining) 6.1 in
+   from the door, inside its middle third (to 6.7 in), needing friction 0.25 of 0.6 (Heyman's
+   statics; `frame.door-arch`, `frame.door-jamb`, `frame.door-slide`). Bearing under it, 3.4 psi
+   at the springing and 3.8 psi at the jamb's toe, is reported, not checked (no allowable
+   bearing stress for refractory brick is published, refractory-bearing.md). The arched head
+   adds $46 of brick over the lintel. The car variant keeps no opening: a car's door is its whole
+   end.
+   - **The roof stays a cast sprung arch** in these brick versions (the author's decision): it
+     springs from the side walls and runs front to back, so it puts nothing on the front wall
+     (door-headers.md §D7). The dome comes with the castable version later.
 2. **Burners: eight.** The same design input (Olsen's Rule 1, 452,083 BTU/hr) split eight ways is
    56,510 BTU/hr each; the library's cheapest burner carrying that within its pressures is the
-   Ransome B3 at 1.0 psi ($1,960 for eight). Through the door they sit in two rows of four, 6 in
-   apart across, at 4⅝ in and 12⅛ in up (the rows three 2½ in courses apart: a layout choice, not
-   a sourced rule); the eight ports are cut through the door's bricks. With eight ports the exit
-   flue is sized 1:1 to them: 113 in² (p.151, p.236). The car's eight spread along the right wall.
+   Ransome B3 at 1.0 psi ($1,960 for eight). **Up the sides of the door, evenly** (the author's
+   layout): two columns of four, 9 in either side of the middle, at 4⅝, 12⅛, 19⅝ and 27⅛ in up:
+   one 2½ in course off the floor (Pitelka [S4]) and then every three courses, 7½ in apart. Each
+   4¼ in port is 0.9 in in from its jamb, and the top ones end 3¼ in under the arched head at
+   their outer edge (the head is 32.5 in up there). All eight are cut, none refused; the
+   engine's port checks are the wall's edges and top and the other ports, and it has no
+   separate margin to a door's jambs or head, so these clearances are the layout's, not a
+   sourced rule. With eight ports the exit flue is sized 1:1 to them: 113 in² (p.151, p.236),
+   and `hardware.flue` passes. The car's eight spread along the right wall.
+   - Spy holes: the engine now puts them above the burners, in the middle of the door, at 33,
+     35⅞ and 38¾ in up. The top one (2¼ × 2½ in, 3 in right of the middle) reaches 40 in, about
+     ¾ in past the arched head over it (39.3 in up at its outer edge): move it down or set it
+     by hand (`spy_holes.places`).
    The **removable welded-steel rack** they hang on is hardware the engine doesn't size: no
    source gives one, so it is listed here and left unsized and unpriced.
 3. **Propane: 11 cylinders.** The least count that meets the burners' draw at 20 °F in every case
@@ -64,13 +70,26 @@ below has its working and source in the report and plans._
    are unchanged; the castable version the author plans is the one to bring under budget.
 5. **The switch-over stays at 1650 °F**: the start of shino reduction, cone 012 to 010 (Orton,
    861–915 °C, about 1580–1680 °F by rate, `cones.yaml`). The glaze sets it, not the cost chart's
-   cheapest point (1200 °F, $6.49 less per firing).
-6. **The stack, an estimate.** `firing.ware` is **328 lb, the shelves only**: four 12 × 24 × 1 in
-   mullite shelves a layer, 24 in across the 28 in width and 12 in along (4 in in front, 1 in
-   between and at the back fit four in the 60 in: Olsen p.142, p.151, Fig 5-82), at 20.5 lb each
-   (Olsen p.33–35), and four layers above the first 4½ in off the floor (p.135). **Four layers is
-   an assumption**, not sourced; the posts and the ware itself have no sourced mass and are left
-   out, so the firing simulated is a lower bound on a full kiln's.
+   cheapest point. (The cost chart was last run on the shelves-only stack; rerun it with
+   `kilndesigner simulate --chart` for the full load.)
+6. **The setting and the ware.** `firing.setting` describes the stack and the engine weighs it
+   (`furniture.py`): four 12 × 24 × 1 in mullite shelves a layer, 24 in across the 28 in width and
+   12 in along (4 in in front, 1 in between and at the back fit four in the 60 in: Olsen p.142,
+   p.151, Fig 5-82), weighed from Olsen's 20.5 lb shelf (p.33–35): **328 lb of shelves**. **Four
+   layers is an assumption**, not sourced or confirmed. **No posts**: no source gives a post's
+   size or weight, so they are left out (the setting is shelves only). The **ware weighs 6 to 8
+   times the setting** (the author, 2026-10-30, not a published source); the design uses 7, the
+   middle: 2,296 lb of ware, 2,624 lb with the shelves. Across the range, hand-over 1650 °F:
+
+   | Ware ÷ setting | Setting and ware | Bricked door / car | Budget lining |
+   |---|---|---|---|
+   | 6 | 2,296 lb | 60 h 37 min, 833.9 kWh in, 655.3 kWh + 17.2 gal, $138.96 | 54 h 56 min, 766.5 kWh in, 590.2 kWh + 17.0 gal, $130.33 |
+   | 7 | 2,624 lb | 65 h 12 min, 899.7 kWh in, 705.4 kWh + 18.7 gal, $150.03 | 59 h 13 min, 828.6 kWh in, 636.9 kWh + 18.4 gal, $140.95 |
+   | 8 | 2,952 lb | 69 h 46 min, 965.3 kWh in, 755.3 kWh + 20.1 gal, $161.10 | 63 h 30 min, 890.8 kWh in, 683.5 kWh + 19.9 gal, $151.58 |
+
+   ("kWh in" is the heat put into the kiln; then electricity and propane bought.) The long
+   firing is the 11.5 kW of elements heating over a ton of ware to 1650 °F; an earlier hand-over
+   would shorten it.
 
 ## What the engine found before the answers
 
@@ -130,13 +149,10 @@ below has its working and source in the report and plans._
 
 ## Open, needs the author
 
-1. **Dome or arch?** The answer speaks of a dome over the door; the design's roof is a sprung
-   arch (it puts no load on the door wall either way). Say if the roof should be a dome.
-2. **The door head:** a lintel (as entered) or an arched head; both pass.
-3. **The burner layout in the door** (two rows of four) and the rack: the engine has no source to
-   size the rack.
-4. **A real stack:** the number of shelf layers, the posts and the ware's weight, to replace the
-   shelves-only estimate.
+1. **The burners' rack:** the engine has no source to size it.
+2. **The setting:** the number of shelf layers (four, assumed) and the posts' size and material
+   (left out, unsourced).
+3. **The top spy hole** reaches past the arched head (above): where should it go?
 
 ## The author's answers (2026-10-30)
 
@@ -154,12 +170,17 @@ below has its working and source in the report and plans._
   itself over the door, with steel bracing. The burners fire through ports in the door, from a
   removable rack of welded steel.
 - **Burners: eight**, for slow flame movement at high volume.
-- **Ware and shelves:** estimate a full stack from Olsen's stacking guidance, and say so.
+- **Ware and shelves:** estimate a full stack from Olsen's stacking guidance, and say so. Later:
+  the ware weighs about 6 to 8 times the setting (shelves and posts); every part of the setting
+  is the user's to change.
+- **Door head: an arched brick head.** The roof stays a cast sprung arch in the brick versions;
+  the dome comes with the castable version.
+- **Burners: up the sides of the door, spaced evenly.**
 - **Curves** (for the castable version): shapes picked by choice first, point editing later.
 
 ## Not sourced, left out
 
 Kanthal APM wire price; steel prices; the car's wheels, rails and seal (no source sizes them);
-the burners' removable welded-steel rack; the mass of the ware and the shelf posts; propane
+the burners' removable welded-steel rack; the shelf posts' size and mass; propane
 cylinder prices;
 an allowable bearing stress for the refractory (shown, not checked); HWI's own c_p.

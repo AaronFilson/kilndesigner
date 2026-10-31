@@ -7,7 +7,10 @@ name: PNW hybrid cross-draft, cone 10, car
 units: us
 firing:
   cone: "10"
-  ware: 328 lb # an ESTIMATE of the shelves only, as in pnw-hybrid-crossdraft.yaml
+  setting: # as in pnw-hybrid-crossdraft.yaml: four layers (an ASSUMPTION) of four mullite
+    # shelves, no posts (unsourced), the ware 7 times the setting (the author's 6 to 8)
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 4}
+    ware_ratio: 7
 chamber:
   width: 28 in
   depth: 60 in
