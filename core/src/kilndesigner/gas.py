@@ -25,7 +25,7 @@ Data: data/gas.yaml, from docs/research/combustion-and-masonry.md and kiln-refer
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from functools import cache
 from importlib import resources
 from typing import Any, Literal
@@ -493,7 +493,7 @@ def _demand(kiln: Kiln, per_ft3: float, volume_ft3: float, what: str, source: st
     )
 
 
-def _tank_suggestion(demand: float, t_f: float) -> str | None:
+def tank_suggestion(demand: float, t_f: float) -> str | None:
     table = gas_data()["tanks_one_third_full"]
     t = min(max(t_f, 0.0), 70.0)
     for gallons, row in table["gallons"].items():
@@ -997,9 +997,12 @@ def _draft_lines(
     return lines
 
 
-def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
+def design_gas(
+    kiln: Kiln, loss_watts: float | None = None, input_btu_hr: float | None = None
+) -> GasDesign:
     """The burners, supply, flue and chimney of a gas kiln. With ``loss_watts``, the kiln's steady
-    heat loss at its top temperature, the burners are also checked against it."""
+    heat loss at its top temperature, the burners are also checked against it. ``input_btu_hr``
+    replaces the rule-of-thumb input: the one the target-time solver found."""
     gas = kiln.heat.gas
     if gas is None:
         raise ValueError("the kiln has no gas heat")
@@ -1096,6 +1099,22 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
             inputs={"firing speed": gas.firing_speed},
         ),
     ]
+    if input_btu_hr is not None:
+        demand = input_btu_hr
+        need = replace(
+            need,
+            btu_per_ft3_hr=demand / volume_ft3,
+            what="the input the firing simulation found for the target firing time",
+            source="the firing simulation (simulation.py, ADR 0015)",
+        )
+        working.append(
+            Step(
+                name="Burner input for the target firing time",
+                value=f"{demand:,.0f} BTU/hr ({demand / volume_ft3:,.0f} BTU/ft³/hr)",
+                note="Found with the firing simulation, in place of the rule of thumb above.",
+                reference="simulation.py (ADR 0015); target.py",
+            )
+        )
     if kiln.heat.electric is not None:
         findings.append(
             Finding(
@@ -1259,7 +1278,7 @@ def design_gas(kiln: Kiln, loss_watts: float | None = None) -> GasDesign:
                 ),
             )
         )  # fmt: skip
-        tank = _tank_suggestion(draw, t_f)
+        tank = tank_suggestion(draw, t_f)
 
     if gas.burners.type == "power":
         findings.append(

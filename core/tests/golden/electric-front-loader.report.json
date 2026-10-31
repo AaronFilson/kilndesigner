@@ -1093,5 +1093,6 @@
       }
     ]
   },
-  "name": "Electric front-loader, cone 10"
+  "name": "Electric front-loader, cone 10",
+  "target": null
 }

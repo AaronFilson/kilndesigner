@@ -2142,6 +2142,17 @@
             ],
             "title": "Switch Over C"
           },
+          "gas_from_c": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gas From C"
+          },
           "reached_c": {
             "type": "number",
             "title": "Reached C"
@@ -3377,6 +3388,16 @@
             },
             "type": "array",
             "title": "Findings"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TargetFiring"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -3632,6 +3653,47 @@
         ],
         "title": "SupplyCase"
       },
+      "SupplyOption": {
+        "properties": {
+          "option": {
+            "type": "string",
+            "title": "Option"
+          },
+          "works": {
+            "type": "boolean",
+            "title": "Works"
+          },
+          "needs": {
+            "type": "string",
+            "title": "Needs"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "source": {
+            "type": "string",
+            "title": "Source"
+          }
+        },
+        "type": "object",
+        "required": [
+          "option",
+          "works",
+          "needs",
+          "cost",
+          "source"
+        ],
+        "title": "SupplyOption",
+        "description": "One way to supply the propane for the firing: a row of the options table."
+      },
       "SwitchOverChart": {
         "properties": {
           "points": {
@@ -3738,6 +3800,261 @@
           "completed"
         ],
         "title": "SwitchPoint"
+      },
+      "TargetFiring": {
+        "properties": {
+          "target_h": {
+            "type": "number",
+            "title": "Target H"
+          },
+          "met": {
+            "type": "boolean",
+            "title": "Met"
+          },
+          "shortest_h": {
+            "type": "number",
+            "title": "Shortest H"
+          },
+          "input_btu_hr": {
+            "type": "number",
+            "title": "Input Btu Hr"
+          },
+          "input_per_ft3_btu_hr": {
+            "type": "number",
+            "title": "Input Per Ft3 Btu Hr"
+          },
+          "duration_h": {
+            "type": "number",
+            "title": "Duration H"
+          },
+          "limits": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Limits"
+          },
+          "burners": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Burners"
+          },
+          "burner_each_btu_hr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Burner Each Btu Hr"
+          },
+          "burners_most_btu_hr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Burners Most Btu Hr"
+          },
+          "propane_gal_hr": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Propane Gal Hr"
+          },
+          "cylinders_full": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cylinders Full"
+          },
+          "cylinders_quarter": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cylinders Quarter"
+          },
+          "tank": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tank"
+          },
+          "supply_meets": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supply Meets"
+          },
+          "propane_gallons": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Propane Gallons"
+          },
+          "electricity_kwh": {
+            "type": "number",
+            "title": "Electricity Kwh"
+          },
+          "elements_share": {
+            "type": "number",
+            "title": "Elements Share"
+          },
+          "cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost Usd"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost"
+          },
+          "flue_area_in2": {
+            "type": "number",
+            "title": "Flue Area In2"
+          },
+          "inlet_area_in2": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inlet Area In2"
+          },
+          "chimney_height": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chimney Height"
+          },
+          "draft": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Draft"
+          },
+          "peak_rate_c_per_h": {
+            "type": "number",
+            "title": "Peak Rate C Per H"
+          },
+          "supply_options": {
+            "items": {
+              "$ref": "#/components/schemas/SupplyOption"
+            },
+            "type": "array",
+            "title": "Supply Options"
+          },
+          "working": {
+            "items": {
+              "$ref": "#/components/schemas/Step"
+            },
+            "type": "array",
+            "title": "Working"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/Finding"
+            },
+            "type": "array",
+            "title": "Findings"
+          }
+        },
+        "type": "object",
+        "required": [
+          "target_h",
+          "met",
+          "shortest_h",
+          "input_btu_hr",
+          "input_per_ft3_btu_hr",
+          "duration_h",
+          "limits",
+          "burners",
+          "burner_each_btu_hr",
+          "burners_most_btu_hr",
+          "propane_gal_hr",
+          "cylinders_full",
+          "cylinders_quarter",
+          "tank",
+          "supply_meets",
+          "propane_gallons",
+          "electricity_kwh",
+          "elements_share",
+          "cost_usd",
+          "cost",
+          "flue_area_in2",
+          "inlet_area_in2",
+          "chimney_height",
+          "draft",
+          "peak_rate_c_per_h",
+          "supply_options",
+          "working",
+          "findings"
+        ],
+        "title": "TargetFiring",
+        "description": "What a target firing time needs, and what limits it."
       },
       "Template": {
         "properties": {

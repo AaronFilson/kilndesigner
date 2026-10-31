@@ -1152,6 +1152,14 @@ function SettingFields({
           onChange={(v) => change(["firing", "ware"], v)}
         />
       )}
+      {doc.heat.gas && (
+        <Quantity
+          label="Target firing time"
+          value={doc.firing.target_time}
+          units={["hour", "minute"]}
+          onChange={(v) => change(["firing", "target_time"], v)}
+        />
+      )}
       {setting && (
         <>
           <Quantity
@@ -1826,6 +1834,14 @@ export function DesignForm({
                 value={electric.off_above}
                 units={TEMPERATURE}
                 onChange={(v) => change(["heat", "electric", "off_above"], v)}
+              />
+            )}
+            {gas && (
+              <Quantity
+                label="Burners lit, elements still on, from"
+                value={gas.on_from}
+                units={TEMPERATURE}
+                onChange={(v) => change(["heat", "gas", "on_from"], v)}
               />
             )}
           </>

@@ -69,3 +69,18 @@ def test_simulate_a_hybrid_with_its_chart(tmp_path: Path, monkeypatch: pytest.Mo
     assert "elements stall; burners from" in result.output
     assert "[info] The elements stall at about" in result.output
     assert (out / "switchover.json").is_file()
+
+
+def test_simulate_solves_a_target_time(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "pnw-hybrid-crossdraft.yaml")
+    result = runner.invoke(app, ["simulate", design, "--target", "6h", "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "a 6 h firing" in result.output
+    assert "Propane supply options (pick one):" in result.output
+    assert "1000 gal tank" in result.output
+    assert (tmp_path / "target.json").is_file()
+    worded = runner.invoke(
+        app, ["simulate", design, "--target", "0.5 hour", "--out", str(tmp_path)]
+    )
+    assert worded.exit_code == 2
+    assert "the schedule alone" in worded.output

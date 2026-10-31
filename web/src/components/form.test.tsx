@@ -583,6 +583,10 @@ describe("DesignForm, electric elements", () => {
     const last = live(hybrid);
     set("Elements hand over to gas above", "1800");
     expect(last().heat.electric?.off_above).toBe("1800 degF");
+    set("Burners lit, elements still on, from", "400");
+    expect(last().heat.gas?.on_from).toBe("400 degF");
+    set("Target firing time", "4");
+    expect(last().firing.target_time).toBe("4 hour");
     fireEvent.click(screen.getByLabelText("Heat with electric elements"));
     expect(last().heat.electric).toBeUndefined();
     expect(field("Fire with gas").disabled).toBe(true);

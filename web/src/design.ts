@@ -27,6 +27,8 @@ export interface KilnDocument {
     final_rate?: 60 | 100 | 150 | 600;
     top_temperature?: string;
     ware?: string;
+    /** A firing time to solve the burners for (model.py Firing.target_time). */
+    target_time?: string;
     setting?: Setting;
   };
   chamber: {
@@ -207,6 +209,8 @@ export interface Gas {
     | { type: "line"; pressure?: string };
   reduction?: boolean;
   firing_speed?: "fast" | "slow";
+  /** A hybrid's burners lit from here with the elements still on (model.py Gas.on_from). */
+  on_from?: string;
 }
 
 /** Kiln furniture Olsen weighs (p.33–35): the materials a setting can be made of. */
