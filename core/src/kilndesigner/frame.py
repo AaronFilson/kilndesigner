@@ -1634,13 +1634,16 @@ def _along_frame(kiln: Kiln, *, building: bool = False) -> FrameDesign:
 
 def _round_frame(kiln: Kiln) -> FrameDesign:
     """A round kiln: its wall is a ring, which holds any dome on it; makers band it with iron (the
-    Breda bottle kiln, Olsen p.167; Sèvres, p.168–169). The band isn't sized here."""
+    Breda bottle kiln, Olsen p.167; Sèvres, p.168–169). The band round a dome's springing is
+    checked against its ring tension, hot (band.py)."""
     findings = [
         Finding(
             level="info",
             message=(
                 "A round kiln's wall is a ring that holds any dome on it, and builders band it "
-                "with iron (Olsen's Breda bottle kiln, p.167): no band is sized here."
+                "with iron (Olsen's Breda bottle kiln, p.167): a band round a dome's springing "
+                "is checked against the dome's ring tension; bands lower on the wall carry no "
+                "sourced load and aren't sized."
             ),
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
@@ -1664,8 +1667,13 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
                 )
             )
         else:
-            working, thrust = ring.steps, ring.thrust
-            findings.append(ring.finding())
+            from kilndesigner.band import dome_band
+
+            # The band is checked against the membrane ring tension, the larger of the membrane
+            # and cracked-dome (Lau, "at least") figures: the safe side for the band
+            band_steps, band = dome_band(kiln, ring.ring)
+            working, thrust = [*ring.steps, *band_steps], ring.thrust
+            findings += [ring.finding(), band]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1708,8 +1716,7 @@ class DomeRing:
         text = (
             f"The dome pushes out {self.per_foot:,.0f} lb per foot round the wall's top; the "
             f"wall's ring, or an iron band round it, holds that as {self.ring:,.0f} lb of ring "
-            "tension (membrane theory, the dome's own weight). No band is sized: no source here "
-            "gives an allowable for a hot kiln's band."
+            "tension (membrane theory, the dome's own weight); the band is checked below."
         )
         c = self.cracked
         if c is None:

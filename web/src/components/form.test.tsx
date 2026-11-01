@@ -948,6 +948,20 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.rings).toBeUndefined();
   });
 
+  it("counts a round kiln's dome bricks a chosen way, only under a dome", () => {
+    const last = live({ ...electric, roof: { type: "dome", rise: "6 in" } });
+    expect(screen.queryByLabelText("Dome bricks counted")).toBeNull();
+    set("Chamber shape", "round");
+    expect(field("Dome bricks counted").value).toBe("");
+    set("Dome bricks counted", "norton");
+    expect(last().chamber.dome_bricks).toBe("norton");
+    set("Dome bricks counted", "");
+    expect(last().chamber.dome_bricks).toBeUndefined();
+    set("Dome bricks counted", "radial");
+    set("Chamber shape", "box");
+    expect(last().chamber.dome_bricks).toBeUndefined();
+  });
+
   it("chooses A.P. Green's full set of tapered shapes, Olsen's simpler ones by default", () => {
     const last = live(electric);
     expect(field("Tapered brick shapes").value).toBe("olsen");

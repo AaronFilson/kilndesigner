@@ -25,7 +25,7 @@ import math
 from collections import Counter, defaultdict
 from dataclasses import dataclass, replace
 
-from kilndesigner import conical
+from kilndesigner import conical, dome_brick
 from kilndesigner.castable import resolve_material
 from kilndesigner.firebox_parts import firebox_findings
 from kilndesigner.geometry import Part, lining_parts
@@ -379,6 +379,28 @@ def _dome_courses(
     )
 
 
+def _counted_by(where: str, method: str) -> Step:
+    """The working's note of which method counted a dome layer."""
+    return Step(
+        name=f"{where}: counted by",
+        value=method,
+        reference="chamber.dome_bricks; round_masonry.py",
+    )
+
+
+def _norton_dome(
+    how: str, radius: float, rise: float, depth: float, where: str
+) -> tuple[dome_brick.CountedDome | None, str]:
+    """A dome layer counted by Norton (inches): his ring count or his radial dome brick, or None
+    and the reason his method doesn't reach it."""
+    try:
+        if how == "norton":
+            return dome_brick.norton_dome(radius, rise, depth, what=where), ""
+        return dome_brick.radial_dome(radius, rise, depth, what=where), ""
+    except ValueError as e:
+        return None, str(e)
+
+
 def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
     us = kiln.units == "us"
     c = kiln.chamber
@@ -596,6 +618,25 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
             th = si(layer.thickness, "mm")
             volume = cap_volume(rho + th, below) - cap_volume(rho, below)
             where = f"Dome, layer {i + 1} from the inside"
+            why = ""
+            if c.dome_bricks in ("norton", "radial") and m.kind in BRICK_KINDS:
+                counted, why = _norton_dome(c.dome_bricks, rho / IN, (rho - below) / IN, th / IN,
+                                            where)  # fmt: skip
+                if counted is not None:
+                    for name, n in counted.counts:
+                        if name == "straight":
+                            whole[m.id] += n
+                        else:
+                            shapes[(m.id, name)] += n
+                    counted_by = (
+                        "Norton's ring count" if c.dome_bricks == "norton" else
+                        "Norton's radial dome brick"
+                    )  # fmt: skip
+                    dome_steps += [_counted_by(where, counted_by), *counted.steps]
+                    lines.append(f"{where}: {counted.text}")
+                    rho += th
+                    continue
+                why = f" (not by Norton's method, which doesn't reach it: {why})"
             laid = (
                 _dome_courses(kiln, rho / IN, (rho - below) / IN, th / IN, where)
                 if m.kind in BRICK_KINDS
@@ -607,12 +648,16 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
                     shapes[(m.id, CONICAL)] += laying.total
                 else:
                     whole[m.id] += laying.total
-                dome_steps.extend(laying.steps)
-                lines.append(f"{where}: {text}")
+                counted_by = "conical bricks, course by course" if is_conical else (
+                    "straights, course by course (Olsen p.51)"
+                )  # fmt: skip
+                dome_steps += [_counted_by(where, counted_by + why), *laying.steps]
+                lines.append(f"{where}: {text}{why}")
             elif m.kind in BRICK_KINDS:
                 count = math.ceil(volume / BRICK_VOLUME)
                 whole[m.id] += count
-                lines.append(f"{where}: about {count} bricks by volume, cut to the curve")
+                dome_steps.append(_counted_by(where, "volume ÷ a 9 in straight's" + why))
+                lines.append(f"{where}: about {count} bricks by volume, cut to the curve{why}")
             elif m.kind in SHEET_KINDS:
                 sheet(m.id, volume / th, th)
             elif m.kind in BULK_KINDS:
