@@ -482,10 +482,43 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   dome past 51.8° (formulas already reconstructed; check them on the page images), a catenary
   at a step, and corbels at heat. Also Trinks's *Industrial Furnaces* Vol. I (pp.196, 238) on
   furnace arches.
+- **Foundations:** block and cinder-block platforms (`concrete-foundations.md` C6–C10): no
+  sourced temperature limit found, so a block platform is checked as cast concrete; still to get
+  TMS 216 / ACI 216.1, EN 1996-1-2 Annex D, NCMA TEK 6-2C and ACI 122R for block conductivity.
+- **Option needing a source: a vented block platform** (`concrete-foundations.md` C8 [C12]):
+  hollow block laid with its cores horizontal and open so air moves through, a kiln-builders'
+  practice known only from a forum thread. Not modelled: it needs a sourced way to work out the
+  heat the moving air carries off (a correlation for natural convection through horizontal
+  open cores heated from above, or a measured kiln floor on such a course), and the block's
+  conductivity above. Until then a platform is solid concrete on dry soil, the side that
+  over-states the heat reaching the ground and the platform's top.
+- **Concrete's specific heat** (EN 1992-1-2 §3.3.2, not yet recorded): wanted so the firing
+  simulation can carry a platform's own layer; today the simulation's floor goes into dry soil
+  without it.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
   proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"
   is a valid answer.
+
+**Fifth round (2026-10-31), `docs/research/mortar-and-brick-strength.md`.** What closed:
+
+- *Joint friction, hot (closed):* dry dense refractory joints 30.9° (μ 0.60) cold, 26.5° (0.50)
+  at 300 °C, 27.0° and 27.9° at 600 and 900 °C (Oliveira et al. 2021, read in full). A hot
+  sliding check should use 0.50, not BIA's 0.60; IFB and fireclay untested.
+- *Mortar bond (closed, as "give no credit"):* NBS 1939–43 measured joint bond of 5–665 psi,
+  scatter to 79 %, air-setting joints often losing all bond after 1000 °C and heat-setting
+  joints having little until 1350–1500 °C; HWI SAIRSET 530 psi at joints, dried only. Keep
+  no tension across joints; Bowen Mountain's arch stays a no-tension thrust check, now with a
+  sourced reason. Hot shear: friction steady, cohesion lost above 900 °C (abstracts only).
+- *Two rings (closed):* unbonded rings act separately; ring separation cut arch strength 33–71 %
+  in tests (Sarhosis et al. 2016 review). Combine ring thicknesses only when header-bonded.
+- *IFB hot load (closed):* C16 values at 10 psi for JM 23–32, TC-26 and the BNZ grades; BNZ's
+  "maximum mean temperature" per grade is the first maker's rule tying load to temperature.
+- *Hot strength of dense brick (partial):* hot MOR 530 psi at 1350 °C for a 42 % alumina brick
+  (Bureau of Mines 1984); hot crushing 24–34 MPa to 1000 °C for one alumina-spinel brick.
+- *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
+  cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
+  corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
 
 ## Open questions
 

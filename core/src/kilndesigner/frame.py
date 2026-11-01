@@ -1634,13 +1634,16 @@ def _along_frame(kiln: Kiln, *, building: bool = False) -> FrameDesign:
 
 def _round_frame(kiln: Kiln) -> FrameDesign:
     """A round kiln: its wall is a ring, which holds any dome on it; makers band it with iron (the
-    Breda bottle kiln, Olsen p.167; Sèvres, p.168–169). The band isn't sized here."""
+    Breda bottle kiln, Olsen p.167; Sèvres, p.168–169). The band round a dome's springing is
+    checked against its ring tension, hot (band.py)."""
     findings = [
         Finding(
             level="info",
             message=(
                 "A round kiln's wall is a ring that holds any dome on it, and builders band it "
-                "with iron (Olsen's Breda bottle kiln, p.167): no band is sized here."
+                "with iron (Olsen's Breda bottle kiln, p.167): a band round a dome's springing "
+                "is checked against the dome's ring tension; bands lower on the wall carry no "
+                "sourced load and aren't sized."
             ),
             reference="Olsen, The Kiln Book, 4th ed., p.167–169",
         )
@@ -1664,8 +1667,13 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
                 )
             )
         else:
-            working, thrust = ring.steps, f"{ring.per_foot:.0f} lb per foot of the wall's top"
-            findings.append(ring.finding())
+            from kilndesigner.band import dome_band
+
+            # The band is checked against the membrane ring tension, the larger of the membrane
+            # and cracked-dome (Lau, "at least") figures: the safe side for the band
+            band_steps, band = dome_band(kiln, ring.ring)
+            working, thrust = [*ring.steps, *band_steps], ring.thrust
+            findings += [ring.finding(), band]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1693,25 +1701,54 @@ class DomeRing:
     ring: float
     hoop: float
     steps: list[Step]
+    cracked: LuneThrust | None = None
+
+    @property
+    def thrust(self) -> str:
+        """The push the frame reports: past 51.8°, the cracked dome's least push if Lau's range
+        covers it, else the membrane push."""
+        c = self.cracked
+        if c is not None and c.per_foot is not None:
+            return f"at least {c.per_foot:.0f} lb per foot of the wall's top (cracked into lunes)"
+        return f"{self.per_foot:.0f} lb per foot of the wall's top"
 
     def finding(self) -> Finding:
         text = (
             f"The dome pushes out {self.per_foot:,.0f} lb per foot round the wall's top; the "
             f"wall's ring, or an iron band round it, holds that as {self.ring:,.0f} lb of ring "
-            "tension (membrane theory, the dome's own weight). No band is sized: no source here "
-            "gives an allowable for a hot kiln's band."
+            "tension (membrane theory, the dome's own weight); the band is checked below."
         )
-        if self.alpha > NO_TENSION:
+        c = self.cracked
+        if c is None:
+            return Finding(level="info", message=text, reference=MEMBRANE)
+        text += (
+            f" The dome springs {self.alpha:.1f}° from its crown, past the {NO_TENSION}° "
+            f"where the membrane state turns to hoop tension ({self.hoop:,.0f} lb per foot "
+            "at the springing), which mortared brick doesn't carry: it cracks along its "
+            "meridians and stands as lunes."
+        )
+        if c.per_foot is None or c.ring is None or c.h_over_w is None:
             text += (
-                f" The dome springs {self.alpha:.1f}° from its crown, past the {NO_TENSION}° "
-                f"where the membrane state turns to hoop tension ({self.hoop:,.0f} lb per foot "
-                "at the springing), which mortared brick doesn't carry: it cracks along its "
-                "meridians and stands as lunes, and the sliced state thrusts more "
-                "(domes-over-doors.md §D3). So the push and the ring "
-                "tension above are the least it can be, not a design value; a rise of 2½ in per "
-                "foot of span (Olsen p.51) keeps it below."
+                f" Its t/R of {c.t_over_r:.3f} is outside {LAU_T_R[0]}–{LAU_T_R[1]}, where "
+                "Lau's lune statics are checked, so the cracked dome's push isn't worked out; "
+                "the membrane numbers above aren't a design value for it."
             )
-        return Finding(level="info", message=text, reference=MEMBRANE)
+            return Finding(level="info", message=text, reference=f"{MEMBRANE}; {LAU}")
+        text += (
+            f" Cracked so, it pushes at least {c.per_foot:,.0f} lb per foot, a ring tension of "
+            f"at least {c.ring:,.0f} lb (Lau's lune statics: H/W = {c.h_over_w:.3f} of a "
+            "lune's weight; the membrane push above leans on hoop tension). That is a least "
+            "value: a dome pushed in by its wall can thrust "
+            "many times more (430 % of its weight for a hemisphere, SAHC 2020)."
+        )
+        if c.t_over_r < LAU_THIN:
+            text += (
+                f" At t/R = {c.t_over_r:.3f} it is thinner than the {LAU_THIN} Lau finds a "
+                "hemisphere needs with no hoop force between its lunes (0.041 with them); a "
+                "shallower dome needs less (his Fig. 3.13), but the equations alone don't show "
+                "it stands (p.59)."
+            )
+        return Finding(level="info", message=text, reference=f"{MEMBRANE}; {LAU}")
 
 
 def membrane(a: float, q: float, alpha: float) -> tuple[float, float, float, float]:
@@ -1751,6 +1788,8 @@ def round_dome_ring(kiln: Kiln) -> DomeRing | None:
         return None  # past a hemisphere: the dome leans in over the wall, not checked here
     alpha = math.asin(min(1.0, dome.diameter / 2 / dome.radius))
     meridian, per_foot, ring, hoop = membrane(a, q, alpha)
+    thick = sum(t for _, t in layers)
+    cracked = lune_thrust(a, thick, q / thick, alpha) if alpha > math.radians(NO_TENSION) else None
     steps = [
         Step(
             name="Dome: weight per square foot of shell",
@@ -1799,7 +1838,128 @@ def round_dome_ring(kiln: Kiln) -> DomeRing | None:
             note=f"tension past α₀ = {NO_TENSION}°",
         ),
     ]
-    return DomeRing(math.degrees(alpha), meridian, per_foot, ring, hoop, steps)
+    if cracked is not None:
+        steps += cracked.steps
+    return DomeRing(math.degrees(alpha), meridian, per_foot, ring, hoop, steps, cracked)
+
+
+LAU = (
+    "W. W. Lau, Equilibrium Analysis of Masonry Domes, S.M. thesis, MIT, 2006 "
+    "(masonry-statics.md §M3, checked on the page images)"
+)
+LAU_SAHC = (
+    "Maia Avelino, Iannuzzo, Van Mele & Block, SAHC 2020, §4.2: hemisphere t/R = 0.10, "
+    "(T/W)min 19.8 %, (T/W)max 430 % (masonry-statics.md §M3)"
+)
+LAU_T_R = (0.03, 0.20)
+"""t/R (whole thickness over the median radius) over which Lau compares Eq. 3.6 with his thrust
+lines (Fig. 3.17, p.59); outside it the lune check refuses (ADR 0009)."""
+LAU_THIN = 0.069
+"""Lau's least t/R for a hemisphere with no hoop force between the lunes (p.54); 0.041 with
+them (p.55)."""
+
+
+@dataclass(frozen=True)
+class LuneThrust:
+    """A cracked dome's least push, from Lau's lune statics (Eq. 3.6), imperial: H/W for one
+    lune, the push per foot of the base circle (Eq. 3.1), the ring tension it makes, and the
+    whole dome's weight. None of the numbers when t/R is outside Lau's checked range."""
+
+    t_over_r: float
+    h_over_w: float | None
+    per_foot: float | None
+    ring: float | None
+    weight: float
+    steps: list[Step]
+
+
+def lune_thrust(a: float, thick: float, rho: float, alpha: float) -> LuneThrust:
+    """Lau's (2006) least horizontal thrust of a spherical dome cracked into lunes, δ = 0, any
+    consistent units (a the median radius, thick the whole thickness, rho the weight per unit
+    volume, alpha radians from the crown).
+
+    Eq. 3.6 (p.58): H = W·(a sin α − x_cg) / ((a + t) cos δ − a cos α), t half the thickness, for
+    a pin at the middle of the lune's foot and a roller at the crown's extrados. W from Eq. 2.5
+    (p.36) with δ = 0; x_cg is the lune's centroid as θ → 0, 3(r⁴ − r′⁴)/(8(r³ − r′³)) ·
+    (2α − sin 2α)/(2(1 − cos α)), derived by integrating over the shell (printed Eq. 2.6 has
+    (β − γ) sin γ in its denominator, which would make a hemisphere's centroid negative; with
+    δ = 0 the term drops, as in Eq. 2.5). Per length of the base, Eq. 3.1: h = H/(aθ sin α),
+    and H/θ = (H/W)·W_dome/2π."""
+    t_r = thick / a
+    r, r_in = a + thick / 2, a - thick / 2
+    weight = 2 * math.pi * rho * (r**3 - r_in**3) / 3 * (1 - math.cos(alpha))
+    steps = [
+        Step(
+            name="Dome cracked into lunes: thickness over radius",
+            formula="t/R = T / a",
+            inputs={"T": f"{thick * 12:.3g} in", "a": f"{a * 12:.4g} in"},
+            value=f"{t_r:.3f}",
+            reference=LAU,
+            note=(
+                f"Lau's lune statics are compared with his thrust lines for t/R "
+                f"{LAU_T_R[0]}–{LAU_T_R[1]} (Fig. 3.17, p.59)"
+            ),
+        ),
+        Step(
+            name="Dome cracked into lunes: whole dome's weight",
+            formula="W_dome = 2π·ρ·(r³ − r′³)/3·(1 − cos α), r = a + T/2, r′ = a − T/2",
+            inputs={"ρ": f"{rho:.0f} lb/ft³", "α": f"{math.degrees(alpha):.1f}°"},
+            value=f"{weight:,.0f} lb",
+            reference=f"{LAU}, Eq. 2.5 (p.36), θ = 2π, δ = 0",
+        ),
+    ]
+    if not LAU_T_R[0] <= t_r <= LAU_T_R[1]:
+        return LuneThrust(t_r, None, None, None, weight, steps)
+    k = 3 * (r**4 - r_in**4) / (8 * (r**3 - r_in**3))
+    x_cg = k * (2 * alpha - math.sin(2 * alpha)) / (2 * (1 - math.cos(alpha)))
+    t = thick / 2
+    h_w = (a * math.sin(alpha) - x_cg) / ((a + t) - a * math.cos(alpha))
+    per_foot = h_w * weight / (2 * math.pi * a * math.sin(alpha))
+    ring = per_foot * a * math.sin(alpha)
+    steps += [
+        Step(
+            name="Dome cracked into lunes: a lune's centroid from the axis",
+            formula="x_cg = 3(r⁴ − r′⁴)/(8(r³ − r′³)) · (2α − sin 2α)/(2(1 − cos α))",
+            value=f"{x_cg * 12:.4g} in",
+            reference=f"{LAU}, Eq. 2.6 (p.36), θ → 0, δ = 0, derived by integration",
+        ),
+        Step(
+            name="Dome cracked into lunes: least thrust over a lune's weight",
+            formula="H/W = (a sin α − x_cg) / ((a + t) − a cos α), t = T/2",
+            value=f"{h_w:.3f}",
+            reference=f"{LAU}, Eq. 3.6 (p.58)",
+            note=(
+                "within about 5 % of Lau's thrust-line minimum for α near 90°, which is up to "
+                "20 % lower below α = 40° (p.59)"
+            ),
+        ),
+    ]
+    if alpha >= math.pi / 3:
+        fit = -0.583 * alpha + 1.123
+        steps.append(
+            Step(
+                name="Dome cracked into lunes: Lau's linear fit, a cross-check",
+                formula="H/W = −0.583·α + 1.123, α in radians, α ≥ π/3, within 20 %",
+                value=f"{fit:.3f}",
+                reference=f"{LAU}, Eq. 3.2 (p.56)",
+            )
+        )
+    steps += [
+        Step(
+            name="Dome cracked into lunes: least push per foot of the base",
+            formula="h = H/(aθ sin α) = (H/W)·W_dome / (2π·a·sin α)",
+            value=f"at least {per_foot:,.0f} lb/ft",
+            reference=f"{LAU}, Eq. 3.1 (p.56); {LAU_SAHC}",
+            note="a least value: pushed in, a dome can thrust many times more (SAHC 2020)",
+        ),
+        Step(
+            name="Dome cracked into lunes: least ring tension at the base",
+            formula="h·a·sin α",
+            value=f"at least {ring:,.0f} lb",
+            reference=f"{LAU}; {MEMBRANE}",
+        ),
+    ]
+    return LuneThrust(t_r, h_w, per_foot, ring, weight, steps)
 
 
 SECTION_IN = 9.0

@@ -32,7 +32,7 @@
 # Chimneys: not sized in the book, so the engine sizes the one it models.
 # Not modelled: Fig 7-2's walls curving in between the arms (the plan here is the two straight
 # tubes); the groundhog's three-flue chimney in the right wall; the 12–15 in step up from the grate
-# to the ware floor; the floor's loss into the ground, which the engine doesn't work out.
+# to the ware floor.
 schema: 1
 name: Fireworks multi-directional kiln, Edmonton
 units: us

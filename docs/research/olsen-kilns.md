@@ -585,9 +585,15 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
     as they stand (the resultant falls outside their 9 in base);
   - the floor: the construction photo (Fig 4-154, p.128) shows 3 layers of brick off the platform;
     the plan drawing (Fig 4-153) shows the floor about 6 in thick against the known 9 in arch, so
-    light-duty firebrick or insulating firebrick may have been used. Modelled as three 2½ in
-    courses of insulating firebrick laid flat, 7½ in, JM 28 as the walls (high-alumina for salt,
-    p.126). The ~6 in is a reading of the drawing, not a size.
+    light-duty firebrick or insulating firebrick may have been used. Superseded by the book
+    (pointed out by the user, 2026-10-31; read on the page image): "The salt-glaze kiln is built
+    upon a concrete-block foundation covered with common red bricks, followed by a layer of
+    medium-duty firebricks (Fig 4-149 [sic; Fig 4-148 is the foundation plan])" (p.126). The same
+    paragraph: "never high-silica insulating bricks, when building a salt kiln. High- or
+    medium-high alumina bricks are best, but if these are not available, any dense medium- to
+    high-duty bricks can be used." Modelled as one 2½ in course of medium-duty firebrick over two
+    of common red brick, 7½ in (the three courses of the photo), on a concrete-block platform. The
+    ~6 in is a reading of the drawing, not a size.
 - Fig 4-154 by scale (rough, read by the agent, 2026-10-31): a flat segmental arch, its springings at
   different heights; by scale it rises only 10–13 in, against the drawing's 18 in (36 − 18), likely
   perspective, so the drawing's 36 in crown stays.

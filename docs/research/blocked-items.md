@@ -307,6 +307,13 @@ outside its 2–50 K/min scope: show, don't certify).
 `heatloss.py`; minimum strengths (IRC Table R402.2, EN 1992-1-1 Table E.1N) and the allowable
 bearing (AISC 360-16 §J8, as ACI 318) in `concrete-foundations.md`.
 
+**Block foundations (2026-10-31, later):** `concrete-foundations.md` C6–C10. No published
+temperature limit for concrete block or cinder block was found; residual strength "usually
+unchanged below 400°C" (Pope and Zalok 2025, abstract) is fire-test data, not a long-term limit.
+IRC R1001 and NCMA TEK 3-7A give hearth thicknesses (4 in, 2 in extension, 2 in firebrick) but no
+temperature. Block conductivity (TEK 6-2C, ACI 122R) still to get; the engine keeps cast-concrete
+values for a block platform.
+
 ### 21. Refractory bearing (item 7, partial)
 
 | Source | Text | Status |
@@ -330,6 +337,15 @@ Goodier (1933) *J. Am. Ceram. Soc.* 16:220 (dome and crown stresses of circular 
 paywalled); Norton Fig. 243 (page image, to read its temperature); HW *Modern Refractory Practice*
 (borrow); ASME II-D Table 1A (library); ACI 216.1 and ACI 349 (library); Hind (1937); Historic
 England's Ceramic HAZ bottle-oven survey reports.
+
+## Fifth round (2026-10-31): mortar and brick strength, in `mortar-and-brick-strength.md`
+
+| Item here | Fifth round | Status |
+|---|---|---|
+| §8 joint thickness | NBS test joints 1/16 and 1/8 in; HW "thin"; no maximum | Partial |
+| §7 / §21 refractory bearing | still no allowable; BNZ maximum mean temperature per IFB grade; IFB C16 values (JM, TC, BNZ) | Partial |
+| `refractory-bearing.md` §B4.1 friction | Oliveira et al. 2021 read: μ 0.60 cold, 0.50–0.53 at 300–900 °C | Verified |
+| Mortar bond, air vs heat setting, two rings | NBS RP1219/1461/1534; HWI; ring-separation tests | Verified |
 
 ---
 

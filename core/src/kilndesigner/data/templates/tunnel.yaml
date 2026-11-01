@@ -29,8 +29,7 @@
 # flue holes between the chambers as drawn (20 × 12 and 24 × 12 in, Fig 4-12): the engine cuts
 # Olsen's standard 4½ × 9 in flues (p.96) instead. The end chamber's open holes
 # are the only chimney: with no stack entered, the engine sizes one by Rule 5. The oil burners
-# most of the kilns now fire their fireboxes with (p.86, p.210). The floor's loss into the ground,
-# which the engine doesn't work out.
+# most of the kilns now fire their fireboxes with (p.86, p.210). The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Tamba tube kiln, Tachikui
 units: us

@@ -54,6 +54,7 @@ export interface KilnDocument {
     };
     floor_inside?: boolean;
     rings?: RingMethod;
+    dome_bricks?: DomeBricks;
     outline?: PlanOutline;
   };
   roof?:
@@ -76,6 +77,8 @@ export interface KilnDocument {
         front_springline?: string;
         /** With along: the frame's tie rods' height over the roof's crown (model.py SprungArch). */
         rods_above_crown?: string;
+        /** A second vault crossing at right angles, side to side (model.py Crossing). */
+        crossing?: { span: string; rise: string; length: string; at?: string };
       }
     | { type: "catenary_arch"; buttressed?: boolean }
     | { type: "dome"; rise: string; crown_at?: string; ring?: number; buttressed?: boolean };
@@ -129,6 +132,9 @@ export interface KilnDocument {
 
 /** How a round wall's brick rings are turned (model.py Chamber.rings). */
 export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
+
+/** How a round kiln's 9 in brick dome is counted (model.py Chamber.dome_bricks). */
+export type DomeBricks = "courses" | "norton" | "radial";
 
 /** A box chamber's plan as a curve (model.py PlanOutline), filling its width and depth. */
 export type PlanOutline =

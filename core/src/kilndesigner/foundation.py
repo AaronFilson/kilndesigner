@@ -107,72 +107,20 @@ def _wall(kiln: Kiln, face: Face) -> tuple[float, float]:
     return rho_t, sum(si(x.thickness, "in") for x in layers)
 
 
-def platform_bearing(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
-    """The mean pressure under each wall on the platform, and its ratio to the platform's
-    strength. Worked out for a box kiln under a sprung arch; refused otherwise."""
-    found = kiln.chamber.foundation
-    if found is None:
-        return [], []
-    strength = si(found.compressive_strength, "psi")
-    roof = kiln.roof
-    if (
-        not isinstance(roof, SprungArch)
-        or kiln.chamber.shape != "box"
-        or roof.tube
-        or (kiln.chamber.chambers > 1)
-    ):
-        return [], [
-            Finding(
-                level="info",
-                message=(
-                    f"The kiln stands on {found.material} ({strength:,.0f} psi, "
-                    f"{found.strength_source}); the bearing under its walls is worked out for "
-                    "one box chamber under a sprung arch only, so it isn't here."
-                ),
-                reference=BEARING,
-            )
-        ]
-    from kilndesigner.frame import _arch_load, outside  # pyright: ignore[reportPrivateUsage]
-    from kilndesigner.shape import Arch, along_arch
-    from kilndesigner.vault import uneven_thrust
-
-    o = outside(kiln)
-    h = si(kiln.chamber.height, "in")
-    roof_t = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof"))
-    crown = h + si(roof.rise, "in") + roof_t
-    if arches_along(kiln):
-        arch = along_arch(kiln, "in")
-        _, front, back = uneven_thrust(arch, _arch_load(kiln, arch).weight)
-        tops: dict[Face, tuple[float, float]] = {
-            "front": (h - arch.drop, front), "back": (h, back),
-            "left": (crown, 0.0), "right": (crown, 0.0),
-        }  # fmt: skip
-    else:
-        arch = Arch(si(kiln.chamber.width, "in"), si(roof.rise, "in"))
-        half = _arch_load(kiln, arch).weight / 2
-        tops = {"left": (h, half), "right": (h, half), "front": (crown, 0.0), "back": (crown, 0.0)}
-    rows: dict[str, str] = {}
-    worst = (0.0, "")
-    for face, (top, share) in tops.items():
-        rho_t, t = _wall(kiln, face)
-        weight = rho_t * (o.bottom + top) / 144 + share  # lb per foot of wall
-        q = weight / (12 * t)
-        rows[f"{face} wall"] = f"{weight:,.0f} lb/ft over {t:g} in = {q:.1f} psi" + (
-            f", the roof's {share:.0f} lb/ft in it" if share else ""
-        )
-        worst = max(worst, (q, face))
-    q, face = worst
+def _top_face(kiln: Kiln, material: str) -> tuple[float | None, float, list[Step], list[Finding]]:
+    """The platform's top face at the top temperature, checked against ACI 349, and EN
+    1992-1-2's strength ratio there; for any kiln on a platform of given thickness."""
     top = platform_top(kiln)
     k_hot = 1.0
     steps: list[Step] = []
     findings: list[Finding] = []
     if top is not None:
         k_hot = float(np.interp(top - 273.15, _THETA_C, STRENGTH_HOT))
-        sheet = top_face_check(top, found.material)
+        sheet = top_face_check(top, material)
         top_f = top * 9 / 5 - 459.67
         steps.append(
             Step(
-                name=f"The {found.material} platform's top face",
+                name=f"The {material} platform's top face",
                 value=f"{top_f:.0f} °F at the top temperature; f_c,θ/f_ck {k_hot:.2f}",
                 formula="the floor's outside face in the heat-loss solve, the platform under it",
                 reference=f"{ACI_349}; {STRENGTH_HOT_SOURCE}",
@@ -204,6 +152,68 @@ def platform_bearing(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
                 check=check,
             )
         )
+    return top, k_hot, steps, findings
+
+
+def platform_bearing(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
+    """The mean pressure under each wall on the platform, and its ratio to the platform's
+    strength. Worked out for a box kiln under a sprung arch; refused otherwise, though the
+    platform's top face is still worked out and checked where its thickness is given."""
+    found = kiln.chamber.foundation
+    if found is None:
+        return [], []
+    strength = si(found.compressive_strength, "psi")
+    roof = kiln.roof
+    if (
+        not isinstance(roof, SprungArch)
+        or kiln.chamber.shape != "box"
+        or roof.tube
+        or (kiln.chamber.chambers > 1)
+    ):
+        _, _, steps, findings = _top_face(kiln, found.material)
+        return steps, [
+            Finding(
+                level="info",
+                message=(
+                    f"The kiln stands on {found.material} ({strength:,.0f} psi, "
+                    f"{found.strength_source}); the bearing under its walls is worked out for "
+                    "one box chamber under a sprung arch only, so it isn't here."
+                ),
+                reference=BEARING,
+            ),
+            *findings,
+        ]
+    from kilndesigner.frame import _arch_load, outside  # pyright: ignore[reportPrivateUsage]
+    from kilndesigner.shape import Arch, along_arch
+    from kilndesigner.vault import uneven_thrust
+
+    o = outside(kiln)
+    h = si(kiln.chamber.height, "in")
+    roof_t = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof"))
+    crown = h + si(roof.rise, "in") + roof_t
+    if arches_along(kiln):
+        arch = along_arch(kiln, "in")
+        _, front, back = uneven_thrust(arch, _arch_load(kiln, arch).weight)
+        tops: dict[Face, tuple[float, float]] = {
+            "front": (h - arch.drop, front), "back": (h, back),
+            "left": (crown, 0.0), "right": (crown, 0.0),
+        }  # fmt: skip
+    else:
+        arch = Arch(si(kiln.chamber.width, "in"), si(roof.rise, "in"))
+        half = _arch_load(kiln, arch).weight / 2
+        tops = {"left": (h, half), "right": (h, half), "front": (crown, 0.0), "back": (crown, 0.0)}
+    rows: dict[str, str] = {}
+    worst = (0.0, "")
+    for face, (top, share) in tops.items():
+        rho_t, t = _wall(kiln, face)
+        weight = rho_t * (o.bottom + top) / 144 + share  # lb per foot of wall
+        q = weight / (12 * t)
+        rows[f"{face} wall"] = f"{weight:,.0f} lb/ft over {t:g} in = {q:.1f} psi" + (
+            f", the roof's {share:.0f} lb/ft in it" if share else ""
+        )
+        worst = max(worst, (q, face))
+    q, face = worst
+    top, k_hot, steps, findings = _top_face(kiln, found.material)
     allowed = 0.85 * k_hot * strength / OMEGA_C
     bearing = bearing_check(q, strength, k_hot, face, found.strength_source)
     bearing.agrees("q_a", Q_(allowed, "psi"))

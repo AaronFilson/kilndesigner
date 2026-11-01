@@ -225,7 +225,9 @@ def build_faces(kiln: Kiln) -> list[_Face]:
     emissivity = EMISSIVITY[kiln.shell.finish]
     fire = kiln.heat.fire
     over_fire = fire is not None and any(fb.position == "under" for fb in fire.fireboxes)
-    grounded = kiln.chamber.on_ground and not over_fire
+    # On the ground or a platform: the floor into dry soil, as in the heat loss; a platform's own
+    # layer is left out, as no specific heat for concrete is recorded in docs/research
+    grounded = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not over_fire
     faces: list[_Face] = []
     for shape in chamber_shape(kiln).faces():
         if over_fire and shape.face == "floor":
@@ -817,8 +819,16 @@ def simulate(
                 "The simulation holds the walls' hot faces at the chamber's temperature and treats "
                 "the chamber and its ware as one temperature; flue losses are counted through the "
                 "burners' available heat, but not air leaks or the door's seal."
+                + (
+                    " The floor loses heat into dry soil at steady state; the platform's own "
+                    "concrete is left out, as no specific heat for it is recorded."
+                    if kiln.chamber.foundation is not None
+                    else ""
+                )
             ),
-            reference=GROUND_SOURCE if kiln.chamber.on_ground else None,
+            reference=GROUND_SOURCE
+            if kiln.chamber.on_ground or kiln.chamber.foundation is not None
+            else None,
         )
     )
     run.result = FiringResult(

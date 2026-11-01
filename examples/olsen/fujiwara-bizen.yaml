@@ -26,8 +26,7 @@
 # (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given. The engine's arch spans
 # the width, so it is laid across the 10 ft with the same springline and crown; held by masonry,
 # it gets no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
-# (p.101); here the rise is counted over the two chambers only. The floor's loss into the ground
-# isn't worked out by the engine.
+# (p.101); here the rise is counted over the two chambers only. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kei Fujiwara's Bizen kiln, Imbe
 units: us

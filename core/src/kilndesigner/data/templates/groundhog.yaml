@@ -18,7 +18,7 @@
 # (gulgong-racer, p.119). The chimney's section and the exit flues aren't given (only "9–30 in
 # wide" inside): engine default. Spy holes: engine default, up the door's end wall under the arch.
 # Not modelled: the 12–15 in step up from the firebox to the ware platform; the six exit flues
-# drawn at the chimney wall; the floor's loss into the ground, which the engine doesn't work out.
+# drawn at the chimney wall.
 schema: 1
 name: Groundhog, Olsen's basic dimensions
 units: us

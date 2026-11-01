@@ -19,9 +19,8 @@
 # Meaders's chimney on the kiln adapted from this one (meaders-david, p.115). Its section 9 in × 5 ft,
 # the kiln's width (p.112, read by the user, 2026-10-31).
 # Not modelled: the engine takes one exit flue, so one of the six is entered. The central post or
-# opening, 30 in (faint) high. No grate is printed: the wood burns on the firebox floor. The
-# floor's loss into the ground, which the engine doesn't work out. Common brick has no rating for
-# kiln heat, so its service temperature isn't checked.
+# opening, 30 in (faint) high. No grate is printed: the wood burns on the firebox floor. Common
+# brick has no rating for kiln heat, so its service temperature isn't checked.
 schema: 1
 name: Cheever Meaders's groundhog
 units: us

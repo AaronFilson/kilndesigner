@@ -77,6 +77,17 @@ hot_steel:
   service_deg_f: 600
   service_source: "Giles, Structural Design of Refractory Concrete (c. 1940); door-headers.md §D6 [H23]"
 
+# A dome's tension band, hot (bands-and-bottle-kilns.md §1, §3): EN 1993-1-2:2005 Table 3.1's
+# effective-yield reduction factor k_y,θ for carbon steel by °C, linear between rows (its own
+# note), and Norton's factor of safety for a dome's band, "at least 5" (Refractories, 3rd ed.,
+# 1949, p.732). The table is for fire heating (2–50 K/min): an upper bound for long service.
+band:
+  ky_source: "BS EN 1993-1-2:2005, §3.2.1, Table 3.1; bands-and-bottle-kilns.md §1 [N1]"
+  ky_deg_c: [20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200]
+  ky: [1.0, 1.0, 1.0, 1.0, 1.0, 0.78, 0.47, 0.23, 0.11, 0.06, 0.04, 0.02, 0.0]
+  safety: 5
+  safety_source: "Norton, Refractories, 3rd ed. (1949), p.732; bands-and-bottle-kilns.md §3 [N3]"
+
 # HarbisonWalker arch constants by rise per foot of span d (in/ft) (§4.3 [S20]):
 # W = w_factor × D S T per foot of arch length; cold horizontal thrust H = h_factor × W.
 # frame.cold_thrust_factor computes h_factor from statics; this column is kept as its check.

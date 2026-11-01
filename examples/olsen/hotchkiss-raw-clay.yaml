@@ -27,7 +27,7 @@
 # neither counted nor sized; the raw clay behind the fired face. Each arch springs between the
 # front and back walls; on the 5 ft square plan the engine's arch across the width has the same
 # span. The door is in a side wall; a sprung arch here springs from the side walls, so it is put
-# in the front wall. The floor's loss into the ground isn't worked out by the engine.
+# in the front wall. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Hotchkiss six-chamber raw-clay climbing kiln, 1971
 units: us
