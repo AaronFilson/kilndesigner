@@ -6,6 +6,94 @@ comparison. Rebuild with `uv run kilndesigner build examples/pnw-hybrid-crossdra
 and `uv run kilndesigner simulate examples/pnw-hybrid-crossdraft.yaml --chart`. Every number
 below has its working and source in the report and plans._
 
+## Review on the engine of 2026-10-31
+
+All four designs rebuilt (`build`), simulated as designed (`simulate`), solved for 8 h and 12 h
+(`simulate --target`), and the bricked door and castable versions fired slowly (`slow 12h`,
+`slow 24h`), on branch `m7-5` at 7a2b1e6. **No design file was changed**: nothing in them is a
+mistake, and every value is the author's or already noted as an assumption.
+
+### Numbers then (2026-10-30) and now
+
+| | Bricked door | Car | Budget lining | Castable |
+|---|---|---|---|---|
+| Errors / warnings | 0 / 1, same | 0 / 1, same | 0 / 1, same | 0 / 3, same (cylinders ¼ full, dome T/S 10.7 %, budget) |
+| Chamber | 45.2 ft³, same | same | same | 55.2 ft³, same |
+| Heat loss at cone 10 | 14.31 kW, same | same | 14.33 kW, same | 20.29 kW, same |
+| Burners | 8 × B3 at 1.0 psi, 452,083 BTU/hr, same | same | same | 8 × B3 at 1.6 psi, 552,249, same |
+| Priced materials | $11,606, same (JM 26 now 651, K-23 378: the cut count moved, the total didn't) | $11,566 + the car | $9,859 | $10,088, same |
+| Firing as designed (elements to 1650 °F) | 65 h 12 min, $150.03, same | same | 59 h 13 min, $140.95, same | **was** 999 °C at 96 h, $143.57; **now** 1174 °C at 97 h 40 min, $178.77, still not finished |
+| 8 h target | 406,332 BTU/hr, $131.44 (was $131.49) | same | 402,965, $130.67 | 536,263, $170.17 (was 535,000, $170.14) |
+| 12 h target | 266,418 BTU/hr, $138.60 (was $138.61) | same | 262,661, $135.77 (was 260,000, $135.94) | 350,849, $176.02 (was 349,000, $176.18) |
+| Steel | arch frame as before (L4×4×5/16 36 ft, flat bar 35 ft, rod 11 ft) | same | same | dome frame as before (L4×4×5/16 43 ft, flat bar 25 ft, rod 11 ft, 741 lb on the busiest rod) |
+
+Why the castable's plain firing moved: the simulation's 96 h stop now counts only time at full
+heat, so a firing that is still climbing runs on (the slow-firing work, 10-30-26.md); it gets
+further, burns more, and still doesn't reach cone 10. The target-run differences (under 0.5 %) are
+solver tolerance. Nothing else moved.
+
+### What the new checks say about it
+
+- **Domes laid course by course, membrane forces, bands:** for round domes and round kilns. None of
+  the four is round; the castable's sail dome is still checked as arches across the side walls.
+- **Mortar:** the wedge-joint mortar is for brick rings. These walls are dry-laid IFB and the
+  roofs cast; the door's arched ring (3 in, or 4½ in in the castable) passes Heyman's statics as
+  before.
+- **Foundations:** the designs give none, so none is checked. The floor's loss is taken as a hot
+  plate facing down in open air, as on a stand (the report says a slab would lose less).
+- **Steel tables, corbels, smoke fireboxes:** the frames are the same sizes; no corbels; gas, no
+  firebox.
+- **Ware rate:** at 8 h the ware heats at up to 351 °C/h (368 in the castable). The engine reports
+  it as information only; the firing speed is the author's.
+
+Numbers that may move with work in progress elsewhere: the **heat loss, firing times and costs**
+with the floor's loss into the ground (if a foundation is entered); the **castable's dome** steel
+and T/S warning with the cracked-dome and groin work; nothing here depends on bands.
+
+### Firing time against the 8–12 h target
+
+As designed (elements alone to 1650 °F, then the burners) the bricked door kiln takes 65 h; a slow
+firing can't be quicker than that either (`slow 12h` comes out at 65 h 21 min, $149.15; `slow 24h`
+at 68 h 30 min, $162.72, because 11.5 kW of elements alone is what sets the pace below the hand-over).
+The 8–12 h target needs **the burners lit from the start, alongside the elements**:
+
+| Target | Burner input | The design's 8 × B3 | Cost/firing | Propane at 20 °F |
+|---|---|---|---|---|
+| 8 h | 406,332 BTU/hr | yes, at 23 in. w.c. (they give 452,083 at 1.0 psi) | $131.44 | 11 cylinders: full yes, ¼ full from 13 °F of air |
+| 12 h | 266,418 BTU/hr | yes, at 11 in. w.c., their lowest published | $138.60 | 11 cylinders: yes |
+| 4 h / 6 h (2026-10-30, not rerun) | 1,002,000 / 574,000 | 6 h at 1.7 psi; 4 h needs B4s | $124.65 / $128.37 | see the table further down |
+
+The cost: the elements stay on into reduction, which shortens their life (no source quantifies
+by how much). The castable needs 536,263 BTU/hr for 8 h ($170.17), within its burners' 552,249.
+
+### The castable against $5,000
+
+$10,088 priced, $5,088 over. Ranked: Kast-O-Lite $5,530 (48 bags at $115.21); eight B3 burners
+$1,960; chimney hard brick $1,406 (258); blanket $630; K-23 $562. Steel, APM wire, cylinders,
+the door's ring and plug, the burners' rack, shelves and the dome's form are unpriced, so the true
+total is higher. The sourced levers: the same castable from L&M at $98.18 a bag (about $820 off);
+the engine's cheapest burners for this input, 6 × GACO MR750 at 2.9 psi ($599.70, $1,360 off,
+but not the author's eight). Both together come to about $7,900, still over.
+
+### Decisions for the author
+
+1. **Firing plan.** (a) As designed: 65 h, $150, elements spared reduction. (b) Burners from the
+   start: 8 h $131.44, 12 h $138.60, on the burners you have; elements wear faster in reduction.
+   (c) An earlier hand-over somewhere between: rerun `simulate --chart` on the full load to see
+   the curve. Setting `firing.target_time: 8 h` (as the castable has) puts (b) in the report.
+2. **Budget.** Keep $5,000 and give up something big (no sourced lining here reaches it), or raise
+   it: brick budget lining $9,859, castable $10,088 (about $9,270 with L&M's price, about $7,910
+   with six GACO burners as well).
+3. **The castable's plain firing never finishes** (1174 °C at 97.7 h): fire it to a target only, or
+   don't build it with element-only early stages.
+4. **The door's sill height.** The design has the sill at the chamber floor (0 in), but the height
+   of that floor above the ground isn't given: what is it, and what does the kiln stand on (a
+   stand, a slab, block)? It sets the loading height, the floor's heat loss and the foundation
+   check, none of which can be worked out without it.
+5. **Still open from before:** the burners' rack, the shelf layers (four assumed) and posts, the
+   top spy hole's place under the arched head, the castable's door ring and plug, and HWI on
+   drying a castable laid on blanket.
+
 ## The design as entered
 
 - Cross-draft, cone 10 (1285 °C / 2345 °F at 60 °C/h, Orton), burners through the front wall
