@@ -91,9 +91,14 @@ Heyman, *Equilibrium of Shell Structures* (1977) is quoted here through Lau only
 | Base thrust per length (Eq. 3.1) | "At the base of the dome, h, the horizontal thrust in units of force per length of circumference is given by" h = H / [a θ (sin α − sin δ)] (a the median radius, θ the lune's plan angle in radians, α the embrace angle, δ the truncation angle, 0 for a spherical dome) | [M2] p. 56 | Verified (equation layout garbled in extraction; reading checked against the length "a θ(sin α − sin δ)" printed on p. 62) |
 | Linear fit (Eq. 3.2) | "a simple linear equation may be written to approximate H/W within 20% of the value determined by the modified thrust line analysis, as a function of α in radians: H/W = −0.583 α + 1.123 for α ≥ π/3" | [M2] p. 56 | Verified |
 | Wider lunes (Eqs 3.3–3.5) | for n lunes of angle θ′: n odd, H_net = H[1 + 2 Σ_{i=1..j} cos(i θ′)], j = (n−1)/2; n even, H_net = 2H Σ_{i=1..j} cos((2i−1)θ′/2), j = n/2; and W_θ = n W_θ′. Example: "a lune with θ = 130° will have a net minimum thrust 110 times the minimum thrust of a lune with θ = 1°" while its weight is 130 times | [M2] pp. 56–57 | Verified (sums reconstructed from garbled extraction; check the page image before coding) |
-| By statics (Eq. 3.6) | "Assuming a pin support at the mid-point of the lune's bottom edge, and a vertical roller support at the dome's extrados at the centerline, the minimum horizontal reaction at the crown, H, to prevent inward rotation due to self-weight is" H = W (a sin α − x_cg) / (a (cos δ − cos α) + t), t "half the dome thickness"; W and x_cg from Eqs 2.5 and 2.6 | [M2] pp. 58–59 | Verified (layout garbled; check before coding) |
+| By statics (Eq. 3.6) | "Assuming a pin support at the mid-point of the lune's bottom edge, and a vertical roller support at the dome's extrados at the centerline, the minimum horizontal reaction at the crown, H, to prevent inward rotation due to self-weight is" H = W (a sin α − x_cg lune) / ((a + t) cos δ − a cos α), "t is equal to half the dome thickness (Fig. 3.17)"; "W is the weight of the lune (Eq. 2.5), x_cg lune is the center of gravity of the lune (Eq. 2.6)" | [M2] pp. 58–59 | **Verified on the page image (2026-10-31)**: the denominator is (a + t) cos δ − a cos α, *not* the a(cos δ − cos α) + t reconstructed before (the two agree only for δ = 0) |
 | Its accuracy | "for domes with α < 40°, the minimum thrust calculated by the modified thrust line analysis will be about 5 to 20% lower than that calculated with static equilibrium equations. As the embrace angle approaches 90 degrees, the thrust values from the two methods are, for the most part, within 5%"; but the equations "reveal nothing about the dome's stability" | [M2] p. 59 | Verified |
-| Lune weight (Eq. 2.5) | w_i = ρ θ (r³ − r′³)/3 · [cos β − cos γ − (γ − β) sin δ], r = a + t, r′ = a − t | [M2] p. 36 | Verified (garbled; check) |
+| Lune weight (Eq. 2.5) | w_i = θ·ρ·(r³ − r′³)/3 · [cos β − cos γ − (γ − β)·sin δ], "r = a + t, r' = a – t, ρ is the material unit weight" | [M2] p. 36 | **Verified on the page image** (as reconstructed) |
+| Centroid (Eq. 2.6) | x_cg = 3(r⁴ − r′⁴)/(8(r³ − r′³)) · sin(θ/2)/θ · [(γ − β)(2 + 4 sin²δ) + (8 sin δ)(cos γ − cos β) − sin 2γ + sin 2β] / [cos β − cos γ + (β − γ) sin γ] | [M2] p. 36 | **Read on the page image.** As printed the denominator's last term is (β − γ) sin γ, which for a hemispherical lune (β = 0, γ = π/2) gives 1 − π/2 < 0, a negative centroid: likely a typo for −(γ − β) sin δ, Eq. 2.5's bracket. With δ = 0 the engine uses the bracket cos β − cos γ, which integrating over the shell confirms (thin hemisphere: x_cg = πa/4) |
+| Hoop forces, least thickness | "With hoop forces ... For a hemispherical dome, the modified thrust line method predicts a minimum t/R of 0.041" | [M2] p. 55 | Verified on the page image |
+| Eqs 3.3–3.5 | as reconstructed above; condition "provided that nθ′ ≤ 180°", for "a lune with θ ≤ 90°" | [M2] p. 57 | **Verified on the page image** |
+| Eq. 3.1 | h = H / [a θ (sin α − sin δ)] | [M2] p. 56 | **Verified on the page image** |
+| Eq. 3.7 | y_TL = k·a(cos δ − cos α), "k is given in Table 3.1 for a lune of θ = 1°"; the worked example is the *height* of the thrust line's last point, not a thrust | [M2] p. 62 | Verified on the page image |
 | Half dome | "For a half-dome with α = 90°, H/W is between 0.12 and 0.18, which is comparable to Heyman's study of estimated thrust as H = 0.068 W_dome, where W_dome is the weight of a complete hemispherical dome" | [M2] p. 61 | Verified (Heyman via Lau) |
 | Into the wall | the thrust line enters the supporting wall with slope (H/W)⁻¹; Eq. 3.7 y_TL = k a (cos δ − cos α), k from Table 3.1; worked: t/R = 0.04, α = 60°, a = 25 ft, median height 12.5 ft, y_TL = 1.005 × 12.5 = 12.56 ft | [M2] pp. 61–62 | Verified |
 | TNA, hemisphere, t/R = 0.10 | radial form diagram: "(T/W)min=19.8% and (T/W)max=430%"; limit "t'/R=0.041 where the thrust achieved is (T/W)limit=24.4%", GSF 2.42. The minimum-thrust state "shows a bi-axial compressive cap in the upper portion of the dome and an uni-axial stress state towards the supports, where null hoop forces are observed", compatible with "Heyman's 'orange-slice' mechanism" | [M3] §4.2, pp. 6–7 | Verified |
@@ -113,6 +118,13 @@ engine should say "at least". Keep the refusal for thin domes: Lau finds no no-h
 t/R = 0.069 for a hemisphere. Range checked: spherical and pointed domes, t/R 0.001–0.20, α to 90°
 (Lau's study range): outside it, refuse (ADR 0009).
 
+**Built (2026-10-31, `frame.py` `lune_thrust`).** Eq. 3.6 with δ = 0, W from Eq. 2.5, x_cg from
+the δ = 0 bracket above; per foot of the base by Eq. 3.1; Eq. 3.2 shown as a cross-check for
+α ≥ 60°. Refuses outside t/R 0.03–0.20 (Fig. 3.17's range); notes t/R < 0.069. Checks: the
+SAHC hemisphere t/R = 0.10 gives H/W = 0.203 against 19.8 %; a thin hemisphere 0.21 against
+Lau's "about 20 %"; Lau's worked dome (t/R 0.04, α = 60°, a = 25 ft) gives 0.484 against
+Eq. 3.2's 0.512 (median height 12.5 ft as printed).
+
 ## M4. Groin vaults (two barrel vaults crossing)
 
 Sources: [M3] §4.3, read; P. Block, J. Ochsendorf, "Lower-bound analysis of vaulted masonry
@@ -127,6 +139,7 @@ structures", SAHC 2008 slides [M4], read.
 | T defined | the objective sums the horizontal reaction magnitudes over the supports, Σ √(R_x² + R_y²) (eq. 6), so T/W is the total over the four corners, not per corner | [M3] §3.2, p. 4 | Verified |
 | Groins carry it | "for the cross diagram, the forces accumulate along the diagonals, while in the fan diagram, the forces are distributed and the compression force accumulate along the ridges"; the cross diagram, the higher GSF, "can be seen as a better approximation of the common crack pattern found on cross vaults, known as Sabouret cracks" | [M3] p. 10 | Verified |
 | Heyman's slicing | "webs transmit vertical and horizontal loads to diagonal ribs or to groins that, in turn, convey these loads to piers" (Heyman's sliced model, as summarised) | Springer chapter 978-3-319-54738-1_6 | Snippet |
+| Slicing, primary | "Through the slicing technique, the central surface of the webs is divided into a series of independent parallel arches entirely supported from the diagonal cross-ribs modelled as three-hinged arches. In the framework of limit analysis applied to masonry structures, the same approach was successively developed by Heyman [3,4] to clarify the path of the forces in masonry domes and masonry cross vaults and to evaluate the thrust value." Assumptions: webs coursed "in the 'French' way", "divided into a series of parallel arches of variable rise, span and width but with uniform thickness t"; ribs "modelled as parabolic arches with variable thickness and vanishing width (in particular, at the crown the ribs thickness is equal to t)" | [M7] §1, §3, pp. 2, 5 | Verified (text extracted). Heyman's own text still not read |
 | Another example | groin vault (pseudo 3-D) "Hthrust (*) ... (*) as percentage of the weight of the vault 23% (min) 32% (max)"; the vault's geometry is shown only in a figure | [M4] slide 26 | Verified (numbers); geometry NOT FOUND |
 | Parametric study | Maia Avelino et al., "Parametric Stability Analysis of Groin Vaults", *Appl. Sci.* 11 (2021) 3560, square footprints, three topologies | identified; publisher and repository blocked fetches (403/500) | NOT READ |
 
@@ -136,6 +149,19 @@ the diagonals, the diagonals as arches to the corners) is a lower-bound (safe) s
 worked TNA result to test against (10 × 7.5 m, t = 0.5 m, four corner supports: total corner
 thrust 67.5–96.7 % of W, limit thickness 0.061 × the larger radius). Use it as a test value, not a
 rule: [M3] shows the result depends on the force pattern chosen.
+
+**Tried (2026-10-31), not adopted.** The slicing was coded for crowns at one height (webs as
+arches across their own vault landing on the groin, the half-diagonals three-hinged at crown and
+corner, moments about the corner) and run on [M3]'s vault (semicircle R = 5 m × ellipse to the
+same crown, t = 0.5 m, 20 kN/m³; weight 888 kN against the paper's 902). Hinges on the centre
+surface: the diagonals need tension at the crown (inadmissible); corner total 57 % of W.
+Hinges at the faces (slices from crown extrados to foot intrados, diagonal likewise): total
+50 % of W, *below* [M3]'s least (67.5 %), so some thrust line must leave the shell; the
+diagonal's crown force reaches zero near t/R ≈ 0.08 (cf. 0.061 cross, 0.084 fan). A sound
+check needs the thrust lines shown inside the shell (a thrust-network or slice-by-slice
+line-of-thrust search), not built. Also: with crowns at different heights (both Olsen crossing
+examples) the groins meet the higher vault's side, not the middle; no source read covers it.
+The groin stays unchecked.
 
 ## M5. A catenary meeting the next chamber's at a step
 
@@ -171,4 +197,5 @@ Heyman (1977) pp. 109–114 directly; Maia Avelino et al. (2021) full text.
 - [M3] R. Maia Avelino, A. Iannuzzo, T. Van Mele, P. Block, "New strategies to assess the safety of unreinforced masonry structures using thrust network analysis", SAHC 2020 (12th Int. Conf. Structural Analysis of Historical Constructions), P. Roca, L. Pelà, C. Molins (eds). https://www.scipedia.com/wd/images/d/d5/Draft_Content_643225908p732.pdf . Read in full.
 - [M4] P. Block, J. Ochsendorf, "Lower-bound analysis of vaulted masonry structures", SAHC 2008, Bath (slides). https://web.mit.edu/masonry/thrustNetwork/SAHC08_ppt_block-ochsendorf.pdf . Read.
 - [M5] Wisconsin Admin. Code SPS 321.28/321.29 (search extract). https://docs.legis.wisconsin.gov/document/administrativecode/SPS%20321.29(6)(d)
+- [M7] C. Intrigila, N. A. Nodargi, P. Bisegna, "The unbuilt Musmeci parabolic cross vault reinvented as a dry-masonry structure", SAHC 2020. https://www.scipedia.com/wd/images/d/df/Draft_Content_303700414p1109.pdf . Text extracted (14 pp.), §1–4 read.
 - [M6] W. Trinks, *Industrial Furnaces*, Vol. II (Wiley, 1925; 1926 printing). https://archive.org/details/industrialfurnac0000wtri ; https://archive.org/details/industrialfurnac0002trin . Full text (OCR) searched.

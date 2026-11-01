@@ -8,8 +8,9 @@ tube's ends up to its arch.
 
 The statics: each vault as the engine checks a sprung arch on its walls (Heyman's thinnest ring,
 the hot line of thrust, Olsen's least rise, the thrust the buttress holds). The groin's ribs are
-not checked: no source recorded in docs/research gives a groin vault's statics (Heyman's chapter
-"The masonry vault", The Stone Skeleton, is not read: blocked-items.md [K19]).
+not checked: Heyman's sliced model is now sourced (masonry-statics.md §M4, Intrigila et al. 2020)
+but, tried on the SAHC 2020 cross vault, it doesn't reproduce the paper's thrust without a
+solver that keeps the thrust lines inside the shell (see GROIN_UNCHECKED).
 """
 
 from __future__ import annotations
@@ -39,8 +40,13 @@ GROIN_UNCHECKED = (
     "et al., SAHC 2020, §4.3: in a 10 × 7.5 m cross vault on its corners the forces accumulate "
     "along the diagonals, the corners' total thrust 67.5–96.7 % of the weight; masonry-statics.md "
     "§M4). That is one worked example, its result depending on the force pattern chosen, not a "
-    "rule; Heyman's slicing (webs onto the diagonals, the diagonals as arches to the corners) is "
-    "the safe method, read in summary only, so it isn't applied here. Each vault is checked as "
+    "rule. Heyman's slicing (webs as arches onto the diagonals, the diagonals as three-hinged "
+    "arches to the corners) was tried on that vault and didn't reproduce it: on the centre "
+    "surface the diagonals need tension at the crown, and with the hinges at the faces the "
+    "corners' thrust, 50 % of the weight, falls below the paper's least, so the thrust lines "
+    "would have to be shown inside the shell, which needs a thrust-network solver not built "
+    "here. These kilns' crowns also stand at different heights, so the groins don't meet at "
+    "the middle, a joint no source read covers. Each vault is checked as "
     "an arch on its walls, as a barrel "
     "vault; where the other tube crosses it, its walls are open and the groin carries it, so "
     "buttress the crossing's corners well, as Olsen buttresses these kilns with dirt, rocks and "
