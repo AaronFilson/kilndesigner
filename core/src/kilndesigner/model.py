@@ -349,6 +349,16 @@ class Chamber(Spec):
             "electric kiln, 'mortar' otherwise"
         ),
     )
+    dome_bricks: Literal["courses", "norton", "radial"] | None = Field(
+        default=None,
+        description=(
+            "How a round kiln's 9 in brick dome is counted: 'courses', course by course in "
+            "straights pitched to the dome's radius (Olsen, The Kiln Book, 4th ed., p.51); "
+            "'norton', Norton's ring count in straights, No. 1 wedges and No. 1 keys "
+            "(Refractories, 1949, pp.731–732); 'radial', Norton's radial dome brick, tapered to "
+            "the dome's centre (Table 155, 4 to 40 ft inside radius). Left out: 'courses'"
+        ),
+    )
     outline: PlanOutline | None = Field(
         default=None,
         description=(
@@ -361,6 +371,8 @@ class Chamber(Spec):
     def _a_shape_it_can_be(self) -> Chamber:
         if self.shape == "round" and abs(si(self.width, "in") - si(self.depth, "in")) > 1e-6:
             raise ValueError("a round chamber's width and depth are both its diameter")
+        if self.dome_bricks is not None and self.shape != "round":
+            raise ValueError("dome_bricks counts a round kiln's dome; this chamber is a box")
         if self.shape == "round" and self.chambers > 1:
             raise ValueError("chambers in a row are boxes; a round kiln is one chamber")
         if self.slope is not None:

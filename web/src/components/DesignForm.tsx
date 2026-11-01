@@ -1419,7 +1419,13 @@ export function DesignForm({
                     bend: undefined,
                     outline: undefined,
                   }
-                : { ...doc.chamber, shape: undefined, rings: undefined, floor_inside: undefined },
+                : {
+                    ...doc.chamber,
+                    shape: undefined,
+                    rings: undefined,
+                    floor_inside: undefined,
+                    dome_bricks: undefined,
+                  },
             )
           }
         />
@@ -1444,6 +1450,27 @@ export function DesignForm({
               bricks among the straights to turn the curve. Arch bricks: possible, but not
               recommended.
             </p>
+            {doc.roof?.type === "dome" && (
+              <>
+                <Choice
+                  label="Dome bricks counted"
+                  value={doc.chamber.dome_bricks ?? ""}
+                  options={[
+                    ["", "As usual: course by course"],
+                    ["courses", "Course by course, straights pitched to the radius"],
+                    ["norton", "Norton's rings: straights, No. 1 wedges and keys"],
+                    ["radial", "Norton's radial dome brick"],
+                  ]}
+                  onChange={(v) => change(["chamber", "dome_bricks"], v || undefined)}
+                />
+                <p className="muted section-note">
+                  For a 9 in brick dome. Norton (Refractories, 1949): rings of straights and No. 1
+                  keys alternated with rings of straights and No. 1 wedges, mortar in the joints; or
+                  radial dome brick tapered to the dome's centre (his Table 155, 4 to 40 ft inside
+                  radius). Where his method doesn't reach, the dome is counted course by course.
+                </p>
+              </>
+            )}
           </>
         )}
         {!round && (

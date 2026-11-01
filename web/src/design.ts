@@ -54,6 +54,7 @@ export interface KilnDocument {
     };
     floor_inside?: boolean;
     rings?: RingMethod;
+    dome_bricks?: DomeBricks;
     outline?: PlanOutline;
   };
   roof?:
@@ -129,6 +130,9 @@ export interface KilnDocument {
 
 /** How a round wall's brick rings are turned (model.py Chamber.rings). */
 export type RingMethod = "mortar" | "cut" | "featheredge" | "arch";
+
+/** How a round kiln's 9 in brick dome is counted (model.py Chamber.dome_bricks). */
+export type DomeBricks = "courses" | "norton" | "radial";
 
 /** A box chamber's plan as a curve (model.py PlanOutline), filling its width and depth. */
 export type PlanOutline =
