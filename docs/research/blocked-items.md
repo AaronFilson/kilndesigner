@@ -307,6 +307,13 @@ outside its 2–50 K/min scope: show, don't certify).
 `heatloss.py`; minimum strengths (IRC Table R402.2, EN 1992-1-1 Table E.1N) and the allowable
 bearing (AISC 360-16 §J8, as ACI 318) in `concrete-foundations.md`.
 
+**Block foundations (2026-10-31, later):** `concrete-foundations.md` C6–C10. No published
+temperature limit for concrete block or cinder block was found; residual strength "usually
+unchanged below 400°C" (Pope and Zalok 2025, abstract) is fire-test data, not a long-term limit.
+IRC R1001 and NCMA TEK 3-7A give hearth thicknesses (4 in, 2 in extension, 2 in firebrick) but no
+temperature. Block conductivity (TEK 6-2C, ACI 122R) still to get; the engine keeps cast-concrete
+values for a block platform.
+
 ### 21. Refractory bearing (item 7, partial)
 
 | Source | Text | Status |
