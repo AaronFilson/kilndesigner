@@ -52,7 +52,7 @@ chamber:
   depth: 5 ft
   height: 18 in # to the springline, at the back wall (Fig 4-153)
   foundation:
-    material: concrete # under the whole kiln and its firebox (the user, 2026-10-31)
+    material: concrete block # "a concrete-block foundation" (p.126); under the whole kiln and its firebox (the user)
     compressive_strength: 1800 psi # below IRC Table R402.2's 2500-3500 psi
     strength_source: the user's starting value, 2026-10-31; not sourced
     # thickness: not known (not visible in the photos), so the floor's loss through it and its
@@ -81,17 +81,18 @@ lining:
   walls:
     - material: ifb-jm28 # brick not named: high-alumina for salt (p.126, p.136)
       thickness: 9 in
-  # The floor: three courses of brick laid flat off the platform in the construction photo
-  # (Fig 4-154, p.128); the plan drawing (Fig 4-153) shows the floor about 6 in thick against the
-  # 9 in arch, so light-duty firebrick or insulating firebrick (the user, 2026-10-31). Taken as
-  # three 2½ in courses of insulating firebrick, 7½ in; JM 28, the walls' brick, as a floor under
-  # salt wants the same high-alumina brick (p.126). The drawing's ~6 in is a reading, not a size.
+  # The floor, as the book specifies it: "built upon a concrete-block foundation covered with
+  # common red bricks, followed by a layer of medium-duty firebricks" (p.126, Fig 4-148; pointed
+  # out by the user, 2026-10-31). The construction photo shows three courses of brick off the
+  # platform (Fig 4-154, p.128): one course of medium-duty firebrick over two of common red brick,
+  # 2½ in each laid flat, 7½ in (the course split is the reading of the photo; the drawing,
+  # Fig 4-153, shows the floor about 6 in, a reading, not a size).
   floor:
-    - material: ifb-jm28
+    - material: firebrick-medium-duty-smithfield # "a layer of medium-duty firebricks" (p.126)
       thickness: 2.5 in
-    - material: ifb-jm28
+    - material: building-brick-common # "common red bricks" (p.126)
       thickness: 2.5 in
-    - material: ifb-jm28
+    - material: building-brick-common
       thickness: 2.5 in
   roof: # two 4½ in rings, one on the other (photos, read by the user)
     - material: ifb-jm28
