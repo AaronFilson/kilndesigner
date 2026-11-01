@@ -696,6 +696,47 @@ def dome_buttress(
     return s
 
 
+def post_bending(
+    load: float,
+    up: float,
+    length: float,
+    a: AngleSection,
+    hot: HotSteel,
+    limit: float,
+    sources: tuple[str, str],
+) -> Sheet:
+    """A frame's post as a beam pinned at its foot on the platform and held at the tie rod, the
+    buttress's end load ``load`` (lb) on it ``up`` (in) above the foot, ``length`` (in) between
+    the two: AISC 360-16 F10 with the steel's properties hot, and HarbisonWalker's 12,000 psi."""
+    load_source, stress_source = sources
+    s = Sheet(
+        "frame.post-bending",
+        f"Post between its foot and the tie rod, {a.name}, hot",
+        reference=f"{hot.source}; {stress_source}; steel-design.md §S4",
+    )
+    s.given("P", "the buttress's end load on the post, hot", Q_(load, "lbf"), source=load_source)
+    s.given("a", "the buttress above the post's foot", Q_(up, "in"), source=DESIGN)
+    s.given("L", "the post's foot to the tie rod", Q_(length, "in"), source=DESIGN)
+    s.let(
+        "M",
+        "bending moment, a point load on a beam pinned at both ends",
+        "P*a*(L - a)/L",
+        "lbf*in",
+        source="statics; the foot taken pinned, the safe side (no fixity sourced)",
+    )
+    s.let("V_f", "shear the foot passes to the platform", "P*(L - a)/L", "lbf", source="statics")
+    s.let("L_b", "unbraced length, AISC L_b: the whole post", "L", "in")
+    _aisc_angle_moment(s, a, hot)
+    s.require("M", "<=", "M_a")
+    s.let("σ_b", "bending stress", "M/S_x", "psi")
+    s.given("σ_allow", "allowed in steel that may run hot", Q_(limit, "psi"), source=stress_source)
+    # AISC's strength is the hard limit; HarbisonWalker's 12,000 psi is its rule for the buttress
+    # and rods, applied to a post as a caution (a built kiln, Bowen Mountain, stands past it)
+    s.require("σ_b", "<=", "σ_allow", level="warning")
+    s.lever("S_x", Q_(0.05, "in**3"), Q_(10, "in**3"))
+    return s
+
+
 def dome_rod(
     dm: DomeInputs,
     at: float,

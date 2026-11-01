@@ -153,6 +153,7 @@ def heat_loss(
     fire = kiln.heat.fire
     over_fire = fire is not None and any(fb.position == "under" for fb in fire.fireboxes)
     grounded = kiln.chamber.on_ground and not over_fire
+    found = kiln.chamber.foundation
 
     def _check_layers(face: Face, layers: list[Layer], temps: Sequence[float]) -> list[LayerResult]:
         """Each layer's temperatures, its rating and its k data checked; the results."""
@@ -205,14 +206,38 @@ def heat_loss(
             if m.status == "excerpt":
                 excerpt_materials.add(m.name)
             slabs.append(Slab(m.id, si(layer.thickness, "m"), m.k))
-        thickness = sum(s.thickness for s in slabs)
         floor = shape.face == "floor"
+        platform = (
+            kiln.chamber.foundation
+            if floor and kiln.chamber.foundation is not None and not over_fire
+            else None
+        )
+        if platform is not None and platform.thickness is not None:
+            from kilndesigner.foundation import CONCRETE_K, CONCRETE_K_SOURCE
+
+            slabs.append(Slab("platform", si(platform.thickness, "m"), CONCRETE_K))
+            working.append(
+                Step(
+                    name="Platform under the floor",
+                    value=f"{show(platform.thickness, len_unit)} of {platform.material}, on soil",
+                    formula="λ = 1.36 − 0.136(θ/100) + 0.0057(θ/100)² W/(m·K), θ in °C",
+                    reference=CONCRETE_K_SOURCE,
+                    note=(
+                        "EN 1992-1-2's lower limit, which it says 'gives more realistic "
+                        "temperatures'. The platform is taken as wide as the floor: its reach "
+                        "past the walls and round the firebox, which would spread the heat, "
+                        "isn't counted."
+                    ),
+                )
+            )
+        thickness = sum(s.thickness for s in slabs)
         if over_fire and floor:
             # Fire on both sides: every layer is checked at the top temperature, none counted
             temps = [t_in] * (len(layers) + 1)
             _check_layers(shape.face, layers, temps)
             continue
-        if grounded and floor:
+        on_slab = platform is not None and platform.thickness is not None
+        if (grounded or on_slab) and floor:
             # A disk on a semi-infinite medium, S = 2D (thermal-properties.md §8.1): per unit
             # area h = 2D·k/(πD²/4) = 8k/(πD), D the disk of the floor's outside area
             ground_d = sqrt(4 * shape.area_at(thickness) / pi)
@@ -266,7 +291,7 @@ def heat_loss(
                     )
                 )
 
-        layer_results = _check_layers(shape.face, layers, result.temperatures)
+        layer_results = _check_layers(shape.face, layers, result.temperatures[: len(layers) + 1])
         faces.append(
             FaceResult(
                 face=shape.face,
@@ -324,7 +349,9 @@ def heat_loss(
                 "spy holes, the flue gases and the heat stored in the walls and ware are not in "
                 "it. "
                 + (
-                    "The floor loses heat into the ground."
+                    "The floor loses heat through its platform into the ground."
+                    if found is not None and found.thickness is not None and not over_fire
+                    else "The floor loses heat into the ground."
                     if grounded
                     else "The floor stands over its fireboxes and isn't counted."
                     if over_fire

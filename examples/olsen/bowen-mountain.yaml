@@ -26,11 +26,14 @@
 # (the engine sizes it); the kiln built into a concrete platform round its whole perimeter. The
 # concrete's strength, 1800 psi, is the user's starting value, not a sourced one; the platform's
 # height and how far it runs out past the walls aren't known.
+# The user, 2026-10-31: the platform runs under the whole kiln and its firebox; the tie bars run
+# about 1½ ft over the crown (roof.rods_above_crown); the posts' feet are in or bolted to the
+# platform, not at the foundation's bottom, so no bottom ring: the engine takes them pinned.
 # Assumed: eight burners, two in each of the four flues. Cone 10, the top of 9–10. The chimney
 # 11 ft, the middle of 10–12 ft. The book names no brick: for
 # salt Olsen says high-alumina brick is best (p.126), and Kähler's salt kiln used high-alumina
 # insulating brick (p.136); JM 28 is 67 % alumina by Olsen's Table 1-4 (p.27), so ifb-jm28 for
-# the walls, arch and floor (engine default). The gas is propane at 11 in. w.c. at the burners,
+# the walls, arch and floor. The gas is propane at 11 in. w.c. at the burners,
 # with a high-pressure regulator at the tank (p.215, p.227); the book doesn't say which gas this
 # kiln burned. The exit flues aren't counted, so the engine sizes the exit flue.
 # The door: "24" (+-) DOOR" in the plan's lower side wall, the right wall looking from the
@@ -49,15 +52,24 @@ chamber:
   depth: 5 ft
   height: 18 in # to the springline, at the back wall (Fig 4-153)
   foundation:
-    material: concrete # a platform round the whole perimeter (photos, read by the user)
-    compressive_strength: 1800 psi
+    material: concrete # under the whole kiln and its firebox (the user, 2026-10-31)
+    compressive_strength: 1800 psi # below IRC Table R402.2's 2500-3500 psi
     strength_source: the user's starting value, 2026-10-31; not sourced
+    # thickness: not known (not visible in the photos), so the floor's loss through it and its
+    # top face's temperature aren't worked out
 roof:
   type: sprung_arch
   along: true # the arch spans the 5 ft length, front to back (Fig 4-153)
   ring: 2 # two 4½ in rings (photos, read by the user)
   rise: 18 in # 36 in to the crown, less the 18 in springline
   front_springline: 16 in # about 16 in at the front (Fig 4-153, read by the user)
+  rods_above_crown: 18 in # the tie bars about 1½ ft over the crown (the user, 2026-10-31)
+  # The steel is for building: "there is probably no need for the steel after construction once
+  # the brick is mortared" (the user, 2026-10-31). The kiln is mortared and built into its concrete
+  # platform, so in service the masonry holds the arch; the frame is sized and listed to hold it
+  # while the mortar sets. No source quantifies the mortar's or the platform's restraint.
+  buttressed: true
+  building_frame: true
 loading:
   type: door
   face: right
@@ -69,6 +81,18 @@ lining:
   walls:
     - material: ifb-jm28 # brick not named: high-alumina for salt (p.126, p.136)
       thickness: 9 in
+  # The floor: three courses of brick laid flat off the platform in the construction photo
+  # (Fig 4-154, p.128); the plan drawing (Fig 4-153) shows the floor about 6 in thick against the
+  # 9 in arch, so light-duty firebrick or insulating firebrick (the user, 2026-10-31). Taken as
+  # three 2½ in courses of insulating firebrick, 7½ in; JM 28, the walls' brick, as a floor under
+  # salt wants the same high-alumina brick (p.126). The drawing's ~6 in is a reading, not a size.
+  floor:
+    - material: ifb-jm28
+      thickness: 2.5 in
+    - material: ifb-jm28
+      thickness: 2.5 in
+    - material: ifb-jm28
+      thickness: 2.5 in
   roof: # two 4½ in rings, one on the other (photos, read by the user)
     - material: ifb-jm28
       thickness: 4.5 in

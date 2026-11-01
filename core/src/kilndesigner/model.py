@@ -213,21 +213,57 @@ class PlanOutline(Spec):
         return self
 
 
+FOUNDATION_STRENGTH_PSI = 3500
+FOUNDATION_STRENGTH_SOURCE = (
+    "IRC Table R402.2's least f′c for slabs exposed to the weather where the weathering potential "
+    "is severe, the most it asks of any slab (concrete-foundations.md §C1)"
+)
+
+
 class Foundation(Spec):
-    """What the kiln's walls stand on: a concrete platform or slab, and its strength."""
+    """What the kiln stands on: a concrete platform or slab under the kiln and its firebox, and
+    its strength."""
 
     material: str = Field(
         default="concrete", description="What the platform is, for example concrete"
     )
     compressive_strength: Pressure = Field(
-        description="Its compressive strength, for example 1800 psi (concrete's f′c)"
+        default_factory=lambda: Q_(FOUNDATION_STRENGTH_PSI, "psi"),
+        description=(
+            "Its compressive strength (concrete's f′c), for example 1800 psi. Left out: 3500 psi, "
+            "the International Residential Code's least for a slab exposed to the weather where "
+            "frost is severe (Table R402.2)"
+        ),
     )
     strength_source: str = Field(
+        default=FOUNDATION_STRENGTH_SOURCE,
         description=(
             "Where the strength comes from: a test, a mix's specification, or the user's own "
-            "starting value. It is reported with every number worked from it"
-        )
+            "starting value. It is reported with every number worked from it; needed when the "
+            "strength is given"
+        ),
     )
+    thickness: Length | None = Field(
+        default=None,
+        description=(
+            "How thick the platform is under the kiln's floor, on the ground. Given, the floor's "
+            "heat goes through it into the soil, and its top face's temperature is checked; left "
+            "out, neither is worked out (there is no default: a platform's thickness is the "
+            "builder's)"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_given_strength_has_its_source(self) -> Foundation:
+        given = "compressive_strength" in self.model_fields_set
+        if given and "strength_source" not in self.model_fields_set:
+            raise ValueError(
+                "a platform's compressive_strength needs its strength_source: a test, a mix's "
+                "specification, or your own starting value"
+            )
+        if self.thickness is not None and si(self.thickness, "in") <= 0:
+            raise ValueError("a platform's thickness must be more than zero")
+        return self
 
 
 class Chamber(Spec):
@@ -285,9 +321,11 @@ class Chamber(Spec):
     foundation: Foundation | None = Field(
         default=None,
         description=(
-            "A platform or slab the walls stand on, with its compressive strength: the bearing "
-            "under the walls is then worked out against it. Its heat loss isn't: no thermal "
-            "conductivity for concrete is sourced"
+            "A concrete platform or slab under the kiln and its firebox, with its compressive "
+            "strength: the bearing under the walls is checked against it (AISC 360-16 §J8, as ACI "
+            "318), and with its thickness the floor's loss through it and its top face's "
+            "temperature (EN 1992-1-2, ACI 349). A frame's posts then stand on it, held at their "
+            "feet"
         ),
     )
     floor_inside: bool = Field(
@@ -414,6 +452,16 @@ class SprungArch(Spec):
         description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
     )
     buttressed: bool = Field(default=False, description=BUTTRESSED)
+    building_frame: bool = Field(
+        default=False,
+        description=(
+            "With buttressed: a steel frame holds the arch only while the kiln is built and the "
+            "mortar sets, and the mortared masonry (and any platform it is built into) holds it "
+            "in service. The frame is still sized and listed for the builder; the in-service "
+            "checks don't count on it. As the user reads Bowen Mountain, mortared into its "
+            "concrete platform (2026-10-31)"
+        ),
+    )
     tube: bool = Field(
         default=False,
         description=(
@@ -443,6 +491,14 @@ class SprungArch(Spec):
             "springs level"
         ),
     )
+    rods_above_crown: Length | None = Field(
+        default=None,
+        description=(
+            "With along: how far above the roof's outside at the crown the frame's tie rods run, "
+            "as Bowen Mountain's about 1½ ft (the user's reading of the photos). The posts reach "
+            "up to them. Left out: at the crown"
+        ),
+    )
     crossing: Crossing | None = Field(
         default=None,
         description=(
@@ -463,6 +519,20 @@ class SprungArch(Spec):
                 "springs on the rods of an arch along the chamber's depth aren't worked out: tie "
                 "its rods rigid"
             )
+        if self.rods_above_crown is not None and (
+            not self.along or si(self.rods_above_crown, "in") < 0
+        ):
+            raise ValueError(
+                "rods_above_crown is for one chamber's arch along its depth (along), and can't be "
+                "below the crown"
+            )
+        if self.building_frame and not self.buttressed:
+            raise ValueError(
+                "building_frame says the masonry holds the arch once built: set buttressed too, "
+                "or leave building_frame out to have the frame hold it in service"
+            )
+        if self.building_frame and self.tube:
+            raise ValueError("a building frame for a tube's vault isn't worked out")
         if self.front_springline is not None and not self.along:
             raise ValueError(
                 "front_springline is for one chamber's arch along its depth (along): a level "
@@ -1385,6 +1455,15 @@ class Kiln(Spec):
             if one and self.chamber.chambers > 1:
                 raise ValueError(
                     "chambers in a row have their arches along the draft already: leave out along"
+                )
+            if self.roof.building_frame and (
+                self.chamber.chambers > 1
+                or self.chamber.shape != "box"
+                or self.roof.crossing is not None
+            ):
+                raise ValueError(
+                    "a building frame is worked out for one box chamber's arch only: no frame is "
+                    "sized for chambers in a row, crossing vaults or a curved plan"
                 )
             if self.roof.front_springline is not None:
                 from kilndesigner.shape import uneven_refusal

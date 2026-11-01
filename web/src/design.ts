@@ -43,6 +43,15 @@ export interface KilnDocument {
     slope?: string;
     bend?: string;
     on_ground?: boolean;
+    /** A concrete platform under the kiln and its firebox (model.py Foundation). */
+    foundation?: {
+      material?: string;
+      /** f′c; left out, 3500 psi (IRC Table R402.2). Given, it needs strength_source. */
+      compressive_strength?: string;
+      strength_source?: string;
+      /** Under the floor; given, the floor loses heat through it. No default. */
+      thickness?: string;
+    };
     floor_inside?: boolean;
     rings?: RingMethod;
     outline?: PlanOutline;
@@ -57,12 +66,16 @@ export interface KilnDocument {
         ties?: "rigid" | "springs";
         spring_rate?: string;
         buttressed?: boolean;
+        /** With buttressed: the steel frame for building only (model.py SprungArch.building_frame). */
+        building_frame?: boolean;
         /** Chambers in a row under one vault spanning the width (model.py SprungArch.tube). */
         tube?: boolean;
         /** One chamber's arch spanning its depth, along the draft (model.py SprungArch.along). */
         along?: boolean;
         /** With along: the front wall's springline, from the floor (model.py SprungArch). */
         front_springline?: string;
+        /** With along: the frame's tie rods' height over the roof's crown (model.py SprungArch). */
+        rods_above_crown?: string;
       }
     | { type: "catenary_arch"; buttressed?: boolean }
     | { type: "dome"; rise: string; crown_at?: string; ring?: number; buttressed?: boolean };

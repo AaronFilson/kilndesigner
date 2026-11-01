@@ -303,6 +303,10 @@ temperature is f_ck × k(θ) from Table 3.1; and a sourced warning threshold for
 150 °F general / 200 °F local (ACI 349, long-term). Refuse above Table 3.1's use (sustained heating is
 outside its 2–50 K/min scope: show, don't certify).
 
+**Used (2026-10-31):** the conductivity, Table 3.1 and ACI 349's 150 °F in `foundation.py` and
+`heatloss.py`; minimum strengths (IRC Table R402.2, EN 1992-1-1 Table E.1N) and the allowable
+bearing (AISC 360-16 §J8, as ACI 318) in `concrete-foundations.md`.
+
 ### 21. Refractory bearing (item 7, partial)
 
 | Source | Text | Status |

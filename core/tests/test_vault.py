@@ -144,7 +144,8 @@ def test_a_thrust_line_through_both_springings_agrees_with_the_halves() -> None:
     fb = 1 - math.cos(pb)
     assert back * math.sin(pb) == pytest.approx(h * fb + wb * fb / pb)
     frame = design_frame(kiln)
-    [step] = [s for s in frame.working if s.name.startswith("The uneven arch's cold thrust")]
+    # Twice: the building frame's, and the in-service masonry's
+    step = next(s for s in frame.working if s.name.startswith("The uneven arch's cold thrust"))
     assert "each half about the crown" in step.value
     assert "largest printed factor is kept" in (step.note or "")
 
@@ -178,7 +179,10 @@ def test_the_uneven_arch_springs_each_end_wall_on_its_own_share() -> None:
     with pytest.raises(ValidationError, match="more than 0"):
         _bowen(roof={"front_springline": "0 in"})
     with pytest.raises(ValidationError, match="front_springline is for one chamber"):
-        _bowen(roof={"front_springline": "16 in", "along": False}, loading={"face": "front"})
+        _bowen(
+            roof={"front_springline": "16 in", "along": False, "rods_above_crown": None},
+            loading={"face": "front"},
+        )
 
 
 def test_bowen_mountains_door_rises_into_the_vault() -> None:
@@ -243,18 +247,66 @@ def test_bowen_mountains_arch_stands_and_needs_its_bracing() -> None:
     assert end.check.status == "error"
     assert "needed, not optional" in end.message
     # Held by masonry, no steel is sized
-    held = design_frame(_bowen(roof={"buttressed": True}))
+    held = design_frame(_bowen(roof={"building_frame": False}))
     assert held.members == []
+
+
+IN_SERVICE = {"buttressed": False, "building_frame": False}
+
+
+def test_bowen_mountains_steel_is_for_building() -> None:
+    # The user, 2026-10-31: mortared into its platform, the kiln needs no steel once built; the
+    # frame holds the arch while the mortar sets, sized and listed all the same
+    kiln = load_design(BOWEN)
+    frame = design_frame(kiln)
+    assert frame.kind == "arch frame"
+    assert frame.angle == "L5×5×5/16"
+    assert all(m.part.endswith(", for building") for m in frame.members)
+    assert not [f for f in frame.findings if f.level in ("error", "warning")]
+    # The end walls' own statics stand in the report, with the designer's reason for the rest
+    ends = [f for f in frame.findings if f.check and f.check.id.startswith("frame.vault-end-wall")]
+    assert len(ends) == 2
+    for end in ends:
+        assert end.check is not None
+        assert end.check.status == "error"
+        assert "past the wall" in end.message
+        assert "no source here quantifies" in end.message
+    assert any(s.name == "Thrust the masonry holds" for s in frame.working)
+    weld = next(f for f in frame.findings if f.message.startswith("Weld the frame"))
+    assert "while it is built and the mortar sets" in weld.message
+    assert any("The frame is for building" in f.message for f in frame.findings)
+    # building_frame says the masonry holds it: buttressed must be set, and one box chamber only
+    with pytest.raises(ValidationError, match="set buttressed too"):
+        _bowen(roof={"buttressed": False})
+    with pytest.raises(ValidationError, match="tube's vault"):
+        _bowen(roof={"along": False, "tube": True, "front_springline": None,
+                     "rods_above_crown": None})  # fmt: skip
+    with pytest.raises(ValidationError, match="one box chamber's arch only"):
+        _bowen(roof={"along": False, "front_springline": None, "rods_above_crown": None},
+               chamber={"chambers": 2}, loading={"face": "front"})  # fmt: skip
+    # Across the width, the ordinary sprung-arch frame is listed for building
+    across = design_frame(
+        _bowen(
+            roof={"along": False, "front_springline": None, "rods_above_crown": None},
+            loading={"face": "front", "opening": None},
+        )
+    )
+    assert across.members
+    assert all(m.part.endswith(", for building") for m in across.members)
 
 
 def test_bowen_mountains_frame_holds_its_arch() -> None:
     # The photos: corner angles with bars over the arch, so the frame is on the end walls and
-    # the rods run the 5 ft depth
-    kiln = load_design(BOWEN)
+    # the rods run the 5 ft depth. Held by the frame in service:
+    kiln = _bowen(roof=IN_SERVICE)
     frame = design_frame(kiln)
     assert frame.kind == "arch frame"
-    assert not [f for f in frame.findings if f.level == "error"]
-    assert frame.angle == "L4×4×3/8"
+    # The rods 18 in over the crown (the user): with the larger angles (AISC v16.0, added
+    # 2026-10-31), L5×5×5/16 keeps the corner posts under 12,000 psi
+    assert not [f for f in frame.findings if f.level in ("error", "warning")]
+    post = next(s for s in frame.working if s.name.startswith("Posts between"))
+    assert "10,368 psi in L5×5×5/16" in post.value
+    assert frame.angle == "L5×5×5/16"
     assert frame.rod == "1/2-13"
     assert frame.posts == 2
     parts = {m.part: m for m in frame.members}
@@ -273,7 +325,41 @@ def test_bowen_mountains_frame_holds_its_arch() -> None:
     assert any(s.name == "The chamber's section along its depth" for s in frame.working)
     post = next(s for s in frame.working if s.name.startswith("Posts between"))
     assert post.note is not None
-    assert "Shown, not checked" in post.note
+    assert "pinned, the safe side" in post.note
+    # 7½ in floor + 36 in crown + 9 in ring + 18 in to the rods
+    assert post.inputs["L, the foot to the rod"] == "70.5 in"
+    assert parts["corner posts"].length_in == pytest.approx(70.5)
+    assert not any(p.startswith("bottom cross-members") for p in parts)
+    foot = next(s for s in frame.working if s.name == "Each post's foot on the platform")
+    assert "no uplift" in foot.value
+    # No platform: the bottom ring ties the feet, and no foot reaction is reported
+    data = yaml.safe_load(BOWEN.read_text(encoding="utf-8"))
+    del data["chamber"]["foundation"]
+    del data["roof"]["rods_above_crown"]
+    bare = design_frame(parse_design(yaml.safe_dump(data, allow_unicode=True)))
+    assert any(m.part.startswith("bottom cross-members") for m in bare.members)
+    assert not any(s.name == "Each post's foot on the platform" for s in bare.working)
+    post = next(s for s in bare.working if s.name.startswith("Posts between"))
+    assert "taken at the roof's crown" in (post.note or "")
+    with pytest.raises(ValidationError, match="rods_above_crown"):
+        _bowen(roof={"rods_above_crown": "-1 in"})
+
+
+def test_bowen_mountains_posts_on_the_old_table_warn(monkeypatch: pytest.MonkeyPatch) -> None:
+    # Cut to the table as it stood, L4×4×3/8 the largest: the posts bend past 12,000 psi, within
+    # AISC's strength, so a warning, with the highest rods that angle carries
+    import kilndesigner.frame as frame_module
+
+    upto = [a for a in frame_module.angles() if a.leg <= 4 and a.t <= 0.375]
+    monkeypatch.setattr(frame_module, "angles", lambda: upto)
+    frame = design_frame(_bowen(roof=IN_SERVICE))
+    assert frame.angle == "L4×4×3/8"
+    (warned,) = [f for f in frame.findings if f.level == "warning"]
+    assert warned.check is not None
+    assert warned.check.id == "frame.post-bending"
+    assert "over the crown" in warned.message
+    low = design_frame(_bowen(roof={**IN_SERVICE, "rods_above_crown": "4 in"}))
+    assert not [f for f in low.findings if f.level in ("error", "warning")]
 
 
 def test_a_level_vault_frame_takes_the_heated_factor_or_the_cap() -> None:
@@ -293,7 +379,14 @@ def test_a_level_vault_frame_takes_the_heated_factor_or_the_cap() -> None:
     assert "too thick for its rise" in thrust.note
 
 
-def test_a_vault_frame_refuses_a_loose_ring_and_steel_too_small() -> None:
+def test_a_vault_frame_refuses_a_loose_ring_and_steel_too_small(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import kilndesigner.frame as frame_module
+
+    # The table cut at L4×4×3/8: the larger angles carry this arch
+    upto = [a for a in frame_module.angles() if a.leg <= 4 and a.t <= 0.375]
+    monkeypatch.setattr(frame_module, "angles", lambda: upto)
     wall = {"material": "ifb-jm28", "thickness": "9 in"}
     blanket = {"material": "kaowool-blanket-8pcf", "thickness": "2 in"}
     loose = design_frame(_bowen(lining={"walls": [wall], "roof": [blanket, wall]}))

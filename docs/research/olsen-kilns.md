@@ -565,6 +565,29 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   - the kiln is built into a concrete platform that goes round its whole perimeter (its height and how
     far it runs out past the walls not read). The concrete's compressive strength, 1800 psi, is the
     user's starting value, not a sourced one.
+- The user's answers on the frame and platform (the user, 2026-10-31):
+  - the platform's extent isn't visible in the photos: take it as running under the whole kiln and
+    its firebox. Its thickness and overhang aren't known, so the engine takes them as design inputs
+    with no default (`chamber.foundation.thickness`; the overhang isn't used);
+  - the tie bars run about 1½ ft above the crown (the user's estimate from the photos):
+    `roof.rods_above_crown: 18 in`;
+  - the posts' feet aren't visible, but aren't at the bottom of the foundation: they're in the
+    platform or bolted to it, or similar. No bottom ring; the engine takes the feet pinned;
+  - any concrete foundation that holds up to frost and the elements will do for a kiln; 1800 psi is
+    low grade and would hold most any kiln in the book (see concrete-foundations.md for what the
+    codes ask).
+- The user's readings on the steel and the floor (the user, 2026-10-31):
+  - "there is probably no need for the steel after construction once the brick is mortared": the
+    kiln is mortared and built into its concrete platform, so in service the masonry holds the
+    arch and the steel is building support, holding the arch while the mortar sets
+    (`roof.buttressed: true`, `roof.building_frame: true`). No source in docs/research quantifies
+    the restraint mortar or a platform gives an end wall; the end walls' own statics are reported
+    as they stand (the resultant falls outside their 9 in base);
+  - the floor: the construction photo (Fig 4-154, p.128) shows 3 layers of brick off the platform;
+    the plan drawing (Fig 4-153) shows the floor about 6 in thick against the known 9 in arch, so
+    light-duty firebrick or insulating firebrick may have been used. Modelled as three 2½ in
+    courses of insulating firebrick laid flat, 7½ in, JM 28 as the walls (high-alumina for salt,
+    p.126). The ~6 in is a reading of the drawing, not a size.
 - Fig 4-154 by scale (rough, read by the agent, 2026-10-31): a flat segmental arch, its springings at
   different heights; by scale it rises only 10–13 in, against the drawing's 18 in (36 − 18), likely
   perspective, so the drawing's 36 in crown stays.

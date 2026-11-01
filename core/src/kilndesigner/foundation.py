@@ -1,22 +1,97 @@
-"""The bearing under a kiln's walls on the platform they stand on (``chamber.foundation``).
+"""The concrete platform a kiln stands on (``chamber.foundation``): the bearing under its walls,
+and its top face's temperature.
 
 Each wall's weight per foot, from the platform to its top, with the roof's share where the roof
-springs from it, spread over the wall's thickness: the mean pressure under it. It is set against
-the platform's compressive strength as a ratio, not passed or failed: no allowable bearing stress
-for concrete under a kiln is sourced in docs/research (refractory-bearing.md §B4 finds none for
-refractory either), so the ratio is shown with the strength's own source.
+springs from it, spread over the wall's thickness: the mean pressure under it. It is checked
+against AISC 360-16 §J8's allowable bearing on concrete, 0.85 f′c over Ω_c = 2.31 on the full
+area (the same as ACI 318, AISC's commentary says), with f′c reduced for the top face's heat by
+EN 1992-1-2 Table 3.1 where the platform's thickness lets the heat be worked out. The top face is
+checked against ACI 349's long-term limit for concrete, 150 °F (concrete-foundations.md).
 """
 
 from __future__ import annotations
 
+import numpy as np
+
 from kilndesigner.model import Face, Kiln, SprungArch, arches_along
-from kilndesigner.units import parse_quantity, si
+from kilndesigner.sheet import Sheet
+from kilndesigner.thermal.conductivity import Conductivity
+from kilndesigner.units import Q_, parse_quantity, si
 from kilndesigner.working import Finding, Step
 
 BEARING = (
-    "statics: the wall's weight and the roof's share over its base; refractory-bearing.md §B4 (no "
-    "allowable bearing stress sourced)"
+    "statics: the wall's weight and the roof's share over its base; AISC 360-16 §J8 (J8-1, "
+    "Ω_c = 2.31), as ACI 318; concrete-foundations.md §C3"
 )
+OMEGA_C = 2.31
+"""AISC 360-16 §J8: the ASD safety factor for bearing on concrete."""
+CONCRETE_K_SOURCE = (
+    "EN 1992-1-2:2004 §3.3.3, the lower limit of normal-weight concrete's conductivity; "
+    "blocked-items.md §20 [K31]"
+)
+_THETA_C = (20, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200)
+CONCRETE_K = Conductivity(
+    tuple(t + 273.15 for t in _THETA_C),
+    tuple(1.36 - 0.136 * (t / 100) + 0.0057 * (t / 100) ** 2 for t in _THETA_C),
+)
+"""EN 1992-1-2's lower limit, sampled every 100 °C (linear between; the quadratic's chords differ
+from it by under 0.002 W/(m·K))."""
+STRENGTH_HOT = (1.00, 1.00, 0.95, 0.85, 0.75, 0.60, 0.45, 0.30, 0.15, 0.08, 0.04, 0.01, 0.00)
+"""EN 1992-1-2 Table 3.1, f_c,θ/f_ck for siliceous aggregate, the lower of its two rows, at
+_THETA_C."""
+STRENGTH_HOT_SOURCE = (
+    "EN 1992-1-2:2004 Table 3.1, siliceous aggregate (the lower row); blocked-items.md §20 [K31]"
+)
+ACI_349_F = 150.0
+ACI_349_LOCAL_F = 200.0
+ACI_349 = (
+    "ACI 349-97 §A.4, as quoted in NRC ML15075A347: 150 °F, 200 °F in local areas, long term; "
+    "blocked-items.md §20 [K32]"
+)
+
+
+def platform_top(kiln: Kiln) -> float | None:
+    """The platform's top face at the top temperature (K), the floor's outside in the engine's
+    heat-loss solve; None without the platform's thickness, or over fireboxes."""
+    found = kiln.chamber.foundation
+    if found is None or found.thickness is None:
+        return None
+    from kilndesigner.heatloss import heat_loss
+
+    floor = next((f for f in heat_loss(kiln).faces if f.face == "floor"), None)
+    return None if floor is None else floor.layers[-1].cold_side_k
+
+
+def top_face_check(top_k: float, material: str) -> Sheet:
+    """The platform's top face against ACI 349's long-term limit for concrete."""
+    s = Sheet(
+        "foundation.top-temperature",
+        f"The {material} platform's top face, long term",
+        reference=ACI_349,
+    )
+    s.given(
+        "T_top", "the top face at the top temperature", Q_(top_k, "K"), "degF",
+        source="the engine's heat-loss solve: the floor's outside (heatloss.py)",
+    )  # fmt: skip
+    s.given("T_max", "ACI 349's long-term limit, general areas", Q_(ACI_349_F, "degF"), "degF",
+            source=ACI_349)  # fmt: skip
+    s.require("T_top", "<=", "T_max", level="warning")
+    s.lever("T_top", Q_(300, "K"), Q_(600, "K"))
+    return s
+
+
+def bearing_check(q: float, strength: float, k_hot: float, wall: str, sources: str) -> Sheet:
+    """The mean pressure under a wall against AISC 360-16 J8-1's allowable bearing, ASD."""
+    s = Sheet("foundation.bearing", f"Bearing under the {wall} wall on the platform", BEARING)
+    s.given("q", "mean pressure under the wall", Q_(q, "psi"), source="statics (above)")
+    s.given("f_c", "the platform's compressive strength f′c", Q_(strength, "psi"), source=sources)
+    s.given("k_c", "f_c,θ/f_ck at the top face", k_hot, source=STRENGTH_HOT_SOURCE)
+    s.given("Ω_c", "ASD safety factor, bearing on concrete", OMEGA_C, source="AISC 360-16 §J8")
+    s.let("q_a", "allowable bearing, the full area (J8-1)", "0.85*k_c*f_c/Ω_c", "psi",
+          source="AISC 360-16 §J8, as ACI 318")  # fmt: skip
+    s.require("q", "<=", "q_a")
+    s.lever("f_c", Q_(500, "psi"), Q_(10000, "psi"))
+    return s
 
 
 def _wall(kiln: Kiln, face: Face) -> tuple[float, float]:
@@ -87,9 +162,57 @@ def platform_bearing(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
         )
         worst = max(worst, (q, face))
     q, face = worst
+    top = platform_top(kiln)
+    k_hot = 1.0
+    steps: list[Step] = []
+    findings: list[Finding] = []
+    if top is not None:
+        k_hot = float(np.interp(top - 273.15, _THETA_C, STRENGTH_HOT))
+        sheet = top_face_check(top, found.material)
+        top_f = top * 9 / 5 - 459.67
+        steps.append(
+            Step(
+                name=f"The {found.material} platform's top face",
+                value=f"{top_f:.0f} °F at the top temperature; f_c,θ/f_ck {k_hot:.2f}",
+                formula="the floor's outside face in the heat-loss solve, the platform under it",
+                reference=f"{ACI_349}; {STRENGTH_HOT_SOURCE}",
+                note=(
+                    f"ACI 349 allows {ACI_349_F:g} °F long term, {ACI_349_LOCAL_F:g} °F in local "
+                    "areas; EN 1992-1-2's strength table is for fires heating at 2–50 K/min, so "
+                    "for a slab held hot firing after firing it is shown, not certified."
+                ),
+            )
+        )
+        check = sheet.check()
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"The platform's top face would reach {top_f:.0f} °F at the top temperature, "
+                    f"above the {ACI_349_F:g} °F ACI 349 allows concrete long term "
+                    f"({ACI_349_LOCAL_F:g} °F in local areas). Insulate the floor more."
+                ),
+            )
+            if check.status != "pass"
+            else Finding(
+                level="info",
+                message=(
+                    f"The platform's top face reaches {top_f:.0f} °F at the top temperature, "
+                    f"within the {ACI_349_F:g} °F ACI 349 allows concrete long term."
+                ),
+                reference=ACI_349,
+                check=check,
+            )
+        )
+    allowed = 0.85 * k_hot * strength / OMEGA_C
+    bearing = bearing_check(q, strength, k_hot, face, found.strength_source)
+    bearing.agrees("q_a", Q_(allowed, "psi"))
     step = Step(
         name=f"Bearing under the walls on the {found.material}",
-        value=f"{q:.1f} psi under the {face} wall, {q / strength:.2%} of {strength:,.0f} psi",
+        value=(
+            f"{q:.1f} psi under the {face} wall against {allowed:,.0f} psi allowed "
+            f"(0.85 f′c/2.31, f′c {strength:,.0f} psi)"
+        ),
         formula=(
             "q = (Σ ρ·t × (d_f + z_top)/144 + N)/(12·t), lb per foot over the wall's base; d_f the "
             "floor's depth, z_top the wall's top, N the roof's share where it springs"
@@ -101,20 +224,44 @@ def platform_bearing(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
             "masonry above a springline outside the ring and any lean of the resultant left out; "
             "a wall filled up to a vault is taken to the roof's crown, the most it reaches. The "
             f"strength is {found.strength_source}."
+            + (
+                ""
+                if top is not None
+                else " The platform's top face's heat isn't worked out (its thickness isn't "
+                "given, or the floor stands over fireboxes), so f′c is taken unreduced."
+            )
         ),
     )
-    finding = Finding(
-        level="info",
-        message=(
-            f"The walls bear at most {q:.1f} psi on the {found.material} (the {face} wall), "
-            f"{q / strength:.2%} of its {strength:,.0f} psi ({found.strength_source}). Shown, not "
-            "checked: no allowable bearing stress for it is sourced. Its heat loss isn't worked "
-            "out either: no thermal conductivity for it is sourced, so the floor's loss is "
-            "worked out as before, without the platform."
+    check = bearing.check()
+    findings.insert(
+        0,
+        Finding.failed(
+            check,
+            message=(
+                f"The {face} wall bears {q:.1f} psi on the {found.material}, more than the "
+                f"{allowed:,.0f} psi AISC 360-16 §J8 allows on {strength:,.0f} psi concrete "
+                f"({found.strength_source}). Use a stronger mix or spread the wall's footing."
+            ),
+        )
+        if check.status != "pass"
+        else Finding(
+            level="info",
+            message=(
+                f"The walls bear at most {q:.1f} psi on the {found.material} (the {face} wall), "
+                f"within the {allowed:,.0f} psi AISC 360-16 §J8 allows on {strength:,.0f} psi "
+                f"concrete ({found.strength_source})."
+                + (
+                    ""
+                    if top is not None
+                    else " Give the platform's thickness to have the floor's loss through it and "
+                    "its top face's temperature worked out."
+                )
+            ),
+            reference=BEARING,
+            check=check,
         ),
-        reference=BEARING,
     )
-    return [step], [finding]
+    return [*steps, step], findings
 
 
 __all__ = ["platform_bearing"]

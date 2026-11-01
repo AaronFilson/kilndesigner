@@ -453,7 +453,11 @@ def _frame(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None:
                     cylinders=(Cylinder(0, centre, rod_r * MM, length * MM),),
                 )
             )
-    # The bottom ring of flat bar
+    # The bottom ring of flat bar, unless the posts' feet are held by a platform (frame.py)
+    if frame.kind == "arch frame" and not any(
+        m.part.startswith("bottom cross-members") for m in frame.members
+    ):
+        return
     ring = [
         ((f.x0 - 0.25, f.y0, f.bottom), (f.x0, f.y1, f.bottom + 2)),
         ((f.x1, f.y0, f.bottom), (f.x1 + 0.25, f.y1, f.bottom + 2)),

@@ -456,6 +456,37 @@ client is ready, since the CLI can produce the client's plans before the app exi
   local codes. Electrical and gas outputs carry that note, and designs outside the checked range
   are refused with a reason rather than drawn.
 
+## Follow-up research: mortar, bricks and statics (2026-10-31)
+
+These are fundamental to the engine, and several checks are still "shown, not checked" or rest
+on a stated assumption for want of them. The information exists in published sources; find it
+there (the author would rather not dig through their own textbooks, Hibbeler's *Mechanics of
+Materials* and Dowling's *Mechanical Behavior of Materials*, so treat those as a last resort and
+ask before relying on them). What's found so far is in `docs/research/blocked-items.md`,
+`masonry-statics.md`, `bands-and-bottle-kilns.md`, `concrete-foundations.md` and
+`refractory-bearing.md`.
+
+- **Mortar:** how mortared joints behave in masonry (bond and tensile strength, shear and
+  friction at a joint, how thick a joint may be, air-setting against heat-setting at heat), and
+  whether two rings laid one on another act as one. Today a mortared wall gets no credit for
+  its mortar, and Bowen Mountain's arch is taken as held by mortared masonry on the author's
+  word, with no number.
+- **Bricks:** strength at temperature (hot modulus of rupture, hot crushing, creep under load:
+  ASTM C16, C583, C832 and makers' sheets), an allowable bearing stress or factor of safety, and
+  how insulating and light-duty brick differ from dense. Bearing is still shown, not checked,
+  for refractory.
+- **Statics:** masonry arches, vaults and domes from primary texts (Heyman's *The Stone
+  Skeleton* and *Equilibrium of Shell Structures*, Huerta's *Arcos, bóvedas y cúpulas*, Block
+  and Ochsendorf's papers), with worked examples to test against: the rampant arch's hot
+  thrust, a door cut into a vault (how load shares onto its ring), the groin's ribs, a round
+  dome past 51.8° (formulas already reconstructed; check them on the page images), a catenary
+  at a step, and corbels at heat. Also Trinks's *Industrial Furnaces* Vol. I (pp.196, 238) on
+  furnace arches.
+- **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
+  proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
+  standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"
+  is a valid answer.
+
 ## Open questions
 
 1. **The materials library.** Which manufacturers' data sheets can be used, and how they are

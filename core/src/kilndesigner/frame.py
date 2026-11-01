@@ -54,6 +54,7 @@ from kilndesigner.frame_checks import (
     heated_factor_limit,
     hot_thrust_line,
     loose_ring,
+    post_bending,
     rise_rule,
     rod_stress,
     skewback_on_wall,
@@ -1224,7 +1225,63 @@ MULTI_RING = (
 )
 
 
-def _along_frame(kiln: Kiln) -> FrameDesign:
+BUILDING_FRAME = (
+    "the designer's reading: the steel holds the arch while it is built and the mortar sets, the "
+    "mortared masonry and the platform it is built into in service (roof.building_frame; Bowen "
+    "Mountain, the user, 2026-10-31). No source in docs/research quantifies the restraint mortar "
+    "or a platform gives an end wall"
+)
+
+
+def _building_frame(kiln: Kiln) -> FrameDesign:
+    """A sprung arch the masonry holds in service, its steel used while building only
+    (``roof.building_frame``): the frame is sized as the in-service one would be, the cautious
+    side for a cold arch on its form, and listed; the in-service working is the masonry's, its
+    walls' statics reported as they stand."""
+    assert isinstance(kiln.roof, SprungArch)
+    roof = kiln.roof.model_copy(update={"buttressed": False, "building_frame": False})
+    framed = kiln.model_copy(update={"roof": roof})
+    steel = _along_frame(framed, building=True) if roof.along else _design_frame(framed)
+    service = _held_by_masonry(kiln)
+    findings = [
+        f
+        if not f.message.startswith("Weld the frame")
+        else f.model_copy(
+            update={
+                "message": (
+                    "Weld the frame and fit it before the arch form comes out: it holds the arch "
+                    "while it is built and the mortar sets. In service the design takes the "
+                    "mortared masonry and its platform as holding the arch, and no check here "
+                    "counts on the steel."
+                )
+            }
+        )
+        for f in steel.findings
+    ]
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                "The frame is for building: it is sized for the arch's hot thrust, the cautious "
+                "side for a cold arch on its form, so it would also carry the arch fired if left "
+                "on. In service the roof is taken as buttressed by the mortared masonry and the "
+                "platform it is built into, the designer's reason; no source here quantifies "
+                "that restraint, so it is the design's judgment, not a check."
+            ),
+            reference=BUILDING_FRAME,
+        )
+    )
+    members = [m.model_copy(update={"part": f"{m.part}, for building"}) for m in steel.members]
+    return steel.model_copy(
+        update={
+            "members": members,
+            "working": [*steel.working, *service.working],
+            "findings": findings,
+        }
+    )
+
+
+def _along_frame(kiln: Kiln, *, building: bool = False) -> FrameDesign:
     """One chamber's arch along its depth (``roof.along``) held by steel: the sprung-arch frame
     turned to the arch's span. The end walls take the thrust, so the buttress angles lie across
     them at the springing between corner posts (and posts between, where the steel needs them),
@@ -1351,7 +1408,33 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
     bay = width / (posts - 1)
     share = 0.5 if posts == 2 else 1.0
     moment = (hot / 12) * bay**2 / 8
-    fits = [x for x in angles() if x.sx >= moment / limit and x.leg >= floor.leg and x.t >= floor.t]
+    per_rod = hot * (bay / 12) * share
+    # The posts: pinned at the foot on the platform (or tied by the bottom ring), held at the rods
+    # over the crown, the buttress's end load between
+    above = si(kiln.roof.rods_above_crown, "in") if kiln.roof.rods_above_crown is not None else 0.0
+    span_post = o.bottom + crown + above
+    up = o.bottom + skewback
+    post_moment = per_rod * up * (span_post - up) / span_post
+    steel = hot_steel(kiln, ("front", "back"))
+    hs = data["hot_steel"]
+    heat = steel_heat(steel, hs["ke_deg_f"][-1], hs["service_deg_f"], hs["service_source"])
+    if (check := heat.check()).status != "pass":
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"The frame's posts would run at {steel.temperature:.0f} °F on the end walls' "
+                    "outside, past where AISC's hot-steel table or Giles's continuous service "
+                    "reaches: their bending check is past what's been checked. Insulate the end "
+                    "walls more."
+                ),
+            )
+        )
+    fits = [
+        x for x in angles()
+        if x.sx >= moment / limit and x.leg >= floor.leg and x.t >= floor.t
+        and post_moment / x.sx <= limit and post_moment <= angle_allowable(x, span_post, steel)
+    ]  # fmt: skip
     biggest = max(angles(), key=lambda x: x.sx)
     chosen = fits[0] if fits else biggest
     bending = buttress_bending(
@@ -1359,7 +1442,7 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
         (data["angles"]["source"], data["binding_stress_source"]), capped, given,
     )  # fmt: skip
     bending.agrees("M", Q_(moment, "lbf*in"))
-    if (check := bending.check()).status != "pass" or not fits:
+    if (check := bending.check()).status != "pass":
         findings.append(
             Finding.failed(
                 check,
@@ -1394,7 +1477,6 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
             note="A cautious first check, derived in kiln-hardware.md §4.5; not a sourced rule.",
         )
     )  # fmt: skip
-    per_rod = hot * (bay / 12) * share
     rod = rods[-1]
     for size in rods:
         if per_rod / size["stress_area"] <= limit:
@@ -1427,31 +1509,99 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
         )
     )  # fmt: skip
     # The rods run over the arch, above the buttress: each post carries the buttress's end
-    # load up to its rod as a beam. Shown, not checked: no frame here checks a post in bending.
-    span_post = o.bottom + crown
-    up = o.bottom + skewback
-    post_moment = per_rod * up * (span_post - up) / span_post
+    # load up to its rod as a beam pinned at its foot, checked as the dome's buttress (AISC F10)
+    section = AngleSection(chosen.name, chosen.leg, chosen.t, chosen.sx, data["angles"]["source"])
+    posted = post_bending(
+        per_rod, up, span_post, section, steel, limit,
+        ("the busiest rod's load (above)", data["binding_stress_source"]),
+    )  # fmt: skip
+    posted.agrees("M", Q_(post_moment, "lbf*in"))
+    posted.agrees("M_a", Q_(angle_allowable(chosen, span_post, steel), "lbf*in"))
+    if (check := posted.check()).status != "pass":
+        # The highest rods the chosen angle carries: P·a·(L − a)/L ≤ M_lim, so
+        # L ≤ P·a²/(P·a − M_lim) when P·a > M_lim
+        m_lim = min(limit * chosen.sx, angle_allowable(chosen, span_post, steel))
+        highest = (
+            per_rod * up**2 / (per_rod * up - m_lim) - o.bottom - crown
+            if per_rod * up > m_lim
+            else math.inf
+        )
+        lower = (
+            f"run the rods at most {highest:.1f} in over the crown"
+            if highest >= 0
+            else "run the rods at the buttress's height"
+        )
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"The posts bend {post_moment:,.0f} lb·in between their feet and the rods "
+                    f"{span_post:.0f} in up: {post_moment / chosen.sx:,.0f} psi in "
+                    f"{chosen.name}, the heaviest listed angle, against AISC's "
+                    f"{angle_allowable(chosen, span_post, steel):,.0f} lb·in hot and "
+                    f"HarbisonWalker's {limit:,.0f} psi for steel that may run hot. With it, "
+                    f"{lower}, or add posts between the corners."
+                ),
+            )
+        )
+    on_platform = kiln.chamber.foundation is not None
+    shear = per_rod * (span_post - up) / span_post
     working.append(
         Step(
-            name="Posts between the bottom tie and the rod, in bending",
+            name="Posts between the foot and the rod, in bending",
             value=(
-                f"{post_moment:,.0f} lb·in: Sx ≥ {post_moment / limit:.3f} in³ at 12,000 psi; "
-                f"{chosen.name} has {chosen.sx:.3f} in³"
+                f"{post_moment:,.0f} lb·in against AISC's "
+                f"{angle_allowable(chosen, span_post, steel):,.0f} lb·in allowable at "
+                f"{steel.temperature:.0f} °F; {post_moment / chosen.sx:,.0f} psi in {chosen.name}"
             ),
-            formula="M = P·a·b/L, a point load on a simple beam",
+            formula=(
+                "M = P·a·(L − a)/L, a point load on a beam pinned at both ends; M_a = M_n/Ω_b by "
+                "AISC 360-16 F10, unbraced over L, Fy and E at the steel's temperature; and "
+                "M/S_x ≤ 12,000 psi"
+            ),
             inputs={"P, the busiest post's load": f"{per_rod:,.0f} lb",
                     "a, the buttress above the post's foot": f"{up:.1f} in",
-                    "L, the foot to the rod over the crown": f"{span_post:.1f} in"},
-            reference="statics of a simple beam (derived); "
-            f"{data['binding_stress_source']}",
+                    "L, the foot to the rod": f"{span_post:.1f} in",
+                    "rods above the roof's crown": f"{above:g} in"},
+            reference=f"statics of a simple beam (derived); {steel.source}; "
+            f"{data['binding_stress_source']}; {DOME_STEEL_SOURCE}",
             note=(
-                "Shown, not checked: the engine's frames don't check a post in bending, and the "
-                "rods' height over the arch is taken at the roof's crown, not read from the "
-                "photos. Rods at the buttress's height would take the post's bending away."
+                "The foot is taken pinned, the safe side: no source here gives the fixity of a "
+                "post anchored in or bolted to a platform. "
+                + ("" if kiln.roof.rods_above_crown is not None else
+                   "The rods' height isn't given, so they're taken at the roof's crown. ")
+                + "Rods at the buttress's height would take the post's bending away."
             ),
         )
     )  # fmt: skip
-    statics, found = along_statics(kiln, framed=True)
+    if on_platform:
+        working.append(
+            Step(
+                name="Each post's foot on the platform",
+                value=f"{shear:,.0f} lb outward, hot; no uplift from the thrust",
+                formula="V_f = P·(L − a)/L, the lower reaction of the pinned post",
+                inputs={"P": f"{per_rod:,.0f} lb", "a": f"{up:.1f} in", "L": f"{span_post:.1f} in"},
+                reference="statics of a simple beam (derived)",
+                note=(
+                    "The thrust is level, so it lifts no foot; the steel's own weight bears down. "
+                    "The rest of P, P·a/L, goes to the rod, which is sized for the whole P (the "
+                    "safe side). The anchors aren't sized: no method for anchors in concrete "
+                    "(ACI 318 ch. 17) is in docs/research, so a builder sizes them for this shear."
+                ),
+            )
+        )  # fmt: skip
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The posts' feet stand in or are bolted to the platform, taken as pinned: "
+                    f"each must carry {shear:,.0f} lb outward, hot, with no uplift from the arch. "
+                    "Size the anchors for it: no anchor method is sourced here."
+                ),
+                reference="statics of a simple beam (derived); the user, 2026-10-31",
+            )
+        )
+    statics, found = along_statics(kiln, framed="building" if building else True)
     working += statics
     findings += found
     leg = chosen.leg
@@ -1460,7 +1610,7 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
                steel=chosen.name, count=2 * posts, length_in=span_post, source=ALONG_FRAME),
         Member(part="buttresses across the end walls at the springing", steel=chosen.name,
                count=2, length_in=o.width + 2 * leg, source=ALONG_FRAME),
-        *_ring_of(FLAT_BAR, "bottom cross-members", o, leg, PITELKA),
+        *([] if on_platform else _ring_of(FLAT_BAR, "bottom cross-members", o, leg, PITELKA)),
         Member(part="tie rods along the depth, over the arch", steel=f"{rod['name']} threaded rod",
                count=posts, length_in=o.depth + 2 * leg + 4, source=f"length: {MERRILL}"),
     ]  # fmt: skip
@@ -1757,6 +1907,8 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _unframed([], [])  # no roof, so no thrust to hold
     if kiln.chamber.shape == "round":
         return _round_frame(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.building_frame:
+        return _building_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
     if arches_along(kiln):
