@@ -19,6 +19,7 @@ import numpy as np
 from scipy.optimize import brentq
 
 from kilndesigner.form import Form
+from kilndesigner.groin import CrossingShape, tubes
 from kilndesigner.library import materials
 from kilndesigner.model import CatenaryArch, Dome, Face, Kiln, OpenTop, SprungArch, arches_along
 from kilndesigner.rings import IN, cut_facets, inside_apothem, ring_method
@@ -363,6 +364,8 @@ class ChamberShape:
     along: bool = False
     """``arch`` spans each chamber's depth, along the draft (model.arches_along): a row's, or one
     chamber's (roof.along)."""
+    crossing: CrossingShape | None = None
+    """Crossing vaults (roof.crossing): the union of two arched tubes (groin.py)."""
 
     @property
     def _row(self) -> bool:
@@ -370,6 +373,8 @@ class ChamberShape:
 
     @property
     def volume(self) -> float:
+        if self.crossing is not None:
+            return self.crossing.volume()
         if self.form is not None:
             return self.form.volume
         n = self.chambers
@@ -398,6 +403,10 @@ class ChamberShape:
 
     def _faces(self) -> list[FaceShape]:
         w, d, h = self.width, self.depth, self.height
+        if self.crossing is not None:
+            from kilndesigner.crossing import crossing_faces
+
+            return crossing_faces(self.crossing)
         if self.form is not None:
             return form_faces(self.form, w, d)
         if self.round:
@@ -609,6 +618,8 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
     if open_top:
         return ChamberShape(w, d, h, None, open_top=True)
     n = c.chambers
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
+        return ChamberShape(w, d, h, None, crossing=CrossingShape(tubes(kiln, "m")))
     if isinstance(kiln.roof, SprungArch) and arches_along(kiln):
         return ChamberShape(w, d, h, along_arch(kiln, "m"), chambers=n, along=True)
     if isinstance(kiln.roof, Dome) and n > 1:

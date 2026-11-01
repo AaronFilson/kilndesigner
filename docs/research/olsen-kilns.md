@@ -556,7 +556,20 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 - Salt: four salt holes, in the door, top and back (p.128). The back usually fires cold, so a side
   burner is lit or wood stoked there (p.128).
 - Door: "24" (+-) DOOR" in the side wall.
-- **Not given:** arch rise and thickness; firebox length and grate height; ash pit; frame; firing time.
+- As built, read by the user from the photos (Figs 4-154, 4-155), 2026-10-31:
+  - the arch is a normal sprung arch laid on a form, springing unevenly, spanning from the firebox to
+    the flue (the 5 ft length);
+  - the door is in the side wall at the arch's high point;
+  - the arch's 9 in is two 4½ in rings, one laid on the other;
+  - angle steel on the kiln's corners, with tie bars joining them above, over the arch;
+  - the kiln is built into a concrete platform that goes round its whole perimeter (its height and how
+    far it runs out past the walls not read). The concrete's compressive strength, 1800 psi, is the
+    user's starting value, not a sourced one.
+- Fig 4-154 by scale (rough, read by the agent, 2026-10-31): a flat segmental arch, its springings at
+  different heights; by scale it rises only 10–13 in, against the drawing's 18 in (36 − 18), likely
+  perspective, so the drawing's 36 in crown stays.
+- **Not given:** arch rise and thickness; firebox length and grate height; ash pit; frame sizes;
+  firing time.
 
 ### `olsen-first-kiln`: Olsen's first kiln, Col Levy's pottery, Australia, November 1963
 

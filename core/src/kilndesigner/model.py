@@ -213,6 +213,23 @@ class PlanOutline(Spec):
         return self
 
 
+class Foundation(Spec):
+    """What the kiln's walls stand on: a concrete platform or slab, and its strength."""
+
+    material: str = Field(
+        default="concrete", description="What the platform is, for example concrete"
+    )
+    compressive_strength: Pressure = Field(
+        description="Its compressive strength, for example 1800 psi (concrete's f′c)"
+    )
+    strength_source: str = Field(
+        description=(
+            "Where the strength comes from: a test, a mix's specification, or the user's own "
+            "starting value. It is reported with every number worked from it"
+        )
+    )
+
+
 class Chamber(Spec):
     """The inside of the kiln: the space the lining encloses."""
 
@@ -263,6 +280,14 @@ class Chamber(Spec):
         description=(
             "The floor is built on the ground or a foundation, as most wood kilns are, not raised "
             "on a stand with air under it. Its loss goes into dry soil, worked out at steady state"
+        ),
+    )
+    foundation: Foundation | None = Field(
+        default=None,
+        description=(
+            "A platform or slab the walls stand on, with its compressive strength: the bearing "
+            "under the walls is then worked out against it. Its heat loss isn't: no thermal "
+            "conductivity for concrete is sourced"
         ),
     )
     floor_inside: bool = Field(
@@ -334,6 +359,36 @@ class FlatRoof(Spec):
     type: Literal["flat"] = "flat"
 
 
+class Crossing(Spec):
+    """A second arched tube crossing the chamber's at right angles, as in Olsen's multi-directional
+    kilns: an anagama-style tube (the chamber, front to back, under the roof's arch) crossed by a
+    groundhog-style tube running side to side, their vaults meeting in a groin over the fire zone
+    (The Kiln Book, 4th ed., Ch. 7, p.178–183, Figs 7-1, 7-2). Fig 7-1 is a concept, not a built
+    kiln: the tubes' spans, heights and lengths are the designer's (docs/research/curved-kilns.md).
+    Both vaults spring from the chamber's height, the walls laid level all round."""
+
+    span: Length = Field(description="The crossing tube's inside width, front to back")
+    rise: Length = Field(
+        description=(
+            "Its arch's rise above the springline (the chamber's height), at most half its span: "
+            "a semicircle"
+        )
+    )
+    length: Length = Field(
+        description=(
+            "Its inside length, end wall to end wall, side to side: at least the chamber's width. "
+            "Longer, it runs out past the chamber's side walls as two arms"
+        )
+    )
+    at: Length | None = Field(
+        default=None,
+        description=(
+            "How far its centreline stands behind the chamber's front wall. Left out: the "
+            "chamber's middle"
+        ),
+    )
+
+
 class SprungArch(Spec):
     """A circular arch springing from the side walls, spanning the chamber's width."""
 
@@ -388,6 +443,14 @@ class SprungArch(Spec):
             "springs level"
         ),
     )
+    crossing: Crossing | None = Field(
+        default=None,
+        description=(
+            "A second vault crossing this one at right angles, the two meeting in a groin over "
+            "the fire zone: Olsen's multi-directional kilns (Ch. 7, Figs 7-1, 7-2). This arch is "
+            "then the anagama-style tube's, front to back"
+        ),
+    )
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
@@ -395,6 +458,11 @@ class SprungArch(Spec):
             raise ValueError("springs on the tie rods need their spring_rate, from the listing")
         if self.along and self.tube:
             raise ValueError("a tube's vault spans the width: leave out along, or tube")
+        if self.along and self.ties == "springs":
+            raise ValueError(
+                "springs on the rods of an arch along the chamber's depth aren't worked out: tie "
+                "its rods rigid"
+            )
         if self.front_springline is not None and not self.along:
             raise ValueError(
                 "front_springline is for one chamber's arch along its depth (along): a level "
@@ -944,6 +1012,43 @@ class Firebox(Spec):
     )
     inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
     stoke_hole: Port | None = None
+    roof: Literal["flat", "corbel"] = Field(
+        default="flat",
+        description=(
+            "'flat': the walls' layers laid flat over it. 'corbel': its side walls' brick courses "
+            "stepped in over the top of its height until one brick bridges what is left, 6 in or "
+            "less (Rhodes, Kilns p.101–102; TMS 402 per BIA's Corbels brief; Olsen p.49, a corbel "
+            "arch spans up to 24 in)"
+        ),
+    )
+    corbel_step: Length | None = Field(
+        default=None,
+        description=(
+            "With a corbel roof: how far each course steps in. Left out, the most TMS 402 allows, "
+            "min(h/2, d/3) of the course height h and the wall's brick thickness d"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _corbel_fits(self) -> Firebox:
+        if self.roof != "corbel":
+            if self.corbel_step is not None:
+                raise ValueError("corbel_step is for a corbel roof: give roof: corbel")
+            return self
+        if self.position == "under":
+            raise ValueError(
+                "a firebox under the floor is roofed by the chamber's floor: it has no roof of "
+                "its own to corbel"
+            )
+        if si(self.width, "in") > 24.0:
+            raise ValueError(
+                f"a corbel over {si(self.width, 'in'):g} in is past the 24 in Olsen gives for a "
+                "corbel arch (The Kiln Book, 4th ed., p.49), and no source gives one wider: roof "
+                "it flat or with a sprung arch"
+            )
+        if self.corbel_step is not None and si(self.corbel_step, "in") <= 0:
+            raise ValueError("each corbel course must step in by something")
+        return self
 
 
 class Fire(Spec):
@@ -1630,6 +1735,91 @@ class Kiln(Spec):
                 f"the door's top, {sill + h:g} in up, is above the wall's inside top there, "
                 f"{top:.1f} in: lower it"
             )
+        return self
+
+    @model_validator(mode="after")
+    def _a_crossing_it_can_build(self) -> Kiln:
+        """Two crossing vaults (roof.crossing) are laid out for one level, straight box chamber,
+        fired with fuel and buttressed, as Olsen's multi-directional kilns are: the range that has
+        been checked (ADR 0009)."""
+        roof = self.roof
+        if not isinstance(roof, SprungArch) or roof.crossing is None:
+            return self
+        c, x = self.chamber, roof.crossing
+        if (c.shape != "box" or c.chambers > 1 or c.slope is not None or c.bend is not None
+                or c.outline is not None):  # fmt: skip
+            raise ValueError(
+                "crossing vaults are laid out over one level, straight box chamber: leave out its "
+                "shape, chambers, slope, bend and outline"
+            )
+        if roof.tube or roof.along or roof.front_springline is not None:
+            raise ValueError(
+                "crossing vaults both spring level from the chamber's height, across their tubes: "
+                "leave out tube, along and front_springline"
+            )
+        if not roof.buttressed:
+            raise ValueError(
+                "crossing vaults are held by masonry here (roof.buttressed: true), as Olsen "
+                "buttresses his multi-directional kilns with dirt, rocks and concrete (Kanayama, "
+                "p.186): each tube's side walls are open where the other passes, and the groin "
+                "gathers both vaults' thrust onto the crossing's corners, so no source sizes a "
+                "steel frame round it"
+            )
+        if self.heat.fire is None or self.heat.gas is not None or self.heat.electric is not None:
+            raise ValueError(
+                "crossing vaults are laid out for a kiln fired with fuel, as Olsen's "
+                "multi-directional kilns are (Ch. 7): no burners or elements are placed in them"
+            )
+        if self.loading.opening is not None or self.lining.door is not None:
+            raise ValueError(
+                "a door in part of a wall, or a door with its own lining, isn't laid out in "
+                "crossing vaults: the whole front wall is the door, bricked up in the walls' own "
+                "layers, as the fireboxes of Olsen's multi-directional kilns are (p.178–179)"
+            )
+        span, rise, length = si(x.span, "in"), si(x.rise, "in"), si(x.length, "in")
+        width, depth = si(c.width, "in"), si(c.depth, "in")
+        at = si(x.at, "in") if x.at is not None else depth / 2
+        if not 0 < rise <= span / 2:
+            raise ValueError(
+                "the crossing vault's rise must be more than 0 and at most half its span, "
+                f"{span / 2:g} in: past that it isn't a segment of a circle"
+            )
+        if at - span / 2 < -1e-9 or at + span / 2 > depth + 1e-9:
+            raise ValueError(
+                f"the crossing vault, {span:g} in wide with its centreline {at:g} in behind the "
+                f"front wall, must lie within the chamber's {depth:g} in depth"
+            )
+        if length < width - 1e-9:
+            raise ValueError(
+                f"the crossing vault's length must be at least the chamber's width, {width:g} in: "
+                "it runs side to side through the chamber"
+            )
+        if length > width + 1e-9:
+            placed: list[tuple[str, str]] = [("the flue", self.draft.flue_wall)] if (
+                self.draft is not None and self.draft.type != "up") else []  # fmt: skip
+            placed += [("a firebox", b.position) for b in self.heat.fire.fireboxes]
+            placed += [("a spy hole", p.wall) for p in (self.spy_holes.places
+                       if self.spy_holes else None) or []]  # fmt: skip
+            for what, wall in placed:
+                if wall in ("left", "right"):
+                    raise ValueError(
+                        f"with the crossing vault's arms out past the side walls, {what} can't go "
+                        f"in the {wall} wall: the engine places it on the chamber's side wall, "
+                        "which the crossing opens there. Put it in the front or back wall, or "
+                        "make the crossing as long as the chamber is wide"
+                    )
+        walls = sum(si(t.thickness, "in") for t in self.lining.walls)
+        shell = sum(si(t.thickness, "in") for t in self.lining.for_face("roof"))
+        for name, s, r in (("chamber's", width, si(roof.rise, "in")), ("crossing", span, rise)):
+            radius = (s * s / 4 + r * r) / (2 * r)
+            below = radius - r  # the circle's centre under the springline
+            foot = math.sqrt(max((radius + shell) ** 2 - below**2, 0.0))
+            if foot > s / 2 + walls + 1e-6:
+                raise ValueError(
+                    f"the {name} vault's {shell:g} in ring meets the springline {foot:.1f} in from "
+                    f"its middle, past the walls' outside, {s / 2 + walls:g} in: the ring must "
+                    "stand on its walls. Thicken the walls or raise the vault"
+                )
         return self
 
     @property

@@ -84,6 +84,34 @@ def uneven_thrust(arch: Arch, weight: float) -> tuple[float, float, float]:
     return h, front, back
 
 
+THRUST_LINE = (
+    "a line of thrust through both springings at their own heights and the crown (Heyman's safe "
+    "theorem: any such line within the masonry is in equilibrium; the hinges fix this one). With "
+    "vertical loads only, H is the same all along the arch, so moments of the whole arch about "
+    "the lower springing and of the higher half about the crown give it (standard statics; "
+    "blocked-items.md §9)"
+)
+
+
+def thrust_line_thrust(arch: Arch, weight: float) -> tuple[float, float, float]:
+    """The same arch as uneven_thrust's, worked the second way (THRUST_LINE): moments of the
+    whole arch about the front (lower) springing, the back springing ``arch.drop`` above it, and
+    of the back half about the crown. Over r, the front springing at (−s_f, −f_f) from the crown,
+    the back at (s_b, −f_b), each half's weight W·φ/(φ_f + φ_b) at c = (1 − cos φ)/φ from it:
+    V_b·(s_f + s_b) + H·δ = W_f·(s_f − c_f) + W_b·(s_f + c_b), δ = drop/r;
+    V_b·s_b = H·f_b + W_b·c_b. Returns H, V_f, V_b."""
+    pf, pb = arch.front_angle, arch.back_angle
+    wf, wb = (weight * p / (pf + pb) for p in (pf, pb))
+    sf, sb = math.sin(pf), math.sin(pb)
+    fb = 1 - math.cos(pb)
+    cf, cb = ((1 - math.cos(p)) / p for p in (pf, pb))
+    delta = arch.drop / arch.radius
+    about = wf * (sf - cf) + wb * (sf + cb)  # the loads' moment about the front springing
+    h = (sb * about / (sf + sb) - wb * cb) / (fb + sb * delta / (sf + sb))
+    back = (h * fb + wb * cb) / sb
+    return h, weight - back, back
+
+
 def along_inputs(kiln: Kiln, cut: float = 0.0) -> ArchInputs:
     """The arch along the chamber's depth, as the frame's sheets take an arch (in). Springing
     unevenly, the level arch on the same circle at the larger angle (TRUNCATED); with ``cut``, the
@@ -118,9 +146,10 @@ def stations(kiln: Kiln) -> list[tuple[float, float]]:
     return out
 
 
-def along_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
+def along_statics(kiln: Kiln, *, framed: bool = False) -> tuple[list[Step], list[Finding]]:
     """The section at stations, and Heyman's statics of the arch along the depth and its end
-    walls: the working and the findings."""
+    walls: the working and the findings. ``framed``: a steel frame on the end walls holds the
+    thrust (frame.py), so the end walls' findings say so."""
     from kilndesigner.frame import steel_data
 
     whole = along_arch(kiln, "in")
@@ -220,14 +249,38 @@ def along_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
             findings.append(Finding.failed(check, message=message))
     for face, end in ends:
         which = f"The {face} wall" if whole.drop else "Each end wall"
-        findings.append(_end_finding(end, which))
+        findings.append(_end_finding(end, which, framed))
     return working, findings
 
 
-def _end_finding(end: Sheet, which: str) -> Finding:
+FRAMED = (
+    "The frame on the end walls carries it: its buttress angles at the springing, tied by rods "
+    "over the arch, are sized in the frame's working for the hot thrust"
+)
+
+
+def _end_finding(end: Sheet, which: str, framed: bool = False) -> Finding:
     x_r, e, x_3 = (end.env[n] / 0.0254 for n in ("x_R", "e", "x_3"))
     check = end.check()
     holds = check.status == "pass"
+    if framed:
+        return Finding(
+            level="info",
+            message=(
+                f"{which}, standing on its own, "
+                + (
+                    f"would hold the arch's cold thrust, the resultant {x_r:.1f} in into its "
+                    f"{e:g} in base, within its middle third"
+                    if holds
+                    else f"couldn't hold the arch's cold thrust: the resultant would meet its "
+                    f"base {x_r:.1f} in in from the inside, "
+                    + ("past the wall" if x_r > e else f"past its middle third, {x_3:.1f} in")
+                )
+                + f". {FRAMED}."
+            ),
+            reference=end.reference,
+            check=check,
+        )
     return Finding(
             level="info",
             message=(

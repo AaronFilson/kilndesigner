@@ -231,6 +231,13 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
     rects: list[Rect] = []
     for p in parts:
         fill = COLOURS.get(p.kind, (0.8, 0.8, 0.8))
+        if p.groin is not None:
+            # Crossing vaults' layer, all above the springline, so the plan misses it
+            if axis != 2:
+                from kilndesigner.crossing import groin_cut
+
+                rects += [_bounded(o, fill, p.name) for o in groin_cut(p, axis, at)]
+            continue
         if p.plan is not None:
             rects += _plan_cut(p, axis, at)
             continue

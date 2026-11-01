@@ -27,6 +27,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
+from kilndesigner.groin import GroinLayer
 from kilndesigner.model import (
     CatenaryArch,
     Dome,
@@ -228,6 +229,9 @@ class Part:
     # thickness.
     plan: tuple[tuple[float, float], ...] | None = None
     inner: tuple[tuple[float, float], ...] | None = None
+    # Crossing vaults' layer above the springline (roof.crossing, groin.py): a ring of both
+    # vaults with the groin cut out, or an end wall's cap; lo–hi its plan. ``ring`` its thickness
+    groin: GroinLayer | None = None
 
     def tilted(self, y: float, z: float) -> tuple[float, float]:
         """Where a point (y, z) of the part, laid out level, stands on the slope."""
@@ -277,6 +281,8 @@ class Part:
 
     @property
     def volume(self) -> float:
+        if self.groin is not None:
+            return self.groin.volume(self.lo, self.hi)
         if self.revolve is not None:
             # A polygon through the corners has N·sin(2π/N)/(2π) of the circle's area, at every r
             scale = 1.0 if self.sides is None else polygon_fraction(self.sides)
@@ -456,6 +462,10 @@ def _level_parts(kiln: Kiln) -> list[Part]:
         return _round_parts(kiln)
     if kiln.chamber.outline is not None:
         return _outline_parts(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
+        from kilndesigner.crossing import crossing_parts
+
+        return crossing_parts(kiln)
     if in_a_row(kiln) and isinstance(kiln.roof, CatenaryArch):
         return _catenary_parts(kiln)
     if in_a_row(kiln):
@@ -1178,6 +1188,10 @@ def _plan_solid(part: Part) -> Any:
 
 
 def _level_solid(part: Part) -> Any | None:
+    if part.groin is not None:
+        from kilndesigner.crossing import groin_solid
+
+        return groin_solid(part)
     if part.plan is not None:
         return _plan_solid(part)
     if part.revolve is not None:

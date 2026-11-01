@@ -15,7 +15,7 @@ simplification is written into the example's notes:
 | `conrad-teardrop` | Teardrop plan, cast dome; door head flatter than a semicircle (Fig 4-140, p.124) | Done (step 3): a teardrop plan (`chamber.outline`) under a sphere through it (`roof.crown_at`), crown and thickness estimated from the figures; the door's head still a semicircle |
 | `bae-gilgama` | Teardrop tube on a slope (p.107–108) | A sloping box |
 | `gulgong-racer`, `hohr-2003` | Cast domes over the chamber (p.118–123) | Dome over a rectangle |
-| `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Not described |
+| `fireworks-edmonton`, `kanayama-multi` | Cast dome over two crossing axes (p.178–189) | Two crossing vaults (`roof.crossing`) for Fireworks and Church since 2026-10-31; Kanayama unmodelled |
 | `breda-bottle`, `bottle-two-storey`, `sevres` | Round, domed, cone-frustum bottle chimney (p.166–169) | Round chamber; chimney as a straight stack |
 | `bowen-mountain` | Crown curving down along the length (Fig 4-153) | One arch along the length (`roof.along`), since 2026-10-31 |
 | `tamba` | Tube with doors turned through the vault's springing (Figs 4-11, 4-15) | Door laid out and checked since 2026-10-31; the example has none, its size unreadable |
@@ -54,7 +54,12 @@ simplification is written into the example's notes:
    not found (HarbisonWalker's *Modern Refractory Practice* is borrow-only on the Archive, not
    read); mortar density found (BNZ: 116–131 lb/ft³, 200–400 lb per 1000 brick), so wedge-joint
    mortar can go on the bill by weight; no largest joint for tatami bricks ("keep the joints
-   thin", FAO, no number).
+   thin", FAO, no number). Fourth round (`blocked-items.md` §18–19): dome bricks now sourced from
+   Norton, *Refractories* (1949) pp. 730–732: Table 155 radial dome brick for 9 in domes (inside
+   radius 4 to 40 ft) and a ring-by-ring count of straights, No. 1 wedges and No. 1 keys (worked
+   example: 10 ft radius, 60°, 1,230 nine-inch equivalents); mortar per 1000 9 in brick from
+   HarbisonWalker (2008): 250–300 lb dipped, 350–450 lb trowelled, 55 lb sacks; heat-setting wants
+   thin dipped joints, air-setting "somewhat thicker". HW's *Modern Refractory Practice* still unread.
 5. **Statics.** For a revolved shell (bottle domes, round domes): membrane theory or a thrust
    network, the hoop tension at the base carried by a band or the wall (the existing sliced-dome
    and band logic generalised). For a vault of changing section: Heyman's thrust-line method at
@@ -65,6 +70,26 @@ simplification is written into the example's notes:
    is read; still no allowable stress for a hot band (ASME II-D Table 1A identified, not read),
    no allowable bearing for refractory, no bottle-kiln top diameter (a secondary 60 ft hovel
    minimum and ~12 in oven wall only), and nothing on a catenary meeting the next at a step.
+   Second round (`blocked-items.md` §9–12): no hot factor for rampant arches; a vault-with-lunette
+   no-tension paper (Monaco et al. 2018) to read for door heads in vaults; steel keeps full yield
+   to 400 °C per EN 1993-1-2 (Snippet only), no hot wrought-iron data, no band temperature.
+   Third round (`masonry-statics.md`): the dome past 51.8° now has sourced lune formulas (Lau
+   2006 read in full: base thrust per length, H/W ≈ −0.583α + 1.123 for α ≥ 60°, a statics
+   estimate, all minimum thrusts) to replace "the least it can be" in `frame.py`; groin vaults
+   have a check method (Heyman's slicing onto the diagonals, lower bound) and one worked TNA
+   example to test against (Maia Avelino et al. 2020); Monaco et al. read in full gives no load
+   share for a door in a vault, only that the load gathers along the intersection curve (the
+   door ring's assumption stays unconfirmed). Still not found: rampant hot factor, a catenary at
+   a step, hot corbel limits, refractory bearing allowable (Trinks Vol. I not online).
+
+   Fourth round (`bands-and-bottle-kilns.md`, `blocked-items.md` §20–21): the band check is
+   unblocked: EN 1993-1-2 Table 3.1 now Verified (k_y,θ 1.0 to 400 °C, 0.78 at 500, 0.47 at 600),
+   Norton's "factor of safety of at least 5" for a dome's tension band, HW's 12,000 psi; historic
+   hot tests of wrought iron and steel (Kent 1916) give iron no advantage. Still open: the band's
+   measured temperature on a brick kiln, long-term creep, a hovel's top diameter (secondary chamber
+   sizes 11–20 ft and one 60 ft × 33 ft 3 in hovel found), and a general hot bearing allowable
+   (Norton gives a creep-based method only). Concrete under the kiln: EN 1992-1-2 strength and
+   conductivity tables and ACI 349's 150/200 °F limits (as quoted by the NRC).
 6. **The form.** Shapes edited in the web form by choices first (teardrop, oval, bottle, crossing
    axes), with point editing later (the "drag to stretch" milestone).
 
@@ -112,11 +137,15 @@ simplification is written into the example's notes:
    the whole against half the wall (BIA's Corbels brief, PDF read), refused past Olsen's 24 in,
    flagged past Rhodes's 18 in; its stepped section and course count given. Not yet a roof type
    of the design file: that touches every roof consumer and no built kiln of Olsen's is corbelled.
-   Crossing axes: blocked on the sources. Fig 7-2 gives only the fire zone (9 ft, "diagonal" in the
-   figure, "both directions" in the text) and Fig 7-1 is an undimensioned sketch of two tubes in a
-   groin; no arm widths, curve radii or tube sections. `fireworks-edmonton` stays a dome over its
-   9 × 9 ft fire zone (builds, no failed checks); `kanayama-multi` prints no fire-zone size and
-   stays unmodelled.
+   Crossing axes: no longer blocked on the sources, since the sizes are the designer's. Fig 7-1
+   (p.178) is a concept, not a built kiln: it shows how the fire and ash travel, with no arch
+   heights (the user, 2026-10-31). The engine should take the two tubes' spans and heights as
+   design inputs, starting about 5 ft for the anagama and 6 ft for the groundhog (the user's
+   estimate), over Fig 7-2's 9 ft fire zone. **Built 2026-10-31** (`roof.crossing`, `groin.py`,
+   `crossing.py`): two crossing vaults meeting in a groin, laid out, drawn, modelled, counted and
+   each vault checked as a sprung arch; the groin's ribs aren't checked (no source; Heyman's
+   vault chapter unread). `fireworks-edmonton` and `church-skaelskor` are now crossing vaults
+   (10-30-26.md); `kanayama-multi` prints no fire-zone size and stays unmodelled.
 
 ## Open questions
 

@@ -672,6 +672,26 @@ test("an open-topped wood kiln on the ground is made from choices", async ({ pag
   await expect(page.locator(".cm-content")).toContainText("on_ground: true");
 });
 
+test("an arch along the chamber's depth, sprung unevenly, is given with choices", async ({
+  page,
+  cleanup,
+}) => {
+  const name = `E2E arch along ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  await form.getByLabel(/The arch spans the depth/).check();
+  await form
+    .getByLabel("Front wall's springline, from the floor (blank: level, the chamber's height)", {
+      exact: true,
+    })
+    .fill("16");
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  await page.getByRole("tab", { name: "YAML" }).click();
+  await expect(page.locator(".cm-content")).toContainText("along: true");
+  await expect(page.locator(".cm-content")).toContainText("front_springline: 16 in");
+});
+
 test("a model that can't be loaded leaves the rest of the page working", async ({
   page,
   request,

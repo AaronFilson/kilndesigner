@@ -1043,14 +1043,15 @@ def _held_by_masonry(kiln: Kiln) -> FrameDesign:
         along = arches_along(kiln)
         span = si(kiln.chamber.depth if along else kiln.chamber.width, "in")
         from kilndesigner.shape import along_arch
-        from kilndesigner.vault import uneven_thrust
 
         arch = along_arch(kiln, "in") if along else Arch(span, si(roof.rise, "in"))
         load = _arch_load(kiln, arch)
         cold = cold_thrust_factor(span, arch.rise) * load.weight
         heated = heated_thrust_factor(span, arch.rise, load.ring)
         if arch.drop:  # springing unevenly: no heated factor printed, so the largest is taken
-            cold, heated = uneven_thrust(arch, load.weight)[0], None
+            cold, step = uneven_cold(arch, load.weight)
+            heated = None
+            working.append(step)
         hot = (heated if heated is not None else MAX_PRINTED_HEATED) * cold
         hot = min(hot, MAX_PRINTED_HEATED * cold)
         thrust = f"{hot:.0f} lb per foot of arch, hot ({cold:.0f} cold)"
@@ -1089,6 +1090,40 @@ ROW_SOURCE = (
 )
 
 
+def uneven_cold(arch: Arch, weight: float) -> tuple[float, Step]:
+    """An arch springing unevenly (in, lb per foot): its cold thrust by a line of thrust through
+    both springings at their own heights (vault.THRUST_LINE), with its working, shown beside the
+    halves' moments about the crown it replaces. Hot stays × HarbisonWalker's largest factor."""
+    from kilndesigner.vault import THRUST_LINE, UNEVEN, thrust_line_thrust, uneven_thrust
+
+    before, *_ = uneven_thrust(arch, weight)
+    cold, front, back = thrust_line_thrust(arch, weight)
+    return cold, Step(
+        name="The uneven arch's cold thrust, by a line of thrust through both springings",
+        value=f"H = {cold:.1f} lb per foot of arch (each half about the crown: {before:.1f}); "
+        f"V = {front:.1f} lb at the front, {back:.1f} lb at the back",
+        formula=(
+            "V_b·(s_f + s_b) + H·δ = W_f·(s_f − c_f) + W_b·(s_f + c_b) (the whole arch about the "
+            "front springing); V_b·s_b = H·f_b + W_b·c_b (the back half about the crown); "
+            "s = sin φ, f = 1 − cos φ, c = (1 − cos φ)/φ, δ = drop/r, all over r"
+        ),
+        inputs={
+            "W, the arch's weight": f"{weight:.1f} lb per foot",
+            "φ_f, φ_b": f"{math.degrees(arch.front_angle):.2f}°, "
+            f"{math.degrees(arch.back_angle):.2f}°",
+            "r": f"{arch.radius:.2f} in",
+            "drop δ·r, the front springing below the back's": f"{arch.drop:g} in",
+        },
+        reference=f"{THRUST_LINE}; {ARCH_THEORY_SOURCE}; {UNEVEN}",
+        note=(
+            "The two ways are the same statics written differently and agree; this one takes the "
+            "springings at their own heights directly. Hot, HarbisonWalker's largest printed "
+            "factor is kept: no heated factor for unequal springings is sourced "
+            "(blocked-items.md §9), and the largest is the safe side."
+        ),
+    )
+
+
 def _row_arches(kiln: Kiln) -> FrameDesign:
     """Chambers in a row, each under an arch spanning its depth along the draft (run_parts.py).
     Each wall between chambers takes the thrust of the arches either side, which push against
@@ -1097,15 +1132,16 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     worked out and no steel is sized."""
     assert isinstance(kiln.roof, SprungArch)
     from kilndesigner.shape import along_arch
-    from kilndesigner.vault import UNEVEN, uneven_thrust
+    from kilndesigner.vault import UNEVEN
 
     depth, width = si(kiln.chamber.depth, "in"), si(kiln.chamber.width, "in")
     arch = along_arch(kiln, "in")
     load = _arch_load(kiln, arch)
+    checks: list[Step] = []
     if arch.drop:
-        # Springing unevenly: the three-hinged arch's statics with its halves unequal; no
-        # heated factor is printed for it, so HarbisonWalker's largest is taken
-        cold = uneven_thrust(arch, load.weight)[0]
+        # Springing unevenly: no heated factor is printed for it, so HarbisonWalker's largest
+        cold, step = uneven_cold(arch, load.weight)
+        checks.append(step)
         heated = None
     else:
         cold = cold_thrust_factor(depth, arch.rise) * load.weight
@@ -1120,13 +1156,13 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     if arch.drop:
         inputs["front springline below the back's"] = f"{arch.drop:g} in"
     working = [
+        *checks,
         Step(
             name="Thrust on each end wall",
             value=thrust,
             formula=(
-                "H = (W_f·ℓ_f/s_f + W_b·ℓ_b/s_b)/(f_f/s_f + f_b/s_b), s = sin φ, f = 1 − cos φ, "
-                "ℓ = sin φ − (1 − cos φ)/φ, each half's own angle φ; hot, × HarbisonWalker's "
-                "largest factor; × the kiln's width"
+                "H, cold, by the line of thrust through both springings (above); hot, × "
+                "HarbisonWalker's largest factor; × the kiln's width"
                 if arch.drop
                 else "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's "
                 "width; the arch spans one chamber's depth"
@@ -1141,7 +1177,7 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
                 if arch.drop
                 else None
             ),
-        )
+        ),
     ]
     between = (
         "The walls between chambers take the arches either side, which push against each other "
@@ -1172,6 +1208,277 @@ def _row_arches(kiln: Kiln) -> FrameDesign:
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
+    )  # fmt: skip
+
+
+ALONG_FRAME = (
+    "the sprung-arch frame turned to the arch's span: corner angles on the end walls, buttress "
+    "angles across them at the springing, tie rods running the chamber's depth over the arch "
+    "(kiln-hardware.md §4.1–4.2 [S11] [S20]); Bowen Mountain's corner angles and bars over the "
+    "arch, read by the user from the construction photos (olsen-kilns.md, 2026-10-31)"
+)
+MULTI_RING = (
+    "the roof's ring layers taken as one ring, their thicknesses summed, as the engine takes any "
+    "ring of several layers (frame_checks: T = t_1 + t_2 + …); no source here checks whether "
+    "rings laid one on another without bond act as one"
+)
+
+
+def _along_frame(kiln: Kiln) -> FrameDesign:
+    """One chamber's arch along its depth (``roof.along``) held by steel: the sprung-arch frame
+    turned to the arch's span. The end walls take the thrust, so the buttress angles lie across
+    them at the springing between corner posts (and posts between, where the steel needs them),
+    and the tie rods run the chamber's depth over the arch. The thrust per foot of the kiln's
+    width is the arch's: springing unevenly, the uneven three-hinged arch's, × HarbisonWalker's
+    largest heated factor, as no heated factor is printed for it."""
+    assert isinstance(kiln.roof, SprungArch)
+    from kilndesigner.frame_checks import GivenCold
+    from kilndesigner.shape import along_arch
+    from kilndesigner.vault import THRUST_LINE, UNEVEN, along_inputs, along_statics
+
+    o = outside(kiln)
+    data = steel_data()
+    limit = float(data["binding_stress_psi"])
+    whole = along_arch(kiln, "in")
+    a = along_inputs(kiln)
+    load = _arch_load(kiln, whole)
+    working: list[Step] = []
+    findings: list[Finding] = []
+    if load.loose:
+        findings.append(
+            Finding.failed(
+                loose_ring("arch", list(load.loose), data["rise_per_foot"]["source"]).check(),
+                message=(
+                    f"The arch's ring includes {' and '.join(load.loose)}, which can't carry an "
+                    "arch's thrust: the ring must be brick or castable. Set the roof's ring to the "
+                    "layers that are."
+                ),
+            )
+        )
+        return _unframed(working, findings)
+    h = si(kiln.chamber.height, "in")
+    roof_t = sum(si(x.thickness, "in") for x in kiln.lining.for_face("roof"))
+    centre = h + whole.rise - whole.radius
+    skewback = max(
+        centre + (whole.radius + load.ring) * math.cos(p)
+        for p in (whole.front_angle, whole.back_angle)
+    )
+    crown = h + whole.rise + roof_t  # the roof's outside at the crown, where the rods run over
+    outside_ft3 = o.width * o.depth * (o.bottom + crown) / 1728
+    big = outside_ft3 >= OLSEN_FRAME_FT3
+    floor = angle("L3×3×1/4") if big else angle("L2×2×3/16")
+    working.append(
+        Step(
+            name="Smallest frame angle",
+            value=floor.name,
+            inputs={"outside, to the roof's crown": f"{outside_ft3:.0f} ft³"},
+            reference=OLSEN_FRAME,
+            note=(
+                "Olsen's corner posts for a 5 × 5 × 6 ft kiln, 'larger (stronger), but not smaller'"
+                if big
+                else "Olsen's bolted fast-fire frame; smaller kilns can use 3/16 in angle"
+            ),
+        )
+    )
+    rings = kiln.lining.for_face("roof")[: kiln.roof.ring]
+    working.append(
+        Step(
+            name="Arch ring",
+            value=f"{load.ring:g} in"
+            + (f", {len(rings)} rings laid one on another" if len(rings) > 1 else ""),
+            inputs={
+                f"ring {i + 1}": f"{si(x.thickness, 'in'):g} in {x.material}"
+                for i, x in enumerate(rings)
+            },
+            reference=MULTI_RING if len(rings) > 1 else None,
+            note="The layers laid over the ring are its load, not part of it.",
+        )
+    )
+    given: GivenCold | None = None
+    capped: float | None = MAX_PRINTED_HEATED
+    factor = MAX_PRINTED_HEATED
+    if whole.drop:
+        cold, step = uneven_cold(whole, load.weight)
+        working.append(step)
+        given = GivenCold(
+            cold, f"a line of thrust through both springings (vault.py); {THRUST_LINE}; {UNEVEN}"
+        )
+        why = (
+            "The arch springs at different heights, outside HarbisonWalker's heated-arch method "
+            "(a level arch's), so its largest printed factor is taken: the cautious side."
+        )
+    else:
+        cold = cold_thrust_factor(a.span, a.rise) * load.weight
+        heated = heated_thrust_factor(a.span, a.rise, load.ring)
+        cos_half = math.cos(whole.half_angle)
+        thickest = (a.rise - a.span / 48) / cos_half if cos_half > 1e-9 else math.inf
+        if (
+            heated is not None
+            and load.ring <= thickest + 1e-9
+            and heated <= MAX_PRINTED_HEATED + 1e-9
+            and hot_thrust_line(a).check().status == "pass"
+        ):
+            capped, factor = None, heated
+            why = f"Heyman's maximum thrust, the arch pressed between the steel: × {heated:.2f}."
+        else:
+            why = (
+                "The ring is too thick for its rise for HarbisonWalker's heated-arch method, so "
+                "its largest printed factor is taken."
+            )
+    hot = cold * factor
+    width = o.width
+    working.append(
+        Step(
+            name="Thrust on each end wall",
+            value=(
+                f"{hot:.0f} lb per foot of the kiln's width, hot ({cold:.0f} cold): "
+                f"{hot * si(kiln.chamber.width, 'in') / 12:,.0f} lb across the chamber"
+            ),
+            formula=(
+                "H, cold, by the line of thrust through both springings (above); hot, × "
+                "HarbisonWalker's largest factor"
+                if whole.drop
+                else "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)); hot, × the heated factor"
+            ),
+            inputs={"W, the arch's weight per foot": f"{load.weight:.1f} lb/ft",
+                    "span, the chamber's depth": f"{whole.span:g} in"},
+            reference=f"{ARCH_THEORY_SOURCE}; {CAPPED}" + (f"; {UNEVEN}" if whole.drop else ""),
+            note=why,
+        )
+    )  # fmt: skip
+    rods = data["rods"]["sizes"][1:]  # ½-13 and up, as the sprung-arch frame
+    posts = _posts_per_side(width, hot / 12, floor, limit, rods)
+    bay = width / (posts - 1)
+    share = 0.5 if posts == 2 else 1.0
+    moment = (hot / 12) * bay**2 / 8
+    fits = [x for x in angles() if x.sx >= moment / limit and x.leg >= floor.leg and x.t >= floor.t]
+    biggest = max(angles(), key=lambda x: x.sx)
+    chosen = fits[0] if fits else biggest
+    bending = buttress_bending(
+        a, bay, share, chosen.name, chosen.sx, limit, None,
+        (data["angles"]["source"], data["binding_stress_source"]), capped, given,
+    )  # fmt: skip
+    bending.agrees("M", Q_(moment, "lbf*in"))
+    if (check := bending.check()).status != "pass" or not fits:
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"No angle up to {biggest.name} carries the arch's thrust across the end wall "
+                    f"over {bay:.0f} in between posts, the shortest bay the engine sets "
+                    f"({MIN_BAY:g} in or more). Lighten the arch, or hold the end walls with "
+                    "masonry (buttressed)."
+                ),
+            )
+        )
+    working.append(
+        Step(
+            name=(
+                "Posts on each end wall"
+                if posts == 2
+                else f"Posts on each end wall: {posts}, {bay:.1f} in apart"
+            ),
+            value=f"{posts} each end, the corners included",
+            formula="the fewest posts for which a listed angle and rod carry the thrust between",
+            reference="kiln-hardware.md §4.1–4.2 [S20] [S34] (derived)",
+        )
+    )
+    working.append(
+        Step(
+            name="Buttress angle across each end wall, bending",
+            value=f"needs Sx ≥ {moment / limit:.3f} in³; {chosen.name} has {chosen.sx:.3f} in³",
+            formula="M = wL²/8, Sx = M ÷ 12,000 psi (a simple beam between the posts)",
+            inputs={"w": f"{hot / 12:.2f} lb/in", "L": f"{bay:.1f} in",
+                    "M": f"{moment:,.0f} lb·in"},
+            reference=f"{data['binding_stress_source']}; AISC Sx, kiln-hardware.md §4.7.1 [S28]",
+            note="A cautious first check, derived in kiln-hardware.md §4.5; not a sourced rule.",
+        )
+    )  # fmt: skip
+    per_rod = hot * (bay / 12) * share
+    rod = rods[-1]
+    for size in rods:
+        if per_rod / size["stress_area"] <= limit:
+            rod = size
+            break
+    tied = rod_stress(
+        a, bay, share, rod["name"], rod["stress_area"], limit, None,
+        (data["rods"]["source"], data["binding_stress_source"]), capped, given,
+    )  # fmt: skip
+    tied.agrees("P", Q_(per_rod, "lbf"))
+    if (check := tied.check()).status != "pass":
+        findings.append(
+            Finding.failed(
+                check,
+                message=(
+                    f"No rod up to {rod['name']} carries the arch's thrust: the busiest takes "
+                    f"{per_rod:,.0f} lb, {per_rod / rod['stress_area']:,.0f} psi, hot."
+                ),
+                reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
+            )
+        )
+    working.append(
+        Step(
+            name=f"Tie rods along the chamber's depth, over the arch, {posts}",
+            value=f"{rod['name']}: {per_rod / rod['stress_area']:,.0f} psi",
+            formula="thrust × the bay the busiest rod ties ÷ tensile stress area",
+            inputs={"load on the busiest rod": f"{per_rod:,.0f} lb",
+                    "stress area": f"{rod['stress_area']} in²"},
+            reference=f"{data['rods']['source']}; {data['binding_stress_source']}",
+        )
+    )  # fmt: skip
+    # The rods run over the arch, above the buttress: each post carries the buttress's end
+    # load up to its rod as a beam. Shown, not checked: no frame here checks a post in bending.
+    span_post = o.bottom + crown
+    up = o.bottom + skewback
+    post_moment = per_rod * up * (span_post - up) / span_post
+    working.append(
+        Step(
+            name="Posts between the bottom tie and the rod, in bending",
+            value=(
+                f"{post_moment:,.0f} lb·in: Sx ≥ {post_moment / limit:.3f} in³ at 12,000 psi; "
+                f"{chosen.name} has {chosen.sx:.3f} in³"
+            ),
+            formula="M = P·a·b/L, a point load on a simple beam",
+            inputs={"P, the busiest post's load": f"{per_rod:,.0f} lb",
+                    "a, the buttress above the post's foot": f"{up:.1f} in",
+                    "L, the foot to the rod over the crown": f"{span_post:.1f} in"},
+            reference="statics of a simple beam (derived); "
+            f"{data['binding_stress_source']}",
+            note=(
+                "Shown, not checked: the engine's frames don't check a post in bending, and the "
+                "rods' height over the arch is taken at the roof's crown, not read from the "
+                "photos. Rods at the buttress's height would take the post's bending away."
+            ),
+        )
+    )  # fmt: skip
+    statics, found = along_statics(kiln, framed=True)
+    working += statics
+    findings += found
+    leg = chosen.leg
+    members = [
+        Member(part="corner posts" if posts == 2 else "posts on the end walls, corners included",
+               steel=chosen.name, count=2 * posts, length_in=span_post, source=ALONG_FRAME),
+        Member(part="buttresses across the end walls at the springing", steel=chosen.name,
+               count=2, length_in=o.width + 2 * leg, source=ALONG_FRAME),
+        *_ring_of(FLAT_BAR, "bottom cross-members", o, leg, PITELKA),
+        Member(part="tie rods along the depth, over the arch", steel=f"{rod['name']} threaded rod",
+               count=posts, length_in=o.depth + 2 * leg + 4, source=f"length: {MERRILL}"),
+    ]  # fmt: skip
+    if not any(f.level == "error" for f in findings):
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Weld the frame and fit it before the arch form comes out: the steel is what "
+                    "holds the arch up."
+                ),
+                reference="kiln-hardware.md §4.1–4.2 [S11] [S21]",
+            )
+        )
+    return FrameDesign(
+        kind="arch frame", angle=chosen.name, angle_leg_in=chosen.leg, angle_t_in=chosen.t,
+        rod=rod["name"], rod_d_in=rod["d"], thrust=f"{hot:.0f} lb per foot of the kiln's width",
+        members=members, working=working, findings=findings, posts=posts,
     )  # fmt: skip
 
 
@@ -1408,8 +1715,22 @@ def round_door_bands(kiln: Kiln) -> Finding:
 def design_frame(kiln: Kiln) -> FrameDesign:
     """The frame, and for a door in part of a wall, what spans the door (door.py)."""
     from kilndesigner.door import door_head
+    from kilndesigner.foundation import platform_bearing
 
     frame = _design_frame(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
+        from kilndesigner.crossing import crossing_note, crossing_statics
+
+        steps, found = crossing_statics(kiln)
+        frame = frame.model_copy(update={
+            "working": [*frame.working, *steps],
+            "findings": [*frame.findings, *found, crossing_note(kiln)],
+        })  # fmt: skip
+    bearing, under = platform_bearing(kiln)
+    if bearing or under:
+        frame = frame.model_copy(
+            update={"working": [*frame.working, *bearing], "findings": [*frame.findings, *under]}
+        )
     head = door_head(kiln)
     if head is None:
         return frame
@@ -1439,7 +1760,8 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
     if arches_along(kiln):
-        return _row_arches(kiln)
+        one = isinstance(kiln.roof, SprungArch) and kiln.roof.along
+        return _along_frame(kiln) if one else _row_arches(kiln)
     if isinstance(kiln.roof, CatenaryArch):
         return _catenary_feet(kiln)
     if isinstance(kiln.roof, Dome):

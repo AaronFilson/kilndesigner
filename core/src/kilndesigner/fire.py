@@ -27,6 +27,7 @@ import math
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.corbel import corbel_working
 from kilndesigner.fire_checks import (
     AUXILIARY_AIR,
     CLIMBING,
@@ -39,6 +40,7 @@ from kilndesigner.fire_checks import (
     floor_ratio,
     grate_ratio,
 )
+from kilndesigner.firebox_parts import COURSE_SOURCE, firebox_corbel
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.model import Dome, Firebox, Kiln, Port, Section, SprungArch
 from kilndesigner.units import Q_, Quantity, si
@@ -215,6 +217,23 @@ def design_fire(kiln: Kiln) -> FireDesign:
             },
         )
     )
+    # A corbel-roofed firebox's corbel over its width (corbel.py), laid in the walls' brick
+    for fb in fire.fireboxes:
+        c = firebox_corbel(kiln, fb)
+        if c is None:
+            continue
+        steps, said = corbel_working(c)
+        working += [
+            s.model_copy(
+                update={
+                    "name": f"{_describe(fb)}: {s.name}",
+                    "reference": f"{s.reference}; {COURSE_SOURCE}; d is the walls' brick "
+                    "from the hot face out",
+                }
+            )
+            for s in steps
+        ]
+        findings += said
     full_fire = 0.0
     if fire.fuel == "oil" and fire.oil_burners is not None and fire.oil_rate is not None:
         gph = si(fire.oil_rate, "gallon/hour")

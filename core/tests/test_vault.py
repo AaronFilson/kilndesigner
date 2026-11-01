@@ -18,7 +18,14 @@ from kilndesigner.geometry import in_a_row, inside_top, lining_parts
 from kilndesigner.model import Kiln, arches_along
 from kilndesigner.shape import Arch, along_arch, chamber_shape
 from kilndesigner.units import Q_, si
-from kilndesigner.vault import along_inputs, along_statics, door_in_vault, stations, uneven_thrust
+from kilndesigner.vault import (
+    along_inputs,
+    along_statics,
+    door_in_vault,
+    stations,
+    thrust_line_thrust,
+    uneven_thrust,
+)
 
 BOWEN = Path(__file__).parents[2] / "examples" / "olsen" / "bowen-mountain.yaml"
 
@@ -112,10 +119,34 @@ def test_the_uneven_arch_is_laid_out_from_each_springline() -> None:
     assert parts["back/skewback-ifb-jm28-chamber-1"].lo[2] == pytest.approx(18 * 25.4)
     ring = parts["roof/1-ifb-jm28-chamber-1"]
     assert ring.arch is not None
-    assert ring.hi[2] == pytest.approx((36 + 9) * 25.4, abs=0.5)
+    # Two 4½ in rings, one on the other (the photos, read by the user)
+    assert ring.hi[2] == pytest.approx((36 + 4.5) * 25.4, abs=0.5)
+    outer = parts["roof/2-ifb-jm28-chamber-1"]
+    assert outer.hi[2] == pytest.approx((36 + 9) * 25.4, abs=0.5)
     cap = parts["right/1-ifb-jm28-chamber-1-arch"]
     assert cap.profile is not None
     assert min(z for _, z in cap.profile) == pytest.approx(16 * 25.4)
+
+
+def test_a_thrust_line_through_both_springings_agrees_with_the_halves() -> None:
+    kiln = load_design(BOWEN)
+    arch = along_arch(kiln, "in")
+    assert arch.drop == pytest.approx(2.0)
+    for a in (arch, Arch(arch.span, arch.rise, -3.0), Arch(60.0, 18.0, 4.0)):
+        h, front, back = thrust_line_thrust(a, 100.0)
+        assert (h, front, back) == pytest.approx(uneven_thrust(a, 100.0))
+        assert front + back == pytest.approx(100.0)
+    # by hand, Arch(60, 18, 4): the back half about the crown holds with that H
+    a = Arch(60.0, 18.0, 4.0)
+    h, _, back = thrust_line_thrust(a, 100.0)
+    pb = a.back_angle
+    wb = 100.0 * pb / (a.front_angle + pb)
+    fb = 1 - math.cos(pb)
+    assert back * math.sin(pb) == pytest.approx(h * fb + wb * fb / pb)
+    frame = design_frame(kiln)
+    [step] = [s for s in frame.working if s.name.startswith("The uneven arch's cold thrust")]
+    assert "each half about the crown" in step.value
+    assert "largest printed factor is kept" in (step.note or "")
 
 
 def test_the_uneven_arch_springs_each_end_wall_on_its_own_share() -> None:
@@ -192,7 +223,9 @@ def test_a_door_cut_into_the_vault_checks_the_thinner_ring() -> None:
     assert into.cut > 0.5
     thinner = along_inputs(kiln, into.cut)
     whole = along_inputs(kiln)
-    assert thinner.layers[0].thickness == pytest.approx(9.0 - into.cut)
+    # The cut comes off the inner of the two 4½ in rings
+    assert thinner.layers[0].thickness == pytest.approx(4.5 - into.cut)
+    assert sum(x.thickness for x in thinner.layers) == pytest.approx(9.0 - into.cut)
     assert thinner.rise > whole.rise  # the ring's inside moved out by the cut
     _, findings = along_statics(kiln)
     assert not [f for f in findings if f.level == "error"]
@@ -205,13 +238,79 @@ def test_bowen_mountains_arch_stands_and_needs_its_bracing() -> None:
     statics = next(s for s in working if s.name.startswith("The arch along the depth"))
     assert "times the thinnest that stands" in statics.value
     end = next(f for f in findings if f.check and f.check.id.startswith("frame.vault-end-wall"))
-    # The 9 in end wall alone can't hold even the cold thrust: the drawn bracing carries it
+    # The 9 in end wall alone can't hold even the cold thrust: the bracing carries it
     assert end.check is not None
     assert end.check.status == "error"
     assert "needed, not optional" in end.message
+    # Held by masonry, no steel is sized
+    held = design_frame(_bowen(roof={"buttressed": True}))
+    assert held.members == []
+
+
+def test_bowen_mountains_frame_holds_its_arch() -> None:
+    # The photos: corner angles with bars over the arch, so the frame is on the end walls and
+    # the rods run the 5 ft depth
+    kiln = load_design(BOWEN)
     frame = design_frame(kiln)
-    assert frame.members == []
+    assert frame.kind == "arch frame"
+    assert not [f for f in frame.findings if f.level == "error"]
+    assert frame.angle == "L4×4×3/8"
+    assert frame.rod == "1/2-13"
+    assert frame.posts == 2
+    parts = {m.part: m for m in frame.members}
+    assert parts["tie rods along the depth, over the arch"].count == 2
+    assert parts["buttresses across the end walls at the springing"].count == 2
+    thrust = next(s for s in frame.working if s.name == "Thrust on each end wall")
+    assert "547 lb per foot" in thrust.value
+    assert thrust.note is not None
+    assert "largest printed factor" in thrust.note
+    ring = next(s for s in frame.working if s.name == "Arch ring")
+    assert "2 rings" in ring.value
+    assert ring.reference is not None
+    assert "no source here checks" in ring.reference
+    ends = [f for f in frame.findings if "frame on the end walls carries it" in f.message]
+    assert len(ends) == 2
     assert any(s.name == "The chamber's section along its depth" for s in frame.working)
+    post = next(s for s in frame.working if s.name.startswith("Posts between"))
+    assert post.note is not None
+    assert "Shown, not checked" in post.note
+
+
+def test_a_level_vault_frame_takes_the_heated_factor_or_the_cap() -> None:
+    level = design_frame(_bowen(roof=LEVEL))
+    thrust = next(s for s in level.working if s.name == "Thrust on each end wall")
+    assert thrust.note is not None
+    assert "Heyman's maximum thrust" in thrust.note
+    # A ring too thick for its rise: HarbisonWalker's largest factor
+    flat = design_frame(
+        _bowen(
+            roof={"rise": "6 in", "front_springline": None},
+            loading={"opening": {"width": "20 in", "height": "20 in"}},
+        )
+    )
+    thrust = next(s for s in flat.working if s.name == "Thrust on each end wall")
+    assert thrust.note is not None
+    assert "too thick for its rise" in thrust.note
+
+
+def test_a_vault_frame_refuses_a_loose_ring_and_steel_too_small() -> None:
+    wall = {"material": "ifb-jm28", "thickness": "9 in"}
+    blanket = {"material": "kaowool-blanket-8pcf", "thickness": "2 in"}
+    loose = design_frame(_bowen(lining={"walls": [wall], "roof": [blanket, wall]}))
+    assert loose.members == []
+    assert [f for f in loose.findings if f.level == "error"]
+    dense = {"material": "hard-firebrick-kx99", "thickness": "9 in"}
+    heavy = _bowen(
+        chamber={"width": "12 ft"},
+        lining={"walls": [wall], "roof": [dense, dense, dense, dense]},
+        roof={"ring": 4},
+    )
+    frame = design_frame(heavy)
+    errors = [f.message for f in frame.findings if f.level == "error"]
+    assert any("No angle up to" in m for m in errors)
+    assert frame.posts > 2
+    with pytest.raises(ValidationError, match="tie its rods rigid"):
+        _bowen(roof={"ties": "springs", "spring_rate": "283 lbf/in"})
 
 
 def test_a_thick_end_wall_holds_the_arch_alone() -> None:
@@ -227,7 +326,7 @@ def test_a_thick_end_wall_holds_the_arch_alone() -> None:
 def test_a_ring_too_thin_for_its_arch_is_an_error() -> None:
     thin = {"material": "ifb-jm28", "thickness": "1 in"}
     wall = {"material": "ifb-jm28", "thickness": "9 in"}
-    kiln = _bowen(lining={"walls": [wall], "roof": [thin, wall]})
+    kiln = _bowen(lining={"walls": [wall], "roof": [thin, wall]}, roof={"ring": 1})
     _, findings = along_statics(kiln)
     errors = [f for f in findings if f.level == "error"]
     assert errors

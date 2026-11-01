@@ -845,7 +845,14 @@ function FireSection({
                     label={`${name}, position`}
                     value={box.position ?? "front"}
                     options={POSITIONS}
-                    onChange={(position) => setBox(i, { ...box, position })}
+                    onChange={(position) =>
+                      setBox(
+                        i,
+                        position === "under"
+                          ? { ...box, position, roof: undefined, corbel_step: undefined }
+                          : { ...box, position },
+                      )
+                    }
                   />
                   <Field label={`${name}, how many of this size`}>
                     <input
@@ -950,6 +957,32 @@ function FireSection({
                     seed={undefined}
                     onChange={(stoke_hole) => setBox(i, { ...box, stoke_hole })}
                   />
+                  {/* A corbel: the walls' brick stepped in until one brick bridges 6 in or less
+                      (TMS 402, Rhodes p.101–102); none under the floor, none past 24 in (Olsen p.49) */}
+                  {box.position !== "under" && (
+                    <label className="check">
+                      <input
+                        type="checkbox"
+                        checked={box.roof === "corbel"}
+                        onChange={(e) =>
+                          setBox(i, {
+                            ...box,
+                            roof: e.target.checked ? "corbel" : undefined,
+                            corbel_step: e.target.checked ? box.corbel_step : undefined,
+                          })
+                        }
+                      />
+                      {name} roofed with a corbel
+                    </label>
+                  )}
+                  {box.roof === "corbel" && box.position !== "under" && (
+                    <Quantity
+                      label={`${name}, corbel step per course (blank: the most TMS 402 allows)`}
+                      value={box.corbel_step}
+                      units={LENGTH}
+                      onChange={(v) => setBox(i, { ...box, corbel_step: v })}
+                    />
+                  )}
                   <button
                     type="button"
                     className="secondary"
@@ -1309,6 +1342,8 @@ export function DesignForm({
   const round = doc.chamber.shape === "round";
   const outline = doc.chamber.outline;
   const chambers = doc.chamber.chambers ?? 1;
+  // The roof's layers (the walls' when it has none of its own): an arch's or dome's ring
+  const roofLayers = (doc.lining.roof ?? doc.lining.walls).length;
   const lid = loading.type === "lid";
   const lidOk = round && electric !== undefined && roof.type === "flat";
   // The last heat source left can't be turned off: a kiln needs one. A smoke firebox only
@@ -1534,7 +1569,15 @@ export function DesignForm({
                 type="button"
                 className="secondary"
                 aria-label="Add a chamber"
-                onClick={() => change(["chamber", "chambers"], chambers + 1)}
+                onClick={() => {
+                  const next = setIn(doc, ["chamber", "chambers"], chambers + 1);
+                  // Chambers in a row have their arches along the draft already
+                  onChange(
+                    roof.type === "sprung_arch" && roof.along
+                      ? setIn(next, ["roof"], { ...roof, along: undefined, front_springline: undefined })
+                      : next,
+                  );
+                }}
               >
                 +
               </button>
@@ -1630,6 +1673,74 @@ export function DesignForm({
             units={SPRING_RATE}
             onChange={(v) => change(["roof", "spring_rate"], v)}
           />
+        )}
+        {roof.type === "sprung_arch" && chambers > 1 && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={roof.tube ?? false}
+              onChange={(e) => change(["roof", "tube"], e.target.checked || undefined)}
+            />
+            One vault over the whole run, spanning the width (a tube kiln, Olsen p.85); left out,
+            each chamber has its own arch along the draft (p.94–95)
+          </label>
+        )}
+        {roof.type === "sprung_arch" && chambers === 1 && (
+          <>
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={roof.along ?? false}
+                onChange={(e) =>
+                  change(
+                    ["roof"],
+                    e.target.checked
+                      ? { ...roof, along: true }
+                      : { ...roof, along: undefined, front_springline: undefined },
+                  )
+                }
+              />
+              The arch spans the depth, front to back, along the draft, springing from the front
+              and back walls (Bowen Mountain, Olsen Fig. 4-153)
+            </label>
+            {roof.along && (
+              <>
+                <Quantity
+                  label="Front wall's springline, from the floor (blank: level, the chamber's height)"
+                  value={roof.front_springline}
+                  units={LENGTH}
+                  onChange={(v) => change(["roof", "front_springline"], v)}
+                />
+                <p className="muted section-note">
+                  The rise is above the back wall's springline; the side walls are filled up to the
+                  arch. The door and the burners go in the front or back wall, under the arch's
+                  ends.
+                </p>
+              </>
+            )}
+          </>
+        )}
+        {(roof.type === "sprung_arch" || roof.type === "dome") && roofLayers > 1 && (
+          <Choice
+            label={roof.type === "dome" ? "Layers in the dome's shell" : "Layers in the arch's ring"}
+            value={roof.ring ?? 1}
+            options={Array.from({ length: roofLayers }, (_, i): [number, string] => [
+              i + 1,
+              i === 0 ? "1, the inside layer (the rest is its load)" : `${i + 1}, from the inside`,
+            ])}
+            onChange={(v) => change(["roof", "ring"], v === 1 ? undefined : v)}
+          />
+        )}
+        {(roof.type === "sprung_arch" || roof.type === "dome" || roof.type === "catenary_arch") && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={roof.buttressed ?? false}
+              onChange={(e) => change(["roof", "buttressed"], e.target.checked || undefined)}
+            />
+            Buttressed: the thrust is carried by masonry or earth, not steel (Olsen p.53, p.186);
+            no steel is sized
+          </label>
         )}
         {roof.type === "catenary_arch" && (
           <p className="muted section-note">
@@ -2165,6 +2276,12 @@ export function DesignForm({
           value={doc.site?.coldest_ambient}
           units={TEMPERATURE}
           onChange={(v) => change(["site", "coldest_ambient"], v)}
+        />
+        <Quantity
+          label="Height above sea level (blank: sea level)"
+          value={doc.site?.elevation}
+          units={["ft", "m"]}
+          onChange={(v) => change(["site", "elevation"], v)}
         />
         <Quantity
           label="Electricity price"
