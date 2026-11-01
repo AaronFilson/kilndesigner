@@ -105,8 +105,11 @@ def test_steel_past_giles_service_limit_warns(monkeypatch: pytest.MonkeyPatch) -
 
 def test_too_hot_steel_finds_no_angle(monkeypatch: pytest.MonkeyPatch) -> None:
     """At 1,390 °F the steel keeps 17 % of its yield and 11 % of its stiffness: no listed angle
-    carries the dome, and the rods are still checked."""
+    carries the dome, and the rods are still checked. The table is cut at L4×4×3/8, as it stood
+    before the larger angles came in: an L8×8 still carries it."""
     _with_heat(monkeypatch, 1390)
+    upto = [a for a in frame_module.angles() if a.leg <= 4 and a.t <= 0.375]
+    monkeypatch.setattr(frame_module, "angles", lambda: upto)
     frame = design_frame(_dome())
     ids = {f.check.id: f for f in frame.findings if f.check}
     assert ids["frame.dome-buttress"].level == "error"

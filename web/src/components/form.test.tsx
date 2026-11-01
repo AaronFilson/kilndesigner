@@ -987,6 +987,20 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().roof).toMatchObject({ along: true, front_springline: "16 in" });
     set("Frame's tie rods above the roof's crown (blank: at the crown)", "18");
     expect(last().roof).toMatchObject({ rods_above_crown: "18 in" });
+    // Buttressed in service, its steel for building only (Bowen Mountain): the rods stay
+    const building = /Steel for building only/;
+    expect(screen.queryByLabelText(building)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    const rods = "Frame's tie rods above the roof's crown (blank: at the crown)";
+    expect(screen.queryByLabelText(rods)).toBeNull();
+    fireEvent.click(screen.getByLabelText(building));
+    expect(last().roof).toMatchObject({ buttressed: true, building_frame: true });
+    expect(screen.getByLabelText(rods)).toBeTruthy();
+    fireEvent.click(screen.getByLabelText(building));
+    expect((last().roof as Record<string, unknown>).building_frame).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(building));
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    expect(last().roof).toMatchObject({ buttressed: undefined, building_frame: undefined });
     fireEvent.click(screen.getByLabelText(along));
     expect(last().roof).not.toHaveProperty("along", true);
     expect(last().roof).toMatchObject({ front_springline: undefined, rods_above_crown: undefined });

@@ -452,6 +452,16 @@ class SprungArch(Spec):
         description="Each spring's rate, from its maker's listing, for example 283 lbf/in",
     )
     buttressed: bool = Field(default=False, description=BUTTRESSED)
+    building_frame: bool = Field(
+        default=False,
+        description=(
+            "With buttressed: a steel frame holds the arch only while the kiln is built and the "
+            "mortar sets, and the mortared masonry (and any platform it is built into) holds it "
+            "in service. The frame is still sized and listed for the builder; the in-service "
+            "checks don't count on it. As the user reads Bowen Mountain, mortared into its "
+            "concrete platform (2026-10-31)"
+        ),
+    )
     tube: bool = Field(
         default=False,
         description=(
@@ -516,6 +526,13 @@ class SprungArch(Spec):
                 "rods_above_crown is for one chamber's arch along its depth (along), and can't be "
                 "below the crown"
             )
+        if self.building_frame and not self.buttressed:
+            raise ValueError(
+                "building_frame says the masonry holds the arch once built: set buttressed too, "
+                "or leave building_frame out to have the frame hold it in service"
+            )
+        if self.building_frame and self.tube:
+            raise ValueError("a building frame for a tube's vault isn't worked out")
         if self.front_springline is not None and not self.along:
             raise ValueError(
                 "front_springline is for one chamber's arch along its depth (along): a level "
@@ -1438,6 +1455,15 @@ class Kiln(Spec):
             if one and self.chamber.chambers > 1:
                 raise ValueError(
                     "chambers in a row have their arches along the draft already: leave out along"
+                )
+            if self.roof.building_frame and (
+                self.chamber.chambers > 1
+                or self.chamber.shape != "box"
+                or self.roof.crossing is not None
+            ):
+                raise ValueError(
+                    "a building frame is worked out for one box chamber's arch only: no frame is "
+                    "sized for chambers in a row, crossing vaults or a curved plan"
                 )
             if self.roof.front_springline is not None:
                 from kilndesigner.shape import uneven_refusal
