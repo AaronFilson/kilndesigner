@@ -26,6 +26,9 @@
 # (the engine sizes it); the kiln built into a concrete platform round its whole perimeter. The
 # concrete's strength, 1800 psi, is the user's starting value, not a sourced one; the platform's
 # height and how far it runs out past the walls aren't known.
+# The user, 2026-10-31: the platform runs under the whole kiln and its firebox; the tie bars run
+# about 1½ ft over the crown (roof.rods_above_crown); the posts' feet are in or bolted to the
+# platform, not at the foundation's bottom, so no bottom ring: the engine takes them pinned.
 # Assumed: eight burners, two in each of the four flues. Cone 10, the top of 9–10. The chimney
 # 11 ft, the middle of 10–12 ft. The book names no brick: for
 # salt Olsen says high-alumina brick is best (p.126), and Kähler's salt kiln used high-alumina
@@ -49,15 +52,18 @@ chamber:
   depth: 5 ft
   height: 18 in # to the springline, at the back wall (Fig 4-153)
   foundation:
-    material: concrete # a platform round the whole perimeter (photos, read by the user)
-    compressive_strength: 1800 psi
+    material: concrete # under the whole kiln and its firebox (the user, 2026-10-31)
+    compressive_strength: 1800 psi # below IRC Table R402.2's 2500-3500 psi
     strength_source: the user's starting value, 2026-10-31; not sourced
+    # thickness: not known (not visible in the photos), so the floor's loss through it and its
+    # top face's temperature aren't worked out
 roof:
   type: sprung_arch
   along: true # the arch spans the 5 ft length, front to back (Fig 4-153)
   ring: 2 # two 4½ in rings (photos, read by the user)
   rise: 18 in # 36 in to the crown, less the 18 in springline
   front_springline: 16 in # about 16 in at the front (Fig 4-153, read by the user)
+  rods_above_crown: 18 in # the tie bars about 1½ ft over the crown (the user, 2026-10-31)
 loading:
   type: door
   face: right

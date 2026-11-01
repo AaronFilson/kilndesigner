@@ -985,9 +985,11 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().roof).toMatchObject({ type: "sprung_arch", along: true });
     set("Front wall's springline, from the floor (blank: level, the chamber's height)", "16");
     expect(last().roof).toMatchObject({ along: true, front_springline: "16 in" });
+    set("Frame's tie rods above the roof's crown (blank: at the crown)", "18");
+    expect(last().roof).toMatchObject({ rods_above_crown: "18 in" });
     fireEvent.click(screen.getByLabelText(along));
     expect(last().roof).not.toHaveProperty("along", true);
-    expect(last().roof).toMatchObject({ front_springline: undefined });
+    expect(last().roof).toMatchObject({ front_springline: undefined, rods_above_crown: undefined });
     // A second chamber: its arches are along the draft already, so along goes
     fireEvent.click(screen.getByLabelText(along));
     fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
@@ -1102,6 +1104,22 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().chamber.on_ground).toBe(true);
     fireEvent.click(screen.getByLabelText("The floor is on the ground (not raised on a stand)"));
     expect(last().chamber.on_ground).toBeUndefined();
+    const platform = "The kiln and its firebox stand on a concrete platform";
+    fireEvent.click(screen.getByLabelText(platform));
+    expect(last().chamber.foundation).toEqual({ material: "concrete" });
+    const strength =
+      "Platform's compressive strength, f′c (blank: 3500 psi, the IRC's least for a slab in the weather)";
+    set(strength, "1800");
+    expect(last().chamber.foundation?.compressive_strength).toBe("1800 psi");
+    fireEvent.change(
+      screen.getByLabelText("Where the strength comes from (a test, the mix, your own value)"),
+      { target: { value: "my own" } },
+    );
+    expect(last().chamber.foundation?.strength_source).toBe("my own");
+    set("Platform's thickness under the floor (blank: its heat isn't worked out)", "6");
+    expect(last().chamber.foundation?.thickness).toBe("6 in");
+    fireEvent.click(screen.getByLabelText(platform));
+    expect(last().chamber.foundation).toBeUndefined();
   });
 
   it("chooses an open top", () => {

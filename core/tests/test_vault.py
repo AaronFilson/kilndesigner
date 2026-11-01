@@ -178,7 +178,10 @@ def test_the_uneven_arch_springs_each_end_wall_on_its_own_share() -> None:
     with pytest.raises(ValidationError, match="more than 0"):
         _bowen(roof={"front_springline": "0 in"})
     with pytest.raises(ValidationError, match="front_springline is for one chamber"):
-        _bowen(roof={"front_springline": "16 in", "along": False}, loading={"face": "front"})
+        _bowen(
+            roof={"front_springline": "16 in", "along": False, "rods_above_crown": None},
+            loading={"face": "front"},
+        )
 
 
 def test_bowen_mountains_door_rises_into_the_vault() -> None:
@@ -253,7 +256,15 @@ def test_bowen_mountains_frame_holds_its_arch() -> None:
     kiln = load_design(BOWEN)
     frame = design_frame(kiln)
     assert frame.kind == "arch frame"
+    # The rods 18 in over the crown (the user): the corner posts bend past 12,000 psi, within
+    # AISC's strength, so a warning
     assert not [f for f in frame.findings if f.level == "error"]
+    (warned,) = [f for f in frame.findings if f.level == "warning"]
+    assert warned.check is not None
+    assert warned.check.id == "frame.post-bending"
+    assert "at most 4.7 in over the crown" in warned.message
+    low = design_frame(_bowen(roof={"rods_above_crown": "4 in"}))
+    assert not [f for f in low.findings if f.level in ("error", "warning")]
     assert frame.angle == "L4×4×3/8"
     assert frame.rod == "1/2-13"
     assert frame.posts == 2
@@ -273,7 +284,23 @@ def test_bowen_mountains_frame_holds_its_arch() -> None:
     assert any(s.name == "The chamber's section along its depth" for s in frame.working)
     post = next(s for s in frame.working if s.name.startswith("Posts between"))
     assert post.note is not None
-    assert "Shown, not checked" in post.note
+    assert "pinned, the safe side" in post.note
+    assert post.inputs["L, the foot to the rod"] == "72.0 in"
+    assert parts["corner posts"].length_in == pytest.approx(72.0)
+    assert not any(p.startswith("bottom cross-members") for p in parts)
+    foot = next(s for s in frame.working if s.name == "Each post's foot on the platform")
+    assert "no uplift" in foot.value
+    # No platform: the bottom ring ties the feet, and no foot reaction is reported
+    data = yaml.safe_load(BOWEN.read_text(encoding="utf-8"))
+    del data["chamber"]["foundation"]
+    del data["roof"]["rods_above_crown"]
+    bare = design_frame(parse_design(yaml.safe_dump(data, allow_unicode=True)))
+    assert any(m.part.startswith("bottom cross-members") for m in bare.members)
+    assert not any(s.name == "Each post's foot on the platform" for s in bare.working)
+    post = next(s for s in bare.working if s.name.startswith("Posts between"))
+    assert "taken at the roof's crown" in (post.note or "")
+    with pytest.raises(ValidationError, match="rods_above_crown"):
+        _bowen(roof={"rods_above_crown": "-1 in"})
 
 
 def test_a_level_vault_frame_takes_the_heated_factor_or_the_cap() -> None:

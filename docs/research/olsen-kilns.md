@@ -565,6 +565,17 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   - the kiln is built into a concrete platform that goes round its whole perimeter (its height and how
     far it runs out past the walls not read). The concrete's compressive strength, 1800 psi, is the
     user's starting value, not a sourced one.
+- The user's answers on the frame and platform (the user, 2026-10-31):
+  - the platform's extent isn't visible in the photos: take it as running under the whole kiln and
+    its firebox. Its thickness and overhang aren't known, so the engine takes them as design inputs
+    with no default (`chamber.foundation.thickness`; the overhang isn't used);
+  - the tie bars run about 1½ ft above the crown (the user's estimate from the photos):
+    `roof.rods_above_crown: 18 in`;
+  - the posts' feet aren't visible, but aren't at the bottom of the foundation: they're in the
+    platform or bolted to it, or similar. No bottom ring; the engine takes the feet pinned;
+  - any concrete foundation that holds up to frost and the elements will do for a kiln; 1800 psi is
+    low grade and would hold most any kiln in the book (see concrete-foundations.md for what the
+    codes ask).
 - Fig 4-154 by scale (rough, read by the agent, 2026-10-31): a flat segmental arch, its springings at
   different heights; by scale it rises only 10–13 in, against the drawing's 18 in (36 − 18), likely
   perspective, so the drawing's 36 in crown stays.

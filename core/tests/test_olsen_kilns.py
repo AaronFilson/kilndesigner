@@ -40,6 +40,10 @@ WARNED: dict[str, dict[str, str]] = {
     "kenzan-muffle": {
         "masonry.thickness": "the 4 in wall, floor and roof as built aren't whole bricks",
     },
+    "bowen-mountain": {
+        "frame.post": "with the rods about 18 in over the crown (the user's estimate), "
+        "the corner posts bend past HarbisonWalker's 12,000 psi, though within AISC's strength",
+    },
     "ninodaguia": {
         "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
     },

@@ -1574,7 +1574,12 @@ export function DesignForm({
                   // Chambers in a row have their arches along the draft already
                   onChange(
                     roof.type === "sprung_arch" && roof.along
-                      ? setIn(next, ["roof"], { ...roof, along: undefined, front_springline: undefined })
+                      ? setIn(next, ["roof"], {
+                          ...roof,
+                          along: undefined,
+                          front_springline: undefined,
+                          rods_above_crown: undefined,
+                        })
                       : next,
                   );
                 }}
@@ -1606,6 +1611,43 @@ export function DesignForm({
           />
           The floor is on the ground (not raised on a stand)
         </label>
+        <label className="check">
+          <input
+            type="checkbox"
+            checked={doc.chamber.foundation !== undefined}
+            onChange={(e) =>
+              change(["chamber", "foundation"], e.target.checked ? { material: "concrete" } : undefined)
+            }
+          />
+          The kiln and its firebox stand on a concrete platform
+        </label>
+        {doc.chamber.foundation !== undefined && (
+          <>
+            <Quantity
+              label="Platform's compressive strength, f′c (blank: 3500 psi, the IRC's least for a slab in the weather)"
+              value={doc.chamber.foundation.compressive_strength}
+              units={["psi", "MPa"]}
+              onChange={(v) => change(["chamber", "foundation", "compressive_strength"], v)}
+            />
+            {doc.chamber.foundation.compressive_strength !== undefined && (
+              <Field label="Where the strength comes from (a test, the mix, your own value)">
+                <input
+                  type="text"
+                  value={doc.chamber.foundation.strength_source ?? ""}
+                  onChange={(e) =>
+                    change(["chamber", "foundation", "strength_source"], e.target.value || undefined)
+                  }
+                />
+              </Field>
+            )}
+            <Quantity
+              label="Platform's thickness under the floor (blank: its heat isn't worked out)"
+              value={doc.chamber.foundation.thickness}
+              units={LENGTH}
+              onChange={(v) => change(["chamber", "foundation", "thickness"], v)}
+            />
+          </>
+        )}
         {round && electric && (
           <label className="check">
             <input
@@ -1696,7 +1738,12 @@ export function DesignForm({
                     ["roof"],
                     e.target.checked
                       ? { ...roof, along: true }
-                      : { ...roof, along: undefined, front_springline: undefined },
+                      : {
+                          ...roof,
+                          along: undefined,
+                          front_springline: undefined,
+                          rods_above_crown: undefined,
+                        },
                   )
                 }
               />
@@ -1711,6 +1758,14 @@ export function DesignForm({
                   units={LENGTH}
                   onChange={(v) => change(["roof", "front_springline"], v)}
                 />
+                {!roof.buttressed && (
+                  <Quantity
+                    label="Frame's tie rods above the roof's crown (blank: at the crown)"
+                    value={roof.rods_above_crown}
+                    units={LENGTH}
+                    onChange={(v) => change(["roof", "rods_above_crown"], v)}
+                  />
+                )}
                 <p className="muted section-note">
                   The rise is above the back wall's springline; the side walls are filled up to the
                   arch. The door and the burners go in the front or back wall, under the arch's
