@@ -482,6 +482,9 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   dome past 51.8° (formulas already reconstructed; check them on the page images), a catenary
   at a step, and corbels at heat. Also Trinks's *Industrial Furnaces* Vol. I (pp.196, 238) on
   furnace arches.
+- **Foundations:** block and cinder-block platforms (`concrete-foundations.md` C6–C10): no
+  sourced temperature limit found, so a block platform is checked as cast concrete; still to get
+  TMS 216 / ACI 216.1, EN 1996-1-2 Annex D, NCMA TEK 6-2C and ACI 122R for block conductivity.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
   proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"

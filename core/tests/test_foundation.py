@@ -70,12 +70,19 @@ def test_a_platforms_heat_and_top_face_are_worked_out_with_its_thickness() -> No
     assert platform_top(load_design(BOWEN)) is None
 
 
-def test_bowens_floor_of_three_ifb_courses_on_a_trial_platform() -> None:
-    """The floor as the photo shows it, three 2½ in courses of IFB (7½ in, the user 2026-10-31),
-    against the 9 in of the walls' IFB it was taken as before: on a trial 6 in platform the
-    thinner floor runs the slab's top hotter, both far past ACI 349's 150 °F."""
+def test_bowens_floor_as_the_book_specifies_on_a_trial_platform() -> None:
+    """The floor as p.126 specifies it: medium-duty firebrick over common red brick on a
+    concrete-block foundation, three 2½ in courses (7½ in, the photo). Dense brick conducts more
+    than the walls' 9 in of IFB the floor was taken as before, so on a trial 6 in platform the
+    slab's top runs hotter, both far past ACI 349's 150 °F."""
     kiln = _bowen_on("6 in")
-    assert [x.thickness.to("in").magnitude for x in kiln.lining.for_face("floor")] == [2.5] * 3
+    floor = kiln.lining.for_face("floor")
+    assert [x.thickness.to("in").magnitude for x in floor] == [2.5] * 3
+    assert [x.material for x in floor] == [
+        "firebrick-medium-duty-smithfield",
+        "building-brick-common",
+        "building-brick-common",
+    ]
     data = yaml.safe_load(BOWEN.read_text(encoding="utf-8"))
     data["chamber"]["foundation"]["thickness"] = "6 in"
     del data["lining"]["floor"]
@@ -83,7 +90,7 @@ def test_bowens_floor_of_three_ifb_courses_on_a_trial_platform() -> None:
     top, before = platform_top(kiln), platform_top(nine)
     assert top is not None
     assert before is not None
-    assert top * 9 / 5 - 459.67 == pytest.approx(1229, abs=2)  # °F
+    assert top * 9 / 5 - 459.67 == pytest.approx(1731, abs=2)  # °F
     assert before * 9 / 5 - 459.67 == pytest.approx(1114, abs=2)
 
 
@@ -91,7 +98,7 @@ def test_a_cool_platform_top_passes() -> None:
     data = yaml.safe_load(BOWEN.read_text(encoding="utf-8"))
     data["chamber"]["foundation"]["thickness"] = "6 in"
     # Into dry soil at steady state even a thick floor's slab runs hot; a low firing keeps it cool
-    data["firing"] = {"top_temperature": "220 degF"}
+    data["firing"] = {"top_temperature": "180 degF"}
     kiln = parse_design(yaml.safe_dump(data, allow_unicode=True))
     _, findings = platform_bearing(kiln)
     top = [f for f in findings if f.check and f.check.id == "foundation.top-temperature"]
