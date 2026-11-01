@@ -490,6 +490,26 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"
   is a valid answer.
 
+**Fifth round (2026-10-31), `docs/research/mortar-and-brick-strength.md`.** What closed:
+
+- *Joint friction, hot (closed):* dry dense refractory joints 30.9° (μ 0.60) cold, 26.5° (0.50)
+  at 300 °C, 27.0° and 27.9° at 600 and 900 °C (Oliveira et al. 2021, read in full). A hot
+  sliding check should use 0.50, not BIA's 0.60; IFB and fireclay untested.
+- *Mortar bond (closed, as "give no credit"):* NBS 1939–43 measured joint bond of 5–665 psi,
+  scatter to 79 %, air-setting joints often losing all bond after 1000 °C and heat-setting
+  joints having little until 1350–1500 °C; HWI SAIRSET 530 psi at joints, dried only. Keep
+  no tension across joints; Bowen Mountain's arch stays a no-tension thrust check, now with a
+  sourced reason. Hot shear: friction steady, cohesion lost above 900 °C (abstracts only).
+- *Two rings (closed):* unbonded rings act separately; ring separation cut arch strength 33–71 %
+  in tests (Sarhosis et al. 2016 review). Combine ring thicknesses only when header-bonded.
+- *IFB hot load (closed):* C16 values at 10 psi for JM 23–32, TC-26 and the BNZ grades; BNZ's
+  "maximum mean temperature" per grade is the first maker's rule tying load to temperature.
+- *Hot strength of dense brick (partial):* hot MOR 530 psi at 1350 °C for a 42 % alumina brick
+  (Bureau of Mines 1984); hot crushing 24–34 MPa to 1000 °C for one alumina-spinel brick.
+- *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
+  cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
+  corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
+
 ## Open questions
 
 1. **The materials library.** Which manufacturers' data sheets can be used, and how they are
