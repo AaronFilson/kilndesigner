@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import Literal
 
 import numpy as np
 
@@ -146,10 +147,13 @@ def stations(kiln: Kiln) -> list[tuple[float, float]]:
     return out
 
 
-def along_statics(kiln: Kiln, *, framed: bool = False) -> tuple[list[Step], list[Finding]]:
+def along_statics(
+    kiln: Kiln, *, framed: bool | Literal["building"] = False
+) -> tuple[list[Step], list[Finding]]:
     """The section at stations, and Heyman's statics of the arch along the depth and its end
     walls: the working and the findings. ``framed``: a steel frame on the end walls holds the
-    thrust (frame.py), so the end walls' findings say so."""
+    thrust (frame.py), so the end walls' findings say so; ``"building"``: the frame holds it only
+    while building, so the end walls' own statics are what stands in service."""
     from kilndesigner.frame import steel_data
 
     whole = along_arch(kiln, "in")
@@ -259,10 +263,36 @@ FRAMED = (
 )
 
 
-def _end_finding(end: Sheet, which: str, framed: bool = False) -> Finding:
+MORTARED = (
+    "In service the design takes the end walls as held by the mortared masonry and the platform "
+    "the kiln is built into (roof.building_frame, the designer's reason); no source here "
+    "quantifies the restraint mortar or a platform gives a wall, so that is the design's "
+    "judgment, not a check. The frame holds the arch while it is built and the mortar sets"
+)
+
+
+def _end_finding(end: Sheet, which: str, framed: bool | Literal["building"] = False) -> Finding:
     x_r, e, x_3 = (end.env[n] / 0.0254 for n in ("x_R", "e", "x_3"))
     check = end.check()
     holds = check.status == "pass"
+    if framed == "building":
+        return Finding(
+            level="info",
+            message=(
+                f"{which}, standing on its own, "
+                + (
+                    f"holds the arch's cold thrust, the resultant {x_r:.1f} in into its {e:g} in "
+                    "base, within its middle third"
+                    if holds
+                    else "can't hold the arch's cold thrust by its own weight: the resultant "
+                    f"would meet its base {x_r:.1f} in in from the inside, "
+                    + ("past the wall" if x_r > e else f"past its middle third, {x_3:.1f} in")
+                )
+                + f". {MORTARED}."
+            ),
+            reference=f"{end.reference}; {BRACING}",
+            check=check,
+        )
     if framed:
         return Finding(
             level="info",

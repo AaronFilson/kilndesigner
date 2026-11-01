@@ -1758,7 +1758,7 @@ export function DesignForm({
                   units={LENGTH}
                   onChange={(v) => change(["roof", "front_springline"], v)}
                 />
-                {!roof.buttressed && (
+                {(!roof.buttressed || roof.building_frame) && (
                   <Quantity
                     label="Frame's tie rods above the roof's crown (blank: at the crown)"
                     value={roof.rods_above_crown}
@@ -1791,12 +1791,36 @@ export function DesignForm({
             <input
               type="checkbox"
               checked={roof.buttressed ?? false}
-              onChange={(e) => change(["roof", "buttressed"], e.target.checked || undefined)}
+              onChange={(e) =>
+                e.target.checked
+                  ? change(["roof", "buttressed"], true)
+                  : change(
+                      ["roof"],
+                      roof.type === "sprung_arch"
+                        ? { ...roof, buttressed: undefined, building_frame: undefined }
+                        : { ...roof, buttressed: undefined },
+                    )
+              }
             />
             Buttressed: the thrust is carried by masonry or earth, not steel (Olsen p.53, p.186);
             no steel is sized
           </label>
         )}
+        {roof.type === "sprung_arch" &&
+          roof.buttressed &&
+          chambers === 1 &&
+          !roof.tube &&
+          outline === undefined && (
+            <label className="check">
+              <input
+                type="checkbox"
+                checked={roof.building_frame ?? false}
+                onChange={(e) => change(["roof", "building_frame"], e.target.checked || undefined)}
+              />
+              Steel for building only: a frame holds the arch while the mortar sets, and is sized and
+              listed; in service the mortared masonry holds it
+            </label>
+          )}
         {roof.type === "catenary_arch" && (
           <p className="muted section-note">
             The arch springs from the floor and is the side walls too, so the door, the burners and

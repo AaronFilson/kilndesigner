@@ -66,6 +66,8 @@ export interface KilnDocument {
         ties?: "rigid" | "springs";
         spring_rate?: string;
         buttressed?: boolean;
+        /** With buttressed: the steel frame for building only (model.py SprungArch.building_frame). */
+        building_frame?: boolean;
         /** Chambers in a row under one vault spanning the width (model.py SprungArch.tube). */
         tube?: boolean;
         /** One chamber's arch spanning its depth, along the draft (model.py SprungArch.along). */

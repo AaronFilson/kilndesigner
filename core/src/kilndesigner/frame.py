@@ -1225,7 +1225,63 @@ MULTI_RING = (
 )
 
 
-def _along_frame(kiln: Kiln) -> FrameDesign:
+BUILDING_FRAME = (
+    "the designer's reading: the steel holds the arch while it is built and the mortar sets, the "
+    "mortared masonry and the platform it is built into in service (roof.building_frame; Bowen "
+    "Mountain, the user, 2026-10-31). No source in docs/research quantifies the restraint mortar "
+    "or a platform gives an end wall"
+)
+
+
+def _building_frame(kiln: Kiln) -> FrameDesign:
+    """A sprung arch the masonry holds in service, its steel used while building only
+    (``roof.building_frame``): the frame is sized as the in-service one would be, the cautious
+    side for a cold arch on its form, and listed; the in-service working is the masonry's, its
+    walls' statics reported as they stand."""
+    assert isinstance(kiln.roof, SprungArch)
+    roof = kiln.roof.model_copy(update={"buttressed": False, "building_frame": False})
+    framed = kiln.model_copy(update={"roof": roof})
+    steel = _along_frame(framed, building=True) if roof.along else _design_frame(framed)
+    service = _held_by_masonry(kiln)
+    findings = [
+        f
+        if not f.message.startswith("Weld the frame")
+        else f.model_copy(
+            update={
+                "message": (
+                    "Weld the frame and fit it before the arch form comes out: it holds the arch "
+                    "while it is built and the mortar sets. In service the design takes the "
+                    "mortared masonry and its platform as holding the arch, and no check here "
+                    "counts on the steel."
+                )
+            }
+        )
+        for f in steel.findings
+    ]
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                "The frame is for building: it is sized for the arch's hot thrust, the cautious "
+                "side for a cold arch on its form, so it would also carry the arch fired if left "
+                "on. In service the roof is taken as buttressed by the mortared masonry and the "
+                "platform it is built into, the designer's reason; no source here quantifies "
+                "that restraint, so it is the design's judgment, not a check."
+            ),
+            reference=BUILDING_FRAME,
+        )
+    )
+    members = [m.model_copy(update={"part": f"{m.part}, for building"}) for m in steel.members]
+    return steel.model_copy(
+        update={
+            "members": members,
+            "working": [*steel.working, *service.working],
+            "findings": findings,
+        }
+    )
+
+
+def _along_frame(kiln: Kiln, *, building: bool = False) -> FrameDesign:
     """One chamber's arch along its depth (``roof.along``) held by steel: the sprung-arch frame
     turned to the arch's span. The end walls take the thrust, so the buttress angles lie across
     them at the springing between corner posts (and posts between, where the steel needs them),
@@ -1545,7 +1601,7 @@ def _along_frame(kiln: Kiln) -> FrameDesign:
                 reference="statics of a simple beam (derived); the user, 2026-10-31",
             )
         )
-    statics, found = along_statics(kiln, framed=True)
+    statics, found = along_statics(kiln, framed="building" if building else True)
     working += statics
     findings += found
     leg = chosen.leg
@@ -1851,6 +1907,8 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _unframed([], [])  # no roof, so no thrust to hold
     if kiln.chamber.shape == "round":
         return _round_frame(kiln)
+    if isinstance(kiln.roof, SprungArch) and kiln.roof.building_frame:
+        return _building_frame(kiln)
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
     if arches_along(kiln):

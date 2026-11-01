@@ -586,11 +586,19 @@ def test_a_heavy_arch_gets_posts_along_its_sides() -> None:
     assert parts["tie rods"].count == n
 
 
-def test_an_arch_too_heavy_for_posts_at_18_in_says_so() -> None:
+def test_an_arch_too_heavy_for_posts_at_18_in_says_so(monkeypatch: pytest.MonkeyPatch) -> None:
     """Two 9 in rings: even with posts 18 in apart, two brick lengths, the closest the engine
     sets, no listed angle or rod carries a bay's thrust. Each error's sheet says what would
-    pass."""
+    pass. The angles are cut to the table up to L4×4×3/8; with the larger ones only the rod
+    fails."""
     hard = {"material": "hard-firebrick-kx99", "thickness": "9 in"}
+    full = design_frame(_big_hard_arch([hard, hard], ring=2))
+    (only,) = [f for f in full.findings if f.level == "error"]
+    assert only.message.startswith("No rod up to 3/4-10")
+    import kilndesigner.frame as frame_module
+
+    upto = [a for a in frame_module.angles() if a.leg <= 4 and a.t <= 0.375]
+    monkeypatch.setattr(frame_module, "angles", lambda: upto)
     frame = design_frame(_big_hard_arch([hard, hard], ring=2))
     errors = [f for f in frame.findings if f.level == "error"]
     assert frame.posts == 6  # 90 in in five bays of 18 in

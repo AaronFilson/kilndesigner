@@ -576,6 +576,18 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   - any concrete foundation that holds up to frost and the elements will do for a kiln; 1800 psi is
     low grade and would hold most any kiln in the book (see concrete-foundations.md for what the
     codes ask).
+- The user's readings on the steel and the floor (the user, 2026-10-31):
+  - "there is probably no need for the steel after construction once the brick is mortared": the
+    kiln is mortared and built into its concrete platform, so in service the masonry holds the
+    arch and the steel is building support, holding the arch while the mortar sets
+    (`roof.buttressed: true`, `roof.building_frame: true`). No source in docs/research quantifies
+    the restraint mortar or a platform gives an end wall; the end walls' own statics are reported
+    as they stand (the resultant falls outside their 9 in base);
+  - the floor: the construction photo (Fig 4-154, p.128) shows 3 layers of brick off the platform;
+    the plan drawing (Fig 4-153) shows the floor about 6 in thick against the known 9 in arch, so
+    light-duty firebrick or insulating firebrick may have been used. Modelled as three 2½ in
+    courses of insulating firebrick laid flat, 7½ in, JM 28 as the walls (high-alumina for salt,
+    p.126). The ~6 in is a reading of the drawing, not a size.
 - Fig 4-154 by scale (rough, read by the agent, 2026-10-31): a flat segmental arch, its springings at
   different heights; by scale it rises only 10–13 in, against the drawing's 18 in (36 − 18), likely
   perspective, so the drawing's 36 in crown stays.
