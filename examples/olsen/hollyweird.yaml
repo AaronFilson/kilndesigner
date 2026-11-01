@@ -31,7 +31,7 @@
 # 6 in steps between the platforms; the insulating-brick transition under the domes; the three exit
 # flues from the front chamber across the second grate, and the 5 in air tube under it; the second
 # firebox's place between the chambers, entered at the front. The chimney's height isn't printed,
-# so the chimney isn't entered and the engine sizes it. The floor's loss into the ground.
+# so the chimney isn't entered and the engine sizes it.
 schema: 1
 name: Olsen's Hollyweird Tube
 units: us

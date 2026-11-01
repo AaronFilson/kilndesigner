@@ -84,6 +84,22 @@ def test_a_schedule_too_fast_for_the_elements_is_not_held(electric: Kiln) -> Non
     assert any("can't keep the schedule" in f.message for f in r.findings)
 
 
+def test_a_platform_puts_the_floor_into_the_ground(electric: Kiln) -> None:
+    platform = {
+        "material": "concrete",
+        "compressive_strength": "1800 psi",
+        "strength_source": "a test value",
+    }
+    short = [Ramp(to=Q_(600, "degC"), rate=Q_(300, "delta_degC/hour"))]
+    on_it = simulate(_example("electric-front-loader", **{"chamber.foundation": platform}),
+                     schedule=short, record=False).result  # fmt: skip
+    note = next(f for f in on_it.findings if "flue losses" in f.message)
+    assert "no specific heat" in note.message
+    assert note.reference is not None
+    stand = simulate(electric, schedule=short, record=False).result
+    assert on_it.shell_kwh != stand.shell_kwh
+
+
 def test_holds_and_cooling(electric: Kiln) -> None:
     schedule = [
         Ramp(to=Q_(600, "degC"), rate=Q_(300, "delta_degC/hour"), hold=Q_(30, "minute")),

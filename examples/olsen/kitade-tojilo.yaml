@@ -20,7 +20,7 @@
 # Not modelled: the other chambers. The firebox's roof slopes at 30° up to the chamber, 42 in
 # above the ash pit's bottom, with a 9 × 12 in flue inlet 12 in above the grate (Fig 8-11); the
 # inlets aren't counted, so they are left out, as are the two 12 × 18 in air holes in the
-# firebox's front. The floor's loss into the ground isn't worked out by the engine.
+# firebox's front. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kitade Tojilo chamber kiln, Kutani
 units: us

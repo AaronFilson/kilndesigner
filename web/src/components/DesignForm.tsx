@@ -1600,12 +1600,13 @@ export function DesignForm({
                   const next = setIn(doc, ["chamber", "chambers"], chambers + 1);
                   // Chambers in a row have their arches along the draft already
                   onChange(
-                    roof.type === "sprung_arch" && roof.along
+                    roof.type === "sprung_arch" && (roof.along || roof.crossing)
                       ? setIn(next, ["roof"], {
                           ...roof,
                           along: undefined,
                           front_springline: undefined,
                           rods_above_crown: undefined,
+                          crossing: undefined,
                         })
                       : next,
                   );
@@ -1764,7 +1765,7 @@ export function DesignForm({
                   change(
                     ["roof"],
                     e.target.checked
-                      ? { ...roof, along: true }
+                      ? { ...roof, along: true, crossing: undefined }
                       : {
                           ...roof,
                           along: undefined,
@@ -1824,7 +1825,7 @@ export function DesignForm({
                   : change(
                       ["roof"],
                       roof.type === "sprung_arch"
-                        ? { ...roof, buttressed: undefined, building_frame: undefined }
+                        ? { ...roof, buttressed: undefined, building_frame: undefined, crossing: undefined }
                         : { ...roof, buttressed: undefined },
                     )
               }
@@ -1847,6 +1848,70 @@ export function DesignForm({
               Steel for building only: a frame holds the arch while the mortar sets, and is sized and
               listed; in service the mortared masonry holds it
             </label>
+          )}
+        {roof.type === "sprung_arch" &&
+          roof.buttressed &&
+          chambers === 1 &&
+          !round &&
+          !roof.tube &&
+          !roof.along &&
+          outline === undefined &&
+          doc.chamber.slope === undefined &&
+          doc.chamber.bend === undefined &&
+          fire !== undefined &&
+          gas === undefined &&
+          electric === undefined && (
+            <>
+              <label className="check">
+                <input
+                  type="checkbox"
+                  checked={roof.crossing !== undefined}
+                  onChange={(e) =>
+                    change(
+                      ["roof", "crossing"],
+                      e.target.checked
+                        ? { span: doc.chamber.depth, rise: roof.rise, length: doc.chamber.width }
+                        : undefined,
+                    )
+                  }
+                />
+                A second vault crosses this one side to side, the two meeting in a groin over the
+                fire zone (Olsen's multi-directional kilns, Ch. 7)
+              </label>
+              {roof.crossing !== undefined && (
+                <>
+                  <Quantity
+                    label="Crossing vault's span, front to back"
+                    value={roof.crossing.span}
+                    units={LENGTH}
+                    onChange={(v) => change(["roof", "crossing", "span"], v)}
+                  />
+                  <Quantity
+                    label="Crossing vault's rise (at most half its span)"
+                    value={roof.crossing.rise}
+                    units={LENGTH}
+                    onChange={(v) => change(["roof", "crossing", "rise"], v)}
+                  />
+                  <Quantity
+                    label="Crossing vault's length, side to side (at least the chamber's width)"
+                    value={roof.crossing.length}
+                    units={LENGTH}
+                    onChange={(v) => change(["roof", "crossing", "length"], v)}
+                  />
+                  <Quantity
+                    label="Crossing vault's centreline, behind the front wall (blank: the middle)"
+                    value={roof.crossing.at}
+                    units={LENGTH}
+                    onChange={(v) => change(["roof", "crossing", "at"], v)}
+                  />
+                  <p className="muted section-note">
+                    Both vaults spring from the chamber's height. The whole front wall is the door;
+                    longer than the chamber is wide, the crossing's arms run out past the side
+                    walls, so the flue, fireboxes and spy holes go in the front or back wall.
+                  </p>
+                </>
+              )}
+            </>
           )}
         {roof.type === "catenary_arch" && (
           <p className="muted section-note">

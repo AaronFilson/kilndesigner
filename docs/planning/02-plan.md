@@ -485,6 +485,16 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
 - **Foundations:** block and cinder-block platforms (`concrete-foundations.md` C6–C10): no
   sourced temperature limit found, so a block platform is checked as cast concrete; still to get
   TMS 216 / ACI 216.1, EN 1996-1-2 Annex D, NCMA TEK 6-2C and ACI 122R for block conductivity.
+- **Option needing a source: a vented block platform** (`concrete-foundations.md` C8 [C12]):
+  hollow block laid with its cores horizontal and open so air moves through, a kiln-builders'
+  practice known only from a forum thread. Not modelled: it needs a sourced way to work out the
+  heat the moving air carries off (a correlation for natural convection through horizontal
+  open cores heated from above, or a measured kiln floor on such a course), and the block's
+  conductivity above. Until then a platform is solid concrete on dry soil, the side that
+  over-states the heat reaching the ground and the platform's top.
+- **Concrete's specific heat** (EN 1992-1-2 §3.3.2, not yet recorded): wanted so the firing
+  simulation can carry a platform's own layer; today the simulation's floor goes into dry soil
+  without it.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
   proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"

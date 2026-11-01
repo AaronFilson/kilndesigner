@@ -22,8 +22,8 @@
 # no steel frame on them.
 # Not modelled: the other six chambers' own sizes, the main firebox and the steps between
 # chambers. The engine's arch spans the width, so it is laid across the 25 ft with the same
-# springline and crown; held by masonry, it gets no steel. The floor's loss into the ground isn't
-# worked out by the engine.
+# springline and crown; held by masonry, it gets no steel. The floor's loss into dry soil is
+# worked out at steady state.
 schema: 1
 name: Tobe Village climbing kiln, Shikoku
 units: us

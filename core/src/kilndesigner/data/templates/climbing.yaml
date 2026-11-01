@@ -24,7 +24,7 @@
 # out and 9 × 4½ to 9 × 6 in in, 9 in apart (Fig 4-28), whose count isn't given. The engine's arch
 # spans the width, so it is laid across the 63 in with the same springline and crown; held by
 # masonry, it gets no steel. The doors are in a side wall; a sprung arch here springs from the
-# side walls, so the door is put in the front wall. The floor's loss into the ground isn't worked out by the engine.
+# side walls, so the door is put in the front wall. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kyoto-style climbing kiln (type)
 units: us

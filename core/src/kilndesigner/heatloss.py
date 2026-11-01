@@ -152,8 +152,10 @@ def heat_loss(
 
     fire = kiln.heat.fire
     over_fire = fire is not None and any(fb.position == "under" for fb in fire.fireboxes)
-    grounded = kiln.chamber.on_ground and not over_fire
     found = kiln.chamber.foundation
+    # A platform stands on the ground, so its floor loses heat into the soil, given its thickness
+    # or not (without it the platform's own layer is left out)
+    grounded = (kiln.chamber.on_ground or found is not None) and not over_fire
 
     def _check_layers(face: Face, layers: list[Layer], temps: Sequence[float]) -> list[LayerResult]:
         """Each layer's temperatures, its rating and its k data checked; the results."""
@@ -237,7 +239,7 @@ def heat_loss(
             _check_layers(shape.face, layers, temps)
             continue
         on_slab = platform is not None and platform.thickness is not None
-        if (grounded or on_slab) and floor:
+        if grounded and floor:
             # A disk on a semi-infinite medium, S = 2D (thermal-properties.md §8.1): per unit
             # area h = 2D·k/(πD²/4) = 8k/(πD), D the disk of the floor's outside area
             ground_d = sqrt(4 * shape.area_at(thickness) / pi)
@@ -317,6 +319,22 @@ def heat_loss(
                 reference=METHOD_SOURCE,
             )
         )
+        if floor and grounded:
+            working.append(
+                Step(
+                    name="The ground's top face under the " + ("platform" if on_slab else "floor"),
+                    value=show(Q_(result.surface, "K"), temp_unit),
+                    formula="T_s from Q = A_out·h_g·(T_s − T∞), h_g the ground's (above)",
+                    reference=GROUND_SOURCE,
+                    note=(
+                        "Where the "
+                        + ("platform's underside" if on_slab else "floor's outside")
+                        + " meets the soil, at steady state in dry soil; the ground far off is "
+                        "taken at the air's temperature. Damp ground, or early in a firing, takes "
+                        "more heat and runs cooler here."
+                    ),
+                )
+            )
 
     for material_id, (_, check, message) in over.items():
         where = ", ".join(faces_over[material_id])
@@ -391,6 +409,11 @@ def heat_loss(
                     "The floor is built on the ground: its loss is worked out as a disk on dry "
                     "soil at steady state. Early in a firing cold ground takes more, about twice "
                     "as much at 12 hours, and wet ground more again."
+                    + (
+                        " The platform's thickness isn't given, so its own layer is left out."
+                        if found is not None and found.thickness is None
+                        else ""
+                    )
                 ),
                 reference=GROUND_SOURCE,
             )

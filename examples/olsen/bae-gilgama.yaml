@@ -28,7 +28,7 @@
 # entered (a brick on end, 9 in high). The chimney is entered at the printed 8 ft; the engine
 # measures a climbing kiln's chimney from the floor at the firing end, so its top is understated
 # by the floor's rise to it, about 32 in. Its section isn't printed: engine default. The sealing
-# for black ware. The floor's loss into the ground, which the engine doesn't work out.
+# for black ware. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Mr Bae's gilgama
 units: us
