@@ -23,8 +23,7 @@
 # brick arch with nine 5 × 5 × 5 × 7 in holes a row, or ring arches 4½ in apart: no size), the 2 ft
 # space between it and the bag wall, and the greenware checkerboard bag wall. The two chimneys
 # each side of the back door, built since the kilns' "rebirth" (p.110): no sizes. The fall in
-# temperature along the tunnel; the floor's tiers, and its loss into the ground, which the engine
-# doesn't work out.
+# temperature along the tunnel; the floor's tiers. Its loss into dry soil is worked out at steady state.
 schema: 1
 name: La Borne tunnel kiln
 units: us

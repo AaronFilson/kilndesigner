@@ -22,8 +22,7 @@
 # width, so it is laid across the 4.3 m with the same springline and crown; held by masonry, it
 # gets no steel. The doors are in the side walls; a sprung arch here springs from the side
 # walls, so the door is put in the front wall. The chambers' cones differ (7 is bisque, "Δ1");
-# the kiln is worked out at the hottest, cone 10. The floor's loss into the ground isn't worked
-# out by the engine.
+# the kiln is worked out at the hottest, cone 10. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Suzuki cooperative climbing kiln, Kyoto
 units: metric

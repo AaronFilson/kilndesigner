@@ -19,8 +19,7 @@
 # given, so the engine sizes them, and the steel that holds the arch: the book shows no buttress.
 # Not modelled: the other chambers and any main firebox; the oil-drip system, six drip channels
 # (p.208), since a design here burns one fuel in its fireboxes; the channel's 12 in height, the
-# 9 × 4½ in inlet flues, whose count isn't given, and the side stoke hole. The floor's loss into
-# the ground isn't worked out by the engine.
+# 9 × 4½ in inlet flues, whose count isn't given, and the side stoke hole. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Les Blakebrough's chamber kiln, Sturt Pottery
 units: us

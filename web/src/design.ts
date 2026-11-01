@@ -76,6 +76,8 @@ export interface KilnDocument {
         front_springline?: string;
         /** With along: the frame's tie rods' height over the roof's crown (model.py SprungArch). */
         rods_above_crown?: string;
+        /** A second vault crossing at right angles, side to side (model.py Crossing). */
+        crossing?: { span: string; rise: string; length: string; at?: string };
       }
     | { type: "catenary_arch"; buttressed?: boolean }
     | { type: "dome"; rise: string; crown_at?: string; ring?: number; buttressed?: boolean };

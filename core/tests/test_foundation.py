@@ -153,3 +153,29 @@ def test_a_platform_needs_its_strength_and_its_source() -> None:
                 }
             )
         )  # fmt: skip
+
+
+def test_a_platform_puts_the_floor_on_the_ground_even_without_its_thickness() -> None:
+    loss = heat_loss(load_design(BOWEN))  # a platform with no thickness, on_ground not set
+    names = [s.name for s in loss.working]
+    assert "Ground under the floor" in names
+    assert "The ground's top face under the floor" in names
+    assert "Platform under the floor" not in names
+    assert any("its own layer is left out" in f.message for f in loss.findings)
+
+
+def test_the_ground_under_a_platform_is_shown_below_it() -> None:
+    loss = heat_loss(_bowen_on("6 in"))
+    under = next(s for s in loss.working if s.name.startswith("The ground's top face"))
+    assert under.name.endswith("under the platform")
+    assert "underside" in (under.note or "")
+
+
+def test_other_roofs_still_get_the_platforms_top_face() -> None:
+    data = yaml.safe_load((EXAMPLES / "electric-front-loader.yaml").read_text(encoding="utf-8"))
+    data["chamber"]["foundation"] = {**PLATFORM, "thickness": "6 in"}
+    kiln = parse_design(yaml.safe_dump(data, allow_unicode=True))
+    steps, findings = platform_bearing(kiln)
+    assert steps[0].name == "The concrete platform's top face"
+    assert "sprung arch only" in findings[0].message
+    assert any(f.check and f.check.id == "foundation.top-temperature" for f in findings)

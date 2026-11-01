@@ -20,8 +20,7 @@
 # The firebox the 2 × 2 ft as its width and length. The chimney, the exit flue and the door: engine
 # default.
 # Not modelled: the hill around the kiln. The walls and roof are counted as losing heat to the air
-# through 9 in of fired clay, not into the earth, and the floor's loss into the ground isn't worked
-# out. The tube's taper into the chimney flue. The fired clay has no service limit, so its
+# through 9 in of fired clay, not into the earth; the floor's loss goes into dry soil at steady state. The tube's taper into the chimney flue. The fired clay has no service limit, so its
 # temperature isn't checked.
 schema: 1
 name: Anagama dug into a clay hill

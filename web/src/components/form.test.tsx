@@ -1031,6 +1031,52 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(screen.queryByLabelText(/Buttressed/)).toBeNull();
   });
 
+  it("crosses a buttressed, wood-fired arch with a second vault, and drops it where it can't go", () => {
+    const wood: KilnDocument = {
+      ...electric,
+      chamber: { width: "48 in", depth: "60 in", height: "40 in" },
+      roof: { type: "sprung_arch", rise: "12 in" },
+      heat: { fire: { fuel: "wood", fireboxes: [{ position: "front", width: "24 in", length: "24 in" }] } },
+    };
+    const last = live(wood);
+    const crossing = /A second vault crosses this one/;
+    // Only over a buttressed arch: the model refuses steel round a groin
+    expect(screen.queryByLabelText(crossing)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    fireEvent.click(screen.getByLabelText(crossing));
+    expect((last().roof as Record<string, unknown>).crossing).toEqual({
+      span: "60 in",
+      rise: "12 in",
+      length: "48 in",
+    });
+    set("Crossing vault's span, front to back", "30");
+    set("Crossing vault's rise (at most half its span)", "15");
+    set("Crossing vault's length, side to side (at least the chamber's width)", "72");
+    set("Crossing vault's centreline, behind the front wall (blank: the middle)", "24");
+    expect((last().roof as Record<string, unknown>).crossing).toEqual({
+      span: "30 in",
+      rise: "15 in",
+      length: "72 in",
+      at: "24 in",
+    });
+    fireEvent.click(screen.getByLabelText(crossing));
+    expect((last().roof as Record<string, unknown>).crossing).toBeUndefined();
+    // Along the draft, unbuttressed or a second chamber: the crossing goes
+    fireEvent.click(screen.getByLabelText(crossing));
+    fireEvent.click(screen.getByLabelText(/The arch spans the depth/));
+    expect((last().roof as Record<string, unknown>).crossing).toBeUndefined();
+    expect(screen.queryByLabelText(crossing)).toBeNull();
+    fireEvent.click(screen.getByLabelText(/The arch spans the depth/));
+    fireEvent.click(screen.getByLabelText(crossing));
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    expect((last().roof as Record<string, unknown>).crossing).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(/Buttressed/));
+    fireEvent.click(screen.getByLabelText(crossing));
+    fireEvent.click(screen.getByRole("button", { name: "Add a chamber" }));
+    expect((last().roof as Record<string, unknown>).crossing).toBeUndefined();
+    expect(screen.queryByLabelText(crossing)).toBeNull();
+  });
+
   it("gives the site's height above sea level", () => {
     const last = live(electric);
     set("Height above sea level (blank: sea level)", "5000");
