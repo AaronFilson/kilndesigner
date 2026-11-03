@@ -227,6 +227,8 @@ export interface Burners {
   model?: string;
   rating?: string;
   wall?: WallFace | "floor";
+  /** Two or more walls the burners are shared between, in place of `wall`. */
+  walls?: WallFace[];
   port?: Port;
   up?: string;
   places?: Place[];

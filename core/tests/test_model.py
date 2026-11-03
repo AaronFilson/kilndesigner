@@ -158,6 +158,7 @@ def test_each_castable_needs_its_own_id() -> None:
     ("change", "what", "wall"),
     [
         ((BURNER_PLACES, "wall: left"), "the burners", "left"),
+        ((BURNER_PLACES, "walls: [back, right]"), "the burners", "right"),
         ((BURNER_PLACES, ONE_BURNER_RIGHT), "a burner", "right"),
         (("face: front", "face: left"), "the door or car", "left"),
         ((CROSS_DRAFT, "type: cross\n  flue_wall: right"), "the flue", "right"),

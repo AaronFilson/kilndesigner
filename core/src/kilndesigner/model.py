@@ -922,6 +922,15 @@ class Burners(Spec):
             "ports round the edge of the floor"
         ),
     )
+    walls: list[WallFace] | None = Field(
+        default=None,
+        min_length=2,
+        description=(
+            "Two or more walls the burners fire through, for example [left, right]: the burners "
+            "are shared between them in the order given, as evenly as the count allows, and "
+            "spread evenly along each. Give this or wall, not both"
+        ),
+    )
     port: Port | None = Field(
         default=None,
         description="The burner ports' size. Left out: the size the burner's sources give",
@@ -950,6 +959,15 @@ class Burners(Spec):
                 "floor burners are spaced round the edge of the floor for you: give their count, "
                 "not their places"
             )
+        if self.walls is not None:
+            if "wall" in self.model_fields_set:
+                raise ValueError("give the burners' wall or their walls, not both")
+            if self.places is not None:
+                raise ValueError(
+                    "the burners' places say which wall each is in: give places or walls, not both"
+                )
+            if len(set(self.walls)) != len(self.walls):
+                raise ValueError("name each of the burners' walls once")
         if self.rating is not None and self.wanted is None:
             raise ValueError("give the count of burners with their rating")
         if self.rating is not None and self.model is not None:
@@ -965,6 +983,17 @@ class Burners(Spec):
         if self.count is not None:
             return self.count
         return len(self.places) if self.places is not None else None
+
+    @property
+    def spread_over(self) -> list[WallFace | Literal["floor"]]:
+        """The walls (or the floor) the burners are spread over when not placed one by one."""
+        return list(self.walls) if self.walls is not None else [self.wall]
+
+    def shares(self, count: int) -> list[int]:
+        """How many of ``count`` burners each of the walls takes: as evenly as it divides, the
+        first walls named taking one more when it doesn't."""
+        n = len(self.spread_over)
+        return [count // n + (1 if i < count % n else 0) for i in range(n)]
 
 
 class SpyHoles(Spec):
@@ -1539,7 +1568,7 @@ class Kiln(Spec):
             gas = self.heat.gas
             if gas is not None:
                 if gas.burners.places is None:
-                    walls.append(("the burners", gas.burners.wall))
+                    walls += [("the burners", w) for w in gas.burners.spread_over]
                 for p in gas.burners.places or []:
                     walls.append(("a burner", p.wall))
             for p in (self.spy_holes.places if self.spy_holes else None) or []:

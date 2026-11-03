@@ -190,6 +190,61 @@ def test_burners_go_where_they_are_placed_and_number_one_a_place() -> None:
     assert burner.cylinders[0].axis == 0  # fires across the kiln
 
 
+def test_burners_can_be_spread_over_both_side_walls() -> None:
+    """Olsen's kilns often fire from both sides (Blakebrough's from back and front, p.149)."""
+    b4 = {"model": "Ransome B4", "count": 4, "walls": ["left", "right"]}
+    hw, _, report = _gas(heat__gas__burners=b4)
+    assert report.gas is not None
+    assert report.gas.burners is not None
+    assert report.gas.burners.count == 4
+    spots = _spots(hw, "burner")
+    assert [s[0] for s in spots] == ["left", "left", "right", "right"]
+    # Spread evenly along each 48 in side wall: a quarter and three quarters along
+    assert sorted(abs(s[1]) for s in spots) == pytest.approx([12, 12, 12, 12])
+    assert {s[1] for s in spots if s[0] == "left"} == {-12, 12}
+    assert not _errors(hw)
+    shared = [f.message for f in hw.findings if "shared between the walls" in f.message]
+    assert shared == [
+        "The 4 burners are shared between the walls in the order named: 2 in the left wall, "
+        "2 in the right wall."
+    ]
+
+
+def test_an_uneven_share_goes_to_the_first_walls_named_and_is_said() -> None:
+    hw, _, _ = _gas(heat__gas__burners={"count": 3, "walls": ["right", "back", "left"]})
+    assert [s[0] for s in _spots(hw, "burner")] == ["right", "back", "left"]
+    hw, _, _ = _gas(
+        heat__gas__burners={"model": "Ransome B4", "count": 3, "walls": ["left", "right"]}
+    )
+    assert [s[0] for s in _spots(hw, "burner")] == ["left", "left", "right"]
+    assert any("a multiple of 2 to share them equally" in f.message for f in hw.findings)
+    hw, _, _ = _gas(
+        heat__gas__burners={"model": "Ransome B4", "count": 1, "walls": ["left", "right"]}
+    )
+    assert [s[0] for s in _spots(hw, "burner")] == ["left"]
+    assert any(
+        "The right wall gets none: set burners.count to at least 2" in f.message
+        for f in hw.findings
+    )
+
+
+@pytest.mark.parametrize(
+    ("burners", "error"),
+    [
+        ({"wall": "left", "walls": ["left", "right"]}, "wall or their walls, not both"),
+        ({"walls": ["left", "left"]}, "each of the burners' walls once"),
+        ({"walls": ["left"]}, "at least 2"),
+        (
+            {"walls": ["left", "right"], "places": [{"wall": "left", "up": "6 in"}]},
+            "give places or walls, not both",
+        ),
+    ],
+)
+def test_burner_walls_are_checked(burners: dict[str, object], error: str) -> None:
+    with pytest.raises(ValueError, match=error):
+        _gas(heat__gas__burners=burners)
+
+
 def test_a_count_and_places_must_agree() -> None:
     with pytest.raises(ValueError, match="a place for each of the 2 burners"):
         _gas(heat__gas__burners={"count": 2, "places": [{"wall": "front", "up": "6 in"}]})

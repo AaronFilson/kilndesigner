@@ -561,6 +561,48 @@ function Places({
   );
 }
 
+/** The wall, the floor, or several walls the burners are spread over. Several walls are kept as
+ * `walls` (two or more, in the order the walls are listed), one wall as `wall`. */
+function BurnerWalls({ burners, onChange }: { burners: Burners; onChange: (next: Burners) => void }) {
+  const several = burners.walls != null;
+  const one = (wall: WallFace | "floor"): Burners => ({ ...burners, walls: undefined, wall });
+  return (
+    <>
+      <Choice
+        label="Burners fire through"
+        value={several ? "several" : (burners.wall ?? "front")}
+        options={[...faceOptions, ["several", "Several walls"], ["floor", "The floor (an updraft)"]]}
+        onChange={(v) => {
+          if (v !== "several") onChange(one(v));
+          else if (!several) {
+            const first = burners.wall && burners.wall !== "floor" ? burners.wall : "left";
+            const pair: WallFace = first === "left" ? "right" : first === "right" ? "left" : first === "front" ? "back" : "front";
+            onChange({ ...burners, wall: undefined, walls: WALLS.filter((w) => w === first || w === pair) });
+          }
+        }}
+      />
+      {several && (
+        <fieldset className="checks" aria-label="Walls the burners fire through">
+          {WALLS.map((w) => (
+            <label key={w} className="check">
+              <input
+                type="checkbox"
+                checked={burners.walls?.includes(w) ?? false}
+                onChange={(e) => {
+                  const next = WALLS.filter((x) => (x === w ? e.target.checked : burners.walls?.includes(x)));
+                  // One wall left is no longer "several"
+                  onChange(next.length >= 2 ? { ...burners, walls: next } : one(next[0] ?? "front"));
+                }}
+              />
+              {FACE_WORDS[w]}
+            </label>
+          ))}
+        </fieldset>
+      )}
+    </>
+  );
+}
+
 const SIDES: (WallFace | "floor" | undefined)[] = ["left", "right"];
 
 /** A catenary is its own side walls: the door goes to the front, the burners there too, and the
@@ -568,8 +610,19 @@ const SIDES: (WallFace | "floor" | undefined)[] = ["left", "right"];
 function offTheSides(doc: KilnDocument): KilnDocument {
   let next = doc;
   if (SIDES.includes(doc.loading?.face)) next = setIn(next, ["loading", "face"], "front");
-  if (doc.heat.gas && SIDES.includes(doc.heat.gas.burners?.wall)) {
+  const burners = doc.heat.gas?.burners;
+  if (burners && SIDES.includes(burners.wall)) {
     next = setIn(next, ["heat", "gas", "burners", "wall"], "front");
+  }
+  if (burners?.walls?.some((w) => SIDES.includes(w))) {
+    const kept = burners.walls.filter((w) => !SIDES.includes(w));
+    next = setIn(
+      next,
+      ["heat", "gas", "burners"],
+      kept.length >= 2
+        ? { ...burners, walls: kept }
+        : { ...burners, walls: undefined, wall: kept[0] ?? "front" },
+    );
   }
   if (doc.draft && SIDES.includes(doc.draft.flue_wall)) next = setIn(next, ["draft", "flue_wall"], "back");
   return next;
@@ -619,7 +672,7 @@ function Ports({
             label="Burner ports go"
             value={burners.places ? "placed" : "spread"}
             options={[
-              ["spread", "Spread evenly along one wall"],
+              ["spread", "Spread evenly along the walls chosen under Heat"],
               ["placed", built("burner") || burners.places ? "Each where it's placed" : placedLater],
             ]}
             disabled={built("burner") || burners.places ? [] : ["placed"]}
@@ -2349,11 +2402,9 @@ export function DesignForm({
                     }
                   />
                 </Field>
-                <Choice
-                  label="Burners fire through"
-                  value={gas.burners?.wall ?? "front"}
-                  options={[...faceOptions, ["floor", "The floor (an updraft)"]]}
-                  onChange={(v) => change(["heat", "gas", "burners", "wall"], v)}
+                <BurnerWalls
+                  burners={gas.burners ?? {}}
+                  onChange={(next) => change(["heat", "gas", "burners"], next)}
                 />
               </>
             )}
