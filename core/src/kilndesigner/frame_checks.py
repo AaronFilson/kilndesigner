@@ -64,6 +64,25 @@ def _arch(s: Sheet, a: ArchInputs, *, weights: bool = False) -> None:
     s.let("r", "inside radius", "S/(2*sin(φ))", "in")
 
 
+RINGS_APART = (
+    "Sarhosis, De Santis and de Felice (2016) §3.4, mortar-and-brick-strength.md S6 [R10]: rings "
+    "laid one on another without headers act separately, ring separation cutting arch strength "
+    "33–71 % in tests (building brick under traffic: the reason, not a factor)"
+)
+
+
+def rings_apart(ring: int, bonded: bool) -> str | None:
+    """What the statics say of a ring of several layers not bonded through: the inside layer
+    alone is checked as the ring that stands, the others its load; None for one ring, or bonded."""
+    if ring <= 1 or bonded:
+        return None
+    return (
+        f"The ring's {ring} layers aren't bonded through (roof.rings_bonded), so the ring that "
+        f"stands is the inside layer alone, the {ring - 1} over it its load: {RINGS_APART}. The "
+        "thrust on the steel and walls is still worked from the whole ring's weight and depth."
+    )
+
+
 CAPPED = (
     "HarbisonWalker's largest printed heated-arch factor, used where its method gives no finite "
     "hot thrust (the ring too thick for its rise): the frame's give limits it instead, as in "

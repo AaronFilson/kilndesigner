@@ -516,6 +516,11 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   "maximum mean temperature" per grade is the first maker's rule tying load to temperature.
 - *Hot strength of dense brick (partial):* hot MOR 530 psi at 1350 °C for a 42 % alumina brick
   (Bureau of Mines 1984); hot crushing 24–34 MPa to 1000 °C for one alumina-spinel brick.
+- *In the engine (2026-11-03):* the door arch's springing and a flat roof's ends slide at the
+  hot 0.50 (every material named where it isn't Oliveira's tested brick: IFB, fireclay,
+  castable); a ring of several layers stands as its inside layer alone unless
+  `roof.rings_bonded` (form checkbox too), the thrust still from the whole ring. Bowen Mountain:
+  3.7 times the thinnest ring (7.0 as one), still passing. No golden number moved.
 - *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
   cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
   corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.

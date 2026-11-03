@@ -12,7 +12,7 @@ arch springs, as a buttress holding the arch's thrust and half its weight (frame
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Literal
 
 import numpy as np
@@ -21,6 +21,7 @@ from kilndesigner.frame_checks import (
     ArchInputs,
     Layer,
     hot_thrust_line,
+    rings_apart,
     vault_end_wall,
     vault_end_wall_uneven,
     vault_ring,
@@ -194,8 +195,11 @@ def along_statics(
     minimum = steel_data()["arch_minimum_thickness"]
     phi = math.degrees(arch.half_angle)
     eta = float(np.interp(phi, minimum["half_angle_deg"], minimum["eta"]))
-    ring = vault_ring(a, eta, minimum["safety"], minimum["source"])
-    t = sum(x.thickness for x in a.layers[: a.ring])
+    # Unbonded rings act separately (S6 [R10]): the inside ring alone stands, the rest its load
+    assert isinstance(kiln.roof, SprungArch)
+    alone = replace(a, ring=kiln.roof.acting_ring)
+    ring = vault_ring(alone, eta, minimum["safety"], minimum["source"])
+    t = sum(x.thickness for x in alone.layers[: alone.ring])
     k = t / (arch.radius + t / 2) / eta
     ring.agrees("k", k)
     line = hot_thrust_line(a)
@@ -220,6 +224,8 @@ def along_statics(
         notes.append(f"The ring: {TRUNCATED}.")
     if cut:
         notes.append(f"The door: {THINNER}, {cut:.2f} in.")
+    if (separate := rings_apart(kiln.roof.ring, kiln.roof.rings_bonded)) is not None:
+        notes.append(separate)
     working.append(
         Step(
             name="The arch along the depth: Heyman's statics",

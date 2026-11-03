@@ -446,7 +446,7 @@ DESIGN_WORD = "the design"
 
 def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     from kilndesigner.castable import resolve_material
-    from kilndesigner.frame import FRICTION, steel_data
+    from kilndesigner.frame import LOOSE, joint_friction, steel_data
     from kilndesigner.frame_checks import (
         DoorArchInputs,
         Layer,
@@ -597,7 +597,24 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
     k = ring / (r + ring / 2) / eta
     standing.agrees("k", k)
     holding = door_jamb(da)
-    sliding = door_slide(da, FRICTION, SLIDE_SOURCE)
+    # The springing's joint is in the wall's brick, hot in firing (S1 [R1])
+    joint = joint_friction(
+        kiln,
+        [
+            x.material
+            for x in kiln.lining.for_face(face)
+            if resolve_material(kiln, x.material).kind not in LOOSE
+        ],
+    )
+    sliding = door_slide(da, joint.mu, f"{joint.source}; {SLIDE_SOURCE}")
+    if joint.untested:
+        out.findings.append(
+            Finding(
+                level="info",
+                message=f"The door arch's springing: {joint.note}",
+                reference=joint.source,
+            )
+        )
     x_r, x_3 = (holding.env[n] / 0.0254 for n in ("x_R", "x_3"))
     mu_need = sliding.env["μ_need"]
     out.working.append(
@@ -608,7 +625,7 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 f"its thrust {least:.0f} lb at least, {most:.0f} lb at most; on the {jamb:.1f} in "
                 f"jamb the resultant {x_r:.1f} in in from the door's edge (its middle third to "
                 f"{x_3:.1f} in); at the springing it needs friction {mu_need:.2f} of "
-                f"{FRICTION:g}"
+                f"{joint.mu:g}"
             ),
             formula=(
                 "k = d/(r + d/2) ÷ η(90°) ≥ 2; H_min ≤ H_max, each the loads' moment about the "
@@ -630,9 +647,7 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                 "a little lets the arch settle to its least thrust, so that is what it must hold "
                 "(Heyman). A hot arch held rigidly would push towards the most; a door arch's hot "
                 "thrust is not sourced (door-headers.md §D8). The whole wall over the arch is "
-                "taken to bear on it, BIA's safe side. Sliding uses BIA's friction between brick "
-                f"masonry units, {FRICTION:g}: for clay brick, none is sourced for insulating "
-                "firebrick or refractory joints (refractory-bearing.md §B4.1). "
+                f"taken to bear on it, BIA's safe side. Sliding: {joint.note} "
                 + (
                     f"The {corner} wall bonded into the jamb's end is counted for a length of the "
                     "jamb wall's thickness only (a design rule, door-headers.md §D9). "
@@ -666,7 +681,7 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
                         if sheet is standing
                         else f"The door arch's least thrust, {least:.0f} lb, over its "
                         f"{sliding.env['N'] / 4.4482216:.0f} lb load at the springing needs "
-                        f"friction {mu_need:.2f}, more than the {FRICTION:g} BIA gives for brick: "
+                        f"friction {mu_need:.2f}, more than the joint's {joint.mu:g}: "
                         "it could slide there. Load the arch more or narrow the door."
                         if sheet is sliding
                         else f"The door arch's thrust carries the resultant {x_r:.1f} in into "
@@ -719,9 +734,8 @@ def _arch_head(kiln: Kiln, w: float, out: DoorHead) -> None:
 
 ARCH_REFERENCE = "arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
 SLIDE_SOURCE = (
-    "BIA TN 31A: 'the coefficient of friction between the units composing a brick or tile masonry "
-    "arch is at least 0.60', stable against sliding if the resultant's angle to the joint's normal "
-    "is under the angle of friction (door-headers.md §D3.3; refractory-bearing.md §B4.1)"
+    "BIA TN 31A: stable against sliding if the resultant's angle to the joint's normal is under "
+    "the angle of friction (door-headers.md §D3.3; refractory-bearing.md §B4.1)"
 )
 BEARING_SOURCE = "refractory-bearing.md"
 BEARING_NOTE = (

@@ -17,7 +17,8 @@ from __future__ import annotations
 
 import itertools
 import math
-from dataclasses import dataclass
+from collections.abc import Sequence
+from dataclasses import dataclass, replace
 from functools import cache
 from importlib import resources
 from typing import Any
@@ -55,6 +56,7 @@ from kilndesigner.frame_checks import (
     hot_thrust_line,
     loose_ring,
     post_bending,
+    rings_apart,
     rise_rule,
     rod_stress,
     skewback_on_wall,
@@ -430,6 +432,7 @@ class DomeSlice:
     thickest: float  # HarbisonWalker's limit for the slice's rise (in)
     weight: float  # lb per inch of the walls it spans, every layer
     span: float = 0.0  # in: the symmetric arch's span (a curved plan's; the chamber's otherwise)
+    standing: float | None = None  # in: the ring that stands, unbonded rings apart (S6 [R10])
 
 
 CURVED_SLICE_SOURCE = (
@@ -489,6 +492,7 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
         for x in kiln.lining.for_face("roof")
     ]  # fmt: skip
     ring = sum(t for _, t in layers[: kiln.roof.ring])
+    alone = sum(t for _, t in layers[: kiln.roof.acting_ring])  # unbonded rings apart (S6 [R10])
     table = steel_data()["arch_minimum_thickness"]
     slices: list[DomeSlice] = []
     for y, half in cuts:
@@ -497,6 +501,7 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
         alpha = math.asin(min(1.0, span / 2 / inside))
         own_rise = inside * (1 - math.cos(alpha))
         thickness = math.sqrt((radius + ring) ** 2 - y**2) - inside
+        stands = math.sqrt((radius + alone) ** 2 - y**2) - inside
         eta = float(np.interp(math.degrees(alpha), table["half_angle_deg"], table["eta"]))
         weight, r = 0.0, radius
         for density, t in layers:  # each layer's slice: its thickness × centre radius × arc
@@ -505,8 +510,8 @@ def dome_slices(kiln: Kiln, rise: float | None = None, count: int = 21) -> list[
             r += t
         slices.append(
             DomeSlice(
-                y, thickness, alpha, own_rise, thickness / (inside + thickness / 2) / eta,
-                (own_rise - span / 48) / math.cos(alpha), weight, span,
+                y, thickness, alpha, own_rise, stands / (inside + stands / 2) / eta,
+                (own_rise - span / 48) / math.cos(alpha), weight, span, stands,
             )
         )  # fmt: skip
     return slices
@@ -626,13 +631,19 @@ def _dome_frame(kiln: Kiln) -> FrameDesign:
                 "Applying HarbisonWalker's rules for sprung arches to a dome's slices is an "
                 "assumption (domes-over-doors.md §D8). The door wall and the wall opposite carry "
                 "nothing."
+                + (
+                    f" {apart}"
+                    if (apart := rings_apart(kiln.roof.ring, kiln.roof.rings_bonded))
+                    else ""
+                )
             ),
         )
     )
     weak = min(slices, key=lambda s: s.factor)
     eta = float(np.interp(math.degrees(weak.half_angle), minimum["half_angle_deg"], minimum["eta"]))
-    standing = dome_factor(dm, weak.at, eta, minimum["safety"], minimum["source"])
-    standing.agrees("T", Q_(weak.thickness, "in"))
+    alone = replace(dm, ring=kiln.roof.acting_ring)  # unbonded rings apart (S6 [R10])
+    standing = dome_factor(alone, weak.at, eta, minimum["safety"], minimum["source"])
+    standing.agrees("T", Q_(weak.standing or weak.thickness, "in"))
     standing.agrees("φ", weak.half_angle)
     standing.agrees("k", weak.factor)
     if (check := standing.check()).status != "pass":
@@ -1219,9 +1230,10 @@ ALONG_FRAME = (
     "arch, read by the user from the construction photos (olsen-kilns.md, 2026-10-31)"
 )
 MULTI_RING = (
-    "the roof's ring layers taken as one ring, their thicknesses summed, as the engine takes any "
-    "ring of several layers (frame_checks: T = t_1 + t_2 + …); no source here checks whether "
-    "rings laid one on another without bond act as one"
+    "the roof's ring layers summed for the thrust (frame_checks: T = t_1 + t_2 + …); whether the "
+    "ring stands is checked on the inside layer alone unless roof.rings_bonded, as rings laid one "
+    "on another without headers act separately (Sarhosis et al. 2016 §3.4; "
+    "mortar-and-brick-strength.md S6 [R10])"
 )
 
 
@@ -2635,7 +2647,59 @@ roof (flat-roofs.md §4.1, §4.3, derived)."""
 FLAT_IFB_TOP_F = 2450.0
 """BNZ: suspended flat IFB roofs no hotter than 1345 °C, 2450 °F (flat-roofs.md §4.4 [F15])."""
 FRICTION = 0.60
-"""BIA's friction between brick masonry units (§2.2 [F2]); for IFB none is sourced."""
+"""BIA's friction between brick masonry units (§2.2 [F2]), cold; Oliveira et al. confirm it for
+dense refractory at 20 °C (μ 0.60, mortar-and-brick-strength.md S1 [R1]). Every joint the frame
+checks is hot in firing, so the checks take HOT_FRICTION."""
+HOT_FRICTION = 0.50
+"""Dry joints of dense refractory, hot: the least of Oliveira et al.'s 0.50, 0.51 and 0.53 at 300,
+600 and 900 °C (mortar-and-brick-strength.md S1 [R1])."""
+HOT_FRICTION_SOURCE = (
+    "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense "
+    "alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and "
+    "900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's "
+    "temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+)
+TESTED_HOT = ("alumina-spinel",)
+"""What Oliveira et al.'s hot friction was measured on: one dense 94 % alumina-spinel brick; a
+library material is taken as that brick only if its name says so."""
+
+
+@dataclass(frozen=True)
+class JointFriction:
+    """The friction a hot joint in a kiln's masonry is checked with, and the materials it wasn't
+    measured on."""
+
+    mu: float
+    source: str
+    untested: tuple[str, ...]  # materials no hot friction is measured for
+
+    @property
+    def note(self) -> str:
+        said = (
+            "The joint is hot in firing, so the friction is dense refractory's least hot value, "
+            f"{self.mu:.2f} (Oliveira et al. 2021), not BIA's cold {FRICTION:.2f}."
+        )
+        if not self.untested:
+            return said
+        return (
+            f"{said} It was measured on one dense alumina-spinel brick, 20–900 °C; none is "
+            f"measured hot for {' or '.join(self.untested)}, so the tested brick's value is "
+            "taken, unconfirmed for this material."
+        )
+
+
+def joint_friction(kiln: Kiln, materials: Sequence[str]) -> JointFriction:
+    """A hot dry joint's friction: Oliveira et al.'s least hot value for dense refractory, with
+    the materials it isn't measured for named (IFB, fireclay, castable: ADR 0009, said so)."""
+    from kilndesigner.castable import resolve_material
+
+    found = [resolve_material(kiln, m) for m in materials]
+    untested = tuple(
+        dict.fromkeys(m.name for m in found if not any(t in m.name.lower() for t in TESTED_HOT))
+    )
+    return JointFriction(HOT_FRICTION, HOT_FRICTION_SOURCE, untested)
+
+
 ROW_IN = 4.5  # a row of roof brick, as Merrill's: bricks on end, 4½ in across the row (§4.3)
 
 
@@ -2692,8 +2756,20 @@ def _flat_roof(kiln: Kiln, working: list[Step], findings: list[Finding]) -> floa
         )
     )
     roof = _roof_layers(kiln)
-    holding = flat_friction(span, roof, FRICTION, FLAT_SOURCE)
+    joint = joint_friction(kiln, [layers[0].material])
+    holding = flat_friction(span, roof, joint.mu, f"{FLAT_SOURCE}; μ: {joint.source}")
     holding.agrees("μ_need", 4 * depth / (3 * span))
+    working.append(
+        Step(
+            name="Flat roof: friction at its ends",
+            value=f"μ = {joint.mu:g}, needs {4 * depth / (3 * span):.2f}",
+            formula="μ ≥ 4d / 3S",
+            reference=joint.source,
+            note=joint.note,
+        )
+    )
+    if joint.untested:
+        findings.append(Finding(level="info", message=joint.note, reference=joint.source))
     if (check := holding.check()).status != "pass":
         findings.append(
             Finding.failed(
@@ -2701,9 +2777,8 @@ def _flat_roof(kiln: Kiln, working: list[Step], findings: list[Finding]) -> floa
                 message=(
                     f"The flat roof is {depth:g} in deep over {span:g} in: too deep for its span "
                     "to hold at its ends by friction. BIA's jack arches need the span more than "
-                    f"about 2.2 times the depth, at the friction of {FRICTION:g} it gives for "
-                    "brick (none is sourced for insulating firebrick). Make it thinner or use an "
-                    "arch."
+                    f"about {4 / (3 * joint.mu):.1f} times the depth at a friction of "
+                    f"{joint.mu:g}. Make it thinner or use an arch."
                 ),
             )
         )

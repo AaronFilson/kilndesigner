@@ -1864,8 +1864,24 @@ export function DesignForm({
               i + 1,
               i === 0 ? "1, the inside layer (the rest is its load)" : `${i + 1}, from the inside`,
             ])}
-            onChange={(v) => change(["roof", "ring"], v === 1 ? undefined : v)}
+            onChange={(v) =>
+              change(["roof"], {
+                ...roof,
+                ring: v === 1 ? undefined : v,
+                rings_bonded: v === 1 ? undefined : roof.rings_bonded,
+              })
+            }
           />
+        )}
+        {(roof.type === "sprung_arch" || roof.type === "dome") && (roof.ring ?? 1) > 1 && (
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={roof.rings_bonded ?? false}
+              onChange={(e) => change(["roof", "rings_bonded"], e.target.checked || undefined)}
+            />
+            Rings bonded through with headers (left unticked, each ring is checked on its own)
+          </label>
         )}
         {(roof.type === "sprung_arch" || roof.type === "dome" || roof.type === "catenary_arch") && (
           <label className="check">

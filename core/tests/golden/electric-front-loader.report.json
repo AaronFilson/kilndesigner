@@ -542,6 +542,12 @@
     {
       "check": null,
       "level": "info",
+      "message": "The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+      "reference": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+    },
+    {
+      "check": null,
+      "level": "info",
       "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
       "reference": "flat-roofs.md §3.2, §4.2"
     },
@@ -576,6 +582,12 @@
     "angle_leg_in": 0.0,
     "angle_t_in": 0.125,
     "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+        "reference": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+      },
       {
         "check": null,
         "level": "info",
@@ -646,6 +658,14 @@
         "note": "BIA's method is for cold brick masonry between abutments that don't move; heat and the clamp's own squeeze aren't in it (flat-roofs.md §2.5).",
         "reference": "BIA Technical Note 31A, jack arches; flat-roofs.md §2 [F2]",
         "value": "spans 22.5 in between the left and right walls; the frame must squeeze it with 68 lb per foot, 128 lb in all, cold"
+      },
+      {
+        "formula": "μ ≥ 4d / 3S",
+        "inputs": {},
+        "name": "Flat roof: friction at its ends",
+        "note": "The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+        "reference": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+        "value": "μ = 0.5, needs 0.27"
       },
       {
         "formula": "the roof's thrust × 4½ in, a row of brick, ÷ the rod's tensile stress area",

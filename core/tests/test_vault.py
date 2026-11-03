@@ -319,7 +319,7 @@ def test_bowen_mountains_frame_holds_its_arch() -> None:
     ring = next(s for s in frame.working if s.name == "Arch ring")
     assert "2 rings" in ring.value
     assert ring.reference is not None
-    assert "no source here checks" in ring.reference
+    assert "Sarhosis" in ring.reference
     ends = [f for f in frame.findings if "frame on the end walls carries it" in f.message]
     assert len(ends) == 2
     assert any(s.name == "The chamber's section along its depth" for s in frame.working)
