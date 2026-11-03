@@ -452,6 +452,15 @@ class SprungArch(Spec):
             "over the ring, such as insulation, are only its load"
         ),
     )
+    rings_bonded: bool = Field(
+        default=False,
+        description=(
+            "With a ring of more than one layer: the layers are bonded through with headers or "
+            "shapes, so they act as one ring. Left out, rings laid one on another act separately "
+            "(Sarhosis et al. 2016: ring separation cut arch strength 33-71 % in tests), and the "
+            "statics check the inside layer alone, carrying the rest as its load"
+        ),
+    )
     ties: Literal["rigid", "springs"] = Field(
         default="rigid",
         description=(
@@ -519,6 +528,12 @@ class SprungArch(Spec):
             "then the anagama-style tube's, front to back"
         ),
     )
+
+    @property
+    def acting_ring(self) -> int:
+        """The layers the statics take as the ring: all of ``ring`` when bonded through, else the
+        inside one alone, the rest its load (mortar-and-brick-strength.md S6 [R10])."""
+        return self.ring if self.rings_bonded else 1
 
     @model_validator(mode="after")
     def _springs_have_a_rate(self) -> SprungArch:
@@ -595,6 +610,21 @@ class Dome(Spec):
             "over it, such as insulation, are only its load"
         ),
     )
+    rings_bonded: bool = Field(
+        default=False,
+        description=(
+            "With a ring of more than one layer: the layers are bonded through with headers or "
+            "shapes, so they act as one ring. Left out, rings laid one on another act separately "
+            "(Sarhosis et al. 2016: ring separation cut arch strength 33-71 % in tests), and the "
+            "statics check the inside layer alone, carrying the rest as its load"
+        ),
+    )
+
+    @property
+    def acting_ring(self) -> int:
+        """The layers the statics take as the ring: all of ``ring`` when bonded through, else the
+        inside one alone, the rest its load (mortar-and-brick-strength.md S6 [R10])."""
+        return self.ring if self.rings_bonded else 1
 
 
 class OpenTop(Spec):

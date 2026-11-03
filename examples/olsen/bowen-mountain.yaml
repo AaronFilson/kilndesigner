@@ -21,7 +21,9 @@
 # foot of the 5 ft span.
 # As built (read by the user from the construction photos, Fig 4-154/4-155, 2026-10-31): a normal
 # sprung arch laid on a form, its 9 in as two 4½ in rings, one laid on the other (roof.ring: 2,
-# both layers the ring); angle steel on the kiln's corners with bars joining them above, tie rods
+# both layers the ring; no headers bonding them are recorded, so rings_bonded is left out and the statics
+# check the inside 4½ in ring alone, the outer its load: 3.7 times the thinnest that stands,
+# down from 7.0 for the two as one, Sarhosis et al. 2016); angle steel on the kiln's corners with bars joining them above, tie rods
 # over the arch, so the frame on the end walls holds the thrust and the rods run the 5 ft length
 # (the engine sizes it); the kiln built into a concrete platform round its whole perimeter. The
 # concrete's strength, 1800 psi, is the user's starting value, not a sourced one; the platform's

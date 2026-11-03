@@ -1033,8 +1033,15 @@ describe("shapes, fireboxes and chimneys", () => {
     // The ring's layers, from the roof's (here the walls') two, and a buttressed vault
     set("Layers in the arch's ring", "2");
     expect(last().roof).toMatchObject({ ring: 2 });
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
+    expect(last().roof).toMatchObject({ ring: 2, rings_bonded: true });
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
+    expect((last().roof as Record<string, unknown>).rings_bonded).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
     set("Layers in the arch's ring", "1");
     expect((last().roof as Record<string, unknown>).ring).toBeUndefined();
+    expect((last().roof as Record<string, unknown>).rings_bonded).toBeUndefined();
+    expect(screen.queryByLabelText(/Rings bonded through/)).toBeNull();
     fireEvent.click(screen.getByLabelText(/Buttressed/));
     expect(last().roof).toMatchObject({ buttressed: true });
     fireEvent.click(screen.getByLabelText(/Buttressed/));

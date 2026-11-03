@@ -304,6 +304,7 @@ def crossing_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
         CAPPED,
         ArchInputs,
         hot_thrust_line,
+        rings_apart,
         rise_rule,
         vault_ring,
     )
@@ -332,8 +333,10 @@ def crossing_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
         a = ArchInputs(span, rise, layers, roof.ring)
         phi = math.degrees(arch.half_angle)
         eta = float(np.interp(phi, minimum["half_angle_deg"], minimum["eta"]))
-        ring = vault_ring(a, eta, minimum["safety"], minimum["source"])
-        t = load.ring
+        # Unbonded rings act separately (S6 [R10]): the inside ring alone stands
+        alone = ArchInputs(span, rise, layers, roof.acting_ring)
+        ring = vault_ring(alone, eta, minimum["safety"], minimum["source"])
+        t = sum(x.thickness for x in layers[: roof.acting_ring])
         k = t / (arch.radius + t / 2) / eta
         ring.agrees("k", k)
         line = hot_thrust_line(a)
@@ -357,6 +360,7 @@ def crossing_statics(kiln: Kiln) -> tuple[list[Step], list[Finding]]:
                 note=(
                     "Checked as a barrel vault on its walls, as the engine checks any sprung arch. "
                     "Within the crossing the other vault cuts it; the groin isn't checked."
+                    + (f" {apart}" if (apart := rings_apart(roof.ring, roof.rings_bonded)) else "")
                 ),
             )
         )
