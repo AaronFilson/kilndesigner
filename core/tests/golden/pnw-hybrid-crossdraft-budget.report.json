@@ -730,6 +730,12 @@
     {
       "check": null,
       "level": "info",
+      "message": "The door arch's springing: The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+      "reference": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+    },
+    {
+      "check": null,
+      "level": "info",
       "message": "The door is arched, as Olsen's built kilns' are: brick jambs and a semicircular ring arch laid on a form (Tamba Figs 4-11, 4-15; Kanayama Figs 7-17, 7-18; Kecskemét, Fig 5-42). Its 3 in ring is 2.1 times the thinnest that holds a line of thrust, and the 10.0 in jamb holds its least thrust, 7 lb, its resultant 6.1 in in from the door (Heyman's statics).",
       "reference": "door-openings.md (Olsen, The Kiln Book, 4th ed., Figs 4-11, 4-15, 5-42, 6-69, 7-18); arch-thrust-theory.md; domes-over-doors.md §D3; door-headers.md §D3, §D9"
     },
@@ -817,6 +823,12 @@
         "level": "info",
         "message": "Weld the frame and fit it before the arch form comes out: the steel is what holds the arch up.",
         "reference": "kiln-hardware.md §4.1–4.2 [S11] [S21]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The door arch's springing: The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+        "reference": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
       },
       {
         "check": null,
@@ -980,9 +992,9 @@
           "wall over the springline": "19.8 in"
         },
         "name": "The door's arch and jambs",
-        "note": "HarbisonWalker's arch method covers roof arches of T/S 4–10 %, and this door arch's ring is 12% of its span: so the statics here are Heyman's, from the geometry and the loads alone, which need no range. A jamb that gives a little lets the arch settle to its least thrust, so that is what it must hold (Heyman). A hot arch held rigidly would push towards the most; a door arch's hot thrust is not sourced (door-headers.md §D8). The whole wall over the arch is taken to bear on it, BIA's safe side. Sliding uses BIA's friction between brick masonry units, 0.6: for clay brick, none is sourced for insulating firebrick or refractory joints (refractory-bearing.md §B4.1). The left wall bonded into the jamb's end is counted for a length of the jamb wall's thickness only (a design rule, door-headers.md §D9). A partition wall bonded in between doors isn't counted.",
+        "note": "HarbisonWalker's arch method covers roof arches of T/S 4–10 %, and this door arch's ring is 12% of its span: so the statics here are Heyman's, from the geometry and the loads alone, which need no range. A jamb that gives a little lets the arch settle to its least thrust, so that is what it must hold (Heyman). A hot arch held rigidly would push towards the most; a door arch's hot thrust is not sourced (door-headers.md §D8). The whole wall over the arch is taken to bear on it, BIA's safe side. Sliding: The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics JM 26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material. The left wall bonded into the jamb's end is counted for a length of the jamb wall's thickness only (a design rule, door-headers.md §D9). A partition wall bonded in between doors isn't counted.",
         "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the minimum thrust, the line of thrust from the crown's extrados touching the intrados: 'an arch on spreading supports will act in a state of minimum thrust' (Heyman, The Stone Skeleton; arch-thrust-theory.md §2 [A1], [A3]), the least it pushes on its neighbours (domes-over-doors.md §D3 [D7]); the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress; Couplet–Heyman minimum thickness, Rizzi et al. 2010; domes-over-doors.md §D3 [D5]",
-        "value": "a 3 in ring over 24 in, 2.1 times the thinnest that stands; its thrust 7 lb at least, 13 lb at most; on the 10.0 in jamb the resultant 6.1 in in from the door's edge (its middle third to 6.7 in); at the springing it needs friction 0.25 of 0.6"
+        "value": "a 3 in ring over 24 in, 2.1 times the thinnest that stands; its thrust 7 lb at least, 13 lb at most; on the 10.0 in jamb the resultant 6.1 in in from the door's edge (its middle third to 6.7 in); at the springing it needs friction 0.25 of 0.5"
       },
       {
         "formula": "σ = 2N/(3·b·a), a the resultant's distance to the nearer edge",

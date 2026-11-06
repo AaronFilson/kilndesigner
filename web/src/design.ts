@@ -64,6 +64,8 @@ export interface KilnDocument {
         type: "sprung_arch";
         rise: string;
         ring?: number;
+        /** The ring's layers bonded through with headers (model.py SprungArch.rings_bonded). */
+        rings_bonded?: boolean;
         ties?: "rigid" | "springs";
         spring_rate?: string;
         buttressed?: boolean;
@@ -81,7 +83,7 @@ export interface KilnDocument {
         crossing?: { span: string; rise: string; length: string; at?: string };
       }
     | { type: "catenary_arch"; buttressed?: boolean }
-    | { type: "dome"; rise: string; crown_at?: string; ring?: number; buttressed?: boolean };
+    | { type: "dome"; rise: string; crown_at?: string; ring?: number; rings_bonded?: boolean; buttressed?: boolean };
   loading?: {
     /** "lid": a round electric top-loader, its flat roof the lid, hinged on its band. */
     type?: "door" | "car" | "lid";
@@ -227,6 +229,8 @@ export interface Burners {
   model?: string;
   rating?: string;
   wall?: WallFace | "floor";
+  /** Two or more walls the burners are shared between, in place of `wall`. */
+  walls?: WallFace[];
   port?: Port;
   up?: string;
   places?: Place[];

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
+  type Burners,
   fromMm,
   type KilnDocument,
   type Layout,
@@ -204,6 +205,19 @@ describe("DesignForm", () => {
     expect(moved()?.loading?.face).toBe("front");
     expect(moved()?.heat.gas?.burners?.wall).toBe("front");
     expect(moved()?.draft?.flue_wall).toBe("back");
+    cleanup();
+    // Burners spread over several walls keep the end walls; with fewer than two left, one wall
+    const gasOn = (burners: Burners): KilnDocument => ({
+      ...electric,
+      heat: { gas: { burners, supply: { type: "cylinders", count: 4 } } },
+    });
+    const four = form(gasOn({ walls: ["front", "back", "left", "right"] }));
+    fireEvent.change(screen.getByLabelText("Roof"), { target: { value: "catenary_arch" } });
+    expect(four()?.heat.gas?.burners).toEqual({ walls: ["front", "back"] });
+    cleanup();
+    const sides = form(gasOn({ walls: ["left", "right"] }));
+    fireEvent.change(screen.getByLabelText("Roof"), { target: { value: "catenary_arch" } });
+    expect(sides()?.heat.gas?.burners).toEqual({ wall: "front" });
     cleanup();
     form({ ...electric, roof: { type: "catenary_arch" } });
     expect(screen.getByLabelText("Height, to the crown")).toBeTruthy();
@@ -1033,8 +1047,15 @@ describe("shapes, fireboxes and chimneys", () => {
     // The ring's layers, from the roof's (here the walls') two, and a buttressed vault
     set("Layers in the arch's ring", "2");
     expect(last().roof).toMatchObject({ ring: 2 });
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
+    expect(last().roof).toMatchObject({ ring: 2, rings_bonded: true });
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
+    expect((last().roof as Record<string, unknown>).rings_bonded).toBeUndefined();
+    fireEvent.click(screen.getByLabelText(/Rings bonded through/));
     set("Layers in the arch's ring", "1");
     expect((last().roof as Record<string, unknown>).ring).toBeUndefined();
+    expect((last().roof as Record<string, unknown>).rings_bonded).toBeUndefined();
+    expect(screen.queryByLabelText(/Rings bonded through/)).toBeNull();
     fireEvent.click(screen.getByLabelText(/Buttressed/));
     expect(last().roof).toMatchObject({ buttressed: true });
     fireEvent.click(screen.getByLabelText(/Buttressed/));
@@ -1368,5 +1389,32 @@ describe("shapes, fireboxes and chimneys", () => {
     expect(last().heat.gas?.supply).toEqual({ type: "line" });
     set("Burners fire through", "floor");
     expect(last().heat.gas?.burners?.wall).toBe("floor");
+  });
+
+  it("spreads burners over several walls, both sides by default", () => {
+    const last = live({
+      ...electric,
+      heat: { gas: { burners: { wall: "left" }, supply: { type: "cylinders", count: 4 } } },
+    });
+    set("Burners fire through", "several");
+    expect(last().heat.gas?.burners).toEqual({ walls: ["left", "right"] });
+    fireEvent.click(screen.getByLabelText("Back"));
+    expect(last().heat.gas?.burners?.walls).toEqual(["back", "left", "right"]);
+    fireEvent.click(screen.getByLabelText("Left"));
+    fireEvent.click(screen.getByLabelText("Right"));
+    // One wall left is no longer "several"
+    expect(last().heat.gas?.burners).toEqual({ wall: "back" });
+    expect(screen.queryByLabelText("Walls the burners fire through")).toBeNull();
+    set("Burners fire through", "several");
+    expect(last().heat.gas?.burners).toEqual({ walls: ["front", "back"] });
+    set("Burners fire through", "several"); // already several: nothing changes
+    expect(last().heat.gas?.burners).toEqual({ walls: ["front", "back"] });
+    set("Burners fire through", "right");
+    expect(last().heat.gas?.burners).toEqual({ wall: "right" });
+    set("Burners fire through", "several");
+    expect(last().heat.gas?.burners?.walls).toEqual(["left", "right"]);
+    set("Burners fire through", "floor");
+    set("Burners fire through", "several");
+    expect(last().heat.gas?.burners?.walls).toEqual(["left", "right"]);
   });
 });

@@ -133,12 +133,13 @@ def test_the_arch_is_checked_for_sliding_at_its_springing(monkeypatch: pytest.Mo
     assert head is not None
     step = next(s for s in head.working if s.name == "The door's arch and jambs")
     assert "needs friction" in step.value
-    assert "of 0.6" in step.value
+    assert "of 0.5" in step.value
+    assert "Oliveira" in (step.note or "")
     assert "bonded into the jamb's end is counted" in (step.note or "")
-    # With almost no friction it would slide (BIA's 0.60 swapped for 0.01)
+    # With almost no friction it would slide (the hot 0.50 swapped for 0.01)
     import kilndesigner.frame as frame
 
-    monkeypatch.setattr(frame, "FRICTION", 0.01)
+    monkeypatch.setattr(frame, "HOT_FRICTION", 0.01)
     head = door_head(kiln)
     assert head is not None
     slid = next(f for f in head.findings if f.level == "error")

@@ -256,12 +256,12 @@ def _check(kiln: Kiln, check_id: str) -> Check:
 
 
 def test_a_flat_roofs_sheets_say_what_would_pass() -> None:
-    """18 in under 9 in: the ends need μ = 4d/3S = 0.667 against BIA's 0.60, so d ≤ 8.1 in holds.
+    """18 in under 9 in: the ends need μ = 4d/3S = 0.667 against the hot 0.50, so d ≤ 6.75 in holds.
     40 in passes Merrill's 36 in but not the 45 in of a roof on four walls."""
     deep = _check(_flat("18 in", "9 in"), "frame.flat-friction")
     assert deep.status == "error"
-    assert deep.requirements[0].margin == "μ_need = 0.6667, 111.1 % of μ = 0.6"
-    assert deep.solve == "Passes when t_1 ≤ 8.1 in"
+    assert deep.requirements[0].margin == "μ_need = 0.6667, 133.3 % of μ = 0.5"
+    assert deep.solve == "Passes when t_1 ≤ 6.75 in"
     assert next(c for c in deep.cells if c.symbol == "μ_need").formula == "4·t_1/(3·S)"
     wide = _check(_flat("40 in", "3 in"), "frame.flat-span")
     assert wide.status == "warning"

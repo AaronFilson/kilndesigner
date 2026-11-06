@@ -880,9 +880,16 @@ def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
     if asked.places is not None:
         places = [(p.wall, si(p.across, "in"), si(p.up, "in")) for p in asked.places]
     else:
-        face, span = asked.wall, f.inside[asked.wall]
-        spread = [-span / 2 + (i + 0.5) * span / count for i in range(count)]
-        places = [(face, Faces.u_of(face, u), up) for u in spread]
+        places = []
+        walls: list[WallFace] = [w for w in asked.spread_over if w != "floor"]
+        for side, k in zip(walls, asked.shares(count), strict=True):
+            span = f.inside[side]
+            along: list[tuple[WallFace, float, float]] = [
+                (side, Faces.u_of(side, -span / 2 + (i + 0.5) * span / k), up) for i in range(k)
+            ]
+            places += along
+        if len(walls) > 1:
+            _shared_walls(walls, asked.shares(count), count, hw)
     for i, (face, across, z) in enumerate(places):
         spot = PortSpot(
             f"port/burner-{i + 1}", f"Burner port {i + 1}", "burner", face, across, z, pw, ph,
@@ -913,6 +920,21 @@ def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
             reference="kiln-hardware.md §1.3 [S4]",
         )
     )
+
+
+def _shared_walls(walls: list[WallFace], shares: list[int], count: int, hw: Hardware) -> None:
+    """Say how burners spread over several walls were shared out, and when a wall got none."""
+    split = ", ".join(f"{k} in the {w} wall" for w, k in zip(walls, shares, strict=True))
+    empty = [w for w, k in zip(walls, shares, strict=True) if k == 0]
+    message = f"The {count} burners are shared between the walls in the order named: {split}."
+    if empty:
+        message += (
+            f" The {' and '.join(empty)} {'walls get' if len(empty) > 1 else 'wall gets'} none: "
+            f"set burners.count to at least {len(walls)} to fire through every wall named."
+        )
+    elif len(set(shares)) > 1:
+        message += f" Set burners.count to a multiple of {len(walls)} to share them equally."
+    hw.findings.append(Finding(level="info", message=message))
 
 
 COMBUSTION_SPACE = 4.5
