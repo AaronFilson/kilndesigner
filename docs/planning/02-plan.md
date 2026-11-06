@@ -420,6 +420,18 @@ and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a war
   under the semicircular arch its section draws.
 - All checks green on `m7` (2,995 tests, 98.43 %).
 
+### Status (2026-11-06)
+
+- **Natural gas is costed** (M6 gap closed): `site.natural_gas_price`, the user's own rate, per
+  therm, kWh or MJ, or per ft³ or m³ through Olsen's 1000 BTU/ft³ (p.230). No default; left out,
+  the firing says it needs the rate. It flows into the firing's cost and therms, the switch-over
+  chart (now propane or natural gas), the CLI, the API and the form (Playwright step). The Olsen
+  24 kit carries the user's $1.5822/therm. `docs/research/natural-gas-prices.md`: EIA's prices,
+  informational only. The hybrid cost-per-useful-kWh analysis stays propane only.
+- Still unsourced: concrete's specific heat (EN 1992-1-2 §3.3.2(1)'s c_p(θ) isn't quoted in
+  `docs/research/`, only its density), so the platform stays out of the simulation; Cerachem and
+  castables other than the Kast-O-Lite 30 class value still have no specific heat.
+
 **M7 is on hold (2026-10-31).** The client is dealing with real estate trouble and is
 distracted; open question 3 waits until they come back to it. Nothing is built for M7 until
 then: the work that would serve it (fireboxes, natural draft, wood) stays general, for any user.

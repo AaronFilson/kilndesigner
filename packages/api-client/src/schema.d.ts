@@ -860,6 +860,8 @@ export interface components {
             energy_kwh: number;
             /** Walls Kwh */
             walls_kwh: number;
+            /** Natural Gas Therms */
+            natural_gas_therms?: number | null;
             /** Ware Kwh */
             ware_kwh: number;
             /** Shell Kwh */
@@ -1428,6 +1430,11 @@ export interface components {
             propane_gallons: number;
             /** Held */
             held: boolean;
+            /**
+             * Fuel Kwh
+             * @default 0
+             */
+            fuel_kwh: number;
             /** Completed */
             completed: boolean;
             /** Handed Over C */

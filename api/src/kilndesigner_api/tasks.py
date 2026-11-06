@@ -79,9 +79,9 @@ def _simulate_files(document: dict[str, object], target: Path) -> dict[str, obje
         if (
             hybrid
             and kiln.heat.gas is not None
-            and kiln.heat.gas.fuel == "propane"
             and site.electricity_price is not None
-            and site.propane_price is not None
+            and (site.propane_price if kiln.heat.gas.fuel == "propane" else site.natural_gas_price)
+            is not None
         ):
             chart = switch_over_chart(kiln, dt=CHART_DT)
             (scratch / "switchover.json").write_text(chart.model_dump_json(), encoding="utf-8")

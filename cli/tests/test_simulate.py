@@ -22,6 +22,15 @@ def test_simulate_writes_parquet(tmp_path: Path) -> None:
     assert (tmp_path / "series.parquet").is_file()
 
 
+def test_simulate_costs_natural_gas_per_therm(tmp_path: Path) -> None:
+    design = str(EXAMPLES / "olsen" / "olsen-kit-24.yaml")
+    result = runner.invoke(app, ["simulate", design, "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "therms of natural gas)" in result.output
+    assert "Cost:             $" in result.output
+    assert "cost isn't given" not in result.output
+
+
 def test_simulate_refuses_a_castable_without_specific_heat(tmp_path: Path) -> None:
     # Kast-O-Lite 26 has no specific heat in the library (Kast-O-Lite 30 has a class value)
     text = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")

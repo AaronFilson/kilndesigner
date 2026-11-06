@@ -42,7 +42,7 @@ from kilndesigner.model import Kiln, Ramp
 from kilndesigner.shape import chamber_shape
 from kilndesigner.thermal.surface import FixedSurface, StillAirSurface, Surface
 from kilndesigner.thermal.transient import HeatCapacity, Layer, StepResult, TransientWall
-from kilndesigner.units import Q_, parse_quantity, si
+from kilndesigner.units import Q_, parse_quantity, si, ureg
 from kilndesigner.working import Finding, Step, show
 
 DT = 60.0  # s, one step
@@ -57,6 +57,43 @@ STALL_HOURS = 1.0  # power-limited with less than STALL_RISE over this long: the
 STALL_RISE = 1.0  # K
 BTU_PER_KWH = 3412.14
 REDUCTION_START_C = 900.0  # hybrid.REDUCTION_START: fire in oxidation to about 900 °C
+
+
+@dataclass(frozen=True)
+class GasRate:
+    """A natural gas price, as dollars per kWh of heating value, and how it was read."""
+
+    usd_per_kwh: float
+    text: str
+    reference: str | None
+
+
+def natural_gas_price(kiln: Kiln) -> GasRate | None:
+    """The site's natural gas rate per kWh, or None if the design gives none (no default).
+
+    A rate per unit of energy (therm, kWh, MJ) converts exactly. A rate per volume goes through the
+    heating value Olsen's orifice tables take, 1000 BTU/ft³ (gas.yaml); the bill's own heat content
+    may differ, so a per-therm rate is the better input.
+    """
+    price = kiln.site.natural_gas_price
+    if price is None:
+        return None
+    per = f"{ureg.USD / price.units:~P}".replace("thm", "therm")
+    given = f"${price.magnitude:g}/{per}"
+    if price.check("[currency] / [energy]"):
+        per_kwh = si(price, "USD/kWh")
+        return GasRate(per_kwh, f"{given} (${per_kwh:.4f}/kWh)", None)
+    from kilndesigner.gas import gas_data
+
+    ng = gas_data()["natural_gas"]
+    btu_per_ft3 = float(ng["btu_per_ft3"])
+    per_kwh = si(price, "USD/ft**3") / btu_per_ft3 * BTU_PER_KWH
+    return GasRate(
+        per_kwh,
+        f"{given} at {btu_per_ft3:g} BTU/ft³ (${per_kwh:.4f}/kWh)",
+        ng["source"],
+    )
+
 
 # Ware and kiln furniture: fired clay, Lienhard Table A.2 (masonry-materials.md §1.1 [M1])
 WARE_CP = 800.0  # J/(kg·K)
@@ -145,6 +182,7 @@ class FiringResult(BaseModel):
     propane_gallons: float | None
     energy_kwh: float
     walls_kwh: float
+    natural_gas_therms: float | None = None  # fuel_kwh in therms of heating value
     ware_kwh: float
     shell_kwh: float
     cost_usd: float | None
@@ -502,8 +540,15 @@ def simulate(
     p_price = (
         si(kiln.site.propane_price, "USD/gallon") if kiln.site.propane_price is not None else None
     )
+    ng = natural_gas_price(kiln)
+    # Dollars per kWh of the fuel's heating value
+    fuel_price = (
+        (p_price * BTU_PER_KWH / PROPANE_HHV_BTU_PER_GAL if p_price is not None else None)
+        if supply.fuel == "propane"
+        else (ng.usd_per_kwh if ng is not None else None)
+    )
     priced = (supply.electric_w is None or e_price is not None) and (
-        supply.gas_w is None or (supply.fuel == "propane" and p_price is not None)
+        supply.gas_w is None or fuel_price is not None
     )
     target_k = max(si(r.to, "K") for r in schedule)
 
@@ -607,7 +652,7 @@ def simulate(
         totals["shell"] += shell
         if priced:
             totals["cost"] += electric_j / 3.6e6 * (e_price or 0.0) + (
-                fuel_j / 3.6e6 * BTU_PER_KWH / PROPANE_HHV_BTU_PER_GAL * (p_price or 0.0)
+                fuel_j / 3.6e6 * (fuel_price or 0.0)
             )
         if paced and limited and target - t_new > 0.5:
             held = False
@@ -774,37 +819,52 @@ def simulate(
             )
         )
     cost_text = None
+    natural = supply.gas_w is not None and supply.fuel == "natural_gas"
+    propane = supply.gas_w is not None and supply.fuel == "propane"
     if cost is not None:
         cost_text = f"${cost:,.2f}"
+        inputs: dict[str, str] = {}
+        if supply.electric_w is not None and e_price is not None:
+            inputs["electricity"] = f"${e_price:.3f}/kWh"
+        if propane and p_price is not None:
+            inputs["propane"] = f"${p_price:.2f}/gal"
+        if natural and ng is not None:
+            inputs["natural gas"] = ng.text
+        parts = (["kWh × electricity price"] if supply.electric_w is not None else []) + (
+            ["gallons × propane price"]
+            if propane
+            else ["fuel kWh × natural gas price per kWh"]
+            if natural
+            else []
+        )
         working.append(
             Step(
                 name="Cost of the firing",
                 value=cost_text,
-                formula="kWh × electricity price + gallons × propane price",
-                inputs={
-                    k: v
-                    for k, v in (
-                        ("electricity", f"${e_price:.3f}/kWh" if e_price is not None else None),
-                        ("propane", f"${p_price:.2f}/gal" if p_price is not None else None),
-                    )
-                    if v is not None
-                },
+                formula=" + ".join(parts),
+                inputs=inputs,
+                reference=ng.reference if natural and ng is not None else None,
             )
         )
     else:
+        wanted = [
+            name
+            for name, needed in (
+                ("electricity_price", supply.electric_w is not None and e_price is None),
+                ("propane_price", propane and p_price is None),
+                ("natural_gas_price", natural and ng is None),
+            )
+            if needed
+        ]
         findings.append(
             Finding(
                 level="info",
                 message=(
-                    "The firing's cost isn't given: it needs the site's electricity_price"
+                    "The firing's cost isn't given: it needs the site's "
+                    + " and ".join(wanted)
                     + (
-                        " and propane_price"
-                        if supply.gas_w is not None and supply.fuel == "propane"
-                        else ""
-                    )
-                    + (
-                        "; natural gas has no price in the design"
-                        if supply.gas_w is not None and supply.fuel == "natural_gas"
+                        ", your rate from the bill (per therm, kWh, ft³ or m³)"
+                        if natural and ng is None
                         else ""
                     )
                     + "."
@@ -845,6 +905,11 @@ def simulate(
         electricity_kwh=totals["electricity"] * to_kwh,
         fuel_kwh=totals["fuel"] * to_kwh,
         propane_gallons=gallons,
+        natural_gas_therms=(
+            si(Q_(totals["fuel"], "J"), "therm")
+            if supply.gas_w is not None and supply.fuel == "natural_gas"
+            else None
+        ),
         energy_kwh=totals["energy"] * to_kwh,
         walls_kwh=totals["walls"] * to_kwh,
         ware_kwh=totals["ware"] * to_kwh,
@@ -911,8 +976,9 @@ class SwitchPoint(BaseModel):
     duration_h: float
     cost_usd: float
     electricity_kwh: float
-    propane_gallons: float
+    propane_gallons: float  # 0 on natural gas
     held: bool
+    fuel_kwh: float = 0.0  # the gas burned, by its heating value
     completed: bool
     # Where the burners really took over: lower than asked when the elements stalled first
     handed_over_c: float | None = None
@@ -936,10 +1002,9 @@ def switch_over_chart(kiln: Kiln, *, step_f: float = 200.0, dt: float = DT) -> S
     if kiln.heat.electric is None or kiln.heat.gas is None:
         raise SimulationError("the switch-over chart is for a kiln with elements and burners")
     gas = kiln.heat.gas
-    if gas.fuel != "propane":
-        raise SimulationError("the switch-over chart is worked out for propane only")
-    if kiln.site.electricity_price is None or kiln.site.propane_price is None:
-        raise SimulationError("give the site's electricity_price and propane_price")
+    fuel_price = "propane_price" if gas.fuel == "propane" else "natural_gas_price"
+    if kiln.site.electricity_price is None or getattr(kiln.site, fuel_price) is None:
+        raise SimulationError(f"give the site's electricity_price and {fuel_price}")
     top, _ = top_temperature(kiln)
     top_f = si(top, "degF")
     temps_f = list(np.arange(400.0, top_f, step_f))
@@ -954,6 +1019,7 @@ def switch_over_chart(kiln: Kiln, *, step_f: float = 200.0, dt: float = DT) -> S
                 duration_h=r.duration_h,
                 cost_usd=r.cost_usd or 0.0,
                 electricity_kwh=r.electricity_kwh,
+                fuel_kwh=r.fuel_kwh,
                 propane_gallons=r.propane_gallons or 0.0,
                 held=r.held,
                 completed=r.completed,

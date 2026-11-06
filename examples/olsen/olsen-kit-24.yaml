@@ -63,3 +63,6 @@ draft:
   flue_port:
     width: 9 in
     height: 5 in
+site:
+  # Not from Olsen: a user's own natural gas rate, from their bill, to cost the firing
+  natural_gas_price: 1.5822 USD/therm
