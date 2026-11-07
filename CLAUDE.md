@@ -18,6 +18,7 @@ uv is installed for the user but is not on PATH. Call it by its full path,
 | Types (strict) | `uv run pyright` |
 | The engine stays pure (ADR 0002) | `uv run lint-imports` |
 | The CLI | `uv run kilndesigner build examples/electric-front-loader.yaml --out out/` |
+| The MCP server (ADR 0016) | `uv run kilndesigner-mcp` (stdio, for Claude Code: `claude mcp add kilndesigner -- <uv> run --directory <repo> kilndesigner-mcp`); `--http` serves stateless Streamable HTTP on 127.0.0.1:8000/mcp |
 
 Run all five checks before committing; CI runs the same ones.
 
@@ -25,6 +26,7 @@ Run all five checks before committing; CI runs the same ones.
 
 - `core/`: the `kilndesigner` engine package. No web, database or CLI imports, ever.
 - `cli/`: the `kilndesigner` command (Typer).
+- `mcp-server/`: the MCP server for AI assistants (ADR 0016).
 - `examples/`: design files. Every example is loaded, round-tripped and built by the tests.
 - `docs/planning/02-plan.md`: the plan and milestones. `docs/adr/`: decisions.
 - `docs/research/`: cited reference data. Every number in the materials library and every

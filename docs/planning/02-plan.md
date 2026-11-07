@@ -157,7 +157,7 @@ kilndesigner/                 uv workspace
   cli/                        Typer: build, check, simulate, export
   api/                        FastAPI; OpenAPI contract; SQLAlchemy 2 + Alembic
   worker/                     arq tasks: simulate, build geometry, render plans
-  mcp/                        FastMCP server over the engine
+  mcp-server/                 MCP server over the engine (official SDK's MCPServer, ADR 0016)
   web/                        React 19 + Vite + TanStack + React Three Fiber
   packages/api-client/        generated TypeScript client
   notebooks/                  marimo: validation against published references
@@ -183,6 +183,7 @@ kilndesigner/                 uv workspace
 | [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
 | [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
 | [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
+| [0016](../adr/0016-mcp-server.md) | AI assistants reach the engine through an MCP server that returns the working (proposed) |
 
 ## The engineering, by kiln type
 
@@ -439,6 +440,20 @@ then: the work that would serve it (fireboxes, natural draft, wood) stays genera
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
 client is ready, since the CLI can produce the client's plans before the app exists.
+
+### Status (2026-11-06): M8 started
+
+- **ADR 0016**: an MCP server on the official Python SDK (`mcp` 2.3.0, pinned), following
+  Glazecalc's: stateless, read-only, snake_case tools, results as structured data and JSON text.
+- **`mcp-server/`** (`kilndesigner-mcp`): `list_templates`, `get_template`, `list_examples`,
+  `get_example`, `validate_design`, `build_design`, `simulate_firing` and `start_design`, every
+  result with the engine's working; stdio, or stateless Streamable HTTP with `--http`. Tested
+  through an in-memory MCP client.
+- "Cone 10 gas, 12 ft³, under $3,000" now starts from the gas cross-draft (33 ft³ chamber,
+  $8,499 priced as it stands): the assistant resizes it and builds again.
+- **Left for M8**: a tool that compares designs; resources (materials, formula sheets) and
+  prompts; mounting `/mcp` on the API with Glazecalc's Host/Origin checks, limits, tokens and
+  OAuth once M5 has sign-in; the conformance suite and Inspector in CI; a registry listing.
 
 ## Quality bar
 
