@@ -9,9 +9,16 @@ document are all this model (ADR 0003, ADR 0006).
 from __future__ import annotations
 
 import math
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+    model_validator,
+)
 
 from kilndesigner import cones
 from kilndesigner.rings import FLOOR_COURSE_IN
@@ -1007,6 +1014,15 @@ class Burners(Spec):
                 "both"
             )
         return self
+
+    @model_serializer(mode="wrap")
+    def _no_wall_with_walls(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Burners over several walls are written without the single wall's default, which the
+        design would refuse beside them when read back."""
+        data: dict[str, Any] = handler(self)
+        if self.walls is not None:
+            data.pop("wall", None)
+        return data
 
     @property
     def wanted(self) -> int | None:

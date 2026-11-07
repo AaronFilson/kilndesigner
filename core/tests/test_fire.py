@@ -250,6 +250,36 @@ def test_wood_beside_gas_needs_an_auxiliary_air_source_or_a_full_chimney() -> No
     assert any("auxiliary air source, a blower (p.79)" in f.message for f in full.findings)
 
 
+def test_wood_per_firing_compares_olsens_fast_fire_and_names_the_missing_source() -> None:
+    """Olsen's only figures for wood burnt are his fast-fire kiln's: less than a quarter of a cord
+    for a 3½–4 h firing of 12–16 ft³ (p.139, p.143). No heating value for wood is in
+    docs/research, so a kiln's own cords aren't worked out from its heat: the figure is given to
+    compare, and the gap is said."""
+    said = " ".join(f.message for f in design_fire(_kiln()).findings)
+    assert "less than a quarter of a cord" in said
+    assert "p.143" in said
+    assert "heating value" in said
+    assert "M7" not in said
+    coal = " ".join(f.message for f in design_fire(_kiln(heat__fire__fuel="coal")).findings)
+    assert "coal use per firing isn't worked out" in coal
+    assert "quarter of a cord" not in coal
+
+
+def test_a_gas_and_wood_fast_fire_kiln_says_how_to_change_fuels() -> None:
+    """p.142: the fast-fire kiln burns gas through 4½ × 4½ in ports at floor level in its side
+    walls, in removable bricks, with the inlet flues blocked and the firebox mouths mud-sealed."""
+    examples = Path(__file__).parents[2] / "examples"
+    kiln = load_design(examples / "olsen-32cuft-propane-wood-fastfire.yaml")
+    switch = next(f for f in design_fire(kiln).findings if "mud-seal" in f.message)
+    assert switch.level == "info"
+    assert "p.142" in (switch.reference or "")
+    # Wood alone, or gas beside a firebox at a wall, isn't Olsen's conversion: nothing said
+    alone = load_design(examples / "olsen" / "fast-fire.yaml")
+    assert not any("mud-seal" in f.message for f in design_fire(alone).findings)
+    gas = {"supply": {"type": "cylinders", "count": 4}}
+    assert not any("mud-seal" in f.message for f in design_fire(_kiln(heat__gas=gas)).findings)
+
+
 def test_with_gas_and_a_fire_the_drawn_chimney_is_the_fires() -> None:
     """The chimney must draw the fire (p.79), so the hardware builds the fire's, not the gas's."""
     from kilndesigner.hardware import build_hardware

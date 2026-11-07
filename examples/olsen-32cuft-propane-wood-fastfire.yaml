@@ -1,0 +1,110 @@
+# Olsen's fast-fire downdraft enlarged to about 32 cu ft of stacking space, fired with propane or
+# wood (Olsen, The Kiln Book, 4th ed., p.139–143, p.204–205; examples/olsen/fast-fire.yaml is the
+# 12–16 ft³ kiln as the book draws it). A general design, not a client's kiln.
+#
+# From the book: the family "can be enlarged to almost any size between 12 and 120cu. ft" by
+# enlarging the cube with the inlet flues, exit flue and chimney (p.142); cone 10 in 3½ h, the
+# rate of rise making no difference to most bodies and glazes (p.139); two fireboxes under the
+# floor along the front and back walls, each "13½ × 40½ in or whatever the width of the kiln is"
+# (p.204); inlet flues 4½ in × the firebox's width at its closed end (p.141); a pull-out grate of
+# ¾ in rod with ¾ in gaps, bisecting the firebox, as far back as possible (p.204); the setting laid
+# out 4½ in clear at each side (over the inlet flues) and in front, 1 in between shelves and at the
+# back, on a rowlock floor channel 4½ in high (p.141–142, Fig 5-43, 5-47); 12 × 24 × 1 in shelves
+# (Fig 5-35); one brick of insulating brick, a No. 1 featheredge arch, 1½ in per foot of span
+# (p.140, p.25). Gas (p.142): 4½ × 4½ in ports at floor level in the side walls, four a side
+# drawn (Fig 5-46), in removable bricks, the inlet flues blocked and the firebox mouths
+# mud-sealed; burners by Chapter 8. Two 13½ × 45 in fireboxes take a 9 × 13½ in chimney (Fig 3-9,
+# p.77). An exit flue of 13½ × 7½ in, the size Olsen enlarges the fast-fire's to (p.140).
+# The stacking: 27 in across (two 12 × 24 in shelves, 1 in apart, and 1 in spare), 49 in deep
+# (two shelves, 1 in apart) and 43 in tall: 32.9 ft³. The chamber round it by Olsen's layout:
+# 27 + 2 × 4½ = 36 in wide, 49 + 4½ + 1 = 54½ in deep, 43 + 4½ = 47½ in (19 courses) to the
+# springline, about 54 ft³. The engine lays fireboxes under the floor side by side across the
+# width, each with a wall's thickness either side, so two 13½ in fireboxes need the 36 in: at
+# 34 in their inlet flues cut into the side walls. They run front to back here, Olsen's "S"
+# turned a quarter, the inlet flues still under the 4½ in side clearances.
+# Assumed: five layers of shelves (about 8½ in apart), not sourced. The fireboxes 15 in tall,
+# the top of Olsen's 12–15 in for the fast-fire (Fig 8-13), the grate at mid-height on 7½ in legs
+# (p.204: 7–8 in); a 12 × 30 in grate, his 12–13 in wide and about two-thirds of the firebox long
+# (24–27 in of 40½, Fig 5-39). The hot face is JM-26 (2600 °F), not Olsen's 2300 °F brick:
+# cone 10 runs 2345 °F, past the 2300 °F rating. Burners in both side walls, four a side, as
+# Fig 5-46 draws, one course up; their ports are the size the burners need, not Olsen's 4½ in
+# for small ones.
+# The chimney's height is Rule 5's (p.80), 3 × (chamber + firebox) plus ⅓ of the horizontal pull,
+# counting the firebox as the fast-fire does (p.140). Propane at 3.50 USD a gallon; the site at
+# 50 °F, its coldest 20 °F.
+# Not modelled: wood per firing (no heating value for wood in docs/research; Olsen's figure for
+# the 12–16 ft³ kiln is reported to compare); a firing that changes fuel part way.
+schema: 1
+name: Olsen fast-fire, 32 cu ft stacking, propane or wood
+units: us
+firing:
+  cone: "10"
+  target_time: 3.5 h # Olsen's fast-fire, cone 10 in 3½ h (p.139); the user's choice of speed
+  setting:
+    shelves: {length: 24 in, width: 12 in, thickness: 1 in, material: mullite, per_layer: 4, layers: 5}
+chamber:
+  width: 36 in
+  depth: 54.5 in
+  height: 47.5 in
+roof:
+  type: sprung_arch
+  rise: 4.5 in # 1½ in per foot of the 36 in span: a No. 1 featheredge arch (p.25, p.140)
+loading:
+  type: door
+  face: front
+  door: bricked # bricked up in rowlocks or stretchers each firing (p.141)
+lining:
+  walls:
+    - material: ifb-jm26
+      thickness: 4.5 in
+  floor:
+    - material: hard-firebrick-kx99 # it roofs the fireboxes: super-duty, as the fast-fire file
+      thickness: 4.5 in
+  roof:
+    - material: ifb-jm26
+      thickness: 4.5 in
+heat:
+  gas:
+    fuel: propane
+    firing_speed: fast
+    burners:
+      type: venturi
+      count: 8 # four a side (Fig 5-46)
+      walls: [left, right] # low in the side walls (p.142), the engine's one course up
+    supply:
+      type: cylinders
+      # 3½ h needs about 1.7 million BTU/hr: 16 full 100 lb cylinders carry it at 20 °F (the
+      # report's options list the rest: 40 kept ¼ full, and no tank in the tables is enough)
+      count: 16
+  fire:
+    fuel: wood
+    fireboxes:
+      - count: 2
+        position: under
+        width: 13.5 in
+        length: 45 in # Fig 3-9's 13½ × 45 in fireboxes (p.77)
+        height: 7.5 in # above the grate; 15 in in all
+        grate:
+          width: 12 in
+          length: 30 in
+          gap: 0.75 in # ¾ in rod at 1½ in centres (p.204)
+        ash_pit: 7.5 in
+        inlet:
+          width: 13.5 in
+          height: 4.5 in # 4½ in × the firebox's width (p.141)
+draft:
+  type: down
+  flue_wall: back
+  run_to_chimney: 0 in # the back wall tied to the chimney (p.140)
+  flue_port:
+    width: 13.5 in
+    height: 7.5 in
+  chimney:
+    height: 18.5 ft # Rule 5's most, 18.6 ft (p.80); its least, twice the pull, 12.0 ft (p.130)
+    inside:
+      width: 13.5 in
+      depth: 9 in
+site:
+  ambient: 50 degF
+  coldest_ambient: 20 degF
+  propane_price: 3.50 USD/gallon
