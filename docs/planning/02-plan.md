@@ -424,6 +424,20 @@ and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a war
 distracted; open question 3 waits until they come back to it. Nothing is built for M7 until
 then: the work that would serve it (fireboxes, natural draft, wood) stays general, for any user.
 
+### Status (2026-11-06, M7 started: a general propane-and-wood kiln)
+
+- **A new example**, `examples/olsen-32cuft-propane-wood-fastfire.yaml`: Olsen's fast-fire
+  downdraft (p.139–143) enlarged as p.142 allows to 32.9 ft³ of stacking (36 × 54½ × 47½ in
+  chamber), two 13½ × 45 in fireboxes under the floor and a 9 × 13½ in chimney (Fig. 3-9, p.77),
+  burners four a side (Fig. 5-46). Not the client's kiln, which stays on hold.
+- **Propane or wood**: the gas firing of a wood kiln with fireboxes under the floor is simulated
+  with them sealed (Olsen p.142), so its target time and slow firing work. At 3½ h (p.139) it needs
+  about 1.7 million BTU/hr (8 Ransome B5 at 2.2 psi), 16 full 100 lb cylinders at 20 °F, 49 gal.
+- **Wood per firing** isn't worked out: no heating value for wood is in `docs/research`. Olsen's
+  fast-fire figure (under ¼ cord, 3½–4 h, 12–16 ft³) is given to compare. Questions for the
+  author: a sourced heating value for wood and a firebox efficiency, and whether a firing may
+  start on propane and finish on wood.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
 client is ready, since the CLI can produce the client's plans before the app exists.

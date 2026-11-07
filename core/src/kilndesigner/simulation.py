@@ -36,6 +36,7 @@ from kilndesigner.combustion import (
     available_heat_fraction,
 )
 from kilndesigner.combustion import SOURCE as COMBUSTION_SOURCE
+from kilndesigner.fire import FAST_FIRE_GAS, on_gas_alone
 from kilndesigner.furniture import setting_weight
 from kilndesigner.heatloss import EMISSIVITY, GROUND_SOURCE, SOIL_K, top_temperature
 from kilndesigner.model import Kiln, Ramp
@@ -230,12 +231,14 @@ def build_faces(kiln: Kiln) -> list[_Face]:
     grounded = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not over_fire
     faces: list[_Face] = []
     for shape in chamber_shape(kiln).faces():
-        if over_fire and shape.face == "floor":
-            continue  # pragma: no cover - a fire kiln is refused before this
         layers = _layers(kiln, shape.face)
         thickness = sum(x.thickness for x in layers)
         surface: Surface
-        if grounded and shape.face == "floor":
+        if over_fire and shape.face == "floor":
+            # Over sealed fireboxes (a gas firing of Olsen's fast-fire kiln, p.142): the floor
+            # takes heat into its mass but loses none to the room, as in the heat loss
+            surface = FixedSurface(0.0)
+        elif grounded and shape.face == "floor":
             d = math.sqrt(4 * shape.area_at(thickness) / math.pi)
             surface = FixedSurface(8 * SOIL_K / (math.pi * d))
         else:
@@ -286,7 +289,9 @@ def heat_supply(
     ``gas_from_c`` lights a hybrid's burners below its hand-over (both on together).
     ``element_w`` is the element design's installed power when the caller has it already (the
     solver, which fires the same kiln many times)."""
-    if kiln.heat.fire is not None and kiln.heat.fire.purpose == "heat":
+    fire = kiln.heat.fire
+    sealed = fire is not None and fire.purpose == "heat" and on_gas_alone(kiln)
+    if fire is not None and fire.purpose == "heat" and not sealed:
         raise SimulationError("wood, coal and oil firings aren't simulated yet (plan milestone M7)")
     from kilndesigner.electric import design_elements
     from kilndesigner.gas import design_gas
@@ -297,6 +302,20 @@ def heat_supply(
         return heat_loss(kiln).total_watts
 
     steps: list[Step] = []
+    if sealed:
+        steps.append(
+            Step(
+                name="Fuel for the firing",
+                value="propane alone, the fireboxes sealed",
+                note=(
+                    "The wood isn't simulated (no heating value for wood is in docs/research): "
+                    "this is the kiln's gas firing, its inlet flues blocked and firebox mouths "
+                    "mud-sealed. A firing that starts on one fuel and finishes on the other isn't "
+                    "worked out."
+                ),
+                reference=FAST_FIRE_GAS,
+            )
+        )
     electric_w = gas_w = None
     if kiln.heat.electric is not None:
         electric_w = (

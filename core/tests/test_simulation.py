@@ -12,10 +12,13 @@ from kilndesigner.model import Fire, Ramp
 from kilndesigner.results import heatmap, read_summary, series, write_run
 from kilndesigner.simulation import (
     SimulationError,
+    build_faces,
     default_schedule,
+    heat_supply,
     simulate,
     switch_over_chart,
 )
+from kilndesigner.thermal.surface import FixedSurface
 from kilndesigner.units import Q_
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
@@ -203,6 +206,28 @@ def test_wood_firing_waits_for_m7() -> None:
     )
     with pytest.raises(SimulationError, match="M7"):
         simulate(kiln)
+
+
+def test_a_gas_and_wood_kiln_fires_on_its_gas_with_the_fireboxes_sealed() -> None:
+    """Olsen p.142: the fast-fire kiln burns gas through ports in its side walls, the inlet flues
+    blocked and the firebox mouths mud-sealed. So its propane firing is simulated, and the floor
+    over the sealed fireboxes stores heat but loses none, as the heat loss leaves it out."""
+    kiln = load_design(EXAMPLES / "olsen-32cuft-propane-wood-fastfire.yaml")
+    floor = next(f for f in build_faces(kiln) if f.name == "floor")
+    assert isinstance(floor.wall.surface, FixedSurface)
+    assert floor.wall.surface.h == 0
+    supply, steps = heat_supply(kiln)
+    assert supply.gas_w is not None
+    assert supply.gas_w > 0
+    assert supply.electric_w is None
+    sealed = next(s for s in steps if s.name == "Fuel for the firing")
+    assert "p.142" in (sealed.reference or "")
+    # Coal beside gas isn't the fast-fire's conversion: refused, as wood alone is
+    fire = kiln.heat.fire
+    assert fire is not None
+    coal = fire.model_copy(update={"fuel": "coal"})
+    with pytest.raises(SimulationError, match="M7"):
+        heat_supply(kiln.model_copy(update={"heat": kiln.heat.model_copy(update={"fire": coal})}))
 
 
 def test_the_hybrid_hands_over_and_costs_both_fuels() -> None:

@@ -189,8 +189,8 @@
     {
       "check": null,
       "level": "info",
-      "message": "Fireboxes are laid out in brick in the masonry, plans and 3D model; their wood use per firing waits for the client's kiln (plan milestone M7).",
-      "reference": null
+      "message": "Wood use per firing isn't worked out for this kiln: docs/research has no heating value for wood, nor how much of it a firebox turns into heat in the kiln, so its cords can't be found from the heat it needs. To compare, Olsen's fast-fire kiln, 12–16 ft³ of insulating brick, reaches cone 10 in 3½ h on less than a quarter of a cord (p.139, p.143); a 40 ft³ hard-brick kiln takes 12 to 14 h (p.143).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.139 and p.143: a 12–16 ft³ fast-fire wood kiln of 2300 °F insulating brick reaches cone 10 in 3½ h on 'less than a quarter of a cord of wood for a 3½ to 4-hour firing'; a 40 ft³ kiln of hard brick averages 12 to 14 hours"
     },
     {
       "check": null,
@@ -296,8 +296,8 @@
       {
         "check": null,
         "level": "info",
-        "message": "Fireboxes are laid out in brick in the masonry, plans and 3D model; their wood use per firing waits for the client's kiln (plan milestone M7).",
-        "reference": null
+        "message": "Wood use per firing isn't worked out for this kiln: docs/research has no heating value for wood, nor how much of it a firebox turns into heat in the kiln, so its cords can't be found from the heat it needs. To compare, Olsen's fast-fire kiln, 12–16 ft³ of insulating brick, reaches cone 10 in 3½ h on less than a quarter of a cord (p.139, p.143); a 40 ft³ hard-brick kiln takes 12 to 14 h (p.143).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.139 and p.143: a 12–16 ft³ fast-fire wood kiln of 2300 °F insulating brick reaches cone 10 in 3½ h on 'less than a quarter of a cord of wood for a 3½ to 4-hour firing'; a 40 ft³ kiln of hard brick averages 12 to 14 hours"
       }
     ],
     "fireboxes": [
