@@ -173,7 +173,13 @@ def firing_summary(result: FiringResult) -> str:
     if result.electricity_kwh:
         lines.append(f"  Electricity:      {result.electricity_kwh:.1f} kWh")
     if result.fuel_kwh:
-        gallons = f" ({result.propane_gallons:.1f} gal propane)" if result.propane_gallons else ""
+        gallons = (
+            f" ({result.propane_gallons:.1f} gal propane)"
+            if result.propane_gallons
+            else f" ({result.natural_gas_therms:.2f} therms of natural gas)"
+            if result.natural_gas_therms
+            else ""
+        )
         lines.append(f"  Fuel burned:      {result.fuel_kwh:.1f} kWh{gallons}")
     if result.cost is not None:
         lines.append(f"  Cost:             {result.cost}")

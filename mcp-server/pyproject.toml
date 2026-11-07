@@ -1,0 +1,16 @@
+[project]
+name = "kilndesigner-mcp"
+version = "0.1.0"
+description = "An MCP server over the kilndesigner engine: AI assistants design and check kilns, with the working."
+license = "MIT"
+authors = [{ name = "Aaron Filson" }]
+requires-python = ">=3.14"
+# The official Python SDK, pinned and moved by hand (ADR 0016)
+dependencies = ["kilndesigner", "mcp==2.3.0"]
+
+[project.scripts]
+kilndesigner-mcp = "kilndesigner_mcp.server:main"
+
+[build-system]
+requires = ["uv_build>=0.13,<0.14"]
+build-backend = "uv_build"

@@ -29,6 +29,21 @@ def _example(changes: dict[str, object] | None = None) -> Kiln:
 
 
 @pytest.mark.slow
+def test_olsens_fast_fire_on_propane_to_cone_10_in_three_and_a_half_hours() -> None:
+    """Olsen p.139: the fast-fire kiln reaches cone 10 in 3½ h; p.142: it burns gas with its
+    fireboxes sealed. The 32 ft³ (stacking) propane-and-wood example's propane firing is solved for
+    3½ h: the input, the gallons and the cylinders it takes."""
+    kiln = load_design(EXAMPLES / "olsen-32cuft-propane-wood-fastfire.yaml")
+    target = solve_target(kiln, dt=DT)
+    assert target.met
+    assert target.duration_h == pytest.approx(3.5, abs=0.05)
+    assert target.propane_gallons is not None
+    assert target.propane_gallons > 0
+    assert target.cylinders_full is not None
+    assert target.supply_options
+
+
+@pytest.mark.slow
 def test_burners_lit_at_the_hand_over_is_the_hand_over() -> None:
     kiln = _example()
     plain = simulate(kiln, dt=DT, record=False).result

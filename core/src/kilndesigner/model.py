@@ -9,9 +9,16 @@ document are all this model (ADR 0003, ADR 0006).
 from __future__ import annotations
 
 import math
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializerFunctionWrapHandler,
+    model_serializer,
+    model_validator,
+)
 
 from kilndesigner import cones
 from kilndesigner.rings import FLOOR_COURSE_IN
@@ -23,6 +30,7 @@ from kilndesigner.units import (
     Duration,
     EnergyPrice,
     Flow,
+    GasPrice,
     Length,
     Mass,
     MassPrice,
@@ -1007,6 +1015,15 @@ class Burners(Spec):
             )
         return self
 
+    @model_serializer(mode="wrap")
+    def _no_wall_with_walls(self, handler: SerializerFunctionWrapHandler) -> dict[str, Any]:
+        """Burners over several walls are written without the single wall's default, which the
+        design would refuse beside them when read back."""
+        data: dict[str, Any] = handler(self)
+        if self.walls is not None:
+            data.pop("wall", None)
+        return data
+
     @property
     def wanted(self) -> int | None:
         """How many burners the design asks for: its count, or one for each place."""
@@ -1339,6 +1356,14 @@ class Site(Spec):
     )
     electricity_price: EnergyPrice | None = None
     propane_price: VolumePrice | None = None
+    natural_gas_price: GasPrice | None = Field(
+        default=None,
+        description=(
+            "Your natural gas rate, from the bill: per therm (for example '1.5822 USD/therm'), "
+            "per kWh or MJ, or per ft³ or m³ (taken at 1000 BTU/ft³, Olsen p.230). No default: "
+            "left out, the firing's cost isn't given"
+        ),
+    )
     materials_budget: Money | None = None
 
 

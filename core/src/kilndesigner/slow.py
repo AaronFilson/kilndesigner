@@ -20,6 +20,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, ConfigDict
 
+from kilndesigner.fire import on_gas_alone
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.model import Kiln, Ramp
 from kilndesigner.sheet import Sheet
@@ -206,7 +207,7 @@ def slow_firing(kiln: Kiln, hours: float, soak_h: float = 0.0) -> SlowFiring:
     findings: list[Finding] = []
     sources = list(SOURCED)
     fire = kiln.heat.fire
-    if fire is not None and fire.purpose == "heat":
+    if fire is not None and fire.purpose == "heat" and not on_gas_alone(kiln):
         findings.append(
             Finding(
                 level="info",

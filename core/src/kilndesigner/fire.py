@@ -57,6 +57,30 @@ STACK_C = 0.0342  # K/m, stack-effect equation [S42]
 PA_PER_IN_WC = 249.09
 DRAFT_SOURCE = "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]"
 FUEL_WORDS = {"wood": "wood", "coal": "coal", "oil": "oil"}
+FAST_FIRE_GAS = (
+    "Olsen, The Kiln Book, 4th ed., p.142: the fast-fire kiln fired with gas, through 4½ × 4½ in "
+    "ports at floor level in the side walls made with removable bricks, the inlet flues blocked "
+    "and the firebox mouth bricked up and mud-sealed; the setting acts as bag wall"
+)
+FAST_FIRE_WOOD = (
+    "Olsen, The Kiln Book, 4th ed., p.139 and p.143: a 12–16 ft³ fast-fire wood kiln of 2300 °F "
+    "insulating brick reaches cone 10 in 3½ h on 'less than a quarter of a cord of wood for a 3½ "
+    "to 4-hour firing'; a 40 ft³ kiln of hard brick averages 12 to 14 hours"
+)
+
+
+def on_gas_alone(kiln: Kiln) -> bool:
+    """A wood kiln with burners and its fireboxes under the floor, as Olsen's fast-fire kiln built
+    for gas (p.142): its gas firing can be worked out with the fireboxes sealed."""
+    fire = kiln.heat.fire
+    return (
+        kiln.heat.gas is not None
+        and fire is not None
+        and fire.fuel == "wood"
+        and all(fb.position == "under" for fb in fire.fireboxes)
+    )
+
+
 SMOKE = (
     "Olsen, The Kiln Book, 4th ed., p.250, Reduction-kiln adjustments and Fig. 9-25: an outside "
     "wood firebox fills an electric kiln with smoke; 'The intention is not to add heat to the kiln'"
@@ -472,14 +496,47 @@ def design_fire(kiln: Kiln) -> FireDesign:
                 reference=RULE_5,
             )
         )
-    if not smoke:
+    if not smoke and fire.fuel == "wood":
         findings.append(
             Finding(
                 level="info",
                 message=(
-                    "Fireboxes are laid out in brick in the masonry, plans and 3D model; their "
-                    f"{fuel} use per firing waits for the client's kiln (plan milestone M7)."
+                    "Wood use per firing isn't worked out for this kiln: docs/research has no "
+                    "heating value for wood, nor how much of it a firebox turns into heat in the "
+                    "kiln, so its cords can't be found from the heat it needs. To compare, "
+                    "Olsen's fast-fire kiln, 12–16 ft³ of insulating brick, reaches cone 10 in "
+                    "3½ h on less than a quarter of a cord (p.139, p.143); a 40 ft³ hard-brick "
+                    "kiln takes 12 to 14 h (p.143)."
                 ),
+                reference=FAST_FIRE_WOOD,
+            )
+        )
+    elif not smoke:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"The {fuel} use per firing isn't worked out: {fuel} firings aren't "
+                    "simulated yet."
+                    if fire.fuel == "oil"
+                    else f"The {fuel} use per firing isn't worked out: docs/research has no "
+                    f"heating value for {fuel}."
+                ),
+            )
+        )
+    if not smoke and on_gas_alone(kiln):
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Changing fuels, as Olsen builds the fast-fire kiln for gas (p.142): for a gas "
+                    "firing, open the burner ports at floor level in the side walls (removable "
+                    "bricks), block the inlet flues and brick up and mud-seal the firebox mouths; "
+                    "for wood, brick the ports up and open the fireboxes. The gas firing is "
+                    "worked out (target and simulation) with the fireboxes sealed; a firing that "
+                    "starts on one fuel and finishes on the other isn't."
+                ),
+                reference=FAST_FIRE_GAS,
             )
         )
     return FireDesign(
@@ -501,4 +558,4 @@ def design_fire(kiln: Kiln) -> FireDesign:
     )
 
 
-__all__ = ["FireDesign", "design_fire", "inside_height", "pull"]
+__all__ = ["FAST_FIRE_GAS", "FireDesign", "design_fire", "inside_height", "on_gas_alone", "pull"]

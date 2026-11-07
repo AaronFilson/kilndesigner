@@ -70,6 +70,16 @@ def test_a_wood_kiln_gets_the_sources_only() -> None:
 
 
 @pytest.mark.slow
+def test_a_gas_and_wood_kiln_fires_slowly_on_its_gas() -> None:
+    """Olsen's fast-fire kiln built for gas too (p.142): its slow firing is the gas's, with the
+    fireboxes sealed, as its target firing is."""
+    kiln = load_design(ROOT / "examples" / "olsen-32cuft-propane-wood-fastfire.yaml")
+    s = slow_firing(kiln, 12)
+    assert s.firing is not None
+    assert s.firing.completed
+
+
+@pytest.mark.slow
 def test_a_slow_electric_firing_reports_where_the_heat_goes() -> None:
     s = slow_firing(load_design(ELECTRIC), 48, 6)
     assert s.firing is not None

@@ -3,19 +3,20 @@ name = "kilndesigner-workspace"
 version = "0"
 description = "The Kilndesigner workspace: the engine, the CLI, the API and the worker."
 requires-python = ">=3.14"
-dependencies = ["kilndesigner", "kilndesigner-cli", "kilndesigner-api", "kilndesigner-worker"]
+dependencies = ["kilndesigner", "kilndesigner-cli", "kilndesigner-api", "kilndesigner-worker", "kilndesigner-mcp"]
 
 [tool.uv]
 package = false
 
 [tool.uv.workspace]
-members = ["core", "cli", "api", "worker"]
+members = ["core", "cli", "api", "worker", "mcp-server"]
 
 [tool.uv.sources]
 kilndesigner = { workspace = true }
 kilndesigner-cli = { workspace = true }
 kilndesigner-api = { workspace = true }
 kilndesigner-worker = { workspace = true }
+kilndesigner-mcp = { workspace = true }
 
 [dependency-groups]
 dev = [
@@ -33,7 +34,7 @@ dev = [
 ]
 
 [tool.pytest.ini_options]
-testpaths = ["core/tests", "cli/tests", "api/tests", "worker/tests"]
+testpaths = ["core/tests", "cli/tests", "api/tests", "worker/tests", "mcp-server/tests"]
 addopts = "-ra --strict-markers --import-mode=importlib"
 markers = [
     "geometry: builds OpenCascade geometry (slower)",
@@ -44,7 +45,13 @@ markers = [
 
 [tool.coverage.run]
 branch = true
-source = ["kilndesigner", "kilndesigner_cli", "kilndesigner_api", "kilndesigner_worker"]
+source = [
+    "kilndesigner",
+    "kilndesigner_cli",
+    "kilndesigner_api",
+    "kilndesigner_worker",
+    "kilndesigner_mcp",
+]
 
 [tool.coverage.report]
 show_missing = true
@@ -62,6 +69,7 @@ isort.known-first-party = [
     "kilndesigner_cli",
     "kilndesigner_api",
     "kilndesigner_worker",
+    "kilndesigner_mcp",
 ]
 ignore = ["RUF001", "RUF002", "RUF003"]  # °, ×, ² and – are intended in docstrings and messages
 
@@ -76,10 +84,12 @@ include = [
     "cli/src",
     "api/src",
     "worker/src",
+    "mcp-server/src",
     "core/tests",
     "cli/tests",
     "api/tests",
     "worker/tests",
+    "mcp-server/tests",
 ]
 pythonVersion = "3.14"
 typeCheckingMode = "strict"
@@ -92,7 +102,13 @@ reportUnknownArgumentType = false
 reportMissingTypeStubs = false
 
 [tool.importlinter]
-root_packages = ["kilndesigner", "kilndesigner_cli", "kilndesigner_api", "kilndesigner_worker"]
+root_packages = [
+    "kilndesigner",
+    "kilndesigner_cli",
+    "kilndesigner_api",
+    "kilndesigner_worker",
+    "kilndesigner_mcp",
+]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
@@ -103,6 +119,8 @@ forbidden_modules = [
     "kilndesigner_cli",
     "kilndesigner_api",
     "kilndesigner_worker",
+    "kilndesigner_mcp",
+    "mcp",
     "fastapi",
     "sqlalchemy",
     "arq",

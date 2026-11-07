@@ -127,6 +127,8 @@ export interface KilnDocument {
     elevation?: string;
     electricity_price?: string;
     propane_price?: string;
+    /** Per therm, kWh, m³ or ft³ (model.py Site.natural_gas_price); no default. */
+    natural_gas_price?: string;
     materials_budget?: string;
   };
   castables?: Castable[];

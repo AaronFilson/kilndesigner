@@ -59,6 +59,21 @@ async def test_a_firing_is_simulated_and_its_results_read_back(
     assert (await client.get(f"/api/simulations/{key}")).json()["status"] == "done"
 
 
+async def test_a_natural_gas_firing_is_costed_at_the_given_rate(
+    client: httpx.AsyncClient, runner: InlineRunner
+) -> None:
+    source = (EXAMPLES / "olsen" / "olsen-kit-24.yaml").read_text(encoding="utf-8")
+    assert "natural_gas_price: 1.5822 USD/therm" in source
+    key = await _key(client, source)
+    await client.post(f"/api/simulations/{key}")
+    await runner.wait()
+    sim = (await client.get(f"/api/simulations/{key}")).json()
+    assert sim["status"] == "done", sim["error"]
+    result = (await client.get(f"/api/simulations/{key}/result")).json()
+    assert result["natural_gas_therms"] > 0
+    assert result["cost_usd"] == pytest.approx(result["natural_gas_therms"] * 1.5822, rel=1e-6)
+
+
 async def test_a_simulation_the_engine_refuses_fails_with_why(
     client: httpx.AsyncClient, runner: InlineRunner
 ) -> None:

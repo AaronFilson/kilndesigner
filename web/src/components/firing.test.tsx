@@ -103,13 +103,13 @@ const result: FiringResult = {
 const chart: SwitchOverChart = {
   points: [
     { switch_over_c: 204, switch_over_f: 400, duration_h: 4.7, cost_usd: 60, electricity_kwh: 14,
-      propane_gallons: 16.7, held: true, completed: true, handed_over_c: 204, elements_stalled: false },
+      propane_gallons: 16.7, fuel_kwh: 448, held: true, completed: true, handed_over_c: 204, elements_stalled: false },
     { switch_over_c: 649, switch_over_f: 1200, duration_h: 14.4, cost_usd: 54, electricity_kwh: 137,
-      propane_gallons: 10.8, held: true, completed: true, handed_over_c: 649, elements_stalled: false },
+      propane_gallons: 10.8, fuel_kwh: 290, held: true, completed: true, handed_over_c: 649, elements_stalled: false },
     { switch_over_c: 1093, switch_over_f: 2000, duration_h: 70.5, cost_usd: 110, electricity_kwh: 793,
-      propane_gallons: 4.3, held: true, completed: true, handed_over_c: 1089, elements_stalled: true },
+      propane_gallons: 4.3, fuel_kwh: 115, held: true, completed: true, handed_over_c: 1089, elements_stalled: true },
     { switch_over_c: 1204, switch_over_f: 2200, duration_h: 66, cost_usd: 91, electricity_kwh: 759,
-      propane_gallons: 0.1, held: true, completed: false, handed_over_c: null, elements_stalled: false },
+      propane_gallons: 0.1, fuel_kwh: 3, held: true, completed: false, handed_over_c: null, elements_stalled: false },
   ],
   cheapest_c: 649,
   fastest_c: 204,

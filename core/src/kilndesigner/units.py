@@ -90,19 +90,24 @@ _DIMENSION_NAMES = {
 class QuantityField:
     """Pydantic metadata for a quantity of one dimension, read from and written as text."""
 
-    def __init__(self, dimension: str, example: str, name: str | None = None) -> None:
-        self.dimension = dimension
+    def __init__(
+        self, dimension: str | tuple[str, ...], example: str, name: str | None = None
+    ) -> None:
+        self.dimensions = (dimension,) if isinstance(dimension, str) else dimension
         self.example = example
-        self.name = name or _DIMENSION_NAMES[dimension]
+        self.name = name or _DIMENSION_NAMES[self.dimensions[0]]
+
+    def _fits(self, quantity: Quantity) -> bool:
+        return any(quantity.check(d) for d in self.dimensions)
 
     def validate(self, value: Any) -> Quantity:
         if isinstance(value, pint.Quantity):
-            if not value.check(self.dimension):
+            if not self._fits(value):
                 raise UnitError(f"{value} is not a {self.name}")
             return value
         if isinstance(value, str):
             quantity = parse_quantity(value)
-            if not quantity.check(self.dimension):
+            if not self._fits(quantity):
                 raise UnitError(f"{value!r} is not a {self.name}")
             return quantity
         if isinstance(value, int | float):
@@ -135,6 +140,15 @@ Voltage = Annotated[pint.Quantity, QuantityField("[electric_potential]", "240 V"
 Pressure = Annotated[pint.Quantity, QuantityField("[pressure]", "11 inch_H2O")]
 EnergyPrice = Annotated[pint.Quantity, QuantityField("[currency] / [energy]", "0.12 USD/kWh")]
 VolumePrice = Annotated[pint.Quantity, QuantityField("[currency] / [volume]", "3.50 USD/gallon")]
+# Natural gas is billed by energy (therm, kWh, MJ) or by volume (ft³, m³)
+GasPrice = Annotated[
+    pint.Quantity,
+    QuantityField(
+        ("[currency] / [energy]", "[currency] / [volume]"),
+        "1.5822 USD/therm",
+        "price per unit of energy or of volume",
+    ),
+]
 Money = Annotated[pint.Quantity, QuantityField("[currency]", "5000 USD")]
 Mass = Annotated[pint.Quantity, QuantityField("[mass]", "50 lb")]
 Density = Annotated[pint.Quantity, QuantityField("[mass] / [length] ** 3", "2.6 g/cm**3")]

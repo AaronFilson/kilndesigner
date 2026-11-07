@@ -157,7 +157,7 @@ kilndesigner/                 uv workspace
   cli/                        Typer: build, check, simulate, export
   api/                        FastAPI; OpenAPI contract; SQLAlchemy 2 + Alembic
   worker/                     arq tasks: simulate, build geometry, render plans
-  mcp/                        FastMCP server over the engine
+  mcp-server/                 MCP server over the engine (official SDK's MCPServer, ADR 0016)
   web/                        React 19 + Vite + TanStack + React Three Fiber
   packages/api-client/        generated TypeScript client
   notebooks/                  marimo: validation against published references
@@ -183,6 +183,7 @@ kilndesigner/                 uv workspace
 | [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
 | [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
 | [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
+| [0016](../adr/0016-mcp-server.md) | AI assistants reach the engine through an MCP server that returns the working (proposed) |
 
 ## The engineering, by kiln type
 
@@ -420,13 +421,53 @@ and Olsen p.250 turned out to be a smoke firebox for an electric kiln, not a war
   under the semicircular arch its section draws.
 - All checks green on `m7` (2,995 tests, 98.43 %).
 
+### Status (2026-11-06)
+
+- **Natural gas is costed** (M6 gap closed): `site.natural_gas_price`, the user's own rate, per
+  therm, kWh or MJ, or per ft³ or m³ through Olsen's 1000 BTU/ft³ (p.230). No default; left out,
+  the firing says it needs the rate. It flows into the firing's cost and therms, the switch-over
+  chart (now propane or natural gas), the CLI, the API and the form (Playwright step). The Olsen
+  24 kit carries the user's $1.5822/therm. `docs/research/natural-gas-prices.md`: EIA's prices,
+  informational only. The hybrid cost-per-useful-kWh analysis stays propane only.
+- Still unsourced: concrete's specific heat (EN 1992-1-2 §3.3.2(1)'s c_p(θ) isn't quoted in
+  `docs/research/`, only its density), so the platform stays out of the simulation; Cerachem and
+  castables other than the Kast-O-Lite 30 class value still have no specific heat.
+
 **M7 is on hold (2026-10-31).** The client is dealing with real estate trouble and is
 distracted; open question 3 waits until they come back to it. Nothing is built for M7 until
 then: the work that would serve it (fireboxes, natural draft, wood) stays general, for any user.
 
+### Status (2026-11-06, M7 started: a general propane-and-wood kiln)
+
+- **A new example**, `examples/olsen-32cuft-propane-wood-fastfire.yaml`: Olsen's fast-fire
+  downdraft (p.139–143) enlarged as p.142 allows to 32.9 ft³ of stacking (36 × 54½ × 47½ in
+  chamber), two 13½ × 45 in fireboxes under the floor and a 9 × 13½ in chimney (Fig. 3-9, p.77),
+  burners four a side (Fig. 5-46). Not the client's kiln, which stays on hold.
+- **Propane or wood**: the gas firing of a wood kiln with fireboxes under the floor is simulated
+  with them sealed (Olsen p.142), so its target time and slow firing work. At 3½ h (p.139) it needs
+  about 1.7 million BTU/hr (8 Ransome B5 at 2.2 psi), 16 full 100 lb cylinders at 20 °F, 49 gal.
+- **Wood per firing** isn't worked out: no heating value for wood is in `docs/research`. Olsen's
+  fast-fire figure (under ¼ cord, 3½–4 h, 12–16 ft³) is given to compare. Questions for the
+  author: a sourced heating value for wood and a firebox efficiency, and whether a firing may
+  start on propane and finish on wood.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
 client is ready, since the CLI can produce the client's plans before the app exists.
+
+### Status (2026-11-06): M8 started
+
+- **ADR 0016**: an MCP server on the official Python SDK (`mcp` 2.3.0, pinned), following
+  Glazecalc's: stateless, read-only, snake_case tools, results as structured data and JSON text.
+- **`mcp-server/`** (`kilndesigner-mcp`): `list_templates`, `get_template`, `list_examples`,
+  `get_example`, `validate_design`, `build_design`, `simulate_firing` and `start_design`, every
+  result with the engine's working; stdio, or stateless Streamable HTTP with `--http`. Tested
+  through an in-memory MCP client.
+- "Cone 10 gas, 12 ft³, under $3,000" now starts from the gas cross-draft (33 ft³ chamber,
+  $8,499 priced as it stands): the assistant resizes it and builds again.
+- **Left for M8**: a tool that compares designs; resources (materials, formula sheets) and
+  prompts; mounting `/mcp` on the API with Glazecalc's Host/Origin checks, limits, tokens and
+  OAuth once M5 has sign-in; the conformance suite and Inspector in CI; a registry listing.
 
 ## Quality bar
 
@@ -521,6 +562,11 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   castable); a ring of several layers stands as its inside layer alone unless
   `roof.rings_bonded` (form checkbox too), the thrust still from the whole ring. Bowen Mountain:
   3.7 times the thinnest ring (7.0 as one), still passing. No golden number moved.
+- *Burners over several walls (2026-11-03, PR #8):* `heat.gas.burners.walls` names the walls
+  that fire together (left and right sides is common in the reference kilns). The count is
+  shared between them in the order named, as evenly as it divides, and spread evenly along each;
+  a finding says how, and names any wall that got none. The web form edits it too
+  ([10-30-26.md](10-30-26.md)).
 - *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
   cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
   corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
