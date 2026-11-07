@@ -521,6 +521,11 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   castable); a ring of several layers stands as its inside layer alone unless
   `roof.rings_bonded` (form checkbox too), the thrust still from the whole ring. Bowen Mountain:
   3.7 times the thinnest ring (7.0 as one), still passing. No golden number moved.
+- *Burners over several walls (2026-11-03, PR #8):* `heat.gas.burners.walls` names the walls
+  that fire together (left and right sides is common in the reference kilns). The count is
+  shared between them in the order named, as evenly as it divides, and spread evenly along each;
+  a finding says how, and names any wall that got none. The web form edits it too
+  ([10-30-26.md](10-30-26.md)).
 - *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
   cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
   corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
