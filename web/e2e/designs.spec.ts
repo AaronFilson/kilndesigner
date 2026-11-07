@@ -692,7 +692,11 @@ test("an arch along the chamber's depth, sprung unevenly, is given with choices"
   await expect(page.locator(".cm-content")).toContainText("front_springline: 16 in");
 });
 
-test("a natural gas kiln is given the user's own gas rate, per therm", async ({ page, cleanup }) => {
+test("a natural gas kiln is given the user's own gas rate, per therm", async ({
+  page,
+  request,
+  cleanup,
+}) => {
   const name = `E2E gas rate ${Date.now()}`;
   const form = await fromGasCrossdraft(page, name);
   const choice = (label: string) =>
@@ -708,9 +712,12 @@ test("a natural gas kiln is given the user's own gas rate, per therm", async ({ 
   await page.getByRole("button", { name: "Save and build" }).click();
   await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
   cleanup(designId(page));
-  await page.getByRole("tab", { name: "YAML" }).click();
-  await expect(page.locator(".cm-content")).toContainText("natural_gas_price: 1.5822 USD/therm");
-  await expect(page.locator(".cm-content")).toContainText("fuel: natural_gas");
+  // The editor only draws the lines on screen and `site:` is far down, so read the saved file
+  const saved = (await (await request.get(`/api/designs/${designId(page)}`)).json()) as {
+    latest: { source: string };
+  };
+  expect(saved.latest.source).toContain("natural_gas_price: 1.5822 USD/therm");
+  expect(saved.latest.source).toContain("fuel: natural_gas");
 });
 
 test("a model that can't be loaded leaves the rest of the page working", async ({
