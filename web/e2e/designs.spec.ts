@@ -716,7 +716,8 @@ test("a natural gas kiln is given the user's own gas rate, per therm", async ({
   const saved = (await (await request.get(`/api/designs/${designId(page)}`)).json()) as {
     latest: { source: string };
   };
-  expect(saved.latest.source).toContain("natural_gas_price: 1.5822 USD/therm");
+  // Written back in Pint's short form, as propane_price is ("3.5 $ / gal")
+  expect(saved.latest.source).toContain("natural_gas_price: 1.5822 $ / thm");
   expect(saved.latest.source).toContain("fuel: natural_gas");
 });
 
