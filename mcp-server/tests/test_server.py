@@ -182,6 +182,7 @@ def test_start_design_with_no_template_of_the_fuel(monkeypatch: pytest.MonkeyPat
 
 def test_main_picks_the_transport(monkeypatch: pytest.MonkeyPatch) -> None:
     seen: list[tuple[Any, ...]] = []
+
     def run(*a: Any, **k: Any) -> None:
         seen.append((a, k))
 
