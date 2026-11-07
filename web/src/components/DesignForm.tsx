@@ -41,6 +41,9 @@ const UNIT_LABELS: Record<string, string> = {
   degC: "°C",
   "USD/kWh": "$/kWh",
   "USD/gallon": "$/gal",
+  "USD/therm": "$/therm",
+  "USD/m**3": "$/m³",
+  "USD/ft**3": "$/ft³",
   USD: "$",
 };
 
@@ -2532,6 +2535,12 @@ export function DesignForm({
           value={doc.site?.propane_price}
           units={["USD/gallon"]}
           onChange={(v) => change(["site", "propane_price"], v)}
+        />
+        <Quantity
+          label="Natural gas price (your rate, from the bill)"
+          value={doc.site?.natural_gas_price}
+          units={["USD/therm", "USD/kWh", "USD/m**3", "USD/ft**3"]}
+          onChange={(v) => change(["site", "natural_gas_price"], v)}
         />
         <Quantity
           label="Materials budget"

@@ -249,8 +249,8 @@ def test_gas_without_prices_has_no_cost() -> None:
     assert any("propane_price" in f.message for f in r.findings)
 
 
-def test_natural_gas_has_no_price() -> None:
-    kiln = _example(
+def _natural_gas(price: str | None) -> Kiln:
+    return _example(
         "gas-crossdraft",
         **{
             "lining.roof.0.specific_heat": TEST_CP,
@@ -262,11 +262,51 @@ def test_natural_gas_has_no_price() -> None:
                 "count": 2,
                 "rating": "100000 BTU/hr",
             },
+            "site.natural_gas_price": price,
         },
     )
-    r = simulate(kiln, dt=600, record=False).result
+
+
+def test_natural_gas_without_a_price_has_no_cost() -> None:
+    r = simulate(_natural_gas(None), dt=600, record=False).result
     assert r.propane_gallons is None
-    assert any("natural gas has no price" in f.message for f in r.findings)
+    assert r.cost_usd is None
+    asks = [f.message for f in r.findings if "cost isn't given" in f.message]
+    assert len(asks) == 1
+    assert "natural_gas_price" in asks[0]
+    assert "propane_price" not in asks[0]
+
+
+def test_natural_gas_is_costed_per_therm() -> None:
+    """The user's own rate, $1.5822/therm: cost = fuel kWh ÷ 29.3071 kWh/therm × the rate."""
+    r = simulate(_natural_gas("1.5822 USD/therm"), dt=600, record=False).result
+    assert r.cost_usd is not None
+    assert r.fuel_kwh > 0
+    assert r.cost_usd == pytest.approx(r.fuel_kwh / 29.3071 * 1.5822, rel=1e-4)
+    assert r.natural_gas_therms == pytest.approx(r.fuel_kwh / 29.3071, rel=1e-4)
+    step = next(s for s in r.working if s.name == "Cost of the firing")
+    assert step.inputs["natural gas"] == "$1.5822/therm ($0.0540/kWh)"
+    assert not any("cost isn't given" in f.message for f in r.findings)
+
+
+def test_a_natural_gas_price_per_volume_uses_olsens_heating_value() -> None:
+    """Per m³ or ft³ the price goes through 1000 BTU/ft³ (Olsen p.230): 100 ft³ to the therm."""
+    per_ft3 = simulate(_natural_gas("0.015822 USD/ft**3"), dt=600, record=False).result
+    per_therm = simulate(_natural_gas("1.5822 USD/therm"), dt=600, record=False).result
+    assert per_ft3.cost_usd is not None
+    assert per_therm.cost_usd is not None
+    # 100 ft³ at 1000 BTU/ft³ is 100,000 BTU, one therm
+    assert per_ft3.cost_usd == pytest.approx(per_therm.cost_usd, rel=1e-5)
+    step = next(s for s in per_ft3.working if s.name == "Cost of the firing")
+    assert "1000 BTU/ft³" in step.inputs["natural gas"]
+    assert step.reference is not None
+    assert "p.230" in step.reference
+
+
+@pytest.mark.parametrize("price", ["1.5 USD/kg", "1.5 USD"])
+def test_a_natural_gas_price_must_be_per_energy_or_volume(price: str) -> None:
+    with pytest.raises(ValueError, match="price per unit of energy or of volume"):
+        _natural_gas(price)
 
 
 def test_the_switch_over_chart() -> None:
@@ -303,22 +343,41 @@ def test_a_hand_over_above_the_elements_stall_is_marked() -> None:
     assert any("same firing" in f.message for f in chart.findings)
 
 
+def _natural_hybrid(price: str | None) -> Kiln:
+    return _hybrid(
+        **{
+            "heat.gas.fuel": "natural_gas",
+            "heat.gas.supply": {"type": "line", "pressure": "7 inch_H2O"},
+            "site.natural_gas_price": price,
+        }
+    )
+
+
+def test_the_switch_over_chart_on_natural_gas() -> None:
+    chart = switch_over_chart(_natural_hybrid("1.5822 USD/therm"), step_f=1400, dt=600)
+    assert [p.switch_over_f for p in chart.points] == [400, 1800]
+    assert all(p.propane_gallons == 0 for p in chart.points)
+    fuel = [p.fuel_kwh for p in chart.points]
+    assert fuel == sorted(fuel, reverse=True)
+    assert fuel[0] > 0
+    # Each point's cost is its electricity at $0.12/kWh and its gas at $1.5822/therm
+    for p in chart.points:
+        assert p.cost_usd == pytest.approx(
+            p.electricity_kwh * 0.12 + p.fuel_kwh / 29.3071 * 1.5822, rel=1e-4
+        )
+
+
 @pytest.mark.parametrize(
     ("kiln", "message"),
     [
         ("electric-front-loader", "elements and burners"),
-        ("natural", "propane only"),
+        ("natural", "natural_gas_price"),
         ("noprice", "electricity_price"),
     ],
 )
 def test_the_switch_over_chart_refuses(kiln: str, message: str) -> None:
     k = (
-        _hybrid(
-            **{
-                "heat.gas.fuel": "natural_gas",
-                "heat.gas.supply": {"type": "line", "pressure": "7 inch_H2O"},
-            }
-        )
+        _natural_hybrid(None)
         if kiln == "natural"
         else _hybrid(**{"site.propane_price": None})
         if kiln == "noprice"

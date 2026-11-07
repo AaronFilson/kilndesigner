@@ -23,6 +23,7 @@ from kilndesigner.units import (
     Duration,
     EnergyPrice,
     Flow,
+    GasPrice,
     Length,
     Mass,
     MassPrice,
@@ -1339,6 +1340,14 @@ class Site(Spec):
     )
     electricity_price: EnergyPrice | None = None
     propane_price: VolumePrice | None = None
+    natural_gas_price: GasPrice | None = Field(
+        default=None,
+        description=(
+            "Your natural gas rate, from the bill: per therm (for example '1.5822 USD/therm'), "
+            "per kWh or MJ, or per ft³ or m³ (taken at 1000 BTU/ft³, Olsen p.230). No default: "
+            "left out, the firing's cost isn't given"
+        ),
+    )
     materials_budget: Money | None = None
 
 

@@ -692,6 +692,27 @@ test("an arch along the chamber's depth, sprung unevenly, is given with choices"
   await expect(page.locator(".cm-content")).toContainText("front_springline: 16 in");
 });
 
+test("a natural gas kiln is given the user's own gas rate, per therm", async ({ page, cleanup }) => {
+  const name = `E2E gas rate ${Date.now()}`;
+  const form = await fromGasCrossdraft(page, name);
+  const choice = (label: string) =>
+    form.locator("label.field").filter({ has: page.getByText(label, { exact: true }) }).locator("select");
+  await choice("Gas").selectOption("natural_gas");
+  await form
+    .getByLabel("Gas pressure at the burners (needed: from the supply's regulator)", { exact: true })
+    .fill("7");
+  const rate = "Natural gas price (your rate, from the bill)";
+  await expect(form.getByLabel(rate, { exact: true })).toHaveValue(""); // no default
+  await form.getByLabel(rate, { exact: true }).fill("1.5822");
+  await expect(form.getByLabel(`${rate}, unit`)).toHaveValue("USD/therm");
+  await page.getByRole("button", { name: "Save and build" }).click();
+  await expect(page).toHaveURL(/\/designs\/[0-9a-f-]{36}$/);
+  cleanup(designId(page));
+  await page.getByRole("tab", { name: "YAML" }).click();
+  await expect(page.locator(".cm-content")).toContainText("natural_gas_price: 1.5822 USD/therm");
+  await expect(page.locator(".cm-content")).toContainText("fuel: natural_gas");
+});
+
 test("a model that can't be loaded leaves the rest of the page working", async ({
   page,
   request,

@@ -2257,6 +2257,17 @@
             "type": "number",
             "title": "Walls Kwh"
           },
+          "natural_gas_therms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Natural Gas Therms"
+          },
           "ware_kwh": {
             "type": "number",
             "title": "Ware Kwh"
@@ -4000,6 +4011,11 @@
           "held": {
             "type": "boolean",
             "title": "Held"
+          },
+          "fuel_kwh": {
+            "type": "number",
+            "title": "Fuel Kwh",
+            "default": 0.0
           },
           "completed": {
             "type": "boolean",

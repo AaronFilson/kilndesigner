@@ -712,8 +712,20 @@ describe("DesignForm, site and costs", () => {
       propane_price: "3.5 USD/gallon",
       materials_budget: "5000 USD",
     });
-    expect(screen.getByText("$/kWh")).toBeTruthy();
+    expect(screen.getAllByText("$/kWh").length).toBe(2); // electricity, and a natural gas unit
     expect(screen.getByText("$/gal")).toBeTruthy();
+  });
+
+  it("takes a natural gas rate per therm, or per m³, with no default", () => {
+    const last = live(electric);
+    const label = "Natural gas price (your rate, from the bill)";
+    expect(field(label).value).toBe("");
+    set(label, "1.5822");
+    expect(last().site?.natural_gas_price).toBe("1.5822 USD/therm");
+    set(`${label}, unit`, "USD/m**3");
+    expect(last().site?.natural_gas_price).toBe("1.5822 USD/m**3");
+    set(label, "");
+    expect(last().site?.natural_gas_price).toBeUndefined();
   });
 });
 
