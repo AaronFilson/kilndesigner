@@ -14,6 +14,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=cli/pyproject.toml,target=cli/pyproject.toml \
     --mount=type=bind,source=api/pyproject.toml,target=api/pyproject.toml \
     --mount=type=bind,source=worker/pyproject.toml,target=worker/pyproject.toml \
+    --mount=type=bind,source=mcp-server/pyproject.toml,target=mcp-server/pyproject.toml \
     uv sync --locked --no-dev --no-install-workspace
 
 COPY pyproject.toml uv.lock ./
@@ -21,6 +22,7 @@ COPY core core
 COPY cli cli
 COPY api api
 COPY worker worker
+COPY mcp-server mcp-server
 RUN --mount=type=cache,target=/root/.cache/uv uv sync --locked --no-dev --no-editable
 
 
