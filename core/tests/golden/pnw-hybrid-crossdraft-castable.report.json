@@ -412,7 +412,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "0.568"
+        "value": "0.569"
       }
     ]
   },
@@ -953,12 +953,12 @@
       "check": null,
       "level": "info",
       "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
-      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran; Jaffer 2023 Table 6)"
     },
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 329.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 347.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
@@ -2198,7 +2198,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "The ware heats at up to 368 °C/h (662 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
+      "message": "The ware heats at up to 381 °C/h (686 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
       "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]"
     },
     {
@@ -4085,7 +4085,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "174,772 BTU/hr kept against 69,217 BTU/hr lost"
+        "value": "174,772 BTU/hr kept against 69,140 BTU/hr lost"
       },
       {
         "formula": null,
@@ -4275,28 +4275,28 @@
       },
       {
         "face": "floor",
-        "heat_loss": "3645 W",
+        "heat_loss": "3623 W",
         "inside_area": "11.67 ft²",
         "layers": [
           {
-            "cold_side": "1874 °F",
-            "cold_side_k": 1296.6509203772246,
+            "cold_side": "1877 °F",
+            "cold_side_k": 1298.330726371752,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "kast-o-lite-30-li-plus",
             "thickness": "2.5 in"
           },
           {
-            "cold_side": "329.1 °F",
-            "cold_side_k": 438.189156132962,
-            "hot_side": "1874 °F",
-            "hot_side_k": 1296.6509203772246,
+            "cold_side": "347.2 °F",
+            "cold_side_k": 448.2521521938131,
+            "hot_side": "1877 °F",
+            "hot_side_k": 1298.330726371752,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "18.47 ft²",
-        "surface_temperature": "329.1 °F"
+        "surface_temperature": "347.2 °F"
       },
       {
         "face": "roof",
@@ -4329,12 +4329,12 @@
         "check": null,
         "level": "info",
         "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
-        "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+        "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran; Jaffer 2023 Table 6)"
       },
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 329.1 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 347.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
@@ -4363,8 +4363,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "20.29 kW",
-    "total_watts": 20285.389562364533,
+    "total": "20.26 kW",
+    "total_watts": 20263.06688635673,
     "working": [
       {
         "formula": null,
@@ -4447,13 +4447,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "18.47 ft²",
-          "outside surface": "329.1 °F",
-          "surface coefficient h": "13.7 W/K/m²"
+          "outside surface": "347.2 °F",
+          "surface coefficient h": "12.79 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "3645 W"
+        "value": "3623 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -4473,14 +4473,14 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "20.29 kW (6.92e+04 Btu/h)"
+        "value": "20.26 kW (6.91e+04 Btu/h)"
       }
     ]
   },
   "hybrid": {
     "cost_crossover": null,
-    "electric_ceiling": "1719 °F",
-    "electric_ceiling_c": 937.4286009101121,
+    "electric_ceiling": "1721 °F",
+    "electric_ceiling_c": 938.3778682184017,
     "element_power": "11.52 kW",
     "findings": [
       {
@@ -4499,7 +4499,7 @@
     "points": [
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.416414547750938,
+        "element_surplus_kw": 10.422354051404223,
         "propane_per_kwh": 0.14940158262060363,
         "propane_reducing_per_kwh": null,
         "temperature_c": 148.8888888888889,
@@ -4507,7 +4507,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.97607363681955,
+        "element_surplus_kw": 9.984107770029064,
         "propane_per_kwh": 0.1535200150348054,
         "propane_reducing_per_kwh": null,
         "temperature_c": 204.44444444444446,
@@ -4515,7 +4515,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.539131597802449,
+        "element_surplus_kw": 9.5489864550291,
         "propane_per_kwh": 0.15793020109541267,
         "propane_reducing_per_kwh": null,
         "temperature_c": 260.0,
@@ -4523,7 +4523,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.093887929557098,
+        "element_surplus_kw": 9.105305197578469,
         "propane_per_kwh": 0.16266596243166323,
         "propane_reducing_per_kwh": null,
         "temperature_c": 315.55555555555566,
@@ -4531,7 +4531,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.598200485178232,
+        "element_surplus_kw": 8.610898359787598,
         "propane_per_kwh": 0.16776673364393752,
         "propane_reducing_per_kwh": null,
         "temperature_c": 371.1111111111112,
@@ -4539,7 +4539,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.055258014054655,
+        "element_surplus_kw": 8.069040773580154,
         "propane_per_kwh": 0.1732782696172658,
         "propane_reducing_per_kwh": null,
         "temperature_c": 426.66666666666674,
@@ -4547,7 +4547,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.4502250272585115,
+        "element_surplus_kw": 7.46493820520238,
         "propane_per_kwh": 0.17925346914364737,
         "propane_reducing_per_kwh": null,
         "temperature_c": 482.2222222222223,
@@ -4555,7 +4555,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.776827400462473,
+        "element_surplus_kw": 6.792392650293212,
         "propane_per_kwh": 0.18575332921077817,
         "propane_reducing_per_kwh": null,
         "temperature_c": 537.7777777777778,
@@ -4563,7 +4563,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.049684830539103,
+        "element_surplus_kw": 6.066132545699073,
         "propane_per_kwh": 0.19284803997241834,
         "propane_reducing_per_kwh": null,
         "temperature_c": 593.3333333333334,
@@ -4571,7 +4571,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.268493670390558,
+        "element_surplus_kw": 5.285716145672533,
         "propane_per_kwh": 0.20061822145730265,
         "propane_reducing_per_kwh": null,
         "temperature_c": 648.888888888889,
@@ -4579,7 +4579,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.41403154147584,
+        "element_surplus_kw": 4.4319587750679945,
         "propane_per_kwh": 0.20915628677630857,
         "propane_reducing_per_kwh": null,
         "temperature_c": 704.4444444444446,
@@ -4587,7 +4587,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 3.474583915055573,
+        "element_surplus_kw": 3.4931525758119624,
         "propane_per_kwh": 0.2185678462204543,
         "propane_reducing_per_kwh": null,
         "temperature_c": 760.0000000000001,
@@ -4595,7 +4595,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 2.4607461554723304,
+        "element_surplus_kw": 2.4798852506850255,
         "propane_per_kwh": 0.22898028353410602,
         "propane_reducing_per_kwh": null,
         "temperature_c": 815.5555555555555,
@@ -4603,7 +4603,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 1.3784438828653873,
+        "element_surplus_kw": 1.3981934223308763,
         "propane_per_kwh": 0.2405547099210462,
         "propane_reducing_per_kwh": null,
         "temperature_c": 871.1111111111112,
@@ -4611,7 +4611,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 0.23026028931277687,
+        "element_surplus_kw": 0.25055223607956395,
         "propane_per_kwh": 0.25349004567681893,
         "propane_reducing_per_kwh": 0.2760916388728337,
         "temperature_c": 926.6666666666666,
@@ -4619,7 +4619,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -0.9834545001065162,
+        "element_surplus_kw": -0.9626827538975412,
         "propane_per_kwh": 0.26803426917710294,
         "propane_reducing_per_kwh": 0.29030981712276493,
         "temperature_c": 982.2222222222223,
@@ -4627,7 +4627,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -2.264062823382841,
+        "element_surplus_kw": -2.2428802091178914,
         "propane_per_kwh": 0.2845006090874077,
         "propane_reducing_per_kwh": 0.30616356033917613,
         "temperature_c": 1037.7777777777778,
@@ -4635,7 +4635,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -3.6115942629429956,
+        "element_surplus_kw": -3.5900795219820667,
         "propane_per_kwh": 0.3032906739346543,
         "propane_reducing_per_kwh": 0.3239497587827232,
         "temperature_c": 1093.3333333333335,
@@ -4643,7 +4643,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -5.025473695989949,
+        "element_surplus_kw": -5.003673721430911,
         "propane_per_kwh": 0.3249282954799764,
         "propane_reducing_per_kwh": 0.3440419189001706,
         "temperature_c": 1148.8888888888891,
@@ -4651,7 +4651,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -6.504956005189856,
+        "element_surplus_kw": -6.482914102201386,
         "propane_per_kwh": 0.3501104283125039,
         "propane_reducing_per_kwh": 0.36691657106541936,
         "temperature_c": 1204.4444444444443,
@@ -4659,7 +4659,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -8.049375910593197,
+        "element_surplus_kw": -8.02713198552397,
         "propane_per_kwh": 0.3797861581537634,
         "propane_reducing_per_kwh": 0.3931916653030738,
         "temperature_c": 1260.0,
@@ -4678,7 +4678,7 @@
         "name": "Electric ceiling",
         "note": "The steady loss ignores the heat going into the ware and walls, so the elements slow down well before this; it is an upper bound.",
         "reference": null,
-        "value": "1719 °F"
+        "value": "1721 °F"
       },
       {
         "formula": "price per gallon ÷ (26.8 kWh per gallon × available heat)",
@@ -4824,26 +4824,26 @@
   },
   "name": "PNW hybrid cross-draft, cone 10, castable",
   "target": {
-    "burner_each_btu_hr": 67032.87622584632,
-    "burners": "8 × Ransome B3 at 1.5 psi",
+    "burner_each_btu_hr": 74876.2219660074,
+    "burners": "8 × Ransome B3 at 1.9 psi",
     "burners_most_btu_hr": 1998842.5781312576,
     "chimney_height": "5.6 ft (67 in) above the chamber floor",
-    "cost": "$170.17",
-    "cost_usd": 170.1656401455654,
-    "cylinders_full": 5,
-    "cylinders_quarter": 13,
+    "cost": "$188.64",
+    "cost_usd": 188.63585174827452,
+    "cylinders_full": 6,
+    "cylinders_quarter": 14,
     "draft": [
       "0.054 in. w.c. (14 Pa) with flue gas at 1000 °F",
       "0.068 in. w.c. (17 Pa) with flue gas at top temperature"
     ],
     "duration_h": 7.983333333333333,
     "electricity_kwh": 91.96799999999999,
-    "elements_share": 0.12400490006319362,
+    "elements_share": 0.11276890173483482,
     "findings": [
       {
         "check": null,
         "level": "info",
-        "message": "The ware heats at up to 368 °C/h (662 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
+        "message": "The ware heats at up to 381 °C/h (686 °F/h), faster than any sourced schedule (316 °C/h, Bartlett's Fast Glaze). No source sets a limit, so it isn't refused; thick or uneven ware and the quartz inversion at 573 °C are where it would crack.",
         "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]"
       },
       {
@@ -4879,7 +4879,7 @@
               "symbol": "b",
               "text": null,
               "unit": "british_thermal_unit / foot ** 3 / hour",
-              "value": 100501.08207836843
+              "value": 112260.45715493741
             },
             {
               "expr": "b*V",
@@ -4892,7 +4892,7 @@
               "symbol": "D",
               "text": null,
               "unit": "BTU/hr",
-              "value": 157163.19613185892
+              "value": 175552.46053903978
             },
             {
               "expr": "D",
@@ -4905,7 +4905,7 @@
               "symbol": "P",
               "text": null,
               "unit": "BTU/hr",
-              "value": 157163.19613185892
+              "value": 175552.46053903978
             },
             {
               "expr": null,
@@ -5026,7 +5026,7 @@
               "holds": false,
               "left": "C",
               "level": "warning",
-              "margin": "C = 476,300 Btu/h, 88.82 % of P = 536,263 Btu/h",
+              "margin": "C = 476,300 Btu/h, 79.51 % of P = 599,010 Btu/h",
               "op": ">=",
               "right": "P"
             }
@@ -5034,93 +5034,93 @@
           "rule": null,
           "rule_holds": true,
           "rule_level": "error",
-          "solve": "Passes when n ≥ 13",
+          "solve": "Passes when n ≥ 14",
           "status": "warning",
           "title": "Propane supply: 11 × 100 lb cylinders, ¼ full, keeping 10 psi"
         },
         "level": "warning",
-        "message": "The propane supply meets the 536,263 BTU/hr the burners draw when full but not in the conservative case (11 × 100 lb cylinders, ¼ full, keeping 10 psi: 476,300 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
+        "message": "The propane supply meets the 599,010 BTU/hr the burners draw when full but not in the conservative case (11 × 100 lb cylinders, ¼ full, keeping 10 psi: 476,300 BTU/hr (43,300 each)) at 20 °F. Expect the kiln to slow near the top as the cylinders cool and empty. Use more cylinders or a tank.",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]"
       }
     ],
     "flue_area_in2": 113.49003461093129,
     "inlet_area_in2": 113.49003461093129,
-    "input_btu_hr": 536263.0098067706,
-    "input_per_ft3_btu_hr": 9714.909597948743,
+    "input_btu_hr": 599009.7757280592,
+    "input_per_ft3_btu_hr": 10851.62637188513,
     "limits": [],
     "met": true,
-    "peak_rate_c_per_h": 368.0484296717464,
-    "propane_gal_hr": 5.860669819312918,
-    "propane_gallons": 45.46556575587588,
+    "peak_rate_c_per_h": 381.18925262763986,
+    "propane_gal_hr": 6.546411835020647,
+    "propane_gallons": 50.742769070935644,
     "shortest_h": 1.6833333333333333,
     "supply_meets": true,
     "supply_options": [
       {
-        "cost": "$170.17",
-        "needs": "5 cylinders at 20 °F",
+        "cost": "$188.64",
+        "needs": "6 cylinders at 20 °F",
         "option": "100 lb cylinders, full",
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3] (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
         "works": true
       },
       {
-        "cost": "$170.17",
-        "needs": "13 cylinders at 20 °F",
+        "cost": "$188.64",
+        "needs": "14 cylinders at 20 °F",
         "option": "100 lb cylinders, down to ¼ full keeping 10 psi",
         "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "works": true
       },
       {
-        "cost": "$170.17",
+        "cost": "$188.64",
         "needs": "air at 20 °F or warmer",
         "option": "The design's 11 cylinders, full",
         "source": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3]",
         "works": true
       },
       {
-        "cost": "$170.17",
-        "needs": "air at 26 °F or warmer",
+        "cost": "$188.64",
+        "needs": "air at 32 °F or warmer",
         "option": "The design's 11 cylinders, ¼ full",
         "source": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
         "works": false
       },
       {
-        "cost": "$170.17",
+        "cost": "$188.64",
         "needs": "too small even 60 % full at 20 °F (209,600 BTU/hr)",
         "option": "120 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.17",
+        "cost": "$188.64",
         "needs": "too small even 60 % full at 20 °F (237,544 BTU/hr)",
         "option": "150 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.17",
+        "cost": "$188.64",
         "needs": "too small even 60 % full at 20 °F (410,444 BTU/hr)",
         "option": "250 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.17",
+        "cost": "$188.64",
         "needs": "too small even 60 % full at 20 °F (519,633 BTU/hr)",
         "option": "325 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": false
       },
       {
-        "cost": "$170.17",
-        "needs": "kept at least 45 % full at 20 °F",
+        "cost": "$188.64",
+        "needs": "kept at least 55 % full at 20 °F",
         "option": "500 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": true
       },
       {
-        "cost": "$170.17",
-        "needs": "kept at least 11 % full at 20 °F",
+        "cost": "$188.64",
+        "needs": "kept at least 15 % full at 20 °F",
         "option": "1000 gal tank",
         "source": "ASME tank table, 1/3 full (secondary); combustion-and-masonry.md §2.4 [S13], scaled by K ÷ 90 for the fill (combustion-and-masonry.md §2.3, derived)",
         "works": true
@@ -5149,44 +5149,44 @@
         "formula": "the least input whose simulated firing ends within the target: a secant search on the logarithm of the input, kept inside a bracket",
         "inputs": {
           "burners lit from": "50 °F",
-          "first guess": "766,140 BTU/hr, from the heat balance",
+          "first guess": "863,911 BTU/hr, from the heat balance",
           "rule of thumb, for comparison": "552,249 BTU/hr",
           "simulated firings": "11 (8 at a 240 s step while searching, 3 at the firing's 60 s)",
           "target": "8 h",
-          "to within": "1% (between 530,953 and 536,263 BTU/hr)"
+          "to within": "1% (between 593,079 and 599,010 BTU/hr)"
         },
         "name": "Burner input for the target",
         "note": null,
         "reference": "simulation.py (ADR 0015)",
-        "value": "536,263 BTU/hr (9,715 BTU/ft³/hr)"
+        "value": "599,010 BTU/hr (10,852 BTU/ft³/hr)"
       },
       {
         "formula": "⌈draw ÷ each cylinder's vaporization⌉",
         "inputs": {
-          "draw": "536,263 BTU/hr",
+          "draw": "599,010 BTU/hr",
           "each": "113,000 BTU/hr"
         },
         "name": "100 lb cylinders for the draw, full",
         "note": null,
         "reference": "Flame Engineering 100 lb cylinder table; combustion-and-masonry.md §2.1 [S3], read at the liquid's temperature (the liquid 20 °F under the air under draw; combustion-and-masonry.md §2.3 [S1], §2.8)",
-        "value": "5"
+        "value": "6"
       },
       {
         "formula": "⌈draw ÷ each cylinder's vaporization⌉",
         "inputs": {
-          "draw": "536,263 BTU/hr",
+          "draw": "599,010 BTU/hr",
           "each": "43,300 BTU/hr"
         },
         "name": "100 lb cylinders for the draw, ¼ full keeping 10 psi",
         "note": "Cylinders in parallel are taken to add their capacities (an inference, §2.6).",
         "reference": "Vertical cylinder, 25% full, at least 10 psi; combustion-and-masonry.md §2.2 [S10, S11]",
-        "value": "13"
+        "value": "14"
       },
       {
         "formula": null,
         "inputs": {
           "coldest air": "20 °F",
-          "draw": "536,263 BTU/hr"
+          "draw": "599,010 BTU/hr"
         },
         "name": "Propane supply options",
         "note": "Each costs the same per firing: the propane burned is the same whatever holds it. A tank's fill is interpolated between the D × L × K rule's rows (derived).",
@@ -5199,7 +5199,7 @@
         "name": "Fastest heating over an hour",
         "note": null,
         "reference": "hybrid-firing.md §5: no source sets a maximum heating rate for ware; the fastest sourced glaze schedule is Bartlett's Fast Glaze, 316 °C/h (570 °F/h) to 1083 °C [H2]; Digitalfire, 'up to 500F/hr should be fine' for thin, even bisque [H5]",
-        "value": "368 °C/h (662 °F/h)"
+        "value": "381 °C/h (686 °F/h)"
       },
       {
         "formula": null,
@@ -5207,7 +5207,7 @@
         "name": "The elements' share of the heat",
         "note": "On for the whole firing, through reduction.",
         "reference": "hybrid-firing.md §1.2: Skutt, reducing 'will clobber their useful life' [H1]; reduction from about 900 °C [S66]",
-        "value": "12% (92 kWh)"
+        "value": "11% (92 kWh)"
       },
       {
         "formula": "W × L × H, plus the space under the dome worked out exactly: Ward gives no formula for a dome",
@@ -5246,7 +5246,7 @@
         "name": "Burner input for the target firing time",
         "note": "Found with the firing simulation, in place of the rule of thumb above.",
         "reference": "simulation.py (ADR 0015); target.py",
-        "value": "536,263 BTU/hr (9,711 BTU/ft³/hr)"
+        "value": "599,010 BTU/hr (10,847 BTU/ft³/hr)"
       },
       {
         "formula": "0.8 × min(20 psi, p_v − 20 psi)",
@@ -5264,12 +5264,12 @@
         "formula": null,
         "inputs": {
           "cost": "$1,960.00",
-          "each": "67,033 BTU/hr"
+          "each": "74,876 BTU/hr"
         },
         "name": "Burners",
         "note": "The pressure at which each gives its share, read from its published ratings: between them, output rises with √pressure (§3.2, derived).",
         "reference": "Ward Burner Systems venturi burners; combustion-and-masonry.md §3.2 [S27]",
-        "value": "8 × Ransome B3 at 1.5 psi"
+        "value": "8 × Ransome B3 at 1.9 psi"
       },
       {
         "formula": "BTU/hr ÷ 91,502 BTU/gal",
@@ -5277,7 +5277,7 @@
         "name": "Propane at full fire",
         "note": null,
         "reference": "combustion-and-masonry.md §1.1 [S1, S2]",
-        "value": "5.86 gal/hr (24.6 lb/hr)"
+        "value": "6.55 gal/hr (27.5 lb/hr)"
       },
       {
         "formula": "(HHV − heat in the flue gas at T_top) ÷ HHV",
@@ -5297,7 +5297,7 @@
         "name": "Burners and elements against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "169,712 + 39,308 BTU/hr kept against 69,217 BTU/hr lost"
+        "value": "189,570 + 39,308 BTU/hr kept against 69,140 BTU/hr lost"
       },
       {
         "formula": null,
@@ -5335,12 +5335,12 @@
         "name": "Propane on hand",
         "note": null,
         "reference": null,
-        "value": "262 gal: 44.7 hours at full fire"
+        "value": "262 gal: 40.0 hours at full fire"
       },
       {
         "formula": "the burner ports together, 1 : 1 (p.151, p.173)",
         "inputs": {
-          "Olsen's other methods": "138 in² (2½ in² per ft³), 77 in² (1 in² per 7000 BTU/hr)",
+          "Olsen's other methods": "138 in² (2½ in² per ft³), 86 in² (1 in² per 7000 BTU/hr)",
           "burner ports together": "113 in²"
         },
         "name": "Exit flue, to start",

@@ -1336,6 +1336,19 @@ def design_gas(
             ),
         )
     )
+    if kiln.draft is not None and kiln.draft.exits is not None:
+        from kilndesigner.openings import exit_flues_step
+
+        built_in2 = kiln.draft.exit_area_in2()
+        assert built_in2 is not None
+        working.append(
+            exit_flues_step(
+                kiln.draft.exit_sum_text(),
+                built_in2,
+                against=(flue_in2, how_flue),
+                source=FLUE_SOURCE,
+            )
+        )
 
     # The chimney: gas under pressure needs it only to the top of the kiln, then a hood and stack
     chimney: str | None = None

@@ -24,8 +24,12 @@
 # Olsen's chamber kiln, which may be this one, opened almost ½ in in firing, and "a steel tie
 # might have helped" (olsen-chamber-p23, p.47).
 # Not modelled: the 5 in perforated air tube under the second grate (p.206); the first firebox's
-# depth below the floor and its air along the front wall (p.202); the floor's loss into the
-# ground, which the engine doesn't work out.
+# depth below the floor (see the firebox) and its air along the front wall (p.202); the floor's loss into the ground, which the engine doesn't
+# work out. Fig 8-17 draws the second grate about 5 in above the second chamber's floor and that
+# floor about 9 in above the first's (scaled: Fig 8-17, p.206, from the 14" and 9", ±1 in), and
+# its ash pit 19-21 in below the grate against the printed 15 in, which scales from the second
+# chamber's floor line instead: none of these is entered (a grate above the floor and a step
+# between chambers' floors aren't expressible; the printed 15 in stays).
 schema: 1
 name: Olsen's two-chamber wood kiln
 units: us
@@ -61,6 +65,9 @@ heat:
           length: 55 in
           gap: 0.75 in # as the fast-fire grate (p.204)
         ash_pit: 15 in
+        # "18in. (46cm) below the floor of the first chamber" (p.202) would be step: 18 in, but
+        # then the firebox must be more than 18 in tall above its grate, and that isn't printed
+        # (no figure of this firebox): left out, a question in the doc
       - count: 1 # the second chamber's (p.206)
         position: front
         width: 14 in

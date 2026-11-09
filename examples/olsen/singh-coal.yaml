@@ -8,18 +8,26 @@
 # opening into the chamber through a 15 × 24 in firebox flue (p.134); twelve 6 × 6 in floor exit
 # flues into a 24 × 16 in flue channel to the chimney (the flue port here), the chimney 24 × 24 in
 # inside (Fig 5-10); coal; cone 10 (p.133).
-# Assumed: the walls are 18 in, the least of the 18–22 in that carried the domes of early domed
-# and downdraft kilns (p.45). The wall is notched 9 in deep at each firebox (p.134), so it is
-# thicker than 9 in. The brick isn't named: dense brick, as in those load-bearing walls;
+# Scaled (step A, 2026-11-09, scratch/scale-pz/scale.py): the wall 13½ in (Fig 5-10; with the
+# bracing between the fireboxes about 22 in, inside the 18–22 in that carried early domes, p.45);
+# each firebox 22½ in above its grate (Fig 5-11); the floor flues' places (printed spacings,
+# Fig 5-10); three dome vents. Assumed: the brick isn't named: dense brick, as in those load-bearing walls;
 # medium-duty firebrick (Olsen's intermediate duty, p.18). The dome is 9 in
 # thick, the thickest of Olsen's usual arch thicknesses (4½, 6¾ and 9 in, p.296). The floor is
 # built on the ground (on_ground): it stands on a flue collection channel 12 in deep (Fig 5-11),
 # not on a stand. Each firebox's length is taken as its grate's 24 in. The chimney is 30 ft tall,
 # about 25–30 ft from the chamber (Fig 5-10, read by the user, 2026-10-31): the run is taken as
-# 27½ ft, the middle. Stoking holes 15 × 13 in (Fig 5-11, read by the user, 2026-10-31). The door
+# 27½ ft, the middle. Stoking holes 15 × 13 in (Fig 5-11, read by the user, 2026-10-31). A 36 in
+# ash pit, the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (Fig 5-11); the section prints 15", 15"
+# and 36" up the firebox's side without saying which band is which, and the grate bars are drawn
+# inside the lower 15 in band, 22½ in (scaled) under the firebox's roof, not 30 (?). The door
 # and the air: engine defaults (a bricked door, 70 °F).
-# Not modelled: the fireboxes are spaced evenly round the wall, the door between two of them; the
-# engine puts one on each of its four faces. The 12 in deep flue channel under the floor, and the
+# The four fireboxes stand on the diagonals (Fig 5-10), each drawn against the front or back wall
+# with its middle on the 45° line, square to that wall; each has its 4 × 2 ft coal pit outside
+# (Fig 5-10), reported, not drawn.
+# Not modelled (see docs/kilns/olsen/singh-coal.md): the arched door between two fireboxes (Fig
+# 5-10), about 22 in wide (scaled, ±1 in) but of no readable height; the engine makes the front
+# wall the door. The damper in the chimney entrance (Fig 5-10). The 12 in deep flue channel under the floor, and the
 # floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
 # the user) doesn't fit the drawn sizes, which give about 235 ft³ (derived); the drawing is used.
 schema: 1
@@ -39,7 +47,7 @@ roof:
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield
-      thickness: 18 in
+      thickness: 13.5 in # (scaled: Fig 5-10, p.134, from 7' and the 24" chimney, ±1 in), 1½ bricks; the solid bracing outside it between the fireboxes, about 8½ in more, isn't modelled
   floor:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in
@@ -50,9 +58,11 @@ heat:
   fire:
     fuel: coal
     fireboxes:
-      - position: left
+      - position: front-left # on the diagonals, evenly round the wall (Fig 5-10)
         width: 24 in
         length: 24 in
+        height: 22.5 in # above the grate (scaled: Fig 5-11, p.134, from 7', 5' and 40", ±1½ in), 9 courses; the 15" + 15" bands read 30 in (?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (Fig 5-11); the grate scales 34–35 in above the ground (±1¼ in)
         grate:
           width: 24 in
           length: 24 in
@@ -62,9 +72,14 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: right
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: front-right
         width: 24 in
         length: 24 in
+        height: 22.5 in # above the grate (scaled: Fig 5-11, p.134, from 7', 5' and 40", ±1½ in), 9 courses; the 15" + 15" bands read 30 in (?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (Fig 5-11); the grate scales 34–35 in above the ground (±1¼ in)
         grate:
           width: 24 in
           length: 24 in
@@ -74,9 +89,14 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: back
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: back-left
         width: 24 in
         length: 24 in
+        height: 22.5 in # above the grate (scaled: Fig 5-11, p.134, from 7', 5' and 40", ±1½ in), 9 courses; the 15" + 15" bands read 30 in (?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (Fig 5-11); the grate scales 34–35 in above the ground (±1¼ in)
         grate:
           width: 24 in
           length: 24 in
@@ -86,9 +106,14 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: front
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: back-right
         width: 24 in
         length: 24 in
+        height: 22.5 in # above the grate (scaled: Fig 5-11, p.134, from 7', 5' and 40", ±1½ in), 9 courses; the 15" + 15" bands read 30 in (?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (Fig 5-11); the grate scales 34–35 in above the ground (±1¼ in)
         grate:
           width: 24 in
           length: 24 in
@@ -98,10 +123,34 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
 draft:
   type: down
   flue_wall: back
-  flue_port: # the flue channel to the chimney
+  exits: # twelve 6" × 6" floor exit flues (Fig 5-10), placed by the plan's printed 12", 6", 10"
+    # and 18": two rows of four 18 in apart (centres), the rows 24 in apart, and one more
+    # 16 in outside each row beside its middle two; the set taken as centred in the floor
+    - through: floor
+      count: 12
+      port:
+        width: 6 in
+        height: 6 in
+      places:
+        - { across: -12 in, along: -27 in }
+        - { across: -12 in, along: -9 in }
+        - { across: -12 in, along: 9 in }
+        - { across: -12 in, along: 27 in }
+        - { across: 12 in, along: -27 in }
+        - { across: 12 in, along: -9 in }
+        - { across: 12 in, along: 9 in }
+        - { across: 12 in, along: 27 in }
+        - { across: -28 in, along: -9 in }
+        - { across: -28 in, along: 9 in }
+        - { across: 28 in, along: -9 in }
+        - { across: 28 in, along: 9 in }
+  connection: # the 24" × 16" flue channel to the chimney (Fig 5-10)
     width: 24 in
     height: 16 in
   run_to_chimney: 27.5 ft # "Approximately 25–30'" away (Fig 5-10)
@@ -110,3 +159,16 @@ draft:
     inside:
       width: 24 in
       depth: 24 in
+openings:
+  vents: # "COOLING & VAPOR HOLES" (Fig 5-11): three drawn in the section, at the crown and
+    # about 28 in either side (scaled: Fig 5-11, p.134, from 7', 5' and 40", ±1 in); each about
+    # 2¾ in across (scaled, ±½ in), a course, 2½ in; the section's line is taken as side to side
+    - through: roof
+      count: 3
+      port:
+        width: 2.5 in
+        height: 2.5 in
+      places:
+        - { across: -28 in }
+        - { across: 0 in }
+        - { across: 28 in }

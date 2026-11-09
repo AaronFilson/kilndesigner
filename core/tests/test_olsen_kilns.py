@@ -23,10 +23,13 @@ K23_AT_CONE_10 = (
 WARNED: dict[str, dict[str, str]] = {
     "fast-fire": {"heatloss.service": K23_AT_CONE_10},
     "fast-fire-anderson": {"heatloss.service": K23_AT_CONE_10},
-    "blakebrough-tasmania": {
-        "hardware.flue": "the book's 9 × 6 in flue into the chimney (p.148) is under 1 in² per "
-        "7000 BTU/hr (p.236) of the input the engine sizes for the 68 ft³ fibre box; the book "
-        "gives no burner rating, so this holds if the burners were that large",
+    "bidai": {
+        "fire.chimney": "the chimney read off Fig 4-36 (p.94), about 81 in over chamber 1's floor, "
+        "is under the height Olsen's rule gives (p.140); the kiln was built and fired so",
+    },
+    "blakebrough-sturt": {
+        "frame.catenary": "no source sizes what holds a catenary's feet; Fig 8-15 (p.205) draws "
+        "the arch pointed, from near the floor",
     },
     "chappell-domura": {
         "fire.grate": "one 12 × 12 in chimney draws both the salt kiln and the two-chamber kiln "
@@ -42,6 +45,14 @@ WARNED: dict[str, dict[str, str]] = {
     },
     "ninodaguia": {
         "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
+    },
+    "olsen-two-chamber": {
+        "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.97 of "
+        "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
+    },
+    "olsen-three-chamber": {
+        "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.65 of "
+        "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
     },
     "tobe": {
         "heatloss.rayleigh": "its roof, about 25 × 73 ft, is past the Rayleigh number its "

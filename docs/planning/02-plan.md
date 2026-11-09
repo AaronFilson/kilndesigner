@@ -451,6 +451,19 @@ then: the work that would serve it (fireboxes, natural draft, wood) stays genera
   author: a sourced heating value for wood and a firebox efficiency, and whether a firing may
   start on propane and finish on wood.
 
+### Status (2026-11-08, M7: wood per firing)
+
+- **`site.wood`**, all the user's own, no defaults: `heating_value` (net, oven-dry), `moisture`
+  (wet basis), `firebox_efficiency`, and optionally `cord_weight` (oven-dry lb/cord) and `price`
+  (USD/cord; `cord` = 128 ft³ in the unit registry). Left out, the firing says what it needs.
+- **`wood.py`**: the gas firing's heat into the kiln, Q, put in by wood instead: H(w) =
+  H(dry)(1 − w) − 2.44w MJ/kg (FAO UBET eq. 3, checked against Forest Research's 14.7 GJ/t at 20 %),
+  m = Q ÷ (η·H(w)), cords and cost. In the firing result (`wood_kg`, `wood_oven_dry_kg`,
+  `wood_cords`, `wood_cost_usd`), its working and the CLI. Not in the web form yet.
+- **`docs/research/wood-fuel.md`**: sourced starting values (MU Extension, Forest Research, FAO,
+  USU's cord weights by species), Olsen's and others' wood per firing to compare. Not found: a kiln
+  firebox efficiency; eucalyptus and pallet values; FPL's scanned PDFs weren't readable.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
 client is ready, since the CLI can produce the client's plans before the app exists.
@@ -468,6 +481,26 @@ client is ready, since the CLI can produce the client's plans before the app exi
 - **Left for M8**: a tool that compares designs; resources (materials, formula sheets) and
   prompts; mounting `/mcp` on the API with Glazecalc's Host/Origin checks, limits, tokens and
   OAuth once M5 has sign-in; the conformance suite and Inspector in CI; a registry listing.
+
+### Status (2026-11-08): M8 compares, with resources and prompts
+
+- **`compare_designs`**: two or more designs (YAML, `template:<id>` or `example:<name>`) built and
+  set side by side in the CLI's rows (chamber volume, heat loss, hottest face, installed power or
+  burner input, propane supply, hand-over, priced materials, errors/warnings), each row with the
+  report's own working and every design's findings; with `simulate`, each firing's time, energy,
+  fuel and cost with its working, or the engine's reason it isn't simulated. The rows moved from
+  the CLI to `kilndesigner.compare`, so both surfaces show the same ones. The stacking volume is
+  not estimated (no source in `docs/research/`); the chamber volume is compared.
+- **Resources**: `kilndesigner://schema/design` (the design file's JSON Schema),
+  `kilndesigner://materials` and `kilndesigner://materials/{id}` (each material's values with its
+  source and status), `kilndesigner://alloys`, and the formula sheets (ADR 0013) behind a
+  template's or a top-level example's findings: `kilndesigner://templates/{id}/checks`,
+  `kilndesigner://examples/{name}/checks`.
+- **Prompts**: `design_from_brief` (start_design → resize → validate → build → compare) and
+  `explain_finding` (a finding explained from its sheet, margin and lever).
+- **Left for M8**: mounting `/mcp` on the API with Host/Origin checks, limits, tokens and OAuth
+  once M5 has sign-in; the MCP Inspector and conformance suite in CI (both are fetched with npx at
+  run time, so they don't run offline); a registry listing.
 
 ## Quality bar
 
@@ -570,6 +603,26 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
 - *Still open:* an allowable bearing stress or FoS (none found), a largest joint thickness, hot
   cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
   corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
+
+**Sixth round (2026-11-08), `docs/research/refractory-movement-and-mortar.md`.** What closed:
+
+- *Growth and allowance (closed):* fireclay brick grows 3/32 in per ft to 2400 °F, and "most
+  brick manufacturers recommend" that as the expansion allowance (Brosnan, in Schacht's
+  *Refractories Handbook*, read in full): a third source for the engine's 3/32 in/ft beside
+  Olsen p.51 and the IFB sheets. Bhatia (PDHonline M158 p.29): half the theoretical expansion is
+  enough, the joints take the rest, which matches Olsen's 1/16 in/ft in a steel frame.
+- *Mortar types (closed):* HWI's air-setting, heat-setting and phosphate definitions; SAIRSET's
+  joint MOR 650 psi dried, 500 psi after 1500 °F (sheet 8/10: 5006); HWI M-2: mortar "is always
+  the weakest link", joints "as thin as possible", troweled better than dipped.
+- *Largest joint (closed):* "should not exceed 1⁄4 in" (Beall, *Masonry Design and Detailing*,
+  5th ed. p.143); 1/16–1/8 in is the usual recommendation (snippets only).
+- *In the engine:* the sprung arch's growth reference now cites Brosnan too. No number moved.
+- *Proposed:* a wall expansion-allowance finding (3/32 in/ft, half allowed, Olsen's ¼ in joints
+  past 48 in); an arch-rise working step (geometry, Derived); a joint-thickness warning past ¼ in.
+- *Still open:* hot cohesion, allowable bearing stress or FoS, IFB hot MOR and creep, castable
+  reversible expansion and drying shrinkage, a measured arch rise, rampant-arch thrust, the
+  catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
+  Refractory Practice* not reached online.
 
 ## Open questions
 

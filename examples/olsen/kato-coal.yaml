@@ -26,10 +26,11 @@
 # the firebox floors are below ground (Fig 5-4). Each firebox's length from its mouth isn't
 # printed: its grate's 22 in. The chimney stands at the back, opposite the door, its run from the
 # kiln an engine default (9 in). The spy holes and the air: engine defaults.
-# Not modelled: the back wall, by the chimney, is marked 10 in too (Fig 5-4), but the engine
-# gives it the side walls' 18 in; the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
+# The back wall, by the chimney, is marked 10 in too (Fig 5-4): its own layers (lining.back).
+# Not modelled: the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
 # 8 in apart; the flue channels under the floor and the collection box, and the floor's loss into
-# them and the ground; the 20 in connection to the chimney and its damper; the inlet flues from
+# them and the ground; the 20 in connection to the chimney (round or square isn't printed:
+# draft.connection could take it) and its damper (not sized); the inlet flues from
 # the fireboxes, about 500 in² in all (p.131), whose sizes aren't printed.
 schema: 1
 name: Kato coal downdraft, Tajimi
@@ -56,6 +57,9 @@ lining:
   door:
     - material: firebrick-medium-duty-smithfield
       thickness: 10 in # "10"" at the door end (Fig 5-4)
+  back:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 10 in # "10"" by the chimney (Fig 5-4)
   floor:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in
@@ -69,18 +73,47 @@ heat:
       - position: left
         width: 30 in
         length: 22 in
+        height: 26 in # (scaled: Fig 5-4 section, p.131, from the 6'6" and 36", ±1 in)
+        step: 9 in # grate below the chamber floor (scaled: Fig 5-4 section, p.131, from the 6'6" and 36", ±1 in)
+        ash_pit: 27 in # (scaled: Fig 5-4 section, p.131, from the 6'6" and 36", ±1 in; the 18" channel
+        # scales it 15 in: a question in the doc)
         grate:
           width: 30 in
           length: 22 in
       - position: right
         width: 30 in
         length: 22 in
+        height: 26 in # as the left
+        step: 9 in
+        ash_pit: 27 in
         grate:
           width: 30 in
           length: 22 in
 draft:
   type: down
   flue_wall: back
+  exits: # twelve 6 × 6 in floor exit flues, 432 in² (p.131), in three rows of four (the plan,
+    # Fig 5-4). Places (scaled: Fig 5-4 plan, p.131, from the 7' and 6'6", ±1 in): rows 16 in
+    # left of, on and 13 in right of the centre line; columns 32 and 13 in in front of the
+    # middle and 6 and 23 in behind it
+    - through: floor
+      count: 12
+      port:
+        width: 6 in
+        height: 6 in
+      places:
+        - { across: -16 in, along: -32 in }
+        - { across: -16 in, along: -13 in }
+        - { across: -16 in, along: 6 in }
+        - { across: -16 in, along: 23 in }
+        - { across: -1 in, along: -32 in }
+        - { across: -1 in, along: -13 in }
+        - { across: -1 in, along: 6 in }
+        - { across: -1 in, along: 23 in }
+        - { across: 13 in, along: -32 in }
+        - { across: 13 in, along: -13 in }
+        - { across: 13 in, along: 6 in }
+        - { across: 13 in, along: 23 in }
   chimney:
     height: 20 ft
     inside:

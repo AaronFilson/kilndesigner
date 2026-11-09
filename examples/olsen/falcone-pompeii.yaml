@@ -20,7 +20,9 @@
 # Not modelled: the façade of old tiles outside the firebrick (no thickness given, and the
 # library has no tile); the floor's ring arches, 9 in apart, and the floor's loss, which goes into
 # the firebox chamber under it (the engine leaves it out); the nine exit flues, whose sizes
-# aren't given (the engine sizes one flue in the vault); the stoking port and its under-air.
+# aren't given (the engine sizes one flue in the vault); the stoking port and its under-air, an
+# arched mouth with an opening below it in the firebox chamber's front (photo, Fig 6-34, p.161;
+# no size printed).
 schema: 1
 name: Falcone Pompeii updraft
 units: us

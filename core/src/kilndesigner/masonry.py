@@ -974,7 +974,11 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
         f"{length_text(run.between, us)} thick, as thick as the side walls. "
     )
     reference = "run_parts.py; Olsen, The Kiln Book, 4th ed."
-    if run.step > 1e-6:
+    if run.sizes:
+        from kilndesigner.shell import sizes_note
+
+        text += sizes_note(kiln, run, us)
+    elif run.step > 1e-6:
         slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
         text += (
             f"Each floor steps {length_text(run.step, us)} above the last: the pitch of a "
@@ -1001,7 +1005,18 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
     from kilndesigner.run_parts import FLUE_HEIGHT, flue_rows
 
     rows = flue_rows(kiln)
-    if rows:
+    between = kiln.draft.between if kiln.draft is not None else None
+    if rows and between is not None:
+        n = rows[0].count
+        w, h = between.port.size_in()
+        text += (
+            f"Each wall between chambers has {n} flue {'hole' if n == 1 else 'holes'} {w:g} in "
+            f"wide and {h:g} in tall at the higher chamber's floor, spread evenly across the "
+            "chamber, as the design gives them (draft.between), in place of Olsen's standard "
+            "4½ × 9 in flues (p.96). They are cut from the brick count. Olsen errs on flues too "
+            "large (p.45)."
+        )
+    elif rows:
         n = rows[0].count
         short = [r.chamber for r in rows if r.top - r.bottom < FLUE_HEIGHT - 1e-6]
         text += (

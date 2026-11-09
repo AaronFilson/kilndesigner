@@ -352,13 +352,20 @@ def heat_loss(
                 reference=m.source,
             )
         )
+    if kiln.firing.chamber_cones is not None and inside is None:
+        from kilndesigner.shell import chamber_cones_loss
+
+        total, step = chamber_cones_loss(kiln, total, air)
+        working.append(step)
     total_q = Q_(total, "W")
     working.append(
         Step(
             name="Total heat loss at top temperature",
             value=f"{show(total_q, 'kW')} ({show(total_q, 'BTU/hr', 3)})",
             formula=(
-                "sum of the "
+                "each chamber's share at its own cone (above)"
+                if kiln.firing.chamber_cones is not None and inside is None
+                else "sum of the "
                 f"{({3: 'three', 4: 'four', 5: 'five', 6: 'six'}).get(len(faces), len(faces))} "
                 "faces"
             ),

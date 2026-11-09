@@ -54,6 +54,19 @@ class HeatCapacity:
     def cp(self, t: Vector) -> Vector:
         return np.interp(t, self.temperatures, self.values)
 
+    def enthalpy(self, t: float) -> float:
+        """H(T) = ∫c_p dT from the first point (J/kg), exact for the piecewise-linear c_p."""
+        ts, cs = self.temperatures, self.values
+        if t <= ts[0]:
+            return cs[0] * (t - ts[0])
+        h = 0.0
+        for t0, t1, c0, c1 in zip(ts, ts[1:], cs, cs[1:], strict=False):
+            if t <= t1:
+                c = c0 + (c1 - c0) * (t - t0) / (t1 - t0)
+                return h + 0.5 * (c0 + c) * (t - t0)
+            h += 0.5 * (c0 + c1) * (t1 - t0)
+        return h + cs[-1] * (t - ts[-1])
+
 
 @dataclass(frozen=True)
 class Layer:

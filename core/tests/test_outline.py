@@ -35,7 +35,9 @@ from kilndesigner.outline import (
 from kilndesigner.shape import Arch, RoundDome, SailDome, chamber_shape
 
 EXAMPLES = Path(__file__).parents[2] / "examples"
-DESIGNS = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.yaml"))
+ALL = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.yaml"))
+# Chambers of different sizes and widths that change are worked out in shell.py, not as a form
+DESIGNS = [p for p in ALL if (c := load_design(p).chamber).sizes is None and c.widths is None]
 
 
 # Kilns whose form differs from shape.chamber_shape, and why (none: Bidai's and Kyoto's arches,
@@ -80,7 +82,7 @@ def test_a_semicircular_arch() -> None:
     assert arch.segment_area == pytest.approx(arch_section(1.0, 0.5).area)
 
 
-@pytest.mark.parametrize("name", ["bidai", "kyoto-climbing"])
+@pytest.mark.parametrize("name", ["kyoto-climbing"])
 def test_kilns_with_arches_over_a_semicircle(name: str) -> None:
     kiln = load_design(EXAMPLES / "olsen" / f"{name}.yaml")
     shape = chamber_shape(kiln)

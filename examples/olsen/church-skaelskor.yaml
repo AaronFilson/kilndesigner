@@ -33,8 +33,12 @@
 # tubes, a 7 × 7 ft crossing; Fig 7-2 calls the 7 ft a diagonal, p.183 the fire zone); the
 # groundhog's three-flue chimney (which would face its firebox in the right wall) left out; Fig
 # 7-10's roof "like an upturned Viking longboat", whitewashed, not drawn. The anagama chimney's height isn't printed, so the chimney isn't entered: the engine sizes
-# it, and its section comes out 13½ × 13½ in, the book's. The 12–15 in step up from the grate to
-# the ware floor.
+# it, and its section comes out 13½ × 13½ in, the book's. The groundhog chimney's three flues
+# (Fig 7-9, drawing: three openings in the groundhog's back wall, "9 BRICKS TALL 28–30"") and the
+# walk-in channels below ground. Fig 7-9 draws no door and no spy holes: the door and spy holes
+# are the engine's defaults.
+# Changed 2026-11-08: each firebox's step up from its grate to the ware floor, 13½ in, the middle
+# of Fig 7-3's "STEP UP TO WARE PLATFORM 12–15"" (p.179, drawing).
 schema: 1
 name: Church multi-directional kiln, Skælskør
 units: us
@@ -77,7 +81,8 @@ heat:
           length: 42 in
           gap: 0.75 in
         ash_pit: 18 in
-      - count: 1 # the groundhog firebox
+        step: 13.5 in # "STEP UP TO WARE PLATFORM 12–15"" (Fig 7-3, p.179, drawing), the middle
+      - count: 1 # the groundhog firebox, facing the groundhog chimney (p.182); left (?)
         position: left
         width: 24 in
         length: 42 in
@@ -86,6 +91,7 @@ heat:
           length: 42 in
           gap: 0.75 in
         ash_pit: 18 in
+        step: 13.5 in # as the anagama firebox (Fig 7-3, drawing)
 draft:
   type: cross
   flue_wall: back

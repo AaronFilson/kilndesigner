@@ -16,13 +16,14 @@
 # least for wide spans (p.296); its ring is 9 in of K-26 (4½, 6¾ or 9 in by brick and span,
 # p.296). Cone 10, the high fire Olsen's updraft rules are for: he checks the flue at about cone 8
 # (p.173). The exit flue: engine default.
-# Not modelled: the door on its I-beam is taken as the car's end wall. As printed (p.172, Fig
-# 6-64, checked on the page image 2026-10-30) it hangs from an overhead I-beam on two Yale
-# half-ton trolleys, by U-bolts and eye-bolts, and spring-tension latches draw it into the door
-# jambs; the photo is "a similar suspended kiln door", so the trolleys may be that door's. The
-# I-beam's size, the door's build and weight and the latches aren't printed, so nothing on it is
-# sized or checked; the engine's car door is its end wall riding on the car. The burners' ports are the
-# engine's for an MR-100. The car's wheels and rails (no source sizes them).
+# The door, the front wall, hangs on its own frame (loading.hung). As printed (p.172, Fig 6-64,
+# checked on the page image 2026-10-30) it hangs from an overhead I-beam on two Yale half-ton
+# trolleys, by U-bolts and eye-bolts, and spring-tension latches draw it into the door jambs; the
+# photo is "a similar suspended kiln door", so the trolleys may be that door's. Half a ton is
+# taken as 1000 lb, the short ton's half. The door's weight is worked out from the walls' layers
+# and checked against the two trolleys.
+# Not modelled: the I-beam's size, the door's steel frame and the latches (not printed). The
+# burners' ports are the engine's for an MR-100. The car's wheels and rails (no source sizes them).
 schema: 1
 name: Jun Kaneko's car kiln
 units: us
@@ -38,6 +39,9 @@ roof:
 loading:
   type: car
   face: front
+  hung: # from an overhead I-beam (Fig 6-64, p.172)
+    trolleys: 2 # "two Yale half-ton trolleys"
+    trolley_rating: 1000 lb # half a (short) ton each
 lining:
   walls:
     - material: ifb-k26
@@ -58,6 +62,8 @@ heat:
       model: GACO MR100
       count: 32
       wall: floor
+      per_side: 10 # "ten on each side" (p.172)
+      per_end: 6 # "six at each end" (p.172)
     supply:
       type: line
       pressure: 8 inch_H2O

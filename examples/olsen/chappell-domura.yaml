@@ -21,8 +21,15 @@
 # TALL" (?), 40 ft³ each by the text but about 57 ft³ by the drawing, its firebox 9 in across the
 # kiln and 12 in below the floor with an 18 in opening in the side wall (Fig 4-149). The chimney
 # draws both kilns, so it is large for this one alone. Also left out: the firebox's depth, the bag
-# wall, the salt and its ports, the door (not shown), the mortar (2 sand, 2 grog (?), 1 stoneware
-# clay, p.33).
+# wall, the salt and its ports, the mortar (2 sand, 2 grog (?), 1 stoneware clay, p.33).
+# Fig 4-149 re-read on the page image, 2026-11-08 (drawing): the salt chamber's front wall, over its
+# firebox, has three inlet flues and its back wall three exit flues into the collection box (9 in
+# deep), none sized, so neither is entered (one exit flue, sized by the engine); the left side wall
+# is left open for about 3 ft, mid-length, read as the door (?), its height not printed. The design
+# refuses a door in a side wall under an arch that springs from it (nothing carries the arch over
+# the door), and the arch's direction isn't printed, so the door stays in the front wall, as
+# before: a difference from the drawing. The firebox's floor is "30" below floor": the step.
+# No spy holes drawn: the engine's defaults.
 schema: 1
 name: Chappell's Domura salt kiln
 units: us
@@ -38,7 +45,7 @@ roof:
   rise: 6 in # 2 in per foot of the 3 ft span (Table A-2, p.298)
 loading:
   type: door
-  face: front
+  face: front # the drawing's door is in the left side wall (?): see the notes
   door: bricked
 lining:
   walls:
@@ -57,6 +64,7 @@ heat:
         position: front
         width: 9 in # as the two-chamber kiln's firebox (Fig 4-149)
         length: 3 ft # across the chamber
+        step: 30 in # "FIRE BOX 30" below floor" (Fig 4-149): its floor 30 in under the chamber's
 draft:
   type: cross
   flue_wall: back

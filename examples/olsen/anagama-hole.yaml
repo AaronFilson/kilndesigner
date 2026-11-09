@@ -17,8 +17,10 @@
 # (p.99–100). The tube's roof a half-circle on its width, as a groundhog's half-cylinder (p.112):
 # it springs 10½ in up and crowns at 3½ ft. Cone 10, from the anagama-style kiln built at
 # Höhr-Grenzhausen in 2003 (hohr-2003, p.122); §4a.7 puts such a clay's ceiling near cone 10–11.
-# The firebox the 2 × 2 ft as its width and length. The chimney, the exit flue and the door: engine
-# default.
+# The firebox the 2 × 2 ft as its width and length, and as its height and its mouth (the
+# "entrance": the drawing shows one opening, 2 ft each way, so the 2 × 2 is read as all three). The
+# chimney, the exit flue and the door: engine default (Fig 4-5 draws the chimney flue but prints
+# no size or height for it, and no door, spy holes or damper).
 # Not modelled: the hill around the kiln. The walls and roof are counted as losing heat to the air
 # through 9 in of fired clay, not into the earth; the floor's loss goes into dry soil at steady state. The tube's taper into the chimney flue. The fired clay has no service limit, so its
 # temperature isn't checked.
@@ -49,6 +51,10 @@ heat:
         position: front
         width: 2 ft
         length: 2 ft
+        height: 2 ft # "ENTRANCE & FIREBOX 2' X 2'" (Fig 4-5, p.84, drawing)
+        stoke_hole: # the entrance is the firebox's mouth, 2 × 2 ft (Fig 4-5, drawing)
+          width: 2 ft
+          height: 2 ft
 draft:
   type: cross
   flue_wall: back

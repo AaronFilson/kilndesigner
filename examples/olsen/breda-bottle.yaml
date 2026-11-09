@@ -23,6 +23,11 @@
 # 4½ × 4½ in, whose count isn't printed; the 8 centre and 21 perimeter exit flues in the dome
 # (4½ × 5 in, with damper blocks); the bottle's top (not printed, so none is given); its door and
 # the iron bands.
+# Figs 6-50, 6-51, 6-53 re-read on the page images, 2026-11-08 (drawing): the chamber door, a tall
+# opening in the wall (Fig 6-50, photo Fig 6-49), isn't sized, so the door is the engine's; the
+# chimney-cone holes 7 × 15 in, 15 in apart, one per perimeter exit flue, and the cone's door
+# aren't expressible. "37 total grate bars" 1 in apart don't fit the 2 ft ash pit's width (37 bars
+# need over 6 ft), so the grate is taken as the pit's width (?). No spy holes drawn.
 schema: 1
 name: Breda bottle kiln, Segra Pottery
 units: us
@@ -61,6 +66,54 @@ heat:
         ash_pit: 42 in
 draft:
   type: up
+  # Step A, 2026-11-09: the dome's exit flues, "8 DOME EXIT FLUES" and "21 - 4½ X 5" EXIT FLUES"
+  # round the edge (Fig 6-53, p.168, printed). Their places (scaled: Fig 6-53, p.168, from the
+  # 15' chamber read as the perimeter ring's width, ±15 in; a perspective sketch with no second
+  # printed dimension in its plane): the 21 evenly round a ring 84 in out, just inside the wall;
+  # the 8 evenly on a ring about 55 in out. The 8 aren't sized in the book: taken as the 21's
+  # 4½ × 5 in (?). The damper blocks over the perimeter flues aren't expressible.
+  exits:
+    - through: roof
+      count: 21
+      port:
+        width: 4.5 in
+        height: 5 in
+      places:
+        - { across: 0.0 in, along: 84.0 in }
+        - { across: 24.8 in, along: 80.3 in }
+        - { across: 47.3 in, along: 69.4 in }
+        - { across: 65.7 in, along: 52.4 in }
+        - { across: 78.2 in, along: 30.7 in }
+        - { across: 83.8 in, along: 6.3 in }
+        - { across: 81.9 in, along: -18.7 in }
+        - { across: 72.7 in, along: -42.0 in }
+        - { across: 57.1 in, along: -61.6 in }
+        - { across: 36.4 in, along: -75.7 in }
+        - { across: 12.5 in, along: -83.1 in }
+        - { across: -12.5 in, along: -83.1 in }
+        - { across: -36.4 in, along: -75.7 in }
+        - { across: -57.1 in, along: -61.6 in }
+        - { across: -72.7 in, along: -42.0 in }
+        - { across: -81.9 in, along: -18.7 in }
+        - { across: -83.8 in, along: 6.3 in }
+        - { across: -78.2 in, along: 30.7 in }
+        - { across: -65.7 in, along: 52.4 in }
+        - { across: -47.3 in, along: 69.4 in }
+        - { across: -24.8 in, along: 80.3 in }
+    - through: roof
+      count: 8
+      port: # not printed: the perimeter flues' size (?)
+        width: 4.5 in
+        height: 5 in
+      places:
+        - { across: 21.0 in, along: 50.8 in }
+        - { across: 50.8 in, along: 21.0 in }
+        - { across: 50.8 in, along: -21.0 in }
+        - { across: 21.0 in, along: -50.8 in }
+        - { across: -21.0 in, along: -50.8 in }
+        - { across: -50.8 in, along: -21.0 in }
+        - { across: -50.8 in, along: 21.0 in }
+        - { across: -21.0 in, along: 50.8 in }
   chimney: # the bottle
     height: 25 ft
     inside:

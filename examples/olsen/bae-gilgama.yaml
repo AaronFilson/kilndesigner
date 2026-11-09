@@ -4,18 +4,19 @@
 # burns on the floor of a combustion area with no grate; fired to temperature, then sealed tight
 # for black ware.
 #
-# From the book: 16 ft long along the base; "4'" (faint) of combustion area at the front, so 12 ft
-# of chamber; 4½ ft (faint) to the tallest point (Fig 4-67); "NO GRATES"; slab wood 3–5 ft long;
+# From the book: 16 ft long along the base; "4'" (faint) of combustion area at the front; 4½ ft (faint) to the tallest point (Fig 4-67); "NO GRATES"; slab wood 3–5 ft long;
 # an 18 in step up from the combustion area, then the floor slopes up (p.108). Slope: the text
 # says "A 20% slope was used, which is standard for most kilns of this style" (p.108), the drawing
 # "20° SLOPE" (flagged): 20 %, 11.3°, is used. Two exit flues 4½ × 9 in in the back wall (p.108);
 # chimney 8 ft high to the ground line, damper on top (Fig 4-67). The kiln is drawn on the ground,
 # its floor climbing the slope (Fig 4-67), and sealed for black ware with dirt over the door and
 # flues (p.108): the floor is on the ground.
-# Assumed: the width isn't printed (the drawing's "4'" and "6'" marks can't be placed): 5¼ ft, the
-# width of the anagama dug into a clay hill that Olsen draws (anagama-hole, Fig 4-5). The roof a
-# half-circle on that width, as a groundhog's half-cylinder (p.112): it springs 22½ in up and
-# crowns at 4½ ft.
+# The chamber's floor (Fig 4-67, drawing, checked on the page image 2026-10-31 and again
+# 2026-11-08): "4'" across it and "6'" from the front of the floor to the back wall. These are the
+# chamber's width and depth. They don't add up to the "16'" along the outside base: 4 ft of
+# combustion area plus 6 ft of chamber is 10 ft (open question). The roof a half-circle on the
+# 4 ft width, as a groundhog's half-cylinder (p.112): it springs 30 in up and crowns at 4½ ft.
+# Two exit flues, each with its own stack with a damper on top (Fig 4-67, drawing).
 # Walls, arch and floor 9 in of K-26 insulating brick: on the hot face of Olsen's anagama it
 # resisted wood-ash slag better than hard brick (p.26), at the 9–10 in of his climbing kilns' walls
 # (p.99–100). What holds the arch isn't printed: it is taken as buttressed, as the book's tube
@@ -23,9 +24,11 @@
 # p.112), and a battered wall carries an arch without steel (p.53). The combustion area the
 # chamber's width. Cone 10, from the anagama-style kiln built at Höhr-Grenzhausen in 2003
 # (hohr-2003, p.122). The door: engine default.
-# Not modelled: the teardrop plan, as a box 5¼ ft wide, that width taken as its mean, and 12 ft
-# long; the 18 in step. The engine takes one exit flue, so one of the two 4½ × 9 in flues is
-# entered (a brick on end, 9 in high). The chimney is entered at the printed 8 ft; the engine
+# The 18 in step is entered as the combustion area's step, from its floor (no grate) up to the
+# chamber floor (p.108).
+# Not modelled: the teardrop (oval) plan, as a box 4 × 6 ft. The two 4½ × 9 in flues (a brick on
+# end, 9 in high) and their two stacks are entered, spread evenly along the back wall, with a
+# damper on top of each. The chimney is entered at the printed 8 ft; the engine
 # measures a climbing kiln's chimney from the floor at the firing end, so its top is understated
 # by the floor's rise to it, about 32 in. Its section isn't printed: engine default. The sealing
 # for black ware. The floor's loss into dry soil is worked out at steady state.
@@ -35,14 +38,14 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 63 in # 5¼ ft
-  depth: 12 ft
-  height: 22.5 in # to the springline; the half-circle crowns at 4½ ft
+  width: 4 ft # "4'" across the floor (Fig 4-67, drawing)
+  depth: 6 ft # "6'" front of the floor to the back wall (Fig 4-67, drawing)
+  height: 30 in # to the springline; the half-circle crowns at 4½ ft (Fig 4-67, ?)
   slope: 11.3 degree # 20 %
   on_ground: true # drawn on the ground up the slope (Fig 4-67)
 roof:
   type: sprung_arch
-  rise: 31.5 in
+  rise: 24 in # half the 4 ft width
   buttressed: true
 lining:
   walls:
@@ -54,13 +57,20 @@ heat:
     fireboxes:
       - count: 1
         position: front
-        width: 63 in
-        length: 4 ft
+        width: 4 ft # the chamber's width
+        length: 4 ft # "4'" combustion area (Fig 4-67, drawing, ?)
+        step: 18 in # floor step (p.108; "18"" on Fig 4-67)
 draft:
   type: cross
   flue_wall: back
-  flue_port:
-    width: 4.5 in
-    height: 9 in
+  exits: # two exit flues 4½ × 9 in in the back wall (p.108), spread evenly (places not printed)
+    - through: back
+      count: 2
+      port:
+        width: 4.5 in
+        height: 9 in
+  chimneys: 2 # each flue with its own stack (Fig 4-67, drawing)
+  damper:
+    kind: top # "DAMPER ON TOP" (Fig 4-67)
   chimney:
     height: 8 ft

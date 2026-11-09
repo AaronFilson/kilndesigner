@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from itertools import pairwise
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,7 @@ from kilndesigner.simulation import (
     heat_supply,
     simulate,
     switch_over_chart,
+    ware_enthalpy,
 )
 from kilndesigner.thermal.surface import FixedSurface
 from kilndesigner.units import Q_
@@ -74,9 +76,35 @@ def test_an_electric_cone_10_firing(electric: Kiln) -> None:
 def test_ware_takes_heat_and_time(electric: Kiln) -> None:
     empty = simulate(electric, record=False).result
     loaded = simulate(_example("electric-front-loader", **{"firing.ware": "100 lb"})).result
-    assert loaded.ware_kwh == pytest.approx(45.36 * 800 * (1285 - 21.1) / 3.6e6, rel=0.01)
+    # Energy into the ware = m·∫c_p dT over the firing (physics review 2026-11 §1, test 2)
+    start = loaded.points[0].chamber_c + 273.15
+    end = loaded.points[-1].chamber_c + 273.15
+    expected = 45.36 * ware_enthalpy(start, end) / 3.6e6
+    assert loaded.ware_kwh == pytest.approx(expected, rel=0.005)
+    assert loaded.energy_kwh == pytest.approx(loaded.walls_kwh + loaded.ware_kwh, rel=1e-9)
     assert loaded.duration_h > empty.duration_h
-    assert any(s.name == "Ware and furniture" for s in loaded.working)
+    step = next(s for s in loaded.working if s.name == "Ware and furniture")
+    assert "VDI" in (step.reference or "")
+    assert "1054 J/(kg·K) at 1200 °C" in step.inputs["specific heat"]
+
+
+def test_ware_enthalpy_is_the_trapezoid_of_its_points() -> None:
+    """Review §1 test 1: 10 → 1285 °C per kg, against the trapezoid of 800 @ 24 °C and VDI's
+    956/997/1021/1037/1054 @ 400–1200 °C, held at the ends."""
+    pts = [(24, 800), (400, 956), (600, 997), (800, 1021), (1000, 1037), (1200, 1054)]
+    by_hand = 800 * (24 - 10) + 1054 * (1285 - 1200)
+    by_hand += sum(0.5 * (c0 + c1) * (t1 - t0) for (t0, c0), (t1, c1) in pairwise(pts))
+    got = ware_enthalpy(10 + 273.15, 1285 + 273.15)
+    assert got == pytest.approx(by_hand, rel=1e-3)
+    assert got / 1275 == pytest.approx(980, rel=0.01)  # the review's mean c_p
+    assert ware_enthalpy(500.0, 500.0) == 0.0
+
+
+def test_a_kiln_with_no_ware_is_unchanged_by_the_ware_curve() -> None:
+    """Review §1 test 4: no ware, no ware heat, and the solve is the linear one."""
+    r = simulate(load_design(EXAMPLES / "gas-crossdraft.yaml"), record=False).result
+    assert r.ware_kwh == 0
+    assert r.energy_kwh == pytest.approx(r.walls_kwh, rel=1e-9)
 
 
 def test_a_schedule_too_fast_for_the_elements_is_not_held(electric: Kiln) -> None:

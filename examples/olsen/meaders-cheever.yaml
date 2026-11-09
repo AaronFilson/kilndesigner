@@ -18,8 +18,8 @@
 # height isn't printed: 8 ft, inside Olsen's 5–10 ft for groundhogs (p.112), the height of David
 # Meaders's chimney on the kiln adapted from this one (meaders-david, p.115). Its section 9 in × 5 ft,
 # the kiln's width (p.112, read by the user, 2026-10-31).
-# Not modelled: the engine takes one exit flue, so one of the six is entered. The central post or
-# opening, 30 in (faint) high. No grate is printed: the wood burns on the firebox floor. Common
+# The exit flues' places are scaled off Fig 4-89 (below). Not modelled: the central post or
+# opening, 30 in (faint) high and drawn 7 in wide (scaled: Fig 4-89, ±½ in). No grate is printed: the wood burns on the firebox floor. Common
 # brick has no rating for kiln heat, so its service temperature isn't checked.
 schema: 1
 name: Cheever Meaders's groundhog
@@ -54,9 +54,21 @@ heat:
 draft:
   type: cross
   flue_wall: back
-  flue_port:
-    width: 5 in
-    height: 9 in
+  exits: # six 5 × 9 in exit flues in the back wall (Fig 4-89). Four are drawn, 23½ and 15 in
+    # each side of the middle (scaled: Fig 4-89, p.112, from the 48", 30" and 5', ±1 in); the
+    # other two are hidden behind the central post: put at 5 in each side, the even spacing's
+    - through: back
+      count: 6
+      port:
+        width: 5 in
+        height: 9 in
+      places:
+        - across: -23.5 in
+        - across: -15 in
+        - across: -5 in
+        - across: 5 in
+        - across: 15 in
+        - across: 23.5 in
   chimney:
     height: 8 ft # Olsen's 5–10 ft for groundhogs (p.112); David Meaders's 8 ft (p.115)
     inside: # 9 in × 5 ft (p.112)

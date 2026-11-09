@@ -14,6 +14,7 @@ from pydantic import ValidationError
 from kilndesigner import Kiln, load_design
 from kilndesigner.build import DRAWINGS, build_design
 from kilndesigner.castable import CastableError
+from kilndesigner.compare import COMPARED, comparison_rows
 from kilndesigner.library import UnknownEntryError
 from kilndesigner.report import Report, design_report
 from kilndesigner.results import write_run
@@ -92,50 +93,6 @@ def summary(report: Report) -> str:
     return "\n".join(lines)
 
 
-COMPARED = (
-    "Chamber volume",
-    "Heat loss at top",
-    "Hottest outside face",
-    "Installed power",
-    "Burner input",
-    "Propane supply keeps up",
-    "Switch to burners at",
-    "Materials (priced)",
-    "Errors / warnings",
-)
-"""The rows of ``compare``'s table, in the order they're shown."""
-
-
-def comparison_rows(report: Report) -> dict[str, str]:
-    """The headline numbers of a design, for comparing designs side by side."""
-    hottest = max(
-        report.heat_loss.faces, key=lambda f: float(f.surface_temperature.split()[0])
-    ).surface_temperature
-    rows = {
-        "Chamber volume": report.chamber_volume,
-        "Heat loss at top": report.heat_loss.total,
-        "Hottest outside face": hottest,
-    }
-    if report.electric is not None:
-        rows["Installed power"] = report.electric.installed_power
-    if report.gas is not None:
-        g = report.gas
-        rows["Burner input"] = g.design_input
-        if g.supply:  # a line (natural gas) has no cylinders or tank to check
-            meets = sum(s.meets_demand for s in g.supply)
-            rows["Propane supply keeps up"] = f"in {meets} of {len(g.supply)} cases"
-    if report.hybrid is not None:
-        rows["Switch to burners at"] = report.hybrid.switch_over
-    if report.bom is not None:
-        unpriced = any(line.cost is None for line in report.bom.lines)
-        rows["Materials (priced)"] = f"${report.bom.total:,.0f}" + (
-            " + unpriced items" if unpriced else ""
-        )
-    levels = [f.level for f in report.findings]
-    rows["Errors / warnings"] = f"{levels.count('error')} / {levels.count('warning')}"
-    return rows
-
-
 @app.command()
 def compare(
     designs: Annotated[
@@ -183,6 +140,13 @@ def firing_summary(result: FiringResult) -> str:
         lines.append(f"  Fuel burned:      {result.fuel_kwh:.1f} kWh{gallons}")
     if result.cost is not None:
         lines.append(f"  Cost:             {result.cost}")
+    if result.wood_kg is not None:
+        cords = f", {result.wood_cords:.2f} cord" if result.wood_cords is not None else ""
+        cost = f", ${result.wood_cost_usd:,.2f}" if result.wood_cost_usd is not None else ""
+        lines.append(
+            f"  Or on wood:       {result.wood_kg:,.0f} kg as fired "
+            f"({si(parse_quantity(f'{result.wood_kg} kg'), 'lb'):,.0f} lb){cords}{cost}"
+        )
     lines.extend(f"  [{f.level}] {f.message}" for f in result.findings)
     return "\n".join(lines)
 

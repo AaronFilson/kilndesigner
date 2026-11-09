@@ -47,6 +47,14 @@ def _parts(view: View) -> set[str]:
     return {r.layer for r in view.rects}
 
 
+def test_a_groundhogs_plan_cuts_the_legs_of_its_arch() -> None:
+    # A groundhog's arch springs from the floor (chamber height 0): the plan's cut, just above
+    # the springing, passes through the arch ring's two legs, which stand for its side walls
+    *_, plan = section_views(_load("olsen/groundhog-basic"))
+    assert plan.rects
+    assert any("arch" in r.layer for r in plan.rects)
+
+
 @pytest.fixture(scope="module")
 def sprung() -> list[View]:
     # 28 in wide, 48 in deep, 40 in to the springline, a 3.75 in rise; 3 in of castable then
@@ -176,6 +184,18 @@ def test_the_plan_of_an_arched_kiln_is_cut_below_the_arch(sprung: list[View]) ->
     plan = sprung[2]
     assert {p.split("/")[0] for p in _parts(plan)} == {"left", "right", "door", "back"}
     assert not [p for p in _parts(plan) if "skewback" in p or p.endswith("-arch")]
+
+
+def test_the_plan_cuts_the_legs_of_an_arch_springing_from_the_floor() -> None:
+    # David Meaders's groundhog: a 5 ft half-circle springing from the floor, 30 in to the crown,
+    # a 9 in ring of K-26. With no wall below the springing the plan is cut at the floor, through
+    # the ring's feet: 30 to 39 in out each side
+    plan = section_views(_load("olsen/meaders-david"))[2]
+    legs = sorted((r for r in plan.rects if r.layer == "roof/1-ifb-k26"), key=lambda r: r.x)
+    assert [(r.x, r.x + r.w) for r in legs] == [
+        pytest.approx((-39 * IN, -30 * IN), abs=0.01 * IN),
+        pytest.approx((30 * IN, 39 * IN), abs=0.01 * IN),
+    ]
 
 
 def _catenary_half_width(span: float, crown: float, z: float) -> float:

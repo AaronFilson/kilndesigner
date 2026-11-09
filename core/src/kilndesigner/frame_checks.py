@@ -1116,6 +1116,42 @@ def vault_end_wall(a: ArchInputs, wall: tuple[Layer, ...], springing: float) -> 
     return s
 
 
+SLIDING = (
+    "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the "
+    "joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from "
+    "the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed "
+    "2006: sliding governs where the normal force is small); physics review part 2, finding 3. "
+    "Mortar's cohesion is left out: none is sourced hot"
+)
+
+
+def end_wall_slide(
+    h_c: float, n: float, wall: tuple[Layer, ...], mu: float, mu_source: str, sheet_id: str,
+    title: str, thrust_source: str,
+) -> Sheet:  # fmt: skip
+    """A wall standing alone under an arch's springing must not slide: at a bed joint z below the
+    springing H_c ≤ μ(N + G_z), G_z the wall over that joint (γ̄e·z per foot of its width). The
+    springing's own joint, with G_z = 0, needs the most: μ_need = H_c/N. Friction alone can't
+    hold the wall's top z* = max(0, (H_c/μ − N)/Σγe), per foot of the wall, all lbf/ft."""
+    s = Sheet(sheet_id, title, reference=f"{SLIDING}; {mu_source}")
+    s.given("H_c", "the arch's thrust, cold", Q_(h_c, "lbf/ft"), source=thrust_source)
+    s.given("N", "the arch's load on the springing", Q_(n, "lbf/ft"), source=thrust_source)
+    s.let("μ_need", "the friction the springing's bed joint needs", "H_c/N",
+          source="the resultant's angle to the joint's normal: tan⁻¹(H_c/N)")  # fmt: skip
+    s.given("μ", "friction of a hot dry joint", mu, source=mu_source)
+    for i, x in enumerate(wall, 1):
+        s.given(f"e_{i}", f"wall layer {i}, {x.name}", Q_(x.thickness, "in"), source=DESIGN)
+        s.given(f"γ_{i}", f"{x.name}, weight per cubic foot", Q_(x.density, "lbf/ft**3"),
+                source="the material's data sheet")  # fmt: skip
+    weight = " + ".join(f"γ_{i}*e_{i}" for i in range(1, len(wall) + 1))
+    s.let("g", "the wall's weight per foot of its width, per unit of height", weight, "lbf/ft**2")
+    s.let("z_s", "how far down from the springing friction alone can't hold the wall",
+          "max((H_c/μ - N)/g, 0*e_1)", "in",
+          source="H_c = μ(N + g·z) solved for z")  # fmt: skip
+    s.require("μ_need", "<=", "μ", level="warning")
+    return s
+
+
 UNEVEN_STATICS = (
     "a three-hinged circular arch, hinges at each springing and the crown, its halves unequal: "
     "moments of each half about the crown, and the vertical loads summing to its weight (statics, "

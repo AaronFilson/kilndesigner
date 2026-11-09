@@ -3,13 +3,16 @@
 Correlations (electric-and-thermal.md §6.2):
 - vertical plate: Churchill and Chu (1975), all Ra;
 - horizontal plate, hot side up: Lloyd and Moran, Nu = 0.54 Ra^¼ (10⁴–10⁷), 0.15 Ra^⅓ (10⁷–10¹¹);
-- horizontal plate, hot side down: Nu = 0.27 Ra^¼ (10⁵–10¹¹);
-with air properties at the film temperature and L = A/P for horizontal plates.
+- horizontal plate, hot side down: Jaffer, Thermo 3 (2023) 148–175 eq. 56,
+  Nu = 0.341 + 0.550 (Ra/Ξ)^⅕, Ξ = [1 + (0.5/Pr)^√⅓]^√3 (10⁶–10¹²);
+with air properties at the film temperature, L = A/P for a face up and L = half the shorter
+side (2R/π for a disc, Jaffer eq. 57) for a face down.
 Radiation to surroundings at the air temperature: h_r = εσ(Ts² + T∞²)(Ts + T∞).
 """
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
@@ -61,7 +64,11 @@ def nusselt(orientation: Orientation, ra: float, pr: float) -> float:
         case "facing_up":
             return 0.54 * ra**0.25 if ra < 1e7 else 0.15 * ra ** (1 / 3)
         case "facing_down":
-            return 0.27 * ra**0.25
+            # Jaffer, Thermo 3 (2023) eq. 56: Nu = 0.341 + 0.550 (Ra/Ξ)^⅕,
+            # Ξ = [1 + (0.5/Pr)^p]^(1/p), p = √(1/3).
+            p = math.sqrt(1 / 3)
+            xi = (1 + (0.5 / pr) ** p) ** (1 / p)
+            return 0.341 + 0.550 * (ra / xi) ** 0.2
 
 
 def convection_coefficient(
@@ -79,21 +86,22 @@ def radiation_coefficient(emissivity: float, t_surface: float, t_ambient: float)
 
 
 # Where each correlation has been checked: Churchill–Chu 0.1–1e12; hot face up 1e4–1e11
-# (0.54 Ra^¼ to 1e7, then 0.15 Ra^⅓); hot face down 1e5–1e10, the narrowest of its sources
-# (thermal-properties.md §5).
+# (0.54 Ra^¼ to 1e7, then 0.15 Ra^⅓); hot face down 1e6–1e12, the span of the data sets
+# Jaffer fitted (Table 6; thermal-properties.md §5).
 RA_RANGE: dict[Orientation, tuple[float, float]] = {
     "vertical": (0.1, 1e12),
     "facing_up": (1e4, 1e11),
-    "facing_down": (1e5, 1e10),
+    "facing_down": (1e6, 1e12),
 }
-RA_SOURCE = "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+RA_SOURCE = "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran; Jaffer 2023 Table 6)"
 
 
 @dataclass(frozen=True)
 class StillAirSurface:
     """An outside face of the kiln in still air.
 
-    ``length`` is the height for a vertical face, or area/perimeter for a horizontal one.
+    ``length`` is the height for a vertical face, area/perimeter for a face up, or half the
+    shorter side (2R/π for a disc) for a face down.
     """
 
     orientation: Orientation

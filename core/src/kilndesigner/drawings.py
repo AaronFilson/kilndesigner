@@ -94,7 +94,10 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
         points = tuple(arch_outline(p))
         xs, zs = [x for x, _ in points], [z for _, z in points]
         return Rect(min(xs), min(zs), max(xs) - min(xs), max(zs) - min(zs), fill, p.name, points)
-    assert axis == 0, "arches are only cut across and along"
+    if axis == 2:
+        # The plan's cut only grazes an arch that springs from the floor (a groundhog's): the
+        # walls it stands on are the plan; the ring above isn't cut.
+        return None
     bottom = p.lo[2] if p.cap else a.centre_z + a.radius
     top = a.centre_z + a.radius + a.thickness
     return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)
@@ -271,6 +274,14 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
                 else:
                     rects.append(Rect(a, p.lo[1], b - a, p.length_y, fill, p.name))
             continue
+        if p.arch is not None and axis == 2:
+            # The plan crosses an arch springing below it (a groundhog's, from the floor): its
+            # ring's legs, as spans of x, run along y; a cut at the springing is taken just above
+            # it, off the outline's bottom edge
+            if p.lo[2] - 1e-6 <= at <= p.hi[2] + 1e-6:
+                for a, b in _crossings(tuple(arch_outline(p)), 1, max(at, p.lo[2] + 1e-3)):
+                    rects.append(Rect(a, p.lo[1], b - a, p.length_y, fill, p.name))
+            continue
         if p.arch is not None:
             if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6 and (rect := _arch_cut(p, axis)):
                 rects.append(rect)
@@ -431,16 +442,17 @@ def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
     from kilndesigner.run_parts import run_layout
 
     run = run_layout(kiln)
-    w, d, h, n = run.width, run.depth, run.height, run.chambers
+    w, d, h, n = run.width, run.depth_of(0), run.height_of(0), run.chambers
+    each = "chamber 1" if run.sizes else "each chamber"
     front = View("Section A–A: across the first chamber, looking at the back",
                  _cut(parts, 1, 0.0, 0, 2), [], [])  # fmt: skip
     side = View("Section B–B: along the kiln, looking from the right", _cut(parts, 0, 0.0, 1, 2),
                 [], [])  # fmt: skip
-    if run.step > 1e-6:
+    if run.step > 1e-6 or run.stepped:
         rects: list[Rect] = []
         for i in range(n):
             mine = [p for p in parts if p.chamber == i + 1]
-            rects += _cut(mine, 2, run.floor(i) + h / 2, 0, 1)
+            rects += _cut(mine, 2, run.floor(i) + run.height_of(i) / 2, 0, 1)
         plan = View("Section C–C: plan of each chamber at its mid-height", rects, [], [])
     else:
         plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
@@ -453,7 +465,7 @@ def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
     ]
     x0, y0, x1, y1 = side.bounds()
     side.dims += [
-        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, each chamber"),
+        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, {each}"),
         Dimension(x0, y0, x1, y0, 0.25 * h, f"{length_text(x1 - x0, us)} outside"),
         Dimension(-d / 2, 0, -d / 2, h, -0.6 * d, f"{length_text(h, us)} to the springline"),
         Dimension(x1, y0, x1, y1, 0.04 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),

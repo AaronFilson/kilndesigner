@@ -42,7 +42,7 @@ heat:
       - position: under # under the umbrella floor
         width: 60 in
         length: 60 in
-        height: 48 in # 3½–4 ft
+        height: 43 in # 3½–4 ft printed; 43 in (scaled: Fig 6-3, p.153, from the 4', ±4 in)
         stoke_hole: # the firebox mouth
           width: 22 in # "22"" (Fig 6-3)
           height: 27 in

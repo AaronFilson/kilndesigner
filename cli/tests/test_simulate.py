@@ -31,6 +31,24 @@ def test_simulate_costs_natural_gas_per_therm(tmp_path: Path) -> None:
     assert "cost isn't given" not in result.output
 
 
+def test_simulate_gives_a_wood_kilns_wood(tmp_path: Path) -> None:
+    text = (EXAMPLES / "olsen-32cuft-propane-wood-fastfire.yaml").read_text(encoding="utf-8")
+    # The example's Hawai'i wood with a test price only, not engineering data
+    design = tmp_path / "wood.yaml"
+    design.write_text(
+        text.replace(
+            "    cord_weight: 3450 lb/cord\n",
+            "    cord_weight: 3450 lb/cord\n    price: 250 USD/cord\n",
+        ),
+        encoding="utf-8",
+    )
+    assert "price: 250 USD/cord" in design.read_text(encoding="utf-8")
+    result = runner.invoke(app, ["simulate", str(design), "--out", str(tmp_path)])
+    assert result.exit_code == 0, result.output
+    assert "Or on wood:" in result.output
+    assert " cord, $" in result.output
+
+
 def test_simulate_refuses_a_castable_without_specific_heat(tmp_path: Path) -> None:
     # Kast-O-Lite 26 has no specific heat in the library (Kast-O-Lite 30 has a class value)
     text = (EXAMPLES / "pnw-hybrid-crossdraft.yaml").read_text(encoding="utf-8")

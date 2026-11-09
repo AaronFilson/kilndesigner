@@ -31,6 +31,9 @@ def _with(path: Path, **chamber: object) -> Kiln:
         if document["loading"].get("opening") is not None:
             # A side-wall door needs arches along the draft: a new roof takes a whole-wall door
             document["loading"].update(face="front", opening=None)
+        if roof == {"type": "catenary_arch"}:
+            # A catenary is its own side walls: no stoke holes in them (the tube's are in its sides)
+            document["stoke_holes"] = None
     document["chamber"].update(chamber)
     return Kiln.model_validate(document)
 
@@ -183,7 +186,9 @@ def test_chambers_in_a_row_have_plans(path: Path, tmp_path: Path) -> None:
 SLOPED = [
     p
     for p in DESIGNS
-    if (k := load_design(p)).chamber.chambers == 1 and k.chamber.slope is not None
+    if (k := load_design(p)).chamber.chambers == 1
+    and k.chamber.slope is not None
+    and k.chamber.widths is None  # a changing width is drawn as shells (shell.py)
 ]
 
 

@@ -8,15 +8,16 @@
 # (Fig 6-12); wood, hardwood logs 2–6 in across, burned in the firebox and its coals shoved into a
 # pit under the chamber (p.155); shards and saggar pieces piled over the setting for a roof.
 # Assumed: the temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft, the only
-# low-fire updraft whose temperature the book prints (p.160). The firebox's width isn't given:
-# 24 in, the "2'" marked at its entry (Fig 6-12) and the width of the fireboxes of Singh's coal
-# kiln (singh-coal, p.134). All six inlet flues are taken as 4 × 4 in, like the one marked. The
+# low-fire updraft whose temperature the book prints (p.160). The firebox's width isn't printed
+# legibly: 16½ in, scaled off the plan where it passes through the wall (Fig 6-12; step A,
+# 2026-11-09, scratch/scale-pz/scale.py). All six inlet flues are taken as 4 × 4 in, like the one marked. The
 # walls aren't described: 9 in, which Olsen says stands to 8 ft unsupported (p.41), of hard brick
 # (his fast-fire wood kiln "can be built of IFB or hard brick", p.142); medium-duty
 # firebrick (Olsen's intermediate duty, p.18). The floor is 9 in, as the floor of Singh's
-# coal kiln (p.134). The door and air: engine defaults.
-# Not modelled: the central round flue (its size is cut off at the page edge); the side opening
-# (unreadable); the domed floor, taken as flat; the open top's loss (the engine leaves it out).
+# coal kiln (p.134). No door: none is drawn, and the kiln is set from the top (Fig 6-11), so
+# loading.type is "top". The air: engine defaults.
+# Not modelled: the central round flue, about 7 in across (scaled, ±½ in; its printed size is
+# cut off at the page edge), as an under-floor firebox's inlets can't be placed one by one; the domed floor, taken as flat; the open top's loss (the engine leaves it out).
 schema: 1
 name: Singh's low-fire glaze kiln, New Delhi
 units: us
@@ -29,6 +30,8 @@ chamber:
   height: 60 in # the setting's height
 roof:
   type: open # shards and saggar pieces over the setting
+loading:
+  type: top # set over the walls, no door drawn (Fig 6-11)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield
@@ -41,7 +44,7 @@ heat:
     fuel: wood
     fireboxes:
       - position: under
-        width: 24 in
+        width: 16.5 in # its mouth through the wall (scaled: Fig 6-12, p.156, plan, from the 5' diameter across and up the page, ±1 in); the half-legible "1?–15"" beside it (?)
         length: 48 in
         height: 30 in # from the floor dome down to the pit floor (Fig 6-12)
         inlet:

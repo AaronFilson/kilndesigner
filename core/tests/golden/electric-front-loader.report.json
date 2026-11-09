@@ -374,7 +374,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "2.02"
+        "value": "2.03"
       }
     ]
   },
@@ -488,7 +488,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 260.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
@@ -552,6 +552,246 @@
       "reference": "flat-roofs.md §3.2, §4.2"
     },
     {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the run, outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design's outside sizes",
+            "symbol": "L",
+            "text": null,
+            "unit": "in",
+            "value": 0.8509
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in/ft",
+            "meaning": "growth per foot, to 2400 °F",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "g",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.0078125
+          },
+          {
+            "expr": "L*g",
+            "formula": "L·g",
+            "label": "in",
+            "meaning": "the run's growth, hot",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "ΔL",
+            "text": null,
+            "unit": "in",
+            "value": 0.00664765625
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the share to leave open",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": "f*ΔL",
+            "formula": "f·ΔL",
+            "label": "in",
+            "meaning": "the allowance to leave open",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "a",
+            "text": null,
+            "unit": "in",
+            "value": 0.003323828125
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's firing",
+            "symbol": "T",
+            "text": null,
+            "unit": "degF",
+            "value": 1558.15
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the temperature the growth is to",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "T_g",
+            "text": null,
+            "unit": "degF",
+            "value": 1588.7055555555557
+          }
+        ],
+        "id": "movement.across",
+        "label": null,
+        "lever": null,
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "T",
+            "level": "warning",
+            "margin": "T = 2,345 °F, 55 °F under T_g = 2,400 °F",
+            "op": "<=",
+            "right": "T_g"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "pass",
+        "title": "Expansion allowance, the front and back walls"
+      },
+      "level": "info",
+      "message": "The front and back walls, 33.5 in outside, grow about 0.26 in hot (3/32 in per foot, to 2400 °F): leave about 0.13 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). An IFB wall up to 48 in in a flexible frame, built not too tight, needs no joint (Olsen p.52–53); the frame takes it.",
+      "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; Olsen, The Kiln Book, 4th ed., p.52–53 (Figs 2-30, 2-31, 2-32): ¼ in fibre pads mortared to the brick ends at the corners, offset; in hard brick only the 9 in hot-face course; an IFB wall in a flexible frame needs none up to 48 in (Fig. 2-32; 5 ft by the text); free-standing chamber kilns use none; kiln-reference.md §2"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the run, outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design's outside sizes",
+            "symbol": "L",
+            "text": null,
+            "unit": "in",
+            "value": 0.8509
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in/ft",
+            "meaning": "growth per foot, to 2400 °F",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "g",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.0078125
+          },
+          {
+            "expr": "L*g",
+            "formula": "L·g",
+            "label": "in",
+            "meaning": "the run's growth, hot",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "ΔL",
+            "text": null,
+            "unit": "in",
+            "value": 0.00664765625
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the share to leave open",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": "f*ΔL",
+            "formula": "f·ΔL",
+            "label": "in",
+            "meaning": "the allowance to leave open",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "a",
+            "text": null,
+            "unit": "in",
+            "value": 0.003323828125
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's firing",
+            "symbol": "T",
+            "text": null,
+            "unit": "degF",
+            "value": 1558.15
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the temperature the growth is to",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "T_g",
+            "text": null,
+            "unit": "degF",
+            "value": 1588.7055555555557
+          }
+        ],
+        "id": "movement.along",
+        "label": null,
+        "lever": null,
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "T",
+            "level": "warning",
+            "margin": "T = 2,345 °F, 55 °F under T_g = 2,400 °F",
+            "op": "<=",
+            "right": "T_g"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "pass",
+        "title": "Expansion allowance, the side walls"
+      },
+      "level": "info",
+      "message": "The side walls, 33.5 in outside, grow about 0.26 in hot (3/32 in per foot, to 2400 °F): leave about 0.13 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). An IFB wall up to 48 in in a flexible frame, built not too tight, needs no joint (Olsen p.52–53); the frame takes it.",
+      "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; Olsen, The Kiln Book, 4th ed., p.52–53 (Figs 2-30, 2-31, 2-32): ¼ in fibre pads mortared to the brick ends at the corners, offset; in hard brick only the 9 in hot-face course; an IFB wall in a flexible frame needs none up to 48 in (Fig. 2-32; 5 ft by the text); free-standing chamber kilns use none; kiln-reference.md §2"
+    },
+    {
       "check": null,
       "level": "info",
       "message": "Three 1 in peepholes are cut through the door. Their heights are not sourced; they are spaced evenly.",
@@ -593,6 +833,246 @@
         "level": "info",
         "message": "The flat roof stays up only while it's squeezed across its 22.5 in span: tighten its band or rods after the first firing and every few firings after, as the makers say, because the brick shrinks and works loose. No maker document read shows a front-loader with a flat brick roof (L&L and Bailey arch theirs).",
         "reference": "flat-roofs.md §3.2, §4.2"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the run, outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design's outside sizes",
+              "symbol": "L",
+              "text": null,
+              "unit": "in",
+              "value": 0.8509
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in/ft",
+              "meaning": "growth per foot, to 2400 °F",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "g",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.0078125
+            },
+            {
+              "expr": "L*g",
+              "formula": "L·g",
+              "label": "in",
+              "meaning": "the run's growth, hot",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "ΔL",
+              "text": null,
+              "unit": "in",
+              "value": 0.00664765625
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the share to leave open",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": "f*ΔL",
+              "formula": "f·ΔL",
+              "label": "in",
+              "meaning": "the allowance to leave open",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "a",
+              "text": null,
+              "unit": "in",
+              "value": 0.003323828125
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the kiln's top temperature",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design's firing",
+              "symbol": "T",
+              "text": null,
+              "unit": "degF",
+              "value": 1558.15
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the temperature the growth is to",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "T_g",
+              "text": null,
+              "unit": "degF",
+              "value": 1588.7055555555557
+            }
+          ],
+          "id": "movement.across",
+          "label": null,
+          "lever": null,
+          "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "T",
+              "level": "warning",
+              "margin": "T = 2,345 °F, 55 °F under T_g = 2,400 °F",
+              "op": "<=",
+              "right": "T_g"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "pass",
+          "title": "Expansion allowance, the front and back walls"
+        },
+        "level": "info",
+        "message": "The front and back walls, 33.5 in outside, grow about 0.26 in hot (3/32 in per foot, to 2400 °F): leave about 0.13 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). An IFB wall up to 48 in in a flexible frame, built not too tight, needs no joint (Olsen p.52–53); the frame takes it.",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; Olsen, The Kiln Book, 4th ed., p.52–53 (Figs 2-30, 2-31, 2-32): ¼ in fibre pads mortared to the brick ends at the corners, offset; in hard brick only the 9 in hot-face course; an IFB wall in a flexible frame needs none up to 48 in (Fig. 2-32; 5 ft by the text); free-standing chamber kilns use none; kiln-reference.md §2"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the run, outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design's outside sizes",
+              "symbol": "L",
+              "text": null,
+              "unit": "in",
+              "value": 0.8509
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in/ft",
+              "meaning": "growth per foot, to 2400 °F",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "g",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.0078125
+            },
+            {
+              "expr": "L*g",
+              "formula": "L·g",
+              "label": "in",
+              "meaning": "the run's growth, hot",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "ΔL",
+              "text": null,
+              "unit": "in",
+              "value": 0.00664765625
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the share to leave open",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": "f*ΔL",
+              "formula": "f·ΔL",
+              "label": "in",
+              "meaning": "the allowance to leave open",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "a",
+              "text": null,
+              "unit": "in",
+              "value": 0.003323828125
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the kiln's top temperature",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design's firing",
+              "symbol": "T",
+              "text": null,
+              "unit": "degF",
+              "value": 1558.15
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the temperature the growth is to",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "T_g",
+              "text": null,
+              "unit": "degF",
+              "value": 1588.7055555555557
+            }
+          ],
+          "id": "movement.along",
+          "label": null,
+          "lever": null,
+          "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "T",
+              "level": "warning",
+              "margin": "T = 2,345 °F, 55 °F under T_g = 2,400 °F",
+              "op": "<=",
+              "right": "T_g"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "pass",
+          "title": "Expansion allowance, the side walls"
+        },
+        "level": "info",
+        "message": "The side walls, 33.5 in outside, grow about 0.26 in hot (3/32 in per foot, to 2400 °F): leave about 0.13 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). An IFB wall up to 48 in in a flexible frame, built not too tight, needs no joint (Olsen p.52–53); the frame takes it.",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; Olsen, The Kiln Book, 4th ed., p.52–53 (Figs 2-30, 2-31, 2-32): ¼ in fibre pads mortared to the brick ends at the corners, offset; in hard brick only the 9 in hot-face course; an IFB wall in a flexible frame needs none up to 48 in (Fig. 2-32; 5 ft by the text); free-standing chamber kilns use none; kiln-reference.md §2"
       }
     ],
     "kind": "welded case",
@@ -674,6 +1154,38 @@
         "note": null,
         "reference": "Olsen, The Kiln Book, 4th ed., p.248–249: a flat roof needs an angle-iron frame, 'a basic requirement', with rows of brick held by tie bolts through them; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
         "value": "8 rods: 26 lb each, 330 psi"
+      },
+      {
+        "formula": "ΔL = L × 3/32 in per ft (to 2400 °F); a = ½ ΔL",
+        "inputs": {
+          "L, outside": "33.5 in",
+          "top temperature": "2345 °F"
+        },
+        "name": "Expansion allowance, the front and back walls",
+        "note": "The growth is to 2400 °F; no source read gives it below, so it isn't scaled down to a cooler firing (the safe side).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "value": "grows 0.262 in hot; leave 0.131 in open"
+      },
+      {
+        "formula": "ΔL = L × 3/32 in per ft (to 2400 °F); a = ½ ΔL",
+        "inputs": {
+          "L, outside": "33.5 in",
+          "top temperature": "2345 °F"
+        },
+        "name": "Expansion allowance, the side walls",
+        "note": "The growth is to 2400 °F; no source read gives it below, so it isn't scaled down to a cooler firing (the safe side).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "value": "grows 0.262 in hot; leave 0.131 in open"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "hot face of": "floor, left, right, front, back, roof"
+        },
+        "name": "IFB near its rating: Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "note": "Long service near its rating can shrink IFB enough to open its joints; no source says how near, so the margin is shown, not judged.",
+        "reference": "Brosnan, 'Alumina-Silica Brick': IFB 'for long-term exposures near the rated service temperature, shrinkage may occur sufficiently to allow joint opening', so use a higher duty rating than the process temperature alone needs; refractory-movement-and-mortar.md §1.1 [M1]; rating: electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05",
+        "value": "rated 2606 °F; the kiln fires to 2345 °F, 261 °F below"
       }
     ]
   },
@@ -783,28 +1295,28 @@
       },
       {
         "face": "floor",
-        "heat_loss": "847.2 W",
+        "heat_loss": "841.8 W",
         "inside_area": "3.516 ft²",
         "layers": [
           {
-            "cold_side": "1127 °F",
-            "cold_side_k": 881.5470031585862,
+            "cold_side": "1136 °F",
+            "cold_side_k": 886.4890336677314,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.149999999907,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "241.7 °F",
-            "cold_side_k": 389.6321774466907,
-            "hot_side": "1127 °F",
-            "hot_side_k": 881.5470031585862,
+            "cold_side": "260.2 °F",
+            "cold_side_k": 399.9505708912359,
+            "hot_side": "1136 °F",
+            "hot_side_k": 886.4890336677314,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "9.252 ft²",
-        "surface_temperature": "241.7 °F"
+        "surface_temperature": "260.2 °F"
       },
       {
         "face": "roof",
@@ -842,7 +1354,7 @@
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 260.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
@@ -865,8 +1377,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "5.693 kW",
-    "total_watts": 5693.144157055688,
+    "total": "5.688 kW",
+    "total_watts": 5687.773866856205,
     "working": [
       {
         "formula": null,
@@ -949,13 +1461,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "9.252 ft²",
-          "outside surface": "241.7 °F",
-          "surface coefficient h": "10.34 W/K/m²"
+          "outside surface": "260.2 °F",
+          "surface coefficient h": "9.267 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "847.2 W"
+        "value": "841.8 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -975,7 +1487,7 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "5.693 kW (1.94e+04 Btu/h)"
+        "value": "5.688 kW (1.94e+04 Btu/h)"
       }
     ]
   },

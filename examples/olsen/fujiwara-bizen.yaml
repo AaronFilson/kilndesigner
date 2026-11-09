@@ -8,11 +8,13 @@
 # slope, so the floor is on the ground (Fig 4-55, p.101); walls 10 to 13 in, tightly built,
 # overcoated with fireclay, straw and earth (p.100); the kedo's exit flues into a stack that runs
 # 3½ ft before rising into the round chimney, 25 ft tall (p.101, Fig 4-53).
-# Assumed: the dogi is the firebox, fired on its floor, and the two ware chambers are one size,
-# their mean: 44 in long and 54 in to the crown. Their width isn't printed (the plan marks the
-# first chamber as the widest part, and the kedo narrower): the dogi's 10 ft. The arch rises
-# 22 in: Olsen uses 4–6 in per foot of span on chamber kilns (p.296), and 6 in/ft on the 44 in
-# span along the draft is a semicircle. So the springline is at 32 in. Walls 11½ in, the middle of
+# Each ware chamber its own size (chamber.sizes): 54 in long and 60 in to the crown, and 34 in
+# long and 48 in to the crown.
+# Assumed: the dogi is the firebox, fired on its floor. The chambers' width isn't printed (the
+# plan marks the first chamber as the widest part, and the kedo narrower): the dogi's 10 ft. Each
+# arch rises 6 in per foot of its span along the draft, the top of the 4–6 in Olsen uses on
+# chamber kilns (p.296), a semicircle: 27 in and 17 in, so the springlines are at 33 in and 31 in.
+# The depth, height and rise below are the first chamber's. Walls 11½ in, the middle of
 # 10–13 in. The book names no brick: Japanese chamber kilns are built of local firebrick (bidai,
 # p.94–95), so medium-duty firebrick (Olsen's intermediate duty, p.18); the floor as the walls
 # (engine default). A 9 in arch, as the Bidai kiln (bidai, Fig 4-36). Cone 10, the hottest
@@ -23,9 +25,12 @@
 # on to the chimney (p.95, p.97); the book shows no steel on this kiln.
 # Not modelled: the dogi holds ware on three steps (p.102), and its own walls and roof aren't in
 # the heat loss; the himitsu, a 2 ft chamber in a 24 in flue, and its 3 × 6 in and 6 × 9 in flues
-# (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given. The engine's arch spans
-# the width, so it is laid across the 10 ft with the same springline and crown; held by masonry,
-# it gets no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
+# (p.100–101); the flue damper at the chimney's entrance (p.101–102, Fig 4-55); the doors into
+# the chambers in the side wall (scaled, but of two sizes, and a door takes one). The flues
+# between and out of the chambers, the takiguchi and the spy holes are scaled off Figs 4-53 and
+# 4-55 (step A, 2026-11-09, below). Chambers in
+# a row get arches along the draft, springing from the walls between them, as the book's do; held
+# by masonry, they get no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
 # (p.101); here the rise is counted over the two chambers only. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kei Fujiwara's Bizen kiln, Imbe
@@ -34,14 +39,19 @@ firing:
   cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
 chamber:
   width: 10 ft # the dogi's width (Fig 4-53)
-  depth: 44 in # the mean of 4 ft 6 in and 2 ft 10 in
-  height: 32 in # to the springline: 54 in to the crown, less the rise
+  depth: 54 in # the first chamber's, 4 ft 6 in
+  height: 33 in # its springline: 60 in to the crown, less the rise
   chambers: 2
+  sizes: # Figs 4-53, 4-55
+    - depth: 54 in # 4 ft 6 in, 5 ft tall
+    - depth: 34 in # the kedo, 2 ft 10 in, 4 ft tall
+      height: 31 in # 48 in to the crown, less the rise
+      rise: 17 in # 6 in per foot of the 34 in span (p.296)
   slope: 22.6 degree # 5 in rise per 12 in
   on_ground: true # built up the slope (p.101)
 roof:
   type: sprung_arch
-  rise: 22 in # 6 in per foot of the 44 in span (p.296)
+  rise: 27 in # 6 in per foot of the first chamber's 54 in span (p.296)
   buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
 loading:
   type: door
@@ -65,9 +75,63 @@ heat:
         stoke_hole:
           width: 42 in # 3½ ft
           height: 24 in # 2 ft
+spy_holes:
+  # Step A, 2026-11-09: the "MEMPO ANA" spy holes drawn in Fig 4-55's side elevation, one in each
+  # chamber's side wall (the far wall of the view, taken as the left (?)). (scaled: Fig 4-55,
+  # p.101, from the 5' and 4' crown heights, ±1 in on the heights; the across ±3 in, the drawing's
+  # horizontal scale being 25 % off its vertical one)
+  holes:
+    - chamber: 1
+      wall: left
+      port: # drawn 11½ × 7½ in
+        width: 11.5 in
+        height: 7.5 in
+      up: 28 in
+      across: -17 in # behind the chamber's middle
+    - chamber: 2
+      wall: left
+      port: # drawn 6 in square
+        width: 6 in
+        height: 6 in
+      up: 22 in
+      across: -12 in
+stoke_holes:
+  # Step A, 2026-11-09: the takiguchi (side fire holes, p.100), drawn as round holes low in each
+  # chamber's side beside the "DOOR TO CHAMBER" (Fig 4-55). (scaled: Fig 4-55, p.101, from the
+  # 5' and 4' crown heights; ±1 in on the size and height, ±3 in across)
+  - chamber: 1
+    wall: left
+    port:
+      diameter: 5 in
+    up: 14 in
+    across: 14 in # in front of the chamber's middle
+  - chamber: 2
+    wall: left
+    port:
+      diameter: 5 in
+    up: 10 in
+    across: 10 in
 draft:
   type: cross
   flue_wall: back
   run_to_chimney: 42 in # the flue stack, 3½ ft (p.101)
+  # Step A, 2026-11-09: the flue holes counted on Fig 4-53's plan (a pixel profile down each wall:
+  # light gaps between the hatched piers). Sizes printed (p.101): 6 × 9 in from the first chamber
+  # into the kedo, 6 × 10 in out of the kedo. (scaled: Fig 4-53, p.100, from 10', 4'6" and 2'10"):
+  # seven gaps of 4–9 in in the wall between the chambers, the 6 in across; five of 6–10 in in the
+  # kedo's back wall, read as the 10 in across (?).
+  between:
+    count: 7
+    port:
+      width: 6 in
+      height: 9 in
+  exits:
+    - through: back
+      count: 5
+      port:
+        width: 10 in
+        height: 6 in
+  connection: # "a 10in. (25cm)-diameter opening" into the chimney (p.101)
+    diameter: 10 in
   chimney:
     height: 25 ft # p.101

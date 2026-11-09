@@ -10,23 +10,32 @@
 # into a small slope (p.94, p.97), so the floor is on the ground; the firebox 46 in long
 # (Fig 4-36), six fireclay grate bars in a 14 in grate zone over a 14 in ash pit (Fig 8-7); the
 # chimney right behind chamber 3 (Fig 4-36).
-# Assumed: one chamber size for all three, their mean: 41⅓ in deep and 61 in to the crown, so the
-# arch rises 23 in from the 38 in springline. The bricks have no stated grade:
+# Each chamber its own size (chamber.sizes): 42, 46 and 36 in deep, 59, 65 and 59 in to the crown.
+# Assumed: each arch a semicircle on its chamber's depth, as Olsen's pointed Kyoto arches rise at
+# least that much (p.91–92), the springline the crown less half the depth: 38, 42 and 41 in
+# (chamber 1's 38 in is the printed springline, p.94–95). The depth, height and rise below are
+# chamber 1's, where the engine takes one. The bricks have no stated grade:
 # medium-duty firebrick (Olsen's intermediate duty, p.18). Walls 9½ in, one length of those
 # bricks, inside Olsen's 9–10 in for climbing kilns (p.99–100); the floor as the walls (engine
 # default). Cone 10, the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35,
 # p.93): the book gives no cone for this kiln. The firebox is taken as a box as wide as the
 # chamber it feeds, 73 in. Its grate is the 14 in zone (read here as across the firebox) by 21 in,
 # the middle of the 18–24 in bars of Kawaii's kiln, which has the same firebox (kawaii, p.97,
-# p.200). No total chimney height is printed (p.94–95), so the engine sizes the chimney.
+# p.200). No total chimney height is printed (p.94–95); it is read off Fig 4-36's stacked marks.
+# The firebox (Fig 4-36, Fig 8-7, drawing): its grate 24 in below chamber 1's floor, six inlet
+# flues (their size isn't printed: engine default), a 9 × 14 in mouth. Its arch starts 22 in above
+# the grate slab (40 in less 18 in) and rises into chamber 1's arch; the crown isn't printed, so the
+# height is left to the engine (22 in would end under the chamber floor, which the engine refuses).
 # The doors, one per chamber, 20 in wide, all in one side wall at each chamber's front, under the
 # end of its arch (Fig 4-36's plan); their height isn't printed, so each is as tall as the engine
 # lays a door in a side wall, to the springline, 38 in, and arched, as the doors of Olsen's other
 # built kilns are (door-openings.md).
-# Not modelled: each arch is peaked toward the back (p.91–92, p.95); the engine's is a circular
-# arch from the front wall to the back. Also left out: the firebox's semicircular front, the vapour
-# and spy holes, the steps between chambers, and the chimney's grid of 9 × 9 in flues across the
-# 73 in width (Fig 4-36).
+# Not modelled: each arch is peaked toward the back (p.91–92, p.95), which roof.peak_at can say,
+# but how far back isn't printed, so each is a circular arch from the front wall to the back. Also left out: the firebox's semicircular front and its
+# three flame-diffusing blocks; the vapour holes (the spy holes are scaled off Fig 4-36, step A,
+# below); the middle chamber's side stoke hole (aizashiguchi), 15 in
+# up (Fig 4-36); the 12 in exit flue and step at chamber 3's back; and the chimney's grid of
+# 9 × 9 in flues across the 73 in width (Fig 4-36).
 schema: 1
 name: Kyoto Bidai climbing kiln, 1962
 units: us
@@ -34,15 +43,29 @@ firing:
   cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
 chamber:
   width: 73 in
-  depth: 41.33 in # the mean of 42, 46 and 36 in
+  depth: 42 in # chamber 1's (Fig 4-36)
   height: 38 in # where the arch begins (p.94–95)
   chambers: 3
+  sizes: # Fig 4-36: 42/46/36 in deep, 59/65/59 in to the crown; each arch a semicircle
+    - depth: 42 in
+      rise: 21 in # 59 in to the crown
+    - depth: 46 in
+      height: 42 in
+      rise: 23 in # 65 in to the crown
+    - depth: 36 in
+      height: 41 in
+      rise: 18 in # 59 in to the crown
   slope: 18.4 degree # "3 TO 1": atan(1/3)
   on_ground: true # the foundation dug into a slope (p.94, p.97)
 roof:
   type: sprung_arch
-  rise: 23 in # to the mean crown, 61 in (59, 65, 59)
+  rise: 21 in # chamber 1's, to its 59 in crown
   buttressed: true # thrust onto the common walls and the chimney (p.95)
+  # (scaled: Fig 4-36, p.94, from each chamber's printed depth, ±7 %) the inner arch's top stands
+  # 49, 62 and 56 % along chambers 1, 2 and 3 from the front wall. Not entered as peak_at: with
+  # each arch a semicircle on its depth (rise half the span), any offset peak turns a half past a
+  # quarter circle, which the engine refuses; the drawing is not truly to scale either (chamber 1
+  # is drawn about 20 % smaller vertically than the others).
 loading:
   type: door
   face: right # one side wall (Fig 4-36's plan)
@@ -50,7 +73,7 @@ loading:
   opening:
     width: 20 in # "DOOR" 20" at each chamber (Fig 4-36)
     height: 38 in # not printed: to the springline, as tall as the engine lays a side door
-    across: -10.5 in # at each chamber's front, against the wall between (Fig 4-36's plan)
+    across: -8 in # at each chamber's front (Fig 4-36's plan): against chamber 3's front wall, the shortest
     each_chamber: true # one per chamber, all in one side wall (Fig 4-36)
 lining:
   walls:
@@ -77,11 +100,46 @@ heat:
         position: front
         width: 73 in # not printed: the chamber it feeds
         length: 46 in # Fig 4-36
+        step: 24 in # (drawing) Fig 4-36: the grate slab 18 in up, chamber 1's floor 42 in up
+        inlets: 6 # six flues into chamber 1 (Fig 8-7, p.201); five piers between them (Fig 4-36's plan)
+        stoke_hole: # (drawing) mouth 9 in wide (Fig 4-36); stoking opening 14 in (Fig 8-7)
+          width: 9 in
+          height: 14 in
         grate:
           width: 14 in # the grate zone, six fireclay bars (Fig 8-7)
           length: 21 in # Kawaii's bars, 18–24 in (p.97)
         ash_pit: 14 in # Fig 8-7
+spy_holes:
+  # Step A, 2026-11-09: one round spy hole high in each chamber near its back (Fig 4-36),
+  # drawn in the side view's far wall (the left, taking the plan's doors as the right (?)).
+  # (scaled: Fig 4-36, p.94, from 19'5", 42", 46", 36", 59", 65", 59" and 56"; the diameter
+  # ±½ in, 6–7½ in read; heights ±3 in; along ±2 in.) Chamber 2's 56 in is printed; the scales
+  # give it 52–56½ in, a check on the method.
+  holes:
+    - chamber: 1
+      wall: left
+      port:
+        diameter: 6 in
+      up: 51 in
+      across: -12 in # 33 in behind chamber 1's front wall
+    - chamber: 2
+      wall: left
+      port:
+        diameter: 6 in
+      up: 56 in # printed (Fig 4-36)
+      across: -12 in # 35 in behind chamber 2's front wall
+    - chamber: 3
+      wall: left
+      port:
+        diameter: 6 in
+      up: 52 in
+      across: -9 in # 27 in behind chamber 3's front wall
 draft:
   type: cross
   flue_wall: back
   run_to_chimney: 0 in # the chimney stands right behind chamber 3 (Fig 4-36)
+  chimney:
+    # (drawing, derived, ?) Fig 4-36: its top 73 + 41 + 9 = 123 in above the ground line at the
+    # front; the engine measures from chamber 1's floor, 42 in up. Its section, a grid of 9 × 9 in
+    # flues across the 73 in width, is left to the engine.
+    height: 81 in

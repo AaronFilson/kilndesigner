@@ -14,12 +14,15 @@
 # Olsen wants high-alumina brick (p.126), and the Kählers' salt kiln used high-alumina insulating
 # brick (kahler-salt, p.136): walls, arch and floor 9 in of JM-28 insulating brick, 67 % alumina by
 # Olsen's Table 1-4 (p.27); 9 in walls stand to 8 ft unsupported (p.41). Cone 10: Olsen salts at
-# the top temperature, cone 9–10 (p.128). The fireboxes' sizes aren't printed: side by side
-# across the 1.05 m firebox end, each half its width, and 4 ft (1.22 m) long, as La Borne's
-# (la-borne, Fig 4-78). What holds the arch isn't printed, so the engine sizes the steel, with
+# the top temperature, cone 9–10 (p.128). The fireboxes' widths aren't printed: side by side
+# across the 1.05 m firebox end, each half its width. Their length, 140 cm, is read off the ash
+# pit's edge in Fig 6-37 (drawing)(?), a drawing marked "NOT TO SCALE". What holds the arch isn't printed, so the engine sizes the steel, with
 # posts along the sides.
-# Not modelled: the level crown over the rising floor, as the mean height to the crown, 1.625 m,
-# with the roof following the floor; the 4.5 m and the mean width, 1.05 m, as a box. The grate bars
+# Not modelled: the two firebox mouths (Fig 6-39 photo; not sized), the brick wall between the ash
+# pits and the "25cm" piers by the flue channels (Fig 6-37); the spy holes (none drawn or
+# printed: the engine's three in the door); the level crown over the rising floor, as the mean height to the crown, 1.625 m,
+# with the roof following the floor. The four sections' widths are the chamber's (chamber.widths),
+# straight between them, each arch rising 3 in per foot of its own width. The grate bars
 # (not sized), the four 15 cm flue channels under the setter tiles, and the exit flues in rows
 # along the top and sides: the engine puts one flue in the roof. The book calls the firebox end
 # the "back" and the far end the "front or door end"; the drawing labels the far end "BACK
@@ -30,8 +33,17 @@ units: metric
 firing:
   cone: "10"
 chamber:
-  width: 1.05 m
+  width: 1.05 m # where the arch's rise is given; each section's width below
   depth: 4.5 m
+  widths: # the four arch sections, 1.5 m apart (Fig 6-37)
+    - at: 0 m
+      width: 1.05 m
+    - at: 1.5 m
+      width: 1.04 m
+    - at: 3.0 m
+      width: 1.07 m
+    - at: 4.5 m
+      width: 1.05 m
   height: 1.365 m # to the springline: 1.625 m to the crown, the mean of the four sections
   slope: 4.83 degree # 38 cm over 4.5 m
 roof:
@@ -52,6 +64,6 @@ heat:
       - count: 2
         position: front
         width: 0.525 m
-        length: 1.22 m
+        length: 1.40 m # "140cm" along the ash pit (Fig 6-37, p.163) (drawing)(?)
 draft:
   type: up

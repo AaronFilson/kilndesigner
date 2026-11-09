@@ -6,10 +6,15 @@
 # chamber 10 ft wide, a straight 10 ft, then 8 ft tapering to 4 ft wide; "(3) INLET FLUE 13.5 X
 # 9"" (Fig 4-95). The firebox dug 3½ ft below the ware floor, a "moat" that a roller conveyor
 # bridges for loading (Figs 4-96, 4-97, 4-103, 4-104), so the floor is on the ground; chimney
-# 14 ft (Fig 4-96). Two stoke holes 13½ in wide × 16 in high, one each side of the central door in
-# the arched front (Fig 4-97).
-# Assumed: the crown, not printed in the straight section, is 38½ in, the middle of Olsen's
-# 29–48 in for groundhogs (groundhog-basic, p.112); Fig 4-96 prints 29 in at the chimney end. The
+# 14 ft (Fig 4-96). Stoke holes 13½ in wide × 16 in high, each over an air hole of the same width
+# and 9 in high, in the arched front beside the central door (Fig 4-97). Fig 4-97 (drawing) labels
+# a "STOKE" left of the door, one under it and a third, half cut off, at the right, three in all,
+# as the plan's three inlet flues (Fig 4-95); the photo, Fig 4-103, shows a mouth each side of the
+# roller conveyor (?). Side stoke holes in two rows, "spaced every 27"", six a row drawn in the
+# side (Fig 4-96, drawing), which also serve for salting (p.114; Fig 4-102).
+# The crown, not printed in the straight section, is scaled off Figs 4-96 and 4-97, 43 in (it
+# was assumed 38½ in, the middle of Olsen's 29–48 in, p.112); Fig 4-96 prints 29 in at the
+# chimney end. The
 # arch springs from the floor and rises less than a half-circle, as a groundhog's does (p.112),
 # and is buttressed: groundhogs are dug in under earth or braced with rock (p.112). For a salt
 # kiln Olsen wants high-alumina brick (p.126), and the Kählers' salt kiln used high-alumina
@@ -18,8 +23,11 @@
 # Cone 10: Olsen salts at the top temperature, cone 9–10 (p.128). The chimney's section and the
 # exit flues: engine default (the neck is about 3 ft wide (faint); the chimney label "4'5" 3'"
 # can't be read). Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: the tapering plan, as a box of the mean width over the 18 ft ware chamber,
-# (10 × 10 + 8 × 7) ÷ 18 = 8 ft 8 in; the firebox's depth below the ware floor; the side stoke
+# The tapering plan (chamber.widths): 10 ft wide for the first 10 ft, then narrowing straight to
+# 4 ft at the chimney end, 18 ft from the front (Fig 4-95). The arch keeps its shape as the plan
+# narrows, its crown falling with the width to about 17 in at the 4 ft neck; Fig 4-96's 29 in there
+# is more than a circular arch from the floor can rise on 4 ft (24 in), so it isn't followed.
+# Not modelled: the firebox's depth below the ware floor; the side stoke
 # holes, two rows every 27 in; the air holes, 9 in high, under the stoke holes; only one stoke hole
 # per firebox can be entered. The plan's three 13½ × 9 in inlet flues are entered as flues from the
 # firebox into the chamber; they match the air holes' size and may be air inlets. The floor's loss
@@ -30,18 +38,33 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 104 in # the mean of 10 ft for 10 ft and 10 to 4 ft over 8 ft
+  width: 10 ft # the straight section's, where the arch's rise is given
   depth: 18 ft
+  widths: # Fig 4-95: 10 ft wide for 10 ft, then 8 ft tapering to 4 ft
+    - at: 0 ft
+      width: 10 ft
+    - at: 10 ft
+      width: 10 ft
+    - at: 18 ft
+      width: 4 ft
   height: 0 in # the arch springs from the floor
   on_ground: true # its firebox is dug 3½ ft below the ware floor (Fig 4-96)
 roof:
   type: sprung_arch
-  rise: 38.5 in # to the crown; under the 52 in of a half-circle
+  # (scaled: Fig 4-97, p.114, from 13.5", 16" and 9"; Fig 4-96, from 27", 4', 3.5' and 29";
+  # ±6 in) the front view's crown stands 43–49 in above the ware floor, the side view's highest
+  # point 37–45 in: 43 in, the middle. It was 38½ in, assumed (the middle of Olsen's 29–48 in,
+  # p.112). Under the 60 in of a half-circle on 10 ft.
+  rise: 43 in
   buttressed: true
 loading:
   type: door
   face: front
   door: bricked
+  # (scaled: Fig 4-97, p.114, from 13.5", 16" and 9", ±2 in wide, ±3 in high) the central door
+  # reads 25–29 in wide, three stretchers, 27 in, and runs from the floor up under the arch,
+  # 42–48 in. Not entered: the engine takes the front wall's top as the springline, 0 in, under an
+  # arch from the floor, and refuses any opening in it, so the door stays the whole front.
 lining:
   walls:
     - material: ifb-jm28

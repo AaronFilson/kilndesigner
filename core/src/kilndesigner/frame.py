@@ -1681,11 +1681,15 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
         else:
             from kilndesigner.band import dome_band
 
-            # The band is checked against the membrane ring tension, the larger of the membrane
-            # and cracked-dome (Lau, "at least") figures: the safe side for the band
-            band_steps, band = dome_band(kiln, ring.ring)
-            working, thrust = [*ring.steps, *band_steps], ring.thrust
-            findings += [ring.finding(), band]
+            working, thrust = list(ring.steps), ring.thrust
+            governing = ring.band_tension()
+            if governing is None:
+                findings += [ring.finding(), ring.band_refusal()]
+            else:
+                tension, step, source = governing
+                band_steps, band = dome_band(kiln, tension, source)
+                working += [*([step] if step else []), *band_steps]
+                findings += [ring.finding(), band]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1723,6 +1727,53 @@ class DomeRing:
         if c is not None and c.per_foot is not None:
             return f"at least {c.per_foot:.0f} lb per foot of the wall's top (cracked into lunes)"
         return f"{self.per_foot:.0f} lb per foot of the wall's top"
+
+    def band_tension(self) -> tuple[float, Step | None, str] | None:
+        """The ring tension the band is sized on, a step showing why, and its source. Up to
+        51.8° the membrane ring force. Past it the membrane push falls to nothing at a
+        hemisphere while the cracked dome still pushes at least Lau's h: the band takes
+        max(a₀·N_α·cos α₀, h_Lau·a₀) (physics review part 2, finding 1). None when Lau's range
+        doesn't cover the dome: then the band isn't sized (ADR 0009)."""
+        c = self.cracked
+        if c is None:
+            return self.ring, None, "frame.py: membrane theory (Timoshenko §106)"
+        if c.ring is None:
+            return None
+        lau = c.ring > self.ring
+        which = "Lau's cracked dome (least push)" if lau else "the membrane ring force"
+        step = Step(
+            name="Dome band: the ring tension it is sized on",
+            formula="H = max(a₀·N_α·cos α₀, h_Lau·a₀), past α₀ = 51.8°",
+            inputs={
+                "membrane, a₀·N_α·cos α₀": f"{self.ring:,.0f} lb",
+                "cracked into lunes, h_Lau·a₀": f"{c.ring:,.0f} lb",
+            },
+            value=f"{max(c.ring, self.ring):,.0f} lb; {which} governs",
+            reference=f"{MEMBRANE}; {LAU}, Eq. 3.6 (p.58)",
+            note=(
+                "past 51.8° the membrane state needs hoop tension masonry doesn't carry; the "
+                "cracked dome's push is a least value, so the larger of the two is taken"
+            ),
+        )
+        source = f"frame.py: the larger of membrane theory (Timoshenko §106) and {LAU}, Eq. 3.6"
+        return max(c.ring, self.ring), step, source
+
+    def band_refusal(self) -> Finding:
+        """Past 51.8° with t/R outside Lau's checked range: the band isn't sized (ADR 0009)."""
+        c = self.cracked
+        assert c is not None
+        return Finding(
+            level="info",
+            message=(
+                f"The dome's band isn't sized: the dome springs {self.alpha:.1f}° from its crown, "
+                f"past {NO_TENSION}°, where the membrane ring force ({self.ring:,.0f} lb) "
+                "understates a cracked dome's push, and its t/R of "
+                f"{c.t_over_r:.3f} is outside {LAU_T_R[0]}–{LAU_T_R[1]}, where Lau's lune "
+                "statics are checked. Make the dome shallower (springing within 51.8° of its "
+                "crown), or its shell's thickness fit that range, to have the band sized."
+            ),
+            reference=f"{MEMBRANE}; {LAU}, Fig. 3.17 (p.59); ADR 0009",
+        )
 
     def finding(self) -> Finding:
         text = (
@@ -2038,8 +2089,14 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     """The frame, and for a door in part of a wall, what spans the door (door.py)."""
     from kilndesigner.door import door_head
     from kilndesigner.foundation import platform_bearing
+    from kilndesigner.movement import expansion, ifb_notes
 
     frame = _design_frame(kiln)
+    moving, allowance = expansion(kiln, frame.kind)
+    frame = frame.model_copy(update={
+        "working": [*frame.working, *moving, *ifb_notes(kiln)],
+        "findings": [*frame.findings, *allowance],
+    })  # fmt: skip
     if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
         from kilndesigner.crossing import crossing_note, crossing_statics
 
@@ -2048,6 +2105,13 @@ def design_frame(kiln: Kiln) -> FrameDesign:
             "working": [*frame.working, *steps],
             "findings": [*frame.findings, *found, crossing_note(kiln)],
         })  # fmt: skip
+    from kilndesigner.shell import hung_door_statics
+
+    hanging, hung = hung_door_statics(kiln)
+    if hanging or hung:
+        frame = frame.model_copy(
+            update={"working": [*frame.working, *hanging], "findings": [*frame.findings, *hung]}
+        )
     bearing, under = platform_bearing(kiln)
     if bearing or under:
         frame = frame.model_copy(
@@ -2081,6 +2145,10 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if isinstance(kiln.roof, SprungArch) and kiln.roof.building_frame:
         return _building_frame(kiln)
+    from kilndesigner.shell import shell_frame
+
+    if (own := shell_frame(kiln)) is not None:
+        return own
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
     if arches_along(kiln):
@@ -2551,7 +2619,9 @@ def _posts_per_side(
 GROWTH_IN_PER_FT = 3 / 32  # the most brickwork grows hot: Olsen 4th ed. p.51 (1/16–3/32 in/ft)
 GROWTH_SOURCE = (
     "Olsen, The Kiln Book, 4th ed., p.51: 1/16–3/32 in per ft (0.5–0.8 %), with IFB's 0.5–0.7 % "
-    "reversible expansion (thermal-properties.md §2)"
+    "reversible expansion (thermal-properties.md §2); fireclay brick grows the same 3/32 in per "
+    "ft heated to 2400 °F, the allowance most makers recommend (Brosnan, 'Alumina-Silica Brick', "
+    "in Schacht, Refractories Handbook; refractory-movement-and-mortar.md §1)"
 )
 SPRING_SOURCE = (
     "a spring's force grows by its rate × its travel; the rods' share capped at the rigid frame's "

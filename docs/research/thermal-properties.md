@@ -221,6 +221,25 @@ Int. J. Heat Mass Transfer 18(11):1323–29.
   verified**. Schulenberg (1985), as given by Jaffer [T33], for an isothermal strip of width 2L:
   Nu = 0.544·Ra^⅕ / [1 + (0.477/Pr)^(3/5)]^(1/3). For a disk, using the radius: 0.619·Ra^⅕ /
   [1 + (0.520/Pr)^(3/5)]^(1/3). Jaffer tested his own formula of this kind over 10⁶ < Ra < 10¹².
+
+### 5.3 Hot face down: Jaffer (2023), the engine's correlation
+
+A. Jaffer, "Natural Convection Heat Transfer from an Isothermal Plate", *Thermo* 3(1) 148–175
+(2023), doi 10.3390/thermo3010010, CC BY 4.0; open preprint arXiv:2201.02612v5 [T33]. Read in
+full for the 2026-11 physics review (`docs/reviews/2026-11-physics-review-heat.md` §7).
+
+- Eq. 56: **Nu_R = 0.341 + 0.550·(Ra/Ξ(Pr))^⅕**, Ξ(Pr) = [1 + (0.5/Pr)^p]^(1/p), p = √(1/3).
+- Eq. 57: **L_R = half the shorter side** of a rectangle; for a disk of radius R, L_R = 2R/π.
+- Fitted to four downward-facing data sets: Fujii & Imura 1972 (water, Pr 5, 10⁷ < Ra < 10¹²),
+  Aihara et al. 1972 (air, 25 × 35 cm), Faw & Dullforce 1982 (air, 18.1 cm disk), Goldstein &
+  Lau 1983 (Pr 2.5). RMSRE 2.7 %, 4.2 %, 3.8 %, 3.7 % (Table 6). Span of the data: 10⁶ < Ra <
+  10¹²; the engine refuses outside it (ADR 0009), although the paper's conclusion states the
+  form for Ra_R > 1.
+- Worked check: Pr 0.71, Ra 10⁸ gives Ξ = 2.81, Nu = 18.15. Large Pr: Ξ → 1 (eq. 46).
+- Against the corrected Schulenberg form above (Jaffer eq. 4): within 5 % for 10⁶–10¹² at Pr
+  0.71. This replaces McAdams's 0.27 Ra^¼ with L = A/P (row 3 of §5.2) in the engine.
+- A round kiln's faceted (polygon) floor uses the disk form; a teardrop's or oval's floor uses
+  half its smaller plan size (not separately sourced; a close approximation).
 - Raithby and Hollands: EES has a combined arbitrary-tilt method from Nellis and Klein §6.2.2 [T34].
   Its coefficients were not read.
 - Use L = A/P, which is A/(2W + 2L) for a rectangle [T30, T32, S62]. VDI and Rohsenow use

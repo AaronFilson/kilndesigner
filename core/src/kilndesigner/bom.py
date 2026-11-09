@@ -257,6 +257,11 @@ def bill_of_materials(
             unpriced.append("the kiln car's hardware (set loading.car_hardware_cost)")
         else:
             total += si(cost, "USD")
+    from kilndesigner.shell import hung_door_line
+
+    if (hung := hung_door_line(kiln)) is not None:
+        lines.append(hung)
+        unpriced.append("the hung door's trolleys and beam")
 
     findings.append(
         Finding(

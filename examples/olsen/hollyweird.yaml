@@ -8,8 +8,8 @@
 # 60 h firing (p.117): cone 11 used. Hard firebrick for the walls (faint), flues and firebox;
 # insulating brick for the transition to "Thermal Ceramics K-26 IFB castable", cast as the two
 # dome-shaped chamber ceilings (p.116), which after 25 years had held up better than expected while
-# the hard brick slagged at the flues (p.117). Chambers 8 ft and 12 ft long (Fig 4-108), 10 ft the
-# mean; the plan runs 249 in from the first ware platform to the chimney, with a 13 in wall between
+# the hard brick slagged at the flues (p.117). Chambers 8 ft and 12 ft long (Fig 4-108), each its
+# own (chamber.sizes); the plan runs 249 in from the first ware platform to the chimney, with a 13 in wall between
 # the chambers, a front firebox 36 in (faint) long over a dug-out ash pit, and a second firebox
 # grate 15 in long with a side door (Fig 4-110). The front ash pit is the walkway into the chamber;
 # grate bars ¾ in apart; one inlet flue 15 × 18 in; a 9 × 13½ in stoke hole in the door's bricking
@@ -27,10 +27,13 @@
 # cast dome's walls "extremely well" (p.59). The dug-out ash pit, walked through into the chamber,
 # puts the floor on the ground. Both fireboxes run across the 55 in chamber, their grates their
 # full size, the second's bars ¾ in apart as the first's.
-# Not modelled: the Bizen-style and tube-style chambers, as two of the mean size; the 12, 18 and
+# Not modelled: the Bizen-style and tube-style chambers' shapes, as two boxes of one width and
+# height under domes; the 12, 18 and
 # 6 in steps between the platforms; the insulating-brick transition under the domes; the three exit
 # flues from the front chamber across the second grate, and the 5 in air tube under it; the second
-# firebox's place between the chambers, entered at the front. The chimney's height isn't printed,
+# firebox's place between the chambers, entered at the front, and its stoking door in the side
+# wall (Fig 4-110 "DOOR"); the round spy holes in the domes' sides (Fig 4-108, unsized). The
+# chimney's 15 × 24 in section can't be entered without its height. The chimney's height isn't printed,
 # so the chimney isn't entered and the engine sizes it.
 schema: 1
 name: Olsen's Hollyweird Tube
@@ -39,9 +42,12 @@ firing:
   cone: "11"
 chamber:
   width: 55 in
-  depth: 10 ft # the mean of the 8 ft and 12 ft chambers
+  depth: 8 ft # the front chamber's
   height: 35.4 in # to the domes' springline: 48 in to the top, less the rise
   chambers: 2
+  sizes: # 8 ft and 12 ft long (Fig 4-108)
+    - depth: 8 ft
+    - depth: 12 ft
   on_ground: true # the dug-out ash pit is the walkway into the chamber (p.117)
 roof:
   type: dome

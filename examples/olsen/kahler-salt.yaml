@@ -9,17 +9,15 @@
 # 5-17, 5-19; p.137); downdraft through the floor; chimney flue at most 9 × 7 in; chimney 10–12 ft
 # (drawings).
 # Assumed: the brick is Morgan JM 28, the library's high-alumina IFB: Olsen's Tables 1-4 and 1-4A
-# give JM-28 59–67 % alumina (p.27). The chimney is 11 ft, the middle of 10–12 ft, 9 × 7 in inside,
-# and the exit flue is the 9 × 7 in chimney flue. The arch: 4½ in of JM 28 at 1½ in per foot of
+# give JM-28 59–67 % alumina (p.27). The chimney is 11 ft, the middle of 10–12 ft, 9 × 7 in inside. The arch: 4½ in of JM 28 at 1½ in per foot of
 # span, Olsen's commonest arch for small kilns (p.25, p.51). The floor as the walls (engine
 # default). Burner ports 4½ in wide by 5 in tall, Olsen's side port for one burner (p.173), in the
 # middle of each wall. Forced air/gas burners are the engine's power burners; their model and
 # rating: engine default. Propane from a 500 gal tank, Olsen's tank for a 24–40 cu ft kiln
 # (p.242): the library rates its power burners on propane. Cone 10: Olsen salts at cone 9–10
 # (p.128).
-# Not modelled: salt. The floor slab 4½ in clear of the walls and the collection channels under it
-# (the engine's downdraft leaves by one flue at the foot of the back wall). The chimney flue
-# through the crown (the engine puts the chimney behind the back wall). The K28 dense port blocks.
+# Not modelled: salt. The salt ports are scaled off Fig 5-18 (openings, below). The floor slab 4½ in clear of the walls and the collection channels under it. The K28
+# dense port blocks.
 schema: 1
 name: Kähler salt kiln, Næstved
 units: us
@@ -34,7 +32,8 @@ roof:
   rise: 3.75 in # 1½ in per foot of span
 loading:
   type: door
-  face: front
+  face: front # "DOOR" at the front end of the side section (Fig 5-18)
+  door: hinged # a hung steel door with latches (photo, Fig 5-21); its size isn't printed
 lining:
   walls:
     - material: ifb-jm28
@@ -51,25 +50,68 @@ heat:
         width: 4.5 in
         height: 5 in
       places:
+        # Left ports toward the front, right ports toward the back ("LEFT BURNER POINTS (front)",
+        # "BURNER PORTS RIGHT BACK", Fig 5-17). Their centres are drawn 2.3 and 1.8 in from the
+        # end walls (scaled: Fig 5-18, p.136, from the 36" and 24", ±½ in); a 4½ in port can sit
+        # no nearer than 2¼ in, so 15.5 in off the middle of the 36 in wall.
         - wall: left
+          across: 15.5 in
           up: 18 in
         - wall: left
+          across: 15.5 in
           up: 39 in
         - wall: right
+          across: 15.5 in
           up: 9 in
         - wall: right
+          across: 15.5 in
           up: 28 in
     supply:
       type: tank
       gallons: 500
+spy_holes:
+  # Three "SPY AND DRAW HOLES" up the door (Fig 5-18), 11, 22 and 34 in above the floor (scaled:
+  # Fig 5-18, p.136, from the 48" and 4½", ±1½ in; but the burners on the same figure read up to
+  # 8 in under their printed heights, a question in the doc). Drawn 1½ in high; size left at the
+  # engine's quarter brick, the nearest brick module.
+  places:
+    - wall: front
+      up: 11 in
+    - wall: front
+      up: 22 in
+    - wall: front
+      up: 34 in
 draft:
   type: down
   flue_wall: back
-  flue_port:
-    width: 9 in
-    height: 7 in
+  exits: # three 4½ × 9 in floor flues into the collection channels (Figs 5-17, 5-18), 11½ in
+    # left of, about on (¾ in left) and 11½ in right of the centre line (scaled: Fig 5-17, p.136,
+    # from the 30", 45" and 24", ±½ in); front to back they aren't drawn: the middle. Each is
+    # drawn 8½ in across, so its 9 in runs across the kiln
+    - through: floor
+      count: 3
+      port:
+        width: 9 in
+        height: 4.5 in
+      places:
+        - across: -11.5 in
+        - across: -0.75 in
+        - across: 11.5 in
+  chimney_through: crown # the chimney flue through the crown (Figs 5-17, 5-18)
   chimney:
     height: 11 ft
     inside:
       width: 9 in
       depth: 7 in
+openings:
+  salt_ports: # top front and top back in the arch (Fig 5-18), 2 in round, centres 2 in from the
+    # end walls (scaled: Fig 5-18, p.136, from the 36" and 24", ±½ in), at the arch's right
+    # springing, 16 in right of the middle (scaled: Fig 5-17, from the 30", 45" and 24", ±1 in):
+    # entered 14 in across, the furthest a 2 in hole sits inside the 30 in span. Rounded to 2 in,
+    # not a brick module: a round hole cut in the arch.
+    - through: roof
+      port:
+        diameter: 2 in
+      places:
+        - { across: 14 in, along: -16 in }
+        - { across: 14 in, along: 16 in }

@@ -318,6 +318,8 @@ class FaceShape:
     arch: Arch | None = None
     grows: Callable[[float], float] | None = field(default=None, compare=False)
     """The area at a depth into the lining, for a curved face that isn't a circular arch."""
+    disc: bool = False
+    """A round floor of diameter ``a`` (a faceted ring's polygon counts as its circle)."""
 
     def area_at(self, depth: float) -> float:
         if self.grows is not None:
@@ -328,10 +330,13 @@ class FaceShape:
         return (self.a + 2 * depth) * (self.b + 2 * depth) + extra
 
     def characteristic_length(self, depth: float) -> float:
-        """Height for a vertical face; area over perimeter for a horizontal one."""
+        """Height for a vertical face; area over perimeter for a face up; for a face down,
+        Jaffer's L_R (Thermo 3 (2023), eq. 57): half the shorter side, or 2R/π for a disc."""
         a, b = self.a + 2 * depth, self.b + 2 * depth
         if self.orientation == "vertical":
             return b
+        if self.orientation == "facing_down":
+            return a / math.pi if self.disc else min(a, b) / 2
         if self.arch is not None:
             a = 2 * (self.arch.radius + depth) * self.arch.half_angle
         return (a * b) / (2 * (a + b))
@@ -366,6 +371,9 @@ class ChamberShape:
     chamber's (roof.along)."""
     crossing: CrossingShape | None = None
     """Crossing vaults (roof.crossing): the union of two arched tubes (groin.py)."""
+    given: tuple[float, tuple[FaceShape, ...]] | None = None
+    """The volume and faces worked out elsewhere (shell.py): chambers of different sizes, a
+    width changing along the run, an offset-peak arch."""
 
     @property
     def _row(self) -> bool:
@@ -373,6 +381,8 @@ class ChamberShape:
 
     @property
     def volume(self) -> float:
+        if self.given is not None:
+            return self.given[0]
         if self.crossing is not None:
             return self.crossing.volume()
         if self.form is not None:
@@ -403,6 +413,8 @@ class ChamberShape:
 
     def _faces(self) -> list[FaceShape]:
         w, d, h = self.width, self.depth, self.height
+        if self.given is not None:
+            return list(self.given[1])
         if self.crossing is not None:
             from kilndesigner.crossing import crossing_faces
 
@@ -520,7 +532,7 @@ class ChamberShape:
             for face in ("left", "right", "back", "front")
         ]
         under = slab if self.floor_inside else disc
-        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=under)
+        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=under, disc=True)
         dome = self.round_dome
         roof = (
             FaceShape("roof", "facing_up", dome.area(), dia, dia, grows=dome.area)
@@ -609,6 +621,15 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
 
         return ChamberShape(w, d, h, None, form=form_of(kiln))
     open_top = isinstance(kiln.roof, OpenTop)
+    roof = kiln.roof
+    if (
+        c.sizes is not None
+        or c.widths is not None
+        or (isinstance(roof, SprungArch) and roof.peak_at is not None)
+    ):
+        from kilndesigner.shell import shell_shape
+
+        return shell_shape(kiln)
     if c.shape == "round":
         dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None
         return ChamberShape(

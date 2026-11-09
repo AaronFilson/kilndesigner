@@ -12,11 +12,13 @@
 # grate's 19 in. The temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft,
 # the only low-fire updraft whose temperature the book prints (p.160). The brick isn't named:
 # hard brick (Olsen's fast-fire wood kiln "can be built of IFB or hard brick", p.142);
-# medium-duty firebrick (Olsen's intermediate duty, p.18). The top isn't
-# described: engine default (a flat roof of the walls' layers), as are the floor and the air.
+# medium-duty firebrick (Olsen's intermediate duty, p.18). The top isn't described, but the
+# drawing shows it open, the wall's 4 in ring round the muffle (Fig 6-47) (drawing)(?): an open
+# top. The firebox is drawn apart, below the kiln, joined to its foot by dashed lines (Fig 6-47):
+# taken as under it. The floor and the air: engine defaults.
 # Not modelled: the muffle (2½ ft tall, 16–18 in across, its wall ½ in, two bands of seven
 # holes, a lid with a lip and a 6 in flue), its pedestal and the wedges between it and the wall.
-# The kiln is taken as a straight cylinder, the firebox as under it.
+# The kiln is taken as a straight cylinder (drawn tapering a little toward the top).
 schema: 1
 name: Kenzan enamel kiln (kin-gama)
 units: us
@@ -26,7 +28,10 @@ chamber:
   shape: round
   width: 22 in
   depth: 22 in
-  height: 42 in # the pedestal and the muffle
+  height: 42.5 in # 43½ in (scaled: Fig 6-47, p.165, from the 2½', ±3 in), rounded to 17
+  # courses; it holds the 12 in pedestal and 30 in muffle (42 in)
+roof:
+  type: open # drawn open round the muffle (Fig 6-47, p.165) (drawing)(?)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield

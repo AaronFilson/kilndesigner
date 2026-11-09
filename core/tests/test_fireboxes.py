@@ -87,7 +87,8 @@ def test_a_firebox_against_the_front_wall_cuts_its_mouth_through_it() -> None:
     assert box.hi[1] < -kiln.chamber.depth.to("mm").magnitude / 2
     parts = lining_parts(kiln)
     fb = [p for p in parts if p.name.startswith("firebox-1/")]
-    assert {p.face for p in fb} == {"left", "right", "front", "floor", "roof"}
+    # Its 13½ in step (Fig 4-85) sets it below the platform, so it builds a back wall round its pit
+    assert {p.face for p in fb} == {"left", "right", "front", "back", "floor", "roof"}
     mouth = [o for o in openings(kiln) if o.name.endswith("/mouth")]
     assert len(mouth) == 1
     front = [
@@ -153,7 +154,11 @@ def test_fireboxes_are_in_the_plans(tmp_path: Path) -> None:
 def test_walls_between_chambers_have_olsens_flue_holes() -> None:
     from kilndesigner.run_parts import FLUE_HEIGHT, flue_holes, flue_rows
 
-    kiln = _template("climbing")
+    given = _template("climbing")
+    assert given.draft is not None
+    assert all(r.count == 5 for r in flue_rows(given))  # Fig 4-28's, as the design gives them
+    # Without draft.between: Olsen's standard flues
+    kiln = given.model_copy(update={"draft": given.draft.model_copy(update={"between": None})})
     rows = flue_rows(kiln)
     assert len(rows) == kiln.chamber.chambers - 1
     w = kiln.chamber.width.to("inch").magnitude
@@ -209,7 +214,7 @@ def _bidai_with(**firebox: str) -> Kiln:
 
 
 def test_a_step_sets_the_grate_below_the_chamber_floor() -> None:
-    level = firebox_boxes(_bidai_with())[0]
+    level = firebox_boxes(_bidai_with(step="0 in"))[0]
     stepped = firebox_boxes(_bidai_with(step="9 in", height="30 in"))[0]
     assert level.grate_z == pytest.approx(level.level)
     assert stepped.grate_z == pytest.approx(stepped.level - 9 * IN)
@@ -230,7 +235,7 @@ def test_an_ash_pit_left_out_is_as_deep_as_the_space_above_the_grate() -> None:
 
 
 def test_the_grate_heights_are_reported_as_choices_not_warned() -> None:
-    report = design_report(_bidai_with(height="12 in", ash_pit="30 in"))
+    report = design_report(_bidai_with(step="0 in", height="12 in", ash_pit="30 in"))
     notes = [f for f in report.findings if f.message.startswith("Firebox 1: ")]
     assert len(notes) == 1
     assert notes[0].level == "info"
