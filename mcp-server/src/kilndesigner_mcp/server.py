@@ -8,6 +8,7 @@ back as a tool error with the engine's reason, never a guess (ADR 0009).
 
 from __future__ import annotations
 
+import json
 import math
 import os
 import sys
@@ -17,15 +18,16 @@ from typing import Any, Literal
 
 import yaml
 from mcp.server.mcpserver import MCPServer
-from mcp.server.mcpserver.exceptions import ToolError
+from mcp.server.mcpserver.exceptions import ResourceError, ToolError
 from mcp.types import ToolAnnotations
 from pydantic import ValidationError
 
 from kilndesigner import Kiln
 from kilndesigner.castable import CastableError
+from kilndesigner.compare import COMPARED, comparison_rows
 from kilndesigner.designfile import dump_design, parse_design
-from kilndesigner.library import UnknownEntryError
-from kilndesigner.report import ENGINE_VERSION, design_report
+from kilndesigner.library import UnknownEntryError, alloys, material, materials
+from kilndesigner.report import ENGINE_VERSION, Report, design_report
 from kilndesigner.shape import chamber_shape
 from kilndesigner.simulation import SimulationError
 from kilndesigner.simulation import simulate as simulate_firing_run
@@ -46,8 +48,10 @@ of list_templates. It returns a design file to change; it never resizes a templa
 the chamber's dimensions in the YAML, then call validate_design and build_design. Errors and
 warnings in a report are physical faults to fix; firing time is the potter's choice. The engine
 refuses what it has not been checked against, with a reason: pass that reason on rather than
-working around it. The bill of materials prices only what has a price in the library; unpriced
-lines are not free."""
+working around it. compare_designs sets designs side by side. The resources hold the design
+file's JSON Schema, the materials library with its sources, and the formula sheet behind each
+warning and error of a template or example. The bill of materials prices only what has a price
+in the library; unpriced lines are not free."""
 
 RESULT_ERRORS = (UnknownEntryError, CastableError, SimulationError, UnitError, ValueError)
 
@@ -126,14 +130,19 @@ def list_templates() -> dict[str, Any]:
     }
 
 
+def _template(id: str) -> Template:
+    for t in templates():
+        if t.id == id:
+            return t
+    ids = ", ".join(t.id for t in templates())
+    raise ToolError(f"No template {id!r}. The templates are: {ids}")
+
+
 @mcp.tool(annotations=READ_ONLY)
 def get_template(id: str) -> dict[str, Any]:
     """A template's design file (YAML), to change and build."""
-    for t in templates():
-        if t.id == id:
-            return {"id": t.id, "title": t.title, "design": t.source}
-    ids = ", ".join(t.id for t in templates())
-    raise ToolError(f"No template {id!r}. The templates are: {ids}")
+    t = _template(id)
+    return {"id": t.id, "title": t.title, "design": t.source}
 
 
 @mcp.tool(annotations=READ_ONLY)
@@ -149,15 +158,19 @@ def list_examples() -> dict[str, Any]:
     return {"examples": out}
 
 
-@mcp.tool(annotations=READ_ONLY)
-def get_example(name: str) -> dict[str, Any]:
-    """An example's design file (YAML), by the name list_examples gives."""
+def _example(name: str) -> str:
     folder = _examples_folder()
     if folder is not None:
         path = (folder / f"{name}.yaml").resolve()
         if path.is_relative_to(folder.resolve()) and path.is_file():
-            return {"name": name, "design": path.read_text(encoding="utf-8")}
+            return path.read_text(encoding="utf-8")
     raise ToolError(f"No example {name!r}; list_examples gives the names.")
+
+
+@mcp.tool(annotations=READ_ONLY)
+def get_example(name: str) -> dict[str, Any]:
+    """An example's design file (YAML), by the name list_examples gives."""
+    return {"name": name, "design": _example(name)}
 
 
 @mcp.tool(annotations=READ_ONLY)
@@ -313,6 +326,255 @@ def start_design(
             result["within_budget"] = report.bom.total <= budget_usd
     result["working"] = [s.model_dump(mode="json", exclude_none=True) for s in working]
     return result
+
+
+def _design_text(ref: str) -> tuple[str, str]:
+    """(a label, the YAML) for 'template:<id>', 'example:<name>' or a design's YAML itself."""
+    if ref.startswith("template:"):
+        tid = ref.removeprefix("template:").strip()
+        return tid, _template(tid).source
+    if ref.startswith("example:"):
+        name = ref.removeprefix("example:").strip()
+        return name, _example(name)
+    return "", ref
+
+
+def _steps(steps: list[Step]) -> list[dict[str, Any]]:
+    return [s.model_dump(mode="json", exclude_none=True) for s in steps]
+
+
+def _compared(report: Report) -> dict[str, Any]:
+    """The working behind each headline row: the report's own steps, not new ones."""
+    working: dict[str, Any] = {"Heat loss at top": _steps(report.heat_loss.working)}
+    if report.electric is not None:
+        working["Installed power"] = _steps(report.electric.working)
+    if report.gas is not None:
+        working["Burner input"] = _steps(report.gas.working)
+    if report.hybrid is not None:
+        working["Switch to burners at"] = _steps(report.hybrid.working)
+    if report.bom is not None:
+        working["Materials (priced)"] = report.bom.model_dump(
+            mode="json", exclude={"findings"}, exclude_none=True
+        )
+    return working
+
+
+FIRING_FIELDS = {
+    "heat",
+    "duration",
+    "duration_h",
+    "completed",
+    "held",
+    "energy_kwh",
+    "electricity_kwh",
+    "fuel_kwh",
+    "propane_gallons",
+    "natural_gas_therms",
+    "cost",
+    "cost_usd",
+    "working",
+    "findings",
+}
+
+
+@mcp.tool(annotations=READ_ONLY)
+def compare_designs(designs: list[str], simulate: bool = False) -> dict[str, Any]:
+    """Build two or more designs and set them side by side: chamber volume, heat loss, the hottest
+    outside face, installed power or burner input, priced materials and the findings, each row
+    with the engine's working. Each design is its YAML, 'template:<id>' or 'example:<name>'. With
+    simulate, each design's firing is simulated too: time, energy, fuel and cost per firing. The
+    stacking volume is not estimated: the chamber volume is compared."""
+    if len(designs) < 2:
+        raise ToolError("Give two or more designs to compare.")
+    out: list[dict[str, Any]] = []
+    for i, ref in enumerate(designs, start=1):
+        label, text = _design_text(ref)
+        kiln = _parse(text)
+        try:
+            report = design_report(kiln)
+        except RESULT_ERRORS as e:
+            raise ToolError(f"Design {i} ({label or kiln.name}): {e}") from e
+        entry: dict[str, Any] = {
+            "design": label or kiln.name,
+            "name": kiln.name,
+            "fuel": _fuel(kiln),
+            "cone": _cone(kiln),
+            "rows": comparison_rows(report),
+            "working": _compared(report),
+            "findings": [f.model_dump(mode="json", exclude_none=True) for f in report.findings],
+        }
+        if simulate:
+            try:
+                run = simulate_firing_run(kiln)
+            except RESULT_ERRORS as e:
+                entry["firing"] = {"refused": str(e)}
+            else:
+                entry["firing"] = run.result.model_dump(
+                    mode="json", include=FIRING_FIELDS, exclude_none=True
+                )
+        out.append(entry)
+    rows = [label for label in COMPARED if any(label in d["rows"] for d in out)]
+    return {
+        "rows": rows,
+        "table": {label: [d["rows"].get(label) for d in out] for label in rows},
+        "designs": out,
+        "note": (
+            "A missing cell (null) is a number the design has no part for. Priced materials leave "
+            "out what the library has no price for; those lines are not free."
+        ),
+    }
+
+
+# ---- Resources -------------------------------------------------------------------------------
+
+
+@mcp.resource(
+    "kilndesigner://schema/design",
+    title="Design file JSON Schema",
+    description="The JSON Schema of a design file: every field, its unit and its limits.",
+    mime_type="application/json",
+)
+def design_schema() -> str:
+    return json.dumps(Kiln.model_json_schema(by_alias=True), indent=2)
+
+
+@mcp.resource(
+    "kilndesigner://materials",
+    title="Materials library",
+    description=(
+        "Every refractory and insulation material the engine knows, with its density, service "
+        "limit, conductivity and specific heat points and the source each comes from."
+    ),
+    mime_type="application/json",
+)
+def materials_resource() -> str:
+    return json.dumps(
+        {"materials": [m.model_dump(mode="json") for m in materials().values()]}, indent=2
+    )
+
+
+@mcp.resource(
+    "kilndesigner://materials/{id}",
+    title="One material",
+    description="A material from the library by its id, with its cited values.",
+    mime_type="application/json",
+)
+def material_resource(id: str) -> str:
+    try:
+        return json.dumps(material(id).model_dump(mode="json"), indent=2)
+    except UnknownEntryError as e:
+        raise ResourceError(str(e)) from e
+
+
+@mcp.resource(
+    "kilndesigner://alloys",
+    title="Element alloys",
+    description="The element wire alloys, with resistivity, temperature limits and sources.",
+    mime_type="application/json",
+)
+def alloys_resource() -> str:
+    return json.dumps({"alloys": [a.model_dump(mode="json") for a in alloys().values()]}, indent=2)
+
+
+def _checks(text: str) -> str:
+    try:
+        report = design_report(_parse(text))
+    except (*RESULT_ERRORS, ToolError) as e:
+        raise ResourceError(str(e)) from e
+    sheets = [
+        {"level": f.level, "message": f.message, "check": f.check.model_dump(mode="json")}
+        for f in report.findings
+        if f.check is not None
+    ]
+    return json.dumps(
+        {
+            "design": report.name,
+            "about": (
+                "The formula sheet behind each warning and error, and behind any note that has "
+                "one (ADR 0013): its input cells with value, "
+                "unit and source, formula cells over them (values in SI), the requirements and "
+                "the lever, the input that would change the result."
+            ),
+            "checks": sheets,
+        },
+        indent=2,
+    )
+
+
+@mcp.resource(
+    "kilndesigner://templates/{id}/checks",
+    title="A template's formula sheets",
+    description="The formula sheets behind a template's warnings and errors (ADR 0013).",
+    mime_type="application/json",
+)
+def template_checks(id: str) -> str:
+    try:
+        source = _template(id).source
+    except ToolError as e:
+        raise ResourceError(str(e)) from e
+    return _checks(source)
+
+
+@mcp.resource(
+    "kilndesigner://examples/{name}/checks",
+    title="An example's formula sheets",
+    description=(
+        "The formula sheets behind an example's warnings and errors (ADR 0013). Examples in "
+        "examples/ itself; for one in a subfolder, build_design carries the same checks."
+    ),
+    mime_type="application/json",
+)
+def example_checks(name: str) -> str:
+    try:
+        source = _example(name)
+    except ToolError as e:
+        raise ResourceError(str(e)) from e
+    return _checks(source)
+
+
+# ---- Prompts ---------------------------------------------------------------------------------
+
+
+@mcp.prompt(title="Design a kiln from a brief")
+def design_from_brief(brief: str) -> str:
+    """Walk through designing a kiln from a potter's brief: start, resize, build, compare."""
+    return f"""\
+Design a kiln for this brief, with the kilndesigner tools:
+
+{brief}
+
+1. Read from the brief the fuel, the cone, the stacking volume and any budget or kind of kiln
+   (cross-draft, catenary, car, front-loader). Ask for what the brief doesn't say rather than
+   guessing; firing time is the potter's choice, not a fault.
+2. Call start_design with them. It returns the nearest template's design file, not resized.
+3. Change chamber.width, depth and height in the YAML to the size wanted, then call
+   validate_design and fix what it reports.
+4. Call build_design. Report the heat loss, the elements or burners, the priced materials and
+   every error and warning, quoting the working and its references. Fix errors in the design and
+   build again; don't work around a refusal, pass its reason on.
+5. If there is more than one way to meet the brief (another kind, a thicker wall, another fuel),
+   call compare_designs on them (simulate=true for the firing time, energy and cost) and set out
+   the trade-offs, number by number, with where each number comes from.
+6. Unpriced lines in the bill of materials are not free; say which they are."""
+
+
+@mcp.prompt(title="Explain a finding")
+def explain_finding(design: str, finding: str) -> str:
+    """Explain one of a design's warnings or errors from its formula sheet."""
+    return f"""\
+Explain this finding of a kiln design to the builder: {finding}
+
+The design file:
+
+```yaml
+{design}
+```
+
+Call build_design on the design and find the finding (by its label, such as E1 or W2, or its
+message). Explain it from its check, the formula sheet behind it (ADR 0013): each input with its
+value, unit and source, each formula, the requirement that fails and by how much (its margin),
+and, if the check names a lever, the value at which it would pass. Say which change to the design
+would move that input, and quote the references. Don't add numbers the sheet doesn't give."""
 
 
 def main() -> None:
