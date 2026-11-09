@@ -1681,11 +1681,15 @@ def _round_frame(kiln: Kiln) -> FrameDesign:
         else:
             from kilndesigner.band import dome_band
 
-            # The band is checked against the membrane ring tension, the larger of the membrane
-            # and cracked-dome (Lau, "at least") figures: the safe side for the band
-            band_steps, band = dome_band(kiln, ring.ring)
-            working, thrust = [*ring.steps, *band_steps], ring.thrust
-            findings += [ring.finding(), band]
+            working, thrust = list(ring.steps), ring.thrust
+            governing = ring.band_tension()
+            if governing is None:
+                findings += [ring.finding(), ring.band_refusal()]
+            else:
+                tension, step, source = governing
+                band_steps, band = dome_band(kiln, tension, source)
+                working += [*([step] if step else []), *band_steps]
+                findings += [ring.finding(), band]
     return FrameDesign(
         kind=NO_FRAME, angle=None, angle_leg_in=0, angle_t_in=0, rod=None, rod_d_in=0,
         thrust=thrust, members=[], working=working, findings=findings,
@@ -1723,6 +1727,53 @@ class DomeRing:
         if c is not None and c.per_foot is not None:
             return f"at least {c.per_foot:.0f} lb per foot of the wall's top (cracked into lunes)"
         return f"{self.per_foot:.0f} lb per foot of the wall's top"
+
+    def band_tension(self) -> tuple[float, Step | None, str] | None:
+        """The ring tension the band is sized on, a step showing why, and its source. Up to
+        51.8° the membrane ring force. Past it the membrane push falls to nothing at a
+        hemisphere while the cracked dome still pushes at least Lau's h: the band takes
+        max(a₀·N_α·cos α₀, h_Lau·a₀) (physics review part 2, finding 1). None when Lau's range
+        doesn't cover the dome: then the band isn't sized (ADR 0009)."""
+        c = self.cracked
+        if c is None:
+            return self.ring, None, "frame.py: membrane theory (Timoshenko §106)"
+        if c.ring is None:
+            return None
+        lau = c.ring > self.ring
+        which = "Lau's cracked dome (least push)" if lau else "the membrane ring force"
+        step = Step(
+            name="Dome band: the ring tension it is sized on",
+            formula="H = max(a₀·N_α·cos α₀, h_Lau·a₀), past α₀ = 51.8°",
+            inputs={
+                "membrane, a₀·N_α·cos α₀": f"{self.ring:,.0f} lb",
+                "cracked into lunes, h_Lau·a₀": f"{c.ring:,.0f} lb",
+            },
+            value=f"{max(c.ring, self.ring):,.0f} lb; {which} governs",
+            reference=f"{MEMBRANE}; {LAU}, Eq. 3.6 (p.58)",
+            note=(
+                "past 51.8° the membrane state needs hoop tension masonry doesn't carry; the "
+                "cracked dome's push is a least value, so the larger of the two is taken"
+            ),
+        )
+        source = f"frame.py: the larger of membrane theory (Timoshenko §106) and {LAU}, Eq. 3.6"
+        return max(c.ring, self.ring), step, source
+
+    def band_refusal(self) -> Finding:
+        """Past 51.8° with t/R outside Lau's checked range: the band isn't sized (ADR 0009)."""
+        c = self.cracked
+        assert c is not None
+        return Finding(
+            level="info",
+            message=(
+                f"The dome's band isn't sized: the dome springs {self.alpha:.1f}° from its crown, "
+                f"past {NO_TENSION}°, where the membrane ring force ({self.ring:,.0f} lb) "
+                "understates a cracked dome's push, and its t/R of "
+                f"{c.t_over_r:.3f} is outside {LAU_T_R[0]}–{LAU_T_R[1]}, where Lau's lune "
+                "statics are checked. Make the dome shallower (springing within 51.8° of its "
+                "crown), or its shell's thickness fit that range, to have the band sized."
+            ),
+            reference=f"{MEMBRANE}; {LAU}, Fig. 3.17 (p.59); ADR 0009",
+        )
 
     def finding(self) -> Finding:
         text = (

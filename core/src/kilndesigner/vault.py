@@ -260,7 +260,28 @@ def along_statics(
     for face, end in ends:
         which = f"The {face} wall" if whole.drop else "Each end wall"
         findings.append(_end_finding(end, which, framed))
+        h_c = float(Q_(end.env["H_c"], "N/m").to("lbf/ft").magnitude)
+        load = float(Q_(end.env["N"], "N/m").to("lbf/ft").magnitude)
+        step, slid = wall_slide(
+            kiln,
+            h_c,
+            load,
+            _layers(kiln, face) if whole.drop else _thinner(kiln),
+            face,
+            which,
+            framed=framed,
+            thrust_source=f"{end.id}: the three-hinged arch's cold H_c and its load N",
+            sheet_id=f"frame.end-wall-slide-{face}" if whole.drop else "frame.end-wall-slide",
+        )
+        working.append(step)
+        findings += slid
     return working, findings
+
+
+def _thinner(kiln: Kiln) -> tuple[Layer, ...]:
+    """The thinner of the front and back walls, the one a level arch's end walls are checked on."""
+    walls = [_layers(kiln, f) for f in ("front", "back")]
+    return min(walls, key=lambda w: sum(x.thickness for x in w))
 
 
 FRAMED = (
@@ -275,6 +296,66 @@ MORTARED = (
     "quantifies the restraint mortar or a platform gives a wall, so that is the design's "
     "judgment, not a check. The frame holds the arch while it is built and the mortar sets"
 )
+
+
+def wall_slide(
+    kiln: Kiln,
+    h_c: float,
+    n: float,
+    wall: tuple[Layer, ...],
+    face: Face,
+    which: str,
+    *,
+    framed: bool | Literal["building"] = False,
+    thrust_source: str,
+    sheet_id: str = "frame.end-wall-slide",
+) -> tuple[Step, list[Finding]]:
+    """Sliding at the springing of a wall standing alone under an arch (physics review part 2,
+    finding 3): μ_need = H_c/N ≤ μ, the hot friction joint_friction gives, and the depth z* down
+    to which friction alone can't hold the wall. A warning for a wall on its own; info where a
+    frame holds the springing, as the overturning finding is. ``h_c`` and ``n`` in lbf/ft."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.frame import LOOSE, joint_friction
+    from kilndesigner.frame_checks import end_wall_slide
+
+    joint = joint_friction(
+        kiln,
+        [
+            x.material
+            for x in kiln.lining.for_face(face)
+            if resolve_material(kiln, x.material).kind not in LOOSE
+        ],
+    )
+    sheet = end_wall_slide(
+        h_c, n, wall, joint.mu, joint.source, sheet_id,
+        f"{which} doesn't slide at the arch's springing", thrust_source,
+    )  # fmt: skip
+    need, depth = sheet.env["μ_need"], sheet.env["z_s"] / 0.0254
+    step = Step(
+        name=f"Sliding at the springing, {which.lower()}",
+        formula="μ_need = H_c / N ≤ μ; z* = max(0, (H_c/μ − N) / Σγe)",
+        inputs={"H_c": f"{h_c:.0f} lb/ft", "N": f"{n:.0f} lb/ft", "μ": f"{joint.mu:g}"},
+        value=f"μ_need = {need:.2f}; friction alone can't hold the top {depth:.1f} in"
+        if depth > 0
+        else f"μ_need = {need:.2f}: holds",
+        reference=sheet.reference,
+        note=joint.note,
+    )
+    check = sheet.check()
+    if check.status == "pass":
+        return step, []
+    message = (
+        f"{which}, standing on its own, needs friction {need:.2f} at the arch's springing to hold "
+        f"its cold thrust, more than a hot dry joint's {joint.mu:g}: friction alone can't hold "
+        f"the wall's top {depth:.1f} in, down from the springing. Mortar's bond, masonry over the "
+        "skewback or bracing at the springing would carry it, but none is counted here"
+    )
+    if framed:
+        message += f". {FRAMED}." if framed is True else f". {MORTARED}."
+        return step, [Finding(level="info", message=message, reference=sheet.reference,
+                              check=check)]  # fmt: skip
+    message += ": brace the springing, or raise the arch (a higher rise pushes less)."
+    return step, [Finding.failed(check, message=message)]
 
 
 def _end_finding(end: Sheet, which: str, framed: bool | Literal["building"] = False) -> Finding:
@@ -478,9 +559,7 @@ def _end_walls(kiln: Kiln, whole: Arch) -> list[tuple[Face, Sheet]]:
     h = si(kiln.chamber.height, "in")
     if not whole.drop:
         a = along_inputs(kiln)
-        walls = [_layers(kiln, f) for f in ends]
-        thinner = min(walls, key=lambda w: sum(x.thickness for x in w))
-        sheet = vault_end_wall(a, thinner, h)
+        sheet = vault_end_wall(a, _thinner(kiln), h)
         sheet.agrees("r", Q_(Arch(a.span, a.rise).radius, "in"))
         return [("front", sheet)]
     assert isinstance(kiln.roof, SprungArch)

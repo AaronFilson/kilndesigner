@@ -174,3 +174,62 @@ def test_cracked_dome_outside_the_range_and_thin() -> None:
         assert ring is not None
         assert expect in ring.finding().message
     assert "at least" not in ring.thrust
+
+
+def _with_roof(kiln: Kiln, depth: str) -> Kiln:
+    assert kiln.lining.roof is not None
+    roof = [kiln.lining.roof[0].model_copy(update={"thickness": parse_quantity(depth)})]
+    return kiln.model_copy(update={"lining": kiln.lining.model_copy(update={"roof": roof})})
+
+
+def _band_h(kiln: Kiln) -> str | None:
+    frame = design_frame(kiln)
+    return next(
+        (s.inputs["H"] for s in frame.working if s.name == "Dome band: least cross-section"), None
+    )
+
+
+def test_band_past_51_8_takes_the_larger_push() -> None:
+    # Physics review part 2, finding 1. A hemisphere: the membrane ring force is about 0,
+    # Lau's cracked dome still pushes, and the band is sized on Lau's
+    hemi = _kiln("breda-bottle", rise="90 in")
+    ring = round_dome_ring(hemi)
+    assert ring is not None
+    assert ring.cracked is not None
+    assert ring.cracked.ring is not None
+    assert ring.ring == pytest.approx(0, abs=1)
+    assert 0.03 <= ring.cracked.t_over_r <= 0.20
+    governing = ring.band_tension()
+    assert governing is not None
+    tension, step, _ = governing
+    assert tension == pytest.approx(ring.cracked.ring)
+    assert step is not None
+    assert "Lau's cracked dome" in step.value
+    assert _band_h(hemi) == f"{ring.cracked.ring:,.0f} lb"
+    # Just past 51.8° (53.1°): the membrane force is the larger, and governs
+    deep = round_dome_ring(_kiln("breda-bottle"))
+    assert deep is not None
+    assert deep.cracked is not None
+    assert deep.cracked.ring is not None
+    assert deep.ring > deep.cracked.ring
+    governing = deep.band_tension()
+    assert governing is not None
+    assert governing[0] == pytest.approx(deep.ring)
+    assert governing[1] is not None
+    assert "membrane ring force governs" in governing[1].value
+    # Within 51.8°: the membrane force, as before, and no extra step
+    shallow = round_dome_ring(_kiln("breda-bottle", rise="37.5 in"))
+    assert shallow is not None
+    governing = shallow.band_tension()
+    assert governing is not None
+    assert governing[:2] == (shallow.ring, None)
+
+
+def test_band_past_51_8_outside_lau_range_is_refused() -> None:
+    kiln = _with_roof(_kiln("breda-bottle", rise="90 in"), "40 in")
+    frame = design_frame(kiln)
+    assert _band_h(kiln) is None
+    refusal = [f for f in frame.findings if "band isn't sized" in f.message]
+    assert len(refusal) == 1
+    assert refusal[0].level == "info"  # a refusal, not a failed check (ADR 0009, 0013)
+    assert "ADR 0009" in (refusal[0].reference or "")

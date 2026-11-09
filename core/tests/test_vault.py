@@ -239,7 +239,13 @@ def test_a_door_cut_into_the_vault_checks_the_thinner_ring() -> None:
 def test_bowen_mountains_arch_stands_and_needs_its_bracing() -> None:
     kiln = load_design(BOWEN)
     working, findings = along_statics(kiln)
-    assert not [f for f in findings if f.level != "info"]
+    # Standing alone, each end wall would also slide at the springing (review part 2, #3)
+    others = [f for f in findings if f.level != "info"]
+    assert {f.check.id for f in others if f.check} == {
+        "frame.end-wall-slide-front",
+        "frame.end-wall-slide-back",
+    }
+    assert len(others) == 2
     statics = next(s for s in working if s.name.startswith("The arch along the depth"))
     assert "times the thinnest that stands" in statics.value
     end = next(f for f in findings if f.check and f.check.id.startswith("frame.vault-end-wall"))
@@ -250,6 +256,50 @@ def test_bowen_mountains_arch_stands_and_needs_its_bracing() -> None:
     # Held by masonry, no steel is sized
     held = design_frame(_bowen(roof={"building_frame": False}))
     assert held.members == []
+
+
+def _review_slide(rise: float, mu: float) -> tuple[float, float]:
+    # Physics review part 2, finding 3: a 48 in span, 9 in ring at 140 lb/ft³, a 13½ in end
+    # wall at 140 lb/ft³; N = W/2, H_c the three-hinged arch's
+    from kilndesigner.frame_checks import Layer, end_wall_slide
+
+    arch = Arch(48, rise)
+    weight = 140 * 9 / 12 * 2 * arch.half_angle * (arch.radius + 4.5) / 12
+    h_c = cold_thrust_factor(48, rise) * weight
+    s = end_wall_slide(
+        h_c, weight / 2, (Layer("brick", 140, 13.5),), mu, "test", "frame.end-wall-slide",
+        "test", "test",
+    )  # fmt: skip
+    assert s.check().status == ("warning" if h_c / (weight / 2) > mu else "pass")
+    return s.env["μ_need"], s.env["z_s"] / 0.0254
+
+
+def test_end_wall_sliding_matches_the_review() -> None:
+    need, depth = _review_slide(6, 0.6)  # 1.5 in per foot
+    assert need == pytest.approx(1.96, abs=0.01)
+    assert depth == pytest.approx(41, abs=1)
+    need, depth = _review_slide(12, 0.6)  # 3 in per foot
+    assert need == pytest.approx(0.92, abs=0.01)
+    assert depth == pytest.approx(11, abs=1)
+    # The engine takes the hot 0.50 (Oliveira 2021): a deeper reach
+    assert _review_slide(12, 0.5)[1] > 11
+
+
+def test_end_wall_sliding_is_a_warning_alone_and_info_framed() -> None:
+    kiln = _bowen(roof=LEVEL)
+    working, alone = along_statics(kiln)
+    slide = [f for f in alone if f.check and f.check.id == "frame.end-wall-slide"]
+    assert len(slide) == 1
+    assert slide[0].level == "warning"
+    assert "can't hold the wall's top" in slide[0].message
+    assert any(s.name.startswith("Sliding at the springing") for s in working)
+    _, framed = along_statics(kiln, framed=True)
+    held = [f for f in framed if f.check and f.check.id == "frame.end-wall-slide"]
+    assert [f.level for f in held] == ["info"]
+    first, alone_check = held[0].check, slide[0].check
+    assert first is not None
+    assert alone_check is not None
+    assert first.cells == alone_check.cells
 
 
 IN_SERVICE = {"buttressed": False, "building_frame": False}
@@ -322,7 +372,9 @@ def test_bowen_mountains_frame_holds_its_arch() -> None:
     assert ring.reference is not None
     assert "Sarhosis" in ring.reference
     ends = [f for f in frame.findings if "frame on the end walls carries it" in f.message]
-    assert len(ends) == 2
+    # Each end wall's overturning and its sliding, both info under the frame
+    assert len(ends) == 4
+    assert all(f.level == "info" for f in ends)
     assert any(s.name == "The chamber's section along its depth" for s in frame.working)
     post = next(s for s in frame.working if s.name.startswith("Posts between"))
     assert post.note is not None
