@@ -39,3 +39,14 @@ arch bricks and 2 straights. Wood use not worked out (no sourced heating value).
   deeper?
 - p.141: how many cone holes are in the door, and how high?
 - Fig 5-36: the damper's size and height above the kiln.
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 5-35 (p.139) is isometric. Along its depth axis it is scaled from the printed 12 × 24 in
+shelves, a pair read as 24 in. Readings in `scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Chamber depth | — | — | about 30 in (one scale only; ±3 in for the iso reading) | 27 in, unchanged: within the reading |
+| Damper (Fig 5-36) | — | in the chimney, which is drawn with a break | can't be scaled: the 14 ft chimney is broken in the drawing | engine |
+| Cone holes in the door | — | photos (Figs 5-40 to 5-45) | can't be scaled: photos | engine default |

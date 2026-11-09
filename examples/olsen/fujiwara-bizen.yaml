@@ -25,9 +25,10 @@
 # on to the chimney (p.95, p.97); the book shows no steel on this kiln.
 # Not modelled: the dogi holds ware on three steps (p.102), and its own walls and roof aren't in
 # the heat loss; the himitsu, a 2 ft chamber in a 24 in flue, and its 3 × 6 in and 6 × 9 in flues
-# (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given; the flue damper at the
-# chimney's entrance (p.101–102, Fig 4-55); the doors into the chambers in the side wall, the
-# takiguchi side fire holes and the spy holes (Fig 4-55: drawn, not sized or placed). Chambers in
+# (p.100–101); the flue damper at the chimney's entrance (p.101–102, Fig 4-55); the doors into
+# the chambers in the side wall (scaled, but of two sizes, and a door takes one). The flues
+# between and out of the chambers, the takiguchi and the spy holes are scaled off Figs 4-53 and
+# 4-55 (step A, 2026-11-09, below). Chambers in
 # a row get arches along the draft, springing from the walls between them, as the book's do; held
 # by masonry, they get no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
 # (p.101); here the rise is counted over the two chambers only. The floor's loss into dry soil is worked out at steady state.
@@ -74,9 +75,63 @@ heat:
         stoke_hole:
           width: 42 in # 3½ ft
           height: 24 in # 2 ft
+spy_holes:
+  # Step A, 2026-11-09: the "MEMPO ANA" spy holes drawn in Fig 4-55's side elevation, one in each
+  # chamber's side wall (the far wall of the view, taken as the left (?)). (scaled: Fig 4-55,
+  # p.101, from the 5' and 4' crown heights, ±1 in on the heights; the across ±3 in, the drawing's
+  # horizontal scale being 25 % off its vertical one)
+  holes:
+    - chamber: 1
+      wall: left
+      port: # drawn 11½ × 7½ in
+        width: 11.5 in
+        height: 7.5 in
+      up: 28 in
+      across: -17 in # behind the chamber's middle
+    - chamber: 2
+      wall: left
+      port: # drawn 6 in square
+        width: 6 in
+        height: 6 in
+      up: 22 in
+      across: -12 in
+stoke_holes:
+  # Step A, 2026-11-09: the takiguchi (side fire holes, p.100), drawn as round holes low in each
+  # chamber's side beside the "DOOR TO CHAMBER" (Fig 4-55). (scaled: Fig 4-55, p.101, from the
+  # 5' and 4' crown heights; ±1 in on the size and height, ±3 in across)
+  - chamber: 1
+    wall: left
+    port:
+      diameter: 5 in
+    up: 14 in
+    across: 14 in # in front of the chamber's middle
+  - chamber: 2
+    wall: left
+    port:
+      diameter: 5 in
+    up: 10 in
+    across: 10 in
 draft:
   type: cross
   flue_wall: back
   run_to_chimney: 42 in # the flue stack, 3½ ft (p.101)
+  # Step A, 2026-11-09: the flue holes counted on Fig 4-53's plan (a pixel profile down each wall:
+  # light gaps between the hatched piers). Sizes printed (p.101): 6 × 9 in from the first chamber
+  # into the kedo, 6 × 10 in out of the kedo. (scaled: Fig 4-53, p.100, from 10', 4'6" and 2'10"):
+  # seven gaps of 4–9 in in the wall between the chambers, the 6 in across; five of 6–10 in in the
+  # kedo's back wall, read as the 10 in across (?).
+  between:
+    count: 7
+    port:
+      width: 6 in
+      height: 9 in
+  exits:
+    - through: back
+      count: 5
+      port:
+        width: 10 in
+        height: 6 in
+  connection: # "a 10in. (25cm)-diameter opening" into the chimney (p.101)
+    diameter: 10 in
   chimney:
     height: 25 ft # p.101

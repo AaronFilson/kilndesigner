@@ -58,3 +58,10 @@ crowns at 4½ ft. The 18 in floor step (p.108) is now entered as the combustion 
 4. Fig 4-67 p.107: are the two dashed stacks two separate chimneys, each with its own damper, or
    one chimney split into two flues?
 5. How big is the arched firebox door in Fig 4-69?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled. Fig 4-67 (p.107) is a perspective sketch whose dimensions run along different
+axes (the 4' and 6' diagonals, the 8' and 16' in depth); the arched opening at the front sits by
+the "18"" mark, but no second dimension lies in its plane, so its width can't be scaled with a
+spread. Fig 4-69 is a photo with no printed dimension.

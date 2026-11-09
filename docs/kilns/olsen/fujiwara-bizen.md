@@ -52,3 +52,28 @@ counts the dogi's run as well (p.101), so this is expected.
    the doors move to the side wall (`opening.each_chamber`).
 2. Fig 4-53 p.100: how many 6 × 10 in exit flues leave the kedo?
 3. Fig 4-55: at what heights are the spy holes ("ANA", "SPY HOLE") in the chamber walls?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-55 (p.101, side elevation) scaled from the 5' and 4' crown heights (4.33 and 4.48 px/in);
+horizontally its chambers are drawn at 5.5 and 7.0 px/in against Fig 4-53's depths, so the places
+along the wall carry ±3 in. Fig 4-53 (p.100, plan) from its 10', 4'6" and 2'10"; the flue holes
+counted with a pixel profile down each wall (`scratch/scale-a/profile.py`). Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Flues, first chamber to kedo | 6 × 9 in (p.101), count not given | piers in the wall | 7 gaps, 4–9 in (mean 6–7 in) | `draft.between`: 7, 6 × 9 in (new) |
+| Kedo exit flues | 6 × 10 in (p.101), count not given | piers in the back wall | 5 gaps, 6–10 in (mean 8–9 in), read as the 10 in across (?) | `draft.exits`: 5 in the back, 10 × 6 in (new) |
+| Chimney entry | "10in.-diameter opening" (p.101) | — | — | `draft.connection`: 10 in round (new) |
+| Spy hole, first chamber ("MEMPO ANA") | — | a rectangle high in the side | 11½ × 7½ in, centre 28 in up, 15–19 in behind the middle | `spy_holes.holes`: left wall (?), chamber 1 |
+| Spy hole, kedo | — | a square in the side | 6 × 6 in, centre 22 in up, 9–15 in behind the middle | chamber 2 |
+| Takiguchi (side fire holes) | — | round, low beside each door | 5 in round; 13½ in up (chamber 1), 9½ in (kedo) | `stoke_holes`: left wall, chambers 1 and 2 |
+| Doors to the chambers | — | arched, in the side | chamber 1: 23–29 × 37–38 in; kedo: 12–20 × 26–27 in | not entered: `opening.each_chamber` takes one size, and these differ |
+
+Questions from step A:
+
+4. Fig 4-55: the side elevation's far wall: is that the left (entered) or the right?
+5. Fig 4-53: seven flues between the chambers and five out of the kedo (counted on the plan):
+   right? Does the kedo's 10 in run across?
+6. Fig 4-55: the doors scale about 26 × 37 in (first chamber) and 16 × 26 in (kedo). Right?

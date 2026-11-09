@@ -65,3 +65,23 @@ No YAML values changed in this pass. Only the notes were added.
 3. Fig 4-140: how tall is the chimney? Its top dimension is cut off. Is the damper slot about
    73 in up?
 4. Which side is the door on, looking from the firebox to the chimney?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-140 (p.124): the plan's neck scaled from its 16", 12", 19" and 12" (7.9–9.4 px/in); the
+elevation's chimney foot from its 35", 12", 13", 24", 8" and 19" (6.9–9.6 px/in). Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Exit opening | 12" high, under a 13" block | the neck's end | 9.6–11.4 in across | `draft.flue_port`: 10½ × 12 in (new; it was engine-sized) |
+| Passive damper | "2½ X 4" | a small upright rectangle | 3–3¼ in along the kiln, 4–5½ in high | 2½ across, 4 high, as entered: the drawing bears it out |
+| Chimney height | top dimension cut off | — | 55–77 in on the left-hand scales, 119 in on the right-hand stack (16 + 24 + 33 = 73 in drawn at 4.45 px/in): a 2× spread | not entered; engine-sized |
+| Stoke hole width | 9" high, sill 14" | — | can't be scaled: neither view draws its width | not given |
+
+Questions from step A:
+
+5. Fig 4-140: the exit opening scales 10½ in wide (9.6–11.4). Is it 9 in, the chimney's inside,
+   or wider?
+6. Fig 4-140: the elevation's right-hand dimensions are drawn at half the scale of the left. Is the
+   chimney about 10 ft (the right-hand stack's reading) or about 5½ ft (the left's)?

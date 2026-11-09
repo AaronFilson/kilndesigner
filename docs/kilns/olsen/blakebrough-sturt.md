@@ -62,3 +62,18 @@ wide and 45 in deep. The chamber is 6 ft to the crown.
 4. Fig 8-15 p.205: the left-hand labels are cut off in the scan ("…FLUES 4½", "…GRATE BARS").
    Are there flues on the left side too?
 5. Fig 8-15 p.205: how high up the front is the spy hole, and how big is it?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 8-15 (p.205) is a perspective sketch. Its printed arrows don't reach what they name: the 6'
+arrow is drawn at 4.0 px/in, the 45" at 4.7, and the chamber's inside from floor to crown at 6.3.
+That 55 % spread is too wide to enter. Readings in `scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Spy hole | — | an oval high in the front, left of the crown | 3–5 × 7–11 in, centre 64–99 in up (above the 72 in crown on two of the three scales) | not entered |
+| Side stoke hole | "STOKE HOLE SIDE" | a small upright opening in the side | 10–15 in high; its width is foreshortened | not entered |
+
+Question from step A:
+
+6. Fig 8-15: the side stoke hole reads 10–15 in high. How big is it?

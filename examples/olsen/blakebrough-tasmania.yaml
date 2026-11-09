@@ -21,9 +21,9 @@
 # Olsen fired his own fibre kiln (olsen-fiber-p62, p.62).
 # Not modelled: the moving box is taken as a car, the hearth and back wall riding on it, as the real
 # hearth and back wall are one part and the box the other. The bottom 15 in of the walls, 9 in of
-# 2600 IFB (p.148, Fig 5-72), is taken as fibre. The eight floor exit flues and the flue channels
-# under the hearth: their size isn't printed, so the downdraft leaves by the 9 × 6 in flue at the
-# foot of the back wall. The damper is the slab on top of the chimney (Fig 5-72). The spy hole in
+# 2600 IFB (p.148, Fig 5-72), is taken as fibre. The eight floor exit flues: scaled off Fig 5-72
+# (step A, below); the flue channels under the hearth aren't drawn in the model. The damper is
+# the slab on top of the chimney (Fig 5-72). The spy hole in
 # the box's wall (photo, Fig 5-71): no size or height printed, so the engine places its default.
 # Checked against Fig 5-72 (2026-11-08): two burner channels 9 in wide along the long sides, the
 # 4½ × 6 in ports at both ends of each, as entered.
@@ -75,7 +75,27 @@ heat:
 draft:
   type: down
   flue_wall: back
-  flue_port:
+  # Step A, 2026-11-09: the eight floor flues, four in the floor of each 9 in burner channel
+  # (Fig 5-72, the dark squares), into the two 4½ × 6 in flue channels under the hearth and on
+  # to the 9 × 6 in chimney flue (p.148). (scaled: Fig 5-72, p.148, from the 54" and the 9"
+  # channel, ±1½ in; an isometric sketch, read along its own axes): each about a half-brick,
+  # 4½ × 4½ in, spread evenly along the channel. Their places along are spread evenly, as drawn.
+  exits:
+    - through: floor
+      count: 8
+      port:
+        width: 4.5 in
+        height: 4.5 in
+      places:
+        - { across: -16.5 in, along: -20.25 in }
+        - { across: -16.5 in, along: -6.75 in }
+        - { across: -16.5 in, along: 6.75 in }
+        - { across: -16.5 in, along: 20.25 in }
+        - { across: 16.5 in, along: -20.25 in }
+        - { across: 16.5 in, along: -6.75 in }
+        - { across: 16.5 in, along: 6.75 in }
+        - { across: 16.5 in, along: 20.25 in }
+  connection: # the chimney flue, "9 x 6in" (p.148)
     width: 9 in
     height: 6 in
   damper:

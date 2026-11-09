@@ -75,3 +75,29 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 5. Fig 4-36 p.94: how wide is the 12 in exit flue at chamber 3's back, and how many are there?
 6. Fig 4-36 p.94: where along each chamber does its arch's peak stand (for `roof.peak_at`), and
    is each chamber's springline 38 in, or does it follow the semicircles' 38, 42 and 41 in?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-36 (p.94) scaled from its printed 19'5", 42", 46", 36", 59", 65", 59" and 56"; Fig 4-36's
+firebox from its 40" and the two 18". Pixel readings in `scratch/scale-a/measure.py`. The side
+view is not truly to scale: chamber 1 is drawn about 20 % smaller vertically (4.0 px/in against
+5.0–5.5 for the others), so each item is scaled from its own chamber's dimensions. Check: chamber
+2's printed 56 in spy-hole height scales to 52–56½ in.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Spy holes, size | — | one round hole high in each chamber | 6 in round (5.9–7.5 in) | `spy_holes.holes`, 6 in round |
+| Spy holes, height | chamber 2: 56 in | — | chamber 1: 51 in (48½–54); chamber 3: 52 in (51–53) | 51, 56, 52 in up |
+| Spy holes, place | — | near each chamber's back | 33, 35 and 27 in behind each chamber's front wall (±2) | in the left wall (the view's far wall (?)), 12, 12 and 9 in behind each middle |
+| Arch peaks | "set back" (p.95) | — | 49, 62, 56 % along chambers 1–3 (±7 %) | not entered: a semicircle can't take an offset peak (the engine refuses it) |
+| Firebox mouth | 9" | — | 9–14 in from the grate slab to the arch's underside at the front | the printed 9 in stands |
+| Exit flue width | 12" high | — | can't be scaled: the plan doesn't separate the exit from the chimney's 9 × 9 grid | engine default |
+| Inlet flues (Fig 8-7, p.201) | six, "6 FLUES" | — | each 4–5½ in wide (gaps of 72–93 px between the piers, `profile.py` at x=1175, 300 dpi; scaled from the plan's 26" and 14", ±1 in): a half-brick, 4½ in | not entered: their height isn't drawn, and `inlet` needs both |
+
+Questions from step A:
+
+7. Fig 4-36: the spy holes are drawn in the side view's far wall. Which wall is that, the door wall
+   (right) or the other? Entered in the left.
+8. Fig 4-36's chamber 1 is drawn 20 % shorter for its printed 59 in than chambers 2 and 3. Is the
+   59 in right, or is chamber 1 lower than the others?
+9. Fig 8-7: the six inlet flues scale 4½ in wide. How tall are they?

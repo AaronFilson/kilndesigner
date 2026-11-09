@@ -68,3 +68,30 @@ in the front wall with 2½ in ports. A 24 × 36 in arched door is in the right w
 4. The four exit flues: should the engine take several exit flues? It takes one at the moment.
 5. Fig 4-153: how deep is the firebox front to back, and how tall inside? With those the burners
    can fire into it (`heat.gas.firebox`), two to each of its four inlet flues.
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-153 (p.127): the long section scaled from its 5', 36" and 18" (12.8, 11.2 and 14.1 px/in:
+a ±12 % spread), the plan from its 5' and 3'. Readings in `scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Firebox depth, front to back | — | a strip across the front | 7–8½ in (section), 11–12 in (plan): 9 in, a brick's length | `heat.gas.firebox`: front, 36 in wide (the plan's strip runs the full width), 9 in deep, 12 in tall, step 12 in, four 4½ × 9 in inlets (new) |
+| Firebox height | "12"" below the floor | — | — | 12 in, the printed |
+| Damper slot | "DAMPER" | — | its foot 21–27 in above the chamber floor, 1½–2 in high | `draft.damper`: slot, 24 in up; the slot's width isn't in the section, so the engine's |
+| Passive air | "PASSIVE AIR" | — | 2½–3 in high; its width isn't in the section | not entered (`passive_air` needs both) |
+| Salt hole in the door | "SALT HOLE built into door" | — | 3–4 × 4½–6 in, centre 24–30 in up, 42 in behind the front wall | `openings.salt_ports`: right wall, 3½ × 5 in, 27 in up |
+| Salt hole, first top | "SALT HOLES" (Fig 4-152 "FIRST TOP") | — | 2½–3½ × 4–5 in, 11½ in behind the front wall | roof, 3 × 4½ in, 18½ in in front of the middle |
+| Salt hole, back | (Fig 4-152 "BACK") | — | 3½–4 × 4–5 in, 21–26 in up, in the arch at the back springing | roof, 4 × 4½ in, 27 in behind the middle |
+| Salt hole, low front | "SALT HOLES" | — | 2½–3 × 4½–5½ in, 8–10 in up, just behind the bag wall | not entered: which wall it is in isn't clear (question 7) |
+| Unlabelled square, far wall | — | low, mid-length | 3 × 3½ in (±½), centre 10–12 in up | not entered (question 1) |
+
+The firebox and the salt ports change the build: priced materials $3,574 → $3,699; heat loss and
+volume unchanged; no new warning.
+
+Questions from step A:
+
+6. The firebox, entered 9 in deep (scaled 7–12 in): is it a brick's length, or more?
+7. Fig 4-153: the low filled square just behind the bag wall, labelled with the "SALT HOLES": is
+   it a salt port into the firebox, and through which wall?
+8. The passive-air hole scales 2½–3 in high: how wide is it?

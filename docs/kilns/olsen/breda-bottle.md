@@ -65,3 +65,25 @@ Notes: `docs/research/olsen-kilns.md`, `breda-bottle`.
    wide. Is the grate wider than the pit?
 3. Fig 6-50: how wide and how tall is the chamber door?
 4. Wall thickness: should it be 22½ or 27 in, so the brick count works?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 6-53 (p.168) is a perspective sketch; its only dimension in the dome's plane is the 15 ft
+chamber, read as the perimeter ring's width. Fig 6-50 (p.167) is an exploded drawing whose
+verticals disagree with each other by 2× (the 7' is drawn at 2.95 px/in, the 3' at 1.81 and the
+3½' at 1.38, against the 15' at 1.36), so the door isn't scaled from it. Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Perimeter exit flues | "21 - 4½" X 5"" round the edge | on a ring just inside the wall | ring about 84 in out (±15) | `draft.exits`: 21 through the roof, 4½ × 5 in, evenly on an 84 in ring (new) |
+| Dome exit flues | "8 DOME EXIT FLUES", size not printed | in the dome's middle | on a ring about 55 in out (56 in read, ±15) | 8 through the roof on a 55 in ring, taken as 4½ × 5 in (?) |
+| Damper blocks | on the perimeter flues | — | — | not expressible |
+| Chamber door | — | a tall opening (Fig 6-50, photo 6-49) | 3½ ft wide on the 15'; 6–12 ft tall on the verticals | not entered: the spread is 2× |
+| Inlet flues | 4½ × 4½ in | Fig 6-51 is a section | the count can't be read off a section | not given |
+
+Questions from step A:
+
+5. Fig 6-53: how big are the 8 dome exit flues? They are entered as the perimeter flues'
+   4½ × 5 in.
+6. Fig 6-53: how far out from the centre are the 8 dome flues? About 55 in scales off the sketch.

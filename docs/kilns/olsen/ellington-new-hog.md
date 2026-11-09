@@ -41,3 +41,28 @@ in 16 slices along the taper; the bricks aren't laid out or priced for a plan wh
   4 ft), and the model's 15.4 in there, its shape kept from the straight section, is low.
 - Fig 4-95: the chimney label "4'5" 3'": the chimney's inside section?
 - The side stoke holes' size and their height above the floor in each row.
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-97 (front view) scaled from its 13.5", 16" and 9" (8.4–9.6 px/in); Fig 4-96 (side view)
+from the 27" spacing, the 4', the 3.5' and the 29" (3.1–3.8 px/in). Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Crown, straight section | 29–48 in range (p.112); 29" at the chimney | — | 43–49 in (front view), 37–45 in (side view): 43 in | `roof.rise: 43 in` (was 38½, assumed); 371 ft³ (was 327), 51.2 kW at the top (was 49.0) |
+| Door | — | central, in the arched front | 25–29 in wide (27 in, three stretchers); floor to the arch, 42–48 in | not entered: the engine refuses an opening in the front wall under an arch sprung from the floor (its wall top is 0 in); the door stays the whole front |
+| Side stoke holes, size | — | two rows, six a row, every 27" | 4½–5½ wide × 6½–8 in high: one brick on edge by three courses, 4½ × 7½ in | not entered (see below) |
+| Side stoke holes, heights | — | — | lower row's centres 14–18 in up, upper 24–29 in | not entered |
+| Side stoke holes, places | "spaced every 27"" | first about 8 ft from the front of the ware chamber | — | not entered |
+
+The side stoke holes aren't entered: under an arch sprung from the floor the side wall is 0 in
+tall, so a hole has to go "through the roof" at an across that changes with the tapering width,
+and the back holes stand where the plan narrows; that needs the holes placed station by station,
+which the schema doesn't do for a tapering plan.
+
+Questions from step A:
+
+- Fig 4-97 vs the printed 29–48 in range: is the straight section's crown about 43 in (scaled)?
+- The side stoke holes scale about 4½ × 7½ in, rows at about 16 and 26 in up: right? On both
+  sides?

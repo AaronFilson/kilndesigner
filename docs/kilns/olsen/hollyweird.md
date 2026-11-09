@@ -46,3 +46,20 @@ The build finishes with no errors. Chamber 335 ft³; top temperature 2361 °F (c
 1. How tall is the chimney? With its height, the printed 15 × 24 in section can go in.
 2. Fig 4-110 p.116: how big are the three exit flues from the front chamber?
 3. Fig 4-108: how far above the floor are the round spy holes in the domes, and how big are they?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-110 (p.116, plan) scaled from the 55" chamber width and the printed 12 × 24 in shelves
+(7.1–7.8 px/in); the flues counted with a pixel profile down the 13" wall
+(`scratch/scale-a/profile.py`). Fig 4-108 is a perspective sketch: its domes' spy holes have no
+printed dimension in their plane, so they aren't scaled. Readings in `scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Flues between the chambers | "Three large exit flues" (p.116); the wall "13"" | three gaps between two piers | 11–13 in wide each (the piers 10½–11½ in) | not entered: their height isn't drawn, and `draft.between` needs it |
+| Spy holes in the domes | — | round, in the domes' sides (Fig 4-108) | can't be scaled: a perspective sketch | engine default |
+| Chimney | 15 × 24 in inside; height not printed | — | not drawn in elevation | engine |
+
+Question from step A:
+
+4. The three flues between the chambers scale about 12 in wide. How tall are they?

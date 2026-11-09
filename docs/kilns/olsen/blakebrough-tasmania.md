@@ -51,3 +51,21 @@ matched. The damper and spy-hole gaps are now noted in the file.
    at the foot of the chamber walls (text, p.148)?
 2. Fig 5-71 p.148: how big is the spy hole in the box's wall, and how high is it?
 3. Is the chimney's height given anywhere?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 5-72 (p.148) is an isometric sketch; read along its own axes, scaled from the 54" hearth and
+the 9" channels. Fig 5-71 is a photo with no printed dimension: the spy hole can't be scaled.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Floor exit flues | eight (p.148–149); channels "4½" WIDE X 6" DEEP", 9 in apart | four dark squares in the floor of each burner channel | each about 5½ in along the channel (±1½), as wide as half the 9 in channel: a half-brick, 4½ × 4½ in | `draft.exits`: 8 through the floor, 4½ × 4½ in, four under each channel at ±16½ in across, spread evenly along (new) |
+| Chimney flue | 9 × 6 in (p.148) | — | — | `draft.connection` 9 × 6 in (it was the flue port) |
+| Spy hole | — | one in the box's wall (photo) | can't be scaled: a photo | engine default |
+
+With the eight floor flues the flue area is 162 in², so the old W1 warning (54 in² flue port
+under Olsen's 68 in²) is gone.
+
+Questions from step A:
+
+4. Fig 5-72: are the eight floor flues a half-brick, 4½ × 4½ in? They scale about 4½–5½ in.
