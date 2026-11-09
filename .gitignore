@@ -242,3 +242,5 @@ docs/research/*.jpg
 # Claude Code: agent worktrees and scratch patches
 .claude/worktrees/
 .claude/*.patch
+.claude/settings.local.json
+CLAUDE.local.md
