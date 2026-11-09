@@ -20,9 +20,10 @@
 # engine sizes it, the exit flue too. The arches are held by masonry (buttressed): each chamber's
 # arch spans along the draft and throws its thrust onto the common wall and on to the chimney, the
 # front braced (p.95, p.97).
-# Not modelled: the main firebox (dogi), which the book doesn't size, and the flues, about 9 × 5 in
-# out and 9 × 4½ to 9 × 6 in in, 9 in apart (Fig 4-28), whose count isn't given. The engine's arch
-# spans the width, so it is laid across the 63 in with the same springline and crown; held by
+# The flues between chambers, about 9 × 5 in out and 9 × 4½ to 9 × 6 in in, 9 in apart (Fig 4-28):
+# five a wall (draft.between, below). Not modelled: the main firebox (dogi), which the book
+# doesn't size. The engine's arch spans the width, so it is laid across the 63 in with the same
+# springline and crown; held by
 # masonry, it gets no steel. The doors are in a side wall; a sprung arch here springs from the
 # side walls, so the door is put in the front wall. The floor's loss into dry soil is worked out at steady state.
 schema: 1
@@ -41,6 +42,11 @@ roof:
   type: sprung_arch
   rise: 20.7 in # 6 in per foot of the 41⅓ in span (p.296)
   buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
+  # (scaled: Fig 4-32, p.92, ratios only, no printed dimension, ±2 %) the reduction chamber's
+  # inner peak stands 56–60 % (58 %) along the span from the front wall; rise 0.68 of the span;
+  # radii about 0.59 (front) and 0.47 (back) of the span. Not entered as peak_at: the back half
+  # runs 0.42 of the span against a 0.68 rise, past a quarter circle, which the engine refuses,
+  # and this file's semicircle (rise half the span) allows no offset peak at all.
 loading:
   type: door
   face: front
@@ -63,3 +69,15 @@ heat:
 draft:
   type: cross
   flue_wall: back
+  between:
+    # Step A, 2026-11-09. Fig 4-28 prints the outlet flues "approx. 9 × 5", 9 in apart, and the
+    # inlets 9 × 6 to 9 × 4½. (scaled: Fig 4-28, p.91, from the printed 15" floor to outlet,
+    # ±1 in) the flues are drawn 11 and 9½ in tall and 5½ in wide, so 9 is the height and 5 the
+    # width across the kiln. The count is not printed: 5 is as many 5 in flues as fit across the
+    # 63 in with 9 in between them (Olsen's rule, p.96, read the same way) (derived). The outlet's
+    # foot is drawn 15 in up the back wall, the inlet's on the next floor: the engine lays one
+    # passage at the higher chamber's floor.
+    count: 5
+    port:
+      width: 5 in
+      height: 9 in
