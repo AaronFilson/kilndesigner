@@ -126,9 +126,10 @@ gaps by the crossed-strings rule in plan; or a ware node with an enclosing-body 
     medium-duty at 32.9 %, `electric-and-thermal.md` §4.2) could fall in the low class
     (ε₀ 0.75–0.79 at 1073–1473 K) or the medium one (0.55–0.63), a difference that matters.
     Osborn (1985) itself is needed.
-  - **IFB above 1350 K (1077 °C):** no data, and cone 10 is near 1285 °C. The chemistry of the
-    IFBs kilns use (K-23, K-26, JM 23, JM 26) isn't recorded in `docs/research/`, so they can't
-    yet be matched to a measured grade in §5.2.
+  - **IFB above 1350 K (1077 °C): to be searched for.** There are no data, and cone 10 is near
+    1285 °C. Until data are found, the engine extrapolates the measured lines (the user's
+    decision, 2026-11-09; §5.5). The chemistry of the IFBs kilns use (K-23, K-26, JM 23, JM 26)
+    isn't recorded in `docs/research/`, so they can't yet be matched to a measured grade in §5.2.
   - **Castables, kiln wash, glazed ware and element wire** (oxidised Kanthal 0.70 and 0.88,
     `electric-and-thermal.md` §1.1, one source only): no high-temperature data found.
   - **Touloukian and DeWitt vol. 8 (1972) itself**, the main source behind both compilations
@@ -241,11 +242,29 @@ All via [R6] Table A2.
 **Each face's emissivity:** its hot-face material's line, at its own temperature, times 0.95–1.0
 for the hemispherical value.
 
-**Open decision.** IFB data end at 1077 °C, short of cone 10. The engine can either:
-- refuse above that, which stops most IFB kilns' simulations; or
-- hold the end value and show the sensitivity.
+**Decided (the user, 2026-11-09): extrapolate.** The IFB data end at 1077 °C, but IFB is used
+well past that.
+- K-26 and JM 26 are classified to 1430 °C (2600 °F) (`electric-and-thermal.md` [S31]); cone 10
+  is 1285–1305 °C (`core/src/kilndesigner/data/cones.yaml`).
+- Refusing would stop most IFB kilns' simulations. So the engine evaluates the measured line past
+  its range, says in the working that it has, and names the measured range.
+- This is the user's exception to ADR 0009's refusal, for this property. More data are to be
+  searched for (§4; `docs/planning/02-plan.md`, follow-up research).
 
-ADR 0009 points to refusal. The user decides.
+**What the lines give at cone 10** (1558 K):
+- MPK 110: 0.65; MPK 125: 0.65; MPK 140: 0.60; MPK 130HSR: 0.61.
+- MPK 155HA: 0.32.
+- MPK SUPRA: 0.99. Its steep line, measured only to 1300 K, runs away when extrapolated; treat it
+  with caution.
+
+**The same rule for fibre** (applied here; the user may say otherwise). Fibre board was measured
+to 1400 K (1127 °C), but blankets and boards are used higher. Extrapolated to 1558 K: 0.58 for
+fibres normal to the face, 0.40 for parallel ones. Kaowool's steep line was measured only to
+1173 K; extrapolated, it falls to zero by 1448 K, so it can't be used past its range.
+
+**Proposed: which line stands for a kiln's IFB.** Which MPK grade represents K-23, K-26 or JM 23
+waits on those bricks' chemistry (§4). Until then the coupling would show the spread across the
+grades.
 
 **Effect.** In a nearly isothermal chamber, ε matters little to the total exchange. It matters
 more to how fast a cold face (the floor, the door) catches up.

@@ -624,6 +624,34 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
   Refractory Practice* not reached online.
 
+## Follow-up research: hot emissivities and gas radiation (2026-11-09)
+
+For radiation between the chamber's faces (`11-09-26.md` §G; `docs/research/radiation-exchange.md`
+§4–§6). The user's note: firebrick and IFB have changed little in 30–40 years, so older
+references serve.
+
+- **IFB emissivity above 1077 °C: search for more.**
+  - The measured lines (Morgan's MPK grades, Hampartsoumian 1990) stop at 1350 K. IFB is used
+    well past that: K-26 and JM 26 are classified to 1430 °C, and cone 10 is about 1285 °C.
+  - Until data are found, the engine extrapolates the measured lines and says so in the
+    working (the user's decision, 2026-11-09).
+  - Where to look:
+    - Touloukian and DeWitt vol. 8 (DTIC ADA951942: download it in a browser, as DTIC refuses
+      scripts);
+    - Gray et al. (1989) and Hampartsoumian (1990) in full;
+    - Jackson and Yen (1994) on ceramic-fibre insulation;
+    - the makers' technical bulletins (Morgan/Thermal Ceramics, HWI, Allied);
+    - NBS/NIST and NASA reports.
+  - Also the chemistry of K-23, K-26, JM 23 and JM 26, so each can be matched to a measured
+    grade.
+- **Osborn (1985):** what "low", "medium" and "high" alumina mean in his fire-brick classes. A
+  kiln's dense brick reads 0.75–0.79 in one class and 0.55–0.63 in the next.
+- **Fibre above 1127 °C, castables, kiln wash, glazed ware and element wire** at firing
+  temperatures.
+- **Gas radiation:** Alberti, Weber and Mancini's CO₂ and H₂O correlations (Combust. Flame 2015,
+  2016) with their spreadsheets, or a weighted-sum-of-grey-gases table; and a soot model for
+  luminous flames (wood, reduction).
+
 ## Open questions
 
 1. **The materials library.** Which manufacturers' data sheets can be used, and how they are
