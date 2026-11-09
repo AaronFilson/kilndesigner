@@ -169,7 +169,7 @@ def _firebox_cells(kiln: Kiln, run: Run, box: Firebox) -> list[Cell]:
     fh = si(box.height, "mm") if box.height is not None else fw
     n = box.count
     out: list[Cell] = []
-    face = box.position
+    face: str = box.position
     across = run.width if face in ("front", "back", "under") else run.length
     if face in ("front", "back") and n * fw > across + 1e-6 and 1 < n <= run.chambers:
         for i in range(n):
@@ -177,6 +177,12 @@ def _firebox_cells(kiln: Kiln, run: Run, box: Firebox) -> list[Cell]:
             out.append(Cell("pit", y, fw, width=min(fl, run.width), z0=-fh, z1=0.0))
         return out
     centres = [across * ((i + 0.5) / n - 0.5) for i in range(n)]
+    if "-" in face:
+        # On a diagonal (B2): against the front or back wall, its middle on the diagonal
+        face, side = face.split("-")
+        sign = -1.0 if side == "left" else 1.0
+        centres = [sign * (run.width / 2 * math.sqrt(0.5) if run.round
+                           else max(run.width / 2 - fw / 2, 0.0))]  # fmt: skip
     back = run.chamber_centre(run.chambers - 1) + run.depth / 2
     front = -run.depth / 2
     for c in centres:

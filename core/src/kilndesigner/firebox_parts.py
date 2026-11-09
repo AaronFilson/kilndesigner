@@ -75,12 +75,14 @@ class FireboxBox:
     trough: bool = False
     chamber: int | None = None
     level: float = 0.0  # the chamber floor's height beside it
+    under_mouth: Side = "-y"  # under the floor: the end it is fed from (Firebox.mouth)
+    gas: bool = False  # the burners' firebox (heat.gas.firebox), not a fuel's
 
     @property
     def mouth(self) -> Side:
-        """The side of the inside the firebox is fed from: across from the chamber, or the front
-        end under the floor."""
-        return "-y" if self.kiln_side == "up" else OPPOSITE[self.kiln_side]
+        """The side of the inside the firebox is fed from: across from the chamber, or the end
+        of the run it is fed from under the floor (the front, unless the design says)."""
+        return self.under_mouth if self.kiln_side == "up" else OPPOSITE[self.kiln_side]
 
     @property
     def along_y(self) -> bool:
@@ -205,20 +207,53 @@ def grate_heights(fb: Firebox) -> tuple[float, float, float]:
     return fh, ash, step
 
 
+DIAGONAL = ("front-left", "front-right", "back-left", "back-right")
+
+
+def fireboxes_of(kiln: Kiln) -> list[tuple[Firebox, bool]]:
+    """Every firebox the design has: the fuel's, then the one the gas burners fire into (with
+    True)."""
+    fire, gas = kiln.heat.fire, kiln.heat.gas
+    out = [(fb, False) for fb in (fire.fireboxes if fire is not None else [])]
+    if gas is not None and gas.firebox is not None:
+        out.append((gas.firebox, True))
+    return out
+
+
+def has_fireboxes(kiln: Kiln) -> bool:
+    return bool(fireboxes_of(kiln))
+
+
+def _diagonal(s: Site, fb: Firebox) -> tuple[str, float]:
+    """A firebox on a diagonal, as one against the front or back wall (B2): its wall, and how far
+    its middle stands across it from the kiln's centre line (mm, +x to the right). On a round
+    kiln its middle is on the 45° line, where the diagonal meets the inside; on a box kiln, as far
+    into the corner as its width lets it, its side flush with the side wall's inside."""
+    wall, side = fb.position.split("-")
+    sign = -1.0 if side == "left" else 1.0
+    if s.radius is not None:
+        return wall, sign * s.radius * math.sqrt(0.5)
+    return wall, sign * max(s.width / 2 - si(fb.width, "mm") / 2, 0.0)
+
+
 def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
     """Every firebox's inside, where it stands."""
-    fire = kiln.heat.fire
-    if fire is None:
+    boxes = fireboxes_of(kiln)
+    if not boxes:
         return []
     s = site(kiln)
     walls = sum(si(x.thickness, "mm") for x in kiln.lining.walls)
     out: list[FireboxBox] = []
     j = 0
     ends = 0  # fireboxes at the ends of a row so far: the later ones feed the later chambers
-    for fb in fire.fireboxes:
+    for fb, gas in boxes:
         fw, fl = si(fb.width, "mm"), si(fb.length, "mm")
         fh, ash, step = grate_heights(fb)
         n, face = fb.count, fb.position
+        if face in DIAGONAL:
+            j += 1
+            out.append(_diagonal_box(s, fb, j, gas))
+            continue
         first = 0
         troughs = n * fw > s.width + 1e-6 and 1 < n <= s.chambers
         if s.chambers > 1 and face in ("front", "back"):
@@ -229,7 +264,7 @@ def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
                 j += 1
                 y, z = s.fronts[i], s.floors[i]
                 lo, hi = (-half, y, z - fh - ash), (half, y + fw, z)
-                out.append(FireboxBox(j, fb, lo, hi, z - fh, "up", True, i + 1, z))
+                out.append(FireboxBox(j, fb, lo, hi, z - fh, "up", True, i + 1, z, gas=gas))
             continue
         across = s.width if face in ("front", "back", "under") else s.length
         pitch = max(across / n, fw + 2 * walls)
@@ -243,7 +278,9 @@ def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
                 top = level - s.floor_t
                 lo = (u0, s.middle - long / 2, top - fh - ash)
                 hi = (u1, s.middle + long / 2, top)
-                out.append(FireboxBox(j, fb, lo, hi, top - fh, "up", level=level))
+                mouth: Side = "+y" if fb.mouth == "back" else "-y"
+                out.append(FireboxBox(j, fb, lo, hi, top - fh, "up", level=level,
+                                      under_mouth=mouth, gas=gas))  # fmt: skip
                 continue
             if face in ("front", "back"):
                 y_out = _outside(s, face, u0, u1)
@@ -266,8 +303,25 @@ def firebox_boxes(kiln: Kiln) -> list[FireboxBox]:
                 else:
                     lo, hi = (x_out, y0, g - ash), (x_out + fl, y1, g + fh)
                     side = "-x"
-            out.append(FireboxBox(j, fb, lo, hi, g, side, level=level))
+            out.append(FireboxBox(j, fb, lo, hi, g, side, level=level, gas=gas))
     return out
+
+
+def _diagonal_box(s: Site, fb: Firebox, index: int, gas: bool) -> FireboxBox:
+    """A firebox on a diagonal: against the front or back wall, its middle across it where the
+    diagonal is (_diagonal), its grate its step below that end's floor."""
+    fw, fl = si(fb.width, "mm"), si(fb.length, "mm")
+    fh, ash, step = grate_heights(fb)
+    face, c = _diagonal(s, fb)
+    u0, u1 = c - fw / 2, c + fw / 2
+    y_out = _outside(s, face, u0, u1)
+    level = s.floors[0] if face == "front" else s.floors[-1]
+    g = level - step
+    if face == "front":
+        return FireboxBox(index, fb, (u0, -y_out - fl, g - ash), (u1, -y_out, g + fh), g, "+y",
+                          level=level, gas=gas)  # fmt: skip
+    return FireboxBox(index, fb, (u0, y_out, g - ash), (u1, y_out + fl, g + fh), g, "-y",
+                      level=level, gas=gas)  # fmt: skip
 
 
 # --- Parts --------------------------------------------------------------------------------------
@@ -443,6 +497,7 @@ def firebox_parts(kiln: Kiln) -> list[Part]:
         c = firebox_corbel(kiln, b.box) if corbel_refusal(kiln, b) is None else None
         if c is not None:
             parts += _corbel_parts(kiln, tag, b, c)
+        parts += roof_fill_parts(kiln, b)
         if b.trough:
             bottom = b.level - s.floor_t
             if b.lo[2] < bottom - 1e-6:
@@ -507,12 +562,7 @@ def openings(kiln: Kiln) -> list[Opening]:
             continue
         if b.kiln_side == "up":
             if fb.inlet is not None:
-                iw, ih = fb.inlet.size_in()
-                iw, ih = iw * IN, ih * IN
-                zs = (z1 - EPS, z1 + s.floor_t + EPS)
-                for a0, a1 in _spread(x0, x1, iw, fb.inlets):
-                    out.append(Opening(f"{tag}/inlet", (a0, y1 - ih, zs[0]), (a1, y1, zs[1]),
-                                       fb.inlet.round and a1 - a0 < iw + 1e-6, 2))  # fmt: skip
+                out += _under_inlets(b, s.floor_t)
         else:
             # Through the kiln's wall, from the firebox's face to the chamber's inside
             kiln_side = b.kiln_side
@@ -550,9 +600,13 @@ def openings(kiln: Kiln) -> list[Opening]:
             sw, sh = fb.stoke_hole.size_in()
             sw, sh = sw * IN, sh * IN
             c = (u0 + u1) / 2
-            zs = (b.grate_z, min(b.grate_z + sh, z1))
+            foot = b.grate_z + (si(fb.sill, "mm") if fb.sill is not None else 0.0)
+            zs = (min(foot, z1), min(foot + sh, z1))
             hole = _through(f"{tag}/stoke-hole", axis, a, (c - sw / 2, c + sw / 2), zs, False)
-            out.append(replace(hole, round=fb.stoke_hole.round))
+            if zs[1] - zs[0] > 1e-6:
+                out.append(replace(hole, round=fb.stoke_hole.round))
+        if b.gas:
+            out += gas_ports(kiln, b, axis, a, (u0, u1))
         if fb.grate is not None and b.grate_z - z0 > 1e-6:
             out.append(_through(f"{tag}/ash-pit", axis, a, (u0, u1), (z0, b.grate_z), False))
     return out
@@ -606,6 +660,179 @@ def _through(
     if axis == 1:
         return Opening(name, (u[0], along[0], z[0]), (u[1], along[1], z[1]), round_, 1)
     return Opening(name, (along[0], u[0], z[0]), (along[1], u[1], z[1]), round_, 0)
+
+
+def _under_inlets(b: FireboxBox, floor_t: float) -> list[Opening]:
+    """An under-floor firebox's inlet flues up through the floor (B2): side by side across its
+    far end from the mouth, or ('spread') one row down its middle, evenly along its length, each
+    ``inlet``'s width across and its height along the run."""
+    fb = b.box
+    assert fb.inlet is not None
+    iw, ih = (v * IN for v in fb.inlet.size_in())
+    (x0, y0, _), (x1, y1, z1) = b.lo, b.hi
+    zs = (z1 - EPS, z1 + floor_t + EPS)
+    tag = f"firebox-{b.index}/inlet"
+    out: list[Opening] = []
+    if fb.inlets_at == "spread":
+        half = min(iw, x1 - x0) / 2
+        c = (x0 + x1) / 2
+        for v0, v1 in _spread(y0, y1, ih, fb.inlets):
+            whole = v1 - v0 < ih + 1e-6 and half * 2 >= iw - 1e-6
+            out.append(Opening(tag, (c - half, v0, zs[0]), (c + half, v1, zs[1]),
+                               fb.inlet.round and whole, 2))  # fmt: skip
+        return out
+    far = (y1 - ih, y1) if b.under_mouth == "-y" else (y0, y0 + ih)
+    for a0, a1 in _spread(x0, x1, iw, fb.inlets):
+        out.append(Opening(tag, (a0, far[0], zs[0]), (a1, far[1], zs[1]),
+                           fb.inlet.round and a1 - a0 < iw + 1e-6, 2))  # fmt: skip
+    return out
+
+
+def burner_port_in(kiln: Kiln) -> tuple[float, float, bool] | None:
+    """The gas burners' port (width, height in inches, round): the design's, or the one its
+    model's sources give (gas.BURNER_PORTS); None when neither is known."""
+    from kilndesigner.gas import BURNER_PORTS
+
+    gas = kiln.heat.gas
+    assert gas is not None
+    if gas.burners.port is not None:
+        w, h = gas.burners.port.size_in()
+        return w, h, gas.burners.port.round
+    spec = BURNER_PORTS.get(gas.burners.model or "")
+    if spec is None:
+        return None
+    shape, w, h = spec[0]
+    return w, h, shape == "round"
+
+
+def gas_ports(
+    kiln: Kiln, b: FireboxBox, axis: int, along: tuple[float, float], u: tuple[float, float]
+) -> list[Opening]:
+    """The burners' ports through a gas firebox's mouth wall (B2): spread evenly across it, each
+    in its own share, their centres ``burners.up`` above its floor, or a 2½ in course up plus half
+    a port, as in a chamber's wall (Pitelka [S4]). None where they don't fit side by side, or
+    their size isn't known (gas_firebox_findings says so)."""
+    gas = kiln.heat.gas
+    assert gas is not None
+    size = burner_port_in(kiln)
+    n = gas.burners.wanted or 0
+    if size is None or n == 0:
+        return []
+    pw, ph, rnd = size[0] * IN, size[1] * IN, size[2]
+    if n * pw >= u[1] - u[0] - 1e-6:
+        return []
+    up = si(gas.burners.up, "mm") if gas.burners.up is not None else COURSE_IN * IN + ph / 2
+    z = (b.grate_z + up - ph / 2, b.grate_z + up + ph / 2)
+    if z[1] > b.hi[2] + 1e-6:
+        return []
+    out: list[Opening] = []
+    for i, (a0, a1) in enumerate(_spread(u[0], u[1], pw, n)):
+        hole = _through(f"firebox-{b.index}/burner-port-{i + 1}", axis, along, (a0, a1), z, False)
+        out.append(replace(hole, round=rnd))
+    return out
+
+
+def gas_burner_pieces(kiln: Kiln, body: tuple[float, float] | None, detail: str) -> list[Piece]:
+    """A burner outside each gas firebox port, ½ in back from it (Ward [S1]), along the port."""
+    from kilndesigner.hardware import Cylinder, Piece
+
+    if body is None:
+        return []
+    dia, length = body[0] * IN, body[1] * IN
+    ports = [o for o in openings(kiln) if "/burner-port-" in o.name]
+    boxes = {b.index: b for b in firebox_boxes(kiln)}
+    out: list[Piece] = []
+    for i, o in enumerate(ports):
+        b = boxes[int(o.name.split("/")[0].split("-")[1])]
+        ax = o.axis
+        outward = -1.0 if b.mouth.startswith("-") else 1.0
+        face = o.lo[ax] if outward < 0 else o.hi[ax]
+        centre = [(p + q) / 2 for p, q in zip(o.lo, o.hi, strict=True)]
+        centre[ax] = face + outward * (0.5 * IN + length / 2)
+        cyl = Cylinder(1 if ax == 1 else 0, (centre[0], centre[1], centre[2]), dia / 2, length)
+        title = f"Burner {i + 1} of {len(ports)}"
+        said = (
+            f"{detail}. Fires into the firebox through its mouth wall, set ½ in back from the "
+            "port (kiln-hardware.md §1.1 [S1])."
+        )
+        out.append(Piece(f"burner/{i + 1}", "burner", title, said, cylinders=(cyl,)))
+    return out
+
+
+ROMAN_STEPS = 16  # straight pieces each quarter of a Roman arch's curve is drawn with
+
+
+def roof_fill_parts(kiln: Kiln, b: FireboxBox) -> list[Part]:
+    """A Roman or sloped firebox roof (B2), as the brick filling the top of the firebox's box
+    outside the curve or the slope: a Roman arch's two haunches, the corners between its
+    semicircle (radius half the width, its crown at the box's top) and the box; a sloped roof's
+    wedge, deepest at the mouth, rising at roof_slope to the box's top at the chamber end. Laid in
+    the walls' hot-face brick and counted by volume, cut to the curve."""
+    from kilndesigner.castable import resolve_material
+    from kilndesigner.geometry import Part
+
+    fb = b.box
+    if fb.roof not in ("roman", "sloped") or b.trough or fill_refusal(b) is not None:
+        return []
+    mat = kiln.lining.walls[0].material
+    kind = resolve_material(kiln, mat).kind
+    (x0, y0, _), (x1, y1, z1) = b.lo, b.hi
+    tag = f"firebox-{b.index}/1-{mat}"
+    if fb.roof == "roman":
+        w0, w1 = (x0, x1) if b.along_y else (y0, y1)
+        r, c = (w1 - w0) / 2, (w0 + w1) / 2
+        zc = z1 - r
+        arc = [(c + r * math.cos(math.pi * (1 - k / (2 * ROMAN_STEPS))),
+                zc + r * math.sin(math.pi * (1 - k / (2 * ROMAN_STEPS))))
+               for k in range(2 * ROMAN_STEPS + 1)]  # fmt: skip
+        halves = (
+            ((*arc[: ROMAN_STEPS + 1], (w0, z1)), (w0, c)),
+            ((*arc[ROMAN_STEPS:], (w1, z1)), (c, w1)),
+        )
+        parts: list[Part] = []
+        for name, (profile, (a, e)) in zip(("haunch-a", "haunch-b"), halves, strict=True):
+            lo, hi = ((a, y0, zc), (e, y1, z1)) if b.along_y else ((x0, a, zc), (x1, e, z1))
+            part = Part(f"{tag}-{name}", mat, kind, lo, hi, face="roof", profile=profile)
+            parts.append(replace(part, across=not b.along_y, chamber=b.chamber))
+        return parts
+    assert fb.roof_slope is not None
+    k0, k1 = (y0, y1) if b.along_y else (x0, x1)
+    drop = slope_drop(b)
+    mouth_at = k0 if b.mouth.startswith("-") else k1
+    chamber_at = k1 if mouth_at == k0 else k0
+    profile = ((mouth_at, z1), (mouth_at, z1 - drop), (chamber_at, z1))
+    lo, hi = ((x0, y0, z1 - drop), (x1, y1, z1))
+    return [Part(f"{tag}-slope", mat, kind, lo, hi, face="roof", profile=profile,
+                 across=b.along_y, chamber=b.chamber)]  # fmt: skip
+
+
+def slope_drop(b: FireboxBox) -> float:
+    """How far a sloped firebox roof comes down at the mouth (mm): the run times the slope's
+    tangent, from the box's top at the chamber end."""
+    fb = b.box
+    assert fb.roof_slope is not None
+    run = (b.hi[1] - b.lo[1]) if b.along_y else (b.hi[0] - b.lo[0])
+    return run * math.tan(si(fb.roof_slope, "radian"))
+
+
+def fill_refusal(b: FireboxBox) -> str | None:
+    """Why a Roman or sloped roof can't be drawn in this firebox, or None."""
+    fb = b.box
+    above = b.hi[2] - b.grate_z
+    if fb.roof == "roman":
+        half = ((b.hi[0] - b.lo[0]) if b.along_y else (b.hi[1] - b.lo[1])) / 2
+        if half > above + 1e-6:
+            return (
+                f"its Roman arch, rising half its {2 * half / IN:g} in width, doesn't fit under "
+                f"its {above / IN:g} in height: make it taller"
+            )
+    if fb.roof == "sloped" and slope_drop(b) >= above - 1e-6:
+        return (
+            f"its roof, falling {slope_drop(b) / IN:.1f} in from the chamber to the mouth, would "
+            f"come down to the grate in its {above / IN:g} in height: make it taller or the "
+            "slope less"
+        )
+    return None
 
 
 # --- Carving boxes ------------------------------------------------------------------------------
@@ -709,6 +936,48 @@ def grate_pieces(kiln: Kiln) -> list[Piece]:
     return out
 
 
+def firing_bits(kiln: Kiln, b: FireboxBox) -> list[str]:
+    """What the B2 fields add to a firebox's note: its mouth and inlets under the floor, its
+    Roman or sloped roof, its stoke hole's sill, its coal pit and the burners firing into it."""
+    us = kiln.units == "us"
+    fb = b.box
+    bits: list[str] = []
+    if b.gas:
+        bits.append("the burners' firebox: they fire into it through its mouth wall")
+        n = kiln.heat.gas.burners.wanted if kiln.heat.gas is not None else None
+        if n and not any(f"firebox-{b.index}/burner-port-" in o.name for o in openings(kiln)):
+            bits.append(f"its {n} burner ports aren't cut, as they don't fit side by side across "
+                        "its mouth wall under its top, or their size isn't known: give "
+                        "burners.port, fewer burners or a wider firebox")  # fmt: skip
+    if b.kiln_side == "up" and not b.trough:
+        if fb.mouth == "back":
+            bits.append("fed from the back of the run, its mouth and ash pit's mouth there")
+        if fb.inlets_at == "spread" and fb.inlet is not None:
+            bits.append(f"its {fb.inlets} inlet flues spread evenly along it, one row down its "
+                        "middle")  # fmt: skip
+    refused = fill_refusal(b) if fb.roof in ("roman", "sloped") and not b.trough else None
+    if refused is not None:
+        bits.append(f"its {fb.roof} roof refused and drawn flat, as {refused}")
+    elif fb.roof == "roman" and not b.trough:
+        bits.append("roofed with a Roman (semicircular) arch across its width, its crown at the "
+                    "top of its height, the haunches filled with brick")  # fmt: skip
+    elif fb.roof == "sloped" and not b.trough and fb.roof_slope is not None:
+        bits.append(f"its roof sloping up {si(fb.roof_slope, 'degree'):g}° from the mouth to the "
+                    f"chamber, {length_text(slope_drop(b), us)} lower at the mouth, the wedge "
+                    "under it filled with brick")  # fmt: skip
+    if fb.sill is not None and fb.stoke_hole is not None:
+        bits.append(f"its stoke hole's sill {length_text(si(fb.sill, 'mm'), us)} above the "
+                    f"{'grate' if fb.grate is not None else 'firebox floor'}")  # fmt: skip
+    if fb.coal_pit is not None:
+        p = fb.coal_pit
+        depth = (f", {length_text(si(p.depth, 'mm'), us)} deep" if p.depth is not None
+                 else ", its depth not given")  # fmt: skip
+        bits.append(f"a coal pit outside its mouth, {length_text(si(p.width, 'mm'), us)} across "
+                    f"and {length_text(si(p.length, 'mm'), us)} out{depth}, dug, not built, so no "
+                    "brick is counted for it")  # fmt: skip
+    return bits
+
+
 def firebox_findings(kiln: Kiln) -> list[Finding]:
     """How the fireboxes are built, and what is left out."""
     boxes = firebox_boxes(kiln)
@@ -725,7 +994,14 @@ def firebox_findings(kiln: Kiln) -> list[Finding]:
             if b.kiln_side == "up"
             else f"against the {fb.position} wall"
         )
+        if fb.position in DIAGONAL:
+            wall = fb.position.split("-")[0]
+            where = (
+                f"on the {fb.position} diagonal, drawn against the {wall} wall with its middle on "
+                "the diagonal and running out square to that wall, not turned to it"
+            )
         bits = [f"Firebox {b.index}, {where}"]
+        bits += firing_bits(kiln, b)
         if fb.height is None:
             bits.append(f"drawn {length_text(si(fb.width, 'mm'), us)} tall, as wide as it is, as "
                         "its height isn't given")  # fmt: skip

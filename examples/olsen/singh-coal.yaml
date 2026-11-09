@@ -21,10 +21,12 @@
 # 15", 15" and 36" up the firebox's side without saying which band is which; the two 15 in bands
 # are read as above the grate, the 36 in as the "AIR SOURCE AND COAL ASH PIT 36" X 24"". The door
 # and the air: engine defaults (a bricked door, 70 °F).
-# Not modelled (see docs/kilns/olsen/singh-coal.md): the fireboxes stand on the diagonals, the
-# arched door between two of them (Fig 5-10); the engine puts one on each of its four faces and
-# makes the front wall the door. The twelve floor exit flues are spread in an even grid (their
-# places aren't printed); the
+# The four fireboxes stand on the diagonals (Fig 5-10), each drawn against the front or back wall
+# with its middle on the 45° line, square to that wall; each has its 4 × 2 ft coal pit outside
+# (Fig 5-10), reported, not drawn.
+# Not modelled (see docs/kilns/olsen/singh-coal.md): the arched door between two fireboxes (Fig
+# 5-10); the engine makes the front wall the door. The twelve floor exit flues are spread in an
+# even grid (their places aren't printed); the
 # cooling and vapour holes in the dome (Fig 5-11); the damper in the chimney entrance (Fig 5-10). The 12 in deep flue channel under the floor, and the
 # floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
 # the user) doesn't fit the drawn sizes, which give about 235 ft³ (derived); the drawing is used.
@@ -56,7 +58,7 @@ heat:
   fire:
     fuel: coal
     fireboxes:
-      - position: left
+      - position: front-left # on the diagonals, evenly round the wall (Fig 5-10)
         width: 24 in
         length: 24 in
         height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
@@ -70,7 +72,10 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: right
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: front-right
         width: 24 in
         length: 24 in
         height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
@@ -84,7 +89,10 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: back
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: back-left
         width: 24 in
         length: 24 in
         height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
@@ -98,7 +106,10 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
-      - position: front
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
+      - position: back-right
         width: 24 in
         length: 24 in
         height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
@@ -112,6 +123,9 @@ heat:
         stoke_hole: # "STOKING HOLE 15" X 13"" (Fig 5-11)
           width: 15 in
           height: 13 in
+        coal_pit: # "4' × 2'" at each firebox (Fig 5-10); which way is across the mouth (?)
+          width: 24 in
+          length: 48 in
 draft:
   type: down
   flue_wall: back
