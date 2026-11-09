@@ -132,9 +132,18 @@ gaps by the crossed-strings rule in plan; or a ware node with an enclosing-body 
     isn't recorded in `docs/research/`, so they can't yet be matched to a measured grade in §5.2.
   - **Castables, kiln wash, glazed ware and element wire** (oxidised Kanthal 0.70 and 0.88,
     `electric-and-thermal.md` §1.1, one source only): no high-temperature data found.
-  - **Touloukian and DeWitt vol. 8 (1972) itself**, the main source behind both compilations
-    (§5). A DTIC copy exists (ADA951942), but the server refuses scripted downloads, so it needs a
-    browser.
+  - **Touloukian and DeWitt vol. 8 (1972) has no brick emissivity.** Its master index (vol. 14,
+    DTIC ADA129117, public on archive.org as `DTIC_ADA129117`; index pp. 12, 32–33, 80, 117,
+    138, read 2026-11-09) shows this:
+    - every brick, firebrick, IFB and "aluminosilicate refractories" entry has conductivity
+      (vol. 2) or diffusivity (vol. 10) data only, and none in vol. 8;
+    - the nearest material is mullite (aluminium silicate), the main fired phase of
+      alumina-silica brick: emissivity on vol. 8 pp. 1685 and 1687, reflectivity on p. 618. A
+      dense mineral is only a guide to a porous brick's face.
+
+    Where to get vol. 8: DTIC (ADA951942; the page was down for maintenance on 2026-11-09, and
+    DTIC refuses scripted downloads), or a borrow-only scan on archive.org
+    (`thermophysicalpr0008purd`).
 - **Gas radiation: a method is sourced (§6), but its correlations are not in hand.** Lienhard
   gives the method and charts; coding it needs the correlations themselves (Alberti et al.,
   with the authors' spreadsheets) or a weighted-sum-of-grey-gases table. Until then the engine

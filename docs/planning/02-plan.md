@@ -636,11 +636,16 @@ references serve.
   - Until data are found, the engine extrapolates the measured lines and says so in the
     working (the user's decision, 2026-11-09).
   - Where to look:
-    - Touloukian and DeWitt vol. 8 (DTIC ADA951942: download it in a browser, as DTIC refuses
-      scripts). The DSIAC report DSIAC-BCO-2022-222 (DTIC AD1194128, June 2022) lists the rest
-      of the TPRC series on DTIC: vol. 7, metals (ADA951941); vol. 9, coatings (ADA951943, for
-      kiln wash and high-emissivity coatings); and the master index (ADA129117). The electronic
-      version, CINDAS's TPMD, is commercial;
+    - Touloukian and DeWitt vol. 8. Its master index (ADA129117, public on archive.org) shows
+      no brick, firebrick or IFB emissivity in it, so read only its mullite (aluminium silicate)
+      pages, 1685 and 1687, as a guide.
+      - Vol. 8 is on DTIC (ADA951942): download it in a browser, as DTIC refuses scripts. It
+        was down for maintenance on 2026-11-09.
+      - It is also a borrow-only scan on archive.org (`thermophysicalpr0008purd`).
+      - The DSIAC report DSIAC-BCO-2022-222 (DTIC AD1194128, June 2022) lists the rest of the
+        TPRC series on DTIC: vol. 7, metals (ADA951941); vol. 9, coatings (ADA951943, for kiln
+        wash and high-emissivity coatings).
+      - The electronic version, CINDAS's TPMD, is commercial;
     - Gray et al. (1989) and Hampartsoumian (1990) in full;
     - Jackson and Yen (1994) on ceramic-fibre insulation;
     - the makers' technical bulletins (Morgan/Thermal Ceramics, HWI, Allied);
