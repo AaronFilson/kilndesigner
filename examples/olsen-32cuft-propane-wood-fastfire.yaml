@@ -116,8 +116,10 @@ site:
     # FPL-RN-0268 (Simpson 1998) outdoor EMC, Hilo's annual mean 14.0 % dry basis = 12.3 % wet,
     # the highest of the four Hawai'i stations; assumes split wood under cover has reached it
     moisture: 12 percent
-    # PLACEHOLDER, not a kiln value: no source gives a kiln firebox's efficiency. MU Extension's
-    # non-airtight stove, about 25 % (wood-fuel.md §3, [W1]); measure your own
+    # Starting value, not measured on this kiln: wood pottery kilns measured at 12.4–21.6 %
+    # (Adubah 2026, 19 Ghana kilns) and 18.07 % (Jongpluempiti et al. 2015, Dan Kwien); biomass
+    # clamps 10–28 % ware-only (Practical Action). Range 15–30 %: firebox-efficiency.md §6.
+    # Weigh the wood of one firing to replace it
     firebox_efficiency: 25 percent
     # Kiawe sp. gr. 0.85 (Little & Skolmen, USDA Agric. Handbook 679, 1989) × 62.4 lb/ft³ × 65 ft³
     # of solid wood, the low end of a cord for crooked sticks (MU G5450): 3,450 lb oven-dry

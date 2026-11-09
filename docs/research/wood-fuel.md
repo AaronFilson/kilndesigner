@@ -121,8 +121,9 @@ content, so the engine doesn't convert, and says net in the field's description.
 
 ## 3. Efficiency of a wood kiln firebox
 
-Not found: any source giving a kiln firebox's efficiency (share of the wood's heat into the
-kiln's walls and ware). Olsen gives fuel per firing ([§4]) but no efficiency.
+Superseded by [firebox-efficiency.md](firebox-efficiency.md) (2026-11-09): measured wood pottery
+kilns at 12.4–21.6 % and 18.07 %, a recommended 15–30 % starting range, and a flue-loss method.
+The stove figures below stay as the analogue they were.
 
 A bounded analogue only, **not a kiln**: heating appliances, [W1]: masonry fireplace about 10 %;
 fireplace insert up to 40 %; non-airtight stove about 25 %; airtight stove 55 %; advanced
