@@ -17,15 +17,19 @@ crown (a semicircular arch on 10 ft), climbing at 18.4°; a 9 in himae trough pe
 walls and a 9 in arch of medium-duty firebrick; cross-draft to an engine-sized chimney; cone 10
 (assumed).
 
+## Scaling (step A, 2026-11-09)
+
+Nothing to scale: there is no figure of this kiln.
+
 ## Feature by feature
 
-| Feature | Book | Model | |
-|---|---|---|---|
-| Chambers | seven (p.90) | seven | matches |
-| Total volume | 15,000 ft³ (p.90) | about 15,600 ft³ | close |
-| Largest chamber | 25 × 10 × 10 ft (p.90) | every chamber that size | assumed for the others |
-| Width ≈ height | p.92 | 10 ft along, 10 ft tall | matches |
-| Firebox, flues, chimney, doors, spy holes, damper | not given | himae; engine defaults | assumed / engine default |
+| Feature | Book | Scaled | Model | |
+|---|---|---|---|---|
+| Chambers | seven (p.90) | — | seven | matches |
+| Total volume | 15,000 ft³ (p.90) | — | about 15,600 ft³ | close |
+| Largest chamber | 25 × 10 × 10 ft (p.90) | — | every chamber that size | assumed for the others |
+| Width ≈ height | p.92 | — | 10 ft along, 10 ft tall | matches |
+| Firebox, flues, chimney, doors, spy holes, damper | not given | — | himae; engine defaults | assumed / engine default |
 
 No figure exists to compare burners, ports, flues, doors or chimney against.
 

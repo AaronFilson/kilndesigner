@@ -20,15 +20,20 @@ super-duty floor over one fast-fire firebox under it (13½ × 36 in, a 12 × 24 
 below and 6 in above it); an inlet flue 13½ × 4½ in; cross-draft to a 9 × 4½ in chimney 9½ ft
 tall sharing the back wall. Only the volume and the layout are the book's.
 
+## Scaling (step A, 2026-11-09)
+
+Nothing to scale: the book has no figure of this kiln (Fig 5-67, its 40 ft³ variation, has no
+printed dimension either).
+
 ## Feature by feature
 
-| Feature | Book (p.147) | Model | |
-|---|---|---|---|
-| Volume | 8 to 10 ft³ | 9 ft³ | matches |
-| Firebox | Roman-arched, under the floor | under the floor, `roof: roman`; its 6¾ in rise doesn't fit the 6 in assumed above the grate, so the engine draws it flat and says so | given; refused on the assumed height |
-| Draft | cross-draft chamber above | cross | matches |
-| Inlet flue, exit flue, chimney | not described | by `phoenix-nh`'s layout and Olsen's rules | assumed |
-| Door, spy holes, damper | not described | engine defaults | engine default |
+| Feature | Book (p.147) | Scaled | Model | |
+|---|---|---|---|---|
+| Volume | 8 to 10 ft³ | — | 9 ft³ | matches |
+| Firebox | Roman-arched, under the floor | — | under the floor, `roof: roman`; its 6¾ in rise doesn't fit the 6 in assumed above the grate, so the engine draws it flat and says so | given; refused on the assumed height |
+| Draft | cross-draft chamber above | — | cross | matches |
+| Inlet flue, exit flue, chimney | not described | — | by `phoenix-nh`'s layout and Olsen's rules | assumed |
+| Door, spy holes, damper | not described | — | engine defaults | engine default |
 
 ## Results from the build
 
