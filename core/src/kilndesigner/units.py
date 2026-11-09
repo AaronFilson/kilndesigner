@@ -20,6 +20,8 @@ from pydantic_core import core_schema
 ureg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
 ureg.define("USD = [currency] = $")
 ureg.define("pcf = pound / foot ** 3")
+# A standard cord: 4 × 4 × 8 ft of stacked wood, bark and air (MU Extension G5450; wood-fuel.md)
+ureg.define("cord = 128 * foot ** 3")
 Q_ = ureg.Quantity  # pyright: ignore[reportInvalidTypeForm]  # Pint's registry-bound class
 
 Quantity = pint.Quantity
@@ -150,6 +152,10 @@ GasPrice = Annotated[
     ),
 ]
 Money = Annotated[pint.Quantity, QuantityField("[currency]", "5000 USD")]
+HeatingValue = Annotated[
+    pint.Quantity,
+    QuantityField("[energy] / [mass]", "19 MJ/kg", "heating value (energy per mass)"),
+]
 Mass = Annotated[pint.Quantity, QuantityField("[mass]", "50 lb")]
 Density = Annotated[pint.Quantity, QuantityField("[mass] / [length] ** 3", "2.6 g/cm**3")]
 MassPrice = Annotated[pint.Quantity, QuantityField("[currency] / [mass]", "1.02 USD/lb")]

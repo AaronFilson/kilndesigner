@@ -44,6 +44,8 @@ from kilndesigner.shape import chamber_shape
 from kilndesigner.thermal.surface import FixedSurface, StillAirSurface, Surface
 from kilndesigner.thermal.transient import HeatCapacity, Layer, StepResult, TransientWall
 from kilndesigner.units import Q_, parse_quantity, si, ureg
+from kilndesigner.wood import SOURCE as WOOD_SOURCE
+from kilndesigner.wood import WoodError, WoodEstimate, wood_per_firing
 from kilndesigner.working import Finding, Step, show
 
 DT = 60.0  # s, one step
@@ -188,6 +190,11 @@ class FiringResult(BaseModel):
     shell_kwh: float
     cost_usd: float | None
     cost: str | None
+    # A wood kiln fired on gas: the same heat into the kiln from wood, by the user's site.wood
+    wood_kg: float | None = None  # as fired, at its moisture
+    wood_oven_dry_kg: float | None = None
+    wood_cords: float | None = None
+    wood_cost_usd: float | None = None
     points: list[FiringPoint]
     faces: list[FaceProfile]
     working: list[Step]
@@ -890,6 +897,7 @@ def simulate(
                 ),
             )
         )
+    wood = _wood(kiln, totals["energy"], us, working, findings)
     findings += _data_findings(kiln, faces)
     findings.append(
         Finding(
@@ -935,6 +943,10 @@ def simulate(
         shell_kwh=totals["shell"] * to_kwh,
         cost_usd=cost,
         cost=cost_text,
+        wood_kg=wood.as_fired_kg if wood is not None else None,
+        wood_oven_dry_kg=wood.oven_dry_kg if wood is not None else None,
+        wood_cords=wood.cords if wood is not None else None,
+        wood_cost_usd=wood.cost_usd if wood is not None else None,
         points=points,
         faces=[
             FaceProfile(
@@ -950,6 +962,47 @@ def simulate(
         findings=findings,
     )
     return run
+
+
+def _wood(
+    kiln: Kiln, heat_j: float, us: bool, working: list[Step], findings: list[Finding]
+) -> WoodEstimate | None:
+    """The wood a wood kiln fired on gas would burn for the same heat, given the site's wood."""
+    fire = kiln.heat.fire
+    if fire is None or fire.fuel != "wood" or fire.purpose != "heat" or heat_j <= 0:
+        return None
+    wood = kiln.site.wood
+    if wood is None:
+        findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "The wood per firing isn't given: it needs the site's wood, your own "
+                    "heating_value, moisture and firebox_efficiency (and cord_weight for cords). "
+                    "docs/research/wood-fuel.md lists sourced starting values."
+                ),
+                reference=WOOD_SOURCE,
+            )
+        )
+        return None
+    try:
+        estimate = wood_per_firing(heat_j, wood, us=us)
+    except WoodError as e:
+        findings.append(Finding(level="info", message=f"The wood per firing isn't given: {e}."))
+        return None
+    working += estimate.working
+    findings.append(
+        Finding(
+            level="info",
+            message=(
+                "The wood per firing is the gas firing's heat into the kiln put in by wood "
+                "instead, through your firebox efficiency; a wood firing's own course, with the "
+                "fireboxes open and stoked, isn't simulated."
+            ),
+            reference=WOOD_SOURCE,
+        )
+    )
+    return estimate
 
 
 def _data_findings(kiln: Kiln, faces: Sequence[_Face]) -> list[Finding]:

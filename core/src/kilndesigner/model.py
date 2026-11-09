@@ -31,6 +31,7 @@ from kilndesigner.units import (
     EnergyPrice,
     Flow,
     GasPrice,
+    HeatingValue,
     Length,
     Mass,
     MassPrice,
@@ -1364,7 +1365,64 @@ class Site(Spec):
             "left out, the firing's cost isn't given"
         ),
     )
+    wood: WoodFuel | None = Field(
+        default=None,
+        description=(
+            "Your wood: its heating value, moisture and the firebox's efficiency, all your own "
+            "estimates (docs/research/wood-fuel.md lists sourced starting values). No default: "
+            "left out, the wood per firing isn't given"
+        ),
+    )
     materials_budget: Money | None = None
+
+
+class WoodFuel(Spec):
+    """The wood a kiln burns, as the user estimates it. Nothing here has a default: wood varies
+    by species, moisture and how it is stacked (docs/research/wood-fuel.md)."""
+
+    heating_value: HeatingValue = Field(
+        description=(
+            "Net (lower) heating value of the oven-dry wood, for example '19 MJ/kg' (Forest "
+            "Research's oven-dry wood) or '8600 BTU/lb'"
+        )
+    )
+    moisture: Share = Field(
+        description=(
+            "Moisture content on the wet basis: water ÷ (wood + water), for example '20 percent' "
+            "for air-dried logs"
+        )
+    )
+    firebox_efficiency: Share = Field(
+        description=(
+            "The share of the wood's net heat, at its moisture, that goes into the kiln's walls "
+            "and ware; the rest leaves up the chimney. No sourced value for a kiln firebox exists"
+        )
+    )
+    cord_weight: Density | None = Field(
+        default=None,
+        description=(
+            "Oven-dry weight of a stacked cord of your wood, for example '2250 lb/cord'. Left "
+            "out: the wood is given by weight only"
+        ),
+    )
+    price: VolumePrice | None = Field(
+        default=None,
+        description="What a cord costs you, for example '250 USD/cord'. Needs cord_weight",
+    )
+
+    @model_validator(mode="after")
+    def _in_range(self) -> WoodFuel:
+        if si(self.heating_value, "J/kg") <= 0:
+            raise ValueError("the wood's heating value must be more than zero")
+        if not 0 <= si(self.moisture, "") < 1:
+            raise ValueError("the wood's moisture must be at least 0 % and under 100 % (wet basis)")
+        if not 0 < si(self.firebox_efficiency, "") <= 1:
+            raise ValueError("the firebox efficiency must be more than 0 % and at most 100 %")
+        if self.cord_weight is not None and si(self.cord_weight, "kg/m**3") <= 0:
+            raise ValueError("the cord weight must be more than zero")
+        if self.price is not None and self.cord_weight is None:
+            raise ValueError("a price per cord needs the cord_weight, to turn weight into cords")
+        return self
 
 
 class Allowances(Spec):

@@ -2298,6 +2298,50 @@
             ],
             "title": "Cost"
           },
+          "wood_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wood Kg"
+          },
+          "wood_oven_dry_kg": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wood Oven Dry Kg"
+          },
+          "wood_cords": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wood Cords"
+          },
+          "wood_cost_usd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Wood Cost Usd"
+          },
           "points": {
             "items": {
               "$ref": "#/components/schemas/FiringPoint"

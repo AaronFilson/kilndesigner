@@ -32,8 +32,9 @@
 # The chimney's height is Rule 5's (p.80), 3 × (chamber + firebox) plus ⅓ of the horizontal pull,
 # counting the firebox as the fast-fire does (p.140). Propane at 3.50 USD a gallon; the site at
 # 50 °F, its coldest 20 °F.
-# Not modelled: wood per firing (no heating value for wood in docs/research; Olsen's figure for
-# the 12–16 ft³ kiln is reported to compare); a firing that changes fuel part way.
+# Wood per firing: give site.wood, your own heating value, moisture and firebox efficiency (no
+# defaults; docs/research/wood-fuel.md lists sourced starting values, and Olsen's under ¼ cord for
+# the 12–16 ft³ kiln to compare). Not modelled: a firing that changes fuel part way.
 schema: 1
 name: Olsen fast-fire, 32 cu ft stacking, propane or wood
 units: us
