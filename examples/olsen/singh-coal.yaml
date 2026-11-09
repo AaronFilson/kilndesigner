@@ -16,10 +16,15 @@
 # built on the ground (on_ground): it stands on a flue collection channel 12 in deep (Fig 5-11),
 # not on a stand. Each firebox's length is taken as its grate's 24 in. The chimney is 30 ft tall,
 # about 25–30 ft from the chamber (Fig 5-10, read by the user, 2026-10-31): the run is taken as
-# 27½ ft, the middle. Stoking holes 15 × 13 in (Fig 5-11, read by the user, 2026-10-31). The door
+# 27½ ft, the middle. Stoking holes 15 × 13 in (Fig 5-11, read by the user, 2026-10-31). Each
+# firebox 30 in tall above the grate and a 36 in ash pit (drawing, Fig 5-11, ?): the section prints
+# 15", 15" and 36" up the firebox's side without saying which band is which; the two 15 in bands
+# are read as above the grate, the 36 in as the "AIR SOURCE AND COAL ASH PIT 36" X 24"". The door
 # and the air: engine defaults (a bricked door, 70 °F).
-# Not modelled: the fireboxes are spaced evenly round the wall, the door between two of them; the
-# engine puts one on each of its four faces. The 12 in deep flue channel under the floor, and the
+# Not modelled (see docs/kilns/olsen/singh-coal.md): the fireboxes stand on the diagonals, the
+# arched door between two of them (Fig 5-10); the engine puts one on each of its four faces and
+# makes the front wall the door. The twelve 6 × 6 in floor exit flues (one flue port here); the
+# cooling and vapour holes in the dome (Fig 5-11); the damper in the chimney entrance (Fig 5-10). The 12 in deep flue channel under the floor, and the
 # floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
 # the user) doesn't fit the drawn sizes, which give about 235 ft³ (derived); the drawing is used.
 schema: 1
@@ -53,6 +58,8 @@ heat:
       - position: left
         width: 24 in
         length: 24 in
+        height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (drawing, Fig 5-11, ?)
         grate:
           width: 24 in
           length: 24 in
@@ -65,6 +72,8 @@ heat:
       - position: right
         width: 24 in
         length: 24 in
+        height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (drawing, Fig 5-11, ?)
         grate:
           width: 24 in
           length: 24 in
@@ -77,6 +86,8 @@ heat:
       - position: back
         width: 24 in
         length: 24 in
+        height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (drawing, Fig 5-11, ?)
         grate:
           width: 24 in
           length: 24 in
@@ -89,6 +100,8 @@ heat:
       - position: front
         width: 24 in
         length: 24 in
+        height: 30 in # above the grate: 15 + 15 in (drawing, Fig 5-11, ?)
+        ash_pit: 36 in # the "AIR SOURCE AND COAL ASH PIT 36" X 24"" (drawing, Fig 5-11, ?)
         grate:
           width: 24 in
           length: 24 in
