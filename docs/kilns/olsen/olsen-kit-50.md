@@ -28,3 +28,9 @@ No change in this pass.
 
 1. The kiln's inside sizes and burner count, if a kit sheet survives.
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Only a photo: nothing to scale.

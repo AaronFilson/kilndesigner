@@ -37,3 +37,15 @@ Figs 6-20 to 6-23 photos).
    firebox floor?
 2. The chamber door's width and height.
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Door | arched, on the firebox side, unsized | — | 33 in wide (from the 8' along that wall, ±2½ in), 51 in to its crown (from 6' and 9', ±9 in) | `loading.opening` 31½ × 50 in, arched |
+| Corner flues | four, 5 in | at the corners | drawn 12 in (perspective of the tube) | `draft.exits`, 5 in round, centres 2½ in in from both walls |
+| Mouth sill | "3'" | — | the 3' arrow runs from the firebox's foot to the mouth's sill (34½ ±2½ in) | `sill: 36 in` confirmed |
+
+The chamber's 6' and 9' disagree by 40 % on the drawing, hence the door height's spread. Question: is the doorway about 2¾ ft wide and 4 ft high?

@@ -29,3 +29,14 @@ isn't printed.
 
 1. Which kiln is this (its draft and chimney)?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Channel ports | three, 6 in wide, plates 16 in high (Fig 8-20) | — | 15 in apart centre to centre, 6 in jambs (from 16" and 6", ±1 in) | not entered |
+| Port flue | — | — | 7½ in wide, 24 in high (side view, from the 9", ±1½ in) | not entered |
+
+Fig 8-20 draws three separate 6 in channel ports against the wall, where the model has one 9 in channel along it. Question: is this kiln's firebox three ports, as Fig 8-20, or one channel (p.208)? Until then the YAML is unchanged.

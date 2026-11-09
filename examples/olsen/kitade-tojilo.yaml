@@ -65,6 +65,9 @@ heat:
         stoke_hole:
           width: 9 in
           height: 7 in
+        sill: 5 in # the stoke hole's foot 4 in over the grate (scaled: Fig 8-11, p.202, from the
+        # 42", 24", 12" and 15", ±½ in), rounded to two 2½ in courses; the hole itself is drawn
+        # 4 × 5½ in against its printed 9 × 7 in
 draft:
   type: cross
   flue_wall: back

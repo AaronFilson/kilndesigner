@@ -28,3 +28,14 @@ No change in this pass.
 
 None new.
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Exit flue places | six 5 × 9 in | four drawn | 23½ and 15 in each side of the middle (Fig 4-89, from 48", 30", 5', ±1 in); two hidden by the post | `places`, the hidden two at ±5 in |
+| Central post | 30" high | — | 7 in wide (±½ in) | not expressible |
+
+Question: are the two flues not drawn behind the post, about 5 in each side of the middle?

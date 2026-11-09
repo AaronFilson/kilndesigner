@@ -31,3 +31,13 @@ Olsen, *The Kiln Book*, 4th ed.: p.165 (text; Fig 6-47).
 1. Fig 6-47: is the firebox under the kiln, or a box built against its foot?
 2. Is the kiln's top open, or covered round the muffle?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Kiln height | not printed | — | 43½ in (Fig 6-47, from the 2½' top, ±3 in) | 42½ in (17 courses) |
+
+The firebox is a separate sketch at another scale (its 2' wide and 2' high give 5.6 and 6.2 px/in, the kiln 10.7), so its place under the kiln can't be scaled.

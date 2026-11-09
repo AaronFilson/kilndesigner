@@ -37,3 +37,14 @@ Olsen, *The Kiln Book*, 4th ed.: p.115 (Fig 4-105 diagram, Figs 4-106, 4-107 pho
 1. Fig 4-105: are there eight exit flues, and how many inlet flues through the bag wall?
 2. The door's width and height, and the openings along the foot of the front arch: air holes?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Exit flue places | 4½ × 7½ in | eight drawn | 26½, 19½, 13½, 7 in left, 0, 6½, 13½, 21½ in right (Fig 4-105, from the 5' span and arrow, ±1 in) | `places` |
+| Door | dashed, in the front arch | — | 19½ in wide, 5½ in left of centre, 25 in tall (±1½ in) | not entered: `loading.opening` needs a wall, and this arch springs from the floor |
+
+The figure is a perspective drawn about twice as tall as wide (the 30" gives 13.3 px/in up, the 5' 6.8–7.0 across), so each axis is scaled alone. Question: is the door about 1½ ft wide and 2 ft high?

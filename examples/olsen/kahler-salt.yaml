@@ -16,8 +16,7 @@
 # rating: engine default. Propane from a 500 gal tank, Olsen's tank for a 24–40 cu ft kiln
 # (p.242): the library rates its power burners on propane. Cone 10: Olsen salts at cone 9–10
 # (p.128).
-# Not modelled: salt, and the salt ports top front and top back in the arch (their size isn't
-# printed). The floor slab 4½ in clear of the walls and the collection channels under it. The K28
+# Not modelled: salt. The salt ports are scaled off Fig 5-18 (openings, below). The floor slab 4½ in clear of the walls and the collection channels under it. The K28
 # dense port blocks.
 schema: 1
 name: Kähler salt kiln, Næstved
@@ -52,46 +51,67 @@ heat:
         height: 5 in
       places:
         # Left ports toward the front, right ports toward the back ("LEFT BURNER POINTS (front)",
-        # "BURNER PORTS RIGHT BACK", Fig 5-17); drawn about 4 in from the end walls (Fig 5-18),
-        # so 12 in off the middle of the 36 in wall (drawing)(?).
+        # "BURNER PORTS RIGHT BACK", Fig 5-17). Their centres are drawn 2.3 and 1.8 in from the
+        # end walls (scaled: Fig 5-18, p.136, from the 36" and 24", ±½ in); a 4½ in port can sit
+        # no nearer than 2¼ in, so 15.5 in off the middle of the 36 in wall.
         - wall: left
-          across: 12 in
+          across: 15.5 in
           up: 18 in
         - wall: left
-          across: 12 in
+          across: 15.5 in
           up: 39 in
         - wall: right
-          across: 12 in
+          across: 15.5 in
           up: 9 in
         - wall: right
-          across: 12 in
+          across: 15.5 in
           up: 28 in
     supply:
       type: tank
       gallons: 500
 spy_holes:
-  # Three "SPY AND DRAW HOLES" up the door (Fig 5-18), by scale about 13, 25 and 37 in above the
-  # floor (drawing)(?); their size isn't printed: engine default.
+  # Three "SPY AND DRAW HOLES" up the door (Fig 5-18), 11, 22 and 34 in above the floor (scaled:
+  # Fig 5-18, p.136, from the 48" and 4½", ±1½ in; but the burners on the same figure read up to
+  # 8 in under their printed heights, a question in the doc). Drawn 1½ in high; size left at the
+  # engine's quarter brick, the nearest brick module.
   places:
     - wall: front
-      up: 13 in
+      up: 11 in
     - wall: front
-      up: 25 in
+      up: 22 in
     - wall: front
-      up: 37 in
+      up: 34 in
 draft:
   type: down
   flue_wall: back
-  exits: # three 4½ × 9 in floor flues into the collection channels (Figs 5-17, 5-18); their
-    # places aren't printed: spread evenly
+  exits: # three 4½ × 9 in floor flues into the collection channels (Figs 5-17, 5-18), 11½ in
+    # left of, about on (¾ in left) and 11½ in right of the centre line (scaled: Fig 5-17, p.136,
+    # from the 30", 45" and 24", ±½ in); front to back they aren't drawn: the middle. Each is
+    # drawn 8½ in across, so its 9 in runs across the kiln
     - through: floor
       count: 3
       port:
-        width: 4.5 in
-        height: 9 in
+        width: 9 in
+        height: 4.5 in
+      places:
+        - across: -11.5 in
+        - across: -0.75 in
+        - across: 11.5 in
   chimney_through: crown # the chimney flue through the crown (Figs 5-17, 5-18)
   chimney:
     height: 11 ft
     inside:
       width: 9 in
       depth: 7 in
+openings:
+  salt_ports: # top front and top back in the arch (Fig 5-18), 2 in round, centres 2 in from the
+    # end walls (scaled: Fig 5-18, p.136, from the 36" and 24", ±½ in), at the arch's right
+    # springing, 16 in right of the middle (scaled: Fig 5-17, from the 30", 45" and 24", ±1 in):
+    # entered 14 in across, the furthest a 2 in hole sits inside the 30 in span. Rounded to 2 in,
+    # not a brick module: a round hole cut in the arch.
+    - through: roof
+      port:
+        diameter: 2 in
+      places:
+        - { across: 14 in, along: -16 in }
+        - { across: 14 in, along: 16 in }

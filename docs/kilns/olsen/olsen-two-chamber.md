@@ -32,3 +32,17 @@ No change in this pass.
 1. Is this the Hollyweird tube (pp.116–117)? They share the 8 ft chamber, 55 in, ¾ in bars and
    the 5 in air tube.
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| First firebox below the floor | 18 in (p.202) | — | — | not entered: needs the firebox's height over its grate (not printed) |
+| Second ash pit | 15 in deep | — | 20 in under the grate, 15 in under the second chamber's floor (Fig 8-17, from 14" and 9", ±1 in) | printed 15 kept |
+| Second grate | at half the flue hole | — | 5 in above the second chamber's floor | not expressible |
+| Floors | — | — | second chamber's floor 9 in above the first's | not expressible |
+| Flue hole | 15 × 20 in | — | drawn 28 in high | printed kept |
+
+Questions: (a) the first firebox's height above its grate, so its 18 in drop can be entered; (b) is the 15 in ash pit measured from the grate or from the chamber floor?

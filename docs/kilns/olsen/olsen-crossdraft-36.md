@@ -27,3 +27,9 @@ No change in this pass.
 
 1. Was the dense brick backed with insulation, and how thick were the walls?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Text only: nothing to scale.

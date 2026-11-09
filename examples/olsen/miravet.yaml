@@ -64,7 +64,28 @@ heat:
           width: 18 in
           height: 27 in
         sill: 36 in # the mouth "3'" up (Fig 6-19) (drawing)(?)
+loading:
+  type: door
+  face: front
+  opening: # the arched doorway on the firebox side (Fig 6-19): 31½ in wide (scaled: Fig 6-19,
+    # p.158, from the 8' along that wall, ±2½ in: 33 in, rounded to 3½ bricks) and 50 in to its
+    # crown (scaled: Fig 6-19, from the 6' and 9', ±9 in: the two disagree, so the spread is wide;
+    # rounded to 20 courses)
+    width: 31.5 in
+    height: 50 in
+    head: arch
 draft:
   type: up
-  flue_port: # the dome's main flue
-    diameter: 15 in
+  exits:
+    - through: roof # the dome's main flue, 15 in round (Fig 6-19)
+      port:
+        diameter: 15 in
+    - through: roof # the four 5 in corner flues (Fig 6-19, p.158), drawn against both walls at
+      # each corner: centres 2½ in in from each wall
+      port:
+        diameter: 5 in
+      places:
+        - { across: -45.5 in, along: -45.5 in }
+        - { across: 45.5 in, along: -45.5 in }
+        - { across: -45.5 in, along: 45.5 in }
+        - { across: 45.5 in, along: 45.5 in }
