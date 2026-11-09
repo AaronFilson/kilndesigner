@@ -34,7 +34,8 @@ roof:
   rise: 3.75 in # 1½ in per foot of span
 loading:
   type: door
-  face: front
+  face: front # "DOOR" at the front end of the side section (Fig 5-18)
+  door: hinged # a hung steel door with latches (photo, Fig 5-21); its size isn't printed
 lining:
   walls:
     - material: ifb-jm28
@@ -51,17 +52,34 @@ heat:
         width: 4.5 in
         height: 5 in
       places:
+        # Left ports toward the front, right ports toward the back ("LEFT BURNER POINTS (front)",
+        # "BURNER PORTS RIGHT BACK", Fig 5-17); drawn about 4 in from the end walls (Fig 5-18),
+        # so 12 in off the middle of the 36 in wall (drawing)(?).
         - wall: left
+          across: 12 in
           up: 18 in
         - wall: left
+          across: 12 in
           up: 39 in
         - wall: right
+          across: 12 in
           up: 9 in
         - wall: right
+          across: 12 in
           up: 28 in
     supply:
       type: tank
       gallons: 500
+spy_holes:
+  # Three "SPY AND DRAW HOLES" up the door (Fig 5-18), by scale about 13, 25 and 37 in above the
+  # floor (drawing)(?); their size isn't printed: engine default.
+  places:
+    - wall: front
+      up: 13 in
+    - wall: front
+      up: 25 in
+    - wall: front
+      up: 37 in
 draft:
   type: down
   flue_wall: back

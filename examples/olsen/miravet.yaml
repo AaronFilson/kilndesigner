@@ -20,7 +20,11 @@
 # Not modelled: the sub-chamber and its pots (the engine has one chamber); the floor's loss, into
 # the hot sub-chamber under it; the buried part of the walls; the four corner flues (only the main
 # flue is given). The floor flues are given as the firebox's inlets, though the gases reach them
-# through the sub-chamber.
+# through the sub-chamber. The door is drawn as an arched doorway in the chamber's wall on the
+# firebox side, by a "TARGET POT" (Fig 6-19 and its inset section); its size isn't printed, so
+# the engine's whole-wall door stands for it. The firebox's inside height, "6'6"" inside its 8 ft
+# cube, and its mouth's sill, "3'" (Fig 6-19), are read off the drawing; the mouth's sill isn't
+# expressible.
 schema: 1
 name: Miravet medieval kiln
 units: us
@@ -52,6 +56,7 @@ heat:
       - position: front
         width: 96 in
         length: 96 in
+        height: 78 in # "6'6"" inside the 8 ft firebox cube (Fig 6-19) (drawing)(?)
         inlet: # the floor flues
           width: 6 in
           height: 6 in

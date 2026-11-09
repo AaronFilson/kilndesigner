@@ -271,6 +271,14 @@ def _cut(parts: list[Part], axis: Axis, at: float, u: Axis, v: Axis) -> list[Rec
                 else:
                     rects.append(Rect(a, p.lo[1], b - a, p.length_y, fill, p.name))
             continue
+        if p.arch is not None and axis == 2:
+            # The plan crosses an arch springing below it (a groundhog's, from the floor): its
+            # ring's legs, as spans of x, run along y; a cut at the springing is taken just above
+            # it, off the outline's bottom edge
+            if p.lo[2] - 1e-6 <= at <= p.hi[2] + 1e-6:
+                for a, b in _crossings(tuple(arch_outline(p)), 1, max(at, p.lo[2] + 1e-3)):
+                    rects.append(Rect(a, p.lo[1], b - a, p.length_y, fill, p.name))
+            continue
         if p.arch is not None:
             if p.lo[axis] - 1e-6 <= at <= p.hi[axis] + 1e-6 and (rect := _arch_cut(p, axis)):
                 rects.append(rect)

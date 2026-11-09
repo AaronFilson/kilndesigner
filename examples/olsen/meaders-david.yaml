@@ -18,7 +18,10 @@
 # groundhogs are dug in under earth or braced with rock (p.112), so the floor is on the ground.
 # Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
 # p.119). Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: the 18 in (faint) bag wall. No grate or ash pit is printed: the wood burns on the
+# Not modelled: eight exit flues are drawn along the foot of the back wall (Fig 4-105, drawing):
+# the engine takes one exit flue, so one is entered. The door is drawn dashed in the front arch,
+# left of centre, with no size printed: the engine's door stands for it. A row of openings is
+# drawn along the foot of the front arch (not labelled). The 18 in (faint) bag wall. No grate or ash pit is printed: the wood burns on the
 # firebox floor.
 schema: 1
 name: David Meaders's groundhog

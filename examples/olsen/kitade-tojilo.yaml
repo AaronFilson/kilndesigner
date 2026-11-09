@@ -17,6 +17,8 @@
 # Fig 4-35, p.93): the book gives no cone for this kiln. The 6 in between the grate bars is taken
 # as their clear gap. No chimney or exit flue is given, so the engine sizes them, and the steel
 # that holds the arch: the book shows no earth or masonry holding it.
+# The firebox's height above the grate is 18 in at its low wall, the 42 in from the ash pit's
+# bottom less the 24 in ash pit (Fig 8-11, derived).
 # Not modelled: the other chambers. The firebox's roof slopes at 30° up to the chamber, 42 in
 # above the ash pit's bottom, with a 9 × 12 in flue inlet 12 in above the grate (Fig 8-11); the
 # inlets aren't counted, so they are left out, as are the two 12 × 18 in air holes in the
@@ -54,6 +56,7 @@ heat:
         position: front
         width: 15 in
         length: 4 ft # the chamber's full width (p.202)
+        height: 18 in # 42 in from the ash pit's bottom less its 24 in (Fig 8-11, derived)
         grate:
           width: 15 in
           length: 4 ft
