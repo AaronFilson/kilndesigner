@@ -32,9 +32,10 @@
 # The chimney's height is Rule 5's (p.80), 3 × (chamber + firebox) plus ⅓ of the horizontal pull,
 # counting the firebox as the fast-fire does (p.140). Propane at 3.50 USD a gallon; the site at
 # 50 °F, its coldest 20 °F.
-# Wood per firing: give site.wood, your own heating value, moisture and firebox efficiency (no
-# defaults; docs/research/wood-fuel.md lists sourced starting values, and Olsen's under ¼ cord for
-# the 12–16 ft³ kiln to compare). Not modelled: a firing that changes fuel part way.
+# Wood per firing: site.wood is a Hawai'i starting point, kiawe seasoned a year
+# (docs/research/wood-fuel.md §6), not the user's measured wood; each value says its source, and
+# the firebox efficiency is a placeholder. Olsen's under ¼ cord for the 12–16 ft³ kiln (p.143) is
+# reported to compare. Not modelled: a firing that changes fuel part way.
 schema: 1
 name: Olsen fast-fire, 32 cu ft stacking, propane or wood
 units: us
@@ -109,3 +110,16 @@ site:
   ambient: 50 degF
   coldest_ambient: 20 degF
   propane_price: 3.50 USD/gallon
+  wood: # Hawai'i, kiawe (Prosopis pallida) seasoned a year: docs/research/wood-fuel.md §6
+    # Generic oven-dry wood, net (Forest Research, wood-fuel.md [W2]); no net value for kiawe found
+    heating_value: 19 MJ/kg
+    # FPL-RN-0268 (Simpson 1998) outdoor EMC, Hilo's annual mean 14.0 % dry basis = 12.3 % wet,
+    # the highest of the four Hawai'i stations; assumes split wood under cover has reached it
+    moisture: 12 percent
+    # PLACEHOLDER, not a kiln value: no source gives a kiln firebox's efficiency. MU Extension's
+    # non-airtight stove, about 25 % (wood-fuel.md §3, [W1]); measure your own
+    firebox_efficiency: 25 percent
+    # Kiawe sp. gr. 0.85 (Little & Skolmen, USDA Agric. Handbook 679, 1989) × 62.4 lb/ft³ × 65 ft³
+    # of solid wood, the low end of a cord for crooked sticks (MU G5450): 3,450 lb oven-dry
+    cord_weight: 3450 lb/cord
+    # price left out: no dated public price per cord for Hawai'i was found (wood-fuel.md §6)
