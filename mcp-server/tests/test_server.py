@@ -9,7 +9,8 @@ from typing import Any
 import anyio
 import pytest
 from mcp import Client
-from mcp.types import TextContent
+from mcp.shared.exceptions import MCPError
+from mcp.types import TextContent, TextResourceContents
 
 from kilndesigner_mcp import server
 from kilndesigner_mcp.server import mcp
@@ -57,6 +58,7 @@ def test_lists_the_tools_all_read_only() -> None:
         "build_design",
         "simulate_firing",
         "start_design",
+        "compare_designs",
     }
     assert all(t.annotations and t.annotations.read_only_hint for t in tools)
 
@@ -194,3 +196,164 @@ def test_main_picks_the_transport(monkeypatch: pytest.MonkeyPatch) -> None:
     assert seen[0] == ((), {})
     assert seen[1][0] == ("streamable-http",)
     assert seen[1][1]["stateless_http"] is True
+
+
+def read(uri: str) -> Any:
+    """Read a resource; its JSON."""
+
+    async def run() -> str:
+        async with Client(mcp) as client:
+            result = await client.read_resource(uri)
+        content = result.contents[0]
+        assert isinstance(content, TextResourceContents)
+        return content.text
+
+    return json.loads(anyio.run(run))
+
+
+def read_fails(uri: str) -> str:
+    async def run() -> str:
+        async with Client(mcp) as client:
+            with pytest.raises(MCPError) as e:
+                await client.read_resource(uri)
+        return str(e.value)
+
+    return anyio.run(run)
+
+
+def test_compare_two_designs_with_the_working() -> None:
+    gas = (EXAMPLES / "gas-crossdraft.yaml").read_text(encoding="utf-8")
+    result = ok("compare_designs", {"designs": ["example:electric-front-loader", gas]})
+    assert result["rows"][0] == "Chamber volume"
+    assert len(result["table"]["Chamber volume"]) == 2
+    assert result["table"]["Installed power"][1] is None
+    electric, burners = result["designs"]
+    assert electric["design"] == "electric-front-loader"
+    assert electric["working"]["Heat loss at top"]
+    assert electric["working"]["Installed power"]
+    assert burners["working"]["Burner input"]
+    assert "lines" in burners["working"]["Materials (priced)"]
+    assert "firing" not in electric
+    hybrid = ok(
+        "compare_designs",
+        {"designs": ["example:pnw-hybrid-crossdraft", "template:gas-crossdraft"]},
+    )["designs"][0]
+    assert hybrid["working"]["Switch to burners at"]
+
+
+def test_compare_refusals(monkeypatch: pytest.MonkeyPatch) -> None:
+    assert "two or more" in call("compare_designs", {"designs": ["template:gas-crossdraft"]})[1]
+    assert call("compare_designs", {"designs": ["template:nope", "template:gas-crossdraft"]})[0]
+    assert call("compare_designs", {"designs": ["example:nope", "template:gas-crossdraft"]})[0]
+
+    def refuse(_: object) -> None:
+        raise ValueError("outside the checked range")
+
+    monkeypatch.setattr(server, "design_report", refuse)
+    is_error, text = call(
+        "compare_designs", {"designs": ["template:gas-crossdraft", "template:gas-crossdraft"]}
+    )
+    assert is_error
+    assert "outside the checked range" in text
+
+
+def test_compare_with_a_firing_refused(monkeypatch: pytest.MonkeyPatch) -> None:
+    def refuse(_: object) -> None:
+        raise ValueError("not simulated here")
+
+    monkeypatch.setattr(server, "simulate_firing_run", refuse)
+    result = ok(
+        "compare_designs",
+        {"designs": ["template:gas-crossdraft", "example:electric-front-loader"], "simulate": True},
+    )
+    assert result["designs"][0]["firing"] == {"refused": "not simulated here"}
+
+
+@pytest.mark.slow
+def test_compare_with_the_firings() -> None:
+    result = ok(
+        "compare_designs",
+        {"designs": ["example:electric-front-loader", "example:round-electric"], "simulate": True},
+    )
+    firing = result["designs"][0]["firing"]
+    assert firing["duration_h"] > 0
+    assert firing["energy_kwh"] > 0
+    assert firing["working"]
+    assert "points" not in firing
+
+
+def test_lists_the_resources_and_prompts() -> None:
+    async def run() -> tuple[set[str], set[str], set[str]]:
+        async with Client(mcp) as client:
+            resources = {str(r.uri) for r in (await client.list_resources()).resources}
+            found = (await client.list_resource_templates()).resource_templates
+            prompts = {p.name for p in (await client.list_prompts()).prompts}
+        return resources, {t.uri_template for t in found}, prompts
+
+    resources, templates, prompts = anyio.run(run)
+    assert resources == {
+        "kilndesigner://schema/design",
+        "kilndesigner://materials",
+        "kilndesigner://alloys",
+    }
+    assert templates == {
+        "kilndesigner://materials/{id}",
+        "kilndesigner://templates/{id}/checks",
+        "kilndesigner://examples/{name}/checks",
+    }
+    assert prompts == {"design_from_brief", "explain_finding"}
+
+
+def test_the_schema_materials_and_alloys() -> None:
+    assert "chamber" in read("kilndesigner://schema/design")["properties"]
+    listed = read("kilndesigner://materials")["materials"]
+    assert all(m["source"] for m in listed)
+    one = read(f"kilndesigner://materials/{listed[0]['id']}")
+    assert one == listed[0]
+    assert "the library has" in read_fails("kilndesigner://materials/nope")
+    assert all(a["source"] for a in read("kilndesigner://alloys")["alloys"])
+
+
+def test_the_formula_sheets_behind_the_checks(monkeypatch: pytest.MonkeyPatch) -> None:
+    sheets = [
+        read(f"kilndesigner://examples/{p.stem}/checks") for p in sorted(EXAMPLES.glob("*.yaml"))
+    ]
+    checks = [c for s in sheets for c in s["checks"]]
+    assert checks
+    # A formula sheet, or a stated rule where there is no formula (ADR 0013)
+    assert {c["level"] for c in checks} >= {"warning"}
+    assert all(c["check"]["cells"] or c["check"]["rule"] for c in checks)
+    assert read("kilndesigner://templates/gas-crossdraft/checks")["design"]
+    assert "No template" in read_fails("kilndesigner://templates/nope/checks")
+    assert "No example" in read_fails("kilndesigner://examples/nope/checks")
+
+    def refuse(_: object) -> None:
+        raise ValueError("outside the checked range")
+
+    monkeypatch.setattr(server, "design_report", refuse)
+    failed = read_fails("kilndesigner://templates/gas-crossdraft/checks")
+    assert "outside the checked range" in failed
+
+
+def test_the_prompts() -> None:
+    async def run() -> tuple[str, str]:
+        async with Client(mcp) as client:
+            brief = await client.get_prompt(
+                "design_from_brief", {"brief": "cone 10 gas, 12 cu ft, under $3000"}
+            )
+            explain = await client.get_prompt(
+                "explain_finding", {"design": "name: x", "finding": "W1"}
+            )
+        texts: list[str] = []
+        for result in (brief, explain):
+            content = result.messages[0].content
+            assert isinstance(content, TextContent)
+            texts.append(content.text)
+        return texts[0], texts[1]
+
+    brief, explain = anyio.run(run)
+    assert "cone 10 gas, 12 cu ft" in brief
+    for tool in ("start_design", "build_design", "compare_designs"):
+        assert tool in brief
+    assert "W1" in explain
+    assert "name: x" in explain

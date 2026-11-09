@@ -469,6 +469,26 @@ client is ready, since the CLI can produce the client's plans before the app exi
   prompts; mounting `/mcp` on the API with Glazecalc's Host/Origin checks, limits, tokens and
   OAuth once M5 has sign-in; the conformance suite and Inspector in CI; a registry listing.
 
+### Status (2026-11-08): M8 compares, with resources and prompts
+
+- **`compare_designs`**: two or more designs (YAML, `template:<id>` or `example:<name>`) built and
+  set side by side in the CLI's rows (chamber volume, heat loss, hottest face, installed power or
+  burner input, propane supply, hand-over, priced materials, errors/warnings), each row with the
+  report's own working and every design's findings; with `simulate`, each firing's time, energy,
+  fuel and cost with its working, or the engine's reason it isn't simulated. The rows moved from
+  the CLI to `kilndesigner.compare`, so both surfaces show the same ones. The stacking volume is
+  not estimated (no source in `docs/research/`); the chamber volume is compared.
+- **Resources**: `kilndesigner://schema/design` (the design file's JSON Schema),
+  `kilndesigner://materials` and `kilndesigner://materials/{id}` (each material's values with its
+  source and status), `kilndesigner://alloys`, and the formula sheets (ADR 0013) behind a
+  template's or a top-level example's findings: `kilndesigner://templates/{id}/checks`,
+  `kilndesigner://examples/{name}/checks`.
+- **Prompts**: `design_from_brief` (start_design → resize → validate → build → compare) and
+  `explain_finding` (a finding explained from its sheet, margin and lever).
+- **Left for M8**: mounting `/mcp` on the API with Host/Origin checks, limits, tokens and OAuth
+  once M5 has sign-in; the MCP Inspector and conformance suite in CI (both are fetched with npx at
+  run time, so they don't run offline); a registry listing.
+
 ## Quality bar
 
 - **Physics:** every module has a validation notebook comparing it with a published example
