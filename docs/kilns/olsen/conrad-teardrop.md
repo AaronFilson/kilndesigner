@@ -45,8 +45,8 @@ No YAML values changed in this pass. Only the notes were added.
 | Door | 33" × 37", far jamb 48" from the chimney wall | same, right wall (side not printed) | matches |
 | Exit flue | 12" high under a 13" block; width not printed | engine-sized flue | differs: the width isn't printed |
 | Chimney | "only 9 x 9in." (p.124); height cut off | engine-sized, comes out 9 × 9 in | matches the section |
-| Passive damper | 2½ × 4 at the chimney's foot | none | not expressible |
-| Damper slot | in the chimney about 73" up (16 + 24 + 33, faint (?)) | the engine's shelf-slot damper | partly |
+| Passive damper | 2½ × 4 at the chimney's foot | a 2½ × 4 in hole through the chimney's foot (`draft.passive_air`; which way each runs (?)) | modelled |
+| Damper slot | in the chimney about 73" up (16 + 24 + 33, faint (?)) | the engine's shelf slot at 73 in (`draft.damper.up`) | modelled (the slot's size not printed) |
 | Spy holes | none drawn | the engine's three | differs |
 | Walls | double side walls, buttressed with stones and concrete (Figs 4-144, 4-145) | 9 in, buttressed | matches |
 

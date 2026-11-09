@@ -43,6 +43,7 @@ from kilndesigner.fire_checks import (
 from kilndesigner.firebox_parts import COURSE_SOURCE, firebox_corbel
 from kilndesigner.heatloss import top_temperature
 from kilndesigner.model import Dome, Firebox, Kiln, Port, Section, SprungArch
+from kilndesigner.openings import exit_flues_step
 from kilndesigner.units import Q_, Quantity, si
 from kilndesigner.working import Finding, Step, show
 
@@ -299,11 +300,23 @@ def design_fire(kiln: Kiln) -> FireDesign:
             reference=GRATE,
         )
     )
-    flue_in2 = (
-        _port_in2(draft.flue_port)
-        if draft is not None and draft.flue_port is not None
-        else FLUE_INTO_CHIMNEY * chimney_in2
-    )
+    if draft is not None and draft.chimneys > 1 and section_note == "as built":
+        # Several chimneys as built: the grate's ratio is to their sections together (p.77)
+        each = chimney_in2
+        chimney_in2 *= draft.chimneys
+        working.append(
+            Step(
+                name="Chimneys' section together",
+                value=f"{chimney_in2:,.0f} in²",
+                formula="chimneys × each one's section",
+                inputs={"chimneys": str(draft.chimneys), "each": f"{each:,.0f} in²"},
+                reference=GRATE,
+            )
+        )
+    stated = draft.exit_area_in2() if draft is not None else None
+    flue_in2 = stated if stated is not None else FLUE_INTO_CHIMNEY * chimney_in2
+    if draft is not None and draft.exits is not None:
+        working.append(exit_flues_step(draft.exit_sum_text(), flue_in2))
 
     # Fuel by fuel: wood's grate against the chimney, coal's grate or oil's area against the floor
     floor = si(kiln.chamber.width, "in") * si(kiln.chamber.length, "in")

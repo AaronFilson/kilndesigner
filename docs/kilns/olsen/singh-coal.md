@@ -37,9 +37,9 @@ of medium-duty firebrick (the thicknesses and brick are assumptions, said in the
 | Stoking hole | 15" × 13" (Fig 5-11) | 15 × 13 in | matches |
 | Coal pit outside | 4' × 2' at each firebox (Fig 5-10) | `coal_pit` 24 in across, 48 in out, depth not given; reported, not drawn | matches (which way is across the mouth: question 5) |
 | Notched wall | 9" deep, 2' wide, 3' long at each firebox (p.134) | none | not expressible |
-| Floor exit flues | twelve 6" × 6", evenly spaced (Fig 5-10) | one flue port | not expressible |
+| Floor exit flues | twelve 6" × 6", evenly spaced (Fig 5-10) | twelve 6 × 6 in in an even grid in the floor (`draft.exits`) | matches (places not printed) |
 | Flue collection channel | 12" deep under a 9" floor (Fig 5-11) | floor on the ground; not drawn | not expressible |
-| Flue channel to chimney | 24" × 16" (Fig 5-10) | flue port 24 × 16 in | matches |
+| Flue channel to chimney | 24" × 16" (Fig 5-10) | `draft.connection` 24 × 16 in | matches |
 | Chimney | 24" × 24" inside, 30' tall, 25–30' away (Fig 5-10) | 24 × 24 in, 30 ft, run 27½ ft | matches |
 | Damper | in the chimney entrance (Fig 5-10) | engine's damper note (a shelf in a slot) | engine default |
 | Door | arched, between two fireboxes (Fig 5-10) | the front wall is a bricked door | differs |

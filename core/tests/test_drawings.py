@@ -47,11 +47,12 @@ def _parts(view: View) -> set[str]:
     return {r.layer for r in view.rects}
 
 
-def test_an_arch_springing_from_the_floor_leaves_the_plan_to_its_walls() -> None:
-    # A groundhog's arch springs from the floor (chamber height 0): the plan's cut grazes it
+def test_a_groundhogs_plan_cuts_the_legs_of_its_arch() -> None:
+    # A groundhog's arch springs from the floor (chamber height 0): the plan's cut, just above
+    # the springing, passes through the arch ring's two legs, which stand for its side walls
     *_, plan = section_views(_load("olsen/groundhog-basic"))
     assert plan.rects
-    assert not any("arch" in r.layer for r in plan.rects)
+    assert any("arch" in r.layer for r in plan.rects)
 
 
 @pytest.fixture(scope="module")

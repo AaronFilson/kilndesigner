@@ -163,8 +163,12 @@ def straight_ring_text(r: Ring, us: bool) -> str:
         per_ft = r.mortar * 12 * IN / IN**3  # in³ for each foot of wall height
         out += (
             f"; the joints open to {length_text(r.joint, us)} at the outside, about "
-            f"{per_ft:.0f} in³ of mortar in them for each foot of wall height (no source sets a "
-            "widest joint)"
+            f"{per_ft:.0f} in³ of mortar in them for each foot of wall height"
+            + (
+                " (Beall gives ¼ in as the most for a refractory mortar joint, p.143)"
+                if r.joint > JOINT_MAX_IN * IN + 1e-9
+                else ""
+            )
         )
     elif r.series in ("cut", "cut2.5", "cut3"):
         assert r.angle is not None
@@ -255,6 +259,23 @@ def wedge_mortar(rings: list[RingPlan], height: float, us: bool) -> tuple[Quanti
         priced_amount=0.0,
     )
     return quantity, step
+
+
+BEALL = (
+    "Beall, Masonry Design and Detailing, 5th ed., §6.4.1 p.143: 'Mortar joints for refractory "
+    "mortars should not exceed 1/4 in.'; refractory-movement-and-mortar.md §2 [M8]"
+)
+JOINT_MAX_IN = 0.25
+
+
+def joint_sheet(id: str, joint_in: float) -> Sheet:
+    """A mortar joint the design states, against Beall's ¼ in for refractory mortar."""
+    s = Sheet(id, "Mortar joint no thicker than ¼ in", reference=BEALL)
+    s.given("j", "the widest joint", Q_(joint_in, "in"), "in", source="the design")
+    s.given("j_max", "the most for a refractory mortar joint", Q_(JOINT_MAX_IN, "in"), "in",
+            source=BEALL)  # fmt: skip
+    s.require("j", "<=", "j_max", level="warning")
+    return s
 
 
 def cut_ring_sheet(inside_diameter: float, depth: float) -> Sheet:
@@ -471,6 +492,16 @@ def plan_round_masonry(kiln: Kiln) -> MasonryPlan:
         top = height - (courses - 1) * course
         ripped = abs(top - course) >= TOL
         ring_plans.append(RingPlan(part, within, r, depth, series, one, courses, course, top))
+        stated = "rings" in c.model_fields_set  # the design's own choice, not the default
+        if series == "mortar" and stated and one.joint is not None:
+            joint = joint_sheet("masonry.joint", one.joint / IN).check()
+            if joint.status != "pass":
+                findings.append(Finding.failed(joint, (
+                    f"Round wall: the {length_text(2 * r, us)} ring of straights with mortar in "
+                    f"the wedge joints opens them to {length_text(one.joint, us)} at the outside, "
+                    f"thicker than the ¼ in Beall gives as the most for a refractory mortar joint. "
+                    "Cut the straights to the angle (chamber.rings: cut), or use arch bricks."
+                )))  # fmt: skip
         is_cut = series in ("cut", "cut2.5", "cut3")
         if is_cut and (check := cut_ring_sheet(2 * r, depth).check()).status != "pass":
             n = math.floor(cut_bricks(2 * r, depth))

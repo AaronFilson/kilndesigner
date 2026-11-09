@@ -3073,6 +3073,16 @@
         "note": "½ in is the smallest used here, because builders use it (kiln-hardware.md §4.2 [S7] [S17]).",
         "reference": "Fastenal thread table; kiln-hardware.md §4.7.3 [S29]; HarbisonWalker Brick Installation Guide; kiln-hardware.md §4.3 [S20]",
         "value": "1/2-13: 4,251 psi"
+      },
+      {
+        "formula": "ΔS = S × 3/32 in per ft (to 2400 °F); a = ½ ΔS",
+        "inputs": {
+          "S, the span": "28 in"
+        },
+        "name": "Expansion allowance, the arch's span",
+        "note": "No expansion joint in the masonry over the arch or near its springing (BIA). How far the arch rises as it grows in a held span isn't worked out: no published method or measurement was found (refractory-movement-and-mortar.md §1.2).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]",
+        "value": "grows 0.219 in hot; 0.109 in of it for the frame to give"
       }
     ]
   },

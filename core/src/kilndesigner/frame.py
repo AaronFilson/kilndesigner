@@ -2038,8 +2038,14 @@ def design_frame(kiln: Kiln) -> FrameDesign:
     """The frame, and for a door in part of a wall, what spans the door (door.py)."""
     from kilndesigner.door import door_head
     from kilndesigner.foundation import platform_bearing
+    from kilndesigner.movement import expansion, ifb_notes
 
     frame = _design_frame(kiln)
+    moving, allowance = expansion(kiln, frame.kind)
+    frame = frame.model_copy(update={
+        "working": [*frame.working, *moving, *ifb_notes(kiln)],
+        "findings": [*frame.findings, *allowance],
+    })  # fmt: skip
     if isinstance(kiln.roof, SprungArch) and kiln.roof.crossing is not None:
         from kilndesigner.crossing import crossing_note, crossing_statics
 

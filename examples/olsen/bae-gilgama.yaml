@@ -26,9 +26,9 @@
 # (hohr-2003, p.122). The door: engine default.
 # The 18 in step is entered as the combustion area's step, from its floor (no grate) up to the
 # chamber floor (p.108).
-# Not modelled: the teardrop (oval) plan, as a box 4 × 6 ft. The engine takes one exit flue and
-# one chimney, so one of the two 4½ × 9 in flues and stacks is entered (a brick on end, 9 in
-# high); the dampers on top of the stacks can't be entered. The chimney is entered at the printed 8 ft; the engine
+# Not modelled: the teardrop (oval) plan, as a box 4 × 6 ft. The two 4½ × 9 in flues (a brick on
+# end, 9 in high) and their two stacks are entered, spread evenly along the back wall, with a
+# damper on top of each. The chimney is entered at the printed 8 ft; the engine
 # measures a climbing kiln's chimney from the floor at the firing end, so its top is understated
 # by the floor's rise to it, about 32 in. Its section isn't printed: engine default. The sealing
 # for black ware. The floor's loss into dry soil is worked out at steady state.
@@ -63,8 +63,14 @@ heat:
 draft:
   type: cross
   flue_wall: back
-  flue_port:
-    width: 4.5 in
-    height: 9 in
+  exits: # two exit flues 4½ × 9 in in the back wall (p.108), spread evenly (places not printed)
+    - through: back
+      count: 2
+      port:
+        width: 4.5 in
+        height: 9 in
+  chimneys: 2 # each flue with its own stack (Fig 4-67, drawing)
+  damper:
+    kind: top # "DAMPER ON TOP" (Fig 4-67)
   chimney:
     height: 8 ft
