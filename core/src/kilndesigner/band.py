@@ -61,9 +61,11 @@ def band_temperature(kiln: Kiln) -> float:
     return max(f.layers[-1].cold_side_k for f in faces) - 273.15
 
 
-def dome_band(kiln: Kiln, ring_lb: float) -> tuple[list[Step], Finding]:
-    """The band for a dome's ring tension ``ring_lb`` (lb): the area it needs, and the engine's
-    ¼ × 2 in flat bar checked against the allowable stress hot."""
+def dome_band(
+    kiln: Kiln, ring_lb: float, source: str = "frame.py: membrane theory (Timoshenko §106)"
+) -> tuple[list[Step], Finding]:
+    """The band for a dome's ring tension ``ring_lb`` (lb), worked out as ``source`` says: the
+    area it needs, and the engine's ¼ × 2 in flat bar checked against the allowable stress hot."""
     from kilndesigner.frame import steel_data
 
     data = steel_data()
@@ -87,7 +89,7 @@ def dome_band(kiln: Kiln, ring_lb: float) -> tuple[list[Step], Finding]:
         reference=f"{band['ky_source']}; {band['safety_source']}; {data['binding_stress_source']}",
     )
     s.given("H", "the dome's ring tension at its springing", Q_(ring_lb, "lbf"),
-            source="frame.py: membrane theory (Timoshenko §106)")  # fmt: skip
+            source=source)  # fmt: skip
     s.given("T_b", "the band's temperature", Q_(t_c, "degC"), "degC", source=TEMPERATURE_SOURCE)
     s.given("F_y0", "A36 yield stress, cold", Q_(hot["fy_psi"], "psi"), source=hot["source"])
     s.given("k_y", "f_y,θ / f_y at T_b", k, source=f"{band['ky_source']}, interpolated")

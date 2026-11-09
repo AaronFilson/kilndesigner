@@ -29,7 +29,7 @@ from kilndesigner.working import Finding, Step, show
 if TYPE_CHECKING:
     from kilndesigner.bom import BomLine
     from kilndesigner.frame import FrameDesign
-    from kilndesigner.model import Kiln
+    from kilndesigner.model import Face, Kiln
     from kilndesigner.run_parts import RunLayout
     from kilndesigner.shape import Arch, ChamberShape, FaceShape
 
@@ -783,6 +783,8 @@ def _arches_held(kiln: Kiln) -> FrameDesign:
     )
     from kilndesigner.model import SprungArch
     from kilndesigner.shape import Arch
+    from kilndesigner.vault import _layers as _wall  # pyright: ignore[reportPrivateUsage]
+    from kilndesigner.vault import wall_slide
 
     roof = kiln.roof
     assert isinstance(roof, SprungArch)
@@ -790,12 +792,14 @@ def _arches_held(kiln: Kiln) -> FrameDesign:
     working: list[Step] = []
     findings: list[Finding] = []
     hottest = 0.0
-    for i, (depth, _, rise) in enumerate(sizes_of(kiln, "in")):
+    sizes = sizes_of(kiln, "in")
+    for i, (depth, _, rise) in enumerate(sizes):
         name = f"chamber {i + 1}'s arch" if kiln.chamber.chambers > 1 else "the arch"
         if share is None:
             arch: Arch | PeakArch = Arch(depth, rise)
             weight, ring = _roof_weight(kiln, arch)
             cold = cold_thrust_factor(depth, rise) * weight
+            front = back = weight / 2
             factor = heated_thrust_factor(depth, rise, ring)
             hot = min((factor if factor is not None else MAX_PRINTED_HEATED) * cold,
                       MAX_PRINTED_HEATED * cold)  # fmt: skip
@@ -863,6 +867,22 @@ def _arches_held(kiln: Kiln) -> FrameDesign:
                 ),
             )
         )
+        # The kiln's front and back walls stand alone under the end arches' springings (the
+        # walls between chambers have an arch on each side); sliding there (review part 2, #3)
+        ends: list[tuple[Face, float]] = []
+        if i == 0:
+            ends.append(("front", front))
+        if i == len(sizes) - 1:
+            ends.append(("back", back))
+        for face, load in ends:
+            step, slid = wall_slide(
+                kiln, cold, load, _wall(kiln, face), face,
+                f"The {face} wall under {name}",
+                thrust_source=f"{reference}: {name}'s cold H and its springing's load",
+                sheet_id=f"frame.end-wall-slide-{face}",
+            )  # fmt: skip
+            working.append(step)
+            findings += slid
     findings.append(
         Finding(
             level="info",
@@ -972,12 +992,14 @@ class PeakArch:
         mid = ring / 2
         total = self.arc_length
         pts: list[tuple[float, float, float, float]] = []
-        for which, (r, phi, a) in enumerate(self.halves()):
+        peak = self.front_run
+        for which, (r, phi, _) in enumerate(self.halves()):
             for k in range(n):
                 ang = phi * (k + 0.5) / n  # from the peak out towards the springing
                 du = (r + mid) * math.sin(ang)
                 z = self.rise - r + (r + mid) * math.cos(ang)
-                u = a - du if which == 0 else a + du
+                # Both halves are measured from the peak, front_run along from the front springing
+                u = peak - du if which == 0 else peak + du
                 pts.append((u, z, ang, r * phi / n / total))
         return sorted(pts)
 

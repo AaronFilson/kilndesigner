@@ -330,6 +330,31 @@ def test_an_offset_peak_moves_the_load_to_the_longer_half() -> None:
     assert peak.line_gap(9) < peak.line_gap(3)
 
 
+def test_the_mid_line_measures_both_halves_from_the_peak() -> None:
+    # Physics review part 2, finding 2: the back half was placed from the back run
+    peak, ring = PeakArch(48, 12, 0.35), 4.5
+    pts = peak.mid_line(ring)
+    us = [u for u, _, _, _ in pts]
+    mid = ring / 2
+    assert min(us) == pytest.approx(-mid * math.sin(peak.front_angle), abs=0.2)
+    assert max(us) == pytest.approx(48 + mid * math.sin(peak.back_angle), abs=0.2)
+    front = [u for u, _, _, _ in pts if u < peak.front_run]
+    assert len(front) == len(pts) // 2
+    assert sum(w for _, _, _, w in pts) == pytest.approx(1)
+
+
+def test_the_line_gap_is_mirror_symmetric() -> None:
+    for span, rise, share, ring in [(48, 12, 0.35, 4.5), (60, 20, 0.30, 4.5), (36, 6, 0.40, 4.5)]:
+        assert PeakArch(span, rise, share).line_gap(ring) == pytest.approx(
+            PeakArch(span, rise, 1 - share).line_gap(ring), rel=1e-6
+        )
+    # The review's corrected gaps (compare.py), and the level arch as before the fix
+    assert PeakArch(48, 12, 0.5).line_gap(4.5) == pytest.approx(0.344, abs=0.001)
+    assert PeakArch(48, 12, 0.35).line_gap(4.5) == pytest.approx(0.656, abs=0.002)
+    assert PeakArch(48, 12, 0.25).line_gap(4.5) == pytest.approx(1.372, abs=0.003)
+    assert PeakArch(48, 18, 0.35).line_gap(9) == pytest.approx(0.735, abs=0.002)
+
+
 def _peaked(share: str, ring: str = "9 in # as the Bidai kiln's arch") -> str:
     return _edit(
         "kyoto-climbing",

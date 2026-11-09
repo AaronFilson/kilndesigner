@@ -42,9 +42,9 @@ Ranked by what a user's result could suffer: safety first, then size of the chan
 
 | # | Finding | Mark | Effect on a user |
 |---|---|---|---|
-| 1 | A round dome's band is sized on the membrane ring tension even past 51.8°, where the membrane force falls to nothing at a hemisphere and Lau's cracked dome still pushes | **fix now** | Band under-sized near a hemisphere (membrane 0 against Lau 20 lb/ft at α = 90° in the example) |
-| 2 | `PeakArch.mid_line` puts the back half's points measured from the back run, not from the peak: `line_gap` is wrong for any off-centre peak | **fix now** | False "leaves the ring" warnings (gap 11 to 458 against a true 0.66 to 1.41); no example uses `peak_at` yet |
-| 3 | No sliding check at the springing or the bed joints under it for arches whose walls stand alone (along-vault end walls, masonry-held arches) | **fix now** (as a warning) | A 48 in arch at 1.5 in/ft on a 13½ in end wall: friction alone can't hold the top 41 in of wall |
+| 1 | A round dome's band is sized on the membrane ring tension even past 51.8°, where the membrane force falls to nothing at a hemisphere and Lau's cracked dome still pushes | **fix now**, done 2026-11-09 | Band under-sized near a hemisphere (membrane 0 against Lau 20 lb/ft at α = 90° in the example) |
+| 2 | `PeakArch.mid_line` puts the back half's points measured from the back run, not from the peak: `line_gap` is wrong for any off-centre peak | **fix now**, done 2026-11-09 | False "leaves the ring" warnings (gap 11 to 458 against a true 0.66 to 1.41); no example uses `peak_at` yet |
+| 3 | No sliding check at the springing or the bed joints under it for arches whose walls stand alone (along-vault end walls, masonry-held arches) | **fix now** (as a warning), done 2026-11-09 | A 48 in arch at 1.5 in/ft on a 13½ in end wall: friction alone can't hold the top 41 in of wall |
 | 4 | The middle-half check uses one fixed three-hinged line, not the best line | proposed | Over-strict: a level 4.5 in ring over 48 in at 12 in rise "strays 34 %" though it is 10 times the thinnest that stands |
 | 5 | A catenary's feet are given the cold thrust only | proposed | Hot, feet held: 1.4× (4½ in ring) to 1.8× (9 in) the reported 13 lb/ft |
 | 6 | Along-vault end walls held only by mortar in service ("building" frame) are checked cold only | proposed | Hot thrust 1.3–5.3× cold is not checked against the wall |
@@ -95,6 +95,11 @@ Lau Eq. 3.6 (p.58), W_dome from Eq. 2.5 (p.36); both are already coded and cited
 - At α₀ < 51.8°: unchanged (golden reports for round kilns stay the same).
 - Past 51.8° with t/R outside 0.03–0.20: a refusal finding, no band size.
 
+**Done (2026-11-09).** `DomeRing.band_tension` (frame.py) takes the larger and adds a working
+step "Dome band: the ring tension it is sized on" with both forces and which governs; outside
+Lau's range past 51.8° `band_refusal` gives an info finding and no band (warnings come only
+from a failed check, ADR 0013). Tests: `test_revolved_domes.py::test_band_past_51_8_*`.
+
 ## 2. Two-radius arch: `mid_line` places the back half wrongly (fix now)
 
 **Code.** `shell.PeakArch.mid_line` (shell.py:975–981) loops over `halves()`, which return each
@@ -130,6 +135,10 @@ kyoto are waiting on the user for it, so this should be fixed before either is e
 - The H that `line_gap` solves, scaled to the intrados hinges, equals `thrust()`'s H: the
   corrected mid-line H is 0.354 against `thrust()`'s 0.415 at 48/12/0.35, the expected
   mid-line-vs-intrados difference (0.392 vs 0.461 when level).
+
+**Done (2026-11-09).** Fixed as above. Tests: `test_shell.py::test_the_mid_line_measures_both_halves_from_the_peak`
+and `::test_the_line_gap_is_mirror_symmetric` (the table's corrected gaps, and 0.344 level as
+before).
 
 **B3's cold thrust itself is right.** `PeakArch.thrust` (H = (W − W_f c_f/a_f − W_b c_b/a_b) /
 (ρ(1/a_f + 1/a_b))) agrees with an independent funicular (4,000 pieces per half, moments of the
@@ -175,6 +184,13 @@ strength.md), the same as `door_slide`. Cohesion stays out: no hot cohesion was 
 - The script's case: μ_need = 1.96 at the springing joint for 48 in at 1.5 in/ft, z* ≈ 41 in.
 - At 3 in/ft: μ_need 0.92 > 0.6, z* ≈ 11 in.
 - A framed vault: the same numbers, info level.
+
+**Done (2026-11-09).** `frame_checks.end_wall_slide`, sheet `frame.end-wall-slide` (or
+`-front`/`-back`), with μ the hot 0.50 from `joint_friction` (Oliveira 2021) as the door and
+flat-roof checks take; wired into `vault.along_statics` and, for the kiln's outer front and back
+walls, `shell._arches_held` (walls between chambers have an arch each side and aren't checked).
+Warning standing alone; info under a frame or a building frame. Tests:
+`test_vault.py::test_end_wall_sliding_*` (the review's 1.96 / 41 in and 0.92 / 11 in at μ 0.6).
 
 ## 4. The middle-half check uses one fixed line (proposed)
 

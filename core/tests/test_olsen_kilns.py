@@ -46,6 +46,14 @@ WARNED: dict[str, dict[str, str]] = {
     "ninodaguia": {
         "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
     },
+    "olsen-two-chamber": {
+        "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.97 of "
+        "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
+    },
+    "olsen-three-chamber": {
+        "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.65 of "
+        "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
+    },
     "tobe": {
         "heatloss.rayleigh": "its roof, about 25 × 73 ft, is past the Rayleigh number its "
         "convection correlation is checked to (thermal-properties.md §5), so that face's loss is "
