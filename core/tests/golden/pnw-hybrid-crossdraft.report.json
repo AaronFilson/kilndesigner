@@ -434,7 +434,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "0.805"
+        "value": "0.806"
       }
     ]
   },
@@ -587,7 +587,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 253.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
@@ -1711,7 +1711,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "143,072 BTU/hr kept against 48,840 BTU/hr lost"
+        "value": "143,072 BTU/hr kept against 48,797 BTU/hr lost"
       },
       {
         "formula": null,
@@ -1933,28 +1933,28 @@
       },
       {
         "face": "floor",
-        "heat_loss": "2327 W",
+        "heat_loss": "2314 W",
         "inside_area": "11.67 ft²",
         "layers": [
           {
-            "cold_side": "1212 °F",
-            "cold_side_k": 928.4606382430342,
+            "cold_side": "1219 °F",
+            "cold_side_k": 932.3475247250745,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1500000000003,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "237.4 °F",
-            "cold_side_k": 387.2833908085758,
-            "hot_side": "1212 °F",
-            "hot_side_k": 928.4606382430342,
+            "cold_side": "253.4 °F",
+            "cold_side_k": 396.17584460266613,
+            "hot_side": "1219 °F",
+            "hot_side_k": 932.3475247250745,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "21.58 ft²",
-        "surface_temperature": "237.4 °F"
+        "surface_temperature": "253.4 °F"
       },
       {
         "face": "roof",
@@ -1992,7 +1992,7 @@
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 237.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 253.4 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
@@ -2021,8 +2021,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "14.31 kW",
-    "total_watts": 14313.71468291903,
+    "total": "14.3 kW",
+    "total_watts": 14301.046479935816,
     "working": [
       {
         "formula": null,
@@ -2105,13 +2105,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "21.58 ft²",
-          "outside surface": "237.4 °F",
-          "surface coefficient h": "11.14 W/K/m²"
+          "outside surface": "253.4 °F",
+          "surface coefficient h": "10.21 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "2327 W"
+        "value": "2314 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -2131,14 +2131,14 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "14.31 kW (4.88e+04 Btu/h)"
+        "value": "14.3 kW (4.88e+04 Btu/h)"
       }
     ]
   },
   "hybrid": {
     "cost_crossover": null,
-    "electric_ceiling": "2019 °F",
-    "electric_ceiling_c": 1104.0214205100224,
+    "electric_ceiling": "2021 °F",
+    "electric_ceiling_c": 1104.80781566094,
     "element_power": "11.52 kW",
     "findings": [
       {
@@ -2157,7 +2157,7 @@
     "points": [
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 10.392973978827934,
+        "element_surplus_kw": 10.395289235040106,
         "propane_per_kwh": 0.14940158262060363,
         "propane_reducing_per_kwh": null,
         "temperature_c": 148.8888888888889,
@@ -2165,7 +2165,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.938351968493519,
+        "element_surplus_kw": 9.941617859647453,
         "propane_per_kwh": 0.1535200150348054,
         "propane_reducing_per_kwh": null,
         "temperature_c": 204.44444444444446,
@@ -2173,7 +2173,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.483396625300102,
+        "element_surplus_kw": 9.487561390414786,
         "propane_per_kwh": 0.15793020109541267,
         "propane_reducing_per_kwh": null,
         "temperature_c": 260.0,
@@ -2181,7 +2181,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 9.027774273789989,
+        "element_surplus_kw": 9.032781832200518,
         "propane_per_kwh": 0.16266596243166323,
         "propane_reducing_per_kwh": null,
         "temperature_c": 315.55555555555566,
@@ -2189,7 +2189,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.564103277245003,
+        "element_surplus_kw": 8.56989174667868,
         "propane_per_kwh": 0.16776673364393752,
         "propane_reducing_per_kwh": null,
         "temperature_c": 371.1111111111112,
@@ -2197,7 +2197,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 8.091168274079795,
+        "element_surplus_kw": 8.09769792843752,
         "propane_per_kwh": 0.1732782696172658,
         "propane_reducing_per_kwh": null,
         "temperature_c": 426.66666666666674,
@@ -2205,7 +2205,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.596614247644558,
+        "element_surplus_kw": 7.603849911550511,
         "propane_per_kwh": 0.17925346914364737,
         "propane_reducing_per_kwh": null,
         "temperature_c": 482.2222222222223,
@@ -2213,7 +2213,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 7.0731554023117384,
+        "element_surplus_kw": 7.081012928630351,
         "propane_per_kwh": 0.18575332921077817,
         "propane_reducing_per_kwh": null,
         "temperature_c": 537.7777777777778,
@@ -2221,7 +2221,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 6.523701625630757,
+        "element_surplus_kw": 6.5320668126353,
         "propane_per_kwh": 0.19284803997241834,
         "propane_reducing_per_kwh": null,
         "temperature_c": 593.3333333333334,
@@ -2229,7 +2229,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.9471001076731,
+        "element_surplus_kw": 5.955933466216992,
         "propane_per_kwh": 0.20061822145730265,
         "propane_reducing_per_kwh": null,
         "temperature_c": 648.888888888889,
@@ -2237,7 +2237,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 5.339001099385863,
+        "element_surplus_kw": 5.348266099623481,
         "propane_per_kwh": 0.20915628677630857,
         "propane_reducing_per_kwh": null,
         "temperature_c": 704.4444444444446,
@@ -2245,7 +2245,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.696977954373071,
+        "element_surplus_kw": 4.706638121036412,
         "propane_per_kwh": 0.2185678462204543,
         "propane_reducing_per_kwh": null,
         "temperature_c": 760.0000000000001,
@@ -2253,7 +2253,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 4.020901898836729,
+        "element_surplus_kw": 4.030953380666409,
         "propane_per_kwh": 0.22898028353410602,
         "propane_reducing_per_kwh": null,
         "temperature_c": 815.5555555555555,
@@ -2261,7 +2261,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 3.310702878389544,
+        "element_surplus_kw": 3.3211466967954637,
         "propane_per_kwh": 0.2405547099210462,
         "propane_reducing_per_kwh": null,
         "temperature_c": 871.1111111111112,
@@ -2269,7 +2269,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 2.5662315533024085,
+        "element_surplus_kw": 2.5770375476782283,
         "propane_per_kwh": 0.25349004567681893,
         "propane_reducing_per_kwh": 0.2760916388728337,
         "temperature_c": 926.6666666666666,
@@ -2277,7 +2277,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 1.7886102251657157,
+        "element_surplus_kw": 1.7997492630084326,
         "propane_per_kwh": 0.26803426917710294,
         "propane_reducing_per_kwh": 0.29030981712276493,
         "temperature_c": 982.2222222222223,
@@ -2285,7 +2285,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 0.9827854548701144,
+        "element_surplus_kw": 0.9942278532717028,
         "propane_per_kwh": 0.2845006090874077,
         "propane_reducing_per_kwh": 0.30616356033917613,
         "temperature_c": 1037.7777777777778,
@@ -2293,7 +2293,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": 0.1600564551928328,
+        "element_surplus_kw": 0.1717979925831696,
         "propane_per_kwh": 0.3032906739346543,
         "propane_reducing_per_kwh": 0.3239497587827232,
         "temperature_c": 1093.3333333333335,
@@ -2301,7 +2301,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -0.6782325735568429,
+        "element_surplus_kw": -0.6662121939548779,
         "propane_per_kwh": 0.3249282954799764,
         "propane_reducing_per_kwh": 0.3440419189001706,
         "temperature_c": 1148.8888888888891,
@@ -2309,7 +2309,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -1.5314359415591552,
+        "element_surplus_kw": -1.5191411252222025,
         "propane_per_kwh": 0.3501104283125039,
         "propane_reducing_per_kwh": 0.36691657106541936,
         "temperature_c": 1204.4444444444443,
@@ -2317,7 +2317,7 @@
       },
       {
         "electric_per_kwh": 0.12,
-        "element_surplus_kw": -2.398858373329129,
+        "element_surplus_kw": -2.386300793539429,
         "propane_per_kwh": 0.3797861581537634,
         "propane_reducing_per_kwh": 0.3931916653030738,
         "temperature_c": 1260.0,
@@ -2336,7 +2336,7 @@
         "name": "Electric ceiling",
         "note": "The steady loss ignores the heat going into the ware and walls, so the elements slow down well before this; it is an upper bound.",
         "reference": null,
-        "value": "2019 °F"
+        "value": "2021 °F"
       },
       {
         "formula": "price per gallon ÷ (26.8 kWh per gallon × available heat)",

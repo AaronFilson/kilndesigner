@@ -5,7 +5,8 @@ Each face of the chamber is a layered wall (:mod:`kilndesigner.thermal.transient
 is the chamber's temperature T_c. Each step of ``dt`` seconds:
 
 1. the schedule asks for T_c* at the step's end (its ramp from where the kiln is, or its hold);
-2. the heat that needs, D(T) = Σ faces' heat into the hot face + m·c·(T − T_c), is linear in T;
+2. the heat that needs, D(T) = Σ faces' heat into the hot face + m·[H(T) − H(T_c)], with the
+   ware's enthalpy H = ∫c_p(T) dT, rises monotonically with T (the faces' part is linear);
 3. the heat that can be put in is the elements' power, or the burners' input times the available
    heat at the kiln's temperature (the flue gas leaves at it), times ``dt``;
 4. T_c is T_c* if 0 ≤ D(T_c*) ≤ the heat available; the T where D is the heat available, if the
@@ -98,9 +99,57 @@ def natural_gas_price(kiln: Kiln) -> GasRate | None:
     )
 
 
-# Ware and kiln furniture: fired clay, Lienhard Table A.2 (masonry-materials.md §1.1 [M1])
-WARE_CP = 800.0  # J/(kg·K)
-WARE_SOURCE = "Lienhard Table A.2, brick, fired clay, 24 °C; masonry-materials.md §1.1 [M1]"
+# Ware and kiln furniture: fired clay at 24 °C, Lienhard Table A.2 (masonry-materials.md §1.1
+# [M1]), then VDI Heat Atlas fireclay c_p(T) from 400 °C (§2.3 [M2]), as in materials.yaml
+WARE_CP = 800.0  # J/(kg·K), at 24 °C
+WARE_CP_AT_K = 24.0 + 273.15
+WARE_CP_MATERIAL = "firebrick-medium-duty-smithfield"
+WARE_SOURCE = (
+    "Lienhard Table A.2, brick, fired clay, 24 °C, masonry-materials.md §1.1 [M1]; "
+    "VDI Heat Atlas 2nd ed., fireclay, 400–1200 °C, masonry-materials.md §2.3 [M2]"
+)
+
+
+@cache
+def ware_heat_capacity() -> HeatCapacity:
+    """The ware's and setting's c_p(T): 800 J/(kg·K) at 24 °C [M1], then VDI's fireclay points
+    [M2], linear between them and held at the end values (physics review 2026-11 §1)."""
+    from kilndesigner.library import material
+
+    sh = material(WARE_CP_MATERIAL).specific_heat
+    assert sh is not None
+    ts, cs = sh.to_points()
+    return HeatCapacity((WARE_CP_AT_K, *ts), (WARE_CP, *cs))
+
+
+def ware_enthalpy(t0: float, t1: float) -> float:
+    """Heat per kg of ware from t0 to t1 (K): ∫c_p dT over the ware's curve, J/kg."""
+    cap = ware_heat_capacity()
+    return cap.enthalpy(t1) - cap.enthalpy(t0)
+
+
+def _solve_step(a: float, b: float, ware_kg: float, t_c: float, heat: float) -> float:
+    """The T where a + b·T + m·[H(T) − H(T_c)] = heat. D is monotone in T; with c_p between its
+    least and greatest the root lies between the two linear roots, and brentq finds it."""
+    if ware_kg == 0:
+        return (heat - a) / b
+    from scipy.optimize import brentq  # pyright: ignore[reportUnknownVariableType]
+
+    cap = ware_heat_capacity()
+    h_c = cap.enthalpy(t_c)
+
+    def d(t: float) -> float:
+        return a + b * t + ware_kg * (cap.enthalpy(t) - h_c) - heat
+
+    roots = [
+        (heat - a + ware_kg * c * t_c) / (b + ware_kg * c)
+        for c in (min(cap.values), max(cap.values))
+    ]
+    lo, hi = min(roots) - 1.0, max(roots) + 1.0
+    root = brentq(d, lo, hi, xtol=1e-9)  # pyright: ignore[reportUnknownVariableType]
+    return float(root)  # pyright: ignore[reportArgumentType, reportUnknownArgumentType]
+
+
 METHOD = (
     "One-dimensional finite volumes through each face's layers, backward Euler with k(T), c_p(T) "
     "and the surface coefficient lagged a step; thermal/transient.py"
@@ -557,7 +606,7 @@ def simulate(
         ware_kg = furniture_kg + ware_only_kg
     else:
         ware_kg = si(kiln.firing.ware, "kg") if kiln.firing.ware is not None else 0.0
-    ware_cap = ware_kg * WARE_CP
+    ware_cap = ware_heat_capacity()
     e_price = (
         si(kiln.site.electricity_price, "USD/kWh")
         if kiln.site.electricity_price is not None
@@ -636,8 +685,9 @@ def simulate(
         target, paced = ctl.target(t_c, dt)
         results = [f.wall.prepare(dt) for f in faces]
         lines = [f.wall.heat_in_line(dt) for f in faces]
-        a = sum(x[0] for x in lines) - ware_cap * t_c
-        b = sum(x[1] for x in lines) + ware_cap
+        a = sum(x[0] for x in lines)
+        b = sum(x[1] for x in lines)
+        h_c = ware_cap.enthalpy(t_c)
         elements_on, burners_on = _sources_at(supply, t_c)
         elements_w = (supply.electric_w or 0.0) if elements_on else 0.0
         fraction, burners_kept_w = 1.0, 0.0
@@ -649,21 +699,21 @@ def simulate(
         if elements_on and burners_on and supply.reduction and t_c >= REDUCTION_START_C + 273.15:
             into_reduction = True
         e_max = available_w * dt
-        need = a + b * target
+        need = a + b * target + ware_kg * (ware_cap.enthalpy(target) - h_c)
         limited = False
         if need > e_max:
-            t_new, limited = (e_max - a) / b, True
+            t_new, limited = _solve_step(a, b, ware_kg, t_c, e_max), True
         elif need < 0:
-            t_new = -a / b
+            t_new = _solve_step(a, b, ware_kg, t_c, 0.0)
         else:
             t_new = target
-        heat = a + b * t_new
+        ware = ware_kg * (ware_cap.enthalpy(t_new) - h_c)
+        heat = a + b * t_new + ware
         outcomes: list[StepResult] = [r(t_new) for r in results]
         for f, o in zip(faces, outcomes, strict=True):
             f.wall.commit(t_new, o.surface)
         walls = sum(o.heat_in for o in outcomes)
         shell = sum(o.heat_out for o in outcomes)
-        ware = ware_cap * (t_new - t_c)
         t_c = t_new
         time += dt
         # The elements' power first (it all stays in the kiln), the burners for the rest
@@ -814,9 +864,22 @@ def simulate(
             Step(
                 name="Ware and furniture",
                 value=show(Q_(ware_kg, "kg"), "lb" if us else "kg"),
-                inputs={"specific heat": f"{WARE_CP:g} J/(kg·K)"},
+                formula="Q = m·[H(T) − H(T₀)], H(T) = ∫c_p(T) dT, taken over each step",
+                inputs={
+                    "specific heat": ", ".join(
+                        f"{c:g} J/(kg·K) at {t - 273.15:.0f} °C"
+                        for t, c in zip(ware_cap.temperatures, ware_cap.values, strict=True)
+                    ),
+                    "into the ware": show(Q_(totals["ware"], "J"), "kWh"),
+                },
                 reference=WARE_SOURCE,
-                note="Lumped at the chamber's temperature; fired clay's room-temperature c_p.",
+                note=(
+                    "Lumped at the chamber's temperature. c_p linear between the points and held "
+                    "at the end values. Shelves and posts take fireclay's curve: no c_p(T) for "
+                    "mullite, cordierite or silicon carbide is sourced. Bisque or glaze firing: "
+                    "raw ware also takes the heat of driving off its water and dehydroxylation, "
+                    "which no source in docs/research gives, so it is left out."
+                ),
             )
         )
     else:

@@ -318,6 +318,8 @@ class FaceShape:
     arch: Arch | None = None
     grows: Callable[[float], float] | None = field(default=None, compare=False)
     """The area at a depth into the lining, for a curved face that isn't a circular arch."""
+    disc: bool = False
+    """A round floor of diameter ``a`` (a faceted ring's polygon counts as its circle)."""
 
     def area_at(self, depth: float) -> float:
         if self.grows is not None:
@@ -328,10 +330,13 @@ class FaceShape:
         return (self.a + 2 * depth) * (self.b + 2 * depth) + extra
 
     def characteristic_length(self, depth: float) -> float:
-        """Height for a vertical face; area over perimeter for a horizontal one."""
+        """Height for a vertical face; area over perimeter for a face up; for a face down,
+        Jaffer's L_R (Thermo 3 (2023), eq. 57): half the shorter side, or 2R/π for a disc."""
         a, b = self.a + 2 * depth, self.b + 2 * depth
         if self.orientation == "vertical":
             return b
+        if self.orientation == "facing_down":
+            return a / math.pi if self.disc else min(a, b) / 2
         if self.arch is not None:
             a = 2 * (self.arch.radius + depth) * self.arch.half_angle
         return (a * b) / (2 * (a + b))
@@ -527,7 +532,7 @@ class ChamberShape:
             for face in ("left", "right", "back", "front")
         ]
         under = slab if self.floor_inside else disc
-        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=under)
+        floor = FaceShape("floor", "facing_down", disc(0), dia, dia, grows=under, disc=True)
         dome = self.round_dome
         roof = (
             FaceShape("roof", "facing_up", dome.area(), dia, dia, grows=dome.area)

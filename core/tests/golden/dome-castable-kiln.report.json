@@ -882,7 +882,7 @@
       "check": null,
       "level": "info",
       "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
-      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+      "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran; Jaffer 2023 Table 6)"
     },
     {
       "check": null,
@@ -893,7 +893,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 230.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 248 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
@@ -4796,7 +4796,7 @@
         "name": "Burners against the heat lost at the top",
         "note": null,
         "reference": "energy balance at the top temperature: the burners' available heat (Cantera, combustion.py) against the lining's steady loss (heatloss.py)",
-        "value": "83,522 BTU/hr kept against 34,953 BTU/hr lost"
+        "value": "83,522 BTU/hr kept against 34,922 BTU/hr lost"
       },
       {
         "formula": null,
@@ -5018,28 +5018,28 @@
       },
       {
         "face": "floor",
-        "heat_loss": "1578 W",
+        "heat_loss": "1569 W",
         "inside_area": "7.5 ft²",
         "layers": [
           {
-            "cold_side": "1185 °F",
-            "cold_side_k": 913.4565203280529,
+            "cold_side": "1192 °F",
+            "cold_side_k": 917.7518766735042,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.1499999999992,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "230.8 °F",
-            "cold_side_k": 383.5772067909341,
-            "hot_side": "1185 °F",
-            "hot_side_k": 913.4565203280529,
+            "cold_side": "248 °F",
+            "cold_side_k": 393.14227049219056,
+            "hot_side": "1192 °F",
+            "hot_side_k": 917.7518766735042,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "15.28 ft²",
-        "surface_temperature": "230.8 °F"
+        "surface_temperature": "248 °F"
       },
       {
         "face": "roof",
@@ -5072,7 +5072,7 @@
         "check": null,
         "level": "info",
         "message": "For convection, a dome's outside loses heat as a flat roof facing up, over its whole area: no correlation for a curved shell is sourced, so its loss is less certain.",
-        "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran)"
+        "reference": "thermal-properties.md §5 (Incropera, Çengel, Lloyd & Moran; Jaffer 2023 Table 6)"
       },
       {
         "check": null,
@@ -5083,7 +5083,7 @@
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 230.8 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 248 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
@@ -5112,8 +5112,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "10.24 kW",
-    "total_watts": 10243.726131180716,
+    "total": "10.23 kW",
+    "total_watts": 10234.50070081606,
     "working": [
       {
         "formula": null,
@@ -5196,13 +5196,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "15.28 ft²",
-          "outside surface": "230.8 °F",
-          "surface coefficient h": "11.07 W/K/m²"
+          "outside surface": "248 °F",
+          "surface coefficient h": "10.05 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1578 W"
+        "value": "1569 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -5222,7 +5222,7 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "10.24 kW (3.5e+04 Btu/h)"
+        "value": "10.23 kW (3.49e+04 Btu/h)"
       }
     ]
   },
