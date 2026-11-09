@@ -9,17 +9,16 @@
 # 5-17, 5-19; p.137); downdraft through the floor; chimney flue at most 9 × 7 in; chimney 10–12 ft
 # (drawings).
 # Assumed: the brick is Morgan JM 28, the library's high-alumina IFB: Olsen's Tables 1-4 and 1-4A
-# give JM-28 59–67 % alumina (p.27). The chimney is 11 ft, the middle of 10–12 ft, 9 × 7 in inside,
-# and the exit flue is the 9 × 7 in chimney flue. The arch: 4½ in of JM 28 at 1½ in per foot of
+# give JM-28 59–67 % alumina (p.27). The chimney is 11 ft, the middle of 10–12 ft, 9 × 7 in inside. The arch: 4½ in of JM 28 at 1½ in per foot of
 # span, Olsen's commonest arch for small kilns (p.25, p.51). The floor as the walls (engine
 # default). Burner ports 4½ in wide by 5 in tall, Olsen's side port for one burner (p.173), in the
 # middle of each wall. Forced air/gas burners are the engine's power burners; their model and
 # rating: engine default. Propane from a 500 gal tank, Olsen's tank for a 24–40 cu ft kiln
 # (p.242): the library rates its power burners on propane. Cone 10: Olsen salts at cone 9–10
 # (p.128).
-# Not modelled: salt. The floor slab 4½ in clear of the walls and the collection channels under it
-# (the engine's downdraft leaves by one flue at the foot of the back wall). The chimney flue
-# through the crown (the engine puts the chimney behind the back wall). The K28 dense port blocks.
+# Not modelled: salt, and the salt ports top front and top back in the arch (their size isn't
+# printed). The floor slab 4½ in clear of the walls and the collection channels under it. The K28
+# dense port blocks.
 schema: 1
 name: Kähler salt kiln, Næstved
 units: us
@@ -83,9 +82,14 @@ spy_holes:
 draft:
   type: down
   flue_wall: back
-  flue_port:
-    width: 9 in
-    height: 7 in
+  exits: # three 4½ × 9 in floor flues into the collection channels (Figs 5-17, 5-18); their
+    # places aren't printed: spread evenly
+    - through: floor
+      count: 3
+      port:
+        width: 4.5 in
+        height: 9 in
+  chimney_through: crown # the chimney flue through the crown (Figs 5-17, 5-18)
   chimney:
     height: 11 ft
     inside:

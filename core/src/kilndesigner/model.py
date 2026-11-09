@@ -1298,6 +1298,133 @@ class Chimney(Spec):
     )
 
 
+# ---- Openings: exit flues, flues between chambers, dampers, chimneys, vents, salt ports ----------
+
+type Through = Literal["front", "back", "left", "right", "floor", "roof"]
+
+
+class HoleSpot(Spec):
+    """Where one hole of a set goes. In a wall: ``across`` from the middle of the wall, to your
+    right standing outside and facing it, and ``up`` from the chamber floor to the hole's centre.
+    In the floor or the roof: ``across`` from the middle of the chamber, to your right facing the
+    back wall from the front, and ``along`` from the middle towards the back."""
+
+    across: Length = Field(default_factory=lambda: Q_(0, "in"))
+    along: Length = Field(default_factory=lambda: Q_(0, "in"))
+    up: Length | None = Field(
+        default=None, description="In a wall only. Left out: the hole's foot on the floor"
+    )
+
+
+class Holes(Spec):
+    """A set of holes of one size through one wall, the floor or the roof."""
+
+    through: Through = Field(description="The wall, the floor or the roof they go through")
+    port: Port = Field(description="Each hole's size")
+    count: int | None = Field(
+        default=None, ge=1, le=200, description="How many. Left out: one, or one per place"
+    )
+    places: list[HoleSpot] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "Where each one goes. Left out: spread evenly along a wall at its foot, or in an even "
+            "grid over the floor or the roof"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_place_each(self) -> Holes:
+        if self.places is not None and self.count is not None and len(self.places) != self.count:
+            raise ValueError(
+                f"give a place for each of the {self.count} holes, not {len(self.places)}"
+            )
+        in_wall = self.through not in ("floor", "roof")
+        for p in self.places or []:
+            if in_wall and si(p.along, "in") != 0:
+                raise ValueError("a hole in a wall has no along: give its across and up")
+            if not in_wall and p.up is not None:
+                raise ValueError("a hole in the floor or the roof has no up: give across and along")
+        return self
+
+    @property
+    def wanted(self) -> int:
+        if self.count is not None:
+            return self.count
+        return len(self.places) if self.places is not None else 1
+
+    def area_in2(self) -> float:
+        """One hole's area, in²."""
+        w, h = self.port.size_in()
+        return math.pi * w * w / 4 if self.port.round else w * h
+
+    def total_in2(self) -> float:
+        return self.wanted * self.area_in2()
+
+
+class BetweenFlues(Spec):
+    """The flue holes through each wall between chambers, in place of Olsen's standard 4½ × 9 in
+    flues 9 in apart (p.96, p.45)."""
+
+    count: int = Field(ge=1, le=40, description="How many in each wall between chambers")
+    port: Port = Field(description="Each one's width across the kiln and its height")
+
+
+class Damper(Spec):
+    """The chimney's damper as built: a shelf in a slot in the chimney, or a slab on its top."""
+
+    kind: Literal["slot", "top"] = Field(
+        default="slot",
+        description="'slot': a shelf slid into a slot in the chimney; 'top': a slab over its top",
+    )
+    port: Port | None = Field(
+        default=None,
+        description=(
+            "With a slot: the slot's width and height. Left out: one course high and 3 in wider "
+            "than the chimney inside"
+        ),
+    )
+    up: Length | None = Field(
+        default=None,
+        description=(
+            "With a slot: from the chamber floor to its foot. Left out: a foot above the flue"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_slot_or_a_top(self) -> Damper:
+        if self.kind == "top" and (self.port is not None or self.up is not None):
+            raise ValueError("a damper on the chimney's top has no slot: leave out its port and up")
+        return self
+
+
+class Openings(Spec):
+    """Holes in the kiln that aren't the draft's: vent holes in a dome or roof, salt ports and
+    vapour holes. Each is cut through the lining and taken out of the brick count."""
+
+    vents: list[Holes] | None = Field(
+        default=None, min_length=1, description="Vent or cooling holes, as in a dome"
+    )
+    salt_ports: list[Holes] | None = Field(
+        default=None, min_length=1, description="Ports for throwing in salt"
+    )
+    vapour_holes: list[Holes] | None = Field(
+        default=None, min_length=1, description="Vapour holes, as in an arch"
+    )
+
+    def all(self) -> list[tuple[str, Holes]]:
+        """Each set with its kind's name."""
+        return [
+            (name, h)
+            for name, sets in (
+                ("vent", self.vents),
+                ("salt port", self.salt_ports),
+                ("vapour hole", self.vapour_holes),
+            )
+            for h in sets or []
+        ]
+
+
 class Draft(Spec):
     """How the flame travels through the kiln to the chimney."""
 
@@ -1327,12 +1454,76 @@ class Draft(Spec):
             "The chimney as built, to check against Olsen's rules. Left out: the engine sizes it"
         ),
     )
+    exits: list[Holes] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The exit flues as built, any count and size, through the walls, the floor or the "
+            "roof; their areas add up to the flue area the rules use. Give this or flue_port"
+        ),
+    )
+    connection: Port | None = Field(
+        default=None,
+        description=(
+            "The flue (duct or channel) from the kiln into the chimney. Left out: the exit flue's "
+            "size, or Ward's area with several exits"
+        ),
+    )
+    chimneys: int = Field(
+        default=1,
+        ge=1,
+        le=6,
+        description="How many chimneys of this size, side by side along the flue wall",
+    )
+    chimney_through: Literal["beside", "crown"] = Field(
+        default="beside",
+        description="'beside': standing outside the flue wall; 'crown': rising through the roof",
+    )
+    damper: Damper | None = Field(
+        default=None, description="Left out: a shelf in a slot about a foot above the flue"
+    )
+    passive_air: Port | None = Field(
+        default=None,
+        description="A passive air hole (a passive damper) through the chimney's foot",
+    )
+    between: BetweenFlues | None = Field(
+        default=None,
+        description=(
+            "The flues through each wall between chambers. Left out: Olsen's standard 4½ × 9 in, "
+            "9 in apart, as many as fit"
+        ),
+    )
 
     @model_validator(mode="after")
     def _flue_in_a_wall(self) -> Draft:
         if self.type == "up" and self.flue_across is not None:
             raise ValueError("an up-draft's flue is in the roof, so it has no flue_across")
+        if self.exits is not None and (self.flue_port is not None or self.flue_across is not None):
+            raise ValueError(
+                "give the exit flues as exits, or one flue as flue_port and flue_across, not both"
+            )
+        if self.chimney_through == "crown" and self.chimneys > 1:
+            raise ValueError("one chimney rises through the crown: give chimneys: 1")
         return self
+
+    def exit_area_in2(self) -> float | None:
+        """The stated exit flues' areas added up (in²), or None when none are stated."""
+        if self.exits is not None:
+            return sum(h.total_in2() for h in self.exits)
+        if self.flue_port is not None:
+            w, h = self.flue_port.size_in()
+            return math.pi * w * w / 4 if self.flue_port.round else w * h
+        return None
+
+    def exit_sum_text(self) -> str:
+        """How the stated exit flues add up, for the working."""
+        assert self.exits is not None
+        parts = []
+        for h in self.exits:
+            w, ht = h.port.size_in()
+            size = f"{w:g} in round" if h.port.round else f"{w:g} × {ht:g} in"
+            parts.append(f"{h.wanted} × {size} ({h.area_in2():.1f} in²) in the {h.through}")
+        return " + ".join(parts)
 
 
 class Shell(Spec):
@@ -1516,6 +1707,9 @@ class Kiln(Spec):
     heat: Heat
     draft: Draft | None = None
     spy_holes: SpyHoles | None = None
+    openings: Openings | None = Field(
+        default=None, description="Vent holes, salt ports and vapour holes"
+    )
     site: Site = Field(default_factory=Site)
     castables: list[CastableMix] | None = Field(
         default=None, min_length=1, description="Castables you mix yourself"

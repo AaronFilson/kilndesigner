@@ -35,8 +35,7 @@
 # ring in the dome's ring, as Olsen's other built doors are (door-openings.md).
 # Not modelled: the chimney's height
 # isn't printed, so the chimney isn't entered: the engine sizes it (its section comes out 9 × 9
-# in). The exit opening (12 in high, its width not printed), the 9 in high stoke hole and the
-# 2½ × 4 in passive damper.
+# in). The exit opening (12 in high, its width not printed) and the 9 in high stoke hole.
 # Fig 4-140 re-read on the page image, 2026-11-08 (drawing): the stoke hole is 9 in high, its sill
 # 14 in over the floor, its width not printed, so it isn't entered (the engine would set its foot
 # at the grate); the grate lies inside the teardrop's front, over the ash pit, where the design's
@@ -95,3 +94,10 @@ heat:
 draft:
   type: cross
   flue_wall: back
+  passive_air: # the 2½ × 4 in passive damper at the chimney's foot (Fig 4-140); which way each
+    # runs isn't printed: 2½ in across, 4 in high (?)
+    width: 2.5 in
+    height: 4 in
+  damper: # a damper slot in the chimney about 73 in up (16 + 24 + 33 in, faint, Fig 4-140, ?);
+    # its size isn't printed: the engine's slot
+    up: 73 in

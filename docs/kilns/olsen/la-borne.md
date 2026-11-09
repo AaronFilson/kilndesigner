@@ -19,7 +19,7 @@ brick construction; Figs 4-80 to 4-84 photos).
 | Bag wall | greenware checkerboard, 2 ft space behind the grate | — | not expressible |
 | Exit flue | the bricked-up back entrance, laid as a lattice, with a "draw hole or spy hole" at the top (Fig 4-79) | engine flue 85½ × 7½ in at the back | lattice not expressible |
 | Spy holes | one draw/spy hole drawn high in the back wall (Fig 4-79) | engine default, three in the back | not set: height not printed |
-| Chimneys | two, each side of the back door, since the "rebirth" | one engine chimney | not expressible (two chimneys, no sizes) |
+| Chimneys | two, each side of the back door, since the "rebirth" | two, spread along the back wall, engine-sized (`draft.chimneys: 2`) | matches the count; no sizes printed |
 
 No change in this pass.
 

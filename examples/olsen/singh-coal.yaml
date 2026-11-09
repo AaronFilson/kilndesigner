@@ -23,7 +23,8 @@
 # and the air: engine defaults (a bricked door, 70 °F).
 # Not modelled (see docs/kilns/olsen/singh-coal.md): the fireboxes stand on the diagonals, the
 # arched door between two of them (Fig 5-10); the engine puts one on each of its four faces and
-# makes the front wall the door. The twelve 6 × 6 in floor exit flues (one flue port here); the
+# makes the front wall the door. The twelve floor exit flues are spread in an even grid (their
+# places aren't printed); the
 # cooling and vapour holes in the dome (Fig 5-11); the damper in the chimney entrance (Fig 5-10). The 12 in deep flue channel under the floor, and the
 # floor's loss into it and the ground. The printed "385 cu. ft (11cu. m)" (p.133, the 385 read by
 # the user) doesn't fit the drawn sizes, which give about 235 ft³ (derived); the drawing is used.
@@ -114,7 +115,13 @@ heat:
 draft:
   type: down
   flue_wall: back
-  flue_port: # the flue channel to the chimney
+  exits: # twelve 6" × 6" floor exit flues, evenly spaced (Fig 5-10)
+    - through: floor
+      count: 12
+      port:
+        width: 6 in
+        height: 6 in
+  connection: # the 24" × 16" flue channel to the chimney (Fig 5-10)
     width: 24 in
     height: 16 in
   run_to_chimney: 27.5 ft # "Approximately 25–30'" away (Fig 5-10)

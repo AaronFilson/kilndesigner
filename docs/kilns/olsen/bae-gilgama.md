@@ -36,9 +36,9 @@ crowns at 4½ ft. The 18 in floor step (p.108) is now entered as the combustion 
 | Combustion area | "4'", "NO GRATES" | firebox 4 × 4 ft, no grate | matches |
 | Floor step | 18 in (p.108) | `step: 18 in` | matches |
 | Firebox door | arched, bricked up and dirt-sealed (p.108, Fig 4-69) | engine stoke hole and door | differs: no size printed |
-| Exit flues | two, 4½ × 9 in, in the back wall (p.108) | one, 4½ × 9 in | not expressible (one flue only) |
-| Chimney | two stacks, 8 ft to the ground line (Fig 4-67) | one, 8 ft | partly: one stack; its section is engine-sized |
-| Damper | "DAMPER ON TOP" (Fig 4-67) | none | not expressible |
+| Exit flues | two, 4½ × 9 in, in the back wall (p.108) | two, 4½ × 9 in, spread evenly along the back wall (`draft.exits`) | matches (places not printed) |
+| Chimney | two stacks, 8 ft to the ground line (Fig 4-67) | two, 8 ft (`draft.chimneys: 2`) | matches; the section is engine-sized |
+| Damper | "DAMPER ON TOP" (Fig 4-67) | a slab on each stack's top (`draft.damper.kind: top`) | modelled |
 | Spy holes | not drawn | three in the door (engine default) | added by the engine |
 
 ## Results from the build

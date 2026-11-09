@@ -15,8 +15,8 @@ Olsen, *The Kiln Book*, 4th ed.: p.131 (text; Fig 5-4 section and plan), p.132, 
 | Walls | very thick; 10" at the door end and by the chimney (Fig 5-4) | sides 18 in assumed, door 10 in | back wall 10 in not expressible (one wall thickness) |
 | Fireboxes | two, one each side, 2'6" mouths, grates 30 × 22 in, 1 in iron rods (Figs 5-4, 8-18) | two 30 × 22 in with grates | matches; bar gap not printed |
 | Bag walls | 36" high, 4'8" apart (Fig 5-4) | — | not expressible |
-| Exit flues | twelve 6 × 6 in floor flues, 432 in² (p.131) into flue channels | engine flue 63 × 12½ in at the back wall | not expressible (floor flues); the engine's area is larger |
-| Chimney | round, 3 ft inside, 20 ft, tapering to 15½ in; 20" connection, damper (Fig 5-4) | 36 in → 15½ in, 20 ft | matches; connection and damper not expressible |
+| Exit flues | twelve 6 × 6 in floor flues, 432 in² (p.131) into flue channels | twelve 6 × 6 in in an even grid in the floor, 432 in² (`draft.exits`) | matches (places not printed); the channels aren't modelled |
+| Chimney | round, 3 ft inside, 20 ft, tapering to 15½ in; 20" connection, damper (Fig 5-4) | 36 in → 15½ in, 20 ft | matches; the 20" connection is expressible (`draft.connection`) but not whether it is round or square, and the damper isn't sized |
 | Vapour holes | in the arch (Fig 5-4) | — | not expressible |
 | Door | in the end wall, bricked | front, bricked, 10 in | matches |
 | Spy holes | not drawn | engine default | — |
