@@ -31,3 +31,9 @@ No change in this pass.
 1. Figs 4-31, 4-32: how far along the span does a reduction chamber's peak stand, and the two
    radii (for `roof.peak_at`)?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Figs 4-28 to 4-32 were not opened in this pass (time): left for a later pass.

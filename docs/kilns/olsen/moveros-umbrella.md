@@ -28,3 +28,13 @@ No change in this pass.
 
 None new (the mouth width, 22 or 28 in, was settled as 22).
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Firebox height | 3½–4 ft | — | 43 in (Fig 6-3, from the 4', ±3 in) | `height: 43 in` |
+
+The elevation is a sketch: its 5' across and 4' up give 6.0 and 3.4 px/in, so nothing across is scaled. The top view and the mouth inset have no dimension to share: wall thickness and the firebox's plan can't be scaled.

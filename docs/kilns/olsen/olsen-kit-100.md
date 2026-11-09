@@ -31,3 +31,9 @@ MR-750s; arch frame L4×4×¼.
 
 1. Are there drawings or a kit sheet for the Olsen 100 (dimensions, burner count)?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+No figure of this kiln: nothing to scale.

@@ -35,3 +35,9 @@ several-day firing fits that); exit flue 864 in²; arch frame L8×8×½.
 1. Which burner did Kaneko use, and at what rating and pressure? The model takes the MR-100.
 2. Is the 8 ft height to the springline or to the crown, and is the roof an arch or flat?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Fig 6-63 is a generic burner-placement diagram, not this kiln; Fig 6-64 (the door and trolley) has no printed dimension. Nothing scaled.

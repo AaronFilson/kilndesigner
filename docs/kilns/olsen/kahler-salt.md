@@ -36,3 +36,17 @@ frame L4×4×¼ with ½ in rods.
    burners about 4 in from the back wall, as read by scale?
 2. Fig 5-18: are the three spy and draw holes about 13, 25 and 37 in above the floor?
 3. Fig 5-18 "40½"": what does it measure?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Exit flue places | three 4½ × 9 in | — | 11½ in left, ¾ in left, 11½ in right of centre; drawn 8½ in across (Fig 5-17, from 30", 45", 24", ±½ in) | `places`; port turned to 9 across × 4½ |
+| Burner places along the walls | heights printed | about 4 in from end walls (earlier reading) | centres 2.3 and 1.8 in from the end walls (Fig 5-18, from 36" and 24", ±½ in) | `across: 15.5 in` (the nearest a 4½ in port fits) |
+| Spy holes | three, up the door | 13, 25, 37 in | 11, 22, 34 in (Fig 5-18, from 48" and 4½", ±1½ in); drawn 1½ in high | heights entered; size engine's quarter brick |
+| Salt ports | top front and back | — | 2 in round, centres 2 in from end walls (Fig 5-18), at the arch's right springing, 16 in right of centre (Fig 5-17, ±1 in) | `openings.salt_ports`, across 14 in (inside the span) |
+| Chimney flue | 9 × 7 in max | — | drawn 6 in across | printed kept |
+
+Question: on Fig 5-18 the burners printed 18, 28 and 9 in up read 11, 23 and 1½ in by the same 48": the side section's heights are loose by up to 8 in, so the spy-hole heights may be too. Are the spy holes about 11, 22 and 34 in up?

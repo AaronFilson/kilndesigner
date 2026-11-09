@@ -31,3 +31,9 @@ No change in this pass.
 1. Where do the two bottom burners fire: through the floor at its centre, under the setting?
    The model puts them down the floor's centre line, each in the middle of half its depth.
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+No drawing of this kiln: nothing to scale.

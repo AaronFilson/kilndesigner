@@ -28,3 +28,9 @@ No change in this pass: the photo shows nothing measurable.
 
 1. How many burners did the Kinzies' kit have (the photo, Fig 6-59, doesn't show them)?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Only a photo (Fig 6-59): no figure to scale.

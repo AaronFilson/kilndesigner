@@ -33,3 +33,18 @@ draft 0.18 in. w.c. at 1000 °F flue gas.
 
 1. Is there a damper size on Fig 5-4 (the 20" connection's height)?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Exit flue places | twelve 6 × 6 in (p.131) | three rows of four | rows 16 in left, 1 in left, 13 in right of centre; columns 32, 13 in in front of and 6, 23 in behind the middle (Fig 5-4 plan, from 7' and 6'6", ±1 in) | `draft.exits.places` |
+| Firebox height over grate | — | — | 26 in (section, from 6'6" and 36", ±1 in) | `height: 26 in` |
+| Grate below chamber floor | — | — | 9 in (±1 in) | `step: 9 in` |
+| Ash pit | — | — | 27 in (from 6'6" and 36", ±1 in); 15 in from the 18" channel | `ash_pit: 27 in` |
+| Damper | drawn in the plan, no size | shelf 28 in long | plan only: no height | left at default |
+| Checks | mouth 2'6", connection 20", grate 22 in | — | 25, 23.6, 24.5 in | printed kept |
+
+Questions: (a) the section's 18" flue channel scales against its 6'6" and 36" by nearly 2×; which is the ash pit's depth, 27 in or about 15 in? (b) the plan draws the 2'6" mouth at 25 in and the 20" connection at 23½ in: is the plan loose there, or are the printed sizes something else?

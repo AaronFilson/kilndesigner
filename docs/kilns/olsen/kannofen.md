@@ -42,3 +42,9 @@ what holds the arch).
 1. Fig 6-37: does the "140cm" mark the length of the firebox and ash pit?
 2. Fig 6-37: the "25cm" and "40cm" (or "64cm") near the firebox: what do they span?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Fig 6-37 is marked "NOT TO SCALE": nothing is scaled off it. Figs 6-38 and 6-39 are a section of the kiln and shed and photos; the mouths have no printed dimension near them.

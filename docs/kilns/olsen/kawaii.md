@@ -31,3 +31,9 @@ arched head of Olsen's other built kilns (see question 2).
 1. How many 7 × 10 in flues are there in each chamber wall (Fig 4-48)?
 2. Fig 4-46: is the second chamber's doorway square-headed (a lintel) or arched?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+Figs 4-44 to 4-48 were not opened in this pass (time): left for a later pass.

@@ -19,8 +19,8 @@
 # groundhogs are dug in under earth or braced with rock (p.112), so the floor is on the ground.
 # Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
 # p.119). Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: the door is drawn dashed in the front arch,
-# left of centre, with no size printed: the engine's door stands for it. A row of openings is
+# The door, drawn dashed in the front arch left of centre with no size printed, is scaled
+# (under loading) but can't be entered: the engine's door stands for it. Not modelled: a row of openings is
 # drawn along the foot of the front arch (not labelled). The 18 in (faint) bag wall. No grate or ash pit is printed: the wood burns on the
 # firebox floor.
 schema: 1
@@ -41,6 +41,11 @@ loading:
   type: door
   face: front
   door: bricked
+  # The door is drawn dashed in the front arch, left of centre, square-headed (Fig 4-105): 19½
+  # in wide, 5½ in left of the middle (scaled: Fig 4-105, p.115, from the front arch taken as
+  # the 5' span, ±½ in), 25 in tall (scaled: from the 30" crown, ±1½ in; the figure is drawn
+  # twice as tall as wide, so each axis is scaled alone). Not entered: loading.opening needs a
+  # wall under it, and this arch springs from the floor.
 lining:
   walls:
     - material: ifb-k26
@@ -59,12 +64,23 @@ heat:
 draft:
   type: cross
   flue_wall: back
-  exits: # eight drawn, 7½ (faint) × 4½ in (Fig 4-105, drawing), spread evenly
+  exits: # eight drawn, 7½ (faint) × 4½ in (Fig 4-105, drawing), their centres 26½, 19½, 13½
+    # and 7 in left of the middle, on it, and 6½, 13½ and 21½ in right (scaled: Fig 4-105,
+    # p.115, from the back arch's 5' span and the 5' arrow, ±1 in: a perspective)
     - through: back
       count: 8
       port:
         width: 4.5 in
         height: 7.5 in
+      places:
+        - across: -26.5 in
+        - across: -19.5 in
+        - across: -13.5 in
+        - across: -7 in
+        - across: 0 in
+        - across: 6.5 in
+        - across: 13.5 in
+        - across: 21.5 in
   chimney:
     height: 8 ft
     inside:

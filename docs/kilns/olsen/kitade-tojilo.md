@@ -35,3 +35,16 @@ Figs 8-8, 8-9), p.203.
 1. Fig 8-11: how many 9 × 12 in flue inlets cross into the chamber?
 2. Fig 8-11: the "2½"" from the end wall to the first air hole scales to about 20 in: which is it?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Stoke hole sill | — | — | 4 in over the grate (Fig 8-11, from 42", 24", 12", 15", ±½ in) | `sill: 5 in` (two courses) |
+| Stoke hole | 9 × 7 in | — | drawn 4 × 5½ in | printed kept |
+| Flue inlet | 9 × 12 in, 12 in over grate | — | 11 in high, foot 12 in over grate | printed; count can't be scaled |
+| Air holes | 12 × 18 in, "2½"" from the end | — | the 2½" arrow scales 20–24 in; hole centres 22 and 71 in from the end | not expressible |
+
+Questions: (a) the plan (Fig 8-11) scales 8 ft long ±9 in from its own 12" and 18": the chamber's depth, not its 4 ft width. Does the firebox run along the 8 ft side? (b) the stoke hole is drawn 4 × 5½ in against its printed 9 × 7 in.

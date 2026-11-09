@@ -28,3 +28,15 @@ No change in this pass.
 
 1. Fig 6-14: how many 1½ in flue holes through the floor?
 </content>
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).
+
+| Part | Printed | Drawing | Scaled | Used |
+|---|---|---|---|---|
+| Floor dome | shallow dome, 12 in keystone | — | rises 11½ in, about 8 in thick (inset, from 3½' and 3', ±1 in) | not expressible |
+| The "18"" by the firebox | 18" | — | the hatched wall it marks scales 29 in (vertical scale; the inset has no horizontal dimension) | not used |
+| Floor flue holes | 1½ in, count not printed | about twenty dots in a perspective sketch | can't be counted or scaled | left out |
+
+Question: the "18"" beside the firebox marks a wall that scales about 29 in: what does it measure?
