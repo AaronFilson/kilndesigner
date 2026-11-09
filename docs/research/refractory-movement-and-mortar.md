@@ -49,6 +49,14 @@ Derived (for the engine, not yet coded): a circular arch whose span is held whil
 by ε rises. With the arc length L = rθ held to (1+ε)L and the span S fixed, the new rise solves
 sin(θ'/2)/θ' = S/(2(1+ε)L). This is geometry only; no source checks it against a kiln.
 
+Searched again 2026-11-09 (search extracts only, not opened, **Not found** as a usable method):
+US 4,137,037 (repairing furnace roofs during heat-up: a crown that settles cold is lifted back by
+the bricks' expansion); US 2,641,207 (an arch's width growth "calculated in advance"); a
+Refractories and Industrial Ceramics paper on glass-furnace roofs, doi 10.1007/s11148-014-9714-z,
+whose extract shows a rise formula f = S²/(…) for a 9 m wedge-brick span, garbled; a study of
+blast-furnace stoves finding measured expansion below calculated (doi 10.1007/BF01282040). The
+Springer paper is the lead to open. Until then the rise formula is not shipped.
+
 ## 2. Mortar
 
 | # | Fact | Status | Source |
@@ -91,6 +99,12 @@ Findings for the engine:
 2. **Arch rise on heating** with the frame held (§1.2, Derived): a working step only, marked
    unchecked against a kiln.
 3. **Joint thickness:** if the design ever carries a joint thickness, warn past ¼ in [M8].
+
+Done 2026-11-09 (`movement.py`): items 1 and 3 (the joint warned only where the design states
+`chamber.rings: mortar`; the default ring's text cites Beall), and IFB hot faces shown against their
+rating in the working. Item 2 stays proposed. No brick in the materials library is identified as
+bauxite, kyanite or andalusite, so no permanent-growth note is shown for brick (kyanite in a
+castable is already in `castable.py`).
 
 Done in the engine this round: the sprung-arch growth's reference (`frame.py`, `GROWTH_SOURCE`)
 now cites Brosnan [M1] beside Olsen. No number moved.
