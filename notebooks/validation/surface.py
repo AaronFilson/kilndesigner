@@ -26,15 +26,17 @@ def _(mo):
       [S63, S84]). Tolerance 0.1 %.
     - **The correlations' constants**, against `ht` (Caleb Bell's open implementation of the
       textbook correlations), an independent code: Churchill–Chu for a vertical plate; McAdams
-      (Lloyd–Moran constants) for a hot face up, 0.54 Ra^¼ / 0.15 Ra^⅓; and for a **hot face down**,
-      0.27 Ra^¼ (§6.2 [S62]; three sources in `thermal-properties.md` §5 [T30, T32]). Tolerance
-      1 % (McAdams's laminar–turbulent switch sits at a slightly different Ra in `ht`).
+      (Lloyd–Moran constants) for a hot face up, 0.54 Ra^¼ / 0.15 Ra^⅓. Tolerance 1 % (McAdams's
+      laminar–turbulent switch sits at a slightly different Ra in `ht`).
+    - **Hot face down**: Jaffer, *Thermo* 3 (2023) eq. 56 (`thermal-properties.md` §5), against
+      the review's worked value Nu = 18.15 at Ra 10⁸, Pr 0.71, and within 10 % of his corrected
+      Schulenberg strip formula (eq. 4) over the fitted span 10⁶–10¹².
     - **Radiation**: h_r = εσ(T_s² + T∞²)(T_s + T∞) (§6.2), against `ht.radiation.q_rad`, the net
       grey-body flux, divided by the temperature difference. Tolerance 10⁻⁵ (`ht` takes σ to
       more figures than the engine's 5.670374 × 10⁻⁸).
 
     **Not sourced, so not checked:** a published worked example with numbers for the radiation
-    coefficient, or for a hot face down (the research files hold the formulas and the constants,
+    coefficient (the research files hold the formulas and the constants,
     not a solved case). FOSSEE's Example 6.11 splits its films into convection and radiation
     (16.5 + 17.5 and 12.5 + 6.5 W/m²K) but gives no emissivity or surface temperature to
     reproduce them. These rows check the engine against an independent implementation, not a
@@ -81,13 +83,23 @@ def _(compare):
                 1e-2,
             )
         )
+    results.append(
+        compare(
+            "hot face down, Ra 1e+08",
+            "Jaffer 2023 eq. 56, worked (review §7)",
+            nusselt("facing_down", 1e8, pr),
+            18.15,
+            3e-3,
+        )
+    )
+    for ra in (1e6, 1e8, 1e10, 1e12):
         results.append(
             compare(
                 f"hot face down, Ra {ra:.0e}",
-                "McAdams 0.27 Ra^¼, `ht`",
+                "corrected Schulenberg, Jaffer eq. 4",
                 nusselt("facing_down", ra, pr),
-                Nu_horizontal_plate_McAdams(pr, ra / pr, buoyancy=False),
-                1e-2,
+                0.544 * ra**0.2 / (1 + (0.477 / pr) ** 0.6) ** (1 / 3),
+                0.1,
             )
         )
     for eps, ts, ta in ((0.79, 350.0, 300.0), (0.9, 450.0, 294.0), (1.0, 400.0, 300.0)):

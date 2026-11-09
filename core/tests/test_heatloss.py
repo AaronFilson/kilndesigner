@@ -133,7 +133,7 @@ def test_colder_air_loses_more_heat() -> None:
 
 def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
     """Held 1 °F above its 70 °F air, the kiln's outside barely warms. The floor's Rayleigh number
-    falls below the 10⁵ that hot-face-down convection is checked from (thermal-properties.md §5),
+    falls below the 10⁶ that hot-face-down convection is checked from (thermal-properties.md §5),
     so its loss is flagged; the walls (checked from 0.1) and roof (from 10⁴) are still covered."""
     kiln = load_design(EXAMPLES / "electric-front-loader.yaml")
     result = heat_loss(kiln, inside=Q_(71, "degF"))
@@ -141,10 +141,10 @@ def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
     assert result.working[0].value == "71 °F"
     [warning] = [f for f in result.findings if f.level == "warning"]
     assert warning.message.startswith("floor: the outside air's Rayleigh number is ")
-    assert "outside the 1e+05 to 1e+10 its convection correlation is checked for" in warning.message
+    assert "outside the 1e+06 to 1e+12 its convection correlation is checked for" in warning.message
     assert warning.reference == RA_SOURCE
     ra = float(warning.message.split("number is ")[1].split(",")[0])
-    assert 0 < ra < 1e5
+    assert 0 < ra < 1e6
     # Its sheet works Ra out from the air's properties at the film temperature, and the face's
     # length that would bring it into range (Ra goes as L³)
     check = warning.check
@@ -152,13 +152,14 @@ def test_a_face_outside_its_convection_correlation_is_a_warning() -> None:
     cells = {c.symbol: c for c in check.cells}
     assert cells["Ra"].formula == "g·β·|T_s − T_a|·L³/(ν·α)"
     assert cells["Ra"].value == pytest.approx(ra, rel=0.01)
-    # 87,0xx since k below a sheet's first point is held there, not carried down (review E6)
-    assert check.requirements[0].margin.startswith("Ra = 87,0")
+    # 711,8xx since k below a sheet's first point is held there, not carried down (review E6),
+    # with Jaffer's L = half the floor's shorter side (87,0xx at the old L = A/P)
+    assert check.requirements[0].margin.startswith("Ra = 711,8")
     assert check.solve is not None
     assert check.solve.startswith("Passes when L ≥ ")
     length = float(check.solve.split("≥ ")[1].split()[0])
     l_now = (cells["L"].value or 0) * cells["L"].scale
-    assert length == pytest.approx(l_now * (1e5 / (cells["Ra"].value or 1)) ** (1 / 3), rel=1e-3)
+    assert length == pytest.approx(l_now * (1e6 / (cells["Ra"].value or 1)) ** (1 / 3), rel=1e-3)
 
 
 def test_arch_geometry() -> None:

@@ -614,12 +614,12 @@
       },
       {
         "face": "floor",
-        "heat_loss": "1281 W",
+        "heat_loss": "1273 W",
         "inside_area": "4.249 ft²",
         "layers": [
           {
-            "cold_side": "364.2 °F",
-            "cold_side_k": 457.72112870723305,
+            "cold_side": "381.6 °F",
+            "cold_side_k": 467.3755402610559,
             "hot_side": "2280 °F",
             "hot_side_k": 1522.1500000001472,
             "material": "ifb-k23",
@@ -627,7 +627,7 @@
           }
         ],
         "outside_area": "6.298 ft²",
-        "surface_temperature": "364.2 °F"
+        "surface_temperature": "381.6 °F"
       },
       {
         "face": "roof",
@@ -668,8 +668,8 @@
       }
     ],
     "top_temperature": "2280 °F",
-    "total": "7.68 kW",
-    "total_watts": 7680.209187330405,
+    "total": "7.672 kW",
+    "total_watts": 7672.3056877200215,
     "working": [
       {
         "formula": null,
@@ -752,13 +752,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "6.298 ft²",
-          "outside surface": "364.2 °F",
-          "surface coefficient h": "13.39 W/K/m²"
+          "outside surface": "381.6 °F",
+          "surface coefficient h": "12.57 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "1281 W"
+        "value": "1273 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -778,7 +778,7 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "7.68 kW (2.62e+04 Btu/h)"
+        "value": "7.672 kW (2.62e+04 Btu/h)"
       }
     ]
   },

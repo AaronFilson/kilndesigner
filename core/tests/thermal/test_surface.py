@@ -1,5 +1,7 @@
 """Natural convection, checked against an independent implementation (the ``ht`` library)."""
 
+import math
+
 import pytest
 from ht.conv_free_immersed import (  # pyright: ignore[reportMissingTypeStubs]
     Nu_horizontal_plate_McAdams,
@@ -66,9 +68,10 @@ def test_lloyd_moran_hot_face_up_changes_form_at_ra_1e7() -> None:
     assert nusselt("facing_up", 1e9, 0.71) == pytest.approx(0.15 * 1e3)
 
 
-def test_hot_face_down_is_027_ra_to_the_quarter() -> None:
-    """Nu = 0.27 Ra^¼ (§6.2): at Ra 10⁸ that is 27."""
-    assert nusselt("facing_down", 1e8, 0.71) == pytest.approx(27.0)
+def test_hot_face_down_is_jaffer_eq_56() -> None:
+    """Jaffer, Thermo 3 (2023) eq. 56 at Pr 0.71, Ra 10⁸: Ξ = 2.81 and
+    Nu = 0.341 + 0.550·(3.56×10⁷)^⅕ = 18.15 (physics review §7)."""
+    assert nusselt("facing_down", 1e8, 0.71) == pytest.approx(18.15, abs=0.05)
 
 
 def test_convection_coefficient_is_nusselt_times_k_over_length() -> None:
@@ -99,11 +102,12 @@ def test_a_fixed_surface_ignores_the_temperatures() -> None:
 
 def test_each_face_knows_whether_its_correlation_covers_it() -> None:
     """Checked ranges (thermal-properties.md §5): vertical 0.1–10¹², hot face up 10⁴–10¹¹, hot
-    face down 10⁵–10¹⁰. Ra grows with L³, so a small plate falls below and a big one above."""
+    face down 10⁶–10¹² (Jaffer Table 6). Ra grows with L³, so a small plate falls below and a
+    big one above."""
     assert RA_RANGE == {
         "vertical": (0.1, 1e12),
         "facing_up": (1e4, 1e11),
-        "facing_down": (1e5, 1e10),
+        "facing_down": (1e6, 1e12),
     }
     ra_per_m3, _ = film_rayleigh_350_300(1.0)  # about 3.4e9
     ra, covered = StillAirSurface("vertical", 1.0, 0.9).rayleigh_in_range(350.0, 300.0)
@@ -130,8 +134,28 @@ def test_radiation_coefficient_matches_hts_grey_body_flux(
     assert radiation_coefficient(emissivity, t_surface, t_air) == pytest.approx(expected, rel=1e-5)
 
 
-@pytest.mark.parametrize("ra", [1e5, 1e7, 1e10])
-def test_hot_face_down_matches_mcadams(ra: float) -> None:
-    """Hot face down, 0.27 Ra^¼ (electric-and-thermal.md §6.2), against ``ht``'s McAdams."""
-    expected = Nu_horizontal_plate_McAdams(0.71, ra / 0.71, buoyancy=False)
-    assert nusselt("facing_down", ra, 0.71) == pytest.approx(expected, rel=1e-9)
+@pytest.mark.parametrize("ra", [1e6, 1e8, 1e10, 1e12])
+def test_hot_face_down_agrees_with_corrected_schulenberg(ra: float) -> None:
+    """Jaffer's eq. 56 against his corrected Schulenberg strip formula (eq. 4),
+    Nu = 0.544 Ra^⅕ / [1 + (0.477/Pr)^⅗]^⅓, within 10 % over the fitted span."""
+    pr = 0.71
+    schulenberg = 0.544 * ra**0.2 / (1 + (0.477 / pr) ** 0.6) ** (1 / 3)
+    assert nusselt("facing_down", ra, pr) == pytest.approx(schulenberg, rel=0.10)
+
+
+def test_a_floor_uses_jaffers_length() -> None:
+    """L_R (Jaffer eq. 57): half the shorter side of a rectangle, 2R/π for a disc."""
+    from kilndesigner.shape import FaceShape
+
+    assert FaceShape("floor", "facing_down", 0.6, 1.0, 0.6).characteristic_length(0.1) == (
+        pytest.approx(0.4)
+    )
+    disc = FaceShape("floor", "facing_down", 0.785, 1.0, 1.0, disc=True)
+    assert disc.characteristic_length(0.0) == pytest.approx(1 / math.pi)
+    roof = FaceShape("roof", "facing_up", 0.6, 1.0, 0.6)
+    assert roof.characteristic_length(0.0) == pytest.approx(0.6 / 3.2)
+
+
+def test_hot_face_down_large_prandtl_limit() -> None:
+    """As Pr grows Ξ → 1, so Nu → 0.341 + 0.550 Ra^⅕ (Jaffer eq. 46)."""
+    assert nusselt("facing_down", 1e10, 1e9) == pytest.approx(0.341 + 0.550 * 1e2, rel=1e-4)

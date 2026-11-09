@@ -374,7 +374,7 @@
         "name": "Installed power over steady loss at top temperature",
         "note": "Power above the loss is what heats the ware and walls near the top.",
         "reference": null,
-        "value": "2.02"
+        "value": "2.03"
       }
     ]
   },
@@ -488,7 +488,7 @@
     {
       "check": null,
       "level": "info",
-      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 260.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
       "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
     },
     {
@@ -1295,28 +1295,28 @@
       },
       {
         "face": "floor",
-        "heat_loss": "847.2 W",
+        "heat_loss": "841.8 W",
         "inside_area": "3.516 ft²",
         "layers": [
           {
-            "cold_side": "1127 °F",
-            "cold_side_k": 881.5470031585862,
+            "cold_side": "1136 °F",
+            "cold_side_k": 886.4890336677314,
             "hot_side": "2345 °F",
             "hot_side_k": 1558.149999999907,
             "material": "ifb-jm26",
             "thickness": "4.5 in"
           },
           {
-            "cold_side": "241.7 °F",
-            "cold_side_k": 389.6321774466907,
-            "hot_side": "1127 °F",
-            "hot_side_k": 881.5470031585862,
+            "cold_side": "260.2 °F",
+            "cold_side_k": 399.9505708912359,
+            "hot_side": "1136 °F",
+            "hot_side_k": 886.4890336677314,
             "material": "ifb-k23",
             "thickness": "2.5 in"
           }
         ],
         "outside_area": "9.252 ft²",
-        "surface_temperature": "241.7 °F"
+        "surface_temperature": "260.2 °F"
       },
       {
         "face": "roof",
@@ -1354,7 +1354,7 @@
       {
         "check": null,
         "level": "info",
-        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 241.7 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "message": "Morgan Thermal Ceramics K-23 insulating firebrick runs down to 260.2 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
         "reference": "electric-and-thermal.md §4.1, Morgan K IFB series [S31]"
       },
       {
@@ -1377,8 +1377,8 @@
       }
     ],
     "top_temperature": "2345 °F",
-    "total": "5.693 kW",
-    "total_watts": 5693.144157055688,
+    "total": "5.688 kW",
+    "total_watts": 5687.773866856205,
     "working": [
       {
         "formula": null,
@@ -1461,13 +1461,13 @@
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
         "inputs": {
           "outside area": "9.252 ft²",
-          "outside surface": "241.7 °F",
-          "surface coefficient h": "10.34 W/K/m²"
+          "outside surface": "260.2 °F",
+          "surface coefficient h": "9.267 W/K/m²"
         },
         "name": "Heat loss, floor",
         "note": null,
         "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
-        "value": "847.2 W"
+        "value": "841.8 W"
       },
       {
         "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
@@ -1487,7 +1487,7 @@
         "name": "Total heat loss at top temperature",
         "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor is taken as a hot plate facing down in open air, as on a stand; on a slab it would lose less.",
         "reference": null,
-        "value": "5.693 kW (1.94e+04 Btu/h)"
+        "value": "5.688 kW (1.94e+04 Btu/h)"
       }
     ]
   },

@@ -28,13 +28,13 @@ Ranked by how much a user's number moves.
 
 | # | Finding | Mark | Effect on the examples |
 |---|---|---|---|
-| 1 | Ware and setting c_p held at the room-temperature 800 J/(kg·K) | **fix now** | hybrid: +12 % energy, +13 % cost, +8.3 h; nothing for a kiln with no ware |
+| 1 | Ware and setting c_p held at the room-temperature 800 J/(kg·K) | **fix now** (done) | hybrid: +12 % energy, +13 % cost, +8.3 h; nothing for a kiln with no ware |
 | 2 | Flue gas assumed to leave at the chamber's temperature (no gas-to-ware/wall heat transfer) | proposed | gas kiln: +8 / +18 / +35 % fuel for flue gas 50 / 100 / 150 K hotter than the chamber; hybrid +7 / +17 / +30 % on its propane |
 | 3 | Excess air fixed at 3 % O₂ through the whole firing (λ 1.15) | proposed | gas kiln +1 % (λ 1.5) to +5 % (λ 2.0) fuel below 800 °C; also moves the hybrid's cost crossover |
 | 4 | Chimney draft without friction or entry/exit losses | proposed | net draft 81–87 % (gas) and 92–95 % (hybrid) of the stack figure shown |
 | 5 | Ground-contact floor: steady disk, S = 2D, adiabatic ground surface | proposed (EP §5 #2) | not in these examples; engine's own note gives about 2× floor loss at 12 h |
 | 6 | Radiation between faces and the ware lag (lumped chamber) | proposed (EP §4 #1) | small on total fuel; larger on floor and ware temperatures |
-| 7 | Hot face down: McAdams 0.27 Ra^¼ against Schulenberg/Jaffer | **fix now** | total loss −0.09 %; floor shell temperature +16 °F (234 → 251 °F) |
+| 7 | Hot face down: McAdams 0.27 Ra^¼ against Schulenberg/Jaffer | **fix now** (done) | total loss −0.09 %; floor shell temperature +16 °F (234 → 251 °F) |
 | 8 | Element power held at its hot value from cold | keep (note) | cold power +4 % (A-1/APM), +6 % (AF); faster only in the first hours |
 | 9 | Natural gas as pure methane | keep | available heat at the top 0.304 (NG) vs 0.330 (propane); per-therm pricing exact |
 | 10 | No inside film (hot face at the chamber's temperature) | keep | radiative h at 1000 °C ≈ 370 W/(m²·K) against about 1 W/(m²·K) for the lining: < 0.3 % |
@@ -49,7 +49,13 @@ Ranked by how much a user's number moves.
 
 ---
 
-## 1. Ware and setting heat capacity: **fix now**
+## 1. Ware and setting heat capacity: **fix now**, done
+
+**Done 2026-11-09.** `simulation.ware_heat_capacity` / `ware_enthalpy`; each step solves
+D(T) = Σ faces + m·[H(T) − H(T_c)] with brentq; the working shows the curve and both sources.
+Tests 1, 2 and 4 are in `core/tests/test_simulation.py`; test 3: pnw-hybrid-crossdraft's ware
+337 → 411 kWh (+22 %), energy 900 → 1022 kWh, time 65.2 → 73.0 h, cost $150.03 → $172.80.
+Golden reports regenerated.
 
 **Ours.** `simulation.py` lumps the setting and the ware into one capacity, `ware_kg × WARE_CP`.
 `WARE_CP` = 800 J/(kg·K), Lienhard Table A.2, fired-clay brick at 24 °C (masonry-materials.md §1.1
@@ -190,7 +196,13 @@ heat at the end of a fast ramp (it would lag) and gives no floor or door cold sp
 total fuel is small; the effect on cone evenness can't be shown today. Do #1 first. ScriptF needs
 the ware node's c_p(T) from #1.
 
-## 7. Hot face down: **fix now**, settled from open sources
+## 7. Hot face down: **fix now**, settled from open sources; done
+
+**Done 2026-11-09.** `thermal/surface.py` uses eq. 56, `FaceShape.characteristic_length` gives
+L_R for a floor (half the shorter side; 2R/π for a disc, eq. 57 as read in arXiv:2201.02612v5),
+`RA_RANGE["facing_down"] = (1e6, 1e12)`, `thermal-properties.md` §5.3 records it, and the
+surface validation notebook checks 18.15 and eq. 4. Tests 1, 2, 3 (eq. 4 within 10 %) and 5 (the
+range) are in `core/tests/thermal/test_surface.py`.
 
 **Ours.** Nu = 0.27 Ra^¼, L = A/P (McAdams), Ra 10⁵–10¹⁰.
 

@@ -32,11 +32,17 @@ def _example(changes: dict[str, object] | None = None) -> Kiln:
 def test_olsens_fast_fire_on_propane_to_cone_10_in_three_and_a_half_hours() -> None:
     """Olsen p.139: the fast-fire kiln reaches cone 10 in 3½ h; p.142: it burns gas with its
     fireboxes sealed. The 32 ft³ (stacking) propane-and-wood example's propane firing is solved for
-    3½ h: the input, the gallons and the cylinders it takes."""
+    3½ h: the input, the gallons and the cylinders it takes. With the ware's c_p(T) (physics
+    review 2026-11 §1) it needs about 1.97 million BTU/hr, more than the design's 16 cylinders
+    give at 20 °F, so the supply limits it to about 3.7 h and 18 cylinders are asked for (an open
+    question for the owner, docs/planning/11-09-26.md step E)."""
     kiln = load_design(EXAMPLES / "olsen-32cuft-propane-wood-fastfire.yaml")
     target = solve_target(kiln, dt=DT)
-    assert target.met
-    assert target.duration_h == pytest.approx(3.5, abs=0.05)
+    assert not target.met
+    assert target.limits
+    assert "16 × 100 lb cylinders" in target.limits[0]
+    assert target.duration_h == pytest.approx(3.7, abs=0.1)
+    assert target.cylinders_full == 18
     assert target.propane_gallons is not None
     assert target.propane_gallons > 0
     assert target.cylinders_full is not None
