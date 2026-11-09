@@ -94,7 +94,10 @@ def _arch_cut(p: Part, axis: Axis) -> Rect | None:
         points = tuple(arch_outline(p))
         xs, zs = [x for x, _ in points], [z for _, z in points]
         return Rect(min(xs), min(zs), max(xs) - min(xs), max(zs) - min(zs), fill, p.name, points)
-    assert axis == 0, "arches are only cut across and along"
+    if axis == 2:
+        # The plan's cut only grazes an arch that springs from the floor (a groundhog's): the
+        # walls it stands on are the plan; the ring above isn't cut.
+        return None
     bottom = p.lo[2] if p.cap else a.centre_z + a.radius
     top = a.centre_z + a.radius + a.thickness
     return Rect(p.lo[1], bottom, p.length_y, top - bottom, fill, p.name)

@@ -37,6 +37,11 @@
 # isn't printed, so the chimney isn't entered: the engine sizes it (its section comes out 9 × 9
 # in). The exit opening (12 in high, its width not printed), the 9 in high stoke hole and the
 # 2½ × 4 in passive damper.
+# Fig 4-140 re-read on the page image, 2026-11-08 (drawing): the stoke hole is 9 in high, its sill
+# 14 in over the floor, its width not printed, so it isn't entered (the engine would set its foot
+# at the grate); the grate lies inside the teardrop's front, over the ash pit, where the design's
+# front firebox stands outside the front wall; a damper slot in the chimney about 73 in up
+# (16 + 24 + 33 in, faint (?)); no spy holes drawn: the engine's defaults.
 schema: 1
 name: Conrad Calimpong's teardrop kiln
 units: us

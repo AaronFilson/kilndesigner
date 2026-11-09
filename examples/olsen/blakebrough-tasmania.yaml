@@ -22,7 +22,11 @@
 # Not modelled: the moving box is taken as a car, the hearth and back wall riding on it, as the real
 # hearth and back wall are one part and the box the other. The bottom 15 in of the walls, 9 in of
 # 2600 IFB (p.148, Fig 5-72), is taken as fibre. The eight floor exit flues and the flue channels
-# under the hearth: the engine's downdraft leaves by one flue at the foot of the back wall.
+# under the hearth: the engine's downdraft leaves by one flue at the foot of the back wall. The
+# damper slab on top of the chimney (Fig 5-72): the design has no damper to enter. The spy hole in
+# the box's wall (photo, Fig 5-71): no size or height printed, so the engine places its default.
+# Checked against Fig 5-72 (2026-11-08): two burner channels 9 in wide along the long sides, the
+# 4½ × 6 in ports at both ends of each, as entered.
 schema: 1
 name: Blakebrough's fibre envelope kiln, Hobart
 units: us

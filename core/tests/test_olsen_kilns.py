@@ -28,6 +28,14 @@ WARNED: dict[str, dict[str, str]] = {
         "7000 BTU/hr (p.236) of the input the engine sizes for the 68 ft³ fibre box; the book "
         "gives no burner rating, so this holds if the burners were that large",
     },
+    "bidai": {
+        "fire.chimney": "the chimney read off Fig 4-36 (p.94), about 81 in over chamber 1's floor, "
+        "is under the height Olsen's rule gives (p.140); the kiln was built and fired so",
+    },
+    "blakebrough-sturt": {
+        "frame.catenary": "no source sizes what holds a catenary's feet; Fig 8-15 (p.205) draws "
+        "the arch pointed, from near the floor",
+    },
     "chappell-domura": {
         "fire.grate": "one 12 × 12 in chimney draws both the salt kiln and the two-chamber kiln "
         "beside it (p.126), so it is large for the salt kiln's firebox alone (its size not "
