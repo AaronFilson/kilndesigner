@@ -30,7 +30,9 @@
 # Not modelled: the Bizen-style and tube-style chambers, as two of the mean size; the 12, 18 and
 # 6 in steps between the platforms; the insulating-brick transition under the domes; the three exit
 # flues from the front chamber across the second grate, and the 5 in air tube under it; the second
-# firebox's place between the chambers, entered at the front. The chimney's height isn't printed,
+# firebox's place between the chambers, entered at the front, and its stoking door in the side
+# wall (Fig 4-110 "DOOR"); the round spy holes in the domes' sides (Fig 4-108, unsized). The
+# chimney's 15 × 24 in section can't be entered without its height. The chimney's height isn't printed,
 # so the chimney isn't entered and the engine sizes it.
 schema: 1
 name: Olsen's Hollyweird Tube

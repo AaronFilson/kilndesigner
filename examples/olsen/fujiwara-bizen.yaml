@@ -23,9 +23,11 @@
 # on to the chimney (p.95, p.97); the book shows no steel on this kiln.
 # Not modelled: the dogi holds ware on three steps (p.102), and its own walls and roof aren't in
 # the heat loss; the himitsu, a 2 ft chamber in a 24 in flue, and its 3 × 6 in and 6 × 9 in flues
-# (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given. The engine's arch spans
-# the width, so it is laid across the 10 ft with the same springline and crown; held by masonry,
-# it gets no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
+# (p.100–101); the kedo's 6 × 10 in exit flues, whose count isn't given; the flue damper at the
+# chimney's entrance (p.101–102, Fig 4-55); the doors into the chambers in the side wall, the
+# takiguchi side fire holes and the spy holes (Fig 4-55: drawn, not sized or placed). Chambers in
+# a row get arches along the draft, springing from the walls between them, as the book's do; held
+# by masonry, they get no steel. The chimney is about 3 × the kiln's whole rise, the dogi's run included
 # (p.101); here the rise is counted over the two chambers only. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kei Fujiwara's Bizen kiln, Imbe

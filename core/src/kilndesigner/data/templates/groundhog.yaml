@@ -17,8 +17,11 @@
 # walls (p.99–100). Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog
 # (gulgong-racer, p.119). The chimney's section and the exit flues aren't given (only "9–30 in
 # wide" inside): engine default. Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: the 12–15 in step up from the firebox to the ware platform; the six exit flues
-# drawn at the chimney wall.
+# Entered from Fig 4-85 (drawing): the 12–15 in step up from the firebox, 13½ in. The chimney is
+# drawn full width and 9–30 in deep inside, but a full-width section asks for a flue port taller
+# than the back wall under an arch springing from the floor, which the engine refuses: its section
+# is left to the engine. Not modelled: the six exit flues drawn at the
+# chimney wall (the engine lays one; their size isn't given); the dug-out firebox variant.
 schema: 1
 name: Groundhog, Olsen's basic dimensions
 units: us
@@ -49,6 +52,7 @@ heat:
         position: front
         width: 102 in # full width
         length: 6 ft
+        step: 13.5 in # "12–15" RISE FROM SHALLOW FIREBOX" (Fig 4-85, drawing): the middle
 draft:
   type: cross
   flue_wall: back

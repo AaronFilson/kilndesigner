@@ -24,10 +24,11 @@
 # front wall, Olsen's for side-stoked chambers (p.205). The chimney's section isn't given, so the
 # engine sizes it.
 # Not modelled: the domed main firebox, which the book doesn't size; the flue holes (Fig 2-40),
-# neither counted nor sized; the raw clay behind the fired face. Each arch springs between the
-# front and back walls; on the 5 ft square plan the engine's arch across the width has the same
-# span. The door is in a side wall; a sprung arch here springs from the side walls, so it is put
-# in the front wall. The floor's loss into dry soil is worked out at steady state.
+# neither counted nor sized (about three drawn in the photo, Fig 2-40 (?)); the raw clay behind
+# the fired face. Each arch springs between the front and back walls (p.55), as the engine lays
+# chambers in a row. The door is in one side wall, with stoke holes and spy holes in both (p.56,
+# Fig 2-44); no size is printed, so the door stays in the front wall as the engine's default and
+# the side stoke holes and spy holes aren't entered. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Hotchkiss six-chamber raw-clay climbing kiln, 1971
 units: us
