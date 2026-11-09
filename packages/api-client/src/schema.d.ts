@@ -870,6 +870,14 @@ export interface components {
             cost_usd: number | null;
             /** Cost */
             cost: string | null;
+            /** Wood Kg */
+            wood_kg?: number | null;
+            /** Wood Oven Dry Kg */
+            wood_oven_dry_kg?: number | null;
+            /** Wood Cords */
+            wood_cords?: number | null;
+            /** Wood Cost Usd */
+            wood_cost_usd?: number | null;
             /** Points */
             points: components["schemas"]["FiringPoint"][];
             /** Faces */

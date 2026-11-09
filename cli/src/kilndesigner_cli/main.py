@@ -140,6 +140,13 @@ def firing_summary(result: FiringResult) -> str:
         lines.append(f"  Fuel burned:      {result.fuel_kwh:.1f} kWh{gallons}")
     if result.cost is not None:
         lines.append(f"  Cost:             {result.cost}")
+    if result.wood_kg is not None:
+        cords = f", {result.wood_cords:.2f} cord" if result.wood_cords is not None else ""
+        cost = f", ${result.wood_cost_usd:,.2f}" if result.wood_cost_usd is not None else ""
+        lines.append(
+            f"  Or on wood:       {result.wood_kg:,.0f} kg as fired "
+            f"({si(parse_quantity(f'{result.wood_kg} kg'), 'lb'):,.0f} lb){cords}{cost}"
+        )
     lines.extend(f"  [{f.level}] {f.message}" for f in result.findings)
     return "\n".join(lines)
 

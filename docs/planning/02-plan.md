@@ -451,6 +451,19 @@ then: the work that would serve it (fireboxes, natural draft, wood) stays genera
   author: a sourced heating value for wood and a firebox efficiency, and whether a firing may
   start on propane and finish on wood.
 
+### Status (2026-11-08, M7: wood per firing)
+
+- **`site.wood`**, all the user's own, no defaults: `heating_value` (net, oven-dry), `moisture`
+  (wet basis), `firebox_efficiency`, and optionally `cord_weight` (oven-dry lb/cord) and `price`
+  (USD/cord; `cord` = 128 ft³ in the unit registry). Left out, the firing says what it needs.
+- **`wood.py`**: the gas firing's heat into the kiln, Q, put in by wood instead: H(w) =
+  H(dry)(1 − w) − 2.44w MJ/kg (FAO UBET eq. 3, checked against Forest Research's 14.7 GJ/t at 20 %),
+  m = Q ÷ (η·H(w)), cords and cost. In the firing result (`wood_kg`, `wood_oven_dry_kg`,
+  `wood_cords`, `wood_cost_usd`), its working and the CLI. Not in the web form yet.
+- **`docs/research/wood-fuel.md`**: sourced starting values (MU Extension, Forest Research, FAO,
+  USU's cord weights by species), Olsen's and others' wood per firing to compare. Not found: a kiln
+  firebox efficiency; eucalyptus and pallet values; FPL's scanned PDFs weren't readable.
+
 M1 to M3 make a usable open-source tool and design the author's kiln. M4 and M5 are the
 full-stack story. M7, the client's kiln, is on hold (above); it can move earlier again when the
 client is ready, since the CLI can produce the client's plans before the app exists.
