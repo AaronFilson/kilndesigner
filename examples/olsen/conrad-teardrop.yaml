@@ -94,8 +94,17 @@ heat:
 draft:
   type: cross
   flue_wall: back
+  # Step A, 2026-11-09: the exit opening at the neck's end, under the 13 in block, "12"" high
+  # (Fig 4-140, printed). Its width (scaled: Fig 4-140, p.124, from the plan's 12", 16", 12" and
+  # 19", ±1 in): the neck's end reads 9.6–11.4 in across, 10½ in (not rounded to the brick: 9 in
+  # falls outside the spread).
+  flue_port:
+    width: 10.5 in
+    height: 12 in
   passive_air: # the 2½ × 4 in passive damper at the chimney's foot (Fig 4-140); which way each
-    # runs isn't printed: 2½ in across, 4 in high (?)
+    # runs isn't printed: 2½ in across, 4 in high. (scaled: Fig 4-140, p.124, from the
+    # elevation's 35", 12", 13", 24", 8" and 19") it is drawn 2.6–3.2 in along the kiln and
+    # 4.2–5.6 in high, so the 4 in runs up, as entered
     width: 2.5 in
     height: 4 in
   damper: # a damper slot in the chimney about 73 in up (16 + 24 + 33 in, faint, Fig 4-140, ?);

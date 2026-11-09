@@ -32,9 +32,8 @@
 # built kilns are (door-openings.md).
 # Not modelled: each arch is peaked toward the back (p.91–92, p.95), which roof.peak_at can say,
 # but how far back isn't printed, so each is a circular arch from the front wall to the back. Also left out: the firebox's semicircular front and its
-# three flame-diffusing blocks; the vapour holes; the spy holes, one round hole high in each
-# chamber's arch near its back (chamber 2's 56 in up, Fig 4-36), since spy holes go in a wall of
-# one chamber, not each chamber's arch; the middle chamber's side stoke hole (aizashiguchi), 15 in
+# three flame-diffusing blocks; the vapour holes (the spy holes are scaled off Fig 4-36, step A,
+# below); the middle chamber's side stoke hole (aizashiguchi), 15 in
 # up (Fig 4-36); the 12 in exit flue and step at chamber 3's back; and the chimney's grid of
 # 9 × 9 in flues across the 73 in width (Fig 4-36).
 schema: 1
@@ -62,6 +61,11 @@ roof:
   type: sprung_arch
   rise: 21 in # chamber 1's, to its 59 in crown
   buttressed: true # thrust onto the common walls and the chimney (p.95)
+  # (scaled: Fig 4-36, p.94, from each chamber's printed depth, ±7 %) the inner arch's top stands
+  # 49, 62 and 56 % along chambers 1, 2 and 3 from the front wall. Not entered as peak_at: with
+  # each arch a semicircle on its depth (rise half the span), any offset peak turns a half past a
+  # quarter circle, which the engine refuses; the drawing is not truly to scale either (chamber 1
+  # is drawn about 20 % smaller vertically than the others).
 loading:
   type: door
   face: right # one side wall (Fig 4-36's plan)
@@ -105,6 +109,31 @@ heat:
           width: 14 in # the grate zone, six fireclay bars (Fig 8-7)
           length: 21 in # Kawaii's bars, 18–24 in (p.97)
         ash_pit: 14 in # Fig 8-7
+spy_holes:
+  # Step A, 2026-11-09: one round spy hole high in each chamber near its back (Fig 4-36),
+  # drawn in the side view's far wall (the left, taking the plan's doors as the right (?)).
+  # (scaled: Fig 4-36, p.94, from 19'5", 42", 46", 36", 59", 65", 59" and 56"; the diameter
+  # ±½ in, 6–7½ in read; heights ±3 in; along ±2 in.) Chamber 2's 56 in is printed; the scales
+  # give it 52–56½ in, a check on the method.
+  holes:
+    - chamber: 1
+      wall: left
+      port:
+        diameter: 6 in
+      up: 51 in
+      across: -12 in # 33 in behind chamber 1's front wall
+    - chamber: 2
+      wall: left
+      port:
+        diameter: 6 in
+      up: 56 in # printed (Fig 4-36)
+      across: -12 in # 35 in behind chamber 2's front wall
+    - chamber: 3
+      wall: left
+      port:
+        diameter: 6 in
+      up: 52 in
+      across: -9 in # 27 in behind chamber 3's front wall
 draft:
   type: cross
   flue_wall: back

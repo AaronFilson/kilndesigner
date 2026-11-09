@@ -29,3 +29,7 @@ first firing), p.82 (Aspen's elevation). The design itself is the `fast-fire` ki
 - Was this kiln built with the high-altitude sizes (sixth firebox course, 13½ × 7½ in exit flue,
   13½ × 13½ in chimney, Figs 5-35, 5-37, 5-39)?
 - Its chamber depth (not printed).
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled: Fig 5-41 is a photo with no printed dimension.

@@ -63,3 +63,22 @@ Notes: `docs/research/olsen-kilns.md`, `chappell-domura`.
    flues?
 3. Fig 4-149: how big are the three exit flues into the collection box?
 4. Spy holes: does any photo or page show where they were?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-149 (p.126) scaled from the salt chamber's 3' and 5' and the "9" WALLS" (7.9, 9.9 and 7.2
+px/in). The plan isn't to scale across the sheet: the chamber kiln beside it draws its 4' at 6.4
+px/in and its 31" at 13 px/in. Fig 4-150 is a sketch with no dimension. Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Inlet flues | — | three openings in the front wall | each 3–4 in wide (a half-brick, 4½ in, read loosely); height not in a plan | not entered (`inlet` needs a height) |
+| Exit flues | — | three openings into the collection box | each 2½–3½ in wide; height not in a plan | not entered (a hole needs a height) |
+| Open stretch of the left wall | "3'" beside it (?) | a gap mid-length | 34–42 in | not entered (question 1 stands) |
+| Firebox width, front to back | — | — | can't be read: the plan doesn't draw the firebox apart from the inlet wall | 9 in, assumed |
+
+Questions from step A:
+
+5. Fig 4-149: is the "3'" on the left wall the open stretch, the door? It scales 34–42 in.
+6. How tall are the three inlet and three exit flues? They scale 3–4 and 2½–3½ in wide.

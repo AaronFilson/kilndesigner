@@ -28,3 +28,7 @@ cut by the page curve: "...wide and 49in. (124cm) tall, with elements located in
 ## Open questions
 
 - p.245, first line: is the cut word before "floor" "and"? Does the kiln have floor elements?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing to scale: the book has no figure of this kiln.

@@ -43,3 +43,10 @@ fired raw clay has no service rating, so the report flags it as information.
    that, the doors can go in the side wall (`opening.each_chamber`).
 2. Fig 2-40 p.55: how many flue holes are in each straight wall, and how big are they?
 3. p.57: how big is the domed main firebox?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled. Fig 2-40 (p.55) shows the straight wall with three flue holes between blocks,
+but the raw-clay blocks' size isn't printed, so the courses can't stand in for a scale (the 2½ in
+course is for standard brick). The other figures (2-39 to 2-49) are photos with no printed
+dimension.

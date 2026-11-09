@@ -53,3 +53,18 @@ exit flue and spy holes.
    uses it for both.
 3. Fig 4-5 p.84: the chimney flue at the back has a width arrow but no number. Is a size given
    anywhere?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-5 (p.84) scaled from its 3½', 5¼' and 9–12' (4.4–6.7 px/in: a ±20 % spread). The chimney
+flue runs into the page's gutter, so its far side may be cut. Readings in
+`scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Chimney flue width | an arrow, no number | up the back to the hill's surface | 4½–7 in (to the page edge) | not entered: one side is in the gutter and its depth isn't drawn |
+| Entrance | "2' × 2'" | an oval | 15–23 in wide, 29–45 in tall | the printed 2 × 2 ft stands |
+
+Question from step A:
+
+4. The chimney flue scales about 6 in across (one side in the gutter). Is that its size?

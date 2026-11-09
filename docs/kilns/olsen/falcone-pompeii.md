@@ -32,3 +32,8 @@ $0 priced (no price for the firebrick).
 - Fig 6-32: how big are the nine exit-flue holes?
 - Fig 6-34: the stoking port's width and height, and how many there are.
 - Where is the ware chamber's door (Fig 6-29 side view)?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled: Figs 6-28 to 6-35 are photos with no printed dimension, so the nine roof flues,
+the stoking port and the door can't be scaled.

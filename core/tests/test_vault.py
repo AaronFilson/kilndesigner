@@ -112,7 +112,8 @@ def test_bowen_mountains_volume_is_the_box_and_the_uneven_arch_over_it() -> None
 def test_the_uneven_arch_is_laid_out_from_each_springline() -> None:
     kiln = load_design(BOWEN)
     parts = {p.name: p for p in lining_parts(kiln)}
-    assert parts["front/1-ifb-jm28"].hi[2] == pytest.approx(16 * 25.4)
+    # the front wall is cut round the gas firebox's four inlet flues (step A): each piece's top
+    assert parts["front/1-ifb-jm28-a"].hi[2] == pytest.approx(16 * 25.4)
     assert parts["back/1-ifb-jm28"].hi[2] == pytest.approx(18 * 25.4)
     assert parts["left/1-ifb-jm28"].hi[2] == pytest.approx(16 * 25.4)
     assert parts["front/skewback-ifb-jm28-chamber-1"].lo[2] == pytest.approx(16 * 25.4)

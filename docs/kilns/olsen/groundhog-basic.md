@@ -45,3 +45,19 @@ available until then.
 1. Fig 4-85 p.111: is the shallow firebox's faint length label "4–6'" or "6'"?
 2. Fig 4-85: are the six exit flues all one size? A flue size, or their total area, would let
    the flue be checked.
+
+The build now runs (the arch-cut failure above was fixed in the engine since).
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Fig 4-85 (p.111) prints only ranges. The flues are scaled from the 29–48" crown at its middle,
+38½ in; the range itself puts ±25 % on the scale. Readings in `scratch/scale-a/measure.py`.
+
+| Feature | printed | drawing | scaled | In the model |
+|---|---|---|---|---|
+| Exit flues | — | six at the foot of the chimney wall | each 5–8½ in wide, 6–10 in high | `draft.exits`: 6 in the back, 7 × 7½ in (three courses high), spread evenly (new) |
+| Chimney section | 9–30" deep, full width | — | — | engine |
+
+Question from step A:
+
+3. The six exit flues scale about 7 × 7½ in. Is there a usual size for a groundhog's flues?

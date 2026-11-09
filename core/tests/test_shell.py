@@ -261,7 +261,7 @@ def test_a_plan_tapering_to_the_chimney() -> None:
     assert width_at(list(taper.stations), -1) == 120
     assert width_at(list(taper.stations), 999) == 48
     # The arch keeps its shape: its segment scales as the width squared
-    seg = Arch(120, 38.5).segment_area / 120**2
+    seg = Arch(120, 43).segment_area / 120**2
     assert chamber_shape(hog).volume == pytest.approx(seg * taper.square * 0.0254**3)
     assert "width changes" in (not_drawn(hog) or "")
     frame = design_frame(hog)

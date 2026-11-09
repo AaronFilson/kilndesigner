@@ -48,3 +48,9 @@ The build finishes with no errors. Chamber 431 ft³; top temperature 2345 °F (c
 2. Fig 7-7 p.181: how tall are the two chimneys, and what are their sections?
 3. p.183 gives 3½–4½ ft to the ceiling's vertex. Your starting heights were 5 and 6 ft. Which
    should stand?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled. Figs 7-5 and 7-6 (p.181) are sketches with no printed dimension, Fig 7-7 is a
+photo, and Fig 7-2 (p.178) prints only the fire zone's diagonal. The chimneys, their flues, the
+dampers and the spy hole can't be scaled.

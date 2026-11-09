@@ -66,3 +66,10 @@ Notes: `docs/research/olsen-kilns.md`, `church-skaelskor`.
 3. Where is the loading door? Fig 7-9 draws none, and Fig 7-8 is a photo of the church. Is it in
    one of the walls between the arms?
 4. How tall are the two chimneys, and how big is each of the groundhog chimney's three flues?
+
+## Scaled off the figures (step A, 2026-11-09)
+
+Nothing scaled. Fig 7-9 (p.182) is a perspective sketch; its only dimension near the chimneys is
+the single chimney's 13.5 × 13.5 in, on a different face from the three-flue chimney, so the
+three flues can't be scaled with a spread. The chimneys' heights aren't drawn. Fig 7-10 is a
+sketch with no dimension, Fig 7-8 a photo.
