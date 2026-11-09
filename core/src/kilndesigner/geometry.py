@@ -430,7 +430,7 @@ def lining_parts(kiln: Kiln) -> list[Part]:
 
     if (why := not_drawn(kiln)) is not None:
         raise GeometryNotSupportedError(why)
-    from kilndesigner.firebox_parts import carve, firebox_parts, openings
+    from kilndesigner.firebox_parts import carve, firebox_parts, has_fireboxes, openings
 
     parts = _level_parts(kiln)
     if kiln.loading.opening is not None:
@@ -442,7 +442,7 @@ def lining_parts(kiln: Kiln) -> list[Part]:
         from kilndesigner.run_parts import flue_holes
 
         holes += flue_holes(kiln)
-    if holes or kiln.heat.fire is not None:
+    if holes or has_fireboxes(kiln):
         # A trough's cut takes the floor out under it; its own floor is laid in the cut
         walls = [h for h in holes if not h.name.endswith("/trough")]
         parts = carve(parts, holes) + carve(firebox_parts(kiln), walls)
@@ -1305,7 +1305,9 @@ def build_model(
 
     holes = _holes(kiln, hardware)
     grates: list[Any] = []
-    if kiln.heat.fire is not None:
+    from kilndesigner.firebox_parts import has_fireboxes
+
+    if has_fireboxes(kiln):
         from kilndesigner.firebox_parts import grate_pieces, model_holes
 
         holes += [_placed_hole(kiln, lo, hi, solid) for lo, hi, solid in model_holes(kiln)]

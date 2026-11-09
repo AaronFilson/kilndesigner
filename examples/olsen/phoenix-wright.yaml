@@ -23,8 +23,10 @@
 # Olsen gives, the grate 6½ in up (p.199, Fig 5-39); a 12 × 24 in fast-fire grate with ¾ in gaps
 # (p.204), 7 × the chimney (p.77). The inlet flue 4½ in × the firebox's width (p.141). The exit
 # flue is the engine's.
-# Not modelled: the firebox's Roman arch, the flexboard behind the walls (p.140) and the frame,
-# which the engine sizes.
+# The firebox's Roman arch is given, but its 6¾ in rise, half the 13½ in width, doesn't fit the
+# 6 in assumed above the grate, so the engine draws it flat and says so: the book's heights would
+# settle it.
+# Not modelled: the flexboard behind the walls (p.140) and the frame, which the engine sizes.
 schema: 1
 name: George Wright's Phoenix kiln, Portland
 units: us
@@ -68,6 +70,7 @@ heat:
         inlet:
           width: 13.5 in # 4½ in × the firebox's width (p.141)
           height: 4.5 in
+        roof: roman # "a Roman arched firebox" (p.147)
 draft:
   type: cross
   flue_wall: back

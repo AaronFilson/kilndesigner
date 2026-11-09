@@ -12,8 +12,10 @@
 # (Fig 5-35), with pull-out cone-hole plugs and a 2½ × 2½ in hole left open at the top centre
 # (p.141). Fig 5-36 (drawing) shows a slide damper across the chimney above the kiln; a passive
 # damper air hole can go in the chimney's back (p.141).
+# The open top-centre hole is a spy hole of its own size (spy_holes.holes), its top at the arch's
+# inside over the door's middle (derived).
 # Not modelled: the cone holes' number, places and size (not given: engine default, three
-# 2¼ × 2½ in); the open top-centre hole and the chimney's air hole (no schema field).
+# 2¼ × 2½ in); the chimney's air hole (no schema field).
 # Assumed: the chamber's depth, not printed: 27 in gives about 15½ ft³, inside the book's
 # 12–16 ft³. The floor (shelves over the fireboxes) is taken as 4½ in of super-duty hard brick: it
 # roofs the fireboxes, where Olsen keeps low- and intermediate-duty brick out (p.18).
@@ -72,5 +74,12 @@ draft:
     inside:
       width: 9 in
       depth: 9 in
+spy_holes:
+  holes:
+    - port: # "a 2½ × 2½ in hole left open at the top centre" of the door (p.141)
+        width: 2.5 in
+        height: 2.5 in
+      wall: front
+      up: 38 in # its top at the arch's inside there, 39.3 in (derived)
 site:
   ambient: 70 degF

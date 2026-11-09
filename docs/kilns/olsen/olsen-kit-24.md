@@ -13,7 +13,7 @@ p.243 (installation); Fig 6-63 (p.172) for floor-burner placement. No drawing of
 | Feature | Book | Model | |
 |---|---|---|---|
 | Size | 24 cu ft | a 34.6 in cube | assumed shape |
-| Burners | eight perimeter and two bottom (p.174) | ten MR-750 round the edge of the floor | count matches; the two bottom (centre) burners not expressible |
+| Burners | eight perimeter and two bottom (p.174) | ten MR-750: eight round the edge, `centre: 2` down the middle of the floor | matches; where under the setting the two go isn't printed (question 1) |
 | Inlet | 50 in² | ten 2½ in ports, 49 in² | matches |
 | Exit flue | 45 in² to start | 9 × 5 in | matches |
 | Gas | natural gas, #32 orifice | natural gas, 8 in. w.c. line | matches |
@@ -29,5 +29,5 @@ No change in this pass.
 ## Open questions for the user
 
 1. Where do the two bottom burners fire: through the floor at its centre, under the setting?
-   The engine can't place floor burners anywhere but round the edge.
+   The model puts them down the floor's centre line, each in the middle of half its depth.
 </content>

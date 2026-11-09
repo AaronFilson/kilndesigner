@@ -35,7 +35,7 @@ four 9 × 18 in arched flues; cross-draft to an engine-sized chimney; cone 10 (a
 | Firebox | 6' deep, 5' across at the flues (p.86); 4' from ground to first chamber floor (Fig 4-16) | 5 × 6 ft at the front | matches; the 4' drop not expressible |
 | Firebox flues | four arched, "9 x 18"" (Fig 4-13) | four 9 × 18 in | matches |
 | Chamber flues | arched; "20 x 12"" and "24 x 12"", middle and last chambers (Fig 4-12) | the engine's 4½ × 9 in | not expressible |
-| Side stoke holes | 1½' apart (Fig 4-7); one in the vault (Fig 4-10) | none | not expressible |
+| Side stoke holes | 1½' apart (Fig 4-7); one in the vault (Fig 4-10) | none | expressible now (`stoke_holes`, in the tube's side or through the vault); not given, as their size and height aren't printed |
 | Doors | arched, bricked up, one per segment, a supporting wall in front (Fig 4-15) | one front-wall door | differs; `loading.opening` with `each_chamber` could place them, but no size is legible |
 | Chimney | the end chamber's open holes, no stack (Figs 4-18, 4-19) | engine-sized stack | differs |
 | Slope | not printed | level | assumed |

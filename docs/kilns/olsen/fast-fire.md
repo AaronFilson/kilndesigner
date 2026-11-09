@@ -17,8 +17,8 @@ text), p.142–143, p.199, p.204–205 (Figs 8-13, 8-14), p.309 (firing log). No
 | Chamber | 27" wide, 36"–40" to the springline (Fig 5-35) | 27 × 27 × 36 in | depth not printed (assumed) |
 | Arch | 4½" IFB, featheredge skewbacks, No. 1 arch (Fig 5-35, p.140) | sprung arch, rise 3⅜ in | matches; rise from the 1½ in/ft rule |
 | Door | whole front, laid in rowlock (Fig 5-35, p.140) | whole front wall, bricked | matches |
-| Spy holes | pull-out cone-hole plugs; a 2½ × 2½ in hole open at top centre (p.141) | three 2¼ × 2½ in in the door (engine default) | number and places not given; the top hole not expressible |
-| Fireboxes | two, 13½ × 40½ in, S plan, under the floor (Figs 5-37, 5-39; p.204) | 2 under, 13½ × 40½ in | matches; S plan and mouths at opposite ends not expressible |
+| Spy holes | pull-out cone-hole plugs; a 2½ × 2½ in hole open at top centre (p.141) | three 2¼ × 2½ in in the door (engine default), and a 2½ × 2½ in hole at the door's top centre (`spy_holes.holes`), its top at the arch's inside (derived) | the top hole matches; the plugs' number and places not given |
+| Fireboxes | two, 13½ × 40½ in, S plan, under the floor (Figs 5-37, 5-39; p.204) | 2 under, 13½ × 40½ in | matches; the S plan not expressible. Mouths at opposite ends could be given now (`mouth`), but two fireboxes of one size share their fields, and which is fed from which end isn't printed |
 | Grate | 12–13 × 24–27 in, ¾ in gaps, 6–7 in up (Fig 5-39, Fig 8-13, p.199) | 12 × 24 in, ¾ in, 6½ in ash pit | matches |
 | Inlet flues | 4½ × 13½ in, one at each firebox's closed end (Fig 5-39, p.141) | 13½ × 4½ in, one each | matches |
 | Bag wall | rowlock rows along the inlet flues (Fig 5-44) | — | not expressible |

@@ -1063,6 +1063,64 @@ class Burners(Spec):
         min_length=1,
         description="Where each burner's port goes. Left out: spread evenly along the wall",
     )
+    per_side: int | None = Field(
+        default=None,
+        ge=0,
+        description=(
+            "Floor burners: how many along each side (the left and right walls), as Kaneko's ten "
+            "each side (Olsen p.172). Give per_end with it"
+        ),
+    )
+    per_end: int | None = Field(
+        default=None,
+        ge=0,
+        description=(
+            "Floor burners: how many along each end (the front and back walls), as Kaneko's six "
+            "at each end (p.172). Give per_side with it"
+        ),
+    )
+    centre: int | None = Field(
+        default=None,
+        ge=1,
+        description=(
+            "Floor burners: how many fire up through the middle of the floor, under the setting, "
+            "spaced evenly down its centre line from front to back, as the Olsen 24 kit's 'two "
+            "bottom' burners (p.174). The rest go round the edge"
+        ),
+    )
+    corner_offset: Length | None = Field(
+        default=None,
+        description=(
+            "Floor burners round the edge: from each inside corner, along the wall, to the "
+            "nearest burner's centre; the rest spaced evenly between. Olsen gives 6–12 in "
+            "(p.171–173). Left out: each burner in the middle of an even share of its wall"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _floor_layout(self) -> Burners:
+        """Floor burners by side and end, in the middle, or set in from the corners (B2)."""
+        by_wall = self.per_side is not None or self.per_end is not None
+        given = by_wall or self.centre is not None or self.corner_offset is not None
+        if given and (self.wall != "floor" or self.walls is not None):
+            raise ValueError(
+                "per_side, per_end, centre and corner_offset lay out floor burners: give wall: "
+                "floor"
+            )
+        if by_wall and (self.per_side is None or self.per_end is None):
+            raise ValueError("give floor burners' per_side and per_end together")
+        if self.corner_offset is not None and si(self.corner_offset, "in") <= 0:
+            raise ValueError("a corner offset must be more than zero")
+        if by_wall:
+            total = 2 * (self.per_side or 0) + 2 * (self.per_end or 0) + (self.centre or 0)
+            if self.count is not None and self.count != total:
+                raise ValueError(
+                    f"{self.per_side} a side, {self.per_end} an end and {self.centre or 0} in the "
+                    f"middle make {total} burners, not the count's {self.count}"
+                )
+        elif self.centre is not None and self.count is not None and self.centre > self.count:
+            raise ValueError("more burners in the middle of the floor than the count")
+        return self
 
     @model_validator(mode="after")
     def _a_place_each(self) -> Burners:
@@ -1107,6 +1165,8 @@ class Burners(Spec):
         """How many burners the design asks for: its count, or one for each place."""
         if self.count is not None:
             return self.count
+        if self.per_side is not None and self.per_end is not None:
+            return 2 * self.per_side + 2 * self.per_end + (self.centre or 0)
         return len(self.places) if self.places is not None else None
 
     @property
@@ -1119,6 +1179,47 @@ class Burners(Spec):
         first walls named taking one more when it doesn't."""
         n = len(self.spread_over)
         return [count // n + (1 if i < count % n else 0) for i in range(n)]
+
+
+class PlacedHole(Spec):
+    """One hole through a wall or up through the roof, in one chamber: a spy hole or a stoke
+    hole placed by the design (B2)."""
+
+    port: Port = Field(description="Its size")
+    wall: WallFace | Literal["roof"] = Field(
+        description="The wall it goes through, or 'roof': straight up through the arch or dome"
+    )
+    across: Length = Field(
+        default_factory=lambda: Q_(0, "in"),
+        description=(
+            "In a wall: from the middle of the wall (of its chamber's stretch, in a side wall of "
+            "chambers in a row) to its centre, to your right standing outside and facing the "
+            "wall, or to your left when negative. Through the roof: from the kiln's centre line "
+            "to its centre, to the right looking from the front"
+        ),
+    )
+    up: Length | None = Field(
+        default=None,
+        description="In a wall: from its chamber's floor up to its centre. Not for the roof",
+    )
+    along: Length = Field(
+        default_factory=lambda: Q_(0, "in"),
+        description=(
+            "Through the roof: from the middle of its chamber, front to back, to its centre, "
+            "towards the back when positive"
+        ),
+    )
+    chamber: int = Field(default=1, ge=1, description="Which chamber in a row, from the front")
+
+    @model_validator(mode="after")
+    def _up_in_a_wall(self) -> PlacedHole:
+        if self.wall == "roof" and self.up is not None:
+            raise ValueError("a hole through the roof has no height up a wall: leave out up")
+        if self.wall != "roof" and self.up is None:
+            raise ValueError("a hole in a wall needs its height: give up")
+        if self.wall != "roof" and si(self.along, "in") != 0:
+            raise ValueError("along places a hole through the roof; in a wall, give across")
+        return self
 
 
 class SpyHoles(Spec):
@@ -1136,6 +1237,17 @@ class SpyHoles(Spec):
     places: list[Place] | None = Field(
         default=None,
         description="Where each one goes. Left out: up the door, a little off centre",
+    )
+
+    holes: list[PlacedHole] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "More spy holes, each with its own size and place: in any chamber of a row, in a "
+            "wall or up through the roof's arch or dome, as Bidai's one round hole high in each "
+            "arch (Olsen Fig 4-36) or the fast-fire kiln's 2½ × 2½ in hole open at the top "
+            "centre (p.141). Cut beside the holes above"
+        ),
     )
 
     @model_validator(mode="after")
@@ -1199,6 +1311,39 @@ class Gas(Spec):
         ),
     )
 
+    firebox: Firebox | None = Field(
+        default=None,
+        description=(
+            "A firebox the burners fire into, rather than straight into the chamber, as Bowen "
+            "Mountain's burners fire into the firebox across its front, 12 in below the floor "
+            "(Olsen Fig 4-153). The burners' ports are cut in its mouth wall, spread across it "
+            "at burners.up above its floor (a course up, left out); its inlet flues carry the "
+            "flame into the chamber. Built as a fuel firebox is"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_firebox_for_burners(self) -> Gas:
+        fb = self.firebox
+        if fb is None:
+            return self
+        b = self.burners
+        if b.walls is not None or b.places is not None or b.wall == "floor":
+            raise ValueError(
+                "burners firing into a firebox go in its mouth wall: leave out the burners' "
+                "walls and places, and don't put them in the floor"
+            )
+        if fb.count != 1 or fb.grate is not None or fb.coal_pit is not None:
+            raise ValueError(
+                "a gas firebox is one firebox with no grate or coal pit: the burners fire into it"
+            )
+        if b.wanted is None or (b.port is None and b.model is None):
+            raise ValueError(
+                "burners firing into a firebox are laid out across its mouth wall: give their "
+                "count, and their port or model"
+            )
+        return self
+
     @model_validator(mode="after")
     def _a_supply_for_the_gas(self) -> Gas:
         if self.fuel == "natural_gas" and not isinstance(self.supply, Line):
@@ -1216,13 +1361,47 @@ class Grate(Spec):
     gap: Length | None = Field(default=None, description="The clear space between its bars")
 
 
+class CoalPit(Spec):
+    """An open pit outside a firebox's mouth, where the stoker stands and the ash is raked out
+    (Singh's 4 × 2 ft, Olsen Fig 5-10)."""
+
+    width: Length = Field(description="Across the mouth")
+    length: Length = Field(description="Out from the firebox's mouth wall")
+    depth: Length | None = Field(
+        default=None, description="Below the ground. Left out: not given, and said so"
+    )
+
+    @model_validator(mode="after")
+    def _a_pit(self) -> CoalPit:
+        sizes = [self.width, self.length] + ([self.depth] if self.depth is not None else [])
+        if any(si(s, "in") <= 0 for s in sizes):
+            raise ValueError("a coal pit's sizes must be more than zero")
+        return self
+
+
 class Firebox(Spec):
     """A firebox, where wood, coal or oil burns before the flame enters the chamber."""
 
     count: int = Field(default=1, ge=1, description="How many fireboxes of this size")
-    position: Literal["front", "back", "left", "right", "under"] = Field(
+    position: Literal[
+        "front",
+        "back",
+        "left",
+        "right",
+        "under",
+        "front-left",
+        "front-right",
+        "back-left",
+        "back-right",
+    ] = Field(
         default="front",
-        description="Against which wall, or under the chamber's floor",
+        description=(
+            "Against which wall, or under the chamber's floor; or at a corner, on a diagonal "
+            "('front-left', 'front-right', 'back-left', 'back-right'), as Singh's four fireboxes "
+            "stand evenly round his round kiln (Olsen Fig 5-10). A diagonal firebox is drawn "
+            "against the front or back wall, its middle on the diagonal (a round kiln's 45° line, "
+            "a box kiln's corner), running out square to that wall, not turned to the diagonal"
+        ),
     )
     width: Length = Field(description="Inside, across its mouth")
     length: Length = Field(description="Inside, from its mouth back")
@@ -1248,13 +1427,57 @@ class Firebox(Spec):
     )
     inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
     stoke_hole: Port | None = None
-    roof: Literal["flat", "corbel"] = Field(
+    roof: Literal["flat", "corbel", "roman", "sloped"] = Field(
         default="flat",
         description=(
             "'flat': the walls' layers laid flat over it. 'corbel': its side walls' brick courses "
             "stepped in over the top of its height until one brick bridges what is left, 6 in or "
             "less (Rhodes, Kilns p.101–102; TMS 402 per BIA's Corbels brief; Olsen p.49, a corbel "
-            "arch spans up to 24 in)"
+            "arch spans up to 24 in). 'roman': a semicircular (Roman) arch across its width, "
+            "its crown at the top of its height, the corners above the curve filled with the "
+            "walls' brick, as the Phoenix kilns' fireboxes (Olsen Fig 5-67). 'sloped': "
+            "its roof rising from the mouth towards the chamber at roof_slope, the wedge under "
+            "the top of its height filled with brick, as Kitade's (Fig 8-11, 30°)"
+        ),
+    )
+    roof_slope: Angle | None = Field(
+        default=None,
+        description=(
+            "With a sloped roof: how steeply it rises from the mouth to the chamber, as an angle "
+            "(Kitade's 30°, Fig 8-11). Its height is the roof's at the chamber end"
+        ),
+    )
+    mouth: Literal["front", "back"] | None = Field(
+        default=None,
+        description=(
+            "Under the floor: the end of the run it is fed from, its mouth and ash pit's mouth "
+            "there. Left out: the front. Phoenix's is stoked from the chimney end (Fig 5-67), "
+            "'back'"
+        ),
+    )
+    inlets_at: Literal["far", "spread"] = Field(
+        default="far",
+        description=(
+            "Under the floor: where the inlet flues rise through the floor. 'far': side by side "
+            "across its far end from the mouth, as Olsen's fast-fire kiln's (p.141). 'spread': "
+            "evenly along its length, one row down its middle, as the Breda kiln's and Falcone's "
+            "floors have them over the firebox (Figs 6-51, 6-31)"
+        ),
+    )
+    sill: Length | None = Field(
+        default=None,
+        description=(
+            "The stoke hole's (the mouth's) sill: from the grate, or the firebox floor without "
+            "one, up to the stoke hole's foot. Left out: at the grate, where Olsen throws the "
+            "fuel (p.188). Miravet's mouth is 3 ft up (Fig 6-19)"
+        ),
+    )
+    coal_pit: CoalPit | None = Field(
+        default=None,
+        description=(
+            "An open pit dug outside the firebox's mouth for the stoker and the ash, as Singh's "
+            "4 × 2 ft at each firebox (Fig 5-10). Reported with its size; dug, not built, so no "
+            "brick is counted for it"
         ),
     )
     corbel_step: Length | None = Field(
@@ -1264,6 +1487,45 @@ class Firebox(Spec):
             "min(h/2, d/3) of the course height h and the wall's brick thickness d"
         ),
     )
+
+    @model_validator(mode="after")
+    def _firing_fields_fit(self) -> Firebox:
+        """The roof, mouth, inlets, sill and coal pit (B2): each where it can be built."""
+        under = self.position == "under"
+        if (self.roof == "sloped") != (self.roof_slope is not None):
+            raise ValueError("a sloped firebox roof takes its roof_slope, and only it does")
+        if self.roof_slope is not None:
+            if f"{self.roof_slope.units}" not in ("degree", "radian"):
+                raise ValueError("give the roof_slope as an angle, for example '30 degree'")
+            if not 0 < si(self.roof_slope, "degree") < 60:
+                raise ValueError("a firebox roof's slope must be more than 0 and under 60 degrees")
+            if under:
+                raise ValueError(
+                    "a firebox under the floor is roofed by the chamber's floor: it has no roof "
+                    "of its own to slope"
+                )
+        if not under and (self.mouth is not None or self.inlets_at != "far"):
+            raise ValueError(
+                "mouth and inlets_at are for a firebox under the floor: one against a wall is fed "
+                "from across the firebox from the chamber, its inlets in the wall between"
+            )
+        if self.inlets_at == "spread" and self.inlet is None:
+            raise ValueError("inlets spread over the floor need their size: give the inlet")
+        if self.sill is not None:
+            if self.stoke_hole is None:
+                raise ValueError("a sill is the stoke hole's: give the stoke_hole")
+            if si(self.sill, "in") < 0:
+                raise ValueError("a stoke hole's sill can't be below the grate")
+        if self.coal_pit is not None and under:
+            raise ValueError(
+                "a coal pit is dug outside a firebox's mouth in a wall: under the floor, the "
+                "mouth's ground is the run's front or back"
+            )
+        if self.position in ("front-left", "front-right", "back-left", "back-right") and (
+            self.count != 1
+        ):
+            raise ValueError("a firebox on a diagonal stands alone at its corner: give count 1")
+        return self
 
     @model_validator(mode="after")
     def _corbel_fits(self) -> Firebox:
@@ -1375,6 +1637,133 @@ class Chimney(Spec):
     )
 
 
+# ---- Openings: exit flues, flues between chambers, dampers, chimneys, vents, salt ports ----------
+
+type Through = Literal["front", "back", "left", "right", "floor", "roof"]
+
+
+class HoleSpot(Spec):
+    """Where one hole of a set goes. In a wall: ``across`` from the middle of the wall, to your
+    right standing outside and facing it, and ``up`` from the chamber floor to the hole's centre.
+    In the floor or the roof: ``across`` from the middle of the chamber, to your right facing the
+    back wall from the front, and ``along`` from the middle towards the back."""
+
+    across: Length = Field(default_factory=lambda: Q_(0, "in"))
+    along: Length = Field(default_factory=lambda: Q_(0, "in"))
+    up: Length | None = Field(
+        default=None, description="In a wall only. Left out: the hole's foot on the floor"
+    )
+
+
+class Holes(Spec):
+    """A set of holes of one size through one wall, the floor or the roof."""
+
+    through: Through = Field(description="The wall, the floor or the roof they go through")
+    port: Port = Field(description="Each hole's size")
+    count: int | None = Field(
+        default=None, ge=1, le=200, description="How many. Left out: one, or one per place"
+    )
+    places: list[HoleSpot] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "Where each one goes. Left out: spread evenly along a wall at its foot, or in an even "
+            "grid over the floor or the roof"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_place_each(self) -> Holes:
+        if self.places is not None and self.count is not None and len(self.places) != self.count:
+            raise ValueError(
+                f"give a place for each of the {self.count} holes, not {len(self.places)}"
+            )
+        in_wall = self.through not in ("floor", "roof")
+        for p in self.places or []:
+            if in_wall and si(p.along, "in") != 0:
+                raise ValueError("a hole in a wall has no along: give its across and up")
+            if not in_wall and p.up is not None:
+                raise ValueError("a hole in the floor or the roof has no up: give across and along")
+        return self
+
+    @property
+    def wanted(self) -> int:
+        if self.count is not None:
+            return self.count
+        return len(self.places) if self.places is not None else 1
+
+    def area_in2(self) -> float:
+        """One hole's area, in²."""
+        w, h = self.port.size_in()
+        return math.pi * w * w / 4 if self.port.round else w * h
+
+    def total_in2(self) -> float:
+        return self.wanted * self.area_in2()
+
+
+class BetweenFlues(Spec):
+    """The flue holes through each wall between chambers, in place of Olsen's standard 4½ × 9 in
+    flues 9 in apart (p.96, p.45)."""
+
+    count: int = Field(ge=1, le=40, description="How many in each wall between chambers")
+    port: Port = Field(description="Each one's width across the kiln and its height")
+
+
+class Damper(Spec):
+    """The chimney's damper as built: a shelf in a slot in the chimney, or a slab on its top."""
+
+    kind: Literal["slot", "top"] = Field(
+        default="slot",
+        description="'slot': a shelf slid into a slot in the chimney; 'top': a slab over its top",
+    )
+    port: Port | None = Field(
+        default=None,
+        description=(
+            "With a slot: the slot's width and height. Left out: one course high and 3 in wider "
+            "than the chimney inside"
+        ),
+    )
+    up: Length | None = Field(
+        default=None,
+        description=(
+            "With a slot: from the chamber floor to its foot. Left out: a foot above the flue"
+        ),
+    )
+
+    @model_validator(mode="after")
+    def _a_slot_or_a_top(self) -> Damper:
+        if self.kind == "top" and (self.port is not None or self.up is not None):
+            raise ValueError("a damper on the chimney's top has no slot: leave out its port and up")
+        return self
+
+
+class Openings(Spec):
+    """Holes in the kiln that aren't the draft's: vent holes in a dome or roof, salt ports and
+    vapour holes. Each is cut through the lining and taken out of the brick count."""
+
+    vents: list[Holes] | None = Field(
+        default=None, min_length=1, description="Vent or cooling holes, as in a dome"
+    )
+    salt_ports: list[Holes] | None = Field(
+        default=None, min_length=1, description="Ports for throwing in salt"
+    )
+    vapour_holes: list[Holes] | None = Field(
+        default=None, min_length=1, description="Vapour holes, as in an arch"
+    )
+
+    def all(self) -> list[tuple[str, Holes]]:
+        """Each set with its kind's name."""
+        return [
+            (name, h)
+            for name, sets in (
+                ("vent", self.vents),
+                ("salt port", self.salt_ports),
+                ("vapour hole", self.vapour_holes),
+            )
+            for h in sets or []
+        ]
+
+
 class Draft(Spec):
     """How the flame travels through the kiln to the chimney."""
 
@@ -1404,12 +1793,76 @@ class Draft(Spec):
             "The chimney as built, to check against Olsen's rules. Left out: the engine sizes it"
         ),
     )
+    exits: list[Holes] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The exit flues as built, any count and size, through the walls, the floor or the "
+            "roof; their areas add up to the flue area the rules use. Give this or flue_port"
+        ),
+    )
+    connection: Port | None = Field(
+        default=None,
+        description=(
+            "The flue (duct or channel) from the kiln into the chimney. Left out: the exit flue's "
+            "size, or Ward's area with several exits"
+        ),
+    )
+    chimneys: int = Field(
+        default=1,
+        ge=1,
+        le=6,
+        description="How many chimneys of this size, side by side along the flue wall",
+    )
+    chimney_through: Literal["beside", "crown"] = Field(
+        default="beside",
+        description="'beside': standing outside the flue wall; 'crown': rising through the roof",
+    )
+    damper: Damper | None = Field(
+        default=None, description="Left out: a shelf in a slot about a foot above the flue"
+    )
+    passive_air: Port | None = Field(
+        default=None,
+        description="A passive air hole (a passive damper) through the chimney's foot",
+    )
+    between: BetweenFlues | None = Field(
+        default=None,
+        description=(
+            "The flues through each wall between chambers. Left out: Olsen's standard 4½ × 9 in, "
+            "9 in apart, as many as fit"
+        ),
+    )
 
     @model_validator(mode="after")
     def _flue_in_a_wall(self) -> Draft:
         if self.type == "up" and self.flue_across is not None:
             raise ValueError("an up-draft's flue is in the roof, so it has no flue_across")
+        if self.exits is not None and (self.flue_port is not None or self.flue_across is not None):
+            raise ValueError(
+                "give the exit flues as exits, or one flue as flue_port and flue_across, not both"
+            )
+        if self.chimney_through == "crown" and self.chimneys > 1:
+            raise ValueError("one chimney rises through the crown: give chimneys: 1")
         return self
+
+    def exit_area_in2(self) -> float | None:
+        """The stated exit flues' areas added up (in²), or None when none are stated."""
+        if self.exits is not None:
+            return sum(h.total_in2() for h in self.exits)
+        if self.flue_port is not None:
+            w, h = self.flue_port.size_in()
+            return math.pi * w * w / 4 if self.flue_port.round else w * h
+        return None
+
+    def exit_sum_text(self) -> str:
+        """How the stated exit flues add up, for the working."""
+        assert self.exits is not None
+        parts = []
+        for h in self.exits:
+            w, ht = h.port.size_in()
+            size = f"{w:g} in round" if h.port.round else f"{w:g} × {ht:g} in"
+            parts.append(f"{h.wanted} × {size} ({h.area_in2():.1f} in²) in the {h.through}")
+        return " + ".join(parts)
 
 
 class Shell(Spec):
@@ -1643,6 +2096,18 @@ class Kiln(Spec):
     heat: Heat
     draft: Draft | None = None
     spy_holes: SpyHoles | None = None
+    stoke_holes: list[PlacedHole] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "Stoke holes into the chambers themselves, beside any firebox's: in a tube's side or "
+            "vault, a side wall of each chamber in a row, or bricked into a door, as the "
+            "side-stoked climbing and tube kilns have them (Olsen Figs 4-7, 4-10, 4-46, 4-96)"
+        ),
+    )
+    openings: Openings | None = Field(
+        default=None, description="Vent holes, salt ports and vapour holes"
+    )
     site: Site = Field(default_factory=Site)
     castables: list[CastableMix] | None = Field(
         default=None, min_length=1, description="Castables you mix yourself"
@@ -1677,6 +2142,58 @@ class Kiln(Spec):
                 f"a floor inside the walls sits in their lowest {FLOOR_COURSE_IN:g} in course, so "
                 f"it can be at most {FLOOR_COURSE_IN:g} in thick; this one is {floor:g} in"
             )
+
+    @model_validator(mode="after")
+    def _holes_it_can_cut(self) -> Kiln:
+        """Spy and stoke holes placed by the design (B2): in a chamber the kiln has, through a
+        roof that is built, and only into a box chamber's walls or roof."""
+        extra = (self.spy_holes.holes if self.spy_holes else None) or []
+        for what, h in [("spy hole", h) for h in extra] + [
+            ("stoke hole", h) for h in self.stoke_holes or []
+        ]:
+            if h.chamber > self.chamber.chambers:
+                raise ValueError(
+                    f"a {what} is in chamber {h.chamber}, but the kiln has {self.chamber.chambers}"
+                )
+            if h.wall == "roof" and isinstance(self.roof, OpenTop):
+                raise ValueError(f"an open top has no roof for a {what} to go through")
+            if self.chamber.shape == "round" or self.chamber.outline is not None:
+                raise ValueError(
+                    f"a {what} placed by the design is laid out in a box chamber's straight walls "
+                    "or roof: on a round or curved plan, use spy_holes.places"
+                )
+            w, ht = h.port.size_in()
+            across, along = abs(si(h.across, "in")), abs(si(h.along, "in"))
+            width, depth = si(self.chamber.width, "in"), si(self.chamber.depth, "in")
+            if h.wall == "roof" and (across + w / 2 > width / 2 or along + ht / 2 > depth / 2):
+                raise ValueError(
+                    f"a {what} through the roof, {w:g} × {ht:g} in, {across:g} in across and "
+                    f"{along:g} in along, reaches past its chamber's {width:g} × {depth:g} in"
+                )
+            in_row = self.chamber.chambers > 1 or arches_along(self)
+            if in_row and h.wall in ("left", "right") and across + w / 2 > depth / 2:
+                raise ValueError(
+                    f"a {what} in the {h.wall} wall of chamber {h.chamber}, {w:g} in wide and "
+                    f"{across:g} in off the middle, reaches past the chamber's {depth:g} in"
+                )
+            if in_row and h.wall in ("front", "back"):
+                end = 1 if h.wall == "front" else self.chamber.chambers
+                if h.chamber != end:
+                    raise ValueError(
+                        f"the {h.wall} wall is chamber {end}'s: a {what} in it is in that chamber"
+                    )
+        gas = self.heat.gas
+        off = gas.burners.corner_offset if gas is not None else None
+        if off is not None and gas is not None:
+            short = min(si(self.chamber.width, "in"), si(self.chamber.depth, "in"))
+            if si(off, "in") >= short / 2:
+                raise ValueError(
+                    f"the floor burners' corner offset must be less than half the shorter inside "
+                    f"wall, {short / 2:g} in"
+                )
+            if gas.burners.per_side is None:
+                raise ValueError("a corner offset sets in burners by side and end: give per_side")
+        return self
 
     @model_validator(mode="after")
     def _a_setting_that_fits(self) -> Kiln:
@@ -1813,6 +2330,10 @@ class Kiln(Spec):
                     walls.append(("a burner", p.wall))
             for p in (self.spy_holes.places if self.spy_holes else None) or []:
                 walls.append(("a spy hole", p.wall))
+            for h in (self.spy_holes.holes if self.spy_holes else None) or []:
+                walls.append(("a spy hole", h.wall))
+            for h in self.stoke_holes or []:
+                walls.append(("a stoke hole", h.wall))
             if self.draft is not None and self.draft.type != "up":
                 walls.append(("the flue", self.draft.flue_wall))
             for what, wall in walls:

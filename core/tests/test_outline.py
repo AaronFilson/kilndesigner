@@ -37,9 +37,7 @@ from kilndesigner.shape import Arch, RoundDome, SailDome, chamber_shape
 EXAMPLES = Path(__file__).parents[2] / "examples"
 ALL = sorted(EXAMPLES.glob("*.yaml")) + sorted((EXAMPLES / "olsen").glob("*.yaml"))
 # Chambers of different sizes and widths that change are worked out in shell.py, not as a form
-DESIGNS = [
-    p for p in ALL if (c := load_design(p).chamber).sizes is None and c.widths is None
-]
+DESIGNS = [p for p in ALL if (c := load_design(p).chamber).sizes is None and c.widths is None]
 
 
 # Kilns whose form differs from shape.chamber_shape, and why (none: Bidai's and Kyoto's arches,

@@ -2,8 +2,8 @@
 
 Every input is the user's (``site.wood``): the net heating value of the oven-dry wood, its
 moisture on the wet basis and the firebox's efficiency. None has a default, since wood varies by
-species, moisture and stacking, and no source gives a kiln firebox's efficiency
-(docs/research/wood-fuel.md).
+species, moisture and stacking, and measured kiln firebox efficiencies spread widely (12–28 %,
+docs/research/firebox-efficiency.md).
 
 1. The net heating value at the wood's moisture (FAO, Unified Bioenergy Terminology, 2004, §5.1.2,
    eq. 3): H(w) = H(dry)·(1 − w) − 2.44 MJ/kg·w, the 2.44 MJ/kg being the water's evaporation.

@@ -40,8 +40,8 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 | Flame-diffusing blocks | three pointed blocks | none | not expressible |
 | Inlet flues | six (Fig 8-7) | six, engine size | matches the count; size not printed |
 | Stoke hole | mouth 9 in; opening 14 in (Fig 8-7) | 9 × 14 in | matches (drawing) |
-| Middle-chamber side stoke hole | aizashiguchi 15 in up | none | not expressible (no side stoke holes) |
-| Spy holes | one round hole high in each arch near its back; chamber 2's 56 in up | three in chamber 1's door (default) | not expressible (no per-chamber spy holes, none in an arch) |
+| Middle-chamber side stoke hole | aizashiguchi 15 in up | none | expressible now (`stoke_holes`, chamber 2's side wall, 15 in up); not given, as its size isn't printed |
+| Spy holes | one round hole high in each arch near its back; chamber 2's 56 in up | three in chamber 1's door (default) | expressible now (`spy_holes.holes`, by chamber, in a wall or through the arch); not given, as their size isn't printed and only chamber 2's height is (question 2) |
 | Vapour holes | rows in the arches | none | not expressible |
 | Flues between chambers | 6"×12" and 7"×12" piers; 12 in flues over a 15 in wall | engine's six 4½ × 9 in holes per wall | differs |
 | Exit | 12 in step and 12 in exit flue at chamber 3's back | engine flue | differs: width not printed |

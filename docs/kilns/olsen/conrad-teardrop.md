@@ -41,12 +41,12 @@ No YAML values changed in this pass. Only the notes were added.
 | Dome | cast, thickened (Fig 4-146); crown and thickness not printed | estimated by scale | estimated |
 | Grate | 15" wide, inside the chamber's front, over the ash pit | 15 × 24 in grate in a front firebox | differs: the model's firebox stands outside the front wall; the book's grate is inside the teardrop |
 | Ash pit | 12" deep, 24" long | 12 in, 24 in | matches |
-| Stoke hole | 9" high, sill 14" above the floor; width not printed | none | differs: the width isn't printed, and the engine puts a stoke hole's foot at the grate, not 14 in above it |
+| Stoke hole | 9" high, sill 14" above the floor; width not printed | none | differs: the width isn't printed, so no stoke hole is given; with one, `sill` would set its foot |
 | Door | 33" × 37", far jamb 48" from the chimney wall | same, right wall (side not printed) | matches |
 | Exit flue | 12" high under a 13" block; width not printed | engine-sized flue | differs: the width isn't printed |
 | Chimney | "only 9 x 9in." (p.124); height cut off | engine-sized, comes out 9 × 9 in | matches the section |
-| Passive damper | 2½ × 4 at the chimney's foot | none | not expressible |
-| Damper slot | in the chimney about 73" up (16 + 24 + 33, faint (?)) | the engine's shelf-slot damper | partly |
+| Passive damper | 2½ × 4 at the chimney's foot | a 2½ × 4 in hole through the chimney's foot (`draft.passive_air`; which way each runs (?)) | modelled |
+| Damper slot | in the chimney about 73" up (16 + 24 + 33, faint (?)) | the engine's shelf slot at 73 in (`draft.damper.up`) | modelled (the slot's size not printed) |
 | Spy holes | none drawn | the engine's three | differs |
 | Walls | double side walls, buttressed with stones and concrete (Figs 4-144, 4-145) | 9 in, buttressed | matches |
 

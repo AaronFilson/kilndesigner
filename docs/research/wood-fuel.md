@@ -93,7 +93,7 @@ Ceramics Monthly (Gaddie and Coppage, "Techno File: By Weight, Not Volume", Dece
 <https://ceramicartsnetwork.org/ceramics-monthly/ceramics-monthly-article/techno-file-by-weight-not-volume>)
 quotes the same pine (2250 lb, 15.9 million Btu) and oak (4200 lb, 29 million) figures, uncited.
 
-Not found: eucalyptus, and scrap lumber or pallets, in any source read. Kiln-dried lumber's heating
+Not found: eucalyptus's heating value (its density is in §6), and scrap lumber or pallets, in any source read. Kiln-dried lumber's heating
 value per oven-dry kg is the wood's own; its moisture is lower (§2).
 
 ## 2. Moisture
@@ -121,8 +121,9 @@ content, so the engine doesn't convert, and says net in the field's description.
 
 ## 3. Efficiency of a wood kiln firebox
 
-Not found: any source giving a kiln firebox's efficiency (share of the wood's heat into the
-kiln's walls and ware). Olsen gives fuel per firing ([§4]) but no efficiency.
+Superseded by [firebox-efficiency.md](firebox-efficiency.md) (2026-11-09): measured wood pottery
+kilns at 12.4–21.6 % and 18.07 %, a recommended 15–30 % starting range, and a flue-loss method.
+The stove figures below stay as the analogue they were.
 
 A bounded analogue only, **not a kiln**: heating appliances, [W1]: masonry fireplace about 10 %;
 fireplace insert up to 40 %; non-airtight stove about 25 %; airtight stove 55 %; advanced
@@ -156,6 +157,104 @@ oven-dry; at 19 MJ/kg that is 4,850 MJ = 1,350 kWh net.
 Olsen, p.197 (kiln-reference.md §Air): "about 10 ft³ of air per 1000 BTU for any fuel". Not found:
 a wood-specific stoichiometric air (kg air per kg wood) in a source read here; the Cantera model
 (ADR 0012) has no wood mechanism, so the engine doesn't model wood combustion.
+
+## 6. Hawai'i
+
+Read 2026-11-09, for a Hawai'i kiln burning wood seasoned about a year. Starting values only, as
+the rest of this file: the user's own wood replaces them.
+
+### Firewoods and their density
+
+**[H1] Little, E. L., Jr. and Skolmen, R. G., *Common Forest Trees of Hawaii (Native and
+Introduced)*, USDA Forest Service Agriculture Handbook 679, 1989**; reprinted by UH CTAHR, 2003,
+one PDF per species under <https://www3.ctahr.hawaii.edu/gsp/doc/Forestry/Little_Skolmen_CFT/>
+(file `CFT_<Genus>_<species>.pdf`). The handbook doesn't state the basis of its specific
+gravities (FPL's usual one is oven-dry weight over green or 12 % volume): read them as about ±10 %.
+
+| Species | Hawai'i name | sp. gr. [H1] | Firewood use, as [H1] words it |
+|---|---|---|---|
+| *Prosopis pallida* | kiawe, algarroba | 0.85 | "very heavy (sp. gr. 0.85), extremely hard … Its most common uses are charcoal, fuelwood, and fence posts"; "the most common tree in the lowland dry zone", about 90,000 acres |
+| *Eucalyptus robusta* | robusta, swamp-mahogany | 0.6 | "Moderately heavy (sp. gr. 0.6) but quite variable in density … interior of logs … (sp. gr. 0.35), while that near the log surface may be heavy (sp. gr. 0.8)"; "Hawaii's most plentiful exotic timber species" |
+| *Eucalyptus saligna* | saligna, Sydney bluegum | 0.61 | "Moderately heavy (sp. gr. 0,61)"; "Now, this is the main species in biomass fuelwood plantations in Hawaii." |
+| *Eucalyptus grandis* | rosegum | 0.57 | "averages moderately heavy (sp. gr. 0.57)"; most Hawai'i trees are hybrids with *E. saligna* |
+| *Casuarina equisetifolia* | ironwood, horsetail casuarina | 0.81 | "very hard, heavy (sp. gr. 0.81)"; "In Hawaii, the wood is used only as fuel." |
+| *Psidium cattleianum* | strawberry guava, waiawi | not given | "A fine-textured, moderately heavy wood used only for fuelwood in Hawaii." |
+| *Grevillea robusta* | silk-oak | 0.57 | "of moderate density (sp. gr. 0.57)"; furniture and paneling, no fuel use stated |
+| *Acacia koa* | koa | 0.55 | "moderately heavy wood (sp. gr. 0.55)"; a cabinet wood, "Hawaii's best known wood", no fuel use stated (too valuable to burn, by its uses; not a source) |
+| *Schinus terebinthifolius* | Christmas berry | not found | [H1]'s PDF for it returned 404; no density read |
+
+**Oven-dry weight of a cord** (derived): sp. gr. × 62.4 lb/ft³ (water) × 65–90 ft³ of solid wood
+in a 128 ft³ cord ([W1], §1). Kiawe's crooked stems ([H1]: "often angled and fluted, twisted, and
+crooked") put it at the low end.
+
+| Species | lb/ft³ | 65 ft³ | 80 ft³ | 90 ft³ |
+|---|---|---|---|---|
+| Kiawe (0.85) | 53.0 | 3,450 | 4,240 | 4,770 |
+| Ironwood (0.81) | 50.5 | 3,290 | 4,040 | 4,550 |
+| Saligna (0.61) | 38.1 | 2,470 | 3,050 | 3,430 |
+| Robusta (0.6) | 37.4 | 2,430 | 2,990 | 3,370 |
+| Rosegum, silk-oak (0.57) | 35.6 | 2,310 | 2,850 | 3,200 |
+| Koa (0.55) | 34.3 | 2,230 | 2,750 | 3,090 |
+
+**[H2] NFTA 87-05, "Prosopis pallida: pioneer species for dry, saline shores"**, Nitrogen Fixing
+Tree Association, October 1987 (now Winrock/FACT Net).
+<https://winrock.org/prosopis-pallida-pioneer-species-for-dry-saline-shores/>: "Kiawe's wood is
+very dense (old trees to .85 specific gravity) and is challenging to cut but burns slowly almost
+smokeless and with little ash (NAS 1980)." So 0.85 is old trees' upper value: young kiawe weighs
+less.
+
+### Heating value
+
+**[H3] Oduor, N. M. and Githiomi, J. K., "Fuel-wood energy properties of *Prosopis juliflora* and
+*Prosopis pallida* grown in Baringo District, Kenya"**, African Journal of Agricultural Research
+8(21), 2476–2481, 6 June 2013, doi:10.5897/AJAR08.221.
+<https://www.fornis.net/sites/default/files/documents/Fuel-wood%20energy%20properties%20of%20prosopis%20spp%20in%20baringo%20district%20Oduor%20and%20Githiomi.pdf>
+Table 1: *P. pallida* wood, moisture 8.11 %, calorific value "4.862" "(Kcal)"; method: "The gross
+calorific value … determined on adiabatic bomb calorimeter", 1 g samples, result in "CV (Cal/g)"
+(their eq. 4). Density of *P. pallida* wood 834 kg/m³ (citing Oduor and Githiomi 2004). Kenyan
+trees grown partly from Hawai'i seed.
+
+Read as 4.862 kcal/g, it is 20.3 MJ/kg **gross**, at 8 % moisture (derived, × 4.1868). Flagged:
+the unit is printed as "Kcal" and the sample basis isn't plain, and the engine needs a **net**,
+oven-dry value, which needs the wood's hydrogen (§2, not found). So it isn't used; it is
+consistent with [W2]'s generic 19 MJ/kg net. Not found: a heating value for eucalyptus, ironwood,
+strawberry guava or Christmas berry in a source read here.
+
+### Moisture after a year's air drying
+
+**[H4] Simpson, W. T., "Equilibrium moisture content of wood in outdoor locations in the United
+States and worldwide"**, Res. Note FPL-RN-0268, USDA Forest Service, Forest Products Laboratory,
+August 1998. <https://research.fs.usda.gov/download/treesearch/5913.pdf>. Monthly EMC "of wood
+exposed to the outdoor atmosphere but protected from direct precipitation or sun", from NOAA
+(NCDC) humidity and temperature normals, "at least 30 years of observation", through the FPL
+sorption model. EMC is on the **dry basis** (moisture over oven-dry wood). Table 2, Hawai'i, %:
+
+| Station | Jan | Feb | Mar | Apr | May | Jun | Jul | Aug | Sep | Oct | Nov | Dec | Mean (derived) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Hilo | 13.7 | 13.5 | 13.9 | 14.3 | 14.0 | 13.3 | 14.1 | 14.3 | 13.8 | 14.1 | 14.6 | 14.3 | 14.0 |
+| Honolulu | 13.3 | 12.8 | 11.9 | 11.3 | 10.8 | 10.6 | 10.6 | 10.7 | 10.8 | 11.3 | 12.1 | 12.9 | 11.6 |
+| Kahului | 13.5 | 13.2 | 12.6 | 12.1 | 11.5 | 11.1 | 11.5 | 11.5 | 11.4 | 11.8 | 12.5 | 13.1 | 12.2 |
+| Lihue | 14.1 | 13.8 | 13.5 | 13.5 | 13.1 | 12.9 | 13.0 | 13.1 | 13.1 | 13.5 | 14.1 | 14.1 | 13.5 |
+
+On the wet basis (w = u ÷ (1 + u), §2): 10.6–14.6 % dry is **9.6–12.7 % wet**; the annual means,
+11.6–14.0 % dry, are **10.4–12.3 % wet**. [H4] warns that high-extractive tropical woods sit lower
+at high humidity, and that hysteresis can move EMC by up to 3 %.
+
+**[H5] Boone, R. S., "Moisture content of wood for interior use … Douglas-fir and robusta
+eucalyptus samples studied"**, Res. Note PSW-RN-152, Pacific Southwest Forest and Range Experiment
+Station, 1967. <https://research.fs.usda.gov/treesearch/37891>. Indoors on Oahu, 19 sites:
+"Minimum EMC at nonair-conditioned locations was 10 percent … Maximum EMC at nonairconditioned
+locations was 16 percent".
+
+EMC is the floor drying approaches, not a promise of a year: whether split kiawe reaches it in a
+year isn't in a source read here (assumed; uncovered or unsplit wood stays wetter). Not found: a
+UH CTAHR firewood-seasoning guide.
+
+### Price
+
+Not found: a dated public price per cord of Hawai'i firewood. A directory site (firewood360.com)
+quotes kiawe at $250–400 a cord without date or source, and Oahu sellers price by the box or rack;
+neither is used.
 
 ## Not found / not read
 

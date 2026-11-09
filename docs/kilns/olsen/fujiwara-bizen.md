@@ -36,7 +36,7 @@ is the firebox: 10 × 8 ft, with a 3½ × 2 ft fire-mouth hole. The flue stack r
 | Chimney | 25 ft; a 10 in round entry (p.101) | 25 ft, section sized by the engine | matches the height |
 | Damper | a flue damper at the chimney entrance (Fig 4-55, p.102) | the engine's shelf-damper note | not expressible as a design feature |
 | Doors | the dogi door in the front; a "door to chamber" in the side of each chamber (Figs 4-54, 4-55) | bricked door in the front wall | differs: the side doors aren't sized in the book |
-| Side fire holes (takiguchi) | in the first chamber (p.100, Fig 4-55) | none | not expressible (no side stoke holes) |
+| Side fire holes (takiguchi) | in the first chamber (p.100, Fig 4-55) | none | expressible now (`stoke_holes`); not given, as their size and place aren't printed |
 | Spy holes | drawn on the dogi, the himitsu and the chambers (Fig 4-55: "ANA", "SPY HOLE") | engine default, three in the door | differs: not sized or placed in the book |
 
 ## Build results

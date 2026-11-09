@@ -19,7 +19,7 @@ Figs 8-8, 8-9), p.203.
 |---|---|---|---|
 | Chamber | 4' wide, 5' tall, 8' deep, arched; slope 33 % | one chamber, 48 × 96 in, 24 in rise, 18.3° | matches; the other chambers not counted in the book |
 | Firebox | 15" wide, the chamber's width long; ash pit 24" | 15 × 48 in, ash pit 24 in, height 18 in | matches |
-| Firebox roof | slopes 30° up to the chamber | flat | not expressible |
+| Firebox roof | slopes 30° up to the chamber | flat | not given: `roof: sloped` slopes along a firebox's run from its mouth to the chamber, but this side-stoked firebox is modelled running 4 ft out from the front wall, so its 30° over the 15 in toward the chamber runs across the model's width |
 | Grate | fireclay bars at 6" | gap 6 in | matches |
 | Stoke hole | 9 × 7 in, in the side | 9 × 7 in | matches |
 | Flue inlet | 9 × 12 in, 12 in above the grate, count not printed | — | left out: count not given |

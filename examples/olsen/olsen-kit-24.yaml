@@ -14,8 +14,10 @@
 # are 4½–5 in). A hinged door (p.175–176). Natural gas on an 8 in. w.c. line, the meter's normal
 # pressure (p.227), as the #32 orifice says. Cone 10: 2600 IFB is "excellent for cone 10"
 # (p.25–27). The exit flue's shape, 9 × 5 in, is chosen to give the book's 45 sq in.
-# Not modelled: the two bottom burners are spaced round the edge of the floor with the others. The
-# arch's insulating cover: Olsen covers the arch with a blanket or a vermiculite mix (p.176), but
+# The two bottom burners fire up through the middle of the floor, the eight others round its edge
+# (where under the setting the two go isn't printed: down the centre line, each in the middle of
+# half the depth).
+# Not modelled: the arch's insulating cover: Olsen covers the arch with a blanket or a vermiculite mix (p.176), but
 # his kits use no fibre (p.175) and the library has no vermiculite mix.
 schema: 1
 name: Olsen 24 kit
@@ -53,6 +55,7 @@ heat:
       model: GACO MR750
       count: 10
       wall: floor
+      centre: 2 # "two bottom" burners (p.174), down the middle of the floor (?)
       port:
         diameter: 2.5 in
     supply:

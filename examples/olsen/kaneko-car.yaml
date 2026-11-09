@@ -62,6 +62,8 @@ heat:
       model: GACO MR100
       count: 32
       wall: floor
+      per_side: 10 # "ten on each side" (p.172)
+      per_end: 6 # "six at each end" (p.172)
     supply:
       type: line
       pressure: 8 inch_H2O

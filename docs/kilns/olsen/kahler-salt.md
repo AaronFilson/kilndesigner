@@ -19,9 +19,9 @@ flame path, 5-20 and 5-21 photos), p.137 (text). Notes: `docs/research/olsen-kil
 | Burner ports | K28 dense port blocks, size not printed | 4½ × 5 in, Olsen's side port (p.173) | assumed |
 | Spy holes | three "SPY AND DRAW HOLES" up the door (Fig 5-18) | three in the front wall, 13, 25 and 37 in up (drawing)(?) | matches; size engine default |
 | Door | in the end ("DOOR", Fig 5-18); hung steel door with latches (Fig 5-21) | whole front wall, hinged | matches; door size not printed |
-| Exit flues | three 4½ × 9 in floor flues into collection channels 4½ × 9 in (Figs 5-17, 5-18) | one 9 × 7 in flue at the foot of the back wall | not expressible (floor flues, channels) |
-| Chimney | flue 9 × 7 in max through the crown, 10–12 ft tall | 9 × 7 in, 11 ft, behind the back wall | position not expressible |
-| Salt ports | top front and top back, in the arch | — | not expressible |
+| Exit flues | three 4½ × 9 in floor flues into collection channels 4½ × 9 in (Figs 5-17, 5-18) | three 4½ × 9 in floor flues, spread evenly (`draft.exits`) | matches the flues (places not printed); the channels aren't modelled |
+| Chimney | flue 9 × 7 in max through the crown, 10–12 ft tall | 9 × 7 in, 11 ft, through the crown (`draft.chimney_through: crown`) | matches |
+| Salt ports | top front and top back, in the arch | — | expressible (`openings.salt_ports`), but their size isn't printed |
 | Floor slab | 4½ in clear of the walls | — | not expressible |
 
 ## Key results (engine build)

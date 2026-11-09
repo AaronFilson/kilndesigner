@@ -872,6 +872,16 @@
         "note": null,
         "reference": "statics of a catenary, combustion-and-masonry.md §6.6 [S63] (derived)",
         "value": "98 lb per foot of kiln"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "hot face of": "left, right, front, back, roof"
+        },
+        "name": "IFB near its rating: Morgan Thermal Ceramics JM 26 insulating firebrick",
+        "note": "Long service near its rating can shrink IFB enough to open its joints; no source says how near, so the margin is shown, not judged.",
+        "reference": "Brosnan, 'Alumina-Silica Brick': IFB 'for long-term exposures near the rated service temperature, shrinkage may occur sufficiently to allow joint opening', so use a higher duty rating than the process temperature alone needs; refractory-movement-and-mortar.md §1.1 [M1]; rating: electric-and-thermal.md §4.1, Morgan JM IFB series data sheet, 01 January 2025, BR.05",
+        "value": "rated 2606 °F; the kiln fires to 2345 °F, 261 °F below"
       }
     ]
   },
