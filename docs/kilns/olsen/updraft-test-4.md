@@ -16,14 +16,18 @@ Olsen, *The Kiln Book*, 4th ed., p.74: text only. No figure.
 MR-750 floor burners in 2½ in ports on natural gas at 8 in w.c.; 7 in IFB walls; a hinged door;
 cone 10.
 
+## Scaling (step A, 2026-11-09)
+
+Nothing to scale: p.74 is text only, with no figure of these kilns.
+
 ## Feature by feature
 
-| Feature | Book (p.74) | Model | |
-|---|---|---|---|
-| Stacking | 4 × 4 × 5 ft | plus 4½ in each side | matches |
-| Burners | in the floor | 18 MR-750, floor | place matches; count and model assumed |
-| Draft | updraft | up | matches |
-| Exit flue, damper, door, spy holes, walls, roof | not given | engine defaults and Olsen's kit practice | assumed |
+| Feature | Book (p.74) | Scaled | Model | |
+|---|---|---|---|---|
+| Stacking | 4 × 4 × 5 ft | — | plus 4½ in each side | matches |
+| Burners | in the floor | — | 18 MR-750, floor | place matches; count and model assumed |
+| Draft | updraft | — | up | matches |
+| Exit flue, damper, door, spy holes, walls, roof | not given | — | engine defaults and Olsen's kit practice | assumed |
 
 ## Results from the build
 

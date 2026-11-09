@@ -69,9 +69,10 @@ def test_a_tube_is_one_vault_spanning_its_width() -> None:
     rings = [p for p in lining_parts(kiln) if p.name.startswith("roof/1-")]
     assert len(rings) == c.chambers
     assert all(p.arch is not None and not p.across for p in rings)
-    # Its span is the width: half a circle on 5 ft, 30 in rise
+    # Its span is the width: a circular arc on the 78 in tube, 30 in rise, r = (s²/4 + h²) / 2h
     assert rings[0].arch is not None
-    assert rings[0].arch.radius == pytest.approx(si(c.width, "mm") / 2)
+    s, h = si(c.width, "mm"), si(kiln.roof.rise, "mm")  # type: ignore[union-attr]
+    assert rings[0].arch.radius == pytest.approx((s * s / 4 + h * h) / (2 * h))
     # The walls between the chambers are filled up to it
     caps = [p for p in lining_parts(kiln) if p.name.startswith("division/") and p.cap]
     assert len(caps) >= c.chambers - 1

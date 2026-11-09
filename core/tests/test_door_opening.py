@@ -347,7 +347,9 @@ book's (Fig 4-15) is unreadable, so the example has none (door-openings.md)."""
 def test_a_door_through_a_tubes_springing_carries_the_vault() -> None:
     # Tamba's doors rise through the springing of the tube's vault, turned as an arch over each,
     # behind a supporting wall (Figs 4-11, 4-15)
-    kiln = _kiln("olsen/tamba.yaml", SPRINGING)
+    # On the 5 ft tube the example had before step A, where its 30 in rise is a semicircle
+    tube = yaml.safe_load((EXAMPLES / "olsen/tamba.yaml").read_text(encoding="utf-8"))["chamber"]
+    kiln = _kiln("olsen/tamba.yaml", SPRINGING, chamber={**tube, "width": "60 in"})
     assert len(door_holes(kiln)) == 7
     head = door_head(kiln)
     assert head is not None

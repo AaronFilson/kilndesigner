@@ -18,15 +18,19 @@ No. 1 arch (4.13 in rise); twelve GACO MR-750 venturi burners in 2½ in floor po
 8 in w.c.; 4½ in K-26 backed by 2½ in K-23 walls; a hinged front door; cone 10; the exit flue the
 engine's. Everything but the stacking size and floor burners is assumed (see the YAML).
 
+## Scaling (step A, 2026-11-09)
+
+Nothing to scale: p.74 is text only, with no figure of these kilns.
+
 ## Feature by feature
 
-| Feature | Book (p.74) | Model | |
-|---|---|---|---|
-| Stacking | 2 × 3 ft, 5 ft-plus high | 2 × 3 × 5 ft, plus 4½ in each side | matches ("plus" not sized) |
-| Burners | "in the floor" | 12 MR-750, floor | matches in place; count and model assumed |
-| Draft | updraft | up | matches |
-| Exit flue, damper, door, spy holes, walls, roof | not given | engine defaults and Olsen's kit practice | assumed |
-| Evenness top to bottom | ½ to 1 cone | not worked out | not expressible |
+| Feature | Book (p.74) | Scaled | Model | |
+|---|---|---|---|---|
+| Stacking | 2 × 3 ft, 5 ft-plus high | — | 2 × 3 × 5 ft, plus 4½ in each side | matches ("plus" not sized) |
+| Burners | "in the floor" | — | 12 MR-750, floor | matches in place; count and model assumed |
+| Draft | updraft | — | up | matches |
+| Exit flue, damper, door, spy holes, walls, roof | not given | — | engine defaults and Olsen's kit practice | assumed |
+| Evenness top to bottom | ½ to 1 cone | — | not worked out | not expressible |
 
 ## Results from the build
 
