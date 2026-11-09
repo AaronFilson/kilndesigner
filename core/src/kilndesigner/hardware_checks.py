@@ -135,9 +135,18 @@ class FlueNeed:
     source: str
 
 
-def flue_area(need: FlueNeed, width: float, height: float, round_: bool, under: float) -> Sheet:
+def flue_area(
+    need: FlueNeed,
+    width: float,
+    height: float,
+    round_: bool,
+    under: float,
+    exits: list[tuple[int, float, str]] | None = None,
+) -> Sheet:
     """The exit flue against the smallest of Olsen's three starting sizes, "slightly under"
-    allowed: a flue smaller than all of them is outside his practice, and the gases back up."""
+    allowed: a flue smaller than all of them is outside his practice, and the gases back up.
+    With ``exits`` (each set's count, one hole's area in², and what it is), the exit flues as
+    built, added up, stand in for the one port."""
     s = Sheet("hardware.flue", "The flue port's area", reference=need.source)
     terms: list[str] = []
     if need.inlet_in2 is not None:
@@ -168,6 +177,18 @@ def flue_area(need: FlueNeed, width: float, height: float, round_: bool, under: 
         source="Olsen, 4th ed. p.174: the Olsen 24 kit's 45 in² exit against 50 in² of inlets",
     )
     s.let("A_min", "the smallest exit that passes", "k*A_least", "in**2")
+    if exits is not None:
+        terms = []
+        for i, (n, a, what) in enumerate(exits, 1):
+            s.given(f"n_{i}", f"how many {what}", n, source=f"{DESIGN}: draft.exits")
+            s.given(
+                f"a_{i}", f"each of the {what}", Q_(a, "in**2"), source=f"{DESIGN}: draft.exits"
+            )
+            terms.append(f"n_{i}*a_{i}")
+        s.let("A_p", "the exit flues together", " + ".join(terms), "in**2")
+        s.require("A_p", ">=", "A_min", level="warning")
+        s.lever("a_1", Q_(1, "in**2"), Q_(3600, "in**2"))
+        return s
     s.given(
         "w",
         "the port's width" if not round_ else "the port's diameter",

@@ -35,14 +35,14 @@ in the front wall with 2½ in ports. A 24 × 36 in arched door is in the right w
 | Burners | 2 MR 750 per flue, four flues, in an IFB block with two 2½" holes, firing into the firebox 12" below the floor | 8 MR750, 2½ in ports, spread evenly along the front wall at the engine's height | differs: the burners are placed in the chamber wall, not stacked in pairs in each flue below the floor |
 | Firebox and bag wall | across the front, 12" below the floor, "BURNER OR STOKE HOLE" | not modelled | not expressible for gas (a gas kiln's burners can't fire into a `Firebox`) |
 | Inlet flues | four, 9" × 4½" (gas) | not modelled | not expressible for gas |
-| Exit flues | four, "9" X 4½" FLUE", into the collection box | one flue, sized by the engine | not expressible (one exit flue only) |
+| Exit flues | four, "9" X 4½" FLUE", into the collection box | four 4½ × 9 in, spread evenly along the back wall (`draft.exits`; which way the 9 runs (?)) | matches (places not printed) |
 | Collection box | 9" | `run_to_chimney: 9 in` | matches |
 | Chimney | 13½" sq "past top of arch", tapering to 9" × 9"; 10–12 ft | 13½ → 9 in, 11 ft | matches |
 | Damper | "DAMPER" in the chimney | the engine's damper note (a shelf slot) | matches in kind; its height isn't printed |
-| Passive air | "PASSIVE AIR" at the chimney's foot | none | not expressible |
+| Passive air | "PASSIVE AIR" at the chimney's foot | none | expressible (`draft.passive_air`), but its size isn't printed |
 | Door | "24" (+-) DOOR", side wall, mid-length | 24 × 36 in, right wall, centred, arched | matches |
 | Spy holes | none labelled; a small unlabelled square low in the far wall, mid-length | the engine's three in the door | differs (?) |
-| Salt holes | four: door, top, back (p.128) | none | not expressible |
+| Salt holes | four: door, top, back (p.128) | none | expressible (`openings.salt_ports`), but their size isn't printed |
 | Frame | angle steel at the corners, tie bars over the arch (photos) | building frame, rods 18 in over the crown | matches |
 
 ## Results from the build

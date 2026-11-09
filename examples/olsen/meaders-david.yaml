@@ -12,14 +12,14 @@
 # "9" INSIDE" is its depth: 60 × 9 in. Read as 9 × 9 in, the firebox floor would be 36 times its
 # section, far outside the 4–10 times of Olsen's wood kilns (p.76–77). The flues as a
 # brick on end, 4½ in wide and 9 or 7½ in high (Olsen's standard flue, p.81); their counts aren't
-# printed, so one inlet flue and one exit flue are entered. Walls, arch and floor 9 in of K-26
+# printed, so one inlet flue is entered; eight exit flues are drawn along the foot of the back
+# wall (Fig 4-105, drawing) and entered, spread evenly. Walls, arch and floor 9 in of K-26
 # insulating brick: on the hot face of Olsen's anagama it resisted wood-ash slag better than hard
 # brick (p.26), at the 9–10 in of his climbing kilns' walls (p.99–100). The arch is buttressed:
 # groundhogs are dug in under earth or braced with rock (p.112), so the floor is on the ground.
 # Cone 10, from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
 # p.119). Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: eight exit flues are drawn along the foot of the back wall (Fig 4-105, drawing):
-# the engine takes one exit flue, so one is entered. The door is drawn dashed in the front arch,
+# Not modelled: the door is drawn dashed in the front arch,
 # left of centre, with no size printed: the engine's door stands for it. A row of openings is
 # drawn along the foot of the front arch (not labelled). The 18 in (faint) bag wall. No grate or ash pit is printed: the wood burns on the
 # firebox floor.
@@ -59,9 +59,12 @@ heat:
 draft:
   type: cross
   flue_wall: back
-  flue_port:
-    width: 4.5 in
-    height: 7.5 in
+  exits: # eight drawn, 7½ (faint) × 4½ in (Fig 4-105, drawing), spread evenly
+    - through: back
+      count: 8
+      port:
+        width: 4.5 in
+        height: 7.5 in
   chimney:
     height: 8 ft
     inside:

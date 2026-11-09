@@ -37,7 +37,7 @@
 # insulating brick (p.136); JM 28 is 67 % alumina by Olsen's Table 1-4 (p.27), so ifb-jm28 for
 # the walls, arch and floor. The gas is propane at 11 in. w.c. at the burners,
 # with a high-pressure regulator at the tank (p.215, p.227); the book doesn't say which gas this
-# kiln burned. The exit flues aren't counted, so the engine sizes the exit flue.
+# kiln burned.
 # The door: "24" (+-) DOOR" in the plan's lower side wall, the right wall looking from the
 # firebox to the chimney, drawn about mid-length (Fig 4-153), so centred here. It is 36 in tall
 # (read by the user, 2026-10-31), its head into the vault, which meets the side wall about
@@ -45,12 +45,12 @@
 # Not modelled: the firebox and bag wall, 12 in below the floor, the four salt holes and the
 # salt itself.
 # Fig 4-153 re-read on the page image, 2026-11-08 (drawing): the back wall has four exit flues,
-# "9" X 4½" FLUE", into the collection box, as the front has four inlet flues. The design takes
-# one exit flue, so they aren't entered and the engine sizes one. The burners fire into the
+# "9" X 4½" FLUE", into the collection box, as the front has four inlet flues: entered (exits).
+# The burners fire into the
 # firebox below the floor, a pair stacked in each flue's IFB block (Detail 1); the burners' ports
 # are left at the engine's height, spread evenly, as no height is printed and the ports in the
 # design go through the chamber's wall. The "DAMPER" in the chimney and "PASSIVE AIR" at its foot
-# aren't expressible. The section draws a small unlabelled square low in the far wall, mid-length:
+# have no size or height printed: the engine's damper slot, and no passive air hole. The section draws a small unlabelled square low in the far wall, mid-length:
 # a spy hole (?); none is labelled, so the spy holes are the engine's defaults.
 schema: 1
 name: Bowen Mountain salt kiln, gas
@@ -126,6 +126,13 @@ draft:
   type: cross
   flue_wall: back
   run_to_chimney: 9 in # the flue collection box
+  exits: # four "9" X 4½" FLUE" into the collection box (Fig 4-153, drawing): each a brick on end,
+    # 4½ in across and 9 in high (?), spread evenly along the back wall
+    - through: back
+      count: 4
+      port:
+        width: 4.5 in
+        height: 9 in
   chimney:
     height: 11 ft # 10–12 ft
     inside:

@@ -34,7 +34,7 @@ matched. The damper and spy-hole gaps are now noted in the file.
 | Exit flues | eight floor flues into two 4½ × 6 in channels under the hearth (p.148–149) | one 9 × 6 in flue at the foot of the back wall | not expressible (no floor flues or channels) |
 | Chimney flue | 9 × 6 in (p.148) | flue port 9 × 6 in | matches |
 | Chimney | 9 × 9 in (Fig 5-72), height not printed | 9 × 9 in, 60 in (assumed) | matches the section |
-| Damper | slab on top of the chimney (Fig 5-72) | none | not expressible |
+| Damper | slab on top of the chimney (Fig 5-72) | a slab on the chimney's top (`draft.damper.kind: top`) | modelled |
 | Spy hole | one in the box's wall (photo, Fig 5-71) | three engine-placed in the door | differs: size and place not printed |
 
 ## Results from the build

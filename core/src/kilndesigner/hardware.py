@@ -85,7 +85,7 @@ class Opening:
     round_axis: Literal[0, 1, 2] | None = None
 
 
-type PortKind = Literal["burner", "spy", "flue"]
+type PortKind = Literal["burner", "spy", "flue", "opening"]
 
 
 @dataclass(frozen=True)
@@ -296,12 +296,14 @@ def floor_and_roof_holes(hw: Hardware) -> list[Hole]:
     """The burner ports up through the floor and an updraft's flue through the roof, for the
     brick count to take out (masonry.plan_masonry); the ports on walls are cut on site."""
     from kilndesigner.masonry import Hole
+    from kilndesigner.openings import FLOOR_AND_ROOF
 
     on_walls = {p.name for p in hw.ports}
     return [
         Hole(o.box[0], o.box[1], o.round_axis == 2)
         for o in hw.openings
-        if (o.name.startswith("port/burner-") or o.name == "port/flue") and o.name not in on_walls
+        if (o.name.startswith(("port/burner-", *FLOOR_AND_ROOF)) or o.name == "port/flue")
+        and o.name not in on_walls
     ]
 
 
@@ -319,6 +321,9 @@ def build_hardware(
     if chimney is not None:
         _flue_and_chimney(kiln, chimney, f, hw)
     _spy_holes(kiln, f, hw, electric=gas is None and fire is None)
+    from kilndesigner.openings import cut_openings
+
+    cut_openings(kiln, f, hw)
     return hw
 
 
@@ -998,13 +1003,22 @@ def _floor_burners(
     )
 
 
-def _check_flue(kiln: Kiln, gas: GasDesign, port: Port, hw: Hardware) -> None:
-    """A flue the design sizes, against the smallest of Olsen's three starting sizes."""
-    w, h = port.size_in()
-    given = math.pi * w * w / 4 if port.round else w * h
+def _check_flue(kiln: Kiln, gas: GasDesign, port: Port | None, hw: Hardware) -> None:
+    """A flue the design sizes (one port, or the exit flues added up), against the smallest of
+    Olsen's three starting sizes."""
+    draft = kiln.draft
+    assert draft is not None
+    given = draft.exit_area_in2()
+    assert given is not None
+    exits = (
+        [(h.wanted, h.area_in2(), f"exit flues in the {h.through}") for h in draft.exits]
+        if draft.exits is not None
+        else None
+    )
+    w, h = port.size_in() if port is not None else (0.0, 0.0)
     volume = si(Q_(chamber_shape(kiln).volume, "m**3"), "ft**3")
     need = FlueNeed(gas.inlet_area_in2, volume, gas.full_fire_btu_hr, FLUE_SOURCE)
-    sheet = flue_area(need, w, h, port.round, SLIGHTLY_UNDER)
+    sheet = flue_area(need, w, h, port is not None and port.round, SLIGHTLY_UNDER, exits)
     sheet.agrees("A_p", Q_(given, "in**2"))
     if (check := sheet.check()).status != "pass":
         least = min(
@@ -1015,7 +1029,8 @@ def _check_flue(kiln: Kiln, gas: GasDesign, port: Port, hw: Hardware) -> None:
             Finding.failed(
                 check,
                 message=(
-                    f"The flue port is {given:.0f} in², under even the smallest of Olsen's three "
+                    f"The {'exit flues together are' if exits else 'flue port is'} {given:.0f} "
+                    f"in², under even the smallest of Olsen's three "
                     f"starting sizes ({least:.0f} in²): the gases may back up, out of the spy "
                     "holes and burner ports. Build it larger and brick it down to tune."
                 ),
@@ -1027,8 +1042,19 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
     area = gas.flue_area_in2
     draft = kiln.draft
     port = draft.flue_port if draft is not None else None
-    if port is not None and isinstance(gas, GasDesign):
+    exits = draft is not None and draft.exits is not None
+    if exits:
+        assert draft is not None
+        area = draft.exit_area_in2() or area
+    if (port is not None or exits) and isinstance(gas, GasDesign):
         _check_flue(kiln, gas, port, hw)
+    if draft is not None and draft.chimney_through == "crown":
+        from kilndesigner.openings import crown_chimney
+
+        crown_chimney(kiln, gas, f, hw, area)
+        return
+    if exits and (draft is None or draft.type == "up"):
+        return  # the exit flues are cut as the design places them (openings.cut_openings)
     if draft is None or draft.type == "up":
         # A flue port in the roof's centre (Pitelka's updrafts [S11]); no chimney is drawn.
         sx, sy = port.size_in() if port is not None else (math.sqrt(area), math.sqrt(area))
@@ -1055,14 +1081,48 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
         # Whole half-bricks across, built big and bricked down to tune (Olsen p.81, Principle 9)
         fw = min(HALF_BRICK * math.ceil(area / fh / HALF_BRICK - 1e-9), span - 2)
     offset = si(draft.flue_across, "in") if draft.flue_across is not None else 0.0
-    flue = PortSpot(
-        "port/flue", "Flue port", "flue", face, offset, fh / 2, fw, fh,
-        port is not None and port.round,
-    )  # fmt: skip
-    if not f.place(kiln, hw, flue) or gas.chimney_height_in is None:
+    if not exits:
+        flue = PortSpot(
+            "port/flue", "Flue port", "flue", face, offset, fh / 2, fw, fh,
+            port is not None and port.round,
+        )  # fmt: skip
+        if not f.place(kiln, hw, flue):
+            return
+    if gas.chimney_height_in is None:
         return
-    # The chimney and its duct are centred on the flue, wherever it is along the wall
-    uc = Faces.u_of(face, offset)
+    if draft.connection is not None:  # the flue into the chimney, as built
+        fw, fh = draft.connection.size_in()
+    from kilndesigner.openings import chimney_centres
+
+    centres = chimney_centres(kiln, f.inside[face])
+    volume = 0.0
+    for k, across_k in enumerate(centres, 1):
+        tag = "" if len(centres) == 1 else f"-{k}"
+        volume += _chimney(
+            kiln, gas, f, hw, (face, Faces.u_of(face, across_k)), (fw, fh), area, tag
+        )
+    # Counted by volume, so it is a straight-run count; the brick allowance covers the cuts
+    hw.chimney_bricks = allowance(kiln, "brick").buy(volume / math.prod(BRICK))
+
+
+def _chimney(
+    kiln: Kiln,
+    gas: GasDesign | FireDesign,
+    f: Faces,
+    hw: Hardware,
+    where: tuple[WallFace, float],
+    flue: tuple[float, float],
+    area: float,
+    tag: str,
+) -> float:
+    """One chimney, its duct from the flue wall, its inlet and damper, centred at ``uc`` along
+    the flue wall's face; the volume of its brick (in³)."""
+    draft = kiln.draft
+    assert draft is not None
+    assert gas.chimney_height_in is not None
+    face, uc = where
+    fw, fh = flue
+    n = draft.chimneys
 
     def at(u: tuple[float, float]) -> tuple[float, float]:
         return uc + u[0], uc + u[1]
@@ -1077,7 +1137,7 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
         assert built.depth is not None
         across, along = si(built.width, "in"), si(built.depth, "in")
     else:
-        need = gas.chimney_area_in2 if isinstance(gas, FireDesign) else area
+        need = (gas.chimney_area_in2 if isinstance(gas, FireDesign) else area) / n
         sizes = [4.5 * n for n in range(1, 2 + math.ceil(math.sqrt(need) / 4.5))]
         a, b = min(
             ((p, q) for p in sizes for q in sizes if p <= q <= 2 * p and p * q >= need),
@@ -1105,14 +1165,15 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
         boxes.append(f.box(face, u, (z0, z1), w))
         volume += (u[1] - u[0]) * (z1 - z0) * (w[1] - w[0])
     title_size = f"{across:g} × {along:g} in inside"
+    share = f"its share of the flues' {area:.0f} in²" if n > 1 else f"flue's {area:.0f} in²"
     hw.pieces.append(
         Piece(
-            "chimney/stack",
+            f"chimney/stack{tag}",
             "dense_firebrick",
-            "Chimney",
+            "Chimney" if n == 1 else f"Chimney {tag[1:]} of {n}",
             f"{title_size}, {height / 12:.1f} ft above the chamber floor, one 4½ in layer of hard "
             "brick laid in fireclay mortar (kiln-hardware.md §3.2 [S4]); inside at least the "
-            f"flue's {area:.0f} in² (Rhodes, §3.1 [S34]). Height: {gas.chimney_height}.",
+            f"{share} (Rhodes, §3.1 [S34]). Height: {gas.chimney_height}.",
             boxes=tuple(boxes),
             material=CHIMNEY_BRICK,
         )
@@ -1128,7 +1189,7 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
             volume += math.prod(h - lo_ for lo_, h in zip(lo, hi, strict=True)) / MM**3
         hw.pieces.append(
             Piece(
-                "chimney/duct",
+                f"chimney/duct{tag}",
                 "dense_firebrick",
                 "Flue duct to the chimney",
                 f"{fw:g} × {fh:g} in inside, hard brick, from the flue port to the chimney.",
@@ -1138,40 +1199,79 @@ def _flue_and_chimney(kiln: Kiln, gas: GasDesign | FireDesign, f: Faces, hw: Har
         )
     hw.openings.append(
         Opening(
-            "port/chimney-inlet",
+            f"port/chimney-inlet{tag}",
             "Chimney inlet",
             f.box(face, at((-fw / 2, fw / 2)), (0, fh), (c0 - 1, c0 + wall + 1)),
         )
     )
+    far = (c0 + wall + along - 1, c0 + 2 * wall + along + 1)  # through the chimney's far wall
+    if draft.passive_air is not None:
+        aw, ah = draft.passive_air.size_in()
+        hw.openings.append(
+            Opening(
+                f"port/passive-air{tag}",
+                "Passive air hole",
+                f.box(face, at((-aw / 2, aw / 2)), (0, ah), far),
+                Faces.normal_axis(face) if draft.passive_air.round else None,
+            )
+        )
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"A passive air hole, {aw:g} × {ah:g} in, through the foot of the chimney's "
+                    "far wall: opened, it lets cold air into the chimney and cuts the draft "
+                    "without closing the damper."
+                ),
+                reference="the design: draft.passive_air",
+            )
+        )
+    damper = draft.damper
+    if damper is not None and damper.kind == "top":
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=(
+                    "Damper: a slab laid over the chimney's top, slid across to close it. Brace "
+                    "the chimney with angle at its corners and tie it to the kiln frame."
+                ),
+                reference="the design: draft.damper",
+            )
+        )
+        return volume
     # The damper slot: about a foot above the flue, a course high, 3 in wider than the inside
-    zd = fh + 12
+    sw, sh = (
+        damper.port.size_in()
+        if damper is not None and damper.port is not None
+        else (across + 3, COURSE)
+    )
+    zd = si(damper.up, "in") if damper is not None and damper.up is not None else fh + 12
     hw.openings.append(
         Opening(
-            "port/damper",
+            f"port/damper{tag}",
             "Damper slot",
-            f.box(
-                face,
-                at((-across / 2 - 1.5, across / 2 + 1.5)),
-                (zd, zd + COURSE),
-                (c0 + wall + along - 1, c0 + 2 * wall + along + 1),
-            ),
+            f.box(face, at((-sw / 2, sw / 2)), (zd, zd + sh), far),
         )
     )
-    hw.findings.append(
-        Finding(
-            level="info",
-            message=(
-                f"Damper: a kiln shelf in a slot {across + 3:g} in wide and one course high, about "
-                "a "
-                "foot above the top of the flue. Brace the chimney with angle at its corners and "
-                "tie it "
-                "to the kiln frame."
-            ),
-            reference="kiln-hardware.md §3.2–3.3 [S4]",
+    if damper is None:
+        said = (
+            f"Damper: a kiln shelf in a slot {across + 3:g} in wide and one course high, about a "
+            "foot above the top of the flue."
         )
-    )
-    # Counted by volume, so it is a straight-run count; the brick allowance covers the cuts
-    hw.chimney_bricks = allowance(kiln, "brick").buy(volume / math.prod(BRICK))
+    else:
+        said = f"Damper: a kiln shelf in a slot {sw:g} in wide and {sh:g} in high, {zd:g} in up."
+    if not tag or tag == "-1":
+        hw.findings.append(
+            Finding(
+                level="info",
+                message=(
+                    f"{said} Brace the chimney with angle at its corners and tie it to the kiln "
+                    "frame."
+                ),
+                reference="kiln-hardware.md §3.2–3.3 [S4]",
+            )
+        )
+    return volume
 
 
 def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:

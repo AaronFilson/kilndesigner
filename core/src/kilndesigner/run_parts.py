@@ -599,21 +599,32 @@ class FlueRow:
     count: int
     bottom: float
     top: float
+    width: float = FLUE_WIDTH
+    pitch: float = FLUE_WIDTH + FLUE_PIER
+    """From one flue's start to the next's (mm)."""
 
 
 def flue_rows(kiln: Kiln) -> list[FlueRow]:
     """Olsen's standard flues through each wall between chambers: 4½ in wide and 9 in tall, as
     many as fit across the chamber with a 9 in separator between each, their foot at the higher
     chamber's floor, so the gases pass along the floor into it (p.96, p.45). Each stops at the
-    lower chamber's springline."""
+    lower chamber's springline. With ``draft.between``, its count and size instead, spread
+    evenly across the chamber."""
     run = run_layout(kiln)
-    n = max(1, math.floor((run.width + FLUE_PIER) / (FLUE_WIDTH + FLUE_PIER) + 1e-9))
+    between = kiln.draft.between if kiln.draft is not None else None
+    if between is not None:
+        w_in, h_in = between.port.size_in()
+        n, width, height = between.count, w_in * 25.4, h_in * 25.4
+        pitch = run.width / n
+    else:
+        n = max(1, math.floor((run.width + FLUE_PIER) / (FLUE_WIDTH + FLUE_PIER) + 1e-9))
+        width, height, pitch = FLUE_WIDTH, FLUE_HEIGHT, FLUE_WIDTH + FLUE_PIER
     rows: list[FlueRow] = []
     for i in range(run.chambers - 1):
         bottom = run.floor(i + 1)
-        top = min(bottom + FLUE_HEIGHT, run.floor(i) + run.height)
+        top = min(bottom + height, run.floor(i) + run.height)
         if top - bottom > 1e-6:
-            rows.append(FlueRow(i + 1, n, bottom, top))
+            rows.append(FlueRow(i + 1, n, bottom, top, width, pitch))
     return rows
 
 
@@ -625,13 +636,13 @@ def flue_holes(kiln: Kiln) -> list[Opening]:
     out: list[Opening] = []
     for row in flue_rows(kiln):
         i = row.chamber - 1
-        span = row.count * FLUE_WIDTH + (row.count - 1) * FLUE_PIER
+        span = row.count * row.pitch - (row.pitch - row.width)
         y0, y1 = run.back(i) - 1.0, run.back(i) + run.between + 1.0
         for k in range(row.count):
-            x = -span / 2 + k * (FLUE_WIDTH + FLUE_PIER)
+            x = -span / 2 + k * row.pitch
             out.append(
                 Opening(f"flue-{row.chamber}-{k + 1}", (x, y0, row.bottom),
-                        (x + FLUE_WIDTH, y1, row.top))
+                        (x + row.width, y1, row.top))
             )  # fmt: skip
     return out
 

@@ -23,7 +23,7 @@ Olsen, *The Kiln Book*, 4th ed.: p.115 (Fig 4-105 diagram, Figs 4-106, 4-107 pho
 | Firebox | 4 ft long, front arch to bag wall | 60 × 48 in, no grate | matches |
 | Bag wall | 18 in (faint) | — | not expressible |
 | Inlet flue | 9 × 4½ in, count not printed | one 4½ × 9 in inlet | count not printed |
-| Exit flues | 7½ (faint) × 4½ in; eight drawn (Fig 4-105) | one 4½ × 7½ in | count not expressible (one flue) |
+| Exit flues | 7½ (faint) × 4½ in; eight drawn (Fig 4-105) | eight 4½ × 7½ in, spread evenly along the back wall (`draft.exits`) | matches (count and places from the drawing) |
 | Chimney | 8 ft, "9" INSIDE" | 60 × 9 in, 8 ft | matches (width read as the kiln's) |
 | Door | dashed in the front arch, left of centre, no size | engine door in the front | position and size not set |
 | Spy holes | not drawn | engine default | — |
