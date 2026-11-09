@@ -21,7 +21,8 @@ brick construction; Figs 4-80 to 4-84 photos).
 | Spy holes | one draw/spy hole drawn high in the back wall (Fig 4-79) | engine default, three in the back | not set: height not printed |
 | Chimneys | two, each side of the back door, since the "rebirth" | one engine chimney | not expressible (two chimneys, no sizes) |
 
-No change in this pass.
+2026-11-09 (B3): `chamber.widths` can now say the plan's 10 ft at the bag wall and 12 ft at the
+widest, but where along the 27 ft the widest stands isn't printed, so the mean-width box stays.
 
 ## Key results
 
@@ -29,5 +30,5 @@ No change in this pass.
 
 ## Open questions for the user
 
-None new.
+1. Fig 4-78: how far from the bag wall is the plan at its widest, 12 ft (for `chamber.widths`)?
 </content>

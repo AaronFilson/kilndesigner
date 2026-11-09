@@ -16,11 +16,13 @@ burner placement for updrafts; Fig 6-64 trolley and suspended door).
 | Car | cart 7 ft wide (p.171) | car loading, front | matches; cart width not expressible |
 | Burners | 32 atmospheric, ten each side, six front and back, 9 in combustion width (p.172) | 32 MR-100 floor burners spaced round the floor by the engine | count matches; per-side split and 9 in channel not expressible |
 | Burner spacing | Fig 6-63: 9–12 in from the corners, 12–24 in apart | engine spacing (about 10 in on the long sides) | close; not set |
-| Door | hung from an overhead I-beam on two half-ton trolleys, spring latches (Fig 6-64) | the car's end wall | not expressible |
+| Door | hung from an overhead I-beam on two half-ton trolleys, spring latches (Fig 6-64) | the front wall hung on its own frame, two trolleys of 1000 lb (`loading.hung`); its masonry, 1,757 lb, checked against their 2,000 lb | matches; the beam, frame and latches aren't sized (not printed) |
 | Exit flue, chimney, damper | not printed | engine default | — |
 | Spy holes | not printed | engine default, three in the door | assumed |
 
-No change to the design file in this pass: the figures add nothing the schema can hold.
+2026-11-09 (B3): the door hangs on its own frame (`loading.hung`), from Fig 6-64's two half-ton
+trolleys, half a ton taken as 1000 lb. The photo is "a similar suspended kiln door", so the
+trolleys may be that door's.
 
 ## Key results
 

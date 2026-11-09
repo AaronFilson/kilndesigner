@@ -55,15 +55,37 @@ class Run:
     between: float  # a wall between two chambers
     slope: float  # radians
     bend: float  # radians
+    # Chambers of different sizes (chamber.sizes): each one's depth, springline and rise, mm
+    sizes: tuple[tuple[float, float, float], ...] = ()
+    # A width changing along one chamber (chamber.widths): (from the front wall, width), mm
+    widths: tuple[tuple[float, float], ...] = ()
 
     @property
     def length(self) -> float:
         """The run's inside length, firing end to flue end, walls between included (mm)."""
+        if self.sizes:
+            return sum(s[0] for s in self.sizes) + (self.chambers - 1) * self.between
         return self.chambers * self.depth + (self.chambers - 1) * self.between
+
+    def depth_of(self, i: int) -> float:
+        return self.sizes[i][0] if self.sizes else self.depth
 
     def chamber_centre(self, i: int) -> float:
         """The y of chamber i's centre, before the run bends or climbs."""
+        if self.sizes:
+            d = [s[0] for s in self.sizes]
+            return -d[0] / 2 + sum(d[:i]) + i * self.between + d[i] / 2
         return i * (self.depth + self.between)
+
+    @property
+    def back(self) -> float:
+        """The y of the last chamber's back face, before the run bends or climbs."""
+        return self.chamber_centre(self.chambers - 1) + self.depth_of(self.chambers - 1) / 2
+
+    @property
+    def front(self) -> float:
+        """The y of the first chamber's front face."""
+        return -self.depth_of(0) / 2
 
     @property
     def radius(self) -> float:
@@ -72,6 +94,8 @@ class Run:
 
 
 def run_of(kiln: Kiln) -> Run:
+    from kilndesigner.shell import sizes_of, widths_of
+
     c = kiln.chamber
     walls = kiln.lining.walls
     between = sum(si(x.thickness, "mm") for x in walls)
@@ -84,6 +108,8 @@ def run_of(kiln: Kiln) -> Run:
         between=between,
         slope=math.radians(si(c.slope, "degree")) if c.slope is not None else 0.0,
         bend=math.radians(si(c.bend, "degree")) if c.bend is not None else 0.0,
+        sizes=tuple(sizes_of(kiln, "mm")) if c.sizes is not None else (),
+        widths=tuple(widths_of(kiln, "mm")) if c.widths is not None else (),
     )
 
 
@@ -92,7 +118,7 @@ def place(run: Run, p: Point) -> Point:
     bends from the first chamber's front face, about a vertical axis to its left, and climbs
     about the x axis through the front face's foot."""
     x, y, z = p
-    front = -run.depth / 2
+    front = run.front
     s = y - front
     if run.bend > 0 and s > 0:
         rho = run.radius
@@ -114,7 +140,7 @@ def turn_at(run: Run, y: float) -> float:
     """How far the run has turned (radians) at y, laid out straight."""
     if run.bend <= 0:
         return 0.0
-    s = min(max(y + run.depth / 2, 0.0), run.length)
+    s = min(max(y - run.front, 0.0), run.length)
     return s / run.radius
 
 
@@ -131,11 +157,19 @@ class Cell:
     z0: float = 0.0
     z1: float = 0.0
     along: bool = False
+    # A chamber of its own size (chamber.sizes), or a slice of a changing width (chamber.widths):
+    # its roof's rise and, along the draft, its arch's span; None and 0 take the run's
+    rise: float | None = None
+    span: float = 0.0
+
+
+TAPER_PIECES = 16
+"""Slices along a chamber whose width changes, each drawn as a box of its middle's width."""
 
 
 def cells(kiln: Kiln, run: Run) -> list[Cell]:
-    """The inside as cells: one per chamber (or eight along a bent single chamber), and one per
-    firebox."""
+    """The inside as cells: one per chamber (or eight along a bent single chamber, or sixteen
+    along one whose width changes, each its middle's width), and one per firebox."""
     out: list[Cell] = []
     if run.round:
         out.append(Cell("round", 0.0, run.width, width=run.width, z1=run.height))
@@ -144,10 +178,21 @@ def cells(kiln: Kiln, run: Run) -> list[Cell]:
         tube = isinstance(kiln.roof, SprungArch) and kiln.roof.tube
         if many:
             for i in range(run.chambers):
+                depth, height, rise = run.sizes[i] if run.sizes else (run.depth, run.height, None)
                 out.append(
-                    Cell("box", run.chamber_centre(i), run.depth, width=run.width, z1=run.height,
-                         along=not tube)
+                    Cell("box", run.chamber_centre(i), depth, width=run.width, z1=height,
+                         along=not tube, rise=rise, span=depth if run.sizes else 0.0)
                 )  # fmt: skip
+        elif run.widths:
+            from kilndesigner.shell import width_at
+
+            stations = list(run.widths)
+            step = run.depth / TAPER_PIECES
+            for i in range(TAPER_PIECES):
+                width = width_at(stations, step * (i + 0.5))
+                rise = _roof_top(kiln, run) * width / run.width
+                out.append(Cell("box", -run.depth / 2 + step * (i + 0.5), step, width=width,
+                                z1=run.height, rise=rise))  # fmt: skip
         else:
             pieces = 8 if run.bend > 0 else 1
             step = run.depth / pieces
@@ -173,12 +218,11 @@ def _firebox_cells(kiln: Kiln, run: Run, box: Firebox) -> list[Cell]:
     across = run.width if face in ("front", "back", "under") else run.length
     if face in ("front", "back") and n * fw > across + 1e-6 and 1 < n <= run.chambers:
         for i in range(n):
-            y = run.chamber_centre(i) - run.depth / 2 + fw / 2
+            y = run.chamber_centre(i) - run.depth_of(i) / 2 + fw / 2
             out.append(Cell("pit", y, fw, width=min(fl, run.width), z0=-fh, z1=0.0))
         return out
     centres = [across * ((i + 0.5) / n - 0.5) for i in range(n)]
-    back = run.chamber_centre(run.chambers - 1) + run.depth / 2
-    front = -run.depth / 2
+    back, front = run.back, run.front
     for c in centres:
         if face == "front":
             out.append(Cell("pit", front - fl / 2, fl + 2, x=c, width=fw, z0=0.0, z1=fh))
@@ -226,7 +270,10 @@ def _cavity(kiln: Kiln, run: Run, cell: Cell, r: float) -> Any:
         if isinstance(roof, Dome):
             body = body + _cap(radius + r, _roof_top(kiln, run) + r, run.height)
         return body
-    w, length = run.width, cell.length
+    w, length = cell.width, cell.length
+    peaked = isinstance(roof, SprungArch) and roof.peak_at is not None and cell.along
+    if cell.rise is not None or cell.span or peaked:
+        return _own_cavity(kiln, run, cell, r)
     top = run.height if open_top else run.height + r
     body = Pos(0, 0, (top - r) / 2) * Box(w + 2 * r, length, top + r)
     if isinstance(roof, CatenaryArch):
@@ -265,6 +312,63 @@ def _cavity(kiln: Kiln, run: Run, cell: Cell, r: float) -> Any:
         above = Pos(0, 0, run.height + (rise + r) / 2) * Box(w + 2 * r, length, rise + r)
         return body + ((Pos(0, 0, centre) * Sphere(radius + r)) & above)
     return body
+
+
+def _own_cavity(kiln: Kiln, run: Run, cell: Cell, r: float) -> Any:
+    """A cell of its own size, grown by r: a chamber of chamber.sizes, a slice of chamber.widths
+    (its arch scaled to its width), or a chamber under an offset-peak arch (roof.peak_at): the
+    box to its springline, and its roof over it."""
+    from build123d import Box, Cylinder, Pos
+
+    roof = kiln.roof
+    w, length, h = cell.width, cell.length, cell.z1
+    rise = cell.rise if cell.rise is not None else _roof_top(kiln, run)
+    top = h if isinstance(roof, OpenTop) else h + r
+    # An arch springing from the floor (height 0) has no box under it on the inside
+    body = Pos(0, 0, (top - r) / 2) * Box(w + 2 * r, length, top + r) if top + r > 1e-6 else None
+    span = cell.span or run.depth
+    roofed: Any = None
+    if isinstance(roof, SprungArch) and roof.peak_at is not None and cell.along:
+        roofed = _peak_vault(span, rise, si(roof.peak_at, ""), h, w, r)
+    elif isinstance(roof, SprungArch):
+        across = span if cell.along else w
+        radius = (across**2 / 4 + rise**2) / (2 * rise)
+        centre = h + rise - radius
+        vault = Cylinder(radius + r, (w + 2 * r) if cell.along else length)
+        turned = vault.rotate(_axis("y" if cell.along else "x"), 90)
+        above = Pos(0, 0, h + (rise + r) / 2) * Box(w + 2 * r, length, rise + r)
+        roofed = (Pos(0, 0, centre) * turned) & above
+    if roofed is not None:
+        return roofed if body is None else body + roofed
+    # A flat roof or an open top over a changing width (domes over chambers of different sizes
+    # are laid out in brick, run_parts.py, and never drawn as shells)
+    assert body is not None
+    return body
+
+
+def _peak_vault(span: float, rise: float, share: float, h: float, w: float, r: float) -> Any:
+    """An offset-peak arch along y over a chamber ``span`` deep, centred on y = 0, its two arcs
+    grown by r (shell.PeakArch), run across the width."""
+    from build123d import Plane, Polyline, Pos, extrude, make_face
+
+    from kilndesigner.shell import PeakArch
+
+    arch = PeakArch(span, rise, share)
+    peak_y = -span / 2 + arch.front_run
+    pts: list[tuple[float, float]] = []
+    for sign, (radius, phi, _) in zip((-1, 1), arch.halves(), strict=True):
+        centre_z = h + rise - radius
+        arc = [
+            (peak_y + sign * (radius + r) * math.sin(phi * k / 24),
+             centre_z + (radius + r) * math.cos(phi * k / 24))
+            for k in range(25)
+        ]  # fmt: skip
+        pts += list(reversed(arc)) if sign < 0 else arc[1:]  # the peak once
+    ends = [(pts[0][0], h), *pts, (pts[-1][0], h)]
+    # Grown by nothing, the springings are on the springline already: each point once
+    pts = [p for i, p in enumerate(ends) if i == 0 or math.dist(p, ends[i - 1]) > 1e-6]
+    face = Plane.YZ * make_face(Polyline(*pts, close=True))
+    return Pos(-(w / 2 + r), 0, 0) * extrude(face, w + 2 * r)
 
 
 def _axis(name: str) -> Any:
@@ -306,7 +410,7 @@ def _located(run: Run, cell: Cell, solid: Any) -> Any:
         solid = solid.rotate(Axis.Z, math.degrees(turn))
     solid = Pos(x, y, 0) * solid
     if run.slope > 0:
-        front = Axis((0, -run.depth / 2, 0), (1, 0, 0))
+        front = Axis((0, run.front, 0), (1, 0, 0))
         solid = solid.rotate(front, math.degrees(run.slope))
     return solid
 
@@ -372,8 +476,7 @@ def port_axis(kiln: Kiln, run: Run, spot: PortSpot) -> tuple[Point, Point]:
         outer = ((radius + t + 50) * math.cos(a), (radius + t + 50) * math.sin(a), up)
         return inner, outer
     half_w = run.width / 2
-    front = -run.depth / 2
-    back = run.chamber_centre(run.chambers - 1) + run.depth / 2
+    front, back = run.front, run.back
     if face == "front":
         return (across, front, up), (across, front - t - 50, up)
     if face == "back":
@@ -439,7 +542,7 @@ def moved_pieces(kiln: Kiln, run: Run, hardware: Hardware | None) -> list[Any]:
     out: list[Any] = []
     if hardware is None:
         return out
-    shift = run.chamber_centre(run.chambers - 1)
+    shift = run.back - run.depth / 2  # from where the hardware's layout puts the back wall
     for piece in hardware.pieces:
         if not piece.name.startswith(("chimney/", "burner/")):
             continue

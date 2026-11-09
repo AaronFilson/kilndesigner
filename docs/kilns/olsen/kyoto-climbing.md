@@ -14,7 +14,7 @@ Olsen, *The Kiln Book*, 4th ed.: pp.89–94 (text; Figs 4-21 to 4-34, notably Fi
 |---|---|---|---|
 | Chamber | 6–7' tall, 4.5–6' wide (Fig 4-28) | 63 in wide, 78 in to the crown | middle of the ranges |
 | Depth, count, slope | not given for the type | Bidai's depth, ten chambers (Kyomizu), Bidai's slope | assumed |
-| Arch | double-radius, peak toward the back (reduction chambers) | semicircular sprung arch across the width | not expressible |
+| Arch | double-radius, peak toward the back (reduction chambers) | semicircular sprung arch across the width | `roof.peak_at` (2026-11-09) can say it, but where the peak stands isn't printed |
 | Chamber firebox (himae) | 9 in trough by the front wall, saggar bag wall | ten 9 × 63 in fireboxes | matches |
 | Flues | outlet about 9 × 5 in, inlet 9 × 4½–6 in, 9 in apart, count not given | engine flue | not expressible (a row of flues) |
 | Doors | in a side wall | front wall | differs (the engine's door can't sit under the arch's springing here) |
@@ -28,5 +28,6 @@ No change in this pass.
 
 ## Open questions for the user
 
-None new.
+1. Figs 4-31, 4-32: how far along the span does a reduction chamber's peak stand, and the two
+   radii (for `roof.peak_at`)?
 </content>

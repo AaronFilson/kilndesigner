@@ -15,8 +15,8 @@ p.117 (text and photos), p.124.
 
 ## What's modelled
 
-Two chambers, each 55 in wide and 10 ft long (the mean of the 8 ft and 12 ft chambers), 35.4 in
-to the springline. The domes are 6 in of Kaolite 2600-LI and rise 12.6 in. Walls are 9 in of
+Two chambers, 55 in wide, 8 ft and 12 ft long (`chamber.sizes`, 2026-11-09), 35.4 in to the
+springline. The domes are 6 in of Kaolite 2600-LI and rise 12.6 in. Walls are 9 in of
 medium-duty firebrick. The front firebox is 55 × 36 in with a grate whose bars are ¾ in apart.
 It has a 15 × 18 in inlet flue and a 9 × 13½ in stoke hole. The second firebox is 15 × 55 in.
 Cone 11.

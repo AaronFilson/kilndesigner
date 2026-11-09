@@ -366,6 +366,9 @@ class ChamberShape:
     chamber's (roof.along)."""
     crossing: CrossingShape | None = None
     """Crossing vaults (roof.crossing): the union of two arched tubes (groin.py)."""
+    given: tuple[float, tuple[FaceShape, ...]] | None = None
+    """The volume and faces worked out elsewhere (shell.py): chambers of different sizes, a
+    width changing along the run, an offset-peak arch."""
 
     @property
     def _row(self) -> bool:
@@ -373,6 +376,8 @@ class ChamberShape:
 
     @property
     def volume(self) -> float:
+        if self.given is not None:
+            return self.given[0]
         if self.crossing is not None:
             return self.crossing.volume()
         if self.form is not None:
@@ -403,6 +408,8 @@ class ChamberShape:
 
     def _faces(self) -> list[FaceShape]:
         w, d, h = self.width, self.depth, self.height
+        if self.given is not None:
+            return list(self.given[1])
         if self.crossing is not None:
             from kilndesigner.crossing import crossing_faces
 
@@ -609,6 +616,15 @@ def chamber_shape(kiln: Kiln) -> ChamberShape:
 
         return ChamberShape(w, d, h, None, form=form_of(kiln))
     open_top = isinstance(kiln.roof, OpenTop)
+    roof = kiln.roof
+    if (
+        c.sizes is not None
+        or c.widths is not None
+        or (isinstance(roof, SprungArch) and roof.peak_at is not None)
+    ):
+        from kilndesigner.shell import shell_shape
+
+        return shell_shape(kiln)
     if c.shape == "round":
         dome = RoundDome(w, si(kiln.roof.rise, "m")) if isinstance(kiln.roof, Dome) else None
         return ChamberShape(

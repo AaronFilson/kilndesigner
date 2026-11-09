@@ -32,10 +32,10 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 
 | Feature | Book (Fig 4-36 unless noted) | Model | |
 |---|---|---|---|
-| Chambers | three, 73 in wide; 42/46/36 deep; 59/65/59 to crown | three alike, 41⅓ deep, crown 61 in | differs: one size for all three |
-| Arch | 9 in, its peak set back toward the chimney | 6 in tatami brick + 3 in overcoat, circular | partly: no offset peak |
+| Chambers | three, 73 in wide; 42/46/36 deep; 59/65/59 to crown | `chamber.sizes`: 42/46/36 deep, crowns 59/65/59, each arch a semicircle, springlines 38/42/41 in | matches (springlines derived) |
+| Arch | 9 in, its peak set back toward the chimney | 6 in tatami brick + 3 in overcoat, circular | partly: `roof.peak_at` can say it, but how far back isn't printed |
 | Slope | 3 to 1 | 18.4° | matches |
-| Doors | one per chamber, 20 in, one side | 20 × 38 in, each chamber, right wall | matches (height assumed) |
+| Doors | one per chamber, 20 in, one side | 20 × 38 in, each chamber, right wall, 8 in off each chamber's middle (to fit the 36 in chamber 3) | matches (height assumed) |
 | Firebox | semicircular front, 46 in long, 18 in ash-pit section, grate slab 18 in up | box 73 × 46 in, grate 14 × 21 in, 14 in ash pit, step 24 in | partly: no round front |
 | Flame-diffusing blocks | three pointed blocks | none | not expressible |
 | Inlet flues | six (Fig 8-7) | six, engine size | matches the count; size not printed |
@@ -48,10 +48,18 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 | Chimney | 9 × 9 flue grid across 73 in; top about 123 in above ground | 81 in from chamber 1's floor, engine section | partly |
 | Damper | not drawn | engine's shelf-in-slot note | engine default |
 
+## What changed on 2026-11-09 (B3)
+
+- Each chamber its own size (`chamber.sizes`), from Fig 4-36's depths and crowns. Each arch is
+  taken as a semicircle on its depth, the springline the crown less half the depth: chamber 1's
+  38 in is the printed springline; 42 and 41 in for chambers 2 and 3 are derived. The doors move
+  to 8 in off each chamber's middle so the 20 in door fits the 36 in chamber 3.
+
 ## Results from the build
 
 - Chamber volume 297 ft³; top temperature 2345 °F (cone 10, assumed).
-- Heat loss at top: 168.1 kW. Priced materials: $1,248.
+- Heat loss at top: 164.4 kW (168.1 kW with one mean size). Priced materials: $1,248. The
+  masonry holds each arch's thrust: 161, 168 and 150 lb per foot, hot.
 - **W1 warning:** the 6.8 ft chimney is under the 8.8 ft that Olsen's rules give as the least for
   this kiln. This follows from the drawing. `core/tests/test_olsen_kilns.py`'s `WARNED` doesn't
   list it yet, so that test fails until the lead adds `fire.chimney` for `bidai`.
@@ -65,3 +73,5 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 3. Fig 4-36 p.94: how tall is the firebox inside, from the grate slab to the crown of its arch?
 4. Fig 8-7 p.201: how big are the six inlet flues into chamber 1?
 5. Fig 4-36 p.94: how wide is the 12 in exit flue at chamber 3's back, and how many are there?
+6. Fig 4-36 p.94: where along each chamber does its arch's peak stand (for `roof.peak_at`), and
+   is each chamber's springline 38 in, or does it follow the semicircles' 38, 42 and 41 in?

@@ -974,7 +974,11 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
         f"{length_text(run.between, us)} thick, as thick as the side walls. "
     )
     reference = "run_parts.py; Olsen, The Kiln Book, 4th ed."
-    if run.step > 1e-6:
+    if run.sizes:
+        from kilndesigner.shell import sizes_note
+
+        text += sizes_note(kiln, run, us)
+    elif run.step > 1e-6:
         slope = si(kiln.chamber.slope, "degree") if kiln.chamber.slope is not None else 0.0
         text += (
             f"Each floor steps {length_text(run.step, us)} above the last: the pitch of a "

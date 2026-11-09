@@ -442,16 +442,17 @@ def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
     from kilndesigner.run_parts import run_layout
 
     run = run_layout(kiln)
-    w, d, h, n = run.width, run.depth, run.height, run.chambers
+    w, d, h, n = run.width, run.depth_of(0), run.height_of(0), run.chambers
+    each = "chamber 1" if run.sizes else "each chamber"
     front = View("Section A–A: across the first chamber, looking at the back",
                  _cut(parts, 1, 0.0, 0, 2), [], [])  # fmt: skip
     side = View("Section B–B: along the kiln, looking from the right", _cut(parts, 0, 0.0, 1, 2),
                 [], [])  # fmt: skip
-    if run.step > 1e-6:
+    if run.step > 1e-6 or run.stepped:
         rects: list[Rect] = []
         for i in range(n):
             mine = [p for p in parts if p.chamber == i + 1]
-            rects += _cut(mine, 2, run.floor(i) + h / 2, 0, 1)
+            rects += _cut(mine, 2, run.floor(i) + run.height_of(i) / 2, 0, 1)
         plan = View("Section C–C: plan of each chamber at its mid-height", rects, [], [])
     else:
         plan = View("Section C–C: plan at mid-height", _cut(parts, 2, h / 2, 0, 1), [], [])
@@ -464,7 +465,7 @@ def _run_views(kiln: Kiln, parts: list[Part], us: bool) -> list[View]:
     ]
     x0, y0, x1, y1 = side.bounds()
     side.dims += [
-        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, each chamber"),
+        Dimension(-d / 2, 0, d / 2, 0, 0.7 * h, f"{length_text(d, us)} inside, {each}"),
         Dimension(x0, y0, x1, y0, 0.25 * h, f"{length_text(x1 - x0, us)} outside"),
         Dimension(-d / 2, 0, -d / 2, h, -0.6 * d, f"{length_text(h, us)} to the springline"),
         Dimension(x1, y0, x1, y1, 0.04 * (x1 - x0), f"{length_text(y1 - y0, us)} outside"),

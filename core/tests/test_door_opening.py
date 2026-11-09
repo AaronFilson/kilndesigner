@@ -270,20 +270,20 @@ def test_a_row_takes_a_door_into_each_chamber() -> None:
     kiln = _kiln("olsen/bidai.yaml", {})  # Fig 4-36: a 20 in door per chamber, one side wall
     holes = door_holes(kiln)
     assert len(holes) == 3
-    # Each the same, at its chamber's front: 10.5 in towards the front of the chamber's middle
+    # Each the same, at its chamber's front: 8 in towards the front of the chamber's middle
     from kilndesigner.run_parts import run_layout
 
     run = run_layout(kiln)
     for k, hole in enumerate(holes):
         middle = (run.front(k) + run.back(k)) / 2
-        assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(middle - 10.5 * 25.4)
+        assert (hole.lo[1] + hole.hi[1]) / 2 == pytest.approx(middle - 8 * 25.4)
     names = {p.name.split("/")[1] for p in lining_parts(kiln) if p.name.startswith("door/")}
     assert names == {"1", "2", "3"}
     assert len(model_door_holes(kiln)) == 6  # a box and a half-round each
     head = door_head(kiln)
     assert head is not None
     assert any(s.name == "A door in each chamber" for s in head.working)
-    assert door_across(kiln) == pytest.approx(-10.5)
+    assert door_across(kiln) == pytest.approx(-8)
     hw = build_hardware(kiln, design_frame(kiln), None)
     assert any("one into each chamber" in f.message for f in hw.findings)
 

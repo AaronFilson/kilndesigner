@@ -21,13 +21,17 @@
 # Not modelled: the main firebox, stoked for the first 15 hours. The engine's arch spans the
 # width, so it is laid across the 4.3 m with the same springline and crown; held by masonry, it
 # gets no steel. The doors are in the side walls; a sprung arch here springs from the side
-# walls, so the door is put in the front wall. The chambers' cones differ (7 is bisque, "Δ1");
-# the kiln is worked out at the hottest, cone 10. The floor's loss into dry soil is worked out at steady state.
+# walls, so the door is put in the front wall. The floor's loss into dry soil is worked out at
+# steady state.
+# The chambers' cones (firing.chamber_cones): 1 and 2 to cone 10, the rest to cone 8–9 (p.93),
+# 9 taken, the hotter; chamber 7 bisque, "Δ1" (Fig 4-35). The heat loss takes each chamber at its
+# own cone; the lining is checked at the hottest, cone 10.
 schema: 1
 name: Suzuki cooperative climbing kiln, Kyoto
 units: metric
 firing:
   cone: "10" # chambers 1 and 2 (Fig 4-35)
+  chamber_cones: ["10", "10", "9", "9", "9", "9", "1"] # p.93; Fig 4-35, chamber 7 bisque "Δ1"
 chamber:
   width: 4.3 m
   depth: 1.4 m

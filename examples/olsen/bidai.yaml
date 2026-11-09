@@ -10,8 +10,11 @@
 # into a small slope (p.94, p.97), so the floor is on the ground; the firebox 46 in long
 # (Fig 4-36), six fireclay grate bars in a 14 in grate zone over a 14 in ash pit (Fig 8-7); the
 # chimney right behind chamber 3 (Fig 4-36).
-# Assumed: one chamber size for all three, their mean: 41⅓ in deep and 61 in to the crown, so the
-# arch rises 23 in from the 38 in springline. The bricks have no stated grade:
+# Each chamber its own size (chamber.sizes): 42, 46 and 36 in deep, 59, 65 and 59 in to the crown.
+# Assumed: each arch a semicircle on its chamber's depth, as Olsen's pointed Kyoto arches rise at
+# least that much (p.91–92), the springline the crown less half the depth: 38, 42 and 41 in
+# (chamber 1's 38 in is the printed springline, p.94–95). The depth, height and rise below are
+# chamber 1's, where the engine takes one. The bricks have no stated grade:
 # medium-duty firebrick (Olsen's intermediate duty, p.18). Walls 9½ in, one length of those
 # bricks, inside Olsen's 9–10 in for climbing kilns (p.99–100); the floor as the walls (engine
 # default). Cone 10, the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35,
@@ -27,8 +30,8 @@
 # end of its arch (Fig 4-36's plan); their height isn't printed, so each is as tall as the engine
 # lays a door in a side wall, to the springline, 38 in, and arched, as the doors of Olsen's other
 # built kilns are (door-openings.md).
-# Not modelled: each arch is peaked toward the back (p.91–92, p.95); the engine's is a circular
-# arch from the front wall to the back. Also left out: the firebox's semicircular front and its
+# Not modelled: each arch is peaked toward the back (p.91–92, p.95), which roof.peak_at can say,
+# but how far back isn't printed, so each is a circular arch from the front wall to the back. Also left out: the firebox's semicircular front and its
 # three flame-diffusing blocks; the vapour holes; the spy holes, one round hole high in each
 # chamber's arch near its back (chamber 2's 56 in up, Fig 4-36), since spy holes go in a wall of
 # one chamber, not each chamber's arch; the middle chamber's side stoke hole (aizashiguchi), 15 in
@@ -41,14 +44,23 @@ firing:
   cone: "10" # not given for this kiln: the Suzuki kiln's hottest chambers (p.93)
 chamber:
   width: 73 in
-  depth: 41.33 in # the mean of 42, 46 and 36 in
+  depth: 42 in # chamber 1's (Fig 4-36)
   height: 38 in # where the arch begins (p.94–95)
   chambers: 3
+  sizes: # Fig 4-36: 42/46/36 in deep, 59/65/59 in to the crown; each arch a semicircle
+    - depth: 42 in
+      rise: 21 in # 59 in to the crown
+    - depth: 46 in
+      height: 42 in
+      rise: 23 in # 65 in to the crown
+    - depth: 36 in
+      height: 41 in
+      rise: 18 in # 59 in to the crown
   slope: 18.4 degree # "3 TO 1": atan(1/3)
   on_ground: true # the foundation dug into a slope (p.94, p.97)
 roof:
   type: sprung_arch
-  rise: 23 in # to the mean crown, 61 in (59, 65, 59)
+  rise: 21 in # chamber 1's, to its 59 in crown
   buttressed: true # thrust onto the common walls and the chimney (p.95)
 loading:
   type: door
@@ -57,7 +69,7 @@ loading:
   opening:
     width: 20 in # "DOOR" 20" at each chamber (Fig 4-36)
     height: 38 in # not printed: to the springline, as tall as the engine lays a side door
-    across: -10.5 in # at each chamber's front, against the wall between (Fig 4-36's plan)
+    across: -8 in # at each chamber's front (Fig 4-36's plan): against chamber 3's front wall, the shortest
     each_chamber: true # one per chamber, all in one side wall (Fig 4-36)
 lining:
   walls:

@@ -15,7 +15,9 @@ Fig 4-53 (floor plan), Fig 4-55 (front and side elevations) and the text on pp.1
 
 ## What's modelled
 
-Two ware chambers of one size, the mean of the two: 44 in deep, 10 ft wide, 54 in to the crown.
+Two ware chambers, each its own size (`chamber.sizes`, 2026-11-09): the first 54 in deep and 60 in
+to the crown, the kedo 34 in deep and 48 in to the crown, both 10 ft wide, each arch a semicircle
+(6 in per foot of its span), so the springlines are 33 and 31 in.
 They stand on a 22.6° slope (5 in in 12). Each has its own arch along the draft, held by the
 walls between the chambers. Walls are 11½ in of medium-duty firebrick, the arch 9 in. The dogi
 is the firebox: 10 × 8 ft, with a 3½ × 2 ft fire-mouth hole. The flue stack runs 3½ ft to a
@@ -27,7 +29,7 @@ is the firebox: 10 × 8 ft, with a 3½ × 2 ft fire-mouth hole. The flue stack r
 |---|---|---|---|
 | Dogi | 8 ft × 10 ft (Fig 4-53); fire-mouth hole 3½ × 2 ft (p.102); stepped shelves for ware | firebox 10 × 8 ft, stoke hole 42 × 24 in | matches; the ware in the dogi isn't modelled |
 | Himitsu | 24 in flue with a 2 ft chamber; flues 3 × 6 in in and 6 × 9 in out (p.100, Fig 4-52) | none | not expressible |
-| Chambers | first 4 ft 6 in, 5 ft tall; kedo 2 ft 10 in, 4 ft tall (Figs 4-53, 4-55) | two of the mean size | differs: the engine has one chamber size |
+| Chambers | first 4 ft 6 in, 5 ft tall; kedo 2 ft 10 in, 4 ft tall (Figs 4-53, 4-55) | `chamber.sizes`: 54 × 60 in and 34 × 48 in to the crowns | matches |
 | Arches | each chamber's own, along the draft | `chambers: 2`, arches along | matches |
 | Slope | 5 in rise per 12 in (Fig 4-55) | 22.6° | matches |
 | Exit flues | first chamber 6 × 9 in; kedo 6 × 10 in, count not given (p.101) | engine's flue holes and exit flue | differs (count unknown) |
@@ -39,8 +41,8 @@ is the firebox: 10 × 8 ft, with a 3½ × 2 ft fire-mouth hole. The flue stack r
 
 ## Build results
 
-The build finishes with no errors. Chamber 301 ft³; heat loss 158.5 kW; priced materials
-$20,002. Each floor steps 23.1 in above the last. **Information:** the 25 ft chimney is taller
+The build finishes with no errors. Chamber 308 ft³ (301 ft³ with one mean size); heat loss
+159.1 kW; priced materials $20,002; the masonry holds 239 and 201 lb per foot of arch, hot. Each floor steps 23.1 in above the last. **Information:** the 25 ft chimney is taller
 than the 14.7 ft that Olsen's 3 × rise rule gives, counting the two modelled chambers only. Olsen
 counts the dogi's run as well (p.101), so this is expected.
 

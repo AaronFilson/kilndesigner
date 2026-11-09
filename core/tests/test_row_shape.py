@@ -54,9 +54,10 @@ def test_the_drawn_arches_match_the_heat_loss() -> None:
 def test_domes_in_a_row_are_one_to_a_chamber() -> None:
     kiln = load_design(EXAMPLES / "hollyweird.yaml")
     c = kiln.chamber
-    w, d, n = si(c.width, "m"), si(c.depth, "m"), c.chambers
-    dome = SailDome(w, d, si(kiln.roof.rise, "m"))  # type: ignore[union-attr]
-    assert _faces(kiln)["roof"] == pytest.approx(n * dome.area())
+    w, rise = si(c.width, "m"), si(kiln.roof.rise, "m")  # type: ignore[union-attr]
+    assert c.sizes is not None  # 8 ft and 12 ft (chamber.sizes), each its own dome
+    domes = [SailDome(w, si(s.depth, "m"), rise) for s in c.sizes]
+    assert _faces(kiln)["roof"] == pytest.approx(sum(d.area() for d in domes))
 
 
 def test_a_tube_is_one_vault_spanning_its_width() -> None:

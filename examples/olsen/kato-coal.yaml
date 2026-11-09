@@ -26,8 +26,8 @@
 # the firebox floors are below ground (Fig 5-4). Each firebox's length from its mouth isn't
 # printed: its grate's 22 in. The chimney stands at the back, opposite the door, its run from the
 # kiln an engine default (9 in). The spy holes and the air: engine defaults.
-# Not modelled: the back wall, by the chimney, is marked 10 in too (Fig 5-4), but the engine
-# gives it the side walls' 18 in; the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
+# The back wall, by the chimney, is marked 10 in too (Fig 5-4): its own layers (lining.back).
+# Not modelled: the bowed walls (Fig 5-6); the bag walls, 36 in high and 4 ft
 # 8 in apart; the flue channels under the floor and the collection box, and the floor's loss into
 # them and the ground; the 20 in connection to the chimney and its damper; the inlet flues from
 # the fireboxes, about 500 in² in all (p.131), whose sizes aren't printed.
@@ -56,6 +56,9 @@ lining:
   door:
     - material: firebrick-medium-duty-smithfield
       thickness: 10 in # "10"" at the door end (Fig 5-4)
+  back:
+    - material: firebrick-medium-duty-smithfield
+      thickness: 10 in # "10"" by the chimney (Fig 5-4)
   floor:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in

@@ -14,7 +14,8 @@
 # walls aren't described: 9 in, which Olsen says stands to 8 ft unsupported (p.41), of hard brick
 # (his fast-fire wood kiln "can be built of IFB or hard brick", p.142); medium-duty
 # firebrick (Olsen's intermediate duty, p.18). The floor is 9 in, as the floor of Singh's
-# coal kiln (p.134). The door and air: engine defaults.
+# coal kiln (p.134). No door: none is drawn, and the kiln is set from the top (Fig 6-11), so
+# loading.type is "top". The air: engine defaults.
 # Not modelled: the central round flue (its size is cut off at the page edge); the side opening
 # (unreadable); the domed floor, taken as flat; the open top's loss (the engine leaves it out).
 schema: 1
@@ -29,6 +30,8 @@ chamber:
   height: 60 in # the setting's height
 roof:
   type: open # shards and saggar pieces over the setting
+loading:
+  type: top # set over the walls, no door drawn (Fig 6-11)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield

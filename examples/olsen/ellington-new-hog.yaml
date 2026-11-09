@@ -22,8 +22,11 @@
 # Cone 10: Olsen salts at the top temperature, cone 9–10 (p.128). The chimney's section and the
 # exit flues: engine default (the neck is about 3 ft wide (faint); the chimney label "4'5" 3'"
 # can't be read). Spy holes: engine default, up the door's end wall under the arch.
-# Not modelled: the tapering plan, as a box of the mean width over the 18 ft ware chamber,
-# (10 × 10 + 8 × 7) ÷ 18 = 8 ft 8 in; the firebox's depth below the ware floor; the side stoke
+# The tapering plan (chamber.widths): 10 ft wide for the first 10 ft, then narrowing straight to
+# 4 ft at the chimney end, 18 ft from the front (Fig 4-95). The arch keeps its shape as the plan
+# narrows, its crown falling with the width to 15.4 in at the 4 ft neck; Fig 4-96's 29 in there
+# is more than a circular arch from the floor can rise on 4 ft (24 in), so it isn't followed.
+# Not modelled: the firebox's depth below the ware floor; the side stoke
 # holes, two rows every 27 in; the air holes, 9 in high, under the stoke holes; only one stoke hole
 # per firebox can be entered. The plan's three 13½ × 9 in inlet flues are entered as flues from the
 # firebox into the chamber; they match the air holes' size and may be air inlets. The floor's loss
@@ -34,13 +37,20 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 104 in # the mean of 10 ft for 10 ft and 10 to 4 ft over 8 ft
+  width: 10 ft # the straight section's, where the arch's rise is given
   depth: 18 ft
+  widths: # Fig 4-95: 10 ft wide for 10 ft, then 8 ft tapering to 4 ft
+    - at: 0 ft
+      width: 10 ft
+    - at: 10 ft
+      width: 10 ft
+    - at: 18 ft
+      width: 4 ft
   height: 0 in # the arch springs from the floor
   on_ground: true # its firebox is dug 3½ ft below the ware floor (Fig 4-96)
 roof:
   type: sprung_arch
-  rise: 38.5 in # to the crown; under the 52 in of a half-circle
+  rise: 38.5 in # to the crown in the straight section; under the 60 in of a half-circle
   buttressed: true
 loading:
   type: door

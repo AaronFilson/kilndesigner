@@ -2048,6 +2048,13 @@ def design_frame(kiln: Kiln) -> FrameDesign:
             "working": [*frame.working, *steps],
             "findings": [*frame.findings, *found, crossing_note(kiln)],
         })  # fmt: skip
+    from kilndesigner.shell import hung_door_statics
+
+    hanging, hung = hung_door_statics(kiln)
+    if hanging or hung:
+        frame = frame.model_copy(
+            update={"working": [*frame.working, *hanging], "findings": [*frame.findings, *hung]}
+        )
     bearing, under = platform_bearing(kiln)
     if bearing or under:
         frame = frame.model_copy(
@@ -2081,6 +2088,10 @@ def _design_frame(kiln: Kiln) -> FrameDesign:
         return _round_frame(kiln)
     if isinstance(kiln.roof, SprungArch) and kiln.roof.building_frame:
         return _building_frame(kiln)
+    from kilndesigner.shell import shell_frame
+
+    if (own := shell_frame(kiln)) is not None:
+        return own
     if getattr(kiln.roof, "buttressed", False):
         return _held_by_masonry(kiln)
     if arches_along(kiln):

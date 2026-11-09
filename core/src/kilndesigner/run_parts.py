@@ -63,38 +63,71 @@ class RunLayout:
     chambers: int
     between: float  # a wall between chambers
     step: float  # how far each chamber's floor stands above the last's
+    # Chambers of different sizes (chamber.sizes): each one's depth, springline height and roof
+    # rise; the floors then climb tan(slope) along the run between the chambers' centres
+    sizes: tuple[tuple[float, float, float], ...] = ()
+    grade: float = 0.0  # tan(slope), with sizes
 
     @property
     def pitch(self) -> float:
         return self.depth + self.between
 
+    def depth_of(self, i: int) -> float:
+        return self.sizes[i][0] if self.sizes else self.depth
+
+    def height_of(self, i: int) -> float:
+        """Chamber i's floor to its springline."""
+        return self.sizes[i][1] if self.sizes else self.height
+
+    def springline(self, i: int) -> float:
+        return self.floor(i) + self.height_of(i)
+
     def centre(self, i: int) -> float:
-        return i * self.pitch
+        if not self.sizes:
+            return i * self.pitch
+        d = [s[0] for s in self.sizes]
+        return -d[0] / 2 + sum(d[:i]) + i * self.between + d[i] / 2
 
     def front(self, i: int) -> float:
-        return self.centre(i) - self.depth / 2
+        return self.centre(i) - self.depth_of(i) / 2
 
     def back(self, i: int) -> float:
-        return self.centre(i) + self.depth / 2
+        return self.centre(i) + self.depth_of(i) / 2
 
     def floor(self, i: int) -> float:
+        if self.sizes:
+            return (self.centre(i) - self.centre(0)) * self.grade
         return i * self.step
 
     @property
+    def stepped(self) -> bool:
+        """Each chamber stands on its own: its floor above the last's, or its springline at its
+        own height."""
+        heights = {round(self.height_of(i), 6) for i in range(self.chambers)}
+        floors = any(self.floor(i) > 1e-6 for i in range(self.chambers))
+        return floors or len(heights) > 1
+
+    @property
     def length(self) -> float:
-        return self.chambers * self.depth + (self.chambers - 1) * self.between
+        return self.back(self.chambers - 1) - self.front(0)
 
     def step_at(self, y: float) -> float:
         """How high the floor stands at y along the run (mm)."""
+        if self.sizes:
+            i = next((k for k in range(self.chambers) if y < self.back(k) + self.between), -1)
+            return self.floor(i if i >= 0 else self.chambers - 1)
         i = math.floor((y + self.depth / 2) / self.pitch)
         return self.floor(min(max(i, 0), self.chambers - 1))
 
 
 def run_layout(kiln: Kiln) -> RunLayout:
+    from kilndesigner.shell import sizes_of
+
     c = kiln.chamber
     between = sum(si(x.thickness, "mm") for x in kiln.lining.walls)
     depth = si(c.depth, "mm")
     slope = math.radians(si(c.slope, "degree")) if c.slope is not None else 0.0
+    sizes = tuple(sizes_of(kiln, "mm")) if c.sizes is not None else ()
     return RunLayout(
         width=si(c.width, "mm"),
         depth=depth,
@@ -102,6 +135,8 @@ def run_layout(kiln: Kiln) -> RunLayout:
         chambers=c.chambers,
         between=between,
         step=(depth + between) * math.tan(slope),
+        sizes=sizes,
+        grade=math.tan(slope),
     )
 
 
@@ -141,7 +176,7 @@ def run_parts(kiln: Kiln) -> list[Part]:
 
     run = run_layout(kiln)
     w, h, n, t = run.width, run.height, run.chambers, run.between
-    stepped = run.step > 1e-6
+    stepped = run.step > 1e-6 or run.stepped
     faces = ("left", "right", "front", "back")
     layers = {f: thicknesses(kiln, f) for f in faces}
     walls = [(x.material, si(x.thickness, "mm")) for x in kiln.lining.walls]
@@ -210,21 +245,22 @@ def run_parts(kiln: Kiln) -> list[Part]:
                     a, b = stretch(i)
                     z = run.floor(i)
                     end = b if i == n - 1 else run.back(i)
-                    p = box(base + suffix(i), mat, side, (xs[0], a, z), (xs[1], end, z + h), i + 1)
+                    p = box(base + suffix(i), mat, side, (xs[0], a, z),
+                            (xs[1], end, run.springline(i)), i + 1)  # fmt: skip
                     parts.append(p)
                     walls_up.append((p, i))
                     if i < n - 1:
-                        top = run.floor(i + 1) + h
+                        top, owner = _between_top(run, i)
                         p = box(f"{base}{suffix(i)}-by-wall", mat, side, (xs[0], end, z),
                                 (xs[1], b, top), i + 1)  # fmt: skip
                         parts.append(p)
-                        walls_up.append((p, i + 1))
+                        walls_up.append((p, owner))
             reached += th
 
     # The end walls, and the walls between chambers, between the side walls
     ends: list[tuple[str, int, float, int, list[tuple[str, float]], float]] = [
-        ("front", -1, run.front(0), 0, layers["front"], h - drop),
-        ("back", 1, run.back(n - 1), n - 1, layers["back"], run.floor(n - 1) + h),
+        ("front", -1, run.front(0), 0, layers["front"], run.springline(0) - drop),
+        ("back", 1, run.back(n - 1), n - 1, layers["back"], run.springline(n - 1)),
     ]
     for face, sign, at, i, stack, top in ends:
         reached = 0.0
@@ -240,17 +276,17 @@ def run_parts(kiln: Kiln) -> list[Part]:
         reached = 0.0
         for k, (mat, th) in enumerate(walls):
             y = run.back(i) + reached
-            top = run.floor(i + 1) + h
+            top, owner = _between_top(run, i)
             p = box(f"division/{k + 1}-{mat}{suffix(i)}", mat, "back", (-w / 2, y, run.floor(i)),
                     (w / 2, y + th, top), i + 1)  # fmt: skip
             parts.append(p)
-            walls_up.append((p, i + 1 if stepped else None))
+            walls_up.append((p, owner if stepped else None))
             reached += th
 
     rings = thicknesses(kiln, "roof")
     for i in range(n):
         lo, hi = clip(i)
-        springline = run.floor(i) + h
+        springline = run.springline(i)
         if isinstance(roof, FlatRoof):
             cum = 0.0
             for k, (mat, th) in enumerate(rings):
@@ -265,6 +301,21 @@ def run_parts(kiln: Kiln) -> list[Part]:
         elif isinstance(roof, Dome):
             parts += _dome(kiln, run, i, (lo, hi), (x0, x1), rings, walls_up)
     return parts
+
+
+def _between_top(run: RunLayout, i: int) -> tuple[float, int]:
+    """The top of the wall between chambers i and i + 1, the higher springline of the two, and
+    the chamber whose springline it is."""
+    here, there = run.springline(i), run.springline(i + 1)
+    return (there, i + 1) if there >= here - 1e-9 else (here, i)
+
+
+def chamber_arch(kiln: Kiln, run: RunLayout, i: int) -> Arch:
+    """Chamber i's arch along the draft (mm): its own depth and rise with chamber.sizes."""
+    if run.sizes:
+        depth, _, rise = run.sizes[i]
+        return Arch(depth, rise)
+    return along_arch(kiln, "mm")
 
 
 def _main_solid(kiln: Kiln, stack: list[tuple[str, float]]) -> str | None:
@@ -289,12 +340,13 @@ def _arch(
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, SprungArch)
-    arch = along_arch(kiln, "mm")
+    arch = chamber_arch(kiln, run, i)
     if arch.drop:
         return _uneven_arch(kiln, run, arch, ends, xs, rings, walls_up, layers)
-    springline = run.floor(i) + run.height
+    springline = run.springline(i)
     centre_z = springline + arch.rise - arch.radius
     c = run.centre(i)
+    half_depth = run.depth_of(i) / 2
     a = arch.half_angle
     lo, hi = ends
     tag = f"-chamber-{i + 1}"
@@ -330,7 +382,7 @@ def _arch(
     for p, owner in walls_up:
         if p.wall not in ("left", "right") or not _tops(p, owner, i, run):
             continue
-        if p.hi[1] <= c - run.depth / 2 + 1e-6 or p.lo[1] >= c + run.depth / 2 - 1e-6:
+        if p.hi[1] <= c - half_depth + 1e-6 or p.lo[1] >= c + half_depth - 1e-6:
             continue  # beside a wall between chambers, not under this arch
         name = p.name.rsplit("-chamber-", 1)[0] if "-chamber-" in p.name else p.name
         cap = part(f"{name}{tag}-arch", p.material, p.wall, inside, (p.lo[0], p.hi[0]), cap=True)
@@ -339,7 +391,7 @@ def _arch(
     r_out = arch.radius + cum
     for face, sign, end in (("front", -1, lo), ("back", 1, hi)):
         outer = abs(end - c)
-        if outer <= run.depth / 2 + 1e-6:
+        if outer <= half_depth + 1e-6:
             continue  # the wall rises past the springline: the arch stops against it
         first, last = i == 0, i == run.chambers - 1
         stack = (layers["front"] if first else walls) if face == "front" else (
@@ -354,10 +406,10 @@ def _arch(
             if not half:
                 continue  # the ring bulges past where the roof stops
         elif top[0] <= outer:
-            half = [(run.depth / 2, springline), top, (outer, top[1]), (outer, springline)]
+            half = [(half_depth, springline), top, (outer, top[1]), (outer, springline)]
         else:
             r = outer / math.sin(a)
-            half = [(run.depth / 2, springline), (outer, centre_z + r * math.cos(a)),
+            half = [(half_depth, springline), (outer, centre_z + r * math.cos(a)),
                     (outer, springline)]  # fmt: skip
         outline = [(c + sign * u, z) for u, z in half]
         parts.append(part(f"{face}/skewback-{mat}{tag}", mat, face, outline, xs))
@@ -526,7 +578,7 @@ def _uneven_arch(
 
 def _tops(p: Part, owner: int | None, i: int, run: RunLayout) -> bool:
     """Whether the wall part's top is chamber i's springline."""
-    return abs(p.hi[2] - (run.floor(i) + run.height)) < 1e-6 and owner in (None, i)
+    return abs(p.hi[2] - run.springline(i)) < 1e-6 and owner in (None, i)
 
 
 def _dome(
@@ -542,8 +594,9 @@ def _dome(
     from kilndesigner.castable import resolve_material
 
     assert isinstance(kiln.roof, Dome)
-    dome = SailDome(run.width, run.depth, si(kiln.roof.rise, "mm"))
-    springline = run.floor(i) + run.height
+    rise = run.sizes[i][2] if run.sizes else si(kiln.roof.rise, "mm")
+    dome = SailDome(run.width, run.depth_of(i), rise)
+    springline = run.springline(i)
     centre, r, c = springline + dome.centre, dome.radius, run.centre(i)
     lo, hi = ends
     tag = f"-chamber-{i + 1}"
@@ -611,7 +664,7 @@ def flue_rows(kiln: Kiln) -> list[FlueRow]:
     rows: list[FlueRow] = []
     for i in range(run.chambers - 1):
         bottom = run.floor(i + 1)
-        top = min(bottom + FLUE_HEIGHT, run.floor(i) + run.height)
+        top = min(bottom + FLUE_HEIGHT, run.springline(i))
         if top - bottom > 1e-6:
             rows.append(FlueRow(i + 1, n, bottom, top))
     return rows

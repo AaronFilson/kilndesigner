@@ -374,6 +374,10 @@ def not_drawn(kiln: Kiln) -> str | None:
     The calculations (heat loss, firing, chimney, roof) still run, and the 3D model is drawn as
     shells (massing.py)."""
     c = kiln.chamber
+    from kilndesigner.shell import shell_not_drawn
+
+    if (why := shell_not_drawn(kiln)) is not None:
+        return why
     if c.bend is not None and si(c.bend, "degree") > 0:
         from kilndesigner.massing import MassingError, check_bend, run_of
 

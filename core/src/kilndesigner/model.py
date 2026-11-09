@@ -143,6 +143,15 @@ class Lining(Spec):
         default=None,
         description="Custom conical (tatami) bricks for arches and domes, sized by the builder",
     )
+    back: list[Layer] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The back wall's own layers, where it is built thicker or thinner than the sides, as "
+            "Mr Kato's 10 in back wall by the chimney (Olsen, 4th ed. Fig 5-4). Left out: the "
+            "walls' layers. A door in the back wall takes lining.door, when given, before this"
+        ),
+    )
 
     def for_face(self, face: Face, *, door_face: Face | None = None) -> list[Layer]:
         if face == door_face and self.door is not None:
@@ -151,6 +160,8 @@ class Lining(Spec):
             return self.floor
         if face == "roof" and self.roof is not None:
             return self.roof
+        if face == "back" and self.back is not None:
+            return self.back
         return self.walls
 
 
@@ -375,6 +386,27 @@ class Chamber(Spec):
             "standing on the curve. Left out: a rectangle"
         ),
     )
+    sizes: list[ChamberSize] | None = Field(
+        default=None,
+        min_length=2,
+        description=(
+            "Chambers in a row of different sizes, front to back, one entry each: its depth, and "
+            "where it differs, its springline height and its roof's rise (Bidai's 42, 46 and 36 "
+            "in, Olsen Fig 4-36). The chamber's depth, height and the roof's rise are then the "
+            "ones left out of an entry take. Left out: every chamber the chamber's size"
+        ),
+    )
+    widths: list[WidthAt] | None = Field(
+        default=None,
+        min_length=2,
+        description=(
+            "One chamber whose plan width changes along its depth: its inside width at stations "
+            "measured from the front wall, straight between them, as a tunnel's arch sections "
+            "(Kannofen, Fig 6-37) or a groundhog tapering to its chimney (Ellington, Fig 4-95). "
+            "A sprung arch keeps its shape at every station: its rise scales with the width, from "
+            "roof.rise at the chamber's width. Left out: the chamber's width all along"
+        ),
+    )
 
     @model_validator(mode="after")
     def _a_shape_it_can_be(self) -> Chamber:
@@ -401,9 +433,22 @@ class Chamber(Spec):
                 raise ValueError("a round chamber has no run to bend")
         return self
 
+    @model_validator(mode="after")
+    def _a_size_for_each(self) -> Chamber:
+        if self.sizes is not None and len(self.sizes) != self.chambers:
+            raise ValueError(
+                f"give a size for each of the {self.chambers} chambers, not {len(self.sizes)}"
+            )
+        return self
+
     @property
     def length(self) -> Length:
         """The whole run, front to back, of the chambers in a row (their walls between left out)."""
+        if self.sizes is not None:
+            total = self.sizes[0].depth
+            for s in self.sizes[1:]:
+                total = total + s.depth
+            return total
         return self.depth * self.chambers
 
 
@@ -535,6 +580,16 @@ class SprungArch(Spec):
             "A second vault crossing this one at right angles, the two meeting in a groin over "
             "the fire zone: Olsen's multi-directional kilns (Ch. 7, Figs 7-1, 7-2). This arch is "
             "then the anagama-style tube's, front to back"
+        ),
+    )
+    peak_at: Share | None = Field(
+        default=None,
+        description=(
+            "An arch along the draft whose peak is set back from the middle of its span: how far "
+            "along the span, from the front springing, the peak stands, for example '60 percent'. "
+            "The arch is then two circular arcs of different radii, each level at the peak (a "
+            "double-radius or offset-peak arch: the Kyoto kilns' and Bidai's, peaked toward the "
+            "back, Olsen 4th ed. p.91–92, p.95). Left out: one circle, its crown mid-span"
         ),
     )
 
@@ -718,11 +773,12 @@ class Loading(Spec):
     walls are all wall, and ``face`` is then the wall the peepholes go in.
     """
 
-    type: Literal["door", "car", "lid"] = Field(
+    type: Literal["door", "car", "lid", "top"] = Field(
         default="door",
         description=(
-            "Through a door in a wall, on a car, or from the top under a hinged lid (a round "
-            "electric kiln's flat roof)"
+            "Through a door in a wall, on a car, from the top under a hinged lid (a round "
+            "electric kiln's flat roof), or 'top': over the walls of an open-topped kiln, with no "
+            "door at all, as Singh's low-fire kiln is set (Olsen, 4th ed. Fig 6-11)"
         ),
     )
     face: WallFace = Field(
@@ -742,6 +798,14 @@ class Loading(Spec):
     car_hardware_cost: Money | None = Field(
         default=None,
         description="Wheels, rails, frame and seal for a car; no sourced prices exist for these",
+    )
+    hung: HungDoor | None = Field(
+        default=None,
+        description=(
+            "The door hangs on its own frame, from an overhead beam on trolleys, rather than on "
+            "hinges or the car: Kaneko's suspended door (Olsen, 4th ed. Fig 6-64). Its weight is "
+            "checked against the trolleys' rating"
+        ),
     )
 
 
@@ -853,6 +917,16 @@ class Firing(Spec):
             "instead of a single ware weight"
         ),
     )
+    chamber_cones: list[str | None] | None = Field(
+        default=None,
+        min_length=2,
+        description=(
+            "Chambers in a row: the cone each reaches, front to back, as Suzuki's '10, 10, 8–9 … "
+            "bisque' (Olsen, 4th ed. Fig 4-35), at the firing's final_rate. None for a chamber "
+            "takes the firing's cone or top temperature, the hottest. The kiln's heat loss is "
+            "then each chamber's share at its own temperature. Left out: every chamber at the top"
+        ),
+    )
 
     @model_validator(mode="after")
     def _one_target(self) -> Firing:
@@ -867,6 +941,9 @@ class Firing(Spec):
             cones.cone_rates(self.cone)  # refuses a cone that isn't in the table
             if self.top_temperature is None:
                 cones.cone_temperature(self.cone, self.final_rate)  # refuses an untabulated pair
+        for cone in self.chamber_cones or []:
+            if cone is not None:
+                cones.cone_temperature(cone, self.final_rate)  # refuses an untabulated cone
         return self
 
 
@@ -1501,6 +1578,56 @@ class CastableMix(Spec):
     measured: Measured | None = None
 
 
+# --- Chambers and shell: sizes along a row, widths along a run, the door's hanging -------------
+
+
+class ChamberSize(Spec):
+    """One chamber of a row whose chambers differ (chamber.sizes)."""
+
+    depth: Length = Field(description="Inside, front to back, along the draft")
+    height: Length | None = Field(
+        default=None,
+        description="Floor to the springline, where it isn't the chamber's height",
+    )
+    rise: Length | None = Field(
+        default=None,
+        description="Its arch's or dome's rise over the springline, where it isn't the roof's",
+    )
+
+    @model_validator(mode="after")
+    def _positive(self) -> ChamberSize:
+        if si(self.depth, "in") <= 0:
+            raise ValueError("a chamber's depth must be more than 0")
+        if self.height is not None and si(self.height, "in") <= 0:
+            raise ValueError("a chamber's height must be more than 0")
+        if self.rise is not None and si(self.rise, "in") <= 0:
+            raise ValueError("a chamber's rise must be more than 0")
+        return self
+
+
+class WidthAt(Spec):
+    """The chamber's inside width at a station along its depth (chamber.widths)."""
+
+    at: Length = Field(description="From the inside of the front wall, along the chamber")
+    width: Length = Field(description="The inside width there")
+
+
+class HungDoor(Spec):
+    """A door hung on its own frame from an overhead beam on trolleys (Olsen, 4th ed. Fig 6-64,
+    Kaneko's: an I-beam, two half-ton trolleys, spring latches)."""
+
+    trolleys: int = Field(ge=1, description="How many trolleys carry it")
+    trolley_rating: Mass = Field(
+        description="Each trolley's rated load, from its maker, for example '1000 lb' (half a ton)"
+    )
+
+    @model_validator(mode="after")
+    def _rated(self) -> HungDoor:
+        if si(self.trolley_rating, "lb") <= 0:
+            raise ValueError("a trolley's rating must be more than 0")
+        return self
+
+
 class Kiln(Spec):
     """A kiln design: everything the user decides, and nothing that is calculated."""
 
@@ -2055,11 +2182,20 @@ class Kiln(Spec):
                 )
         return self
 
+    @model_validator(mode="after")
+    def _chambers_and_shell(self) -> Kiln:
+        """No door, a hung door, a cone for each chamber, chambers of different sizes, a width
+        changing along the run and an offset-peak arch: each in the range worked out (ADR 0009)."""
+        from kilndesigner.shell import check_shell
+
+        check_shell(self)
+        return self
+
     @property
     def door_wall(self) -> Face | None:
         """The wall that is the door, when the whole wall is; None for a door in part of one, or
         a top-loader, whose walls are all wall."""
-        if self.loading.opening is not None or self.loading.type == "lid":
+        if self.loading.opening is not None or self.loading.type in ("lid", "top"):
             return None
         return self.door_face
 
@@ -2072,8 +2208,9 @@ class Kiln(Spec):
 
     @property
     def door_kind(self) -> Literal["bricked", "hinged"] | None:
-        """How the door is built, or None for a car kiln; a top-loader's lid is hinged."""
-        if self.loading.type == "car":
+        """How the door is built, or None for a car kiln, a door hung on its own frame, or a kiln
+        set over its walls with no door; a top-loader's lid is hinged."""
+        if self.loading.type in ("car", "top") or self.loading.hung is not None:
             return None
         if self.loading.type == "lid":
             return "hinged"

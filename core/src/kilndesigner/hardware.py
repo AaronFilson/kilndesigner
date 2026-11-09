@@ -550,6 +550,10 @@ def _door_or_car(kiln: Kiln, frame: FrameDesign, f: Faces, hw: Hardware) -> None
     if kiln.loading.type == "lid":
         _lid(hw)
         return
+    from kilndesigner.shell import door_hardware
+
+    if door_hardware(kiln, hw.findings):
+        return
     face = kiln.door_face
     assert face not in ("floor", "roof")
     o = outside(kiln)

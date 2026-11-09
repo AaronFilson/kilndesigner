@@ -29,13 +29,13 @@ in arch of medium-duty firebrick; cross-draft to a chimney the engine sizes.
 | Doors and stoke porches | a bay on both sides of each chamber (Fig 4-35) | one bricked door in the front wall | differs; `loading.opening.each_chamber` exists but no size is printed |
 | Chimney | round, at the top of the kiln (Fig 4-35) | engine-sized | not sized in the book |
 | Spy holes | not shown | engine's three | engine default |
-| Cones by chamber | 10, 10, 8–9 … bisque Δ1 (Fig 4-35) | cone 10 throughout | not expressible |
+| Cones by chamber | 10, 10, 8–9 … bisque Δ1 (Fig 4-35) | `firing.chamber_cones`: 10, 10, 9, 9, 9, 9, 1 (8–9 taken as 9, the hotter) | matches; the heat loss takes each chamber at its own cone |
 | Slope, walls, arch | not given | 18.4°, 9½ in, 9 in (assumed) | assumed |
 
 ## Results from the build
 
-77.9 m³ in all; 1285 °C; 803.5 kW lost at top temperature (all seven chambers hot at once, the
-steady-state upper bound).
+77.9 m³ in all; 1285 °C; 777.4 kW lost with each chamber held at its own cone (803.5 kW with all
+seven at cone 10, the steady-state upper bound used before 2026-11-09).
 
 ## Open questions for the user
 

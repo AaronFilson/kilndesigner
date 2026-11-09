@@ -18,7 +18,7 @@ SCALE, all measurements metric"), Fig 6-38 (section of kiln and shed), Fig 6-39 
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Tunnel | 4.5 m long; four arch sections 1.04–1.07 m wide, 1.43–1.82 m to the crown; floor rises 38 cm (Fig 6-37) | 1.05 × 4.5 m box, mean height, sloped 4.83° | as close as a box allows |
+| Tunnel | 4.5 m long; four arch sections 1.04–1.07 m wide, 1.43–1.82 m to the crown; floor rises 38 cm (Fig 6-37) | `chamber.widths`: 1.05, 1.04, 1.07, 1.05 m at 1.5 m apart, each arch 3 in/ft of its width; mean height, sloped 4.83° | widths match; the level crown over the rising floor isn't modelled |
 | Fireboxes | two, side by side, grate bars on both sides, brick wall between the ash pits, 140 cm (Fig 6-37) | two, 0.525 × 1.40 m | length matches; widths assumed; grates not sized |
 | Firebox mouths | two arched mouths (photo, Fig 6-39) | — | not sized in the book |
 | Flue channels | four, 15 cm wide, under setter tiles (Fig 6-37) | — | not expressible |
@@ -27,9 +27,15 @@ SCALE, all measurements metric"), Fig 6-38 (section of kiln and shed), Fig 6-39 
 | Spy holes | none drawn | engine default, three in the door | — |
 | Salt ports | into the top exit flue | — | not expressible |
 
+2026-11-09 (B3): the four sections' widths (`chamber.widths`). The steel is sized for the widest,
+1.07 m. The bricks aren't laid out for a width that changes, so the build gives the report and the
+3D model as shells, with no masonry plan or bill of materials; the widths differ by 3 %, so
+leaving them out (one 1.05 m box) gets the plans back at little cost to the numbers.
+
 ## Key results
 
-7.31 m³; heat loss 53.5 kW; arch frame L8×8×⅝ (the book doesn't show what holds the arch).
+7.33 m³; heat loss 53.5 kW; arch frame sized at the widest section, 1.07 m (the book doesn't show
+what holds the arch).
 
 ## Open questions for the user
 

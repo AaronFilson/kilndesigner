@@ -35,7 +35,7 @@ firebrick walls and floor (assumed); top temperature 1760 °F (assumed, Falcone'
 | Side entrance | 12–15" from the firebox (plan) | none | not expressible |
 | Pit for coals | "pit line (for coals and embers)" | firebox floor | matches in effect |
 | Wall thickness | not given; by scale about 9–10 in (drawing, ?) | 9 in | assumed |
-| Door | none drawn; loaded from the top (Fig 6-11) | the engine's front wall door | differs (engine default) |
+| Door | none drawn; loaded from the top (Fig 6-11) | no door: `loading.type: top`, set over the walls (2026-11-09) | matches |
 | Spy holes | none drawn | the engine's three | engine default |
 | Chimney | none: updraft through the shards | none sized (updraft) | matches |
 
@@ -50,4 +50,5 @@ firing isn't worked out (no heating value for wood in `docs/research/`).
    copy ("ALL FLUES … ROUND … DIAMETER")?
 2. Is the firebox's width readable (the plan's 12–15" side entrance, or another figure)?
 3. Is the kiln loaded from the top only, or through a door in the wall (Fig 6-11 shows a man
-   inside)? If there's no door, the engine's default door should be noted as not being the book's.
+   inside)? The model now has no door (`loading.type: top`), as none is drawn; a door's size
+   would put one back.
