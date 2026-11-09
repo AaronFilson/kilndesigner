@@ -2,8 +2,7 @@
 
 ## Commands
 
-uv is installed for the user but is not on PATH. Call it by its full path,
-`C:/Users/bellows/AppData/Roaming/Python/Python311/Scripts/uv.exe`; below, `uv` means that.
+Call uv by its full path, `/home/bellows/.local/bin/uv`; below, `uv` means that.
 
 - One command per shell call: no `&&` chains, no shell variables such as `$U`, no `cd`.
 - Read, search and edit files with the built-in tools, not the shell.
