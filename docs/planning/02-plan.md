@@ -571,6 +571,26 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   cohesion values, IFB hot MOR and creep, rampant-arch thrust, the catenary at a step, hot
   corbels, Trinks Vol. I (not online), Heyman (1966) and Huerta (2001) texts.
 
+**Sixth round (2026-11-08), `docs/research/refractory-movement-and-mortar.md`.** What closed:
+
+- *Growth and allowance (closed):* fireclay brick grows 3/32 in per ft to 2400 °F, and "most
+  brick manufacturers recommend" that as the expansion allowance (Brosnan, in Schacht's
+  *Refractories Handbook*, read in full): a third source for the engine's 3/32 in/ft beside
+  Olsen p.51 and the IFB sheets. Bhatia (PDHonline M158 p.29): half the theoretical expansion is
+  enough, the joints take the rest, which matches Olsen's 1/16 in/ft in a steel frame.
+- *Mortar types (closed):* HWI's air-setting, heat-setting and phosphate definitions; SAIRSET's
+  joint MOR 650 psi dried, 500 psi after 1500 °F (sheet 8/10: 5006); HWI M-2: mortar "is always
+  the weakest link", joints "as thin as possible", troweled better than dipped.
+- *Largest joint (closed):* "should not exceed 1⁄4 in" (Beall, *Masonry Design and Detailing*,
+  5th ed. p.143); 1/16–1/8 in is the usual recommendation (snippets only).
+- *In the engine:* the sprung arch's growth reference now cites Brosnan too. No number moved.
+- *Proposed:* a wall expansion-allowance finding (3/32 in/ft, half allowed, Olsen's ¼ in joints
+  past 48 in); an arch-rise working step (geometry, Derived); a joint-thickness warning past ¼ in.
+- *Still open:* hot cohesion, allowable bearing stress or FoS, IFB hot MOR and creep, castable
+  reversible expansion and drying shrinkage, a measured arch rise, rampant-arch thrust, the
+  catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
+  Refractory Practice* not reached online.
+
 ## Open questions
 
 1. **The materials library.** Which manufacturers' data sheets can be used, and how they are

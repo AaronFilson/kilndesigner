@@ -2551,7 +2551,9 @@ def _posts_per_side(
 GROWTH_IN_PER_FT = 3 / 32  # the most brickwork grows hot: Olsen 4th ed. p.51 (1/16–3/32 in/ft)
 GROWTH_SOURCE = (
     "Olsen, The Kiln Book, 4th ed., p.51: 1/16–3/32 in per ft (0.5–0.8 %), with IFB's 0.5–0.7 % "
-    "reversible expansion (thermal-properties.md §2)"
+    "reversible expansion (thermal-properties.md §2); fireclay brick grows the same 3/32 in per "
+    "ft heated to 2400 °F, the allowance most makers recommend (Brosnan, 'Alumina-Silica Brick', "
+    "in Schacht, Refractories Handbook; refractory-movement-and-mortar.md §1)"
 )
 SPRING_SOURCE = (
     "a spring's force grows by its rate × its travel; the rods' share capped at the rigid frame's "
