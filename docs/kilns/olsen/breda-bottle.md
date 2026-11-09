@@ -38,7 +38,7 @@ Notes: `docs/research/olsen-kilns.md`, `breda-bottle`.
 | Floor | "KILN DOMED FLOOR" | flat, 13½ in | differs (the floor can't be domed) |
 | Firebox | 3' grate to floor dome; ash pit 2' wide × 3½' deep (Figs 6-50, 6-51) | same | matches |
 | Grate | metal, on a 1' ledge, bars 1" apart, run 8', "37 total" | 24 in wide, 8 ft, 1 in gap | partly: 37 bars 1 in apart don't fit 2 ft (flagged) |
-| Inlet flues | 4½" × 4½", lines 27" and 18" from the wall, perimeter flues 27" apart, count not printed (Fig 6-51) | none: the floor over the firebox is left solid | not expressible (an under-floor firebox takes one row of inlets at its far end) |
+| Inlet flues | 4½" × 4½", lines 27" and 18" from the wall, perimeter flues 27" apart, count not printed (Fig 6-51) | none: the floor over the firebox is left solid | expressible now in part (`inlets_at: spread`, one row down the firebox's middle); not given, as their count isn't printed (question 1), and the perimeter flues aren't over the firebox |
 | Bag wall | 2' high, inside the perimeter inlets, openings 9" apart | none | not expressible |
 | Exit flues | 8 in the centre of the dome, 21 round the edge, 4½ × 5", with damper blocks (Fig 6-53) | one square roof flue | not expressible (one flue) |
 | Dampers | damper blocks on the perimeter flues | none | not expressible |

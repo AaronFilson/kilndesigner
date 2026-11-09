@@ -19,7 +19,7 @@ taper, side stoke and salt ports, front with roller conveyor). Notes:
 | Firebox | front, dug 3.5' below the ware floor, 4' wide in section (Fig 4-96) | front, 10 ft × 4 ft | depth below floor not expressible |
 | Inlet flues | "(3) INLET FLUE 13.5 X 9"" (Fig 4-95) | 3 × 13½ × 9 in | matches |
 | Front stoke holes | 13.5" × 16", air holes 13.5" × 9" under each; Fig 4-97 draws three (left, centre, right, half cut off) | one 13½ × 16 in stoke hole | count and air holes not expressible |
-| Side stoke holes | two rows, "spaced every 27"", six a row drawn (Fig 4-96); also salt ports (Fig 4-102) | — | not expressible |
+| Side stoke holes | two rows, "spaced every 27"", six a row drawn (Fig 4-96); also salt ports (Fig 4-102) | — | expressible now (`stoke_holes`); not given, as their size and height aren't printed |
 | Door | central, in the arched front (Fig 4-97, Fig 4-103) | whole front, bricked | opening size not printed |
 | Chimney | 14' (Fig 4-96); label "4'5" 3'" (?) | 14 ft, section by engine | section unreadable |
 | Exit flues | not drawn | engine default | — |

@@ -25,7 +25,7 @@ tall sharing the back wall. Only the volume and the layout are the book's.
 | Feature | Book (p.147) | Model | |
 |---|---|---|---|
 | Volume | 8 to 10 ft³ | 9 ft³ | matches |
-| Firebox | Roman-arched, under the floor | under the floor, flat roof | differs: Roman arch not expressible |
+| Firebox | Roman-arched, under the floor | under the floor, `roof: roman`; its 6¾ in rise doesn't fit the 6 in assumed above the grate, so the engine draws it flat and says so | given; refused on the assumed height |
 | Draft | cross-draft chamber above | cross | matches |
 | Inlet flue, exit flue, chimney | not described | by `phoenix-nh`'s layout and Olsen's rules | assumed |
 | Door, spy holes, damper | not described | engine defaults | engine default |

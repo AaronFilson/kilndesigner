@@ -23,8 +23,7 @@
 # through the sub-chamber. The door is drawn as an arched doorway in the chamber's wall on the
 # firebox side, by a "TARGET POT" (Fig 6-19 and its inset section); its size isn't printed, so
 # the engine's whole-wall door stands for it. The firebox's inside height, "6'6"" inside its 8 ft
-# cube, and its mouth's sill, "3'" (Fig 6-19), are read off the drawing; the mouth's sill isn't
-# expressible.
+# cube, and its mouth's sill, "3'" (Fig 6-19), are read off the drawing.
 schema: 1
 name: Miravet medieval kiln
 units: us
@@ -64,6 +63,7 @@ heat:
         stoke_hole: # the firebox mouth
           width: 18 in
           height: 27 in
+        sill: 36 in # the mouth "3'" up (Fig 6-19) (drawing)(?)
 draft:
   type: up
   flue_port: # the dome's main flue

@@ -14,7 +14,7 @@ burner placement for updrafts; Fig 6-64 trolley and suspended door).
 |---|---|---|---|
 | Chamber | 8 ft wide, 9 ft deep, 8 ft tall; 500 cu ft (p.170–171) | 8 × 9 × 8 ft to the springline, arch on top | matches (height reading assumed) |
 | Car | cart 7 ft wide (p.171) | car loading, front | matches; cart width not expressible |
-| Burners | 32 atmospheric, ten each side, six front and back, 9 in combustion width (p.172) | 32 MR-100 floor burners spaced round the floor by the engine | count matches; per-side split and 9 in channel not expressible |
+| Burners | 32 atmospheric, ten each side, six front and back, 9 in combustion width (p.172) | 32 MR-100 floor burners, `per_side: 10`, `per_end: 6` | matches; the 9 in channel not expressible (the engine's combustion space) |
 | Burner spacing | Fig 6-63: 9–12 in from the corners, 12–24 in apart | engine spacing (about 10 in on the long sides) | close; not set |
 | Door | hung from an overhead I-beam on two half-ton trolleys, spring latches (Fig 6-64) | the car's end wall | not expressible |
 | Exit flue, chimney, damper | not printed | engine default | — |

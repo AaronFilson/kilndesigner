@@ -22,8 +22,9 @@
 # side by side, 24 × 24 in with ¾ in gaps (p.204), 7 × the chimney (p.77); 15 in above the grate
 # and 15 in below, the middle of the 12–18 in Olsen gives for 30–100 ft³ kilns (p.199). The inlet
 # flue 4½ in × the firebox's width (p.141); the exit flue the fast-fire's 9 × 7½ in (Fig 5-35).
-# Not modelled: the firebox's Roman arch, the flexboard behind the walls (p.140) and the frame,
-# which the engine sizes.
+# The firebox's Roman arch: its crown at the top of its 15 in, the haunches filled with brick. Its
+# mouth at the chimney end (drawing, Fig 5-67), so its inlet flue rises at the front.
+# Not modelled: the flexboard behind the walls (p.140) and the frame, which the engine sizes.
 schema: 1
 name: Phoenix workshop kiln, New Hampshire, 1978
 units: us
@@ -67,6 +68,8 @@ heat:
         inlet:
           width: 27 in # 4½ in × the firebox's width (p.141)
           height: 4.5 in
+        roof: roman # "a Roman-arched firebox" (p.147, Fig 5-67)
+        mouth: back # stoked from the chimney end (drawing, Fig 5-67); the inlet at the front
 draft:
   type: down
   flue_wall: back

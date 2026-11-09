@@ -25,9 +25,9 @@ the YAML).
 |---|---|---|---|
 | Volume | 40 ft³ | 40 ft³ | matches |
 | Chamber shape | box with an arched roof (drawing) | box, sprung arch | matches |
-| Firebox | one, Roman-arched, under the floor, with grate bars | one under the floor, flat roof, grate | differs: Roman arch not expressible |
-| Firebox mouth | at the chimney end (drawing: entered under the chimney) | under the middle of the floor; no mouth side | not expressible |
-| Inlet flue | one, rising at the front of the chamber | one opening, its place under the floor not set | not expressible as placed |
+| Firebox | one, Roman-arched, under the floor, with grate bars | one under the floor, `roof: roman` (crown at its 15 in, haunches filled), grate | matches |
+| Firebox mouth | at the chimney end (drawing: entered under the chimney) | `mouth: back` | matches the drawing (question 2) |
+| Inlet flue | one, rising at the front of the chamber | one, at the far end from the mouth: the front | matches |
 | Exit flue | at floor level in the back wall | 9 × 7½ in at the foot of the back wall | matches (size assumed) |
 | Chimney | shares the back wall | run 0 in, back wall | matches (size assumed) |
 | Door | not shown | bricked front wall | assumed |

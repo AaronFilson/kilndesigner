@@ -33,8 +33,8 @@ in the front wall with 2½ in ports. A 24 × 36 in arched door is in the right w
 | Walls | "9" WALLS" | 9 in JM 28 (the brick isn't named) | matches (size) |
 | Floor | concrete block, red brick, medium-duty firebrick (p.126) | same, 7½ in | matches |
 | Burners | 2 MR 750 per flue, four flues, in an IFB block with two 2½" holes, firing into the firebox 12" below the floor | 8 MR750, 2½ in ports, spread evenly along the front wall at the engine's height | differs: the burners are placed in the chamber wall, not stacked in pairs in each flue below the floor |
-| Firebox and bag wall | across the front, 12" below the floor, "BURNER OR STOKE HOLE" | not modelled | not expressible for gas (a gas kiln's burners can't fire into a `Firebox`) |
-| Inlet flues | four, 9" × 4½" (gas) | not modelled | not expressible for gas |
+| Firebox and bag wall | across the front, 12" below the floor, "BURNER OR STOKE HOLE" | not modelled | expressible now (`heat.gas.firebox`), but the firebox's length front to back and height aren't printed, so it isn't given (question 5) |
+| Inlet flues | four, 9" × 4½" (gas) | not modelled | with the gas firebox, once it is sized |
 | Exit flues | four, "9" X 4½" FLUE", into the collection box | one flue, sized by the engine | not expressible (one exit flue only) |
 | Collection box | 9" | `run_to_chimney: 9 in` | matches |
 | Chimney | 13½" sq "past top of arch", tapering to 9" × 9"; 10–12 ft | 13½ → 9 in, 11 ft | matches |
@@ -66,3 +66,5 @@ in the front wall with 2½ in ports. A 24 × 36 in arched door is in the right w
 3. Fig 4-153: how high is the damper slot in the chimney, and how big is the passive-air opening
    at its foot?
 4. The four exit flues: should the engine take several exit flues? It takes one at the moment.
+5. Fig 4-153: how deep is the firebox front to back, and how tall inside? With those the burners
+   can fire into it (`heat.gas.firebox`), two to each of its four inlet flues.

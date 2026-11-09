@@ -319,7 +319,23 @@ def build_hardware(
     if chimney is not None:
         _flue_and_chimney(kiln, chimney, f, hw)
     _spy_holes(kiln, f, hw, electric=gas is None and fire is None)
+    _placed_holes(kiln, f, hw)
     return hw
+
+
+def _placed_holes(kiln: Kiln, f: Faces, hw: Hardware) -> None:
+    """The spy holes of their own size and place, and the stoke holes into the chambers, the
+    design gives (firing_holes.py)."""
+    from kilndesigner.firing_holes import place_holes, placed_hole_findings
+
+    extra = (kiln.spy_holes.holes if kiln.spy_holes else None) or []
+    stoke = kiln.stoke_holes or []
+    if not extra and not stoke:
+        return
+    first = 1 + sum(p.kind == "spy" for p in hw.ports + hw.refused)
+    spy = place_holes(kiln, f, hw, extra, "spy", first)
+    stoked = place_holes(kiln, f, hw, stoke, "stoke", 1)
+    hw.findings += placed_hole_findings(kiln, spy, stoked)
 
 
 def _angle(
@@ -869,6 +885,12 @@ def _burners(kiln: Kiln, gas: GasDesign, f: Faces, hw: Hardware) -> None:
         return
     else:
         (shape, pw, ph), _, why = spec
+    if kiln.heat.gas.firebox is not None:
+        # Firing into a firebox: the ports are cut in its mouth wall (firebox_parts.gas_ports)
+        from kilndesigner.firebox_parts import gas_burner_pieces
+
+        hw.pieces += gas_burner_pieces(kiln, body, f"{detail}. Port: {why}")
+        return
     if asked.wall == "floor":
         _floor_burners(
             kiln, f, hw, count, (pw, ph, shape == "round"), body, f"{detail}. Port: {why}"
@@ -952,21 +974,33 @@ def _floor_burners(
 ) -> None:
     """An updraft's burners firing up through ports round the edge of the floor (Olsen p.171–173):
     centred in the combustion space between the setting and the walls, spaced evenly round it."""
+    from kilndesigner.firing_holes import FLOOR_BURNERS_SOURCE, floor_burner_xy
+
     pw, ph, is_round = port
     w, d = si(kiln.chamber.width, "in"), si(kiln.chamber.depth, "in")
     inset = max(COMBUSTION_SPACE, pw, ph) / 2
     a, b = w - 2 * inset, d - 2 * inset
     loop = 2 * (a + b)
-    for i in range(count):
+    assert kiln.heat.gas is not None
+    laid = floor_burner_xy(kiln.heat.gas.burners, w, d, count, inset)
+    xys: list[tuple[float, float]] = []
+    for i in range(count if laid is None else 0):
         s = (i + 0.5) * loop / count  # along the loop from the front-left corner
         if s < a:
-            x, y = -a / 2 + s, -b / 2
+            xys.append((-a / 2 + s, -b / 2))
         elif s < a + b:
-            x, y = a / 2, -b / 2 + (s - a)
+            xys.append((a / 2, -b / 2 + (s - a)))
         elif s < 2 * a + b:
-            x, y = a / 2 - (s - a - b), b / 2
+            xys.append((a / 2 - (s - a - b), b / 2))
         else:
-            x, y = -a / 2, b / 2 - (s - 2 * a - b)
+            xys.append((-a / 2, b / 2 - (s - 2 * a - b)))
+    if laid is not None:
+        xys = laid[0]
+        hw.findings.append(Finding(level="info", reference=FLOOR_BURNERS_SOURCE, message=(
+            f"The {count} floor burners are laid out as the design gives: {laid[1]}. Olsen puts "
+            "them 6–12 in from the corners and 9–12 in apart, each tip at least ¼ in below the "
+            "floor.")))  # fmt: skip
+    for i, (x, y) in enumerate(xys):
         box = _mm(((x - pw / 2, y - ph / 2, f.bottom - 1), (x + pw / 2, y + ph / 2, 1.0)))
         hw.openings.append(
             Opening(f"port/burner-{i + 1}", f"Burner port {i + 1}", box, 2 if is_round else None)
@@ -984,6 +1018,8 @@ def _floor_burners(
                 cylinders=(Cylinder(2, centre, dia / 2 * MM, length * MM),),
             )
         )
+    if laid is not None:
+        return
     hw.findings.append(
         Finding(
             level="info",
@@ -1260,9 +1296,12 @@ def _spy_holes(kiln: Kiln, f: Faces, hw: Hardware, *, electric: bool) -> None:
             f"port/spy-{i + 1}", f"{word} {i + 1}", "spy", wall, across, up, sw, sh, is_round
         )
         f.place(kiln, hw, spot)
+    # Holes placed one by one (spy_holes.holes) are said by firing_holes; these are the default's
+    s = kiln.spy_holes
+    own = s if s is not None and (s.count, s.port, s.places) != (None, None, None) else None
     hw.findings.append(
         _spy_hole_note(
-            kiln.spy_holes, n, (sw, sh, is_round), electric=electric,
+            own, n, (sw, sh, is_round), electric=electric,
             flat=kiln.roof.type == "flat", lid=lid,
         )
     )  # fmt: skip

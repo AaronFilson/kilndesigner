@@ -22,7 +22,7 @@ Figs 6-20 to 6-23 photos).
 | Walls, floor | 3–4 ft, partly buried; floor 13–15 in | 36 in; 13½ in | matches |
 | Floor flues | 35, 6 × 6 in | 35 firebox inlets 6 × 6 in | matches (through the sub-chamber: not expressible) |
 | Dome flues | 15 in main flue; four 5 in corner flues | 15 in round flue | corner flues not expressible |
-| Firebox | an 8 ft cube, no grate; mouth 27 × 18 in, 3' up | 96 × 96 in, height 78 in, stoke hole 18 × 27 in | matches; the mouth's sill not expressible |
+| Firebox | an 8 ft cube, no grate; mouth 27 × 18 in, 3' up | 96 × 96 in, height 78 in, stoke hole 18 × 27 in, `sill: 36 in` | matches |
 | Sub-chamber | a cube under the chamber, holding pots | — | not expressible |
 | Door | arched, on the firebox side, unsized | whole front wall | position matches; size not printed |
 | Spy holes | a target pot by the door | engine default | — |

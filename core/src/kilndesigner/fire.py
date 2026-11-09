@@ -114,7 +114,13 @@ def _port_in2(port: Port) -> float:
 
 
 def _describe(fb: Firebox) -> str:
-    where = "under the floor" if fb.position == "under" else f"at the {fb.position} wall"
+    where = (
+        "under the floor"
+        if fb.position == "under"
+        else f"on the {fb.position} diagonal"
+        if "-" in fb.position
+        else f"at the {fb.position} wall"
+    )
     size = f"{si(fb.width, 'in'):g} × {si(fb.length, 'in'):g} in"
     grate = (
         f", a {si(fb.grate.width, 'in'):g} × {si(fb.grate.length, 'in'):g} in grate"

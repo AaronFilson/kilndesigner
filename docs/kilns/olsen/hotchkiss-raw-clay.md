@@ -26,7 +26,7 @@ The chimney is 30 ft. Cone 10.
 | Arches | spring between the front and back walls, each roped until the arch below buttresses it (p.55–56) | arches along the draft, buttressed | matches |
 | Flue holes | in the straight wall, about three drawn (Fig 2-40 photo (?)), not sized | the engine's flue holes | differs (count and size unknown) |
 | Door | one side wall (p.56, Fig 2-44) | front wall | differs: not sized |
-| Stoke holes, spy holes | in both side walls (p.56) | a stoking channel per chamber; spy holes by default | not expressible (no side stoke holes); spy holes not placed |
+| Stoke holes, spy holes | in both side walls (p.56) | a stoking channel per chamber; spy holes by default | expressible now (`stoke_holes`, `spy_holes.holes`, by chamber); not given, as their sizes and places aren't printed |
 | Main firebox | domed (p.57), not sized | none beyond the channels | not modelled |
 | Chimney | firebrick to 12 ft, then 18 ft of pipe (p.56–57) | 30 ft, section sized by the engine | matches the height |
 | Damper | not described | the engine's note | n/a |
