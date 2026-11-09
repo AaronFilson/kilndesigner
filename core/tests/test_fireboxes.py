@@ -154,7 +154,11 @@ def test_fireboxes_are_in_the_plans(tmp_path: Path) -> None:
 def test_walls_between_chambers_have_olsens_flue_holes() -> None:
     from kilndesigner.run_parts import FLUE_HEIGHT, flue_holes, flue_rows
 
-    kiln = _template("climbing")
+    given = _template("climbing")
+    assert given.draft is not None
+    assert all(r.count == 5 for r in flue_rows(given))  # Fig 4-28's, as the design gives them
+    # Without draft.between: Olsen's standard flues
+    kiln = given.model_copy(update={"draft": given.draft.model_copy(update={"between": None})})
     rows = flue_rows(kiln)
     assert len(rows) == kiln.chamber.chambers - 1
     w = kiln.chamber.width.to("inch").magnitude

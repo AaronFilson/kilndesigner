@@ -25,12 +25,13 @@
 # The doors, one per chamber in a side wall (Figs 4-45, 4-46), have no printed size (p.97, its
 # text and photos checked on the page image 2026-10-30): each is
 # taken as the Bidai kiln's, 20 in wide at the chamber's front (Fig 4-36), and as tall as the
-# engine lays a door in a side wall, to the springline, 44 in. What spans their heads isn't
-# visible in the photos: they are arched, as the doors of Olsen's other built kilns are
-# (door-openings.md).
+# engine lays a door in a side wall, to the springline, 44 in. Fig 4-46's photo (looked at
+# closely in step A, 2026-11-09) shows the second chamber's doorway square-headed under a slab
+# lintel, so the head is flat (laid out, not checked: no source gives what spans it).
 # Not modelled: held by masonry, the arches get no steel. The front bracing isn't sized. The stoke
-# hole in each door's bricking (Fig 4-46) is left out. The flues, 7 × 10 in between chambers and 9 × 10 in out of the last (p.97,
-# Fig 4-48), aren't counted in the book, so the exit flue is the engine's. The floor's loss into
+# hole in each door's bricking (Fig 4-46) is left out. The flues, 7 × 10 in between chambers and
+# 9 × 10 in out of the last (p.97, Fig 4-48), aren't counted in the book: five each, counted off
+# Fig 4-48 (step A, draft below). The floor's loss into
 # the ground (the engine doesn't work it out), the earth-mix plaster outside and the firebox's
 # side stoke holes are left out.
 schema: 1
@@ -58,6 +59,7 @@ loading:
     height: 44 in # not printed: to the springline, as tall as the engine lays a side door
     across: -13.5 in # at each chamber's front, as the Bidai kiln's (Fig 4-36)
     each_chamber: true # a doorway per chamber (Figs 4-45, 4-46)
+    head: flat # (photo) Fig 4-46: a square head under a slab lintel (step A, 2026-11-09)
 lining:
   walls:
     - material: firebrick-medium-duty-smithfield # local firebrick, grade not given
@@ -80,3 +82,21 @@ heat:
 draft:
   type: cross
   flue_wall: back
+  between:
+    # Step A, 2026-11-09. 7 × 10 in printed (p.97); the count isn't. (scaled: Fig 4-48, p.97, a
+    # photo, each pier from the printed 7 in width of the flues beside it, ±1½ in) the piers
+    # between three of the 3rd chamber's flues read 6–8½ in; across the 84 in, 5 flues leave
+    # 8 in piers (both ends too) and 6 leave 6 in, so 5 (or 6, ?). The photo shows them taller
+    # than wide (flue 2 reads 10½ in tall by its 7 in width), so 7 across and 10 high.
+    count: 5
+    port:
+      width: 7 in
+      height: 10 in
+  exits:
+    # The last chamber's exit flues, 9 × 10 in (p.97); "exit flues are the same in each chamber"
+    # (Fig 4-48's caption), so as many as between the chambers, 5 (scaled, as above).
+    - through: back
+      count: 5
+      port:
+        width: 9 in
+        height: 10 in
