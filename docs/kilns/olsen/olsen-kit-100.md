@@ -24,8 +24,9 @@ No change in this pass.
 
 ## Key results
 
-108 ft³; heat loss 26.8 kW; Ward's input 1.08 million BTU/hr against 1.5 million from twenty
-MR-750s; arch frame L4×4×¼.
+154 ft³ (with the arch); heat loss 33.4 kW; Ward's input 1.54 million BTU/hr against 1.5 million
+from twenty MR-750s (v1, 2026-11-10, the chamber resized from its stacking; it was 108 ft³, 26.8 kW
+and 1.08 million BTU/hr on the stacking alone, arch frame L4×4×¼).
 
 ## Open questions for the user
 

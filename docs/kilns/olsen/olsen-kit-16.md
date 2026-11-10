@@ -22,7 +22,9 @@ No change in this pass: the photo shows nothing measurable.
 
 ## Key results
 
-17.1 ft³; heat loss 9.0 kW; Ward's input 171,000 BTU/hr.
+32.9 ft³ (with the arch); heat loss 13.0 kW; Ward's input 329,000 BTU/hr (v1, 2026-11-10, the
+chamber resized from its stacking; it was 17.1 ft³, 9.0 kW and 171,000 BTU/hr on the stacking
+alone).
 
 ## Open questions for the user
 
