@@ -26,7 +26,6 @@ dev = [
     "pyright>=1.1.400",
     "import-linter>=2.5",
     # A second, independent implementation of the convection correlations, for the tests only
-    "ht>=1.2",
     "httpx>=0.28",
     "pytest-cov>=7",
     "formulas[excel]>=1.2",

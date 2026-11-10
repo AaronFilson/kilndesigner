@@ -684,6 +684,32 @@ wheels = [
 ]
 
 [[package]]
+name = "embreex"
+version = "4.4.0.post1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7b/0a/f9cdba49c8e552aef7dd66aedcb8bf273a98e80c66ddd50647bc7ae88590/embreex-4.4.0.post1-cp314-cp314-macosx_13_0_arm64.whl", hash = "sha256:d1d9193b99fb4b704b5982970dd79cd68a12603ac6d72d6ea59c701bd705b8e3", size = 5050813, upload-time = "2026-10-21T22:48:53.625Z" },
+    { url = "https://files.pythonhosted.org/packages/67/61/e4e060ea97073f25c7aa974e9d1965a4cce22069c720391c8b91373784b8/embreex-4.4.0.post1-cp314-cp314-macosx_13_0_x86_64.whl", hash = "sha256:78408e6bebf154294acee729bd1e0ea0d8d843f37f190f8c4ed058347d9eff3a", size = 13223133, upload-time = "2026-10-21T22:48:56.267Z" },
+    { url = "https://files.pythonhosted.org/packages/94/c6/41f78d315dce7a2defc1ef45904623b6dc29434ed69265fd964d974a83bd/embreex-4.4.0.post1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:cb799b02e9b140b6e64a6e5a4caf476494ea12c67828d92709effcec990fc47f", size = 14543062, upload-time = "2026-10-21T22:48:59.107Z" },
+    { url = "https://files.pythonhosted.org/packages/95/20/44e87e9d94c77f356182515a2e42a0b6ddfdc46d92e503cf29e49a541411/embreex-4.4.0.post1-cp314-cp314-win_amd64.whl", hash = "sha256:9b8d24212eff720f4308d3861621d8cdfbf5d7259fa2412269d35f30d989f50c", size = 13378870, upload-time = "2026-10-21T22:49:01.901Z" },
+    { url = "https://files.pythonhosted.org/packages/74/73/e74a3070bc00c4ebbed1580c621742b4399f5c205966e9165ade609bc438/embreex-4.4.0.post1-cp314-cp314t-macosx_13_0_arm64.whl", hash = "sha256:a97cff4cba32bc10c005d552c7cba2bcff5b75c3aaed366cbe0159e4eb9414b6", size = 5058637, upload-time = "2026-10-21T22:49:04.45Z" },
+    { url = "https://files.pythonhosted.org/packages/95/e2/e54d6ccb28fc793ee341188a19b2bc03a3a805d0ead2516af03515fc6e64/embreex-4.4.0.post1-cp314-cp314t-macosx_13_0_x86_64.whl", hash = "sha256:f6a59a83836357359f2664078c03c3e4fb7482c56d60cc98791f3956e30a24be", size = 13231427, upload-time = "2026-10-21T22:49:06.797Z" },
+    { url = "https://files.pythonhosted.org/packages/22/c8/d54a634481d97ad6667c6fad92390ebb913a0ba20017dd4323f74e752d15/embreex-4.4.0.post1-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:4c8c70a0602d9184afc9ac92b8ad59ca97de15e5ab5da3e4adec45d187715f24", size = 14649592, upload-time = "2026-10-21T22:49:10.116Z" },
+    { url = "https://files.pythonhosted.org/packages/78/94/7fb1beee1de47b119bebefae50af95b16cd8b8e02b955e8163f78b85e14b/embreex-4.4.0.post1-cp314-cp314t-win_amd64.whl", hash = "sha256:e758e434cfc349fc1d82074fcd3f5f74662e983bdb4d4ec91c941b7cdcb8a37f", size = 13386626, upload-time = "2026-10-21T22:49:13.221Z" },
+    { url = "https://files.pythonhosted.org/packages/37/50/3fd8d4c7824757fdd4116c7a58e42ec8bc83b5e8b85f793b5c6d4fe1b22f/embreex-4.4.0.post1-cp315-cp315-macosx_13_0_arm64.whl", hash = "sha256:7120d400b522b1b8bb06f203dae91f8deca6238b5f82a417ff2c51ab55cde258", size = 5050194, upload-time = "2026-10-21T22:49:15.582Z" },
+    { url = "https://files.pythonhosted.org/packages/f5/f9/c2bd059780c28c0314096c84c645dd609ae20f941e9c62f716e2dae228f8/embreex-4.4.0.post1-cp315-cp315-macosx_13_0_x86_64.whl", hash = "sha256:e6caf932e3f0746a6e193f777b29fa8b9a9b111181313a4451d4619a45380a89", size = 13222971, upload-time = "2026-10-21T22:49:18.158Z" },
+    { url = "https://files.pythonhosted.org/packages/07/5a/1d1ff756abff5b0899053421902c86942bbeb2e33a234b6847cc47d233f8/embreex-4.4.0.post1-cp315-cp315-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:518171ba2bc84f261aaff3f8202c3d0eff5ce31fc9ebc3db109ec6de0f556f49", size = 14546764, upload-time = "2026-10-21T22:49:20.885Z" },
+    { url = "https://files.pythonhosted.org/packages/7d/19/697ddcab6b0d944db4836b9cfe667c5f2cb2bc96c048e9168c5a662892ad/embreex-4.4.0.post1-cp315-cp315-win_amd64.whl", hash = "sha256:f6121887228c8aaab0947f1d912bd4609320021db1ab7344f65dee295f1b9766", size = 13378680, upload-time = "2026-10-21T22:49:23.641Z" },
+    { url = "https://files.pythonhosted.org/packages/92/d9/71156e6a6fd7e3ce458517c805400f2c93479825289efbf13b7f020f3f53/embreex-4.4.0.post1-cp315-cp315t-macosx_13_0_arm64.whl", hash = "sha256:36cfe86fd06e0291bb711a923c0ec8a6dc12d3d94568b8ae59415429b98b5cd6", size = 5057501, upload-time = "2026-10-21T22:49:26.482Z" },
+    { url = "https://files.pythonhosted.org/packages/c6/c8/6864c9a5cb2b0dbf79146791c0faa4d00281309ce3f989574300cfbb1905/embreex-4.4.0.post1-cp315-cp315t-macosx_13_0_x86_64.whl", hash = "sha256:c5c0bf1a564902535cf48a91f6dd2a09161ca5a0e8c0bbba97bae4578869f407", size = 13229818, upload-time = "2026-10-21T22:49:28.721Z" },
+    { url = "https://files.pythonhosted.org/packages/82/bd/ba15bb9e8a9675b463df110f58d559cae5b74e1d1981d56c338b0e406a4b/embreex-4.4.0.post1-cp315-cp315t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:7d12bd640b856052d3f8f9071c58843907e58e47c03082f4dd40f21798f53366", size = 14648532, upload-time = "2026-10-21T22:49:31.739Z" },
+    { url = "https://files.pythonhosted.org/packages/66/a1/0e831742834ed55bb8b3214e5da85318eb791c8c5cf1a6bc29e1fbfe921e/embreex-4.4.0.post1-cp315-cp315t-win_amd64.whl", hash = "sha256:4effa63420a05da30b5ee925b28ce593810393883a6be014435dcad94a53512b", size = 13385216, upload-time = "2026-10-21T22:49:35.02Z" },
+]
+
+[[package]]
 name = "et-xmlfile"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1366,13 +1392,19 @@ dependencies = [
     { name = "build123d" },
     { name = "cantera" },
     { name = "duckdb" },
+    { name = "embreex" },
+    { name = "fluids" },
+    { name = "ht" },
     { name = "numpy" },
     { name = "pint" },
     { name = "pyarrow" },
     { name = "pydantic" },
     { name = "pynitefea" },
     { name = "pyyaml" },
+    { name = "scikit-fem" },
+    { name = "scikit-sundae" },
     { name = "scipy" },
+    { name = "trimesh" },
     { name = "typst" },
     { name = "xlsxwriter" },
 ]
@@ -1382,13 +1414,19 @@ requires-dist = [
     { name = "build123d", specifier = ">=0.10" },
     { name = "cantera", specifier = ">=3.2" },
     { name = "duckdb", specifier = ">=1.4" },
+    { name = "embreex", specifier = ">=4.4.0.post1" },
+    { name = "fluids", specifier = ">=1.3.1" },
+    { name = "ht", specifier = ">=1.2.0" },
     { name = "numpy", specifier = ">=2.3" },
     { name = "pint", specifier = ">=0.25" },
     { name = "pyarrow", specifier = ">=21" },
     { name = "pydantic", specifier = ">=2.12" },
     { name = "pynitefea", specifier = ">=3.2.1" },
     { name = "pyyaml", specifier = ">=6.0" },
+    { name = "scikit-fem", specifier = ">=12.0.2" },
+    { name = "scikit-sundae", specifier = ">=1.2.0" },
     { name = "scipy", specifier = ">=1.16" },
+    { name = "trimesh", specifier = ">=5.2.0" },
     { name = "typst", specifier = ">=0.13" },
     { name = "xlsxwriter", specifier = ">=3.2" },
 ]
@@ -1482,7 +1520,6 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "formulas", extra = ["excel"] },
-    { name = "ht" },
     { name = "httpx" },
     { name = "hypothesis" },
     { name = "import-linter" },
@@ -1505,7 +1542,6 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "formulas", extras = ["excel"], specifier = ">=1.2" },
-    { name = "ht", specifier = ">=1.2" },
     { name = "httpx", specifier = ">=0.28" },
     { name = "hypothesis", specifier = ">=6.140" },
     { name = "import-linter", specifier = ">=2.5" },
@@ -2961,6 +2997,19 @@ wheels = [
 ]
 
 [[package]]
+name = "scikit-fem"
+version = "12.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/5f/77643ece20e33a770fdfb6cafb9b2a5a1dd51b8a1ee1d3dc5bac8c72bdfa/scikit_fem-12.0.2.tar.gz", hash = "sha256:0a38764cdb93411c5a994451c22c1da07808ebabf920f462c6253f78f5703f8a", size = 130353, upload-time = "2026-06-05T20:45:50.903Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/5b/13/d46cf943bd1b04b1b010094eb08493d6660c99c49652fa46cf7c3bf36ab5/scikit_fem-12.0.2-py3-none-any.whl", hash = "sha256:34cd891f80072c0c1eb759a2371e82f0eeec91ff7c08acab96d27b6edbbe1b05", size = 178478, upload-time = "2026-06-05T20:45:49.084Z" },
+]
+
+[[package]]
 name = "scikit-learn"
 version = "1.9.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2997,6 +3046,26 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/c2/03/82215cb78ad1c513a4498777571fb28444621ad26ef636287551767b7732/scikit_learn-1.9.1-cp315-cp315t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:caae15634feceafa2612566b109a3082d3293167fac388eedaf77bff66b51983", size = 9129640, upload-time = "2026-09-10T18:33:58.186Z" },
     { url = "https://files.pythonhosted.org/packages/d4/90/4b7af4efd7909a4a0524a9f18457e4eb2eb60616eff2c7627eda8e3cdceb/scikit_learn-1.9.1-cp315-cp315t-win_amd64.whl", hash = "sha256:ffbcbbbb44202fbe9bc64bced25a145759adb9ef010b3d37a8064958ac13df2a", size = 8678083, upload-time = "2026-09-10T18:34:00.354Z" },
     { url = "https://files.pythonhosted.org/packages/31/27/068e484d4b83004302e0d9cfc1faca69bcc010d76fbb66a642446095af1b/scikit_learn-1.9.1-cp315-cp315t-win_arm64.whl", hash = "sha256:800dd22dd87fe97dcea484c24e85dd93cf1734d86bd74e668ad18f7967f4d1b5", size = 8259434, upload-time = "2026-09-10T18:34:02.678Z" },
+]
+
+[[package]]
+name = "scikit-sundae"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "scipy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/e4/10/abfad0651c96bcb43b7c54c7f14fa4f0846315d254f35d885e134374c64a/scikit_sundae-1.2.0.tar.gz", hash = "sha256:d0c415dee5dba0e50246b1cd8068b3e48d98541b692167045f5eb7853c4023bd", size = 63217, upload-time = "2026-10-16T20:16:06.278Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/31/d6/0d506abc3f82cac23044ab6c60b2ff00d55b7767a04d08102e963d755fd7/scikit_sundae-1.2.0-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:301a04727a764b268fbacca82e847bf3ec56c5434f7f81584d53d063da89fff7", size = 8574397, upload-time = "2026-10-16T20:15:49.811Z" },
+    { url = "https://files.pythonhosted.org/packages/0e/6e/6b79022babce8eee475cea083a5df977b3567653c0592e1b05831e28f457/scikit_sundae-1.2.0-cp314-cp314-macosx_11_0_x86_64.whl", hash = "sha256:ab9e6103c27c378997dd5d137ac0167b735feb40799c6005a73bfa79c2e1090b", size = 15549361, upload-time = "2026-10-16T20:15:51.702Z" },
+    { url = "https://files.pythonhosted.org/packages/22/90/b7372f3451cc8efe9bbbdb92ea5a277d80fd9bc9356d9faa75a7381ee44a/scikit_sundae-1.2.0-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:a27c1ae59d415c7ced2a4cd86364103f7b756c4a126c35d26b77e5252c8ac5d2", size = 20789739, upload-time = "2026-10-16T20:15:54.017Z" },
+    { url = "https://files.pythonhosted.org/packages/9a/d2/a42d1b0c3f45c8eb42cb603fe2ad395d10e7c0241422f6d5b479eb0d8c49/scikit_sundae-1.2.0-cp314-cp314-win_amd64.whl", hash = "sha256:d2c62eb3a01d4acec9d8c3dd7ad0e9653d73fed6c1409ec91b6586a62d7a7639", size = 8619833, upload-time = "2026-10-16T20:15:56.295Z" },
+    { url = "https://files.pythonhosted.org/packages/0c/b4/21e739117f53453300cdd5faab2454d7b48b16d8e82a4d2e455368d8848a/scikit_sundae-1.2.0-cp315-cp315-macosx_11_0_arm64.whl", hash = "sha256:fb10da4694175a4c171fa18ab222df9284ffc6606206d4da575d9310561e28a5", size = 8572824, upload-time = "2026-10-16T20:15:58.198Z" },
+    { url = "https://files.pythonhosted.org/packages/48/37/ac4bbc0236499a1762bf3acf0750917c3aae84dfaf2ea81c8b8391b3e323/scikit_sundae-1.2.0-cp315-cp315-macosx_11_0_x86_64.whl", hash = "sha256:750093c61aaacc32e5503ecb3d6a2ba0ead11cbe468566d4bf091446b33f1b08", size = 15549172, upload-time = "2026-10-16T20:16:00.283Z" },
+    { url = "https://files.pythonhosted.org/packages/51/76/33be95db03d3d02f4481e6b1bc7cb8332882034e29c3521c44773bf2139c/scikit_sundae-1.2.0-cp315-cp315-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:5690e089d9b7455e3b77c5384c211e8434e84a4ef3b15621fa6be93f41363c7b", size = 20799000, upload-time = "2026-10-16T20:16:02.668Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/21/b134073fb7f623d10ff6b3acecaf0a2a3524354ef3ff87cdc5749375bffd/scikit_sundae-1.2.0-cp315-cp315-win_amd64.whl", hash = "sha256:117f60c7656fd417cb3c91cbd408640fa5aa0779df4789dd29ba8055c485ecf9", size = 8619246, upload-time = "2026-10-16T20:16:04.69Z" },
 ]
 
 [[package]]
@@ -3279,6 +3348,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6f/52/18f909fcc652b2a4de75a274aa3de0d567a5d592b13d57e65b76c550bdf1/trianglesolver-1.2.tar.gz", hash = "sha256:4af18aade579d5c0d64389b3e65aeaf06cff26319762ccd859e3268559a76aea", size = 4718, upload-time = "2020-04-10T18:52:31.193Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ff/8e/43d45cf3e18e3f455e4b5ab333a7c27b8e38c4e535f7346b7148ce08eb65/trianglesolver-1.2-py3-none-any.whl", hash = "sha256:aa0903c3708b4e2b496f06d490cae72c6ff6274b00d1edce420fcfa3b2b76682", size = 5377, upload-time = "2020-04-10T18:52:29.811Z" },
+]
+
+[[package]]
+name = "trimesh"
+version = "5.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/77/8a/0798e6cd28e2d1c6a7dfc97ba8eb27f7da5f392a5c81147d4f1e41ce0c1b/trimesh-5.2.0.tar.gz", hash = "sha256:d0a845d058e5a4ff145d0f0082d80c58d761687ce389c79d422dbe774966957b", size = 880133, upload-time = "2026-10-24T01:10:30.021Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/51/14/78624d9c89bab76c2a2e1e839c7641fa686828c2c1c8fb64aedf3b371a5d/trimesh-5.2.0-py3-none-any.whl", hash = "sha256:04db2c7ec62afdd7763fb04c82bb5f257ddd984993a19ee83697f475fc58fd29", size = 751459, upload-time = "2026-10-24T01:10:27.874Z" },
 ]
 
 [[package]]
