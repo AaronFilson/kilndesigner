@@ -64,6 +64,35 @@ COURSE = Sourced(
 )
 
 
+IFB_GROWTH = Sourced(
+    0.008,
+    "IFB 0.5–0.7 % reversible to about 1000 °C (Morgan JM and TJM, H.S. Walsh class 26; "
+    "thermal-properties.md §2.1), 0.7–0.8 % at most (Morgan K-23, K-25, K-26, 2025; "
+    "morgan-k-ifb-sheets.md §7)",
+    "the band 0.5–0.8 %, the ring taken at its hot face's temperature throughout (more growth than "
+    "a ring cooler outside: the cautious end for the frame) until v2's heat model gives its mean",
+)
+IFB_GROWTH_LOW = 0.005
+FIRECLAY_GROWTH = Sourced(
+    3 / 32 / 12,
+    "fireclay brick 3/32 in a foot from room temperature to 2400 °F, the makers' expansion "
+    "allowance (Brosnan, refractory-movement-and-mortar.md §1.1.1 [M1]); half is enough, the "
+    "joints taking the rest (Bhatia [M2])",
+    "the band 3/64 to 3/32 in a foot; the cautious end for the frame is the whole",
+)
+
+
+def growth(material_id: str) -> tuple[float, float, Sourced] | None:
+    """The reversible strain of a ring of this material at full temperature: (low, high, source),
+    or None where no source gives one (castables, building brick, stone)."""
+    kind = material(material_id).kind
+    if kind == "insulating_firebrick":
+        return IFB_GROWTH_LOW, IFB_GROWTH.value, IFB_GROWTH
+    if kind == "dense_firebrick":
+        return FIRECLAY_GROWTH.value / 2, FIRECLAY_GROWTH.value, FIRECLAY_GROWTH
+    return None
+
+
 def density(material_id: str) -> float:
     """kg/m³, from the materials library."""
     return si(parse_quantity(material(material_id).density), "kg/m**3")

@@ -104,6 +104,8 @@ class CrossSection:
     courses: int
     steps: tuple[Step, ...]
     y_range: tuple[float, float] = (0.0, 0.0)  # m along the run: where the slice was taken
+    skewback_top: float = 0.0  # m above the floor: where a frame bears
+    ring_material: str = ""
 
 
 def default_support(kiln: Kiln) -> Support:
@@ -207,7 +209,7 @@ def cross_section(
         *steps[1:],
     )  # fmt: skip
     return CrossSection(tuple(blocks), sec, held, slope, springline * MM, n_v, n_courses, steps,
-                        (y0 * MM, y1 * MM))  # fmt: skip
+                        (y0 * MM, y1 * MM), skew_top * MM, ring_parts[0].material)  # fmt: skip
 
 
 def _clear_slice(kiln: Kiln, parts: list[Part], d: float, springline: float) -> tuple[float, float]:

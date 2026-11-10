@@ -20,6 +20,8 @@ dependencies = [
     # Firing simulation results: Parquet files, queried with DuckDB (ADR 0007)
     "pyarrow>=21",
     "duckdb>=1.4",
+    # Steel frames, rods and posts for engine v2's statics (the user, 2026-11-10)
+    "pynitefea>=3.2.1",
 ]
 
 [build-system]
