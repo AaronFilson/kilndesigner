@@ -72,7 +72,10 @@ class Wood:
     reference: str
 
 
-def fuel_of(kiln: Kiln, wood: Wood | None) -> gas.Fuel:
+def fuel_of(kiln: Kiln, wood: Wood | gas.Fuel | None) -> gas.Fuel:
+    """The fuel a design burns: its burners' gas; or for a fire, the fuel given (each kiln's own,
+    ADR 0017 decision 12: wood, coal or oil by its analysis, `gas.solid`), else the design's own
+    wood (`site.wood`) on the surrogate's analysis."""
     heat = kiln.heat
     if heat.electric is not None and heat.gas is None and heat.fire is None:
         raise NotModelledError("elements as face sources are build order step 10, not built yet")
@@ -80,9 +83,15 @@ def fuel_of(kiln: Kiln, wood: Wood | None) -> gas.Fuel:
         f = heat.gas.fuel
         return gas.propane() if f == "propane" else gas.natural_gas()
     if heat.fire is not None and heat.gas is None:
-        if heat.fire.fuel != "wood":
+        kind = heat.fire.fuel
+        if isinstance(wood, gas.Fuel):
+            if wood.kind != kind:
+                raise NotModelledError(f"the design burns {kind}, the fuel given is {wood.kind}")
+            return wood
+        if kind != "wood":
             raise NotModelledError(
-                f"{heat.fire.fuel}: no composition or heating value is sourced (problem set §7)"
+                f"{kind}: give the fuel's analysis, moisture and heating value (gas.solid, from "
+                "kiln-fuels.md); the design file holds none"
             )
         if wood is None and kiln.site.wood is not None:
             w = kiln.site.wood
@@ -171,7 +180,7 @@ def heat_model(
     kiln: Kiln,
     load: Load | Sequence[Load],
     air_ratio: float,
-    wood: Wood | None = None,
+    wood: Wood | gas.Fuel | None = None,
     wsgg: Literal["bordbar2014", "dorigon2013", "transparent"] = "bordbar2014",
     n_rays: int = 100_000,
     seed: int = 20261110,

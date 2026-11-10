@@ -2,13 +2,18 @@
 radiating composition, tabulated against temperature (ADR 0017 H2–H4).
 
 Cantera (GRI-Mech 3.0 thermodynamics and transport; ADR 0012) takes the chemistry. A gas fuel is
-its Cantera species (natural gas as methane, as v1). Wood has no species: it is the 50/6/44 C/H/O
-surrogate CH₁.₄₃O₀.₆₆ (Pettersen 1984, via firebox-efficiency.md §4), its enthalpy set by its
-sourced net heating value, its water entering as liquid (FAO UBET eq. 3), so Cantera supplies only
-the products (cantera-tespy-review.md §2). Below λ 1 the equilibrium products carry CO and H₂, and
-the heat they hold is not released (H4); soot isn't counted.
+its Cantera species (natural gas as methane, as v1). **A solid or liquid fuel** (wood, coal, oil;
+ADR 0017 decision 12, `kiln-fuels.md`) has no species: it is its ultimate analysis, C, H, O and N
+per kg of dry fuel as atoms (CH_aO_bN_n per kmol of carbon), its ash and sulphur left out of the
+gas (GRI-Mech holds no sulphur; S is at most 0.94 % of the coals, 0.3 % of the oil: its share of
+the air, under 1 %, is left out and said), its enthalpy set by its sourced net heating value, its
+water entering as liquid (FAO UBET eq. 3; EN ISO 18125's as-received form), so Cantera supplies
+only the products (cantera-tespy-review.md §2). Wood without its own analysis is the 50/6/44 C/H/O
+surrogate CH₁.₄₃O₀.₆₆, inside Stolarski 2022's quartiles (kiln-fuels.md §2.3). Below λ 1 the
+equilibrium products carry CO and H₂, and the heat they hold is not released (H4); soot isn't
+counted.
 
-**Per kg of fuel**: of gas, or of oven-dry wood (its water comes with it). The heat a zone keeps
+**Per kg of fuel**: of gas, or of dry fuel (its water comes with it). The heat a zone keeps
 when its gas leaves at T is
 
     q(T) = H_reactants − m_products · h_products(T)     (J per kg fuel)
@@ -47,6 +52,16 @@ LAMBDA_MIN = 0.8
 T_REF = 298.15
 ATM = 101_325.0
 M_H2O, M_O2, M_N2 = 18.015, 31.998, 28.014  # kg/kmol
+M_N = 14.007  # g/mol (IUPAC)
+# The wood surrogate: C, H, O, N, S, ash as mass fractions of the dry fuel (Pettersen's 50/6/44)
+SURROGATE = (0.50, 0.06, 0.44, 0.0, 0.0, 0.0)
+# Net heating values (J per kg dry) the sources give for each kind, the range a fuel is checked in
+NET_RANGE = {
+    "wood": ((15e6, 23e6), "wood-fuel.md §1: 18.4–19.2 net; kiln-fuels.md: 17.0–19.9 by genus"),
+    "coal": ((20e6, 30e6), "kiln-fuels.md §4: generic coal 27.9, Grade B 22–28 MJ/kg dry net"),
+    "oil": ((40e6, 46e6), "kiln-fuels.md §3: #2 diesel 42.1–43.3 net, 45.4 gross"),
+}
+type Solid = Literal["wood", "coal", "oil"]
 
 
 class RangeError(ValueError):
@@ -55,21 +70,28 @@ class RangeError(ValueError):
 
 @dataclass(frozen=True)
 class Fuel:
-    """A fuel: a gas by its Cantera species and higher heating value, or wood as the surrogate
-    with its moisture (wet basis) and net heating value (oven-dry)."""
+    """A fuel: a gas by its Cantera species and higher heating value; or wood, coal or oil by its
+    dry analysis (``composition``: C, H, O, N, S, ash as mass fractions of the dry fuel), its
+    moisture (wet basis) and its net heating value per kg dry."""
 
     name: str
-    kind: Literal["gas", "wood"]
+    kind: Literal["gas", "wood", "coal", "oil"]
     species: str = ""
     hhv: float = 0.0  # J/kg, gases: the basis of a burner's rating
-    moisture: float = 0.0  # wood, wet basis
-    net_dry: float = 0.0  # J per kg oven-dry wood, net
+    moisture: float = 0.0  # wet basis
+    net_dry: float = 0.0  # J per kg dry fuel, net
     reference: str = ""
+    composition: tuple[float, float, float, float, float, float] = SURROGATE
 
     @property
     def water_per_kg(self) -> float:
-        """kg of water per kg of fuel: wood's u = w/(1 − w), dry basis."""
-        return self.moisture / (1 - self.moisture) if self.kind == "wood" else 0.0
+        """kg of water per kg of dry fuel: u = w/(1 − w)."""
+        return self.moisture / (1 - self.moisture) if self.kind != "gas" else 0.0
+
+    @property
+    def gas_forming(self) -> float:
+        """The share of the dry fuel that goes into the gas: all but its sulphur and ash."""
+        return 1.0 - self.composition[4] - self.composition[5]
 
 
 def propane() -> Fuel:
@@ -104,6 +126,48 @@ def wood(moisture: float, net_dry: float) -> Fuel:
         net_dry=net_dry,
         reference=f"{src.WOOD_CHO.reference}; {src.EVAPORATION.reference}",
     )
+
+
+def solid(
+    name: str,
+    kind: Solid,
+    composition: tuple[float, float, float, float, float, float],
+    moisture: float,
+    net_dry: float,
+    reference: str,
+) -> Fuel:
+    """Wood, coal or oil by its dry analysis (C, H, O, N, S, ash as fractions of the dry fuel),
+    its moisture (wet basis) and its net heating value (J per kg dry). The analysis's C, H, O, N
+    and S are scaled to sum to 1 − ash, so bands' middles that don't (kiln-fuels.md §5) make a
+    whole fuel; the scale is said in the name."""
+    c, h, o, n, s, ash = composition
+    if min(composition) < 0 or ash >= 1 or c <= 0:
+        raise RangeError(f"{name}: an analysis needs carbon, no negative parts, ash under 100 %")
+    if not 0.0 <= moisture <= 0.5:
+        raise RangeError(
+            f"{name} at {moisture:.0%} moisture: the formula is checked for 0–50 % wet basis "
+            "(FAO UBET eq. 3)"
+        )
+    (lo, hi), why = NET_RANGE[kind]
+    if not lo <= net_dry <= hi:
+        raise RangeError(
+            f"{name}: a net heating value of {net_dry / 1e6:.1f} MJ/kg dry is outside "
+            f"{lo / 1e6:.0f}–{hi / 1e6:.0f} MJ/kg, the {kind} the sources give ({why})"
+        )
+    total = c + h + o + n + s
+    k = (1 - ash) / total
+    scaled = (c * k, h * k, o * k, n * k, s * k, ash)
+    if abs(k - 1) > 1e-6:
+        name = f"{name} (its analysis scaled ×{k:.3f} to sum to 100 %)"
+    return Fuel(name, kind, moisture=moisture, net_dry=net_dry, reference=reference,
+                composition=scaled)  # fmt: skip
+
+
+def net_from_gross(gross_dry: float, hydrogen: float, oxygen: float, nitrogen: float) -> float:
+    """The net heating value (J per kg dry) from the gross, EN ISO 18125's eq. as Alakangas 2016
+    gives it ([F4] eq. 2.4, kiln-fuels.md): q_net,d = q_gr,d − 212.2·H − 0.8·(O + N) J/g, with H,
+    O and N in % of the dry fuel (fractions here)."""
+    return gross_dry - (212.2 * hydrogen * 100 + 0.8 * (oxygen + nitrogen) * 100) * 1e3
 
 
 @cache
@@ -190,31 +254,37 @@ class Products:
         return xw + xc, xw / xc
 
 
-def _wood_moles(fuel: Fuel, lam: float) -> tuple[dict[str, float], float, float, float]:
-    """The mixture per kmol of carbon (Cantera species), its mass, the stoichiometric O2 and the
-    water, all per kmol C."""
-    a, b = src.WOOD_H_PER_C, src.WOOD_O_PER_C
-    m_wood = src.M_C + a * src.M_H + b * src.M_O  # kg per kmol C
-    water = fuel.water_per_kg * m_wood / M_H2O
+def _solid_moles(fuel: Fuel, lam: float) -> tuple[dict[str, float], float, float, float, float]:
+    """The mixture per kmol of carbon (Cantera species: the fuel as C, H, O and N atoms, its
+    water, the air), the kg of dry fuel per kmol C, the stoichiometric O2, the water and the
+    fuel's N atoms, all per kmol C."""
+    c, h, o, n, _, _ = fuel.composition
+    kmol_c = c / src.M_C  # kmol C per kg dry fuel
+    a, b, nn = h / src.M_H / kmol_c, o / src.M_O / kmol_c, n / M_N / kmol_c
+    m_dry = 1.0 / kmol_c  # kg dry fuel per kmol C
+    water = fuel.water_per_kg * m_dry / M_H2O
     s = 1 + a / 4 - b / 2
-    x = {"C": 1.0, "H": a, "O": b, "H2O": water, "O2": lam * s, "N2": lam * s * src.N2_PER_O2}
-    return x, m_wood, s, water
+    x = {"C": 1.0, "H": a, "O": b, "N": nn, "H2O": water, "O2": lam * s,
+         "N2": lam * s * src.N2_PER_O2}  # fmt: skip
+    return x, m_dry, s, water, nn
 
 
-def _reactants_wood(fuel: Fuel, lam: float, t_air: float) -> tuple[dict[str, float], float, float]:
-    """Wood's mixture, its reactants' enthalpy (J per kg dry wood) and air (kg/kg dry wood).
+def _reactants_solid(fuel: Fuel, lam: float, t_air: float) -> tuple[dict[str, float], float, float]:
+    """A solid or liquid fuel's mixture, its reactants' enthalpy (J per kg dry fuel) and air
+    (kg/kg dry fuel).
 
-    The wood's enthalpy from its net heating value: CH_aO_b + s O2 → CO2 + a/2 H2O(g) releases
-    H_net·M per kmol C at 25 °C; its water enters as liquid, 2.44 MJ/kg below the vapour (FAO)."""
-    x, m_wood, s, water = _wood_moles(fuel, lam)
-    a = src.WOOD_H_PER_C
-    h_co2, h_h2o, h_o2 = (_species_h(n, T_REF) for n in ("CO2", "H2O", "O2"))
-    h_wood = fuel.net_dry * m_wood + h_co2 + a / 2 * h_h2o - s * h_o2  # J per kmol C
+    The fuel's enthalpy from its net heating value: CH_aO_bN_n + s O2 → CO2 + a/2 H2O(g) + n/2 N2
+    releases H_net per kg dry at 25 °C; its water enters as liquid, 2.44 MJ/kg below the vapour
+    (FAO)."""
+    x, m_dry, s, water, nn = _solid_moles(fuel, lam)
+    a = x["H"]
+    h_co2, h_h2o, h_o2, h_n2 = (_species_h(n, T_REF) for n in ("CO2", "H2O", "O2", "N2"))
+    h_fuel = fuel.net_dry * m_dry + h_co2 + a / 2 * h_h2o + nn / 2 * h_n2 - s * h_o2  # per kmol C
     h_liquid = h_h2o - src.EVAPORATION.value * M_H2O
     o2 = lam * s
     h_air = o2 * (_species_h("O2", t_air) + src.N2_PER_O2 * _species_h("N2", t_air))
-    air = o2 * (M_O2 + src.N2_PER_O2 * M_N2) / m_wood
-    return x, (h_wood + water * h_liquid + h_air) / m_wood, air
+    air = o2 * (M_O2 + src.N2_PER_O2 * M_N2) / m_dry
+    return x, (h_fuel + water * h_liquid + h_air) / m_dry, air
 
 
 @cache
@@ -235,10 +305,10 @@ def products(fuel: Fuel, air_ratio: float, t_air: float) -> Products:
         mass = 1.0 / y_fuel
         air = mass - 1.0
     else:
-        xw, reactants, air = _reactants_wood(fuel, air_ratio, t_air)
+        xw, reactants, air = _reactants_solid(fuel, air_ratio, t_air)
         g.TPX = T_REF, ATM, xw
         x0 = g.X.copy()
-        mass = 1.0 + fuel.water_per_kg + air
+        mass = fuel.gas_forming + fuel.water_per_kg + air
     # From 290 K so 25 °C interpolates (the polynomials hold from 200 K); refused below T_MIN
     temps = np.arange(T_MIN - T_STEP, T_MAX + T_STEP / 2, T_STEP)
     cols: dict[str, list[float]] = {k: [] for k in ("h", "rho", "mu", "k", "cp", "w", "c", "co")}
@@ -268,24 +338,28 @@ def products(fuel: Fuel, air_ratio: float, t_air: float) -> Products:
 
 def _working(p: Products) -> tuple[Step, ...]:
     f = p.fuel
-    what = (
-        f"{f.name}: Cantera species {f.species}, HHV {f.hhv / 1e6:.2f} MJ/kg"
-        if f.kind == "gas"
-        else f"wood CH{src.WOOD_H_PER_C:.3f}O{src.WOOD_O_PER_C:.3f}, {f.moisture:.0%} moisture "
-        f"(wet basis), {f.net_dry / 1e6:.2f} MJ/kg net oven-dry"
-    )
+    if f.kind == "gas":
+        what = f"{f.name}: Cantera species {f.species}, HHV {f.hhv / 1e6:.2f} MJ/kg"
+        note = None
+    else:
+        c, h, o, n, s, ash = (100 * v for v in f.composition)
+        what = (
+            f"{f.name}: C {c:.1f}, H {h:.2f}, O {o:.1f}, N {n:.2f}, S {s:.2f}, ash {ash:.2f} % "
+            f"dry; {f.moisture:.0%} moisture (wet basis), {f.net_dry / 1e6:.2f} MJ/kg net dry"
+        )
+        surrogate = f"{src.WOOD_CHO.note}; " if f.composition == SURROGATE else ""
+        note = (
+            f"{surrogate}the ash stays in the bed and the sulphur is left out of the gas "
+            "(GRI-Mech has no sulphur; its air under 1 %)"
+        )
     hot = p.released(1558.15)
     return (
-        Step(
-            name="The fuel",
-            value=what,
-            reference=f.reference,
-            note=None if f.kind == "gas" else src.WOOD_CHO.note,
-        ),
+        Step(name="The fuel", value=what, reference=f.reference, note=note),
         Step(
             name="Air and products per kg of fuel",
             value=f"{p.air:.3f} kg air, {p.mass:.3f} kg products",
-            formula="λ × stoichiometric air; products = fuel (and its water) + air",
+            formula="λ × stoichiometric air; products = the fuel's gas-forming part (and its "
+            "water) + air",
             inputs={"λ": f"{p.air_ratio:.3f}", "air at": f"{p.t_air - 273.15:.1f} °C"},
             reference=src.O2_IN_AIR.reference,
         ),

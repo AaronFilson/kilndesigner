@@ -13,11 +13,13 @@ from functools import cache
 from pathlib import Path
 from typing import Any, Protocol
 
+import fuel as own
 import yaml
 
 from kilndesigner.designfile import load_design
 from kilndesigner.model import Kiln
 from kilndesigner.v2.heat import firing as fi
+from kilndesigner.v2.heat import gas
 from kilndesigner.v2.heat import kiln as hk
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -48,9 +50,9 @@ class Outcome(Protocol):
 # Olsen's fast-fire (p.139–143). TEST INPUTS: the setting's envelope from p.142's layout (4½ in
 # clear each side and in front, 1 in at the back; on the bag walls' two rowlock rows, 9 in; to
 # 33 in, under the 36 in springline) and its 55 kg (three 12 × 24 × 1 in shelves, posts and
-# about 25 kg of ware: the survey's); ε 0.8 (the survey's); wood 12 % moisture (FAO's air-dried
-# low end) at 19 MJ/kg net oven-dry (Forest Research); λ 1 (the stoker's, the survey's); the
-# grate's ¾ in round bars (printed, p.204).
+# about 25 kg of ware: the survey's); ε 0.8 (the survey's); its own wood (below; until B4 a test
+# input, 12 % moisture at 19 MJ/kg); λ 1 (the stoker's, the survey's); the grate's ¾ in round bars
+# (printed, p.204).
 FAST_FIRE_LOAD = hk.Load(
     55.0,
     (-9 * IN, -9 * IN, 9 * IN),
@@ -60,6 +62,15 @@ FAST_FIRE_LOAD = hk.Load(
     "(thermal-combinations.md §4.1); the book prints no load",
 )
 WOOD = hk.Wood(0.12, 19e6, "TEST INPUT: FAO's air-dried 12 %, Forest Research's 19 MJ/kg")
+# The fast-fire's own fuel (ADR 0017 decision 12): "wood of any kind" (printed, p.139), the
+# dataset's band for a wood no source names (kiln-fuels.md §5: coniferous or deciduous, net
+# 17.60–19.31 MJ/kg dry, 12–25 % moisture, the analysis at its quartiles' middles)
+
+
+def fast_fire_fuel(end: own.End = "mid") -> gas.Fuel:
+    return own.own_fuels("fast-fire", end)[0]
+
+
 # Olsen p.309's log, minutes from 4:55 and °C, the start at the room's 21.1 °C (70 °F)
 LOG = (
     (0, 21.1), (5, 190), (20, 315), (35, 455), (50, 580), (65, 720), (80, 790), (95, 900),
@@ -69,13 +80,14 @@ LOG = (
 
 
 @cache
-def fast_fire_model(heavier: float = 1.0, path: bool = True) -> Any:
+def fast_fire_model(heavier: float = 1.0, path: bool = True, end: own.End = "mid") -> Any:
     """The fast-fire's whole gas path (B2: the fireboxes and the chimney as zones of their own,
     with their own brick), or (``path`` False) its chamber alone as the one zone the fire burns
-    in, as first built."""
+    in, as first built; its own wood at its bands' ``end``."""
     k = load_design(OLSEN / "fast-fire.yaml")
     load = replace(FAST_FIRE_LOAD, mass=FAST_FIRE_LOAD.mass * heavier)
-    return hk.heat_model(k, load, 1.0, WOOD, n_rays=RAYS, grate_bar=0.75 * IN, path=path)
+    return hk.heat_model(k, load, 1.0, fast_fire_fuel(end), n_rays=RAYS, grate_bar=0.75 * IN,
+                         path=path)  # fmt: skip
 
 
 def fast_fire_max(heavier: float = 1.0) -> fi.Firing:

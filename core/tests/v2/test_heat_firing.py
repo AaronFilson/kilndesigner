@@ -8,6 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+import fuel as kiln_fuel
 import heat_cases as hc
 import numpy as np
 import pytest
@@ -138,8 +139,13 @@ def test_what_the_heat_model_refuses() -> None:
            "firebox_efficiency": "25 percent"}  # fmt: skip
     wooded = _design("fast-fire", {"site.wood": own})
     assert hk.fuel_of(wooded, None).moisture == pytest.approx(0.12)
-    with pytest.raises(hk.NotModelledError, match="no composition"):
-        hk.fuel_of(load_design(OLSEN / "singh-coal.yaml"), None)
+    singh = load_design(OLSEN / "singh-coal.yaml")
+    with pytest.raises(hk.NotModelledError, match="give the fuel's analysis"):
+        hk.fuel_of(singh, None)
+    coal = kiln_fuel.own_fuels("singh-coal")[0]
+    assert hk.fuel_of(singh, coal) is coal  # each kiln's own fuel (ADR 0017 decision 12)
+    with pytest.raises(hk.NotModelledError, match="the design burns wood"):
+        hk.fuel_of(ff, coal)
     with pytest.raises(hk.NotModelledError, match="elements"):
         hk.fuel_of(load_design(OLSEN / "electric-car-45.yaml"), None)
     both = {"fuel": "natural_gas", "burners": {"rating": "36000 BTU/hr", "count": 2},
@@ -204,14 +210,16 @@ def test_a_schedule_held_on_the_whole_path(held: str) -> None:
 
 def test_one_zone_is_the_model_as_first_built() -> None:
     """The chamber alone as the zone the fire burns in (``path`` False): the max fire reaches
-    cone 10 as the model did before the fireboxes and chimney were zones (0.395 h on fluids'
-    round-pipe fittings and the flat plate; 0.41 h on Idelchik's and the duct forms, B4)."""
+    cone 10 far sooner than the whole path does, as the model did before the fireboxes and
+    chimney were zones (0.395 h on fluids' round-pipe fittings, the flat plate and wood at 12 %;
+    0.41 h on Idelchik's and the duct forms; 0.48 h on the kiln's own wood at its bands'
+    middles, 18.5 %, B4)."""
     m = hc.fast_fire_model(path=False)
     assert len(m.gas) == 1
     f = fi.fire(m, fi.MaxFire(), 3600.0, (), hc.CONE_10)
     t = f.reached(hc.CONE_10)
     assert t is not None
-    assert t == pytest.approx(0.41 * 3600, rel=0.02)
+    assert t == pytest.approx(0.48 * 3600, rel=0.02)
 
 
 def test_a_round_chimney_as_a_zone_is_a_round_duct() -> None:

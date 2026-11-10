@@ -378,7 +378,7 @@ class Balance:
         self.conv = np.flatnonzero(self.convects)
         self.tall = np.array([model.gas[z].flow.height for z in self.zone_of[self.conv]])
         self.path_zone = dict(model.path_zones)
-        self.stoked = model.products.fuel.kind == "wood"
+        self.stoked = model.products.fuel.kind in ("wood", "coal")  # oil drips at a set rate
 
     def convection(self, t_gas: Vector, fuel: float, t: Vector) -> Vector:
         """h (W/(m²·K)) on each surface (0 on an opening): its zone's duct flow, at least

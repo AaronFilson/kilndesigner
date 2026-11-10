@@ -9,8 +9,13 @@ and the reason is returned instead.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import cache
+from typing import Any, Literal
+
+import reference as ref
 
 from kilndesigner.units import Q_, si
+from kilndesigner.v2.heat import gas
 
 MJ_PER_KWH = 3.6
 
@@ -112,5 +117,94 @@ def fuel_heat(value: float, unit: str, fuel: str, kind: str = "") -> FuelHeat | 
     if fuel.startswith("oil") and unit in {"gallon", "gal"}:
         return diesel(value)
     if fuel.startswith("coal"):
-        return "no heating value for coal is sourced in docs/research; left out"
+        return (
+            "a coal's heating value is each kiln's (kiln-fuels.md §4), and a shovel's weight the "
+            "owner's question (Taylor's 21 lb the only open figure): not converted here"
+        )
     return f"no sourced conversion for {fuel} in {unit}"
+
+
+# --- each kiln's own fuel for the heat model (ADR 0017 decision 12; kiln-fuels.md §5) ---------
+
+# Which end of each band a fuel is built at: the least heat per kg as fired (the wettest, the
+# lowest heating value), the bands' middles, or the most. The analysis is always at its middles.
+type End = Literal["least", "mid", "most"]
+# Singh's Grade B steam coal (kiln-fuels.md §4): its heating value is gross on the equilibrated
+# basis, its ash and moisture together 19.6–23.9 % (UHV = 8900 − 138·(A + M), [F7] p.14); its
+# moisture alone isn't printed: India's Barakar coals hold under 2 to 6 % ([F7] p.9), carried by
+# analogy (an assumption, said)
+GRADE_B_MOISTURE = (0.02, 0.06)
+GRADE_B_ASH_AND_MOISTURE = (0.196, 0.239)
+ANALYSIS = ("fuel_carbon", "fuel_hydrogen", "fuel_oxygen", "fuel_nitrogen", "fuel_sulphur",
+            "fuel_ash")  # fmt: skip
+
+
+def _band(f: dict[str, Any] | None, unit: str) -> tuple[float, float]:
+    """A fuel fact as (low, high) in ``unit``; an upper bound ("<=") runs from zero; none is 0."""
+    if f is None:
+        return 0.0, 0.0
+    lo, hi = ref.span(f, unit)
+    return (0.0, hi) if f.get("bound") in ("<", "<=") else (lo, hi)
+
+
+def _pick(band: tuple[float, float], end: End, wet: bool = False) -> float:
+    """A band's end: ``least`` heat is its low end, or its high end for the moisture."""
+    lo, hi = band
+    if end == "mid":
+        return (lo + hi) / 2
+    return hi if (end == "least") == wet else lo
+
+
+@cache
+def _kilns() -> dict[str, Any]:
+    """The dataset's kilns, read once."""
+    return ref.load()["kilns"]
+
+
+def own_intakes(kid: str) -> tuple[tuple[float, float], tuple[float, float]] | None:
+    """A kiln's air intakes from the dataset (firebox-air-intakes.md §3), m², all its fireboxes
+    together: below the grate and above it, each (least, most); None where neither is given (the
+    dataset's gap); a side not given is closed (the least air, said by the caller)."""
+    kiln = _kilns()[kid]
+    below = ref.facts(kiln, "flow", "primary_air")
+    above = ref.facts(kiln, "flow", "secondary_air")
+    if not below and not above:
+        return None
+
+    def area(fs: list[dict[str, Any]]) -> tuple[float, float]:
+        return ref.span(fs[0], "m**2") if fs else (0.0, 0.0)
+
+    return area(below), area(above)
+
+
+def own_fuels(kid: str, end: End = "mid") -> list[gas.Fuel]:
+    """A reference kiln's fuels, from the dataset's facts (each `fuel_species` starts one: the
+    Sturt kiln burns wood and drips oil), as the heat model takes them."""
+    kiln = _kilns()[kid]
+    groups: list[dict[str, dict[str, Any]]] = []
+    for f in kiln.get("heat") or []:
+        what = str(f.get("what"))
+        if what == "fuel_species":
+            groups.append({what: f})
+        elif what.startswith("fuel_") and what not in ("fuel_kind", "fuel_rate") and groups:
+            groups[-1][what] = f
+    return [_fuel(kid, g, end) for g in groups if "fuel_heating_value" in g]
+
+
+def _fuel(kid: str, g: dict[str, dict[str, Any]], end: End) -> gas.Fuel:
+    species = str(g["fuel_species"]["value"])
+    kind: gas.Solid = "oil" if "diesel" in species else "coal" if "coal" in species else "wood"
+    parts = [(lo + hi) / 2 for lo, hi in (_band(g.get(a), "") for a in ANALYSIS)]
+    net = _band(g["fuel_heating_value"], "J/kg")
+    moisture = _pick(_band(g.get("fuel_moisture"), ""), end, wet=True)
+    how = f"{kid}'s own fuel from the dataset (kiln-fuels.md §5), at the bands' {end}"
+    if kid == "singh-coal":
+        moisture = _pick(GRADE_B_MOISTURE, end, wet=True)
+        parts[5] = sum(GRADE_B_ASH_AND_MOISTURE) / 2 - moisture
+        gross_dry = _pick(net, end) / (1 - moisture)
+        value = gas.net_from_gross(gross_dry, parts[1], parts[2], parts[3])
+        how += "; Grade B's gross (equilibrated) to net dry by EN ISO 18125, its moisture assumed"
+    else:
+        value = _pick(net, end)
+    c, h, o, n, s, ash = parts
+    return gas.solid(species, kind, (c, h, o, n, s, ash), moisture, value, how)
