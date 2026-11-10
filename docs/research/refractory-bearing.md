@@ -241,7 +241,7 @@ superimposed load. These ratios are arithmetic on sheet values, not an allowable
 | Cold CCS, Mizzou Castable Plus | 5,500 dried; 3,500 at 1,500 °F; 3,000 at 2,000 °F | Verified (repo) |
 | Cold CCS, Kast-O-Lite 26, Kaolite 2600 LI | none | NOT FOUND / Snippet only |
 | Hot C16 test load, dense firebrick | 25 psi (C16 §7.1), applied by the standard, so the sheets' subsidence values (Jet D.P. 1.3 % at 2460 °F; Smithfield 6.8 % at 2640 °F; KX-99 0.6 % at 2640 °F) correspond to 25 psi only if the maker ran C16 as written; KX-99's sheet does not print the load | [B2], [B7], [B8], [B9] |
-| Hot test load, IFB | 10 psi, 1½ h: K-23 0 / 0.3 %, K-25 0 / 0.1 % at 2000 / 2200 °F; TC-23 0.1 to 0.2 % (2010) or 0 % (2016) at 2000 °F, 0.3 % at 2200 °F (2016); IFB 23 Tile 0 % at 2000 °F | Verified [B11], [B21], [B22]. Labelled ASTM C16 by the maker. The owner reports (2026-11-09) that C16 tests at 10 psi at the stated temperature, which contradicts the 25 psi-only reading of [B2] §7.1 above; [B2] needs re-reading (possibly a separate IFB load or a different edition) |
+| Hot test load, IFB | 10 psi, 1½ h: K-23 0 / 0.3 %, K-25 0 / 0.1 % at 2000 / 2200 °F; TC-23 0.1 to 0.2 % (2010) or 0 % (2016) at 2000 °F, 0.3 % at 2200 °F (2016); IFB 23 Tile 0 % at 2000 °F | Verified [B11], [B21], [B22]. Labelled ASTM C16 by the maker. The owner reports (2026-11-09) that C16 tests at 10 psi held 90 min at the stated temperature, matching the sheets' 1½ h, which contradicts the 25 psi-only reading of [B2] §7.1 above; [B2] needs re-reading (possibly a separate IFB load or a different edition) |
 | Hot load for K26, JM-series, castables | none | NOT FOUND |
 | Allowable bearing stress, cold or hot | **none** | NOT FOUND |
 | Factor of safety on CCS or on the C16 load | **none** | NOT FOUND |
@@ -267,7 +267,7 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 8. HWI Handbook of Refractory Practice, Gilchrist, Chesters, Schacht, Routschka, Caniglia, AISE: no
    accessible text on allowable loads or skewback stress.
 9. C16 load: [B2] was recorded as 25 psi only ("There is no 10 psi load in C16"); the owner says C16
-   tests at 10 psi at the stated temperature. Re-read C16 (2026-11-09 fetch returned compressed
+   tests at 10 psi held 90 min at the stated temperature. Re-read C16 (2026-11-09 fetch returned compressed
    binary) and correct §B1.2 and §B3.
 10. Current-edition ASTM text: C16, C27, C133, C155 above are the 2007/2008 reapproved editions from a
    public mirror; the current editions were not compared.
