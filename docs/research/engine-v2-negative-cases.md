@@ -114,6 +114,21 @@ not check for an error or a warning.
 | N6 | a groin vault at t'/R 0.05 | no admissible state, once crossings are checked | §1 |
 | P | all 53 reference kilns as built | each stands: an admissible state exists | ADR 0014, 0017 |
 
+## 7. What v2's statics gives (2026-11-10)
+
+Run in `core/tests/v2/test_statics_arch.py` and `test_statics_section.py` (Derived: v2's own
+limit analysis on the inputs named).
+
+| Id | v2's result | Test |
+|---|---|---|
+| N1 | least t/R of a semicircle 0.10746 (160 voussoirs), 0.107478 (320); t/r 0.095 has no admissible state; 0.11 and 0.22 stand, factors on thickness 1.02 and 2.05 | `test_n1_a_semicircle_needs_its_least_thickness` |
+| N3 | the fast-fire arch on its free 4½ in IFB walls, 36 in high: no admissible state; with the frame, it must give at least 7.08 lbf/ft a side, the walls hinging on their outer toes | `test_n3_…`, `test_without_its_frame_the_fast_fire_kiln_falls` |
+| N4 | **restated.** The review's μ needed of 1.96 took HarbisonWalker's mid-thickness thrust, 465 lbf/ft. v2 lets the arch settle to its least thrust, 168.8 lbf/ft, on an end wall that spreads (Heyman); the springing bed then needs μ 0.518 with the skewback's own weight on it (0.71 with none). So the 41 in wall stands cold (μ 0.60) and slides hot (0.50); a 60 in wall overturns either way, and a buttress must give 16.15 lbf/ft | `test_n4_the_reviews_end_wall_restated` |
+| P (part) | every reference kiln a cross-section takes (31 of 53: sprung arches across the width) stands cold and hot (μ 0.50 and the C16 stand-in) | `scratch/v2-statics/all_sections.py`; the test comes with the report |
+
+N4's expected result in §6 rested on one fixed line of thrust, the thing v2 replaces; the case
+is kept, with v2's numbers above as its expectation.
+
 ## Sources
 
 As cited above; the research files named hold the full references: masonry-statics.md ([M2] Lau

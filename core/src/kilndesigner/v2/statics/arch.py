@@ -24,7 +24,7 @@ joints (Milankovitch's value as Maia Avelino et al. 2020 quote it, `engine-v2-ne
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
@@ -147,20 +147,104 @@ class ArchRing:
 
     def _voussoir(self, i: int, t0: float, t1: float, centre_z: float) -> Body:
         r, ro = self.radius, self.radius + self.thickness
-        weight, cx, cz = _sector(r, ro, t0, t1, self.density * G * self.depth)
+        weight, cx, cz = sector(r, ro, t0, t1, self.density * G * self.depth)
         loads: list[tuple[float, float, float, float]] = []
         inner = ro
         for layer in self.overburden:
-            w, x, z = _sector(
-                inner, inner + layer.thickness, t0, t1, layer.density * G * self.depth
-            )
+            w, x, z = sector(inner, inner + layer.thickness, t0, t1, layer.density * G * self.depth)
             loads.append((x, centre_z + z, 0.0, -w))
             inner += layer.thickness
         return Body(f"voussoir {i + 1}", weight, (cx, centre_z + cz), False, VOUSSOIR, None,
                     tuple(loads))  # fmt: skip
 
 
-def _sector(
+def on_walls(
+    ring: ArchRing,
+    wall: float,
+    height: float,
+    density: float,
+    courses: int,
+    held: str = "none",
+) -> Section:
+    """The ring on two walls ``wall`` m thick standing on the ground, their springline ``height``
+    m up, each in ``courses`` level courses of ``density`` kg/m³, with a skewback on each wall's
+    top cut on the arch's radius (none for a half circle, which springs from the wall's top).
+    ``held``: "frame" (a fixed block against each skewback's back, or the top course's where there
+    is no skewback), "buttress" (against the whole outer face of each wall) or "none". A
+    parametric section for studies and the negative cases; kilns are cut from the engine's own
+    solids (`section.py`)."""
+    r, ro, phi, n, d = (ring.radius, ring.radius + ring.thickness, ring.half_angle,
+                        ring.voussoirs, ring.depth)  # fmt: skip
+    half = r * math.sin(phi)
+    zc = height - r * math.cos(phi)
+    arch = ring.section(centre_z=zc)
+    bodies: list[Body] = list(arch.bodies[:n])
+    joints: list[Joint] = list(arch.joints[1:-1])
+    unit = density * G * d
+    skewed = phi < math.pi / 2 - 1e-9
+    x_e, z_e = ro * math.sin(phi), zc + ro * math.cos(phi)
+    h = height / courses
+    supports: list[tuple[int, tuple[tuple[float, float], ...], float]] = []
+    ground = Body("ground", 0.0, (0.0, -0.05), True, "ground")
+    for s, springing in ((1.0, arch.joints[0]), (-1.0, arch.joints[-1])):
+        side = "right" if s > 0 else "left"
+        x_in, x_out = s * half, s * (half + wall)
+        lo, hi = min(x_in, x_out), max(x_in, x_out)
+        first = len(bodies)
+        top_face: tuple[tuple[float, float], ...] = ((x_out, height - h), (x_out, height))
+        if skewed:
+            poly = [(x_in, height), (s * x_e, z_e), (x_out, z_e), (x_out, height)]
+            area, cx, cz = _polygon(poly)
+            tag = f"skewback {side}"
+            bodies.append(Body(tag, unit * area, (cx, cz), False, tag))
+            top_face = ((x_out, height), (x_out, z_e))
+        for k in range(courses):
+            bodies.append(Body(f"{side} wall, course {k + 1}", unit * wall * h,
+                               ((lo + hi) / 2, (k + 0.5) * h), False, f"wall {side}"))  # fmt: skip
+        course0 = first + (1 if skewed else 0)
+        holder = first if skewed else course0 + courses - 1  # what the arch springs from
+        a, b = (holder, springing.b) if s > 0 else (springing.a, holder)
+        joints.append(Joint(a, b, springing.points, springing.normals, d))
+        bed = ((lo, 0.0), (hi, 0.0))
+        joints.append(Joint(-1, course0, bed, ((0.0, 1.0),) * 2, d))  # on the ground: fixed up
+        for k in range(1, courses + (1 if skewed else 0)):
+            above = course0 + k if k < courses else first
+            z = k * h
+            joints.append(Joint(course0 + k - 1, above, ((lo, z), (hi, z)), ((0.0, 1.0),) * 2, d))
+        if held == "frame":
+            supports.append((first if skewed else course0 + courses - 1, top_face, s))
+        elif held == "buttress":
+            for k in range(courses):
+                supports.append((course0 + k, ((x_out, k * h), (x_out, (k + 1) * h)), s))
+            if skewed:
+                supports.append((first, top_face, s))
+    g = len(bodies)
+    bodies.append(ground)
+    joints = [replace(j, a=g) if j.a == -1 else j for j in joints]
+    if supports:
+        for s in (1.0, -1.0):
+            bodies.append(Body(f"{held} {'right' if s > 0 else 'left'}", 0.0,
+                               (s * (half + wall + 0.05), height), True, held))  # fmt: skip
+            idx = len(bodies) - 1
+            for body, pts, side in supports:
+                if side == s:
+                    joints.append(Joint(idx, body, pts, ((-s, 0.0),) * 2, d))
+    return Section(tuple(bodies), tuple(joints), d)
+
+
+def _polygon(pts: list[tuple[float, float]]) -> tuple[float, float, float]:
+    """A simple polygon's area and centroid (the shoelace formula)."""
+    a = cx = cz = 0.0
+    for (x0, z0), (x1, z1) in zip(pts, pts[1:] + pts[:1], strict=True):
+        c = x0 * z1 - x1 * z0
+        a += c
+        cx += (x0 + x1) * c
+        cz += (z0 + z1) * c
+    a /= 2
+    return abs(a), cx / (6 * a), cz / (6 * a)
+
+
+def sector(
     r0: float, r1: float, t0: float, t1: float, unit_weight: float
 ) -> tuple[float, float, float]:
     """An annular sector's weight (unit weight × area) and centroid (x, z) about its centre."""
