@@ -94,6 +94,18 @@ def test_when_the_setting_reached_a_temperature() -> None:
     assert f.reached(2000.0) is None
 
 
+def test_a_target_reached_to_round_off_is_reached() -> None:
+    """A setting held to a schedule reaches a break's temperature only to round-off, and IDA
+    gives no event where its root is zero as the next piece starts: the first sample within the
+    temperatures' tolerance counts, not the one after it."""
+    t = np.array([0.0, 60.0, 120.0, 180.0])
+    s = np.array([[300.0], [1500.0], [1558.15 - 1e-7], [1558.15]])
+    f = fi.Firing(t, s, s, np.zeros(4), np.zeros(4), {}, {}, True, "")
+    assert f.reached(1558.15) == pytest.approx(120.0)
+    assert f.reached(1529.075) == pytest.approx(90.0, rel=1e-6)  # halfway, interpolated
+    assert f.reached(1600.0) is None
+
+
 def test_max_fire_needs_a_draft() -> None:
     k = hc._crossdraft(hc.FLUE)  # pyright: ignore[reportPrivateUsage]
     m = hk.heat_model(k, hc.CROSSDRAFT_LOAD, 1.0, n_rays=5_000)

@@ -45,6 +45,7 @@ SOURCES = (
 
 START_TOL = 1e-3  # the algebraic rows at a start (kW, K, Pa/10): IDA refines from there
 REDUCED = 0.999  # λ under this is reduction (λ 1 itself comes out to IDA's tolerance)
+REACHED_TOL = 1e-3  # K: the temperatures' absolute tolerance in IDA (`_atol`)
 
 
 class FiringError(ValueError):
@@ -143,11 +144,14 @@ class Firing:
         return self.t_settings[:, 0]
 
     def reached(self, target: float, setting: int = 0) -> float | None:
-        """When a setting (the first, unless given) first reached ``target`` (K), or None."""
+        """When a setting (the first, unless given) first reached ``target`` (K), or None: IDA's
+        event, else the first sample within the temperatures' tolerance of it (a setting held to
+        a schedule reaches a break's temperature to round-off, and IDA reports no event where its
+        root is already zero as the next piece starts), interpolated."""
         if (setting, target) in self.events:
             return self.events[(setting, target)]
         col = self.t_settings[:, setting]
-        above = np.flatnonzero(col >= target)
+        above = np.flatnonzero(col >= target - REACHED_TOL)
         if len(above) == 0:
             return None
         i = int(above[0])
@@ -155,7 +159,7 @@ class Firing:
             return float(self.times[0])
         t0, t1 = self.times[i - 1], self.times[i]
         s0, s1 = col[i - 1], col[i]
-        return float(t0 + (t1 - t0) * (target - s0) / (s1 - s0))
+        return float(t0 + (t1 - t0) * min((target - s0) / (s1 - s0), 1.0))
 
     @property
     def fuel_kg(self) -> float:
