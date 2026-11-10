@@ -73,6 +73,16 @@ class Bom(BaseModel):
     prices_checked: str
     findings: list[Finding]
 
+    def left_out(self) -> list[str]:
+        """The items the total leaves out, having no price (each once, in the bill's order)."""
+        return list(dict.fromkeys(line.item for line in self.lines if line.cost is None))
+
+    def total_text(self, cents: bool = False) -> str:
+        """The total with what it leaves out, so a sum is never read as the whole bill."""
+        money = f"${self.total:,.2f}" if cents else f"${self.total:,.0f}"
+        out = self.left_out()
+        return money + (f", leaving out {len(out)} unpriced: " + "; ".join(out) if out else "")
+
 
 def _purchase_word(unit: str, count: int) -> str:
     words = {"bricks": "brick", "ft²·in": "roll", "lb": "bag"}

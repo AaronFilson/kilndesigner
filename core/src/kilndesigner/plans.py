@@ -165,7 +165,7 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
                 ["Grooves", f"{el.groove_rows} rows, evenly spaced up the walls"],
                 ["Wire, total", el.wire_mass_total],
             ]  # fmt: skip
-    summary.append(["Materials (priced items)", f"${bom.total:,.0f}"])
+    summary.append(["Materials (priced items)", bom.total_text()])
     findings: list[Finding] = report.findings
     working = [{"title": "Heat loss", "steps": _steps(report.heat_loss.working)}]
     if report.electric is not None:
@@ -267,7 +267,7 @@ def plan_data(kiln: Kiln, report: Report, masonry: MasonryPlan, bom: Bom) -> dic
                 }
                 for line in bom.lines
             ],
-            "total_text": f"${bom.total:,.2f}",
+            "total_text": bom.total_text(cents=True),
         },
         "working": working,
     }  # fmt: skip

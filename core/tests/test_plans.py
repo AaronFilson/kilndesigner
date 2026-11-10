@@ -120,7 +120,8 @@ def test_an_electric_kilns_plans_list_its_elements(kiln) -> None:  # type: ignor
     assert _row(summary, "Chamber volume") == "7.03 ft³"  # 22.5 × 22.5 × 24 in
     assert _row(summary, "Installed power") == f"{e.installed_power} ({e.power_per_volume})"
     assert report.bom is not None
-    assert _row(summary, "Materials (priced items)") == f"${report.bom.total:,.0f}"
+    assert _row(summary, "Materials (priced items)") == report.bom.total_text()
+    assert report.bom.total_text().startswith(f"${report.bom.total:,.0f}")
     assert _row(data["elements"], "Elements") == (
         f"{e.elements.count}, wired as {e.elements.wiring}"
     )
