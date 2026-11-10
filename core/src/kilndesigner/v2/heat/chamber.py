@@ -188,35 +188,65 @@ def _solid(kiln: Kiln, run: Any, lay: _Layout) -> tuple[Any, str]:
     return solid, "round" if lay.round else "box"
 
 
-def _pieces(solid: Any, cuts: tuple[float, ...]) -> list[Any]:
-    """The solid split at each cut (a plane square to y)."""
+def _pieces(solid: Any, planes: list[tuple[int, float]]) -> list[Any]:
+    """The solid split at each plane, (axis, value) mm."""
     from build123d import Keep, Plane
 
     pieces = [solid]
-    for y in cuts:
-        plane = Plane(origin=(0, y, 0), z_dir=(0, 1, 0))
+    for axis, value in planes:
+        normal = [0.0, 0.0, 0.0]
+        normal[axis] = 1.0
+        origin = [0.0, 0.0, 0.0]
+        origin[axis] = value
+        plane = Plane(origin=tuple(origin), z_dir=tuple(normal))
         pieces = [s for p in pieces for s in p.split(plane, keep=Keep.ALL)]
     return pieces
 
 
-def _zone_of(lay: _Layout, y: float) -> int:
-    return sum(1 for c in lay.cuts if y > c)
+@dataclass(frozen=True)
+class _Zone:
+    """A gas zone as built (mm): its name, kind and region boxes, and what names its faces: a
+    firebox's grate height and its passages' band (an axis and a span), a chimney's top height and
+    where its stack begins along the flue (an axis, a value and the side away from the kiln)."""
+
+    name: str
+    kind: Literal["firebox", "chamber", "chimney"]
+    boxes: tuple[tuple[Point, Point], ...]
+    grate: float = 0.0
+    band: tuple[int, float, float] = (2, 0.0, 0.0)
+    top: float = 0.0
+    stack: tuple[int, float, float] = (1, 0.0, 1.0)
 
 
-def _namer(lay: _Layout, many: bool) -> Any:
-    """Name a face of a piece (mm): skip the cuts' faces; find its zone and the way it faces from
-    a point a step into the gas. Gives the name, a point on the face and its normal into the gas."""
+def _inside(boxes: tuple[tuple[Point, Point], ...], p: Point) -> bool:
+    return any(all(lo[i] <= p[i] < hi[i] for i in range(3)) for lo, hi in boxes)
+
+
+def _namer(lay: _Layout, zones: list[_Zone], solid: Any) -> Any:
+    """Name a face of a piece (mm): skip the cuts' faces (gas on both sides in the whole solid);
+    find its zone from a point a step into the gas, and name it by the zone's kind and the way it
+    faces."""
+    chambers = [k for k, z in enumerate(zones) if z.kind == "chamber"]
+    many = len(chambers) > 1
 
     def name(piece: Any, face: Any) -> tuple[str, Any, Any] | None:
         planar = face.geom_type.name == "PLANE"
         p = face.center() if planar else face.position_at(0.5, 0.5)
         n = face.normal_at(p)
-        inward = -n if piece.is_inside(p - n * EPS) else n
-        x, y = p.X, p.Y
-        if planar and abs(n.Y) > 0.999 and any(abs(y - c) < 1e-3 for c in lay.cuts):
+        if planar and solid.is_inside(p + n * EPS) and solid.is_inside(p - n * EPS):
             return None  # a cut: gas on both sides
-        k = _zone_of(lay, y + inward.Y * EPS)
-        tag = f" {k + 1}" if many else ""
+        inward = -n if piece.is_inside(p - n * EPS) else n
+        q = (p.X + inward.X * EPS, p.Y + inward.Y * EPS, p.Z + inward.Z * EPS)
+        k = next(i for i, z in enumerate(zones) if _inside(z.boxes, q))
+        z = zones[k]
+        if z.kind == "firebox":
+            return _fire_name(z, p, inward, planar), p, inward
+        if z.kind == "chimney":
+            return _chimney_name(z, p, inward), p, inward
+        i = chambers.index(k)
+        tag = f" {i + 1}" if many else ""
+        x, y = p.X, p.Y
+        front, back = _span(lay, i, many)
         if any(a + 1e-3 < y < b - 1e-3 for a, b in lay.walls):
             return f"flues{tag}", p, inward
         if not planar:
@@ -224,7 +254,6 @@ def _namer(lay: _Layout, many: bool) -> Any:
         if inward.Z > 0.999:
             return f"floor{tag}", p, inward
         if abs(inward.Y) > 0.999:
-            front, back = _span(lay, k, many)
             if abs(y - front) < 1e-3 and inward.Y > 0:
                 return f"front{tag}", p, inward
             if abs(y - back) < 1e-3 and inward.Y < 0:
@@ -235,6 +264,27 @@ def _namer(lay: _Layout, many: bool) -> Any:
         return f"roof{tag}", p, inward
 
     return name
+
+
+def _fire_name(z: _Zone, p: Any, inward: Any, planar: bool) -> str:
+    axis, a, b = z.band
+    at = (p.X, p.Y, p.Z)[axis]
+    if a + 1e-3 < at < b - 1e-3:
+        return "inlet flues"  # through the floor or the wall, into the chamber
+    if planar and inward.Z > 0.999 and abs(p.Z - z.grate) < 1e-3:
+        return "grate"
+    if planar and inward.Z < -0.999:
+        return "firebox roof"
+    return "firebox walls"
+
+
+def _chimney_name(z: _Zone, p: Any, inward: Any) -> str:
+    axis, start, sign = z.stack
+    if sign * ((p.X, p.Y, p.Z)[axis] - start) < -1e-3:
+        return "exit flue"  # the channel from the flue wall into the stack
+    if inward.Z < -0.999 and abs(p.Z - z.top) < 1e-3:
+        return "chimney top"
+    return "chimney walls"
 
 
 def _oriented(face: Any, piece: Any) -> Any:
@@ -263,9 +313,170 @@ def _span(lay: _Layout, k: int, many: bool) -> tuple[float, float]:
     return row[0], row[1]
 
 
-def _regions(lay: _Layout, n: int) -> list[tuple[tuple[Point, Point], ...]]:
-    edges = [-BIG, *(c * MM for c in lay.cuts), BIG]
-    return [(((-BIG, edges[k], -BIG), (BIG, edges[k + 1], BIG)),) for k in range(n)]
+INF = BIG / MM  # the regions' reach, mm
+SIDES = {"up": "under", "+y": "front", "-y": "back", "+x": "left", "-x": "right"}
+CHIMNEY_WALL = 4.5 * 25.4  # mm: the engine's chimney, one 4½ in layer of hard brick (hardware.py)
+
+
+@dataclass(frozen=True)
+class _Fire:
+    """The fireboxes on one side of the chamber (mm): the spaces above their grates and their
+    passages into the chamber, where they open (the chamber's inside face, along ``axis``) and
+    their own face behind them."""
+
+    side: str
+    spaces: tuple[tuple[Point, Point], ...]
+    passages: tuple[tuple[Point, Point], ...]
+    grate: float
+    axis: int
+    face: float  # the chamber's inside face (under: its floor, z = 0)
+    outer: float  # the fireboxes' face towards it (under: their top)
+
+
+def _fires(kiln: Kiln) -> list[_Fire]:
+    """The fireboxes as gas zones, by the side they stand (`firebox_parts`' layout): the space
+    from the grate up and the inlet flues or mouths through the floor or the wall; troughs sunk in
+    a chamber's floor are its own (not here)."""
+    from kilndesigner.firebox_parts import firebox_boxes, openings, site
+
+    s = site(kiln)
+    holes = openings(kiln)
+    sides: dict[str, list[Any]] = {}
+    for b in firebox_boxes(kiln):
+        if b.trough:
+            continue
+        sides.setdefault(SIDES[b.kiln_side], []).append(b)
+    out: list[_Fire] = []
+    for side, boxes in sides.items():
+        axis = {"under": 2, "front": 1, "back": 1, "left": 0, "right": 0}[side]
+        face = {"under": 0.0, "front": s.front, "back": s.back, "left": -s.width / 2,
+                "right": s.width / 2}[side]  # fmt: skip
+        outer = [b.hi[axis] if side in ("under", "front", "left") else b.lo[axis] for b in boxes]
+        spaces = tuple(((b.lo[0], b.lo[1], b.grate_z), b.hi) for b in boxes)
+        passages: list[tuple[Point, Point]] = []
+        for b in boxes:
+            for o in holes:
+                if o.name in (f"firebox-{b.index}/inlet", f"firebox-{b.index}/mouth"):
+                    lo, hi = list(o.lo), list(o.hi)
+                    near = b.hi[axis] if side in ("under", "front", "left") else b.lo[axis]
+                    lo[axis], hi[axis] = sorted((near, face))
+                    passages.append(((lo[0], lo[1], lo[2]), (hi[0], hi[1], hi[2])))
+        grate = min(b.grate_z for b in boxes)
+        out.append(_Fire(side, spaces, tuple(passages), grate, axis, face, outer[0]))
+    return out
+
+
+@dataclass(frozen=True)
+class _Stack:
+    """The chimney (mm): the channel from the flue wall's inside face through it, the run and the
+    chimney's near wall, and the stack's inside to its top."""
+
+    passage: tuple[Point, Point]
+    stack: tuple[Point, Point]
+    wall: str
+    inside: float  # the flue wall's inside face
+    outside: float  # and its outside
+
+
+def _stack(kiln: Kiln, lay: _Layout) -> _Stack | None:
+    """The design's chimney beside the kiln, its section and its flue port given; None for any
+    other (refused where it matters: `draft.kiln_path`)."""
+    d = kiln.draft
+    if d is None or d.chimney is None or d.chimney.inside is None or d.flue_port is None:
+        return None
+    if d.type == "up" or d.chimney_through != "beside" or d.chimneys != 1 or d.exits is not None:
+        return None
+    if d.flue_wall not in ("back", "front"):
+        return None
+    fw, fh = (v * 25.4 for v in d.flue_port.size_in())
+    if d.flue_port.round:
+        fw = fh = math.sqrt(math.pi / 4) * fw
+    inside = d.chimney.inside
+    if inside.diameter is not None:
+        across = along = math.sqrt(math.pi / 4) * si(inside.diameter, "mm")
+    else:
+        assert inside.width is not None
+        assert inside.depth is not None
+        across, along = si(inside.width, "mm"), si(inside.depth, "mm")
+    t_wall = sum(si(x.thickness, "mm") for x in kiln.lining.for_face(d.flue_wall))  # pyright: ignore[reportArgumentType]
+    run = si(d.run_to_chimney, "mm")
+    floor_t = sum(si(x.thickness, "mm") for x in kiln.lining.for_face("floor"))
+    sign = 1.0 if d.flue_wall == "back" else -1.0
+    face = lay.chambers[-1][1] if sign > 0 else lay.chambers[0][0]
+    outside = face + sign * t_wall
+    start = outside + sign * (run + CHIMNEY_WALL)
+    c = (-1.0 if sign > 0 else 1.0) * (si(d.flue_across, "mm") if d.flue_across is not None else 0)
+    y0, y1 = sorted((face, start))
+    s0, s1 = sorted((start, start + sign * along))
+    top = si(d.chimney.height, "mm")
+    return _Stack(
+        ((c - fw / 2, y0, 0.0), (c + fw / 2, y1, fh)),
+        ((c - across / 2, s0, -floor_t), (c + across / 2, s1, top)),
+        d.flue_wall, face, outside,
+    )  # fmt: skip
+
+
+def _plan(
+    lay: _Layout, n: int, fires: list[_Fire], stack: _Stack | None
+) -> tuple[list[_Zone], list[tuple[int, float]]]:
+    """The gas zones in the gas's order, fireboxes, chambers, chimney, as boxes of space that tile
+    it (mm), and the planes between them. Under-floor fireboxes own what is below the chamber
+    floor; fireboxes against a wall what is beyond its inside face; the chimney what is beyond the
+    flue wall's inside face above the floor and beyond its outside face below it (so fireboxes
+    under the floor may run under the flue wall); the chambers the rest, cut along the run."""
+    xl, xr, yf, yc, z0 = -INF, INF, -INF, INF, -INF
+    planes: list[tuple[int, float]] = []
+    for f in fires:
+        if f.side == "under":
+            z0 = 0.0
+        elif f.side == "front":
+            yf = f.face
+        elif f.side == "back":
+            yc = f.face
+        elif f.side == "left":
+            xl = f.face
+        else:
+            xr = f.face
+    yo = yc
+    if stack is not None:
+        if stack.wall == "back":
+            yc, yo = stack.inside, stack.outside
+        else:
+            yf = stack.inside
+    for axis, v in ((0, xl), (0, xr), (1, yf), (1, yc), (1, yo), (2, z0)):
+        if abs(v) < INF and (axis, v) not in planes:
+            planes.append((axis, v))
+    edges = [yf, *lay.cuts, yc]
+    zones: list[_Zone] = []
+    for f in fires:
+        if f.side == "under":
+            boxes: tuple[tuple[Point, Point], ...] = (((xl, yf, -INF), (xr, yo, z0)),)
+        elif f.side == "front":
+            boxes = (((-INF, -INF, -INF), (INF, yf, INF)),)
+        elif f.side == "back":
+            boxes = (((-INF, yc, -INF), (INF, INF, INF)),)
+        elif f.side == "left":
+            boxes = (((-INF, yf, -INF), (xl, yo, INF)),)
+        else:
+            boxes = (((xr, yf, -INF), (INF, yo, INF)),)
+        name = "firebox" if len(fires) == 1 else f"firebox {f.side}"
+        lo, hi = sorted((f.outer, f.face))
+        zones.append(_Zone(name, "firebox", boxes, f.grate, (f.axis, lo, hi)))
+    many = n > 1
+    for k in range(n):
+        box = ((xl, edges[k], z0), (xr, edges[k + 1], INF))
+        zones.append(_Zone(f"chamber {k + 1}" if many else "chamber", "chamber", (box,)))
+    if stack is not None:
+        sign = 1.0 if stack.wall == "back" else -1.0
+        if stack.wall == "back":
+            boxes = (((-INF, yc, z0), (INF, INF, INF)), ((-INF, yo, -INF), (INF, INF, z0)))
+        else:
+            boxes = (((-INF, -INF, z0), (INF, yf, INF)),)
+        boxes = tuple(b for b in boxes if b[1][2] > b[0][2])
+        start = stack.stack[0][1] if sign > 0 else stack.stack[1][1]
+        zones.append(_Zone("chimney", "chimney", boxes, top=stack.stack[1][2],
+                           stack=(1, start, sign)))  # fmt: skip
+    return zones, [*planes, *((1, c) for c in lay.cuts)]
 
 
 def _rooms(lay: _Layout, n: int, kiln: Kiln) -> tuple[Room, ...]:
@@ -282,23 +493,44 @@ def _rooms(lay: _Layout, n: int, kiln: Kiln) -> tuple[Room, ...]:
                  for k in range(n))  # fmt: skip
 
 
-def _built(kiln: Kiln, name: str, chambers: int) -> str:
-    """The lining face a surface is built in: the walls between chambers ("between") take their
-    flue holes' sides too."""
-    face, _, k = name.partition(" ")
+def _built(kiln: Kiln, name: str, chambers: int, plan: list[_Zone]) -> tuple[str, int]:
+    """The lining face a surface is built in and the gas zone it faces: the walls between chambers
+    ("between") take their flue holes' sides too; a firebox's surfaces its own lining ("firebox"),
+    the floor over it and its inlet flues the floor's; the chimney's its brick ("chimney"), its
+    channel through the flue wall that wall's."""
+    names = [z.name for z in plan]
+    if name in ("grate", "firebox walls", "firebox roof", "inlet flues"):
+        k = next(i for i, z in enumerate(plan) if z.kind == "firebox")
+        under = plan[k].band[0] == 2  # under the floor: the floor roofs it, its inlets in it
+        return {"grate": "grate", "firebox walls": "firebox",
+                "inlet flues": "floor" if under else "walls",
+                "firebox roof": "floor" if under else "firebox"}[name], k  # fmt: skip
+    if name in ("exit flue", "chimney walls", "chimney top"):
+        k = names.index("chimney")
+        wall = kiln.draft.flue_wall if kiln.draft is not None else "back"
+        return {"exit flue": wall, "chimney walls": "chimney", "chimney top": "open"}[name], k
+    face, _, tag = name.partition(" ")
+    chamber_zones = [i for i, z in enumerate(plan) if z.kind == "chamber"]
+    k = chamber_zones[int(tag) - 1] if tag.isdigit() else chamber_zones[0]
     if face == "flues":
-        return "between"
-    if chambers > 1 and k:
-        i = int(k)
+        return "between", k
+    if chambers > 1 and tag.isdigit():
+        i = int(tag)
         if (face == "front" and i > 1) or (face == "back" and i < chambers):
-            return "between"
+            return "between", k
     if face == "wall":
-        return "walls"
-    return face
+        return "walls", k
+    if face == "open":
+        return "open", k
+    return face, k
 
 
-def cavity(kiln: Kiln, segments: int = 1) -> Chamber:
-    """The gas volume's surfaces, gas zones and rooms from the engine's own solid; no openings."""
+def cavity(kiln: Kiln, segments: int = 1, path: bool = False) -> Chamber:
+    """The gas volume's surfaces, gas zones and rooms from the engine's own solid; no openings.
+    With ``path``, the fireboxes (from their grates up, with their inlet flues) and the chimney
+    (its channel through the flue wall and its stack) join it as gas zones of their own (H13)."""
+    from build123d import Box, Pos
+
     from kilndesigner.massing import run_of
 
     if segments < 1:
@@ -315,14 +547,23 @@ def cavity(kiln: Kiln, segments: int = 1) -> Chamber:
     if shape == "crossing":
         lay = _Layout(lay.width, lay.chambers, (), ())
     n = len(lay.cuts) + 1
-    many = n > 1
-    namer = _namer(lay, many)
+    fires = _fires(kiln) if path else []
+    stack = _stack(kiln, lay) if path else None
+    extra = [b for f in fires for b in (*f.spaces, *f.passages)]
+    if stack is not None:
+        extra += [stack.passage, stack.stack]
+    for lo, hi in extra:
+        size = [h - lo_ for lo_, h in zip(lo, hi, strict=True)]
+        mid = [(lo_ + h) / 2 for lo_, h in zip(lo, hi, strict=True)]
+        solid = solid + Pos(mid[0], mid[1], mid[2]) * Box(size[0], size[1], size[2])
+    plan, planes = _plan(lay, n, fires, stack)
+    namer = _namer(lay, plan, solid)
     groups: dict[str, list[Any]] = {}
-    pieces = _pieces(solid, lay.cuts)
-    volumes = np.zeros(n)
-    for piece in pieces:
+    volumes = np.zeros(len(plan))
+    for piece in _pieces(solid, planes):
         c = piece.center()
-        volumes[_zone_of(lay, c.Y)] += float(piece.volume) * MM**3
+        k = next(i for i, z in enumerate(plan) if _inside(z.boxes, (c.X, c.Y, c.Z)))
+        volumes[k] += float(piece.volume) * MM**3
         for face in piece.faces():
             named = namer(piece, face)
             if named is not None:
@@ -331,10 +572,10 @@ def cavity(kiln: Kiln, segments: int = 1) -> Chamber:
     if isinstance(kiln.roof, OpenTop):
         zones = [Zone(z.name.replace("roof", "open top"), z.triangles) for z in zones]
     gas = tuple(
-        GasZone(f"chamber {k + 1}" if many else "chamber", "chamber", reg, float(volumes[k]))
-        for k, reg in enumerate(_regions(lay, n))
+        GasZone(z.name, z.kind, tuple((_m(lo), _m(hi)) for lo, hi in z.boxes), float(v))
+        for z, v in zip(plan, volumes, strict=True)
     )
-    built = {z.name: (_built(kiln, z.name, run.chambers), _zone_index(z.name, many)) for z in zones}
+    built = {z.name: _built(kiln, z.name, run.chambers, plan) for z in zones}
     f0, b0, h0, _ = lay.chambers[0]
     if shape == "crossing":
         c = kiln.chamber
@@ -345,11 +586,14 @@ def cavity(kiln: Kiln, segments: int = 1) -> Chamber:
     )  # fmt: skip
 
 
-def _zone_index(name: str, many: bool) -> int:
-    return int(name.rsplit(" ", 1)[1]) - 1 if many else 0
+def _m(p: Point) -> Point:
+    return (p[0] * MM, p[1] * MM, p[2] * MM)
 
 
-ORDER = ("left", "right", "front", "back", "floor", "roof", "wall", "flues")
+ORDER = (
+    "left", "right", "front", "back", "floor", "roof", "wall", "flues", "grate", "firebox",
+    "inlet", "exit", "chimney",
+)  # fmt: skip
 
 
 def _order(name: str) -> tuple[int, int]:
@@ -407,11 +651,12 @@ def _on(c: Chamber, k: int | None) -> tuple[tuple[float, float, float], float]:
 
 
 def _placed(c: Chamber, wall: str, p: Patch) -> Patch:
-    """The opening on the surface of the gas zone its centre is in."""
-    if len(c.gas) <= 1:
+    """The opening on the surface of the chamber zone its centre is in."""
+    rooms = [g for g in c.gas if g.kind == "chamber"]
+    if len(rooms) <= 1:
         return p
     y = p.centre[1]
-    k = next(i for i, g in enumerate(c.gas) for lo, hi in g.regions if lo[1] <= y <= hi[1])
+    k = next(i for i, g in enumerate(rooms) for lo, hi in g.regions if lo[1] <= y <= hi[1])
     return replace(p, face=f"{wall} {k + 1}")
 
 
@@ -428,6 +673,9 @@ def openings(kiln: Kiln, c: Chamber | tuple[float, float, float]) -> tuple[list[
     notes: list[str] = []
     draft = kiln.draft
     rows = kiln.chamber.chambers > 1
+    kinds = {g.kind for g in c.gas}
+    if "chimney" in kinds:  # the exit flue is the chimney zone's channel
+        draft = None
     if draft is not None and draft.flue_port is not None and draft.type != "up":
         w, h, rnd = _size(draft.flue_port)
         across = si(draft.flue_across, "m") if draft.flue_across is not None else 0.0
@@ -441,7 +689,7 @@ def openings(kiln: Kiln, c: Chamber | tuple[float, float, float]) -> tuple[list[
             notes.append("the exit flue in a round wall: not carved yet, left out")
     elif draft is not None and draft.exits is not None:
         out += _exits(kiln, c, rows, notes)
-    if kiln.heat.fire is not None:
+    if kiln.heat.fire is not None and "firebox" not in kinds:
         out += _inlets(kiln, c, rows, notes)
     gas = kiln.heat.gas
     if gas is not None and gas.burners.count is not None and gas.burners.wall != "floor":
@@ -621,8 +869,9 @@ def _inlets(kiln: Kiln, c: Chamber, rows: bool, notes: list[str]) -> list[Patch]
     return out
 
 
-def chamber(kiln: Kiln, segments: int = 1) -> Chamber:
-    """The inside with its openings; a single chamber cut into ``segments`` along its length."""
-    c = cavity(kiln, segments)
+def chamber(kiln: Kiln, segments: int = 1, path: bool = False) -> Chamber:
+    """The inside with its openings; a single chamber cut into ``segments`` along its length;
+    with ``path``, the fireboxes and the chimney as gas zones of their own."""
+    c = cavity(kiln, segments, path)
     patches, notes = openings(kiln, c)
     return replace(c, patches=tuple(patches), notes=tuple(notes))

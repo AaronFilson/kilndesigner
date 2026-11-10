@@ -140,6 +140,17 @@ class Products:
     x_co2: Vector
     x_co: Vector
     steps: tuple[Step, ...] = field(default=())
+    air_enthalpy: Vector = field(default_factory=lambda: np.zeros(0))  # J per kg air
+
+    def h_air(self, t: float) -> float:
+        """The air's enthalpy (J/kg) at t, on GRI-Mech's formation basis: the stream through
+        zones before the fire (staged firing)."""
+        return float(np.interp(t, self.temps, self.air_enthalpy))
+
+    @property
+    def fuel_enthalpy(self) -> float:
+        """The fuel's own enthalpy as it enters (J per kg fuel): the reactants less their air."""
+        return self.reactants - self.air * self.h_air(self.t_air)
 
     def check(self, t: float) -> None:
         if not T_MIN <= t <= T_MAX:
@@ -244,9 +255,13 @@ def products(fuel: Fuel, air_ratio: float, t_air: float) -> Products:
         cols["c"].append(float(g.X[ic]))
         cols["co"].append(float(g.X[ico]))
     arr = {k: np.array(v) for k, v in cols.items()}
+    air_h = []
+    for t in temps:  # the air as it is, unreacted
+        g.TPX = float(t), ATM, f"O2:1.0, N2:{src.N2_PER_O2}"
+        air_h.append(float(g.enthalpy_mass))
     p = Products(
         fuel, air_ratio, t_air, air, mass, reactants, temps, arr["h"], arr["rho"], arr["mu"],
-        arr["k"], arr["cp"], arr["w"], arr["c"], arr["co"],
+        arr["k"], arr["cp"], arr["w"], arr["c"], arr["co"], air_enthalpy=np.array(air_h),
     )  # fmt: skip
     return replace(p, steps=_working(p))
 

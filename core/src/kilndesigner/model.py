@@ -1459,12 +1459,30 @@ class Firebox(Spec):
             "(Kitade's 30°, Fig 8-11). Its height is the roof's at the chamber end"
         ),
     )
-    mouth: Literal["front", "back"] | None = Field(
+    runs: Literal["along", "across"] = Field(
+        default="along",
+        description=(
+            "Under the floor: which way it runs. 'along': from the firing end towards the flue "
+            "end, side by side across the chamber, as Phoenix's (Fig 5-67). 'across': from side "
+            "to side, along the front and back walls, side by side along the run with one wall "
+            "between each pair, its far end under the far side wall so its inlet flues come up "
+            "on the floor against it, as the fast-fire's two in an S (Olsen p.204, Fig 5-37, "
+            "Fig 5-44)"
+        ),
+    )
+    mouth: (
+        Literal["front", "back", "left", "right"]
+        | list[Literal["front", "back", "left", "right"]]
+        | None
+    ) = Field(
         default=None,
         description=(
-            "Under the floor: the end of the run it is fed from, its mouth and ash pit's mouth "
-            "there. Left out: the front. Phoenix's is stoked from the chimney end (Fig 5-67), "
-            "'back'"
+            "Under the floor: the end it is fed from, its mouth and ash pit's mouth there: "
+            "'front' or 'back' for one running along the run, 'left' or 'right' for one running "
+            "across it. Left out: the front, or the left. Phoenix's is stoked from the chimney "
+            "end (Fig 5-67), 'back'. Or one per firebox of this entry, front to back (or left to "
+            "right): the fast-fire's S is fed from opposite sides, the front one from the right "
+            "and the back one from the left (Fig 5-37), [right, left]"
         ),
     )
     inlets_at: Literal["far", "spread"] = Field(
@@ -1499,6 +1517,15 @@ class Firebox(Spec):
             "min(h/2, d/3) of the course height h and the wall's brick thickness d"
         ),
     )
+    lining: list[Layer] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The firebox's own walls, hot face first, where the book builds it of other brick "
+            "than the chamber, as the fast-fire's straight low-duty firebrick (Olsen Fig 5-39, "
+            "'90 required'). Left out: the kiln's walls' layers"
+        ),
+    )
 
     @model_validator(mode="after")
     def _firing_fields_fit(self) -> Firebox:
@@ -1516,10 +1543,24 @@ class Firebox(Spec):
                     "a firebox under the floor is roofed by the chamber's floor: it has no roof "
                     "of its own to slope"
                 )
-        if not under and (self.mouth is not None or self.inlets_at != "far"):
+        laid = self.mouth is not None or self.inlets_at != "far" or self.runs != "along"
+        if not under and laid:
             raise ValueError(
-                "mouth and inlets_at are for a firebox under the floor: one against a wall is fed "
-                "from across the firebox from the chamber, its inlets in the wall between"
+                "mouth, inlets_at and runs are for a firebox under the floor: one against a wall "
+                "is fed from across the firebox from the chamber, its inlets in the wall between"
+            )
+        ends = {"along": ("front", "back"), "across": ("left", "right")}[self.runs]
+        mouths = self.mouth if isinstance(self.mouth, list) else [self.mouth]
+        if any(m is not None and m not in ends for m in mouths):
+            raise ValueError(
+                f"a firebox running {self.runs} the run is fed from its {' or '.join(ends)}"
+            )
+        if isinstance(self.mouth, list) and len(self.mouth) != self.count:
+            raise ValueError(f"give one mouth for each of the {self.count} fireboxes")
+        if self.runs == "across" and (self.count > 2 or self.inlets_at != "far"):
+            raise ValueError(
+                "fireboxes running across under the floor are laid as the fast-fire's S: one or "
+                "two, their inlets at the far end"
             )
         if self.inlets_at == "spread" and self.inlet is None:
             raise ValueError("inlets spread over the floor need their size: give the inlet")

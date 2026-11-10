@@ -221,6 +221,17 @@ def _firebox_cells(kiln: Kiln, run: Run, box: Firebox) -> list[Cell]:
             y = run.chamber_centre(i) - run.depth_of(i) / 2 + fw / 2
             out.append(Cell("pit", y, fw, width=min(fl, run.width), z0=-fh, z1=0.0))
         return out
+    if face == "under" and box.runs == "across":
+        # Along the front and back walls, one wall between them, each far end under the far
+        # side wall (firebox_parts._across: Olsen p.204, Fig 5-37)
+        walls = sum(si(x.thickness, "mm") for x in (box.lining or kiln.lining.walls))
+        mouths = box.mouth if isinstance(box.mouth, list) else [box.mouth] * n
+        middle = (run.back + run.front) / 2
+        for i, m in enumerate(mouths):
+            y = middle + (fw + walls) * (i - (n - 1) / 2)
+            x = -run.width / 2 + fl / 2 if m == "right" else run.width / 2 - fl / 2
+            out.append(Cell("pit", y, fw, x=x, width=fl, z0=-run.between - fh, z1=-run.between))
+        return out
     centres = [across * ((i + 0.5) / n - 0.5) for i in range(n)]
     if "-" in face:
         # On a diagonal (B2): against the front or back wall, its middle on the diagonal

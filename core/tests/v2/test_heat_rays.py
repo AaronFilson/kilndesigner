@@ -170,7 +170,9 @@ def test_the_fast_fires_own_chamber_with_its_openings_and_setting() -> None:
     names = [p.name for p in c.patches]
     assert names == ["exit flue", "inlet flue 1", "inlet flue 2", "spy hole 1"]
     inlets = [p for p in c.patches if p.name.startswith("inlet")]
-    assert [round(p.area / IN**2, 2) for p in inlets] == [60.75, 60.75]
+    # 4½ in along each firebox × the 11¼ in of its 13½ in width the 27 in floor exposes
+    assert [round(p.area / IN**2, 2) for p in inlets] == [50.62, 50.62]
+    assert not any("moved onto the floor" in n for n in c.notes)
     xs = sorted(p.centre[0] for p in inlets)
     assert xs[0] < 0 < xs[1]  # one each side: the S
     setting = rays.box_zone("setting", (-9 * IN, -9 * IN, 9 * IN), (9 * IN, 12.5 * IN, 33 * IN))
@@ -345,6 +347,34 @@ def test_a_tube_cut_into_segments() -> None:
     r = rays.trace(list(c.zones), rays=10_000, regions=c.regions(),
                    gas=[g.name for g in c.gas], ks=(0.3,))  # fmt: skip
     assert r.gas_volumes == pytest.approx([c.volume / 4] * 4, rel=2e-2)
+
+
+@pytest.mark.geometry
+def test_the_fast_fires_whole_gas_path_as_one_enclosure() -> None:
+    """H13: the fireboxes (from the grate up, their inlet flues through the floor) and the chimney
+    (its channel through the back wall and its stack) as gas zones of the chamber's enclosure:
+    the floor's underside the fireboxes' roof, the grate the fire; each zone's volume by its own
+    chords (Cauchy) within 1 %; the inlet and exit flues no longer openings."""
+    c = ch.chamber(load_design(OLSEN / "fast-fire.yaml"), path=True)
+    assert [(g.name, g.kind) for g in c.gas] == [
+        ("firebox", "firebox"), ("chamber", "chamber"), ("chimney", "chimney"),
+    ]  # fmt: skip
+    a = _areas(c)
+    assert {"grate", "firebox walls", "firebox roof", "inlet flues", "exit flue",
+            "chimney walls", "chimney top"} <= set(a)  # fmt: skip
+    assert a["grate"] == pytest.approx(2 * 13.5 * 40.5 * IN**2, rel=1e-6)
+    assert a["chimney top"] == pytest.approx(81 * IN**2, rel=1e-6)
+    assert c.built["firebox roof"] == ("floor", 0)
+    assert c.built["firebox walls"] == ("firebox", 0)
+    assert c.built["chimney walls"] == ("chimney", 2)
+    assert c.built["floor"] == ("floor", 1)
+    assert [p.name for p in c.patches] == ["spy hole 1"]
+    stack = 9 * 9 * IN**2 * (14 * 12 * IN + 4.5 * IN)
+    assert c.gas[2].volume == pytest.approx(stack + 9 * 7.5 * 9 * IN**3, rel=1e-6)
+    r = rays.trace(list(c.zones), c.patches, rays=20_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+    assert r.gas_volumes == pytest.approx([g.volume for g in c.gas], rel=1e-2)
 
 
 @pytest.mark.geometry

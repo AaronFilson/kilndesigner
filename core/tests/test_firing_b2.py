@@ -37,9 +37,11 @@ def _data(name: str) -> dict[str, Any]:
 
 
 def _fast_fire(**firebox: Any) -> Kiln:
+    """The fast-fire's fireboxes running along the run, as the older layout drew them (these
+    tests are of that layout), changed as given."""
     data = _data("wood-fast-fire")
     for fb in data["heat"]["fire"]["fireboxes"]:
-        fb.update(firebox)
+        fb.update({"runs": "along", "mouth": None} | firebox)
     return Kiln.model_validate(data)
 
 
@@ -138,6 +140,76 @@ def test_mouth_and_inlets_at_are_for_under_floor_fireboxes(
 def test_spread_inlets_need_their_size() -> None:
     with pytest.raises(ValidationError, match="need their size"):
         _fast_fire(inlets_at="spread", inlet=None)
+
+
+def test_the_fast_fires_fireboxes_run_along_the_front_and_back_walls_in_an_s() -> None:
+    """Olsen p.204, Fig 5-37: two fireboxes along the front and back walls, side by side with one
+    wall between them, the front one fed from the right and the back one from the left, each far
+    end under the far side wall so its inlet flue comes up on the floor against it (Fig 5-44);
+    built of the book's low-duty firebrick (Fig 5-39), the wall between built once."""
+    kiln = load_design(EXAMPLES / "fast-fire.yaml")
+    front, back = firebox_boxes(kiln)
+    half_w, half_d = 13.5 * IN, 13.5 * IN
+    assert (front.mouth, back.mouth) == ("+x", "-x")
+    assert not front.along_y
+    assert front.lo[0] == pytest.approx(-half_w)  # its far end under the left wall
+    assert back.hi[0] == pytest.approx(half_w)
+    assert front.hi[0] - front.lo[0] == pytest.approx(40.5 * IN)
+    assert back.lo[1] - front.hi[1] == pytest.approx(4.5 * IN)  # one wall between
+    assert (front.lo[1] + back.hi[1]) / 2 == pytest.approx(0.0)
+    inlets = sorted((o for o in openings(kiln) if o.name.endswith("/inlet")),
+                    key=lambda o: o.lo[1])  # fmt: skip
+    assert [o.name for o in inlets] == ["firebox-1/inlet", "firebox-2/inlet"]
+    a, b = inlets
+    assert (a.lo[0], a.hi[0]) == pytest.approx((-half_w, -half_w + 4.5 * IN))
+    assert (b.lo[0], b.hi[0]) == pytest.approx((half_w - 4.5 * IN, half_w))
+    # 13½ in channels with the wall between need 31½ in: on the 27 in floor each opens 11¼ in
+    assert a.lo[1] == pytest.approx(-half_d)
+    assert b.hi[1] == pytest.approx(half_d)
+    assert a.hi[1] - a.lo[1] == pytest.approx(11.25 * IN)
+    parts = lining_parts(kiln)
+    names = [p.name for p in parts]
+    assert len(names) == len(set(names))
+    mine = [p for p in parts if p.name.startswith("firebox-")]
+    walls = [p for p in mine if "-floor" not in p.name]  # the ash pits' floors: the floor's
+    assert {p.material for p in walls} == {"firebrick-medium-duty-smithfield"}
+    between = [p for p in mine if p.name.endswith("-between")]
+    assert len(between) == 1
+    message = firebox_findings(kiln)[0].message
+    assert "running across along the front wall, fed from the right" in message
+    assert "built of its own lining" in message
+
+
+def test_fireboxes_running_across_take_side_mouths() -> None:
+    kiln = _fast_fire(runs="across")
+    a, b = firebox_boxes(kiln)
+    assert a.mouth == b.mouth == "-x"
+    from kilndesigner.massing import cells, run_of
+
+    pits = [c for c in cells(kiln, run_of(kiln)) if c.kind == "pit"]
+    assert [round(c.width / IN, 2) for c in pits] == [40.5, 40.5]
+    assert pits[0].y < 0 < pits[1].y
+
+
+@pytest.mark.parametrize(
+    ("change", "match"),
+    [
+        ({"runs": "across", "mouth": "back"}, "fed from its left or right"),
+        ({"mouth": "left"}, "fed from its front or back"),
+        ({"mouth": ["front"]}, "one mouth for each"),
+        ({"runs": "across", "count": 3}, "laid as the fast-fire's S"),
+    ],
+)
+def test_what_an_under_floor_firebox_running_across_refuses(
+    change: dict[str, Any], match: str
+) -> None:
+    with pytest.raises(ValidationError, match=match):
+        _fast_fire(**change)
+
+
+def test_runs_is_for_under_floor_fireboxes() -> None:
+    with pytest.raises(ValidationError, match="for a firebox under the floor"):
+        _groundhog(runs="across")
 
 
 # --- Roman and sloped roofs ---------------------------------------------------------------------

@@ -62,9 +62,12 @@ def test_under_floor_fireboxes_have_their_own_walls_and_inlets_through_the_floor
     boxes = firebox_boxes(kiln)
     assert len(boxes) == 2
     a, b = boxes
-    # Packed so each has its own walls: no overlap
-    walls = sum(x.thickness.to("mm").magnitude for x in kiln.lining.walls)
-    assert b.lo[0] - a.hi[0] >= 2 * walls - 1e-6
+    # Along the front and back walls in an S, one wall of their own brick between (Fig 5-37)
+    fire = kiln.heat.fire
+    assert fire is not None
+    own = fire.fireboxes[0].lining
+    assert own is not None
+    assert b.lo[1] - a.hi[1] == pytest.approx(sum(x.thickness.to("mm").magnitude for x in own))
     assert a.hi[2] < 0  # under the floor
     inlets = [o for o in openings(kiln) if o.name.endswith("/inlet")]
     assert len(inlets) == 2
