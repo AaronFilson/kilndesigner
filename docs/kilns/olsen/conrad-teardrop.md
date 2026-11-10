@@ -56,6 +56,10 @@ No YAML values changed in this pass. Only the notes were added.
 - Door: 33 × 37 in in the right wall, flat head, laid out but not checked (no source gives its
   statics).
 - Damper: a shelf in a 12 in slot.
+- v2 statics (2026-11-10): the cast dome over the teardrop, sliced into arches across its width
+  (Heyman's slicing), stands cold and hot on its buttressed walls; being flat (10 in rise over
+  51½ in), its strips push hard: the most any needs of the buttress is 164.9 lbf/ft hot
+  (`docs/planning/11-09-26.md` §H item 10).
 
 ## Open questions for the user
 

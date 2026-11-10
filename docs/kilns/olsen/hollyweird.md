@@ -41,6 +41,10 @@ Cone 11.
 The build finishes with no errors. Chamber 335 ft³; top temperature 2361 °F (cone 11); heat loss
 159.3 kW; priced materials $6,731.
 
+v2 statics (2026-11-10): each chamber's cast dome, sliced into arches across the 55 in width
+(Heyman's slicing), stands cold and hot on its buttressed walls; the most any strip needs of the
+buttress is 143.6 lbf/ft hot (`docs/planning/11-09-26.md` §H item 10).
+
 ## Open questions
 
 1. How tall is the chimney? With its height, the printed 15 × 24 in section can go in.

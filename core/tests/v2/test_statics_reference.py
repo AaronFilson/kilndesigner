@@ -20,10 +20,6 @@ NOT_MODELLED = {
     # vaults crossing in a groin: a 3-D force pattern or 3-D blocks
     "church-skaelskor": "groin",
     "fireworks-edmonton": "groin",
-    # domes over square or curved plans
-    "conrad-teardrop": "sail dome",
-    "hollyweird": "sail dome",
-    "miravet": "sail dome",
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }
@@ -90,3 +86,17 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
         assert n["least on the buttress at the front, cold"] == pytest.approx(0.0, abs=1e-6)
     rows = {k for k, r in results.items() if r.kind == "arches along the draft"}
     assert len(rows) == 10
+
+
+@pytest.mark.slow
+@pytest.mark.geometry
+def test_what_holds_the_sail_domes(results: dict[str, KilnStatics]) -> None:
+    """The domes over square, oblong and curved plans, sliced: the most any strip needs of the
+    walls' buttress, hot: Miravet's dense-brick dome about 100 lbf/ft, Calimpong's and
+    Hollyweird's flat cast domes 165 and 144 lbf/ft."""
+    lbft = 4.4482216152605 / 0.3048
+    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 143.6}
+    for kid, hot in want.items():
+        r = results[kid]
+        assert r.kind == "sail dome"
+        assert r.numbers["least on the walls' buttress, hot"] / lbft == pytest.approx(hot, abs=1.0)

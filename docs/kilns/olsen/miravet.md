@@ -31,6 +31,10 @@ Figs 6-20 to 6-23 photos).
 
 521 ft³; heat loss 85.2 kW; inlet area 1260 in².
 
+v2 statics (2026-11-10): the sail dome, sliced into arches across its width (Heyman's slicing),
+stands cold and hot on its 36 in walls; the most any strip needs of what holds the walls is
+99.5 lbf/ft hot (`docs/planning/11-09-26.md` §H item 10).
+
 ## Open questions for the user
 
 1. Fig 6-19: is "6'6"" the firebox's inside height, and is "3'" the mouth's sill above the

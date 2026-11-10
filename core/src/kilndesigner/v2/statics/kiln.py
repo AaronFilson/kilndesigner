@@ -12,9 +12,10 @@ missing physics, and `missing` names it.
   section along the row (`row.py`).
 - **Catenary arches**: the ring along the engine's catenary on fixed feet (`arch.catenary_ring`).
 - **Round domes on round walls**: rings of revolution with hoop compression (`dome.py`).
+- **Domes over square, oblong or curved plans** (sail domes): sliced into arches across the width,
+  each on its walls (`sail.py`).
 - **No roof**: free-standing walls under their own weight.
-- Refused, each with its reason: crossing vaults, domes over square or curved plans, and fibre
-  roofs hung in steel.
+- Refused, each with its reason: crossing vaults, and fibre roofs hung in steel.
 """
 
 from __future__ import annotations
@@ -24,7 +25,7 @@ from dataclasses import dataclass, field
 
 from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, OpenTop, SprungArch
 from kilndesigner.units import Q_, si
-from kilndesigner.v2.statics import sources
+from kilndesigner.v2.statics import sail, sources
 from kilndesigner.v2.statics.arch import SUPPORT, catenary_ring
 from kilndesigner.v2.statics.dome import kiln_dome, kiln_not_modelled
 from kilndesigner.v2.statics.rigid import Problem, Status, assemble, force_on, solve
@@ -68,6 +69,8 @@ def statics(kiln: Kiln) -> KilnStatics:
     if isinstance(roof, CatenaryArch):
         return _catenary(kiln)
     if isinstance(roof, Dome):
+        if kiln.chamber.shape != "round":
+            return _sail(kiln)
         why = kiln_not_modelled(kiln)
         if why is not None:
             return _refused("dome", why)
@@ -99,11 +102,31 @@ def _refused(kind: str, why: str) -> KilnStatics:
 
 
 ROW = "arches along the draft"
+SAIL = "sail dome"
 ANALOGY = (
     "dense brick's hot crushing: with the 25 psi stand-in carried over from IFB by analogy (a "
     "question for the user) there is no admissible state hot, without it one; real hot crushing "
     "and creep data, and the shell's temperature through its thickness, are to decide it"
 )
+
+
+def _sail(kiln: Kiln) -> KilnStatics:
+    """A dome over a square, oblong or curved plan, sliced into arches across its width; a hot
+    verdict that rests only on a crushing stand-in by analogy isn't given."""
+    why = sail.not_modelled(kiln)
+    if why is not None:
+        return _refused(SAIL, why)
+    stands: dict[str, bool | None] = {}
+    numbers: dict[str, float] = {}
+    steps: list[Step] = []
+    missing: str | None = None
+    for state in STATES:
+        r = sail.analyse(kiln, state)
+        stands[state] = None if r.analogy else r.stands
+        missing = ANALOGY if r.analogy else missing
+        numbers[f"least on the walls' buttress, {state}"] = r.least
+        steps += r.steps
+    return KilnStatics(SAIL, stands, numbers, missing, tuple(steps))
 
 
 def _row(kiln: Kiln) -> KilnStatics:
