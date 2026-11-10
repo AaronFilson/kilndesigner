@@ -37,6 +37,10 @@ HEAT = frozenset((
     "gas_pressure", "orifice", "oil_rate", "nozzle", "element_power", "voltage", "current",
     "surface_load", "atmosphere", "schedule", "damper_schedule", "ware", "setting", "evenness",
     "altitude", "wall_heat_loss", "wall_heat_storage", "cold_face_temperature",
+    # each kiln's own fuel (research A1, docs/research/kiln-fuels.md): the wood, oil or coal, its
+    # moisture (% wet basis), net heating value (dry), composition (% dry) and a unit's weight
+    "fuel_species", "fuel_moisture", "fuel_heating_value", "fuel_carbon", "fuel_hydrogen",
+    "fuel_oxygen", "fuel_nitrogen", "fuel_sulphur", "fuel_ash", "fuel_unit_mass",
 ))  # fmt: skip
 CHAMBER = frozenset((
     "volume", "stacking_volume", "width", "depth", "height", "springline_height", "crown_height",
@@ -51,6 +55,9 @@ FLOW = frozenset((
     "grate_area", "ash_pit", "inlet_flue", "exit_flue", "exit_flue_area", "between_flues",
     "chimney_count", "chimney_height", "chimney_section", "chimney_run", "damper", "burner_port",
     "stoke_hole", "spy_hole", "passive_air", "bag_wall", "salt_port",
+    # the firebox's air intakes (research A2, docs/research/firebox-air-intakes.md): below the
+    # grate (the ash-pit mouth) and above it (the stoke hole and air holes), as open areas
+    "primary_air", "secondary_air",
 ))  # fmt: skip
 STRUCTURE = frozenset((
     "roof_type", "span", "rise", "rise_per_ft", "ring_thickness", "arch_material", "skewback",

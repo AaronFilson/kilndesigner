@@ -135,6 +135,14 @@ kilns:
         condition: the flue's width; its depth isn't drawn
         note: a vertical flue up the back to the hill's surface, drawn with a width arrow and no 
           number; not entered in the design (engine-sized chimney)
+      - what: primary_air
+        value: 576
+        unit: inch**2
+        status: derived
+        page: p.84
+        figure: Fig 4-5
+        reason: the printed 2 × 2 ft entrance and firebox
+        condition: no grate; the entrance admits the fuel and all the air (research A2)
     structure:
       - what: roof_type
         value: the cavity's own roof, a rounded teardrop section dug and fired in the clay bank
@@ -376,6 +384,7 @@ kilns:
       - firing time
       - wood per firing
       - the firebox door's size
+      - 'research A2: the firebox mouth''s size (the only air intake; no grate)'
     notes:
       - the slope is printed both as 20 % (text, p.108) and 20° (Fig 4-67); the design uses 20 % 
         (11.3°)
@@ -690,6 +699,16 @@ kilns:
         spread: heights ±3 in, diameter ±½ in, from the printed 19 ft 5 in, 42, 46, 36, 59, 65, 59 
           and 56 in
         note: the scales give chamber 2's printed 56 in as 52–56½ in
+      - what: secondary_air
+        value: [108, 126]
+        unit: inch**2
+        status: derived
+        page: p.94, p.201
+        figure: Figs 4-36, 8-7
+        reason: the 9 in mouth (Fig 4-36) × the 12–14 in air and stoke opening (Fig 8-7), read as width
+          × height
+        reading: uncertain
+        condition: the air and stoke opening above the grate (research A2)
     structure:
       - what: roof_type
         value: >-
@@ -948,6 +967,7 @@ kilns:
       - exit flues and chimney
       - cone, firing time, wood and oil per firing
       - what holds the catenary's feet (the design's frame.catenary warning)
+      - 'research A2: the side stoke hole''s width and the channel firebox''s air intakes'
     notes:
       - not the Tasmanian fibre kiln (blakebrough-tasmania)
       - the text's "width of the 6ft chamber" and the drawing's 45 in across the front disagree on 
@@ -1648,6 +1668,7 @@ kilns:
       - door size; inlet flue count
       - band size
       - wood moisture
+      - 'research A2: whether the 2 × 3½ ft ash pit (Fig 6-50) is its mouth; the stoke opening''s size'
   chappell-domura:
     name: John Chappell's Domura tandem kiln, its salt chamber
     design: examples/olsen/chappell-domura.yaml
@@ -1854,6 +1875,7 @@ kilns:
       - arch shape, direction and rise
       - damper size
       - which of the two kilns the shared chimney was sized for
+      - 'research A2: the salt firebox''s mouth and air intakes'
     notes:
       - the printed volumes disagree with the drawing (40 ft³ printed against about 57 ft³ drawn; 50
         against 45); Flagged in the notes
@@ -1973,6 +1995,14 @@ kilns:
         page: p.182
         figure: Fig 7-9
         condition: the groundhog chimney
+      - what: primary_air
+        value: 504
+        unit: inch**2
+        status: derived
+        page: p.179
+        figure: Fig 7-3
+        reason: two ash pits and walkways 14 in wide × 18 in deep, the type's drawing
+        condition: below the grates, fully open (research A2)
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin
@@ -2269,6 +2299,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the ash pit''s mouth (primary air)'
     notes:
       - the dome's first casting was too thin and had to be thickened (Fig 4-146), the nearest thing
         to a structural failure printed for these kilns, with no size for the thin casting
@@ -2529,6 +2560,23 @@ kilns:
         status: printed
         page: p.114, p.115
         figure: Fig 4-102
+      - what: primary_air
+        value: 364.5
+        unit: inch**2
+        status: derived
+        page: p.114
+        figure: Fig 4-97
+        reason: three air holes 13½ in wide × 9 in high, one under each front stoke hole, the count as
+          the figure draws it
+        condition: under the front stoke holes (research A2)
+      - what: secondary_air
+        value: 648
+        unit: inch**2
+        status: derived
+        page: p.114
+        figure: Fig 4-97
+        reason: three front stoke holes 13½ × 16 in, the count as the figure draws it
+        condition: the front stoke holes, fully open; the side stoke holes left out (research A2)
     structure:
       - what: roof_type
         value: an arch springing from the floor, rising less than a half-circle, keeping its shape 
@@ -2729,6 +2777,7 @@ kilns:
       - vault rise and thickness
       - exit-flue and stoking-port sizes
       - firing schedule; wood species and moisture
+      - 'research A2: the stoking port''s and its under-air supply''s sizes'
     notes:
       - the printed 848 ft³ is the box to 79 in; the design file adds the vault above it (about 
         1,010 ft³)
@@ -3017,6 +3066,24 @@ kilns:
         status: printed
         page: pp.141–142
         figure: Fig 5-44
+      - what: primary_air
+        value: [162, 216]
+        unit: inch**2
+        status: derived
+        page: p.140, p.199, p.204
+        figure: Fig 5-39
+        reason: two firebox mouths 13½ in wide below a grate 6–7 in up (p.199) on legs 7–8 in tall
+          (p.204)
+        condition: the firebox mouths below the grate, fully open (research A2); whether they were partly
+          closed isn't printed
+      - what: secondary_air
+        value: [121.5, 175.5]
+        unit: inch**2
+        status: derived
+        page: p.140, p.199, p.204
+        figure: Fig 5-39
+        reason: two firebox mouths 13½ in wide, 12½ in tall (five courses) less the grate's 6–8 in
+        condition: the firebox mouths above the grate, fully open (research A2)
     structure:
       - what: roof_type
         value: sprung arch, a bonded arch of No. 1 arch bricks with straights, laid on a form, 
@@ -3249,6 +3316,12 @@ kilns:
         status: assumed
         reason: the fast-fire design at sea level; 13½ × 13½ in at high altitude not stated for this
           kiln
+      - what: primary_air
+        value: [162, 216]
+        unit: inch**2
+        status: assumed
+        reason: as the fast-fire's (p.140, p.199, p.204), the design file's firebox
+        condition: the firebox mouths below the grate (research A2)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -3418,6 +3491,15 @@ kilns:
         status: drawing
         page: p.181
         figure: Fig 7-6
+      - what: primary_air
+        value: 504
+        unit: inch**2
+        status: derived
+        page: p.179
+        figure: Fig 7-3
+        reason: two ash pits 14 in wide × 18 in deep, the type's drawing; the door's adjustable air (Fig
+          7-4) isn't sized
+        condition: below the grates, fully open (research A2)
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin over the fire 
@@ -3793,6 +3875,13 @@ kilns:
         page: p.101
         figure: Fig 4-55
         spread: ±1 in on the heights, ±3 in along the wall
+      - what: primary_air
+        value: 1008
+        unit: inch**2
+        status: derived
+        page: p.102
+        reason: the fire-mouth hole 3½ × 2 ft when open
+        condition: no grate; the fire mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: sprung arches along the draft, one per chamber, semicircular, held by masonry
@@ -4047,6 +4136,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox''s mouths and air intakes'
     notes:
       - the text and Fig 4-85 differ on the chimney (5–10 against 5–12 ft), the width (7–10 against 
         the drawing's 5–10 ft firebox) and the length (12–24 ft against a 10–20 ft ware platform) 
@@ -4237,6 +4327,13 @@ kilns:
         status: drawing
         page: p.116
         figure: Fig 4-108
+      - what: secondary_air
+        value: 121.5
+        unit: inch**2
+        status: derived
+        page: p.117
+        reason: the stoke hole 9 × 13½ in in the door bricking; its grate-level air holes aren't sized
+        condition: the front firebox's stoke hole (research A2)
     structure:
       - what: dome_type
         value: two cast dome-shaped ceilings over a Bizen-style front chamber and a tube-style 
@@ -4536,6 +4633,7 @@ kilns:
       - flue sizes and counts between chambers
       - main firebox size
       - chimney section
+      - 'research A2: the main firebox''s mouth and the side stoke holes'' sizes'
     notes:
       - the design file's loss is likely overstated, as it takes the whole raw-clay wall as fired 
         (its header)
@@ -5096,6 +5194,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood and salt per firing
+      - 'research A2: the two firebox mouths'' sizes (photo only)'
     notes:
       - the notes read the firebox label as 1400cm across the firebox front; the page shows it 
         running along the ash pit (the design's direction), and printed 1400cm (the notes' digits); 
@@ -5375,6 +5474,7 @@ kilns:
       - arch thickness; side-wall thickness
       - firebox heights (scaled only)
       - ware and saggar load
+      - 'research A2: the fire mouth''s height (its width printed 2 ft 6 in) and the ash pit''s mouth'
     notes:
       - olsen-kilns.md's "Not given" for this kiln still lists firing hours as lost, though the same
         entry reads "over 50 hours" (the user's reading)
@@ -5585,6 +5685,7 @@ kilns:
       - flue count per wall
       - door size, the dogi's side stoke holes
       - the bracing's size
+      - 'research A2: the dogi''s mouth and air intakes'
     notes:
       - the "(30.5 x 38cm)" step is a misprint for 30.5 to 38 cm (Flagged in the notes)
 
@@ -5687,6 +5788,7 @@ kilns:
       - outer height; firebox length and place
       - temperature and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and the ash pit''s intake'
   kitade-tojilo:
     name: Kitade Tojilo chamber kiln, Kutani
     design: examples/olsen/kitade-tojilo.yaml
@@ -5842,6 +5944,22 @@ kilns:
         reading: flagged
         note: the arrow scales 20–24 in against the 12 in hole (step A); the hole centres scale 22 
           and 71 in from the end
+      - what: primary_air
+        value: 432
+        unit: inch**2
+        status: derived
+        page: p.202
+        figure: Fig 8-11
+        reason: two air draft and ash pit holes 12 in wide × 18 in tall
+        condition: below the grate, fully open (research A2)
+      - what: secondary_air
+        value: 63
+        unit: inch**2
+        status: derived
+        page: p.202
+        figure: Fig 8-11
+        reason: the stoke hole 9 × 7 in
+        condition: the stoke hole (research A2)
     structure:
       - what: roof_type
         value: arched
@@ -6087,6 +6205,7 @@ kilns:
       - chimney
       - flue count per wall
       - cone, firing time and fuel per firing (the Suzuki kiln's are its own)
+      - 'research A2: the stoke holes'' (takaguchi) and the main firebox''s intakes'
     notes:
       - a type, not one kiln; the design file draws one from the book's ranges
 
@@ -6326,6 +6445,7 @@ kilns:
       - flue and chimney sizes
       - wood per firing
       - ware load
+      - 'research A2: the firebox mouth and the ash pit''s intake under the brick grate'
     notes:
       - the design's 11 × 27 ft box with a 7 ft springline and a 33 in rise gives 2650 ft³, inside 
         the printed 1766–2825 ft³
@@ -6476,6 +6596,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox mouth and its air intakes'
     notes:
       - the two flues hidden behind the post are placed at ±5 in in the design (kiln doc question)
 
@@ -6627,6 +6748,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox mouth and its air intakes'
     notes:
       - a row of unlabelled openings is drawn along the foot of the front arch (air holes?)
 
@@ -6760,6 +6882,14 @@ kilns:
         status: printed
         page: p.158
         figure: Fig 6-19
+      - what: primary_air
+        value: 486
+        unit: inch**2
+        status: derived
+        page: p.158
+        figure: Fig 6-19
+        reason: the firebox mouth 27 in high × 18 in wide
+        condition: no grate; the mouth admits the fuel and the air (research A2)
     structure:
       - what: dome_type
         value: a dome on the cubic chamber
@@ -6905,6 +7035,14 @@ kilns:
         page: p.153
         figure: Fig 6-3
         note: checked on the page image, 2026-10-31 (the width was once read as 28 in)
+      - what: primary_air
+        value: 594
+        unit: inch**2
+        status: derived
+        page: p.153
+        figure: Fig 6-3
+        reason: the firebox mouth 27 in high × 22 in wide
+        condition: the mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: open; shards over the pots
@@ -7019,6 +7157,14 @@ kilns:
         value: 1½ in holes through the floor bricks; their count isn't printed
         status: printed
         page: pp.156–157
+      - what: primary_air
+        value: 486
+        unit: inch**2
+        status: derived
+        page: pp.156–157
+        figure: Fig 6-14
+        reason: the firebox mouth 27 in high × 18 in wide
+        condition: the mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: open; shards over the setting
@@ -8427,6 +8573,14 @@ kilns:
           outside
         status: printed
         page: p.206
+      - what: secondary_air
+        value: 49
+        unit: inch**2
+        status: derived
+        page: p.206
+        figure: Fig 8-17
+        reason: the second firebox's stoke hole 7 × 7 in
+        condition: the second firebox (research A2)
     structure:
       - what: roof_type
         value: sprung arch across the 55 in width
@@ -8601,6 +8755,7 @@ kilns:
       - every dimension (Fig 5-67 has none)
       - cone and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - Studio Potter Vol. 7, No. 2 would hold the sizes the book leaves out
   phoenix-wright:
@@ -8722,6 +8877,7 @@ kilns:
       - every dimension
       - cone and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - >-
         the design file says this kiln "gave the type its name"; olsen-kilns.md says the name Phoenix
@@ -8959,6 +9115,23 @@ kilns:
         status: printed
         page: p.134
         figure: Fig 5-10
+      - what: primary_air
+        value: 3456
+        unit: inch**2
+        status: derived
+        page: p.134
+        figure: Fig 5-11
+        reason: four fireboxes, each "AIR SOURCE AND COAL ASH PIT 36 X 24" in
+        condition: below the grates, fully open (research A2)
+      - what: secondary_air
+        value: 780
+        unit: inch**2
+        status: derived
+        page: p.134
+        figure: Fig 5-11
+        reason: four stoke holes 15 × 13 in; the fire mouth open hours 1–3, bricked up from hour 4 (p.133,
+          Table 5-1)
+        condition: the stoke holes when open (research A2)
     structure:
       - what: dome_type
         value: a round dome on the cylindrical wall
@@ -9155,6 +9328,7 @@ kilns:
       - firebox width (printed note half-legible)
       - wood per firing
       - ware and saggar load
+      - 'research A2: the coal pit''s mouth (its width scaled 12–16½ in only)'
     notes:
       - >-
         the side entrance from the firebox: olsen-kilns.md has 12–15 in (read by the user), kiln-reference.md's
@@ -9399,6 +9573,7 @@ kilns:
       - walls, arch shape and thickness, slope, the step between chambers
       - firebox size, flues, chimney
       - ware load
+      - 'research A2: the side stoke bays'' and the main firebox''s intakes'
     notes:
       - the stage times add up to the printed total, 15 + 3 × 7 + 4 × 5 = 56 h (derived)
       - a bundle's gross volume is π × 7.5² × 18 in³ = 1.84 ft³ (derived); no weight is printed
@@ -9680,6 +9855,8 @@ kilns:
       - the firebox stage's wood
       - a bundle's weight
       - the doors' size; the number of side stoke holes per chamber
+      - 'research A2: the dogi''s mouth and air intakes (the side stoke holes only scaled, about 7 in
+        round)'
     notes:
       - the front is unloaded within half a day (pp.87–88); not recorded as a cooling time, as the 
         notes don't say from when
@@ -9825,6 +10002,7 @@ kilns:
       - the other six chambers' sizes
       - walls, arch, flues, firebox, chimney, slope
       - cone and firing time
+      - 'research A2: the fireboxes'' intakes'
     notes:
       - 25 × 10 × 10 ft is 2,500 ft³; seven such chambers would be 17,500 ft³ against the printed 
         15,000, so the others are smaller, 2,143 ft³ on average (derived)
