@@ -27,10 +27,12 @@ an unknown of its own, its row the pressure balance round the path at the zones'
 (H13); the fire's surfaces at their zone's gas temperature; an exit flue left as an opening (the
 chimney not a zone) at its wall's hot-face temperature.
 
-**Convection inside**: no correlation for a kiln's setting is sourced (`thermal-software.md` §9):
-ht's laminar flat plate (Baehr–Stephan) at the mean velocity across a chamber or a firebox, the
-stated stand-in; in a chimney, flow in a duct (ht's `Nu_conv_internal`: Baehr–Stephan's developing
-laminar flow, or Hausen's turbulent, as the Reynolds number falls).
+**Convection inside** (`fittings-and-kiln-convection.md` §2, "For the engine"; no measured
+coefficient inside a kiln exists): each zone as flow in a duct on its section's hydraulic diameter
+at the mean velocity, the larger of Baehr–Stephan's developing laminar flow and Gnielinski's
+turbulent correlation (Lienhard eq. 7.41; ht), with Churchill–Chu's natural convection (Lienhard
+eq. 8.13b) as each surface's floor; the setting at its passages' laminar parallel-plate value
+(Lienhard Table 7.4) on a stated band of gaps.
 
 The unknowns: [T_g of each zone, F, (the draft's air), (T_hot, cells…, T_out) for each wall, the
 soil, T of each setting, accumulators]. Which of them the firing's mode holds is `firing.py`'s.
@@ -44,9 +46,6 @@ from typing import Literal
 
 import numpy as np
 from fluids.friction import Clamond  # pyright: ignore[reportMissingTypeStubs]
-from ht.conv_external import (  # pyright: ignore[reportMissingTypeStubs]
-    Nu_horizontal_plate_laminar_Baehr,
-)
 from ht.conv_internal import (  # pyright: ignore[reportMissingTypeStubs]
     laminar_entry_Baehr_Stephan,
     turbulent_Gnielinski,
@@ -64,16 +63,27 @@ from kilndesigner.working import Step
 
 type Vector = NDArray[np.float64]
 
+CONVECTION = (
+    "each zone flow in a duct on its section's hydraulic diameter; Churchill–Chu the floor; the "
+    "setting its passages' laminar value"
+)
 CONVECTION_NOTE = (
-    "no correlation for convection to a kiln's setting is sourced (thermal-software.md §9): ht's "
-    "laminar flat plate (Baehr–Stephan) at the mean velocity across the chamber, over the "
-    "setting's length along the flow, on every surface: a stated stand-in; in a chimney, flow in "
-    "a duct (ht): the larger of Baehr–Stephan's developing laminar flow and Gnielinski's "
-    "turbulent correlation, so the coefficient doesn't jump at transition"
+    "fittings-and-kiln-convection.md §2 (no measured coefficient inside a kiln exists): each zone "
+    "as flow in a duct on its section's hydraulic diameter at the mean velocity, the larger of "
+    "Baehr–Stephan's developing laminar flow over the zone's length and Gnielinski's turbulent "
+    "correlation (Lienhard eq. 7.41, ±20 % on D_h; ht 1.2), the gas the hotter so no property "
+    "correction (eq. 7.45, n = 0); Churchill–Chu's natural convection on a vertical wall of the "
+    "zone's height (eq. 8.13b), at the film temperature, as each surface's floor (floors and roofs "
+    "taken as walls); the setting at its passages' fully developed laminar value between plates, "
+    "Nu 7.541 (Table 7.4), or Gnielinski's when turbulent, on gaps of a stated band (no source "
+    "gives a kiln setting's passages) at the zone's mean velocity, over its envelope's area"
 )
 AIR_SCALE = 10.0  # Pa: the draft's row
 FUEL_SCALE = 1e3
 DUCT_RE_MIN = 10.0  # the duct correlation's least Reynolds number (a still chimney: no matter)
+G = 9.80665
+PLATES_NU = 7.541  # Lienhard Table 7.4: parallel plates, fully developed laminar, T_w fixed
+TURBULENT_RE = 2300.0  # Gnielinski's range starts here (Lienhard eq. 7.41)
 
 
 @dataclass(frozen=True)
@@ -100,7 +110,8 @@ def line(key: str) -> Line:
 @dataclass(frozen=True)
 class Setting:
     """A load: ware and furniture as one lumped node in its envelope (m, the chamber's frame), in
-    gas zone ``zone``, its surface ``name``."""
+    gas zone ``zone``, its surface ``name``; ``gap`` the passages between its ware (m, a stated
+    band's end, `sources.SETTING_GAP`)."""
 
     mass: float
     emissivity: float
@@ -110,6 +121,7 @@ class Setting:
     reference: str
     name: str = "setting"
     zone: int = 0
+    gap: float = src.SETTING_GAP[1]
 
 
 def fired_clay() -> HeatCapacity:
@@ -149,12 +161,13 @@ class Face:
 
 @dataclass(frozen=True)
 class Flow:
-    """Where a zone's convection's velocity and length come from: the flow's cross-section (m²)
-    and the length along it (m); a duct (a chimney) its hydraulic diameter as well."""
+    """Where a zone's convection comes from: the flow's cross-section (m²), the length along it
+    (m), the section's hydraulic diameter (m), and its walls' height (m, natural convection's)."""
 
     area: float
     length: float
-    duct: float = 0.0
+    duct: float
+    height: float
 
 
 @dataclass(frozen=True)
@@ -268,11 +281,51 @@ def layout(model: ZoneModel, air_row: bool = False) -> Layout:
                   grounded, soil)  # fmt: skip
 
 
+def duct_h(rho: float, mu: float, k: float, cp: float, v: float, d: float, length: float) -> float:
+    """Flow in a duct of hydraulic diameter ``d`` (W/(m²·K)): the larger of Baehr–Stephan's
+    developing laminar flow over ``length`` and Gnielinski's turbulent correlation (Lienhard eq.
+    7.41, from Re 1000 so the larger doesn't jump at transition; ht 1.2)."""
+    re = max(rho * v * d / mu, DUCT_RE_MIN)
+    pr = cp * mu / k
+    laminar = float(laminar_entry_Baehr_Stephan(re, pr, length, d))
+    fd = float(Clamond(max(re, TURBULENT_RE), 0.0))
+    turbulent = float(turbulent_Gnielinski(re, pr, fd)) if re > 1000.0 else 0.0
+    return max(laminar, turbulent) * k / d
+
+
+def natural_h(p: Products, t_gas: Vector, t_wall: Vector, tall: Vector) -> Vector:
+    """Churchill–Chu's natural convection on a vertical wall ``tall`` high (Lienhard eq. 8.13b,
+    all Ra; ht's `Nu_vertical_plate_Churchill`), the gas's properties at the film temperature,
+    β = 1/T_film (an ideal gas), W/(m²·K)."""
+    film = np.clip((t_gas + t_wall) / 2, 300.0, 3000.0)
+    rho = np.interp(film, p.temps, p.density)
+    mu = np.interp(film, p.temps, p.viscosity)
+    k = np.interp(film, p.temps, p.conductivity)
+    cp = np.interp(film, p.temps, p.cp)
+    pr = cp * mu / k
+    ra = G * np.abs(t_gas - t_wall) / film * tall**3 * (rho / mu) ** 2 * pr
+    nu = (0.825 + 0.387 * ra ** (1 / 6) / (1 + (0.492 / pr) ** (9 / 16)) ** (8 / 27)) ** 2
+    return nu * k / tall
+
+
+def passage_h(rho: float, mu: float, k: float, cp: float, v: float, d: float) -> float:
+    """A setting's passages, gaps between ware of hydraulic diameter ``d`` = 2 × the gap: fully
+    developed laminar flow between plates, Nu 7.541 (Lienhard Table 7.4, T_w fixed), or
+    Gnielinski's when the flow is turbulent (W/(m²·K))."""
+    re = rho * v * d / mu
+    nu = PLATES_NU
+    if re > TURBULENT_RE:
+        fd = float(Clamond(re, 0.0))
+        nu = max(nu, float(turbulent_Gnielinski(re, cp * mu / k, fd)))
+    return nu * k / d
+
+
 @dataclass(frozen=True)
 class State:
     """The heat flows at one instant (W), for the balances and the record: into each wall's hot
     face and outer face (a wall between zones), each setting, the openings that lose to the room;
-    each zone's released heat, its convection coefficient and its gas's radiative gain."""
+    each zone's released heat, each surface's convection coefficient and each zone's gas's
+    radiative gain."""
 
     q_walls: Vector
     q_backs: Vector
@@ -322,31 +375,29 @@ class Balance:
         for s, i in zip(model.settings, self.i_set, strict=True):
             self.zone_of[i] = s.zone
         self.convects = self.zone_of >= 0
+        self.conv = np.flatnonzero(self.convects)
+        self.tall = np.array([model.gas[z].flow.height for z in self.zone_of[self.conv]])
         self.path_zone = dict(model.path_zones)
         self.stoked = model.products.fuel.kind == "wood"
 
-    def convection(self, t_gas: Vector, fuel: float) -> Vector:
-        """h (W/(m²·K)) in each zone: the laminar flat plate at the mean velocity, or flow in a
-        duct."""
+    def convection(self, t_gas: Vector, fuel: float, t: Vector) -> Vector:
+        """h (W/(m²·K)) on each surface (0 on an opening): its zone's duct flow, at least
+        Churchill–Chu's natural convection on it; a setting at least its passages' value."""
         p = self.m.products
-        out = np.empty(self.g)
         m_gas = max(fuel * p.mass, 1e-9)
+        forced, speed = np.empty(self.g), np.empty(self.g)
         for z, gz in enumerate(self.m.gas):
             rho, mu, k, cp = p.props(min(max(float(t_gas[z]), 300.0), 3000.0))
-            v = m_gas / (rho * gz.flow.area)
-            if gz.flow.duct > 0:
-                d = gz.flow.duct
-                re = max(rho * v * d / mu, DUCT_RE_MIN)
-                pr = cp * mu / k
-                laminar = float(laminar_entry_Baehr_Stephan(re, pr, gz.flow.length, d))
-                fd = float(Clamond(max(re, 2300.0), 0.0))
-                turbulent = float(turbulent_Gnielinski(re, pr, fd)) if re > 1000.0 else 0.0
-                out[z] = max(laminar, turbulent) * k / d
-                continue
-            length = gz.flow.length
-            nu = float(Nu_horizontal_plate_laminar_Baehr(rho * v * length / mu, cp * mu / k))
-            out[z] = nu * k / length
-        return out
+            speed[z] = m_gas / (rho * gz.flow.area)
+            forced[z] = duct_h(rho, mu, k, cp, speed[z], gz.flow.duct, gz.flow.length)
+        c = self.conv
+        zones = self.zone_of[c]
+        h = np.zeros(len(t))
+        h[c] = np.maximum(forced[zones], natural_h(p, t_gas[zones], t[c], self.tall))
+        for s, i in zip(self.m.settings, self.i_set, strict=True):
+            rho, mu, k, cp = p.props(min(max(float(t_gas[s.zone]), 300.0), 3000.0))
+            h[i] = max(h[i], passage_h(rho, mu, k, cp, float(speed[s.zone]), 2 * s.gap))
+        return h
 
     def temps(self, y: Vector, t_gas: Vector) -> tuple[Vector, Vector]:
         """Every surface's temperature and emissivity."""
@@ -390,9 +441,9 @@ class Balance:
     def state(self, y: Vector, t_gas: Vector, fuel: float) -> State:
         t, eps = self.temps(y, t_gas)
         q_rad, q_gas = self.radiation(t_gas, t, eps)
-        h = self.convection(t_gas, fuel)
+        h = self.convection(t_gas, fuel, t)
         z = self.zone_of
-        conv = np.where(self.convects, h[z] * self.areas * (t_gas[z] - t), 0.0)
+        conv = np.where(self.convects, h * self.areas * (t_gas[z] - t), 0.0)
         into = q_rad + conv
         out = -q_gas + np.bincount(z[self.convects], conv[self.convects], minlength=self.g)
         for i, k in self.flame:

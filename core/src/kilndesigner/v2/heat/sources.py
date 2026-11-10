@@ -82,6 +82,13 @@ FIRED_CLAY_CP = Sourced(
     "Heat Atlas fireclay c_p from 400 °C (§2.3 [M2]): v1's ware curve (heat review #1)",
 )
 FIRED_CLAY_AT = 24.0 + 273.15
+# The gaps between a setting's ware (m): a stated band, no source gives a kiln setting's passages;
+# fittings-and-kiln-convection.md §2 places them at 25–100 mm (D_h = 2 × the gap)
+SETTING_GAP = (0.025, 0.100)
+SETTING_GAP_NOTE = (
+    "the setting's passages: gaps of 25–100 mm between its ware, a stated band (no source gives a "
+    "kiln setting's; fittings-and-kiln-convection.md §2)"
+)
 SHELL_EMISSIVITY = {"painted": 0.95, "oxidised_steel": 0.79, "rolled_steel_sheet": 0.6}
 SHELL_REFERENCE = "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52] (v1's heatloss)"
 

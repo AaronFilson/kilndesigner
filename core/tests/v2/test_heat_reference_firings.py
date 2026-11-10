@@ -146,10 +146,12 @@ def test_the_fast_fire_stands_with_four_times_the_load() -> None:
 def test_fast_fire_follows_its_p309_log_within_its_drafts_air() -> None:
     """Olsen p.309's logged firing (4 h 50 min, cone 10 down at 9:00): with the setting held to
     the log's temperatures, the wood it takes never needs more air than the draft draws, damper
-    open, within the band brick's roughness puts on it (no source gives it: smooth to fluids'
-    'Rough concrete', `draft.ROUGH_NOTE`). With the fireboxes' and the chimney's brick as zones
-    the log uses the whole draft at its rough end (1.01) and 0.98 of it at a smooth wall: the
-    stoker's damper was fully open by 9:15 (p.309)."""
+    open, within the draft's band (brick's roughness, no source gives it: smooth to fluids'
+    'Rough concrete', `draft.ROUGH_NOTE`; Idelchik's two-valued fittings). With the fireboxes'
+    and the chimney's brick as zones, Idelchik's fittings and the sourced convection (B4) the log
+    needs at most 0.90 of the draft at its least-air end and 0.87 at its most (it needed 1.01 and
+    0.98 on fluids' round-pipe fittings and the flat plate): the stoker's damper was fully open
+    by 9:15 (p.309)."""
     result = heat_cases.fast_fire_log()
     assert result.completed
     assert result.worst_air_share_smooth <= 1.0

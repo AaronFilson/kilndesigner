@@ -9,6 +9,7 @@ doesn't, so they are the caller's, stated (`Load.reference`).
 
 from __future__ import annotations
 
+import math
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
@@ -27,6 +28,7 @@ from kilndesigner.v2.heat import sources as src
 from kilndesigner.v2.heat.ground import DRY, Ground, Soil, ground
 from kilndesigner.v2.heat.walls import CellWall, Outside, face_sides, grown, linear_area
 from kilndesigner.v2.heat.zone import (
+    CONVECTION,
     CONVECTION_NOTE,
     Face,
     Flow,
@@ -50,13 +52,15 @@ class NotModelledError(ValueError):
 @dataclass(frozen=True)
 class Load:
     """The setting: its mass (kg), its envelope in the chamber's frame (m) and its surface's
-    emissivity, with where each comes from."""
+    emissivity, with where each comes from; ``gap`` the passages between its ware (m), an end of
+    the stated band `sources.SETTING_GAP` (the wide end, the lower coefficient, unless given)."""
 
     mass: float
     lo: tuple[float, float, float]
     hi: tuple[float, float, float]
     emissivity: float
     reference: str
+    gap: float = src.SETTING_GAP[1]
 
 
 @dataclass(frozen=True)
@@ -253,7 +257,14 @@ def heat_model(
         Step(name="The gas zones", value=", ".join(f"{g.name} {g.volume * 1e3:.0f} L"
                                                    for g in c.gas),
              note=f"the fuel burns in the {c.gas[fire_zone].name}" if many else None),
-        Step(name="Convection inside", value="the laminar flat plate", note=CONVECTION_NOTE),
+        Step(
+            name="Convection inside",
+            value=CONVECTION,
+            inputs={"the setting's passages": ", ".join(f"{x.gap * 1e3:.0f} mm" for x in loads)},
+            reference="Lienhard, A Heat Transfer Textbook 6th ed. (2024) eqs. 7.41, 8.13b, Table "
+            "7.4; ht 1.2",
+            note=f"{CONVECTION_NOTE}; {src.SETTING_GAP_NOTE}",
+        ),
         *(table.steps if table is not None else ()),
         Step(name="Said about the model", value="; ".join(notes) if notes else "nothing"),
     )  # fmt: skip
@@ -281,7 +292,7 @@ def _settings(
         name = "setting" if len(loads) == 1 else f"setting {j + 1}"
         boxes.append(rays.box_zone(name, x.lo, x.hi))
         settings.append(Setting(x.mass, x.emissivity, x.lo, x.hi, fired_clay(), x.reference,
-                                name, k))  # fmt: skip
+                                name, k, x.gap))  # fmt: skip
     return settings, boxes
 
 
@@ -429,9 +440,9 @@ def _openings(c: ch.Chamber, first: int) -> list[Opening]:
 
 
 def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tuple[Gas, ...]:
-    """Each zone's convection's flow: across a chamber (cross-draft: its width × height, the
-    setting's length along y; else its plan, the setting's height), along a firebox's channels,
-    up the chimney as a duct."""
+    """Each zone's convection's flow, as a duct: across a chamber (cross-draft: its width ×
+    height, along the setting's length; else its plan, down the setting's height), along a
+    firebox's channels, up the chimney; each section's hydraulic diameter, 2ab/(a + b)."""
     across = kiln.draft is not None and kiln.draft.type == "cross"
     out: list[Gas] = []
     for k, g in enumerate(c.gas):
@@ -443,25 +454,34 @@ def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tu
             d = room.hi[1] - room.lo[1] if room else c.depth
             h = room.hi[2] - room.lo[2] if room else c.height
             if across:
-                out.append(Gas(g.name, Flow(w * h, x.hi[1] - x.lo[1])))
+                out.append(Gas(g.name, Flow(w * h, x.hi[1] - x.lo[1], hydraulic(w, h), h)))
             else:
-                out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2])))
+                out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2], hydraulic(w, d), h)))
         elif g.kind == "firebox":
             fire = kiln.heat.fire
             assert fire is not None
             fb = fire.fireboxes[0]
             fw, fl = si(fb.width, "m"), si(fb.length, "m")
             fh = si(fb.height, "m") if fb.height is not None else fw
-            out.append(Gas(g.name, Flow(fw * fh * sum(b.count for b in fire.fireboxes), fl)))
+            n = sum(b.count for b in fire.fireboxes)
+            out.append(Gas(g.name, Flow(fw * fh * n, fl, hydraulic(fw, fh), fh)))
         else:
             assert kiln.draft is not None
             assert kiln.draft.chimney is not None
             inside = kiln.draft.chimney.inside
             assert inside is not None
-            across = inside.width if inside.width is not None else inside.diameter
-            assert across is not None
-            a = si(across, "m")
-            b = si(inside.depth, "m") if inside.depth is not None else a
-            out.append(Gas(g.name, Flow(a * b, si(kiln.draft.chimney.height, "m"),
-                                        2 * a * b / (a + b))))  # fmt: skip
+            tall = si(kiln.draft.chimney.height, "m")
+            if inside.diameter is not None:
+                dia = si(inside.diameter, "m")
+                out.append(Gas(g.name, Flow(math.pi * dia * dia / 4, tall, dia, tall)))
+                continue
+            assert inside.width is not None
+            assert inside.depth is not None
+            a, b = si(inside.width, "m"), si(inside.depth, "m")
+            out.append(Gas(g.name, Flow(a * b, tall, hydraulic(a, b), tall)))
     return tuple(out)
+
+
+def hydraulic(a: float, b: float) -> float:
+    """A rectangle's hydraulic diameter, 4A/P (Lienhard §7.5)."""
+    return 2 * a * b / (a + b)

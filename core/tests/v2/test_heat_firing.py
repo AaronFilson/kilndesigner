@@ -204,13 +204,23 @@ def test_a_schedule_held_on_the_whole_path(held: str) -> None:
 
 def test_one_zone_is_the_model_as_first_built() -> None:
     """The chamber alone as the zone the fire burns in (``path`` False): the max fire reaches
-    cone 10 as the model did before the fireboxes and chimney were zones (0.40 h)."""
+    cone 10 as the model did before the fireboxes and chimney were zones (0.395 h on fluids'
+    round-pipe fittings and the flat plate; 0.41 h on Idelchik's and the duct forms, B4)."""
     m = hc.fast_fire_model(path=False)
     assert len(m.gas) == 1
     f = fi.fire(m, fi.MaxFire(), 3600.0, (), hc.CONE_10)
     t = f.reached(hc.CONE_10)
     assert t is not None
-    assert t == pytest.approx(0.395 * 3600, rel=0.02)
+    assert t == pytest.approx(0.41 * 3600, rel=0.02)
+
+
+def test_a_round_chimney_as_a_zone_is_a_round_duct() -> None:
+    """The chimney zone's convection takes a round chimney's own area and diameter."""
+    k = _design("fast-fire", {"draft.chimney.inside": {"diameter": "10 in"}})
+    m = hk.heat_model(k, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=2_000, path=True)
+    chimney = next(g for g in m.gas if g.name == "chimney")
+    assert chimney.flow.area == pytest.approx(np.pi * (10 * IN) ** 2 / 4)
+    assert chimney.flow.duct == pytest.approx(10 * IN)
 
 
 def test_a_model_names_every_surface() -> None:

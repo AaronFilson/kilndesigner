@@ -110,7 +110,8 @@ class Firing:
 
     @property
     def worst_air_share_smooth(self) -> float:
-        """The air share at the smooth end of the brick's roughness band (`draft.ROUGH_NOTE`)."""
+        """The air share at the draft band's most-air end: a smooth wall (`draft.ROUGH_NOTE`) and
+        each fitting's lower coefficient (`draft.Path.most`)."""
         share = self.air_share_smooth[np.isfinite(self.air_share_smooth)]
         return float(share.max()) if len(share) else math.nan
 
@@ -384,12 +385,13 @@ def _shares(model: ZoneModel, bal: Balance, t: Vector, tg: NDArray[np.float64],
             fuel: Vector) -> tuple[Vector, Vector]:  # fmt: skip
     """The air each instant's fuel needs over the most the draft draws at the zones'
     temperatures, damper open (`draft.draw`, by bisection), at up to SHARE_POINTS times: at the
-    rough end of the brick's roughness band and at a smooth wall."""
-    from kilndesigner.v2.heat.draft import Path, draw
+    draft band's least-air end (rough brick, the fittings' higher coefficients) and its most-air
+    end (`draft.Path.most`)."""
+    from kilndesigner.v2.heat.draft import draw
 
     path = model.path
     assert path is not None
-    smooth = Path(path.elements, path.t_room, path.pressure, 0.0, path.steps)
+    smooth = path.most()
     p = model.products
     pick = np.unique(np.linspace(0, len(t) - 1, min(len(t), SHARE_POINTS)).astype(int))
     out: list[list[float]] = [[], []]
