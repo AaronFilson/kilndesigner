@@ -42,7 +42,8 @@ The build finishes with no errors. Chamber 431 ft³; top temperature 2345 °F (c
 
 v2 statics (2026-11-10): the groin solid cut both ways into slices, coupled where they cross
 (`docs/planning/11-09-26.md` §H item 11), stands cold and hot on its buttressed walls; the least
-peak push on the walls is 255.9 lbf/ft cold, 299.2 hot.
+peak push on the walls is 255.9 lbf/ft cold, 299.2 hot. It stands down to a 2.21 in shell cold,
+so the 6 in cast is 2.7 times the thinnest.
 
 ## Open questions
 

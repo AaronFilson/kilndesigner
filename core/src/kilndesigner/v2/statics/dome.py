@@ -20,12 +20,20 @@ sector, weighted by the distance from the axis). Its forces lie in the meridian 
 Checked: a hemisphere with hoop forces needs t/R 0.0428 of its mid-surface radius (Heyman 0.042;
 Nodargi and Bisegna's refined 0.04284; domes-over-doors.md §D1). The lunes give the same: hoop
 compression is never active at the limit, the binding zone being low, where hoops would be in
-tension (the thrust-network probe found the same, `tool-triples.md` §4). Lau's 0.069 for lunes
-(Lau 2006 p.54) is not reproduced: an open question (`engine-v2-negative-cases.md` §7).
+tension (the thrust-network probe found the same, `tool-triples.md` §4), and Heyman's 0.042
+negated hoop forces. Lau's 0.069 for lunes (Lau 2006 p.54) is the edge of his program's search,
+kept off both surfaces on a coarse grid of t/R, more cautious than Heyman's by his own account
+(p.55; `masonry-statics.md` M3, `engine-v2-negative-cases.md` §7).
 
 A round kiln's dome bears on its round wall: wall courses per radian (their weight ρg times the
 annulus's area moment), a skewback ring cut on the dome's springing cone, hoops in the wall too,
 and optionally a steel band: a push toward the axis at its height (the band's tension per radian).
+
+**Hot crushing**: the C16 stand-in (`sources.crushing`) at every masonry joint, a uniform stress
+block inside the joint as in `rigid.py`. Per radian of azimuth a joint's depth is the arc a radian
+subtends at its mean distance from the axis (Derived; exact where the joint is level, within
+±t/2r of the joint's own spread on a conical one). The hoops carry no crushing rows yet, and the
+lunes none: their crowns meet at a point on the axis, where no stress block can be placed.
 """
 
 from __future__ import annotations
@@ -51,7 +59,7 @@ from kilndesigner.v2.statics.rigid import (
 from kilndesigner.v2.statics.section import NotModelledError
 from kilndesigner.working import Step, show
 
-RING, HOOP, GROUND, BAND, WALL = "ring", "hoop", "ground", "band", "wall"
+RING, HOOP, GROUND, BAND, WALL, SKEWBACK = "ring", "hoop", "ground", "band", "wall", "skewback"
 
 
 @dataclass(frozen=True)
@@ -161,10 +169,11 @@ def section(
         p = ps * k / n
         c, s = math.cos(p), math.sin(p)
         pts = ((ri * s, zc + ri * c), (ro * s, zc + ro * c))
-        joints.append(Joint(k - 1, k, pts, ((c, -s), (c, -s)), 1.0))
+        joints.append(Joint(k - 1, k, pts, ((c, -s), (c, -s)), (ri + ro) / 2 * s))
     c, s = math.cos(ps), math.sin(ps)
     springing_pts = ((ri * s, zc + ri * c), (ro * s, zc + ro * c))
     springing_n = ((c, -s), (c, -s))  # from the lowest ring down into what it springs from
+    springing_d = (ri + ro) / 2 * s  # a joint's depth per radian: the arc at its mean radius
     hoop_bodies: list[tuple[int, float, float]] = []  # (body, z low, z high) for hoop joints
     for k in range(n):
         p0, p1 = ps * k / n, ps * (k + 1) / n
@@ -172,7 +181,7 @@ def section(
     if wall is None:
         holder = len(bodies)
         bodies.append(Body("ground", 0.0, (ri * s, zc + ri * c - 0.1), True, GROUND))
-        joints.append(Joint(n - 1, holder, springing_pts, springing_n, 1.0))
+        joints.append(Joint(n - 1, holder, springing_pts, springing_n, springing_d))
     else:
         thick, h, rho, courses = wall
         unit = rho * G
@@ -184,7 +193,7 @@ def section(
         if skewed:
             poly = [(x_in, h), (x_e, z_e), (x_out, z_e), (x_out, h)]
             w, cx, cz = _wedge(poly, unit)
-            bodies.append(Body("skewback", w, (cx, cz), False, "skewback"))
+            bodies.append(Body("skewback", w, (cx, cz), False, SKEWBACK))
             hoop_bodies.append((first, h, z_e))
             top = z_e
         dz = h / courses
@@ -195,15 +204,16 @@ def section(
             bodies.append(Body(f"wall, course {k + 1}", w, (cx, cz), False, WALL))
             hoop_bodies.append((course0 + k, k * dz, (k + 1) * dz))
         holder = first if skewed else course0 + courses - 1
-        joints.append(Joint(n - 1, holder, springing_pts, springing_n, 1.0))
+        joints.append(Joint(n - 1, holder, springing_pts, springing_n, springing_d))
         ground = len(bodies)
         bodies.append(Body("ground", 0.0, (x_in, -0.1), True, GROUND))
-        joints.append(Joint(ground, course0, ((x_in, 0.0), (x_out, 0.0)), ((0.0, 1.0),) * 2, 1.0))
+        bed = (x_in + x_out) / 2
+        joints.append(Joint(ground, course0, ((x_in, 0.0), (x_out, 0.0)), ((0.0, 1.0),) * 2, bed))
         for k in range(1, courses + (1 if skewed else 0)):
             above = course0 + k if k < courses else first
             z = k * dz
             joints.append(Joint(course0 + k - 1, above, ((x_in, z), (x_out, z)),
-                                ((0.0, 1.0),) * 2, 1.0))  # fmt: skip
+                                ((0.0, 1.0),) * 2, bed))  # fmt: skip
         if band is not None:
             banded = first if skewed and band >= h else course0 + min(int(band / dz), courses - 1)
             bodies.append(Body("band", 0.0, (x_out + 0.1, band), True, BAND))
@@ -221,12 +231,30 @@ def section(
     return Section(tuple(bodies), tuple(joints), 1.0)
 
 
-def problem(sec: Section, mu: float) -> Problem:
-    """μ at the masonry's joints; none at the hoops' and the band's (they push square)."""
-    mus = tuple(
-        0.0 if {sec.bodies[j.a].tag, sec.bodies[j.b].tag} & {HOOP, BAND} else mu for j in sec.joints
-    )
-    return Problem(sec, mus)
+def problem(sec: Section, mu: float, crush: dict[str, float] | None = None) -> Problem:
+    """μ at the masonry's joints; none at the hoops' and the band's (they push square). ``crush``:
+    a crushing stress (Pa) by body tag (the shell's rings, the wall's skewback and courses), each
+    joint taking the least of its two bodies'; the hoops and the band have none."""
+    mus: list[float] = []
+    stresses: list[float | None] = []
+    for j in sec.joints:
+        tags = {sec.bodies[j.a].tag, sec.bodies[j.b].tag}
+        square = bool(tags & {HOOP, BAND})
+        mus.append(0.0 if square else mu)
+        limits = [] if square or crush is None else [crush[t] for t in tags if t in crush]
+        stresses.append(min(limits) if limits else None)
+    return Problem(sec, tuple(mus), tuple(stresses) if crush is not None else ())
+
+
+def stand_ins(shell: str, wall: str, analogy: bool = True) -> dict[str, float]:
+    """The hot crushing stand-ins by body tag, from the shell's and the wall's materials; without
+    ``analogy``, none carried over by analogy (dense brick's 25 psi)."""
+    out: dict[str, float] = {}
+    for tags, material in (((RING,), shell), ((SKEWBACK, WALL), wall)):
+        s = sources.crushing(material)
+        if s is not None and (analogy or not sources.by_analogy(material)):
+            out.update(dict.fromkeys(tags, s.value))
+    return out
 
 
 def stands(shell: DomeShell, mu: float, hoops: bool = True) -> bool:
@@ -286,14 +314,15 @@ def kiln_not_modelled(kiln: Kiln) -> str | None:
 @dataclass(frozen=True)
 class DomeResult:
     """A round kiln's dome on its wall, in one state: whether it stands with hoop compression and
-    as lunes, the least push at its springing per metre of circumference (on fixed ground), and
-    the working."""
+    as lunes, the least push at its springing per metre of circumference (on fixed ground), whether
+    a hot verdict rests on a crushing stand-in by analogy alone, and the working."""
 
     state: str
     stands: bool
     stands_as_lunes: bool
     thrust: float  # N/m of the springing's circumference
     steps: tuple[Step, ...]
+    analogy: bool = False
 
 
 def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
@@ -316,18 +345,26 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
     height = si(kiln.chamber.height, "m")
     courses = max(1, round(height / sources.COURSE.value))
     mu = sources.MU_COLD if state == "cold" else sources.MU_HOT
+    materials = (acting[0].material, kiln.lining.walls[0].material)
+    crush = stand_ins(*materials) if state == "hot" else None
     sec = section(shell, True, (wall_t, height, wall_rho, courses), overburden=loads)
-    ok = solve(problem(sec, mu.value)).status is Status.OPTIMAL
+    ok = solve(problem(sec, mu.value, crush)).status is Status.OPTIMAL
+    decided = stand_ins(*materials, analogy=False)
+    analogy = (not ok and crush is not None and decided != crush
+               and solve(problem(sec, mu.value, decided)).status is Status.OPTIMAL)  # fmt: skip
     lunes = section(shell, False, (wall_t, height, wall_rho, courses), overburden=loads)
-    ok_lunes = solve(problem(lunes, mu.value)).status is Status.OPTIMAL
+    ok_lunes = solve(problem(lunes, mu.value)).status is Status.OPTIMAL  # crown: a point, no block
     ground = section(shell, True, overburden=loads)
-    p = problem(ground, mu.value)
+    p = problem(ground, mu.value, crush)
     least = solve(p, force_on(assemble(p), ground, GROUND, 0), 1)
     r_s = shell.radius * math.sin(shell.springing)
     thrust = least.value / r_s if least.status is Status.OPTIMAL else math.nan
     hot_note = mu.note
-    if state == "hot":
-        hot_note = f"{mu.note}; the crushing stand-in isn't applied to the dome's joints yet"
+    if crush is not None:
+        hot_note = f"{mu.note}; the hot crushing stand-ins at the masonry's joints: " + ", ".join(
+            f"{t} {v / sources.PSI:.0f} psi" for t, v in crush.items()
+        )
+        hot_note += "; no verdict where it rests on one by analogy alone" if analogy else ""
     steps = (
         Step(
             name="The dome as rings of revolution",
@@ -359,4 +396,4 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
             "(Lau 2006 Eq. 3.1)",
         ),
     )
-    return DomeResult(state, ok, ok_lunes, thrust, steps)
+    return DomeResult(state, ok, ok_lunes, thrust, steps, analogy)

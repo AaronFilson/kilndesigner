@@ -79,9 +79,10 @@ def statics(kiln: Kiln) -> KilnStatics:
         results = {s: kiln_dome(kiln, s) for s in STATES}
         return KilnStatics(
             "dome of revolution",
-            {s: r.stands for s, r in results.items()},
+            {s: None if r.analogy else r.stands for s, r in results.items()},
             {f"springing push, {s}": r.thrust for s, r in results.items()},
-            steps=tuple(step for r in results.values() for step in r.steps),
+            ANALOGY if any(r.analogy for r in results.values()) else None,
+            tuple(step for r in results.values() for step in r.steps),
         )
     assert isinstance(roof, SprungArch)
     if roof.crossing is not None:

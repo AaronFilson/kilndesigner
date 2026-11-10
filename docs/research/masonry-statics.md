@@ -96,6 +96,18 @@ Heyman, *Equilibrium of Shell Structures* (1977) is quoted here through Lau only
 | Lune weight (Eq. 2.5) | w_i = θ·ρ·(r³ − r′³)/3 · [cos β − cos γ − (γ − β)·sin δ], "r = a + t, r' = a – t, ρ is the material unit weight" | [M2] p. 36 | **Verified on the page image** (as reconstructed) |
 | Centroid (Eq. 2.6) | x_cg = 3(r⁴ − r′⁴)/(8(r³ − r′³)) · sin(θ/2)/θ · [(γ − β)(2 + 4 sin²δ) + (8 sin δ)(cos γ − cos β) − sin 2γ + sin 2β] / [cos β − cos γ + (β − γ) sin γ] | [M2] p. 36 | **Read on the page image.** As printed the denominator's last term is (β − γ) sin γ, which for a hemispherical lune (β = 0, γ = π/2) gives 1 − π/2 < 0, a negative centroid: likely a typo for −(γ − β) sin δ, Eq. 2.5's bracket. With δ = 0 the engine uses the bracket cos β − cos γ, which integrating over the shell confirms (thin hemisphere: x_cg = πa/4) |
 | Hoop forces, least thickness | "With hoop forces ... For a hemispherical dome, the modified thrust line method predicts a minimum t/R of 0.041" | [M2] p. 55 | Verified on the page image |
+| Why 0.069 exceeds Heyman's | "Heyman's analytical analysis was accurate under his assumptions, including the negation of hoop forces. His assessment of minimum t/R ratios, which were lower than the ratios calculated by the modified thrust line analyses without hoop forces, used thrust lines of domes at incipient collapse; however, the modified thrust line program's thrust line solutions were for stable dome geometries." | [M2] p. 55 | Verified (text extracted 2026-11-10) |
+| The search behind it | t/R tested at "0.001, 0.01, 0.02, 0.03, 0.04, 0.05, 0.10, 0.15, and 0.20"; "the program first tried a distance about a/3000 below the extrados, and if needed, gradually moved the thrust line toward the intrados in increments between a/3000 and a/300. The program allowed the thrust line to approach within a/3000 of the extrados in the remainder of the dome, but not touch either surface"; without hoops "For t/R = 0.05, the program found a solution up to α = 86°" | [M2] pp. 45, 50 | Verified (text extracted 2026-11-10) |
+| Hinges allowed | "the thrust line may touch the dome surfaces at no more than two hinge locations per lune; additional contact points put the structure at incipient collapse" | [M2] p. 33 | Verified (text extracted 2026-11-10) |
+
+**Lau's 0.069 against v2's 0.0428 (settled 2026-11-10).** v2's lunes need t/R 0.0428, Heyman's
+analytical lune value (0.042, hoop forces negated). Lau's 0.069 is where his program, testing
+t/R 0.05 and then 0.10 and keeping the thrust line off both surfaces, stopped finding no-hoop
+solutions for a hemisphere; by his own account (p. 55) his minima exceed Heyman's because he
+sought stable, not incipient-collapse, thrust lines. N2+ is restated accordingly
+(`engine-v2-negative-cases.md` §7). One thing stays unread: Eq. 2.5 takes r = a + t, r' = a − t
+(t half the thickness), while his hoop result 0.041 agrees with the full-thickness values
+(Heyman, TNA): which t his charts use isn't stated in the text read.
 | Eqs 3.3–3.5 | as reconstructed above; condition "provided that nθ′ ≤ 180°", for "a lune with θ ≤ 90°" | [M2] p. 57 | **Verified on the page image** |
 | Eq. 3.1 | h = H / [a θ (sin α − sin δ)] | [M2] p. 56 | **Verified on the page image** |
 | Eq. 3.7 | y_TL = k·a(cos δ − cos α), "k is given in Table 3.1 for a lune of θ = 1°"; the worked example is the *height* of the thrust line's last point, not a thrust | [M2] p. 62 | Verified on the page image |
@@ -223,7 +235,7 @@ construction. Hotchkiss's arches, each "roped until the arch below was finished 
 ## Sources
 
 - [M1] M. Monaco, I. Bergamasco, M. Betti, "A no-tension analysis for a brick masonry vault with lunette", *J. Mech. Mater. Struct.* 13(5) (2018) 703–714, doi 10.2140/jomms.2018.13.703. https://msp.org/jomms/2018/13-5/jomms-v13-n5-p09-s.pdf . Read in full. (Same as `blocked-items.md` [K20].)
-- [M2] W. W. Lau, *Equilibrium Analysis of Masonry Domes*, S.M. thesis, MIT, 2006. https://web.mit.edu/masonry/papers/wwLau_SMBT_2006.pdf . Full text extracted (172 pp.); Ch. 3 read. (Same as `domes-over-doors.md` [D3], `blocked-items.md` [K11].)
+- [M2] W. W. Lau, *Equilibrium Analysis of Masonry Domes*, S.M. thesis, MIT, 2006. https://web.mit.edu/masonry/papers/wwLau_SMBT_2006.pdf . Full text extracted (172 pp.); Ch. 3 read; Ch. 2.4 (the modified thrust line method) read 2026-11-10. (Same as `domes-over-doors.md` [D3], `blocked-items.md` [K11].)
 - [M3] R. Maia Avelino, A. Iannuzzo, T. Van Mele, P. Block, "New strategies to assess the safety of unreinforced masonry structures using thrust network analysis", SAHC 2020 (12th Int. Conf. Structural Analysis of Historical Constructions), P. Roca, L. Pelà, C. Molins (eds). https://www.scipedia.com/wd/images/d/d5/Draft_Content_643225908p732.pdf . Read in full.
 - [M4] P. Block, J. Ochsendorf, "Lower-bound analysis of vaulted masonry structures", SAHC 2008, Bath (slides). https://web.mit.edu/masonry/thrustNetwork/SAHC08_ppt_block-ochsendorf.pdf . Read.
 - [M5] Wisconsin Admin. Code SPS 321.28/321.29 (search extract). https://docs.legis.wisconsin.gov/document/administrativecode/SPS%20321.29(6)(d)
