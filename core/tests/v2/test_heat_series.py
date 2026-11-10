@@ -15,6 +15,7 @@ from kilndesigner.designfile import load_design
 from kilndesigner.v2.heat import chamber as ch
 from kilndesigner.v2.heat import firing as fi
 from kilndesigner.v2.heat import kiln as hk
+from kilndesigner.v2.heat import rays
 from kilndesigner.v2.heat import series as se
 from kilndesigner.v2.heat.zone import ZoneModel
 
@@ -42,6 +43,20 @@ def _model(name: str, segments: int = 1) -> ZoneModel:
     k = load_design(OLSEN / f"{name}.yaml")
     return hk.heat_model(k, _loads(ch.cavity(k, segments=segments)), 1.2, WOOD, n_rays=10_000,
                          segments=segments)  # fmt: skip
+
+
+def test_the_two_chamber_kilns_front_firebox_zone_closes() -> None:
+    """Its front firebox as a gas zone (B2's path): the front wall round the firebox's passage is
+    a surface of its own ("front 1"), not taken for a cut because its centroid lies in the
+    passage, so no ray leaves the enclosure (about 4 % of chamber 1's rays escaped, B3's
+    finding)."""
+    k = load_design(OLSEN / "olsen-two-chamber.yaml")
+    c = ch.chamber(k, path=True)
+    assert [g.kind for g in c.gas] == ["firebox", "chamber", "chamber"]
+    assert "front 1" in [z.name for z in c.zones]
+    r = rays.trace(list(c.zones), c.patches, rays=2_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas])  # fmt: skip
+    assert r.lost == 0
 
 
 def test_two_chambers_in_a_row_fired_in_stages() -> None:

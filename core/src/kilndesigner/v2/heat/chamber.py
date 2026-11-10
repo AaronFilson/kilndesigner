@@ -231,7 +231,7 @@ def _namer(lay: _Layout, zones: list[_Zone], solid: Any, planes: list[tuple[int,
 
     def name(piece: Any, face: Any) -> tuple[str, Any, Any] | None:
         planar = face.geom_type.name == "PLANE"
-        p = face.center() if planar else face.position_at(0.5, 0.5)
+        p = _point_on(face) if planar else face.position_at(0.5, 0.5)
         n = face.normal_at(p)
         on_cut = any(abs((p.X, p.Y, p.Z)[a] - v) < 1e-3 for a, v in planes)
         if planar and on_cut and solid.is_inside(p + n * EPS) and solid.is_inside(p - n * EPS):
@@ -265,6 +265,20 @@ def _namer(lay: _Layout, zones: list[_Zone], solid: Any, planes: list[tuple[int,
         return f"roof{tag}", p, inward
 
     return name
+
+
+def _point_on(face: Any) -> Any:
+    """A point on a planar face itself (mm): its largest triangle's centroid. A face's centroid
+    can lie in a hole through it (a front wall round a firebox's passage), where the gas is on
+    both sides and the wall would be taken for a cut (the two-chamber kiln's leak, B3)."""
+    from build123d import Vector
+
+    t = face_triangles([face])
+    if len(t) == 0:  # pragma: no cover - a sliver OCCT tessellates to nothing
+        return face.center()
+    cr = np.cross(t[:, 1] - t[:, 0], t[:, 2] - t[:, 0])
+    c = t[int(np.argmax(np.linalg.norm(cr, axis=1)))].mean(axis=0) / MM
+    return Vector(float(c[0]), float(c[1]), float(c[2]))
 
 
 def _fire_name(z: _Zone, p: Any, inward: Any, planar: bool) -> str:
