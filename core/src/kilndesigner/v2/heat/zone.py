@@ -101,11 +101,13 @@ def fired_clay() -> HeatCapacity:
 
 @dataclass(frozen=True)
 class Opening:
-    """A black opening and what it shows: the room, the fire, or the flue's channel."""
+    """A black opening and what it shows: the room, the fire, the flue's channel, or the next
+    zone's gas in a series (``zone`` its index)."""
 
     name: str
-    kind: Literal["room", "flame", "flue"]
+    kind: Literal["room", "flame", "flue", "zone"]
     wall: str = ""
+    zone: int = -1
 
 
 @dataclass(frozen=True)
@@ -220,10 +222,16 @@ class Balance:
                               dtype=int)  # fmt: skip
         self.flue = [(names.index(o.name), [f.name for f in model.faces].index(o.wall))
                      for o in model.openings if o.kind == "flue"]  # fmt: skip
-        self.loss = np.concatenate([self.room, [i for i, _ in self.flue]]).astype(int)
+        self.links = [(names.index(o.name), o.zone) for o in model.openings if o.kind == "zone"]
+        self.loss = np.concatenate(
+            [self.room, [i for i, _ in self.flue], [i for i, _ in self.links]]
+        ).astype(int)
         self.areas = model.exchange.areas
         self.eps_fixed = np.ones(len(names))
         self.eps_fixed[self.i_set] = model.setting.emissivity
+        # In a series: the other zones' gas temperatures, and the gas's temperature coming in
+        self.others: dict[int, float] = {}
+        self.upstream: float | None = None
 
     def convection(self, t_gas: float, fuel: float) -> float:
         """h (W/(m²·K)) from the laminar flat plate at the mean velocity."""
@@ -245,6 +253,8 @@ class Balance:
         t[self.flame] = t_gas
         for i, w in self.flue:
             t[i] = hot[w]
+        for i, z in self.links:
+            t[i] = self.others[z]
         eps = self.eps_fixed.copy()
         for k, f in enumerate(self.m.faces):
             eps[self.i_face[k]] = float(f.emissivity(np.array([hot[k]]))[0])
@@ -258,7 +268,11 @@ class Balance:
         q_walls = (q_rad + conv)[self.i_face]
         q_set = float(q_rad[self.i_set] + conv[self.i_set])
         q_open = float(q_rad[self.loss].sum())
-        return State(q_walls, q_set, q_open, fuel * self.m.products.released(t_gas), h)
+        p = self.m.products
+        released = fuel * p.released(t_gas)
+        if self.upstream is not None:  # the gas comes in hot from the zone before, burnt there
+            released -= fuel * p.released(self.upstream)
+        return State(q_walls, q_set, q_open, released, h)
 
     def fill(
         self,
