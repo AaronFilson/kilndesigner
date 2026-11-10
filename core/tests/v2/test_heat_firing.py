@@ -160,6 +160,9 @@ def test_what_the_heat_model_refuses() -> None:
     assert hk._layer(given).heat_capacity.cp(np.array([800.0]))[0] == pytest.approx(1000.0)  # pyright: ignore[reportPrivateUsage]
     no_rating = _design("olsen-crossdraft-36", {"heat.gas.burners.rating": None})
     assert hk.rated_fuel(no_rating, hk.fuel_of(no_rating, None)) is None
+    round_ = load_design(OLSEN / "kenzan-muffle.yaml")
+    with pytest.raises(hk.NotModelledError, match="box chambers only"):
+        hk.heat_model(round_, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=1_000)
 
 
 def test_the_whole_path_closes_and_cools_along_it() -> None:

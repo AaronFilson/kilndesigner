@@ -408,6 +408,8 @@ def test_fireboxes_against_a_wall_as_zones(design: str, zones: list[str]) -> Non
     [
         ("groundhog-basic", {"heat.fire.fireboxes.0.position": "back", "draft.exits": None,
                              "draft.flue_wall": "front"}, ["firebox", "chamber"]),
+        ("corbel-firebox-crossdraft", {"heat.fire.fireboxes.0.position": "right"},
+         ["firebox", "chamber", "chimney"]),
         ("fast-fire", {"draft.flue_wall": "front", "spy_holes": None,
                        "draft.flue_port": {"diameter": "8 in"},
                        "draft.chimney.inside": {"diameter": "9 in"}},

@@ -457,9 +457,9 @@ def _plan(
         elif f.side == "back":
             boxes = (((-INF, yc, -INF), (INF, INF, INF)),)
         elif f.side == "left":
-            boxes = (((-INF, yf, -INF), (xl, yo, INF)),)
+            boxes = (((-INF, yf, -INF), (xl, yc, INF)),)
         else:
-            boxes = (((xr, yf, -INF), (INF, yo, INF)),)
+            boxes = (((xr, yf, -INF), (INF, yc, INF)),)
         name = "firebox" if len(fires) == 1 else f"firebox {f.side}"
         lo, hi = sorted((f.outer, f.face))
         zones.append(_Zone(name, "firebox", boxes, f.grate, (f.axis, lo, hi)))
