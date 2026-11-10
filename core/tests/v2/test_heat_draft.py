@@ -43,6 +43,19 @@ def test_no_buoyancy_no_flow() -> None:
     assert dr.draw(path, {"chimney": 1200.0}, WOOD).air == 0.0
 
 
+def test_the_pressure_balance_as_a_row() -> None:
+    """The DAE's row for the draft's air at max fire: zero at the air the path draws, buoyancy
+    above it, and a flow pushed backwards is pushed back."""
+    path = dr.Path((dr.column("stack", "chimney", 4.0), dr.outlet("top", "chimney", 0.05)), ROOM)
+    temps = {"chimney": 1200.0}
+    air = dr.draw(path, temps, WOOD).air
+    assert dr.pressure(path, air, temps, WOOD) == pytest.approx(0.0, abs=1e-6)
+    assert dr.pressure(path, 0.0, temps, WOOD) > 0
+    assert dr.pressure(path, -air, temps, WOOD) > dr.pressure(path, 0.0, temps, WOOD)
+    burners = dr.draw(path, temps, WOOD, fuel=0.001).air
+    assert dr.pressure(path, burners, temps, WOOD, 0.001) == pytest.approx(0.0, abs=1e-6)
+
+
 def _probe_path() -> dr.Path:
     """gas_path.py's fast-fire path, element for element (its inputs: the chimney's 14 ft from the
     firebox top, a 12 in firebox run, ¾ in round bars at 1½ in, 1 mm roughness)."""

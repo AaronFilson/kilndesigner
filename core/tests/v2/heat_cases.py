@@ -69,10 +69,13 @@ LOG = (
 
 
 @cache
-def fast_fire_model(heavier: float = 1.0) -> Any:
+def fast_fire_model(heavier: float = 1.0, path: bool = True) -> Any:
+    """The fast-fire's whole gas path (B2: the fireboxes and the chimney as zones of their own,
+    with their own brick), or (``path`` False) its chamber alone as the one zone the fire burns
+    in, as first built."""
     k = load_design(OLSEN / "fast-fire.yaml")
     load = replace(FAST_FIRE_LOAD, mass=FAST_FIRE_LOAD.mass * heavier)
-    return hk.heat_model(k, load, 1.0, WOOD, n_rays=RAYS, grate_bar=0.75 * IN)
+    return hk.heat_model(k, load, 1.0, WOOD, n_rays=RAYS, grate_bar=0.75 * IN, path=path)
 
 
 def fast_fire_max(heavier: float = 1.0) -> fi.Firing:

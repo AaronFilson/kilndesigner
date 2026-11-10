@@ -9,6 +9,7 @@ doesn't, so they are the caller's, stated (`Load.reference`).
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -29,6 +30,7 @@ from kilndesigner.v2.heat.zone import (
     CONVECTION_NOTE,
     Face,
     Flow,
+    Gas,
     Opening,
     Setting,
     ZoneModel,
@@ -126,9 +128,44 @@ def _emissivity(material_id: str) -> str:
     raise NotModelledError(f"{material_id}: no hot-face emissivity sourced for {kind}")
 
 
+def _layers(kiln: Kiln, built: str, door: str | None) -> tuple[Layer, ...]:
+    """The layers a surface's wall is built of: the lining's face, the walls between chambers
+    (`common_wall.between_layers`), a firebox's own lining, the engine's chimney (one 4½ in layer
+    of hard brick, `hardware.CHIMNEY_BRICK`)."""
+    from kilndesigner.model import Layer as DesignLayer
+    from kilndesigner.units import Q_
+
+    if built == "between":
+        from kilndesigner.common_wall import between_layers
+
+        return tuple(_layer(DesignLayer(material=m, thickness=Q_(t, "mm")))
+                     for m, t in between_layers(kiln))  # fmt: skip
+    if built == "firebox":
+        fire = kiln.heat.fire
+        own = next((b.lining for b in fire.fireboxes if b.lining), None) if fire else None
+        return tuple(_layer(x) for x in (own or kiln.lining.walls))
+    if built == "chimney":
+        from kilndesigner.hardware import CHIMNEY_BRICK
+
+        return (_layer(DesignLayer(material=CHIMNEY_BRICK, thickness=Q_(4.5, "in"))),)
+    face = "walls" if built == "walls" else built
+    return tuple(_layer(x) for x in kiln.lining.for_face(face, door_face=door))  # pyright: ignore[reportArgumentType]
+
+
+def _grey(
+    prod: gas.Products, wsgg: Literal["bordbar2014", "dorigon2013", "transparent"]
+) -> tuple[gasrad.WSGG | None, float, float]:
+    pwc, mr = prod.radiating(NOMINAL)
+    if wsgg == "bordbar2014":
+        return gasrad.bordbar2014(min(max(mr, 0.01), 4.0)), pwc, mr
+    if wsgg == "dorigon2013":
+        return gasrad.dorigon2013(mr), pwc, mr
+    return None, pwc, mr
+
+
 def heat_model(
     kiln: Kiln,
-    load: Load,
+    load: Load | Sequence[Load],
     air_ratio: float,
     wood: Wood | None = None,
     wsgg: Literal["bordbar2014", "dorigon2013", "transparent"] = "bordbar2014",
@@ -136,98 +173,55 @@ def heat_model(
     seed: int = 20261110,
     grate_bar: float | None = None,
     ground_soil: Soil = DRY,
+    path: bool = False,
+    segments: int = 1,
 ) -> ZoneModel:
-    """The kiln's zone model at an air ratio λ, with its load. A floor on the ground (the design's
-    ``chamber.on_ground`` or a foundation, as v1 reads it) loses into the soil (`ground.py`)."""
+    """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
+    back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
+    brick (H13): the fuel burns in the firebox, the floor over it a wall between the two zones,
+    the chimney's walls taking heat from the leaving gas; without, the one chamber is the zone the
+    fire burns in, as built first. A floor on the ground (``chamber.on_ground`` or a foundation,
+    as v1 reads it) loses into the soil (`ground.py`)."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
-    c = ch.chamber(kiln)
-    if len(c.gas) > 1 or c.shape != "box":
+    c = ch.chamber(kiln, segments=segments, path=path)
+    if c.shape != "box":
         raise NotModelledError(
-            f"one gas zone in a box chamber so far: a {c.shape} chamber with {len(c.gas)} gas "
-            "zone(s) is traced (chamber.py) but its walls wait for the zones in series"
+            f"a {c.shape} chamber is traced (chamber.py) but its walls' outside areas aren't "
+            "worked out yet: box chambers only"
         )
-    roof = kiln.roof
-    rise = si(roof.rise, "m") if isinstance(roof, SprungArch | Dome) else 0.0
-    lo, hi = np.asarray(load.lo), np.asarray(load.hi)
-    inside = np.array([c.width / 2, c.depth / 2, c.height])
-    fits = np.all(hi > lo) and np.all(lo >= [-inside[0], -inside[1], 0.0])
-    if not (fits and np.all(hi <= inside)):
+    loads = [load] if isinstance(load, Load) else list(load)
+    kinds = [g.kind for g in c.gas]
+    rooms = [k for k, g in enumerate(c.gas) if g.kind == "chamber"]
+    if len(loads) != len(rooms):
         raise NotModelledError(
-            "the setting's envelope must lie inside the chamber, under its springline"
+            f"one load for each chamber zone: {len(rooms)} zones, {len(loads)} loads"
         )
-    box = rays.box_zone("setting", load.lo, load.hi)
-    vol = c.volume - rays.box_volume(load.lo, load.hi)
-    traced = rays.trace([*c.zones, box], c.patches, rays=n_rays, seed=seed, volume=vol)
-    pwc, mr = prod.radiating(NOMINAL)
-    grey = None
-    if wsgg == "bordbar2014":
-        grey = gasrad.bordbar2014(min(max(mr, 0.01), 4.0))
-    elif wsgg == "dorigon2013":
-        grey = gasrad.dorigon2013(mr)
-    exchange = gasrad.exchange_for(traced, grey, pwc)
-    door = kiln.loading.face if kiln.loading.type in ("door", "car") else None
-    shell = src.SHELL_EMISSIVITY[kiln.shell.finish]
-    fire = kiln.heat.fire
-    under = fire is not None and any(b.position == "under" for b in fire.fireboxes)
-    on_ground = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not under
-    faces: list[Face] = []
-    notes: list[str] = list(c.notes)
-    soil: Ground | None = None
-    for name in traced.names:
-        if name not in WALL_FACES:
-            continue
-        layers = tuple(_layer(x) for x in kiln.lining.for_face(name, door_face=door))  # pyright: ignore[reportArgumentType]
-        t = sum(x.thickness for x in layers)
-        a_in = float(traced.areas[traced.index(name)])
-        sides = face_sides(name, c.width, c.depth, c.height, rise)
-        a_out = grown(a_in, sides, t)
-        if name == "floor" and under:
-            outside = Outside("adiabatic", None, t_room)
-            notes.append(
-                "the floor over the fireboxes: its underside adiabatic (the fireboxes aren't "
-                "zones yet)"
-            )
-        elif name == "floor" and on_ground:
-            outside = Outside("ground", None, t_room)
-            soil = ground(a_out, ground_soil)
-            notes.append(
-                f"the floor on the ground: {soil.soil.reference}, the floor as the disc of its "
-                f"{a_out:.2f} m² ({soil.nodes} nodes), the soil round it adiabatic, the far sides "
-                "at the room's temperature"
-            )
-        else:
-            o = sides[0] + 2 * t, sides[1] + 2 * t
-            if name == "roof":
-                surf = StillAirSurface("facing_up", o[0] * o[1] / (2 * (o[0] + o[1])), shell)
-            elif name == "floor":
-                surf = StillAirSurface("facing_down", min(o) / 2, shell)
-            else:
-                surf = StillAirSurface("vertical", o[1], shell)
-            outside = Outside("air", surf, t_room)
-        wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
-        faces.append(Face(name, wall, line(_emissivity(layers[0].name))))
-    openings: list[Opening] = []
-    for p in c.patches:
-        if p.name.startswith("exit flue"):
-            openings.append(Opening(p.name, "flue", p.face))
-        elif p.name.startswith(("inlet flue", "burner port")):
-            openings.append(Opening(p.name, "flame"))
-        else:
-            openings.append(Opening(p.name, "room"))
-    setting = Setting(load.mass, load.emissivity, load.lo, load.hi, fired_clay(), load.reference)
-    across = kiln.draft is not None and kiln.draft.type == "cross"
-    if across:
-        flow = Flow(c.width * c.height, float(hi[1] - lo[1]))
-    else:
-        flow = Flow(c.width * c.depth, float(hi[2] - lo[2]))
-    table = None
+    settings, boxes = _settings(c, loads, rooms)
+    many = len(c.gas) > 1
+    grey, pwc, mr = _grey(prod, wsgg)
+    ks = gasrad.grey_ks(grey, pwc)
+    vol = c.volume - sum(rays.box_volume(x.lo, x.hi) for x in loads)
+    traced = rays.trace(
+        [*c.zones, *boxes], c.patches, rays=n_rays, seed=seed, volume=vol,
+        regions=c.regions() if many else (), gas=[g.name for g in c.gas] if many else (), ks=ks,
+    )  # fmt: skip
+    exchange: gasrad.GasExchange | gasrad.ZonesExchange = (
+        gasrad.exchange_zones(traced, grey, pwc) if many else gasrad.exchange_for(traced, grey, pwc)
+    )
+    faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room)
+    notes = [*c.notes, *notes]
+    fire_zone = kinds.index("firebox") if "firebox" in kinds else rooms[0]
+    openings = _openings(c, rooms[0])
+    gases = _gases(kiln, c, loads, rooms)
+    table, draft_path = None, None
     try:
-        path = dr.kiln_path(kiln, grate_bar=grate_bar)
-        table = dr.table(path, prod, fuel=rated_fuel(kiln, fuel))
+        draft_path = dr.kiln_path(kiln, grate_bar=grate_bar)
+        table = dr.table(draft_path, prod, fuel=rated_fuel(kiln, fuel))
     except dr.NotModelledError as e:
         notes.append(f"the draft isn't worked out: {e}")
+    path_zones = tuple((g.name, k) for k, g in enumerate(c.gas)) if many else ()
     steps = (
         *prod.steps,
         *traced.steps,
@@ -240,24 +234,214 @@ def heat_model(
         ),
         Step(
             name="The walls",
-            value="; ".join(f"{f.name}: " + " + ".join(f"{x.thickness * 1e3:.0f} mm {x.name}"
-                                                        for x in f.wall.layers) for f in faces),
+            value="; ".join(f"{f.name}" + (f" | {f.back}" if f.back else "") + ": "
+                            + " + ".join(f"{x.thickness * 1e3:.0f} mm {x.name}"
+                                         for x in f.wall.layers) for f in faces),
             inputs={f.name: f.emissivity.reference for f in faces[:1]},
             note="hot-face emissivity lines extrapolated past their measured range (the user's "
-            "decision, radiation-exchange.md §5.5)",
+            "decision, radiation-exchange.md §5.5); a wall between two zones (|) has a face in "
+            "each",
         ),
         Step(
             name="The setting",
-            value=f"{load.mass:.0f} kg, ε {load.emissivity:.2f}, in "
-            f"{np.round(lo, 3).tolist()}–{np.round(hi, 3).tolist()} m",
+            value="; ".join(f"{x.mass:.0f} kg, ε {x.emissivity:.2f}, in "
+                            f"{np.round(x.lo, 3).tolist()}–{np.round(x.hi, 3).tolist()} m"
+                            for x in loads),
             reference=src.FIRED_CLAY_CP.reference,
-            note=load.reference,
+            note=loads[0].reference,
         ),
+        Step(name="The gas zones", value=", ".join(f"{g.name} {g.volume * 1e3:.0f} L"
+                                                   for g in c.gas),
+             note=f"the fuel burns in the {c.gas[fire_zone].name}" if many else None),
         Step(name="Convection inside", value="the laminar flat plate", note=CONVECTION_NOTE),
         *(table.steps if table is not None else ()),
         Step(name="Said about the model", value="; ".join(notes) if notes else "nothing"),
     )  # fmt: skip
     return ZoneModel(
-        prod, exchange, traced.names, tuple(faces), setting, tuple(openings), flow, t_room,
-        table, steps, soil,
+        prod, exchange, traced.names, tuple(faces), tuple(settings), tuple(openings), gases,
+        t_room, table, steps, soil, draft_path, path_zones, fire_zone,
     )  # fmt: skip
+
+
+def _settings(
+    c: ch.Chamber, loads: list[Load], rooms: list[int]
+) -> tuple[list[Setting], list[rays.Zone]]:
+    """Each load in its chamber zone's room, under its springline, as a setting and its box."""
+    settings: list[Setting] = []
+    boxes: list[rays.Zone] = []
+    whole = ch.Room((-c.width / 2, -c.depth / 2, 0.0), (c.width / 2, c.depth / 2, c.height), 0.0)
+    for j, (x, k) in enumerate(zip(loads, rooms, strict=True)):
+        room = c.rooms[j] if c.rooms else whole
+        lo, hi = np.asarray(x.lo), np.asarray(x.hi)
+        fits = np.all(hi > lo) and np.all(lo >= room.lo) and np.all(hi <= room.hi)
+        if not fits:
+            raise NotModelledError(
+                "the setting's envelope must lie inside its chamber, under its springline"
+            )
+        name = "setting" if len(loads) == 1 else f"setting {j + 1}"
+        boxes.append(rays.box_zone(name, x.lo, x.hi))
+        settings.append(Setting(x.mass, x.emissivity, x.lo, x.hi, fired_clay(), x.reference,
+                                name, k))  # fmt: skip
+    return settings, boxes
+
+
+def _faces(
+    kiln: Kiln, c: ch.Chamber, traced: rays.Rays, ground_soil: Soil, path: bool, t_room: float
+) -> tuple[list[Face], Ground | None, list[str]]:
+    """The walls behind the surfaces: each its layers, its area growing to its outside, and what
+    its outer face loses to; the floor over fireboxes that are zones a wall between the two."""
+    roof = kiln.roof
+    rise = si(roof.rise, "m") if isinstance(roof, SprungArch | Dome) else 0.0
+    door = kiln.loading.face if kiln.loading.type in ("door", "car") else None
+    shell = src.SHELL_EMISSIVITY[kiln.shell.finish]
+    fire = kiln.heat.fire
+    under = fire is not None and any(b.position == "under" for b in fire.fireboxes)
+    on_ground = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not under
+    zoned = "firebox roof" in traced.names
+    faces: list[Face] = []
+    notes: list[str] = []
+    soil: Ground | None = None
+    area = {n: float(a) for n, a in zip(traced.names, traced.areas, strict=True)}
+    for name in traced.names:
+        if name not in c.built or name == "firebox roof":
+            continue
+        built, zone = c.built[name]
+        if built in ("grate", "open"):
+            continue
+        layers = _layers(kiln, built, door)
+        t = sum(x.thickness for x in layers)
+        a_in = area[name]
+        face = name.rsplit(" ", 1)[0] if name.rsplit(" ", 1)[-1].isdigit() else name
+        back, back_zone, back_line = "", 0, None
+        if face in WALL_FACES:
+            sides = face_sides(face, c.width, c.depth, c.height, rise)
+            a_out = grown(a_in, sides, t)
+        else:
+            a_out = a_in * _duct_growth(kiln, c, built, t)
+        if face == "floor" and under and zoned:
+            back, back_zone = "firebox roof", c.built["firebox roof"][1]
+            a_out = area["firebox roof"]
+            back_line = line(_emissivity(layers[-1].name))
+            outside = Outside("adiabatic", None, t_room)
+        elif face == "floor" and under:
+            outside = Outside("adiabatic", None, t_room)
+            notes.append(
+                "the floor over the fireboxes: its underside adiabatic (the fireboxes aren't "
+                "zones in this model)"
+            )
+        elif face == "floor" and on_ground:
+            outside = Outside("ground", None, t_room)
+            soil = ground(a_out, ground_soil)
+            notes.append(
+                f"the floor on the ground: {soil.soil.reference}, the floor as the disc of its "
+                f"{a_out:.2f} m² ({soil.nodes} nodes), the soil round it adiabatic, the far sides "
+                "at the room's temperature"
+            )
+        elif name in ("inlet flues", "exit flue"):
+            outside = Outside("adiabatic", None, t_room)
+            notes.append(f"the {name}' sides: their brick's far side adiabatic (a channel "
+                         "through a wall stores heat, its loss is the wall's)")  # fmt: skip
+        else:
+            outside = Outside("air", _surface(kiln, c, face, built, t, shell, rise), t_room)
+        wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
+        faces.append(Face(name, wall, line(_emissivity(layers[0].name)), zone, back, back_zone,
+                          back_line))  # fmt: skip
+    if path and not zoned and under:
+        notes.append("the fireboxes under the floor aren't zones: no space for them was traced")
+    return faces, soil, notes
+
+
+def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float) -> float:
+    """A firebox's or a chimney's walls round their box: the outside perimeter over the inside's
+    (Derived: each wall's outside grows by the thickness on each edge, as a box chamber's)."""
+    if built == "chimney" and kiln.draft is not None and kiln.draft.chimney is not None:
+        inside = kiln.draft.chimney.inside
+        if inside is not None and inside.width is not None and inside.depth is not None:
+            a, b = si(inside.width, "m"), si(inside.depth, "m")
+            return (a + b + 4 * t) / (a + b)
+    fire = kiln.heat.fire
+    if built == "firebox" and fire is not None:
+        fb = fire.fireboxes[0]
+        a, b = si(fb.width, "m"), si(fb.length, "m")
+        return (a + b + 4 * t) / (a + b)
+    return 1.0
+
+
+def _surface(
+    kiln: Kiln, c: ch.Chamber, face: str, built: str, t: float, shell: float, rise: float
+) -> StillAirSurface:
+    """The still air outside a wall: v1's surfaces at the wall's own size."""
+    if built == "chimney" and kiln.draft is not None and kiln.draft.chimney is not None:
+        return StillAirSurface("vertical", si(kiln.draft.chimney.height, "m"), shell)
+    if built == "firebox":
+        fire = kiln.heat.fire
+        assert fire is not None
+        fb = fire.fireboxes[0]
+        tall = si(fb.height, "m") if fb.height is not None else si(fb.width, "m")
+        return StillAirSurface("vertical", tall, shell)
+    sides = face_sides(face, c.width, c.depth, c.height, rise)
+    o = sides[0] + 2 * t, sides[1] + 2 * t
+    if face == "roof":
+        return StillAirSurface("facing_up", o[0] * o[1] / (2 * (o[0] + o[1])), shell)
+    if face == "floor":
+        return StillAirSurface("facing_down", min(o) / 2, shell)
+    return StillAirSurface("vertical", o[1], shell)
+
+
+def _openings(c: ch.Chamber, first: int) -> list[Opening]:
+    """The openings: the patches carved from the faces, and the zones' own: a grate (the fire),
+    the chimney's top and an open top (the room)."""
+    out: list[Opening] = []
+    for p in c.patches:
+        if p.name.startswith("exit flue"):
+            out.append(Opening(p.name, "flue", p.face))
+        elif p.name.startswith(("inlet flue", "burner port")):
+            out.append(Opening(p.name, "flame", zone=first))
+        else:
+            out.append(Opening(p.name, "room"))
+    for z in c.zones:
+        built, zone = c.built[z.name]
+        if built == "grate":
+            out.append(Opening(z.name, "flame", zone=zone))
+        elif built == "open":
+            out.append(Opening(z.name, "room"))
+    return out
+
+
+def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tuple[Gas, ...]:
+    """Each zone's convection's flow: across a chamber (cross-draft: its width × height, the
+    setting's length along y; else its plan, the setting's height), along a firebox's channels,
+    up the chimney as a duct."""
+    across = kiln.draft is not None and kiln.draft.type == "cross"
+    out: list[Gas] = []
+    for k, g in enumerate(c.gas):
+        if g.kind == "chamber":
+            j = rooms.index(k)
+            x = loads[j]
+            room = c.rooms[j] if c.rooms else None
+            w = room.hi[0] - room.lo[0] if room else c.width
+            d = room.hi[1] - room.lo[1] if room else c.depth
+            h = room.hi[2] - room.lo[2] if room else c.height
+            if across:
+                out.append(Gas(g.name, Flow(w * h, x.hi[1] - x.lo[1])))
+            else:
+                out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2])))
+        elif g.kind == "firebox":
+            fire = kiln.heat.fire
+            assert fire is not None
+            fb = fire.fireboxes[0]
+            fw, fl = si(fb.width, "m"), si(fb.length, "m")
+            fh = si(fb.height, "m") if fb.height is not None else fw
+            out.append(Gas(g.name, Flow(fw * fh * sum(b.count for b in fire.fireboxes), fl)))
+        else:
+            assert kiln.draft is not None
+            assert kiln.draft.chimney is not None
+            inside = kiln.draft.chimney.inside
+            assert inside is not None
+            across = inside.width if inside.width is not None else inside.diameter
+            assert across is not None
+            a = si(across, "m")
+            b = si(inside.depth, "m") if inside.depth is not None else a
+            out.append(Gas(g.name, Flow(a * b, si(kiln.draft.chimney.height, "m"),
+                                        2 * a * b / (a + b))))  # fmt: skip
+    return tuple(out)

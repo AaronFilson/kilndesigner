@@ -19,7 +19,7 @@ from kilndesigner.model import Layer as DesignLayer
 from kilndesigner.units import Q_
 from kilndesigner.v2.heat import firing as fi
 from kilndesigner.v2.heat import kiln as hk
-from kilndesigner.v2.heat.zone import Balance, Layout, ZoneModel
+from kilndesigner.v2.heat.zone import ACC, Balance, ZoneModel
 
 OLSEN = Path(__file__).resolve().parents[3] / "examples" / "olsen"
 IN = 0.0254
@@ -149,7 +149,7 @@ def test_what_the_heat_model_refuses() -> None:
     propane = _design("olsen-crossdraft-36", {"heat.gas.fuel": "propane"})
     assert hk.fuel_of(propane, None).name == "propane"
     outside = replace(hc.FAST_FIRE_LOAD, hi=(9 * IN, 12.5 * IN, 40 * IN))
-    with pytest.raises(hk.NotModelledError, match="inside the chamber"):
+    with pytest.raises(hk.NotModelledError, match="inside its chamber"):
         hk.heat_model(ff, outside, 1.0, hc.WOOD, n_rays=1_000)
     with pytest.raises(hk.NotModelledError, match="no hot-face emissivity"):
         hk._emissivity("kaowool-blanket-8pcf")  # pyright: ignore[reportPrivateUsage]
@@ -162,9 +162,60 @@ def test_what_the_heat_model_refuses() -> None:
     assert hk.rated_fuel(no_rating, hk.fuel_of(no_rating, None)) is None
 
 
+def test_the_whole_path_closes_and_cools_along_it() -> None:
+    """The fast-fire as firebox, chamber and chimney (H13): the fuel burns in the firebox; each
+    zone's gas cooler than the last's; the balance closes to round-off and the walls' share is
+    the zones' shares summed; the floor between firebox and chamber takes heat from both sides,
+    its underside hotter than its top while the fire is on."""
+    m = hc.fast_fire_model()
+    assert [g.name for g in m.gas] == ["firebox", "chamber", "chimney"]
+    assert m.burns == 0
+    f = fi.fire(m, fi.MaxFire(), 3 * 3600.0, (), hc.CONE_10)
+    assert f.completed
+    late = f.times > 600.0
+    assert np.all(f.t_gases[late, 0] > f.t_gases[late, 1])
+    assert np.all(f.t_gases[late, 1] > f.t_gases[late, 2])
+    e = f.energy
+    closure = e["fuel heat"] - e["flue"] - e["walls"] - e["setting"] - e["openings"]
+    assert abs(closure) < 1e-9 * e["fuel heat"]
+    zones = sum(e[f"walls: {g}"] for g in ("firebox", "chamber", "chimney"))
+    assert zones == pytest.approx(e["walls"], rel=1e-9)
+    floor = next(x for x in m.faces if x.name == "floor")
+    assert floor.back == "firebox roof"
+    assert floor.back_zone == 0
+    assert "firebox walls" in {x.name for x in m.faces}
+    assert any(o.kind == "flame" and o.zone == 0 for o in m.openings)  # the grate
+    assert any(s.name == "The gas zones" for s in m.steps)
+
+
+@pytest.mark.parametrize("held", ["gas", "setting"])
+def test_a_schedule_held_on_the_whole_path(held: str) -> None:
+    pts = ((0.0, 294.26), (1800.0, 900.0), (3600.0, 1100.0))
+    m = hc.fast_fire_model()
+    f = fi.fire(m, fi.Schedule(held, pts), 3600.0)  # pyright: ignore[reportArgumentType]
+    assert f.completed
+    col = f.t_gas if held == "gas" else f.t_setting
+    assert col[-1] == pytest.approx(1100.0, abs=0.01)
+    assert f.worst_air_share_smooth <= f.worst_air_share
+
+
+def test_one_zone_is_the_model_as_first_built() -> None:
+    """The chamber alone as the zone the fire burns in (``path`` False): the max fire reaches
+    cone 10 as the model did before the fireboxes and chimney were zones (0.40 h)."""
+    m = hc.fast_fire_model(path=False)
+    assert len(m.gas) == 1
+    f = fi.fire(m, fi.MaxFire(), 3600.0, (), hc.CONE_10)
+    t = f.reached(hc.CONE_10)
+    assert t is not None
+    assert t == pytest.approx(0.395 * 3600, rel=0.02)
+
+
 def test_a_model_names_every_surface() -> None:
     m = hc.fast_fire_model()
     with pytest.raises(ValueError, match="every surface"):
-        ZoneModel(m.products, m.exchange, (*m.names, "ghost"), m.faces, m.setting, m.openings,
-                  m.flow, m.t_room)  # fmt: skip
-    assert Layout.ACC[0] == "fuel kg"
+        ZoneModel(m.products, m.exchange, (*m.names, "ghost"), m.faces, m.settings, m.openings,
+                  m.gas, m.t_room)  # fmt: skip
+    with pytest.raises(ValueError, match="without a load"):
+        ZoneModel(m.products, m.exchange, m.names, m.faces, (), m.openings, m.gas, m.t_room)
+    assert ACC[0] == "fuel kg"
+    assert m.flow is m.gas[0].flow

@@ -154,6 +154,25 @@ def balance(
     return Draft(m_air, m_gas, tuple(terms))
 
 
+def pressure(
+    path: Path,
+    m_air: float,
+    temps: Mapping[str, float],
+    prod: Products,
+    fuel: float | None = None,
+) -> float:
+    """The path's buoyancy less its losses (Pa) at an air flow (kg/s): zero at the air it draws,
+    damper open. Stoked (``fuel`` None) the gas is air × products ÷ air; burners add their fuel."""
+
+    def gas_of(m: float) -> float:
+        return m * prod.mass / prod.air if fuel is None else m + fuel
+
+    d = balance(path, abs(m_air), temps, prod, gas_of)
+    lift = sum(b for _, b, _ in d.terms)
+    loss = sum(x for _, _, x in d.terms)
+    return lift - math.copysign(loss, m_air)  # a flow pushed backwards is pushed back
+
+
 def draw(
     path: Path,
     temps: Mapping[str, float],
