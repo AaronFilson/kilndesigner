@@ -453,6 +453,98 @@ def analyse(xs: CrossSection, state: State, support_friction: bool = False) -> S
     return SectionResult(state, stands, least, most, beds, sol, steps)
 
 
+@dataclass(frozen=True)
+class WallCapacity:
+    """One wall (all its layers and its skewback) under the arch's push at the springing, the
+    vertical part held and the horizontal part factored: the push it takes alone, with
+    associative friction (the LP) and without (the least, the MILP), against the push it gets.
+    N/m."""
+
+    side: str
+    push: float
+    lp: float
+    least: float
+    proven: bool
+    steps: tuple[Step, ...]
+
+    @property
+    def support_needed(self) -> float:
+        """What a frame or buttress must still give, non-associative friction: push − least."""
+        return max(0.0, self.push - self.least)
+
+
+def wall_capacity(
+    xs: CrossSection, result: SectionResult, side: str, time_limit: float = 60.0
+) -> WallCapacity | None:
+    """The wall on ``side`` alone under the arch's force at its springing in ``result``'s state
+    (its least-support state): the vertical part as a load, the horizontal part as the live load
+    the collapse is sought for (`nonassoc.collapse`). None when the arch springs from the ground."""
+    from kilndesigner.v2.statics.nonassoc import collapse
+
+    sec, sol = xs.section, result.least_solution
+    assert sol.x is not None
+    keep = [i for i, b in enumerate(sec.bodies) if b.tag in (f"wall {side}", f"skewback {side}")]
+    if not keep:
+        return None
+    ground = next(i for i, b in enumerate(sec.bodies) if b.tag == GROUND)
+    fx = fz = m = 0.0
+    spring: tuple[int, tuple[tuple[float, float], ...]] | None = None
+    for j, jt in enumerate(sec.joints):
+        ends = {sec.bodies[jt.a].tag, sec.bodies[jt.b].tag}
+        if VOUSSOIR not in ends or not ends & {f"wall {side}", f"skewback {side}"}:
+            continue
+        holder = jt.a if sec.bodies[jt.a].tag != VOUSSOIR else jt.b
+        sgn = 1.0 if holder == jt.b else -1.0
+        k0 = sol.assembly.first[j]
+        for k in range(k0, k0 + len(jt.points)):
+            _, x, z, nx, nz = sol.assembly.points[k]
+            n_, t_ = float(sol.x[2 * k]), float(sol.x[2 * k + 1])
+            px, pz = sgn * (n_ * nx - t_ * nz), sgn * (n_ * nz + t_ * nx)
+            fx, fz, m = fx + px, fz + pz, m + x * pz - z * px
+        spring = (holder, jt.points)
+    assert spring is not None
+    holder, ((x0, z0), (x1, z1)) = spring
+    s = (m - x0 * fz + z0 * fx) / ((x1 - x0) * fz - (z1 - z0) * fx)
+    px, pz = x0 + s * (x1 - x0), z0 + s * (z1 - z0)  # where the arch's resultant crosses
+    index = {old: k for k, old in enumerate([*keep, ground])}
+    bodies = [sec.bodies[i] for i in keep] + [sec.bodies[ground]]
+    h = index[holder]
+    bodies[h] = replace(bodies[h], loads=(*bodies[h].loads, (px, pz, 0.0, fz)))
+    joints = tuple(
+        replace(jt, a=index[jt.a], b=index[jt.b])
+        for jt in sec.joints
+        if jt.a in index and jt.b in index
+    )
+    whole = conditions(xs, result.state)
+    picked = [j for j, jt in enumerate(sec.joints) if jt.a in index and jt.b in index]
+    p = Problem(  # no crushing rows: a crushing hinge isn't one of the joint modes
+        Section(tuple(bodies), joints, sec.depth),
+        tuple(whole.mu[j] for j in picked),
+        live=((h, px, pz, math.copysign(1.0, fx), 0.0),),
+    )
+    c = collapse(p, time_limit=time_limit)
+    d = sec.depth
+    push = abs(fx) / d
+    steps = (
+        Step(
+            name=f"The {side} wall alone under the arch's push ({result.state})",
+            value=f"push {_per_metre(push)}; it takes {_per_metre(c.lp / d)} with associative "
+            f"friction, {_per_metre(c.least / d)} without"
+            + ("" if c.proven else f" (not proven least; at least {_per_metre(c.bound / d)})"),
+            formula="the springing force's vertical part held, its horizontal part × λ; λ_LP the "
+            "most, λ_NA the least load factor with a mechanism whose joints slide without "
+            "opening (Ferris & Tin-Loi 2001), HiGHS's branch and cut",
+            inputs={"binaries": str(c.binaries), "springing at": f"({px:.3f}, {pz:.3f}) m"},
+            reference="statics-combinations.md §3 (case C: −23.6 %)",
+            note="without the hot crushing stand-in: a crushing hinge isn't one of the joints' "
+            "modes (open, sticking, sliding)"
+            if result.state == "hot"
+            else None,
+        ),
+    )
+    return WallCapacity(side, push, c.lp / d, c.least / d, c.proven, steps)
+
+
 def bed_joints(xs: CrossSection, sol: Solution) -> tuple[BedJoint, ...]:
     """Each wall's level joints, every layer of the wall together, from the floor up to the
     skewback's bed."""
