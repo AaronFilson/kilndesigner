@@ -113,7 +113,7 @@ together. Statuses as the dataset's. The chimney's section is given where printe
 | `tamba` | – | side stoke holes about 7–7¼ in round | 38–41 each | – | scaled Fig 4-16 |
 | `kato-coal` | ash pit 27 in deep (scaled, or 15 in) | fireboxes 2 ft 6 in wide at the outer mouth | – | round, 3 ft at the base | printed and scaled; the mouth's height not printed |
 | `singh-coal` | "AIR SOURCE AND COAL ASH PIT 36" X 24"" at each of four fireboxes | stoke hole 15 × 13 in each | 3,456 below; 780 above (four) | 24 × 24 in | printed Fig 5-11; the fire mouth open hours 1–3, then bricked up (Table 5-1) |
-| `olsen-oil-drip` | – | three drip ports, each about 7½ in wide × 24 in high, open to the air | about 180 each | – | scaled Fig 8-20 |
+| `olsen-oil-drip` | – | three drip ports, each about 7½ in wide × 24 in high; the air enters with the oil (p.209 speaks of a drip unit's "open air end") | about 180 each | – | scaled Fig 8-20 |
 
 Against the chimney, where both are printed (Derived): the fast-fire's mouths below the grate are
 2.0–2.7 × its 81 in² chimney and above it 1.5–2.2 ×; the Church kiln's ash pits 1.4–2.8 × (one or

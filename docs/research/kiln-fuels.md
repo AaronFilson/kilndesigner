@@ -289,7 +289,7 @@ and `fuel_unit_mass` (the shovel). The rules, so every band traces:
 | `fireworks-edmonton` | wood, not named (Alberta's firewoods [C1]) | either | 17.60–19.31 | 9.3–35 | Edmonton |
 | `fujiwara-bizen` | red pine ([K2]–[K4], read), with pine needles (pp.103–104) | coniferous, *Pinus* | 17.50–19.88 (needles about 21) | 9.7–25 | Kobe |
 | `groundhog-basic` | pine (Catawba Valley [U1], [U2]) | coniferous, *Pinus* | 17.50–19.88 | 10.2–25 | Georgia, North Carolina |
-| `hollyweird`, `olsen-two-chamber` | wood, not named (Olsen's own; place not printed) | either | 17.60–19.31 | 12–25 | none |
+| `hollyweird`, `olsen-two-chamber` | wood, not named (Olsen's own; place not printed: p.170 prints his kit business's address, Mountain Center, California, read on the page image; that his kilns stood there isn't said) | either | 17.60–19.31 | 12–25 | none |
 | `hotchkiss-raw-clay` | wood (the fuel isn't named) | either | 17.60–19.31 | 8.8–25 | Sacramento (if near its clay) |
 | `kannofen` | beech ([E1], read: a Höhr-Grenzhausen pottery's former fuel) | deciduous, *Fagus* | 17.00–18.60 | 10.6–25 | Luxembourg, Berlin |
 | `kenzan-muffle`, `kitade-tojilo` | wood, not named (pine by analogy only) | either | 17.60–19.31 | 8.7–25 | Japan's three |

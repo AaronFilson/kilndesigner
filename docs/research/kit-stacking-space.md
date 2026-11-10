@@ -15,15 +15,15 @@ Marks as in the other research files: **Read** (on the page), **Derived** (arith
 
 | Kit (stacking, printed) | Stacking cube (Derived) | Chamber it needs, 4½ in all round (Derived) | to the springline | with the arch | Chamber ÷ stacking |
 |---|---|---|---|---|---|
-| Olsen 16 (16 ft³, p.173) | 30.2 in cube; or 28.1 × 28.1 × 35.1 in if the 25 % extra height (p.170) is the setting's | 39.2 in square, springline 32.7 in; or 37.1 in square, 37.6 in | 29.2–29.9 ft³ | 32.1–32.4 ft³ | 1.8–2.0 |
+| Olsen 16 (16 ft³, p.173) | 25.9 × 25.9 × 41.2 in, in a chamber 25 % taller than wide (p.170) | 34.9 in square, springline 43.7 in | 30.8 ft³ | 32.9 ft³ | 1.9–2.1 |
 | Olsen 24 (24 ft³, p.174) | 34.6 in cube | 43.6 in square, springline 37.1 in | 40.9 ft³ | 44.9 ft³ | 1.7–1.9 |
 | Olsen 36 (model name only, p.170, p.182) | 39.6 in cube | 48.6 in square, springline 42.1 in | 57.6 ft³ | 63.2 ft³ | 1.6–1.8 |
 | Olsen 50 car kiln (50 ft³, p.174) | 44.2 in cube | 53.2 in square, springline 46.7 in | 76.5 ft³ | 83.9 ft³ | 1.5–1.7 |
 | Olsen 100 (100 ft³, p.174) | 55.7 in cube | 64.7 in square, springline 58.2 in | 141 ft³ | 154 ft³ | 1.4–1.5 |
 
 With 6 in of combustion space (the book's figure for a 4 in tip, p.171; the band's other end, since
-the kits' MR-100 head size isn't found) each chamber is 3 in wider and deeper: 16 → 33.8–34.9 ft³
-to the springline, 24 → 46.7, 36 → 65.0, 50 → 85.4, 100 → 154 ft³ (Derived).
+the kits' MR-100 head size isn't found) each chamber is 3 in wider and deeper: 16 → 36.9 ft³ to the
+springline, 24 → 46.7, 36 → 65.0, 50 → 85.4, 100 → 154 ft³ (Derived).
 
 **How the book relates them** (Read, the pages below): it sizes a kiln by its stacking space, the
 volume the shelves and ware fill, and builds the chamber round it: a combustion space of at least
@@ -34,7 +34,7 @@ their stacking space (§3).
 
 **For the design files** (B6, the engine's): the kits' chambers today are cubes (or the 16's
 1.25 × box) of the printed volume, to the springline, with no combustion space round the setting
-(the dataset's notes say so). By the book's own clearances they are 1.4–2.0 times bigger. The
+(the dataset's notes say so). By the book's own clearances they are 1.4–2.3 times bigger. The
 lining, door and frame of each kit aren't printed, so the resize is of the chamber only.
 
 ## 1. What the book says (Read; `kiln-reference.md` §6, §7, §11)
@@ -44,10 +44,12 @@ lining, door and frame of each kit aren't printed, so the resize is of the chamb
   given per ft³ of stacking: 16 → 40½ in², 24 → 45 in², 50 → 90 in², 100 → 120–140 in² (p.173–174).
   The small cube kiln of Fig 6-63 is "a 2, 3 or 4cu. … cube (in terms of the amount of stacking
   space)" (p.171; read as a 2, 3 or 4 ft cube, `kiln-reference.md` §11, Flagged there).
-- **The shape: a cube.** An efficient forced-draft updraft has "a cube chamber, height equal to
-  width"; the height can be up to 25 % greater than the width; his 16 ft³ kit is 25 % taller than
-  wide and "fires quite evenly" (p.170). Whether the 25 % is the chamber's or the setting's isn't
-  said; both readings are in the short answer. "For an updraft put the arch on top of the cube (the
+- **The shape: a cube.** "A cube is the best all-round chamber shape for a kiln (i.e. height equals
+  width) ... the height of the kiln can be up to 25% greater than the width without incurring
+  significant risk that it will fire unevenly. An Olsen 16 kiln kit has a 25% height increase over
+  the width deviation and, as the picture illustrates, fires quite evenly (Fig. 6-59)" (p.170, read
+  on the page image, 2026-11-10): the 25 % is the kiln's, so the 16's chamber is taken 1.25 times
+  as tall to the springline as it is wide. "For an updraft put the arch on top of the cube (the
   most stacking space; the arch volume collects the flue gas)" (p.74).
 - **The combustion space round the setting.** At least 4½ in (11.5 cm) between ware and wall for
   floor burners or 2½–3 in burner tips, usually the length of the wall (p.76, p.171); a 4 in tip
@@ -68,7 +70,9 @@ lining, door and frame of each kit aren't printed, so the resize is of the chamb
 ## 2. The chamber each kit needs (Derived)
 
 The method, each step a printed rule above:
-- stacking: a cube of the printed volume, side s = V^(1/3) (p.170); for the 16 also s × s × 1.25 s;
+- stacking: a cube of the printed volume, side s = V^(1/3) (p.170); for the 16, the stacking that
+  fills a chamber 1.25 times as tall as wide (p.170), s × s × h with s + 2c the chamber's width and
+  h + 2½ in its springline, solved for s·s·h = 16 ft³;
 - plan: s + 2 × 4½ in each way (p.171, Fig 6-63), the band's other end s + 2 × 6 in (p.171);
 - springline: 2½ in under the setter shelf (p.172) plus the stacking's height, the arch on top
   (p.74);
@@ -78,8 +82,8 @@ The method, each step a printed rule above:
 | Kit | s (in) | Combustion space | Width = depth (in) | Springline (in) | Arch rise (in) | Box (ft³) | + arch (ft³) | Total ÷ stacking |
 |---|---|---|---|---|---|---|---|---|
 | 12 (the family's smallest) | 27.5 | 4½ / 6 in | 36.5 / 39.5 | 30.0 | 4.6 / 4.9 | 23.1 / 27.0 | 25.4 / 30.0 | 2.1 / 2.5 |
-| 16, cube | 30.2 | 4½ / 6 in | 39.2 / 42.2 | 32.7 | 4.9 / 5.3 | 29.2 / 33.8 | 32.1 / 37.5 | 2.0 / 2.3 |
-| 16, 25 % taller | 28.1 × 35.1 | 4½ / 6 in | 37.1 / 40.1 | 37.6 | 4.6 / 5.0 | 29.9 / 34.9 | 32.4 / 38.1 | 2.0 / 2.4 |
+| 16, the chamber 25 % taller (p.170) | 25.9 × 41.2 / 25.1 × 43.9 | 4½ / 6 in | 34.9 / 37.1 | 43.7 / 46.4 | 4.4 / 4.6 | 30.8 / 36.9 | 32.9 / 39.4 | 2.1 / 2.5 |
+| 16, were it a cube | 30.2 | 4½ / 6 in | 39.2 / 42.2 | 32.7 | 4.9 / 5.3 | 29.2 / 33.8 | 32.1 / 37.5 | 2.0 / 2.3 |
 | 24 | 34.6 | 4½ / 6 in | 43.6 / 46.6 | 37.1 | 5.5 / 5.8 | 40.9 / 46.7 | 44.9 / 51.6 | 1.9 / 2.2 |
 | 36 | 39.6 | 4½ / 6 in | 48.6 / 51.6 | 42.1 | 6.1 / 6.5 | 57.6 / 65.0 | 63.2 / 71.7 | 1.8 / 2.0 |
 | 50 | 44.2 | 4½ / 6 in | 53.2 / 56.2 | 46.7 | 6.7 / 7.0 | 76.5 / 85.4 | 83.9 / 94.1 | 1.7 / 1.9 |
@@ -110,8 +114,8 @@ for 90–500 ft³. The kits' derived ratios (§2) fall in the same run.
 
 ## 4. What stays open
 
-- **The 16's 25 %** (p.170): the chamber's or the setting's? Both are in §2; they differ by under
-  1 ft³.
+- **The 16's 25 %** (p.170): settled on the page image, the kiln's height; its chamber is taken to
+  the springline 1.25 times its width. The cube reading is kept in §2 for comparison (within 2 ft³).
 - **The combustion space**: 4½ in fits the MR-750's 2.5 in head (p.171); the MR-100's head size isn't
   found, so 4½–6 in is the band.
 - **Above the setting**: whether the stacking runs to the springline (as the Kähler kiln's does to

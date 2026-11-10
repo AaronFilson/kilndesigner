@@ -25,8 +25,10 @@
 #   derived  arithmetic on printed numbers (reason: the arithmetic);
 #   scaled   measured off a figure from a dimension printed on it (figure, spread);
 #   drawing  read off a figure with no printed dimension and not scaled (figure);
-#   assumed  not in the book: the design file's value and its reason, with the Olsen page of any
-#            rule it follows. No value is here without a source.
+#   assumed  not in the book: the design file's value, or a value sourced in docs/research (the
+#            round of 2026-11-10's research A: each kiln's fuel, intakes and the kits' chambers,
+#            their reasons naming the file), with its reason and the Olsen page of any rule it
+#            follows. No value is here without a source.
 schema: 1
 book: Frederick L. Olsen, The Kiln Book, 4th ed.
 kilns:
@@ -8877,30 +8879,31 @@ kilns:
         status: assumed
         reason: 1¼ × the width (p.170)
       - what: width
-        value: [37.1, 42.2]
+        value: [34.9, 37.1]
         unit: inch
         status: assumed
-        reason: 'kit-stacking-space.md §2: the stacking a 30.2 in cube, or 28.1 in square and 25 % taller
-          (p.170), plus 4½–6 in of combustion space each side (p.171, Fig 6-63)'
+        reason: 'kit-stacking-space.md §2: a chamber 25 % taller than wide (p.170, "An Olsen 16 kiln kit
+          has a 25% height increase") holding 16 ft³ of stacking with 4½–6 in of combustion space each
+          side (p.171, Fig 6-63)'
         condition: the chamber its printed 16 ft³ of stacking needs (research A6)
       - what: depth
-        value: [37.1, 42.2]
+        value: [34.9, 37.1]
         unit: inch
         status: assumed
         reason: as the width (p.170, p.171)
         condition: the chamber its printed 16 ft³ of stacking needs (research A6)
       - what: springline_height
-        value: [32.7, 37.6]
+        value: [43.7, 46.4]
         unit: inch
         status: assumed
-        reason: 2½ in under the setter shelf (p.172) plus the stacking's 30.2 or 35.1 in, the arch on
-          top (p.74)
+        reason: 1.25 × the width (p.170); the stacking 41.2–43.9 in tall over 2½ in under the setter
+          shelf (p.172), the arch on top (p.74)
         condition: the chamber its printed 16 ft³ of stacking needs (research A6)
       - what: volume
-        value: [29.2, 34.9]
+        value: [30.8, 36.9]
         unit: ft**3
         status: assumed
-        reason: 'kit-stacking-space.md §2: 1.8–2.2 × the stacking; 32.1–38.1 ft³ with a No. 1 arch rising
+        reason: 'kit-stacking-space.md §2: 1.9–2.3 × the stacking; 32.9–39.4 ft³ with a No. 1 arch rising
           1½ in a foot (p.171)'
         condition: to the springline, the chamber its stacking needs (research A6)
     lining:
@@ -9005,7 +9008,7 @@ kilns:
         height reduces evenness "in a normal 8–12 h firing" of a forced-draft updraft (said of 
         updrafts in general)
       - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 16 ft³ of stacking needs
-        a chamber of 29–35 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
+        a chamber of 31–37 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
         alone'
 
   olsen-kit-24:
