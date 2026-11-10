@@ -156,10 +156,33 @@ def _emissivity(material_id: str, cls: Emissivity = "nominal") -> Line:
     return line(keys[kind], factor)
 
 
-def _layers(kiln: Kiln, built: str, door: str | None) -> tuple[Layer, ...]:
+# A clay flue liner's wall (clay-flue-liners.md): a fireclay body (ASTM C315's liners are fire clay
+# or shale, its tables unread), taken as the library's fireclay brick, Alsey Smithfield, 5/8 in:
+# Rumford's standard 8½ × 8½ in flue weighs 36 lb a 2 ft piece, 26.8 kg/m, which at Smithfield's
+# 2,086 kg/m³ is 19.9 in² of wall, t = (8.5 − √(8.5² − 19.9))/2 = 0.63 in (Derived)
+FLUE_LINER = ("firebrick-medium-duty-smithfield", 0.63)  # (material, in)
+FLUE_LINER_NOTE = (
+    "the chimney's walls clay flue liners (clay-flue-liners.md): a fireclay body, the library's "
+    "Smithfield brick, 0.63 in thick (Rumford's 36 lb per 2 ft of standard 8½ × 8½ in flue at "
+    "its 2,086 kg/m³: Derived), standing in the room's still air"
+)
+
+
+def flue_liner() -> tuple[object, ...]:
+    """A chimney of clay flue liners, as the design's layers (`FLUE_LINER`)."""
+    from kilndesigner.model import Layer as DesignLayer
+    from kilndesigner.units import Q_
+
+    return (DesignLayer(material=FLUE_LINER[0], thickness=Q_(FLUE_LINER[1], "in")),)
+
+
+def _layers(
+    kiln: Kiln, built: str, door: str | None, chimney: Sequence[object] | None = None
+) -> tuple[Layer, ...]:
     """The layers a surface's wall is built of: the lining's face, the walls between chambers
-    (`common_wall.between_layers`), a firebox's own lining, the engine's chimney (one 4½ in layer
-    of hard brick, `hardware.CHIMNEY_BRICK`)."""
+    (`common_wall.between_layers`), a firebox's own lining, the chimney's own walls where given
+    (a design's `Layer`s, hot face first: clay flue liners, `FLUE_LINER`), else the engine's (one
+    4½ in layer of hard brick, `hardware.CHIMNEY_BRICK`)."""
     from kilndesigner.model import Layer as DesignLayer
     from kilndesigner.units import Q_
 
@@ -175,6 +198,8 @@ def _layers(kiln: Kiln, built: str, door: str | None) -> tuple[Layer, ...]:
     if built == "chimney":
         from kilndesigner.hardware import CHIMNEY_BRICK
 
+        if chimney:
+            return tuple(_layer(x) for x in chimney)
         return (_layer(DesignLayer(material=CHIMNEY_BRICK, thickness=Q_(4.5, "in"))),)
     face = "walls" if built == "walls" else built
     return tuple(_layer(x) for x in kiln.lining.for_face(face, door_face=door))  # pyright: ignore[reportArgumentType]
@@ -206,6 +231,7 @@ def heat_model(
     intake: dr.Intakes | None = None,
     bed_rate: float | None = None,
     emissivity: Emissivity = "nominal",
+    chimney: Sequence[object] | None = None,
 ) -> ZoneModel:
     """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
     back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
@@ -215,7 +241,8 @@ def heat_model(
     as v1 reads it) loses into the soil (`ground.py`). ``intake``: the fireboxes' air intakes for
     the draft (`draft.Intakes`); ``bed_rate``: a coal bed's burning rate on its grates (kg/(m²·s)
     as fired, `air.COAL_BED`), the most the stoker can burn; ``emissivity``: the class's band end
-    (`EMISSIVITY_CLASS`)."""
+    (`EMISSIVITY_CLASS`); ``chimney``: the chimney's own walls, hot face first, where the book says
+    how it is built (`flue_liner()` for clay flue liners; the design file can't say)."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
@@ -244,8 +271,11 @@ def heat_model(
     exchange: gasrad.GasExchange | gasrad.ZonesExchange = (
         gasrad.exchange_zones(traced, grey, pwc) if many else gasrad.exchange_for(traced, grey, pwc)
     )
-    faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room, emissivity)
+    faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room, emissivity, chimney)
     notes = [*c.notes, *notes]
+    if chimney and any(g.kind == "chimney" for g in c.gas):
+        liner = tuple(chimney) == flue_liner()
+        notes.append(FLUE_LINER_NOTE if liner else "the chimney's walls: given")
     fire_zone = kinds.index("firebox") if "firebox" in kinds else rooms[0]
     openings = _openings(c, rooms[0])
     gases = _gases(kiln, c, loads, rooms)
@@ -360,6 +390,7 @@ def _faces(
     path: bool,
     t_room: float,
     cls: Emissivity = "nominal",
+    chimney: Sequence[object] | None = None,
 ) -> tuple[list[Face], Ground | None, list[str]]:
     """The walls behind the surfaces: each its layers, its area growing to its outside, and what
     its outer face loses to; the floor over fireboxes that are zones a wall between the two."""
@@ -390,7 +421,7 @@ def _faces(
             face, tag = name, ""
         if built in ("grate", "open") or (built == "between" and face == "front"):
             continue  # an opening, or the back of a wall between chambers
-        layers = _layers(kiln, built, door)
+        layers = _layers(kiln, built, door, chimney)
         t = sum(x.thickness for x in layers)
         a_in = area[name]
         back, back_zone, back_line = "", 0, None

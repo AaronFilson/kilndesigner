@@ -311,6 +311,26 @@ def test_the_drafts_own_air_needs_a_draft() -> None:
         fi.Schedule("gas", ((0.0, 300.0), (60.0, 400.0)), opened=1.5)
 
 
+def test_a_chimney_of_clay_flue_liners() -> None:
+    """Olsen's fast-fire chimney "made from chimney flues" (Fig 5-37): its walls a fireclay body
+    0.63 in thick (clay-flue-liners.md, Derived from Rumford's weights), an eighth of the mass of
+    the engine's 4½ in of hard brick, said in the working."""
+    k = load_design(OLSEN / "fast-fire.yaml")
+    m = hk.heat_model(k, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=2_000, path=True,
+                      chimney=hk.flue_liner())  # fmt: skip
+    walls = next(f for f in m.faces if f.name == "chimney walls").wall.layers
+    assert [x.name for x in walls] == ["firebrick-medium-duty-smithfield"]
+    assert walls[0].thickness == pytest.approx(0.63 * IN)
+    said = next(s for s in m.steps if s.name == "Said about the model").value
+    assert "clay flue liners" in said
+    other = hk.heat_model(k, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=2_000, path=True,
+                          chimney=hk.flue_liner() * 2)  # fmt: skip
+    assert (
+        "the chimney's walls: given"
+        in next(s for s in other.steps if s.name == "Said about the model").value
+    )
+
+
 def test_a_round_chimney_as_a_zone_is_a_round_duct() -> None:
     """The chimney zone's convection takes a round chimney's own area and diameter."""
     k = _design("fast-fire", {"draft.chimney.inside": {"diameter": "10 in"}})

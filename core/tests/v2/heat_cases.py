@@ -96,14 +96,15 @@ def fast_fire_model(
     heavier: float = 1.0, path: bool = True, end: own.End = "mid", intakes: bool = True
 ) -> Any:
     """The fast-fire's whole gas path (B2: the fireboxes and the chimney as zones of their own,
-    with their own brick), or (``path`` False) its chamber alone as the one zone the fire burns
-    in, as first built; its own wood at its bands' ``end``; its draft through its own intakes,
-    below and above the grates (B4), or (``intakes`` False) the design's ash-pit mouths alone."""
+    with their own brick, the chimney "made from chimney flues", Fig 5-37: clay flue liners, B4),
+    or (``path`` False) its chamber alone as the one zone the fire burns in, as first built; its
+    own wood at its bands' ``end``; its draft through its own intakes, below and above the grates
+    (B4), or (``intakes`` False) the design's ash-pit mouths alone."""
     k = load_design(OLSEN / "fast-fire.yaml")
     load = replace(FAST_FIRE_LOAD, mass=FAST_FIRE_LOAD.mass * heavier)
     intake = own_intake("fast-fire") if intakes else None
     return hk.heat_model(k, load, 1.0, fast_fire_fuel(end), n_rays=RAYS, grate_bar=0.75 * IN,
-                         path=path, intake=intake)  # fmt: skip
+                         path=path, intake=intake, chimney=hk.flue_liner())  # fmt: skip
 
 
 def fast_fire_max(heavier: float = 1.0) -> fi.Firing:
@@ -156,7 +157,7 @@ def _band_model(wsgg: str, wood: own.End, emissivity: str) -> Any:
     return hk.heat_model(
         k, FAST_FIRE_LOAD, 1.0, fast_fire_fuel(wood), wsgg=wsgg, n_rays=BAND_RAYS,  # pyright: ignore[reportArgumentType]
         grate_bar=0.75 * IN, path=True, intake=own_intake("fast-fire"),
-        emissivity=emissivity,  # pyright: ignore[reportArgumentType]
+        emissivity=emissivity, chimney=hk.flue_liner(),  # pyright: ignore[reportArgumentType]
     )  # fmt: skip
 
 
