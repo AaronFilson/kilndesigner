@@ -271,6 +271,15 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
    binary) and correct §B1.2 and §B3.
 10. Current-edition ASTM text: C16, C27, C133, C155 above are the 2007/2008 reapproved editions from a
    public mirror; the current editions were not compared.
+11. **To find for engine v2 (2026-11-10): real hot crushing strength and creep of IFB and dense
+    firebrick.** v2's statics caps a hot joint's stress at the C16 test load as a stand-in, the
+    user's decision for IFB (10 psi held 90 min), carried to dense brick by analogy at 25 psi
+    (`core/src/kilndesigner/v2/statics/sources.py`). Where an arch has no maximum-thrust state
+    (Olsen's fast-fire and kit arches, chappell-domura) the stand-in sets the hot thrust on the
+    frame outright: 176 lbf/ft for the fast-fire. Look for: hot CCS or hot MOR of IFB (C583 doesn't
+    cover IFB), creep under load (ASTM C832) of K-23/K-26/JM grades and of medium-duty fireclay
+    at 1,100–1,300 °C, any measured skewback or crown stress in a kiln or furnace arch, and the
+    stress–strain curve of IFB at temperature (it sets how much growth the brick itself takes up).
 
 ---
 
