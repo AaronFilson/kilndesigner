@@ -25,8 +25,9 @@ Worked 2026-11-10.
   5 in perforated clay tube spreading air under a grate (p.116, p.206); "the ash-pit entrance fully
   open" (pp.188–189). The stoker opens and closes them: Singh's coal kiln's fire mouth is open for
   hours 1–3 and bricked up from hour 4 (p.133, Table 5-1).
-- **The open sources** on hand-fired furnaces (grates, air space, ash-pit doors) are research A3's
-  (`grates-and-fuel-beds.md`); §2 summarises them.
+- **The open sources** on hand-fired furnaces (`grates-and-fuel-beds.md`, §2 here) size the grate's
+  free air space (30–50 % of its area), the over-fire air (4 in² per ft² of grate in one city's
+  settings) and the split (about half the air through the bed), but no ash-pit door or stoke hole.
 - **Each kiln's intakes** (§3): printed or derived from printed sizes for 16 of the 38 stoked
   kilns; scaled for a few more; the rest print none (their gaps). Where both are printed, the
   intakes below the grate are 1.4–6 times the chimney's section and the stoke holes 0.3–2.2 times
@@ -68,9 +69,29 @@ port (`combustion-and-masonry.md` §5.2, secondary).
 
 ## 2. The open sources on air openings
 
-Not yet integrated: research A3's `grates-and-fuel-beds.md` reads the hand-fired furnace literature
-(grate air space, ash-pit doors, over-fire air); its findings on openings are summarised here when
-it is committed.
+From `grates-and-fuel-beds.md` §2 and §4 (research A3; its tags), all on hand-fired furnaces,
+mostly coal; each Read there unless said:
+- **Through the grate**: "air-opening = 30% to 50% of area of the grate; the larger the better"
+  (Kent 1916 [G4], coal); soft-coal gaps at least ½–¾ in ([G3]); Norsker's potters' fireboxes: gaps
+  15–20 cm for firewood, 2.5–4 cm for coal, the grate 15–25 % (wood) or 12–25 % (coal) of the
+  chamber floor, the ash pit at least as big as the space above the grate ([G1]). The fast-fire's
+  ¾ in rods at 1½ in centres leave 50 % open (Derived).
+- **Over the fire**: the Chicago settings' fire doors admit "four square inches for each square
+  foot of grate surface", 2.8 % ([G5]); about half the air goes through the bed and half over it,
+  the bed passing about 7 lb of air per lb of coal ([G3], [G6], [G8]); wood with primary air alone
+  needs 50–100 % excess air, 30–50 % with secondary air ([G1]).
+- **The doors and the ash pit**: no rule sizing an ash-pit door, stoke hole or fire door against
+  the grate or the fuel rate was found. Norsker stokes "through a small hole not allowing in excess
+  air" and draws a firebox with seven 10 × 10 cm primary-air holes ([G1]); Bourry's air comes
+  through the ash pit and its door ([G9]).
+- **A firebox fed through its openings**: fire research's Kawagoe law (burning ∝ A√H) holds for a
+  room's own buoyancy at its window; a kiln's chimney sets the pressure across the openings, so the
+  inflow is the orifice flow C·A·√(2ρΔp), C about 0.65–0.70 ([G11]'s 0.68), and the lower of the
+  air-limited and bed-limited rates governs ([G11]); wide, low openings lie outside the law's checked
+  range ([G14]).
+
+So the open sources, like the book, size the grate and its free area, not the ash-pit mouth or the
+stoke hole: the kilns' printed openings (§3) are the inputs, and their flow follows from the draft.
 
 ## 3. Each stoked kiln's intakes
 
