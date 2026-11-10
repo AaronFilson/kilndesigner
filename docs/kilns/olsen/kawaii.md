@@ -12,9 +12,10 @@ Olsen, *The Kiln Book*, 4th ed.: pp.96–97 (text; Figs 4-44 to 4-48, photos), p
 | Feature | Book | Model | |
 |---|---|---|---|
 | Chambers | four, 7 ft wide × 4 ft deep × 5'8" tall | four, 84 × 48 in, 24 in arch rise | matches |
-| Step | 12–15 in between chambers | 13.2° slope | matches |
+| Step | 12–15 in between chambers | 11.6° slope: a 13½ in step over a chamber and the 18 in wall between (re-derived 2026-11-10, when the wall between chambers became Olsen's common wall) | matches |
+| Wall between chambers | not printed | 18 in: Olsen's common wall, 4½ in thicker than the others and never narrower than the two 9 in arches' feet on it (p.46), the engine's default | assumed |
 | Firebox (dogi) | 5 ft tall, bars 18–24 in, two extra side stoke holes | Bidai's firebox, 21 in bars | assumed from Bidai; side stoke holes expressible now (`stoke_holes`), not given: their size isn't printed |
-| Flues | inlet and exit 7 × 10 in, last exit 9 × 10 in, count not printed (Figs 4-47, 4-48) | five 7 × 10 in a wall, five 9 × 10 in out of chamber 4 | count scaled (step A, below) |
+| Flues | inlet and exit 7 × 10 in, last exit 9 × 10 in, count not printed (Figs 4-47, 4-48) | five 7 × 10 in a wall, five 9 × 10 in out of chamber 4; since 2026-11-10 five 7 × 10 in inlets from the firebox through chamber 1's front wall, which carries its arch (before, the firebox's whole mouth was cut through that wall) | sizes printed; counts scaled (step A, below) |
 | Doors | one per chamber in a side wall, a stoke hole bricked into each (Fig 4-46) | 20 × 44 in flat-headed, each chamber, right wall | size from Bidai; head from Fig 4-46 (step A); a door stoke hole expressible now (`stoke_holes` at the door's place), not given: its size isn't printed |
 | Bracing | on the dogi and front chamber | buttressed, no steel | partly |
 | Spy holes | not visible | engine default | — |

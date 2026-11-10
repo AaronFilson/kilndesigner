@@ -75,6 +75,14 @@ heat:
         stoke_hole:
           width: 42 in # 3½ ft
           height: 24 in # 2 ft
+        # The dogi meets the first chamber through the himitsu's wall, its flues into the first
+        # chamber "6 × 9 in on average" (p.100–101); how many isn't printed: assumed as many as in
+        # the wall between the first chamber and the kedo, 7 (scaled there off Fig 4-53). The
+        # himitsu itself isn't modelled.
+        inlets: 7
+        inlet:
+          width: 6 in
+          height: 9 in
 spy_holes:
   # Step A, 2026-11-09: the "MEMPO ANA" spy holes drawn in Fig 4-55's side elevation, one in each
   # chamber's side wall (the far wall of the view, taken as the left (?)). (scaled: Fig 4-55,

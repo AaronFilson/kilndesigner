@@ -10,8 +10,10 @@
 # Assumed: the 5 ft 8 in is to the crown. The arch rises 24 in: Olsen uses 4–6 in per foot of
 # span on chamber kilns of 4–8 ft (p.296), and the top of that range on the 4 ft span is nearest
 # the tall pointed arches of the Kyoto kilns (Bidai's rise 21–27 in on 36–46 in, Fig 4-36). So
-# the springline is at 44 in. The slope, 13.2°, is the middle step, 13½ in, over one chamber and
-# one wall, 57½ in. Walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), and a 9 in
+# the springline is at 44 in. The slope, 11.6°, is the middle step, 13½ in, over one chamber and
+# the wall between, 66 in: walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), the
+# common wall between two chambers 18 in, never narrower than the two 9 in arches' feet on it
+# (p.46; the engine's default, lining.between); and a 9 in
 # arch, as the Bidai kiln (bidai, Fig 4-36). The book names no brick but the tatami-mat arch
 # bricks: Kyoto kilns are built of local firebrick of no stated grade (bidai, p.94–95), so
 # medium-duty firebrick (Olsen's intermediate duty, p.18); the floor as the walls (engine
@@ -44,7 +46,7 @@ chamber:
   depth: 48 in # 4 ft
   height: 44 in # to the springline: 5 ft 8 in to the crown, less the rise
   chambers: 4
-  slope: 13.2 degree # a 13½ in step per 57½ in of chamber and wall
+  slope: 11.6 degree # a 13½ in step per 66 in of chamber and common wall
   on_ground: true # the floors step up the ground (p.97)
 roof:
   type: sprung_arch
@@ -79,6 +81,13 @@ heat:
           width: 14 in # the Bidai kiln's grate zone (Fig 8-7)
           length: 21 in # bars 18–24 in long (p.97)
         ash_pit: 14 in # the Bidai kiln's (Fig 8-7)
+        # The flues from the firebox into chamber 1 through its front wall, which carries the
+        # chamber's arch: 7 × 10 in, "inlet and exit alike" (p.97); as many as in each wall between
+        # the chambers, 5 (scaled: Fig 4-48, p.97, as draft.between below)
+        inlets: 5
+        inlet:
+          width: 7 in
+          height: 10 in
 draft:
   type: cross
   flue_wall: back

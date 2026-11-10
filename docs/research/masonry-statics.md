@@ -188,6 +188,26 @@ shown, not checked (`frame_checks.py` ~line 733, `door.py` BEARING_NOTE).
 Next: Trinks Vol. I (1923) pp. 196, 238 (library or HathiTrust search-only); Huerta (2004);
 Heyman (1977) pp. 109–114 directly; Maia Avelino et al. (2021) full text.
 
+## M8. A ring's foot against a taller wall: the springer (tas-de-charge) (2026-11-10)
+
+On a climbing kiln each chamber's arch along the draft ends against the wall behind it, which
+rises past its springline to the next chamber's. The engine's layout (`run_parts.py`) trims the
+ring at that wall's face, so its foot ends against a vertical face, which friction alone can't
+carry (v2's row section, `v2/statics/row.py`). Built, the foot sits on the wall. The construction
+for a vault's foot bonded into its wall is the tas-de-charge:
+
+| Item | Text | Source | Status |
+|---|---|---|---|
+| Courses | the lower courses "laid in horizontal courses and bonded into the wall, forming a solid mass"; they "help bond the ribs, vault and walls together"; they "generally rise about one-third of the height of the vault" and, projecting forward, reduce the span that must be vaulted | Encyclopædia Britannica, 11th ed. (1911), vol. 26, p.437, "Tas-de-Charge", as the Wikipedia article quotes it [M8] | Secondary (the 1911 text via Wikipedia; the original not read) |
+| Beds | "The beds of these courses are not radial as those of the average voussoirs, but horizontal" | Fehér 2021, abstract [M9] | Verified (abstract) |
+
+**For the engine (v2's row section).** Where a chamber's ring is trimmed at the taller wall
+behind it, the ring below the radial joint that meets the wall's face at the extrados (or at the
+wall's top, if that is lower) is laid in the wall's level courses and bonded to them, each course
+one block; the voussoirs start at that joint. No number is taken from these sources, only the
+construction. Hotchkiss's arches, each "roped until the arch below was finished to buttress it"
+(Olsen p.55–56), were carried by the wall below in the same way.
+
 ---
 
 ## Sources
@@ -199,3 +219,5 @@ Heyman (1977) pp. 109–114 directly; Maia Avelino et al. (2021) full text.
 - [M5] Wisconsin Admin. Code SPS 321.28/321.29 (search extract). https://docs.legis.wisconsin.gov/document/administrativecode/SPS%20321.29(6)(d)
 - [M7] C. Intrigila, N. A. Nodargi, P. Bisegna, "The unbuilt Musmeci parabolic cross vault reinvented as a dry-masonry structure", SAHC 2020. https://www.scipedia.com/wd/images/d/df/Draft_Content_303700414p1109.pdf . Text extracted (14 pp.), §1–4 read.
 - [M6] W. Trinks, *Industrial Furnaces*, Vol. II (Wiley, 1925; 1926 printing). https://archive.org/details/industrialfurnac0000wtri ; https://archive.org/details/industrialfurnac0002trin . Full text (OCR) searched.
+- [M8] "Tas-de-charge", Wikipedia, quoting H. Chisholm (ed.), *Encyclopædia Britannica*, 11th ed., Cambridge University Press, 1911, vol. 26, p.437. https://en.wikipedia.org/wiki/Tas-de-charge . Read 2026-11-10.
+- [M9] K. Fehér, "Tas-de-charge – An Essential Part of Gothic Vault", *Periodica Polytechnica Architecture* 52(1) (2021) 21–31, doi 10.3311/PPar.16889. https://pp.bme.hu/ar/article/view/16889 . Abstract read 2026-11-10.

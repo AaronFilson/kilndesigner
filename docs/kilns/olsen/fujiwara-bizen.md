@@ -28,7 +28,8 @@ is the firebox: 10 × 8 ft, with a 3½ × 2 ft fire-mouth hole. The flue stack r
 | Feature | Book | Model | |
 |---|---|---|---|
 | Dogi | 8 ft × 10 ft (Fig 4-53); fire-mouth hole 3½ × 2 ft (p.102); stepped shelves for ware | firebox 10 × 8 ft, stoke hole 42 × 24 in | matches; the ware in the dogi isn't modelled |
-| Himitsu | 24 in flue with a 2 ft chamber; flues 3 × 6 in in and 6 × 9 in out (p.100, Fig 4-52) | none | not expressible |
+| Himitsu | 24 in flue with a 2 ft chamber; flues 3 × 6 in in and 6 × 9 in out (p.100, Fig 4-52) | the himitsu itself none; its wall is chamber 1's front wall, carrying the first arch, with seven 6 × 9 in flues from the dogi (2026-11-10; before, the dogi's whole mouth was cut through it) | size printed; the count assumed, as the wall between the chambers (7, scaled off Fig 4-53) |
+| Wall between chambers | walls 10–13 in (p.100) | 18 in: Olsen's common wall, 4½ in thicker than the others and never narrower than the two 9 in arches' feet on it (p.46), the engine's default | assumed: is the printed 10–13 in for these walls too? |
 | Chambers | first 4 ft 6 in, 5 ft tall; kedo 2 ft 10 in, 4 ft tall (Figs 4-53, 4-55) | `chamber.sizes`: 54 × 60 in and 34 × 48 in to the crowns | matches |
 | Arches | each chamber's own, along the draft | `chambers: 2`, arches along | matches |
 | Slope | 5 in rise per 12 in (Fig 4-55) | 22.6° | matches |

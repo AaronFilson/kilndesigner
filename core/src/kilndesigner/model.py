@@ -152,6 +152,18 @@ class Lining(Spec):
             "walls' layers. A door in the back wall takes lining.door, when given, before this"
         ),
     )
+    between: list[Layer] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "The layers of each wall between chambers in a row, front to back, where the book "
+            "prints its thickness, as the 9 in wall of Olsen's two-chamber kiln (Fig 8-17). Left "
+            "out: Olsen's common wall, which carries the arches of the chambers either side: the "
+            "walls' layers, the hot face 4½ in thicker, and never narrower than the two arches' "
+            "feet on it (The Kiln Book, 4th ed., p.46). Under a tube's vault, a flat roof or a "
+            "catenary, which throw nothing on it, the walls' layers"
+        ),
+    )
 
     def for_face(self, face: Face, *, door_face: Face | None = None) -> list[Layer]:
         if face == door_face and self.door is not None:

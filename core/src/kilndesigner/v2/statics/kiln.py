@@ -8,11 +8,13 @@ missing physics, and `missing` names it.
 
 - **Sprung arches across the width**: the cross-section cut from the engine's solids
   (`section.py`), at each printed station where the width changes.
+- **Arches along the draft**, a row of chambers or one chamber under an arch along its depth: the
+  section along the row (`row.py`).
 - **Catenary arches**: the ring along the engine's catenary on fixed feet (`arch.catenary_ring`).
 - **Round domes on round walls**: rings of revolution with hoop compression (`dome.py`).
 - **No roof**: free-standing walls under their own weight.
-- Refused, each with its reason: arches along the draft (a row of chambers), crossing vaults,
-  domes over square or curved plans, and fibre roofs hung in steel.
+- Refused, each with its reason: crossing vaults, domes over square or curved plans, and fibre
+  roofs hung in steel.
 """
 
 from __future__ import annotations
@@ -26,6 +28,8 @@ from kilndesigner.v2.statics import sources
 from kilndesigner.v2.statics.arch import SUPPORT, catenary_ring
 from kilndesigner.v2.statics.dome import kiln_dome, kiln_not_modelled
 from kilndesigner.v2.statics.rigid import Problem, Status, assemble, force_on, solve
+from kilndesigner.v2.statics.row import analyse as analyse_row
+from kilndesigner.v2.statics.row import row_section
 from kilndesigner.v2.statics.section import NotModelledError, analyse, cross_section, stations
 from kilndesigner.working import Step
 
@@ -82,11 +86,7 @@ def statics(kiln: Kiln) -> KilnStatics:
             "a force pattern (cross or fan; SAHC 2020 §4.3) or 3-D blocks are needed, not built",
         )
     if roof.along or (kiln.chamber.chambers > 1 and not roof.tube):
-        return _refused(
-            "arches along the draft",
-            "the section along a row of chambers (stepped floors, division walls carrying two "
-            "arches at different springlines, the flues through them) isn't cut yet",
-        )
+        return _row(kiln)
     try:
         return _cross_sections(kiln)
     except NotModelledError as e:
@@ -96,6 +96,37 @@ def statics(kiln: Kiln) -> KilnStatics:
 def _refused(kind: str, why: str) -> KilnStatics:
     return KilnStatics(kind, dict.fromkeys(STATES), missing=why,
                        steps=(Step(name="Not modelled", value=why),))  # fmt: skip
+
+
+ROW = "arches along the draft"
+ANALOGY = (
+    "dense brick's hot crushing: with the 25 psi stand-in carried over from IFB by analogy (a "
+    "question for the user) there is no admissible state hot, without it one; real hot crushing "
+    "and creep data, and the shell's temperature through its thickness, are to decide it"
+)
+
+
+def _row(kiln: Kiln) -> KilnStatics:
+    """The section along a row of chambers, cold and hot; a hot verdict that rests only on a
+    crushing stand-in carried over by analogy isn't given, the missing data said instead."""
+    try:
+        rs = row_section(kiln)
+    except NotModelledError as e:
+        return _refused(ROW, str(e))
+    stands: dict[str, bool | None] = {}
+    numbers: dict[str, float] = {}
+    steps: list[Step] = []
+    missing: str | None = None
+    for state in STATES:
+        r = analyse_row(rs, state)
+        stands[state] = None if r.analogy else r.stands
+        missing = ANALOGY if r.analogy else missing
+        for end, v in r.least.items():
+            numbers[f"least on the {rs.support} at the {end}, {state}"] = v
+        for end, v in r.most.items():
+            numbers[f"most on the {rs.support} at the {end}, hot"] = v
+        steps += list(r.steps[len(rs.steps) :]) if steps else list(r.steps)
+    return KilnStatics(ROW, stands, numbers, missing, tuple(steps))
 
 
 def _cross_sections(kiln: Kiln) -> KilnStatics:

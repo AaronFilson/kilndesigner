@@ -117,7 +117,8 @@ def test_chambers_in_a_row_are_laid_out_in_brick(path: Path) -> None:
 def test_each_chambers_floor_steps_up_the_slope() -> None:
     kiln = load_design(EXAMPLES / "olsen" / "kawaii.yaml")
     run = run_layout(kiln)
-    assert run.step == pytest.approx(run.pitch * math.tan(math.radians(13.2)))
+    assert run.step == pytest.approx(run.pitch * math.tan(math.radians(11.6)))
+    assert 12 * 25.4 <= run.step <= 15 * 25.4  # the book's 12–15 in step (p.97)
     floors = {p.chamber: p.hi[2] for p in lining_parts(kiln) if p.name.startswith("floor/1-")}
     assert floors == {i + 1: pytest.approx(i * run.step) for i in range(4)}
     # Each chamber's arch spans along the draft, over its depth

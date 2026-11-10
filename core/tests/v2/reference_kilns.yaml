@@ -5429,11 +5429,11 @@ kilns:
         reading: flagged
         note: the metric is misprinted "(30.5 x 38cm)" for 30.5 to 38 cm
       - what: slope
-        value: 13.2
+        value: 11.6
         unit: degree
         status: assumed
-        reason: the middle step, 13½ in, over one chamber and one wall, 57½ in (48 in plus the 
-          assumed 9½ in wall)
+        reason: the middle step, 13½ in, over one chamber and the wall between, 66 in (48 in plus
+          the 18 in common wall, never narrower than the two 9 in arches' feet on it, p.46)
       - what: springline_height
         value: 44
         unit: inch

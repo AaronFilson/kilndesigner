@@ -24,6 +24,14 @@ No change in this pass.
 against the 1.29 million printed (the engine fires all three chambers at once, a climbing kiln
 doesn't); chimney 7.3 ft by the engine.
 
+## v2 statics (2026-11-10)
+
+The walls between the chambers are now 17 in (Olsen's common wall, never narrower than the two
+arches' feet on it, p.46, in whole bricks; the engine's default). Along the row the chambers stand
+cold and hot in the frame, which gives about 19 lbf/ft at each end cold and 26 hot; the 9 in walls'
+two 4½ in layers are tied by header courses (Olsen p.41–42, p.295): as two separate leaves they
+needed friction of 0.94.
+
 ## Open questions for the user
 
 1. Where were the six burners: two per chamber, or all in the first?

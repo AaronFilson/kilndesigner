@@ -14,17 +14,9 @@ ROOT = Path(__file__).resolve().parents[3]
 OLSEN = ROOT / "examples" / "olsen"
 
 NOT_MODELLED = {
-    # a row of chambers: the section along the kiln isn't cut yet
-    "bidai": "along the draft",
-    "bowen-mountain": "along the draft",
-    "fujiwara-bizen": "along the draft",
-    "hotchkiss-raw-clay": "along the draft",
-    "kawaii": "along the draft",
-    "kyoto-climbing": "along the draft",
-    "olsen-three-chamber": "along the draft",
-    "olsen-two-chamber": "along the draft",
-    "suzuki-kyoto": "along the draft",
-    "tobe": "along the draft",
+    # stands cold; hot, its verdict rests on dense brick's 25 psi crushing stand-in, carried over
+    # from IFB by analogy (a question for the user), so it isn't given
+    "tobe": "dense brick's hot crushing",
     # vaults crossing in a groin: a 3-D force pattern or 3-D blocks
     "church-skaelskor": "groin",
     "fireworks-edmonton": "groin",
@@ -55,7 +47,9 @@ def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) 
         assert r.all_stand is None
         assert r.missing is not None
         assert words in f"{r.kind}: {r.missing}"
-        assert r.steps[0].name == "Not modelled"
+        if all(v is None for v in r.stands.values()):
+            assert r.steps[0].name == "Not modelled"
+    assert results["tobe"].stands == {"cold": True, "hot": None}
 
 
 @pytest.mark.slow
@@ -77,3 +71,22 @@ def test_what_holds_the_reference_kilns(results: dict[str, KilnStatics]) -> None
     assert results["kenzan-muffle"].kind == "no roof"
     assert results["blakebrough-sturt"].kind == "catenary arch"
     assert len([k for k in results["kannofen"].numbers if k.startswith("least")]) == 8  # 4 stations
+
+
+@pytest.mark.slow
+@pytest.mark.geometry
+def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
+    """The rows of chambers: Olsen's three-chamber kiln's frame must give about 19 lbf/ft at each
+    end cold; tobe's 10 ft arches need about 210 lbf/ft at each end from what holds the row (the
+    firebox, the earth, the chimney); Bidai's and Fujiwara's end walls carry their arches alone."""
+    lbft = 4.4482216152605 / 0.3048
+    three = results["olsen-three-chamber"].numbers
+    assert three["least on the frame at the front, cold"] / lbft == pytest.approx(18.9, abs=0.5)
+    assert three["least on the frame at the back, cold"] / lbft == pytest.approx(18.6, abs=0.5)
+    tobe = results["tobe"].numbers
+    assert tobe["least on the buttress at the front, cold"] / lbft == pytest.approx(210.4, abs=1.0)
+    for kid in ("bidai", "fujiwara-bizen"):
+        n = results[kid].numbers
+        assert n["least on the buttress at the front, cold"] == pytest.approx(0.0, abs=1e-6)
+    rows = {k for k, r in results.items() if r.kind == "arches along the draft"}
+    assert len(rows) == 10

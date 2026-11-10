@@ -28,9 +28,6 @@ import math
 from dataclasses import dataclass, replace
 from typing import Any, Literal
 
-import build123d as bd
-import numpy as np
-
 from kilndesigner.geometry import Part, lining_parts, part_solid
 from kilndesigner.model import Kiln, SprungArch
 from kilndesigner.units import Q_, si
@@ -47,6 +44,7 @@ from kilndesigner.v2.statics.rigid import (
     section_from_blocks,
     solve,
 )
+from kilndesigner.v2.statics.solids import between, box, courses, fused, voussoirs
 from kilndesigner.working import Step, show
 
 MM = 1e-3  # the engine's solids are in millimetres
@@ -159,7 +157,7 @@ def cross_section(
             continue
         x_out = max(x_out, abs(p.lo[0]), abs(p.hi[0]))
         layer = p.name.split("/")[1].split("-")[0]
-        for k, solid in enumerate(_courses(_sliced(p, y0, y1), levels)):
+        for k, solid in enumerate(courses(_sliced(p, y0, y1), levels)):
             blocks.append(_block(f"{side} wall, layer {layer}, piece {k + 1}", solid, p, side))
     skew_top = springline
     for p in parts:
@@ -182,9 +180,9 @@ def cross_section(
     n_v = max(2, round(r_out * 2 * arch.half_angle / (course / MM)))
     a0 = math.pi / 2 - arch.half_angle
     theta = [a0 + 2 * arch.half_angle * i / n_v for i in range(n_v + 1)]
-    ring = _fused([s for p in ring_parts for s in _sliced(p, y0, y1)])
+    ring = fused([s for p in ring_parts for s in _sliced(p, y0, y1)])
     rho_ring = sources.density(ring_parts[0].material)
-    for i, solid in enumerate(_voussoirs(ring, arch.centre_z, theta)):
+    for i, solid in enumerate(voussoirs(ring, 0, (0.0, arch.centre_z), theta)):
         loads = _overburden(over, theta[i], theta[i + 1], depth)
         blocks.append(
             Block(f"voussoir {i + 1}", solid, rho_ring, MM, tag=VOUSSOIR,
@@ -192,7 +190,7 @@ def cross_section(
         )  # fmt: skip
     pad = 100.0
     x_out = max(x_out, r_out * math.sin(arch.half_angle))
-    blocks.append(Block(GROUND, _box((-x_out - pad, y0, -pad), (x_out + pad, y1, 0.0)), 0.0, MM,
+    blocks.append(Block(GROUND, box((-x_out - pad, y0, -pad), (x_out + pad, y1, 0.0)), 0.0, MM,
                         fixed=True, tag=GROUND))  # fmt: skip
     if skew_top <= 0.0:
         held = "none"  # the arch springs from the ground, which holds its feet by friction
@@ -203,7 +201,7 @@ def cross_section(
         for sign in (-1.0, 1.0):
             xs = sorted((sign * x_out, sign * (x_out + SUPPORT_THICKNESS)))
             blocks.append(Block(f"{held} {'left' if sign < 0 else 'right'}",
-                                _box((xs[0], y0, z_lo), (xs[1], y1, skew_top)), 0.0, MM,
+                                box((xs[0], y0, z_lo), (xs[1], y1, skew_top)), 0.0, MM,
                                 fixed=True, tag=held))  # fmt: skip
     slope = si(kiln.chamber.slope, "radian") if kiln.chamber.slope is not None else 0.0
     sec = section_from_blocks(blocks, contacts_pairwise(blocks), depth)
@@ -273,56 +271,7 @@ def _has_area(p: Part) -> bool:
 def _sliced(p: Part, y0: float, y1: float) -> list[Any]:
     """The part's solid between y0 and y1 (mm), as solids (none for a wall with no height)."""
     solid = part_solid(p)
-    if solid is None:
-        return []
-    # XZ's normal is −y: BOTTOM keeps y > y0, TOP keeps y < y1
-    keep = solid.split(bd.Plane.XZ.offset(-y0), keep=bd.Keep.BOTTOM)
-    keep = None if keep is None else keep.split(bd.Plane.XZ.offset(-y1), keep=bd.Keep.TOP)
-    return [] if keep is None else list(keep.solids())
-
-
-def _split(solid: Any, plane: Any) -> list[Any]:
-    return [s for piece in solid.split(plane, keep=bd.Keep.BOTH) if piece is not None
-            for s in piece.solids()]  # fmt: skip
-
-
-def _courses(solids: list[Any], levels: list[float]) -> list[Any]:
-    """Each solid cut at the level planes, lowest first."""
-    out: list[Any] = []
-    rest = solids
-    for z in levels:
-        above: list[Any] = []
-        for piece in (x for s in rest for x in _split(s, bd.Plane.XY.offset(z))):
-            (out if z > piece.center(bd.CenterOf.MASS).Z else above).append(piece)
-        rest = above
-    return out + rest
-
-
-def _fused(solids: list[Any]) -> Any:
-    whole = solids[0]
-    for s in solids[1:]:
-        whole = whole.fuse(s)
-    return whole
-
-
-def _voussoirs(ring: Any, centre_z: float, theta: list[float]) -> list[Any]:
-    """The ring cut by radial planes through the arch's axis at each inner angle, from the right
-    springing to the left."""
-    out: list[Any] = []
-    rest = ring
-    for a in theta[1:-1]:
-        normal = np.array([-math.sin(a), 0.0, math.cos(a)])
-        plane = bd.Plane(origin=(0.0, 0.0, centre_z), z_dir=tuple(normal.tolist()))
-        before: list[Any] = []
-        after: list[Any] = []
-        for piece in _split(rest, plane):
-            c = piece.center(bd.CenterOf.MASS)
-            side = float(normal @ np.array([c.X, 0.0, c.Z - centre_z]))
-            (before if side < 0 else after).append(piece)
-        out.append(_fused(before))
-        rest = _fused(after)
-    out.append(rest)
-    return out
+    return [] if solid is None else between(solid, 1, y0, y1)
 
 
 def _overburden(over: list[Part], t0: float, t1: float, depth: float) -> tuple[Load, ...]:
@@ -342,12 +291,6 @@ def _overburden(over: list[Part], t0: float, t1: float, depth: float) -> tuple[L
 def _block(name: str, solid: Any, p: Part, side: str, tag: str | None = None) -> Block:
     return Block(name, solid, sources.density(p.material), MM, tag=tag or f"wall {side}",
                  material=p.material)  # fmt: skip
-
-
-def _box(lo: tuple[float, float, float], hi: tuple[float, float, float]) -> Any:
-    sx, sy, sz = (b - a for a, b in zip(lo, hi, strict=True))
-    cx, cy, cz = ((a + b) / 2 for a, b in zip(lo, hi, strict=True))
-    return (bd.Pos(cx, cy, cz) * bd.Box(sx, sy, sz)).solid()
 
 
 def _built_steps(

@@ -94,11 +94,11 @@ class Run:
 
 
 def run_of(kiln: Kiln) -> Run:
+    from kilndesigner.common_wall import between_layers
     from kilndesigner.shell import sizes_of, widths_of
 
     c = kiln.chamber
-    walls = kiln.lining.walls
-    between = sum(si(x.thickness, "mm") for x in walls)
+    between = sum(t for _, t in between_layers(kiln, "mm"))
     return Run(
         round=c.shape == "round",
         width=si(c.width, "mm"),

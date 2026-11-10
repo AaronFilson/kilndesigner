@@ -113,3 +113,10 @@ def crushing(material_id: str) -> Sourced | None:
     if kind == "dense_firebrick":
         return C16_DENSE
     return None
+
+
+def by_analogy(material_id: str) -> bool:
+    """Whether the material's crushing stand-in is carried over by analogy rather than decided
+    (dense firebrick's 25 psi, a question for the user): a verdict that rests on it alone isn't
+    given (ADR 0009), the missing data said instead."""
+    return crushing(material_id) is C16_DENSE
