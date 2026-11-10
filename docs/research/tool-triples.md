@@ -20,7 +20,7 @@ nothing. The checks below only show that a tool was driven correctly.
 |---|---|---|---|
 | **build123d + HiGHS + PyNite** → statics of a whole kiln section, frame included | the blocks' solids and contacts, every LP solve, the frame analysis | about 250–300 lines of glue, the pair's coupling (~100), working steps, all of 3-D | **adopt** as v2's statics path (§1) |
 | **Cantera + fluids + ht** → the gas path, burner to chimney top | gas composition and properties, friction, fitting losses, convection | about 150–250 lines: segments, the draft sum, the flow solve, range guards, working | **adopt** (§2) |
-| **build123d + pyViewFactor's kernel + `radiation.py`** → view factors for any chamber shape | geometry, meshing, the view-factor integral (unobstructed) | face naming, mesh/group/closure glue (~120), a partial-shadowing test (100–200) | **adopt the kernel, copied as NumPy**, not the package (§3) |
+| **build123d + pyViewFactor's kernel + `radiation.py`** → view factors for any chamber shape | geometry, meshing, the view-factor integral (unobstructed only) | face naming, mesh/group/closure glue (~120), an obstruction test (100–200, or §6's ray tracing) | **adopt the kernel, copied as NumPy, for unobstructed pairs and as a check**; obstructed chambers need §6 (§3) |
 | **compas_tna + HiGHS + build123d** → thrust networks for domes and groin vaults | diagram bookkeeping, the vertical LP solve, intrados/extrados heights | the search over force distributions (300–600), moving springings, loading (~150) | **partial**: keep HiGHS and build123d's ray queries; compas_tna's diagram generators at most (§4) |
 
 ## 1. build123d + HiGHS + PyNite: whole-kiln statics (Run)
@@ -34,17 +34,25 @@ nothing. The checks below only show that a tool was driven correctly.
   1e-4 in loses the contact to a sliver.
 - **The section:** a 12 in slice across Olsen's fast-fire kiln (`examples/olsen/fast-fire.yaml`),
   46 blocks: 14 courses a wall, skewbacks, 13 arch bricks, ground and frame. K-23 at 32.03
-  lb/ft³, friction 0.6 cold and 0.50 hot, from `docs/research`.
+  lb/ft³, friction 0.6 cold (the low end of the sourced 0.6–0.7) and 0.50 hot, from
+  `docs/research`. Assumptions: rigid blocks of unlimited strength, associative friction (which
+  `statics-combinations.md` §3 shows can over-read), and a frictionless frame contact.
   - The arch alone reproduces the pair's least thrust, 11.6705 lb/ft (−0.58 % at 13 bricks,
     exact at 52 and 320).
   - Blocks from the layout numbers and blocks cut from the engine's own solids agree within 0.1 %.
   - With the walls, the least frame force is 7.08 lb/ft a side: the walls buttress.
   - No frame: HiGHS proves the section infeasible. Cold, the thrust has no upper bound; hot, the
-    arch sliding on its skewbacks caps it at 580 lb/ft.
+    arch sliding on its skewbacks caps it at 580 lb/ft. **That cap is the model's, not the
+    kiln's** (review, Derived): it follows from μ = 0.50 under the assumptions above, and the
+    skewback then bears about 9.5 psi on average, more at the pivot, near IFB's 10 psi C16 hot
+    load. Crushing at the pivots would set a lower cap.
   - Contacts 0.13–0.31 s; the two LPs 11–15 ms.
 - **With PyNite** (4 and 36 slices over a 36 in bay; 0.2 and 1.3 s): the bay's ends hold the arch
-  at the hot bound, 580 lb/ft; mid-bay the angle gives and the thrust drops to 7.1 lb/ft. The
-  angle reaches about 21,000 psi and the rods about 600 lb; not judged, as no allowable was set.
+  at the hot bound, 580 lb/ft; mid-bay the angle gives and the thrust drops, to 207.8 lb/ft with
+  4 slices and 7.1 with 36: **not converged** in the slicing. The angle reaches about 21,000 psi
+  and the rods about 600 lb; both follow from the 580 cap, so they inherit its caveat, and are not
+  judged, as no allowable was set. (PyNite figures checked against RESULTS.md, not rerun in the
+  review.)
 - **Not run:** 3-D (corners, returns, the arch along its length), and LP rows for curved
   contacts.
 
@@ -55,7 +63,9 @@ nothing. The checks below only show that a tool was driven correctly.
 - **The run:** Olsen's fast-fire wood downdraft, ash-pit mouths → grates → fireboxes → inlet
   flues → chamber → exit flue → 14 ft chimney, on test inputs (temperatures, λ 1.2, roughness,
   fuel). Draft 41.5 Pa (38.1 from the column); the largest loss the turn up the chimney, 14.5 Pa;
-  0.087 kg/s of air; the chimney gas cools 1285 → 1167 °C by convection. Solves in 50–65 ms.
+  0.087 kg/s of air; the chimney gas cools 1285 → 1167 °C by convection, against a test wall
+  temperature. Solves in 50–65 ms. Fitting losses are 89 % of the draft, so the flow mostly
+  reflects the round-pipe coefficients flagged below.
 - **Cantera** (BSD-3, 62 MB): composition at any λ and temperature (CO below λ 1), density,
   viscosity, conductivity, heat capacity, stream mixing.
 - **fluids** (MIT, 2.5 MB): Colebrook friction; entrance, exit, contraction, expansion, bend and
@@ -63,7 +73,7 @@ nothing. The checks below only show that a tool was driven correctly.
 - **ht** (MIT, 2.4 MB): flue and shelf convection coefficients.
 - **Faults (Run):**
   - ht's method selector crosses three laminar-entry names, and at Re 3600 picks a correlation
-    stated for Re ≥ 10⁴. v2 calls named correlations only.
+    stated for Re ≥ 10⁴; it also errs below Re ≈ 10. v2 calls named correlations only.
   - Cantera evaluates at 150 K and 5000 K without a warning, outside most species' 200–3500 K.
     v2 checks the range itself (ADR 0009).
   - fluids' fittings are for round pipes. On rectangular brick flues they are an assumption until
@@ -91,13 +101,15 @@ nothing. The checks below only show that a tool was driven correctly.
   rows off by 1.5–4.7e-2 and a symmetric chamber slightly asymmetric. The closure then moves
   factors up to 8.4e-3, hiding the error, not fixing it. Unobstructed, the closure moves them at
   most 4e-6.
-- **Cost:** about 5 s at 1250–1500 facets after a 6.7 s first-call compile; time and memory grow
-  as the square of the facets.
+- **Cost:** pyViewFactor takes about 5 s at 1250–1500 facets after a 6.7 s first-call compile;
+  time and memory grow as the square of the facets. The NumPy copy proposed below takes 32.6 s at
+  1252 facets, and has no obstruction test at all.
 - **The package's weight:** 1.1.0 (MIT) needs pyvista and numba at import: 220 MB new to the repo
   on Linux, VTK the repo avoids on purpose, and numba caps NumPy below 2.6. A NumPy-only copy of
   its kernel matches it to 2.5e-7 but takes 32.6 s against 4.7 s at 1252 facets.
-- **Verdict (Derived):** copy the kernel in as plain NumPy (about 70 lines, credited to AREP,
-  MIT), keep pyViewFactor as a test reference only. v2 writes the face naming (20–40 lines a
+- **Verdict (Derived):** for unobstructed chambers and as a check, copy the kernel in as plain
+  NumPy (about 70 lines, credited to AREP, MIT); keep pyViewFactor as a test reference only.
+  Single-ray obstruction is too coarse by design; obstructed chambers go to §6's ray tracing. v2 writes the face naming (20–40 lines a
   chamber family), the mesh, group and closure glue (~120), and a partial-shadowing test
   (100–200). The closure follows the smoothing of zonal exchange areas (Larsen & Howell 1986;
   Lawson 1995): **from memory, not sourced**; it needs a source here before v2 uses it.
@@ -120,8 +132,10 @@ nothing. The checks below only show that a tool was driven correctly.
   prism Booleans are slow (13 ms a face, about 90 % of the run time).
 - **Dome:** least t/R 0.161 with compas_tna's force diagram, 0.079 with a lune pattern. Its form
   diagram stops at the median radius and misses 14 % of the weight. Fixed supports at the base
-  joint's middle give about 0.080; a springing free to move across the joint about 0.043
-  (Derived). Allowing hoop compression never changed the answer; why is not settled.
+  joint's middle give about 0.080; a springing free to move across the joint about 0.043 (Run;
+  checked by a closed form). Allowing hoop compression never changed the answer. The review found
+  no sign error in the hoop rows (Read); the likely reason is that the limiting zone is at the
+  springing, where hoops would be in tension. Reporting each hoop limit's slack would settle it.
 - **Groin vault:** no admissible state at any t/R up to 0.30 with compas_tna's force diagram; with
   supports at z = 0 the range of r is empty (Derived). So reproducing negative case N6 (no state
   at t/R 0.05, `engine-v2-negative-cases.md` §1) here says nothing.
@@ -132,12 +146,38 @@ nothing. The checks below only show that a tool was driven correctly.
 
 ## 5. What this does not settle
 
-- 3-D whole-kiln statics (§1) and LP rows for curved contacts.
+- 3-D whole-kiln statics (§1) and LP rows for curved contacts; crushing at the pivots, the
+  frame contact's friction, and non-associative friction in the whole section (§1's cap).
+- The mid-bay thrust's convergence in the slicing (§1).
 - Partial shadowing in view factors (§3), and a source for the closure correction.
 - Rectangular-flue fitting losses, fuel-bed and setting resistance, brick roughness, gas
   radiation (§2).
 - Why hoop compression doesn't move the dome's least thickness, and a force-distribution search
   for vaults (§4).
+
+## 6. Bridges the threes missed (2026-11-10)
+
+The user's rule for this pass: **a bridge module is cheaper than a whole science module.** Ranked
+by the science taken off v2's hands over the bridge's size. Bridge sizes are estimates (Derived).
+Probes: `scratch/missed-combos/` (`mc_vf.py`, `probe_wheels.py`, `radis_probe.py`).
+
+| # | Bridge | Takes | Bridge | Verdict |
+|---|---|---|---|---|
+| 1 | trimesh + embreex: Monte Carlo view factors with obstruction (H5) | ray tracing against the whole chamber, partial shadowing | 80–120 lines; MIT-type; 14 MB; CPython 3.14 wheels for Linux, macOS, Windows (Run) | **adopt**, with §3's kernel for unobstructed pairs and as a check |
+| 2 | SciPy `solve_ivp` (BDF/Radau) as the firing integrator | stiff integration, cone events | 150–250 lines; no new dependency | **adopt** |
+| 3 | scikit-fem for the 2-D soil (H9); pyfvtool for 1-D | the field solve | 120–180 lines; BSD, 174 kB, pure Python | **adopt**; v1's wall solver stays for H8 |
+| 4 | Cantera reactor networks as the H1 zones | well-stirred zone balances | 200–300 lines | **trial**: its kinetics against ADR 0017's equilibrium only; feeding radiation in each step. Fallback: #2 with Cantera's equilibrium |
+| 5 | radis or HAPI with HITEMP for gas radiation (H6) | line-by-line gas spectra | heavy: about 95 packages, LGPL, gigabytes of data (from memory) | **test reference only**; no WSGG package on PyPI |
+| – | CasADi | gradients for target-time solves | LGPL, 91 MB | defer |
+| – | tespy, pyfluids; thermo, chemicals; pyradiance, mitsuba; assimulo, scikits-odes, pyembree | – | – | reject: fluids or Cantera already cover them, rendering tools, or no CPython 3.14 wheels |
+
+- **#1, Run:** two 1 m squares 1 m apart, 10⁶ rays: F = 0.20017 ± 0.0004 against the exact
+  0.19982, in 0.33 s. With a blocker between them, 0.0996, with no exact value to check it
+  against. Monte Carlo factors aren't exactly reciprocal, so the closure correction still needs
+  the source §3 asks for.
+- **Questions for the user:** whether Cantera's kinetics fit ADR 0017 (#4); whether a WSGG fit
+  made here from radis output counts as "fitted" under decision 4 (the alternative is a published
+  WSGG set, checked against radis offline).
 
 ## Sources
 
