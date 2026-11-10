@@ -43,6 +43,47 @@ kilns:
         reason: no temperature printed; cone 10 from the anagama-style kiln built at 
           Höhr-Grenzhausen in 2003 (hohr-2003, p.122); masonry-materials.md §4a.7 puts such a clay's
           ceiling near cone 10–11
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the book names neither the wood nor a place (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 5.25
@@ -222,6 +263,48 @@ kilns:
           cool for black, carbonized ware
         status: printed
         page: p.108
+      - what: fuel_species
+        value: slab wood, kind not printed
+        status: assumed
+        reason: pp.107–108 print slab wood; built at an NCECA conference in the USA (kiln-fuelwood-by-region.md)
+        note: Korean kilns burn pine dried a year ([G1]), a tradition, not this kiln's wood
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: length
         value: 16
@@ -408,6 +491,48 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 3
@@ -699,16 +824,17 @@ kilns:
         spread: heights ±3 in, diameter ±½ in, from the printed 19 ft 5 in, 42, 46, 36, 59, 65, 59 
           and 56 in
         note: the scales give chamber 2's printed 56 in as 52–56½ in
-      - what: secondary_air
-        value: [108, 126]
+      - what: primary_air
+        value: [168, 196]
         unit: inch**2
         status: derived
-        page: p.94, p.201
-        figure: Figs 4-36, 8-7
-        reason: the 9 in mouth (Fig 4-36) × the 12–14 in air and stoke opening (Fig 8-7), read as width
-          × height
+        page: p.201
+        figure: Fig 8-7
+        reason: the front opening 12–14 in wide in the plan × the 14 in ash pit, which the side view
+          labels AIR, with STOKING above it (read on the page image, 2026-11-10)
         reading: uncertain
-        condition: the air and stoke opening above the grate (research A2)
+        condition: the air opening into the ash pit, below the stoking opening (research A2); the
+          stoking opening's height isn't legible
     structure:
       - what: roof_type
         value: >-
@@ -850,6 +976,78 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: wood sticks, kind not printed
+        status: assumed
+        reason: p.205 prints the sticks' size; no source names Sturt's wood (kiln-fuelwood-by-region.md
+          [A1])
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Sydney''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_species
+        value: '#2 diesel, for the oil drip'
+        status: assumed
+        reason: 'the oil isn''t named (p.208, Fig 8-21); the book''s drip-oil practice is #2 diesel (pp.207–209)'
+      - what: fuel_heating_value
+        value: [42.1, 43.3]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s 18,610 BTU/lb (p.209) is 43.3 MJ/kg, basis not printed;
+          AFDC''s net 128,488 BTU/gal is 42.1 MJ/kg at the book''s sg 0.85 ([F6]); [F3]''s light fuel
+          oil 42.4'
+        condition: net (research A1); the oil drip
+      - what: fuel_carbon
+        value: [85.0, 86.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 86 % (p.196), 86.2 % ([F3]), 85–86 % ([F2])'
+        condition: the oil drip
+      - what: fuel_hydrogen
+        value: [13.0, 13.7]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 13 % (p.196), 13.7 % ([F3])'
+        condition: the oil drip
+      - what: fuel_sulphur
+        value: [0.1, 0.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
+        condition: the oil drip
     chamber:
       - what: crown_height
         value: 6
@@ -1516,6 +1714,49 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: chestnut
+        status: printed
+        page: p.166
+        quote: chestnut slats
+        note: Castanea sativa (kiln-fuelwood-by-region.md [E2]); [F1] has one chestnut analysis only
+      - what: fuel_moisture
+        value: [11.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Barcelona''s driest month, 11.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 18.67]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: diameter
         value: 180
@@ -1689,6 +1930,48 @@ kilns:
         value: "10"
         status: assumed
         reason: Olsen salts at cone 9–10 (p.128); not given for this kiln
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the drawing shows wood fireboxes (p.126); Japanese kilns burn pine, by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]; Domura not located) to 25 %, firewood stored several years
+          ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: 50
@@ -1895,6 +2178,49 @@ kilns:
         status: assumed
         reason: from its sister the Fireworks kiln (p.181, cone 10-plus) and the Kanayama kiln 
           (p.189, cone 9/10)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Danish firewoods are beech, oak, ash, spruce, pine (kiln-fuelwood-by-region.md [E5]);
+          none named for this kiln
+      - what: fuel_moisture
+        value: [11.2, 23.1]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Copenhagen''s driest month, 11.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 23 %, split wood dried one or two summers to 15–30 % of its dry weight ([E5], 13–23
+          % wet)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 7
@@ -2068,6 +2394,47 @@ kilns:
         value: "10"
         status: assumed
         reason: from the Gulgong racer, Olsen's cast-dome wood cross-draft (gulgong-racer, p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no place printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: length
         value: 117
@@ -2420,6 +2787,48 @@ kilns:
         value: wood, stoked from the front and through the side stoke holes
         status: printed
         page: p.114
+      - what: fuel_species
+        value: pine slabs
+        status: assumed
+        reason: his Hart Square groundhog fires 'fast burning pine slabs' (kiln-fuelwood-by-region.md
+          [U2]); Catawba Valley kilns burned pine ([U1]); the species not named
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Charlotte''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: length
         value: 24
@@ -2672,6 +3081,47 @@ kilns:
         page: p.160
         condition: 80,000 bricks, replica tiles and bricks for restoring Pompeii
         note: short tons (18 metric t printed beside)
+      - what: fuel_species
+        value: long wooden slats, kind not printed
+        status: assumed
+        reason: p.160 prints long slats; no source names the wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [11.5, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Naples''s driest month, 11.5 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 118
@@ -2912,6 +3362,48 @@ kilns:
         note: >-
           Fig 5-43 (on p.141) reads 4½–5 in at the front; p.151 gives the fast-fire kiln a 4 in
           front space
+      - what: fuel_species
+        value: wood of any kind
+        status: printed
+        page: p.139
+        quote: a quarter of a cord of wood of any kind
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: [12, 16]
@@ -3240,6 +3732,48 @@ kilns:
         note: >-
           Aspen's elevation, read by the user from the book (the digits are cut off in the scan);
           the book doesn't say this kiln used the high-altitude sizes
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names Anderson Ranch's wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [6.1, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Grand Junction''s driest month, 6.1 % (Denver''s
+          8.6 %; neither a mountain valley; kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored
+          several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: 18
@@ -3377,6 +3911,49 @@ kilns:
           atmosphere
         status: printed
         page: pp.178–179
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Alberta's firewoods are birch, maple, poplar, willow, larch, pine and spruce (kiln-fuelwood-by-region.md
+          [C1]); none named for this kiln
+      - what: fuel_moisture
+        value: [9.3, 35.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Edmonton''s driest month, 9.3 % (kiln-fuelwood-by-region.md
+          [S1]) to 35 %: Alberta''s advice is at least one summer''s drying ([C1]), and wood stored a
+          summer holds 25–35 % ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 9
@@ -3650,6 +4227,49 @@ kilns:
           Bizen clay
         status: printed
         page: p.99
+      - what: fuel_species
+        value: red pine (akamatsu), with pine needles
+        status: assumed
+        reason: Bizen kilns burn red pine (kiln-fuelwood-by-region.md [K2]–[K4], read); the book prints
+          split logs, sticks, fireplace logs and pine needles (pp.103–104)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13); the needles burn
+          hotter, LHV about 21 MJ/kg ([F1] Table A1)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: shape
         value: >-
@@ -3976,6 +4596,49 @@ kilns:
         status: printed
         page: p.119
         condition: Olsen's advice for reducing a groundhog, given with the Gulgong racer
+      - what: fuel_species
+        value: pine
+        status: assumed
+        reason: 'southern US groundhogs: pine and pine slabs in the Catawba Valley (kiln-fuelwood-by-region.md
+          [U1], [U2]); the species not named'
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the Georgia and North Carolina stations'' driest
+          month, 10.2 % (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several years ([F2]
+          Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: crown_height
         value: [29, 48]
@@ -4190,6 +4853,47 @@ kilns:
         figure: Fig 4-110
         reading: uncertain
         note: the 12 × 18 label is faint
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Olsen's home pottery; its place isn't printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 2
@@ -4449,6 +5153,48 @@ kilns:
           the book gives none; a firing listing for the kiln asks for high-fire work, and Lincoln 60 is
           a stoneware clay that bloats at cone 11, so cone 10 is near its ceiling (masonry-materials.md
           §4a.1, §4a.6)
+      - what: fuel_species
+        value: wood, kind not printed (the fuel isn't named)
+        status: assumed
+        reason: the captions show firebox and side stoking (p.57); no source names the wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.8, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Sacramento''s driest month, 8.8 %, if the kiln stood
+          near its clay''s Lincoln, California (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored
+          several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 6
@@ -5041,6 +5787,49 @@ kilns:
         status: printed
         page: p.162
         note: read on the page image, 2026-11-09
+      - what: fuel_species
+        value: beech
+        status: assumed
+        reason: a Höhr-Grenzhausen salt-glaze pottery formerly fired beech billets (kiln-fuelwood-by-region.md
+          [E1], read); the book prints long planks (p.163, drawing)
+      - what: fuel_moisture
+        value: [10.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Luxembourg''s and Berlin''s driest month, 10.6 %
+          (kiln-fuelwood-by-region.md [S1]; no Westerwald station) to 25 %, firewood stored several years
+          ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.0, 18.6]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Fagus wood LHV min–max (median 17.67)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: length
         value: 4.5
@@ -5254,6 +6043,72 @@ kilns:
         status: printed
         page: p.131
         figure: Fig 5-4
+      - what: fuel_species
+        value: coal, kind not printed
+        status: printed
+        page: p.131
+        note: the book speaks of bituminous coal for kilns generally (p.196)
+      - what: fuel_moisture
+        value: 10
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3])'
+        condition: as received (research A1)
+      - what: fuel_heating_value
+        value: 27.9
+        unit: MJ/kg
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3]); 24.8 MJ/kg as received at 10 %'
+        condition: net, dry basis (research A1)
+      - what: fuel_ash
+        value: 14
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3])'
+        condition: dry basis (research A1)
+      - what: fuel_carbon
+        value: [68.0, 78.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal, C 68–78 % (average 71.5, [F3]), 72.5 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [3.5, 5.6]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 3.5–5.0 % ([F3]), 5.6 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: 11.0
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: [F2] Table 19''s coal'
+        condition: dry basis (research A1)
+      - what: fuel_nitrogen
+        value: [0.8, 1.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 0.8–1.5 % ([F3]), 1.3 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_sulphur
+        value: 0.94
+        unit: percent
+        bound: <=
+        status: assumed
+        reason: 'kiln-fuels.md §4: < 0.5 % ([F3]), 0.94 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_unit_mass
+        value: 21
+        unit: pound
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
+          isn''t described: a question for the owner'
+        condition: a shovelful (research A1)
     chamber:
       - what: volume
         value: 250
@@ -5495,6 +6350,48 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 4
@@ -5711,6 +6608,47 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Fig 6-47 prints 'FIREBOX (wood)'; Japanese kilns burn pine, by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: diameter
         value: 2.5
@@ -5804,6 +6742,48 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: long wood slabs, kind not printed
+        status: assumed
+        reason: p.202 prints long slabs; no source names Kutani's wood; pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]; no Sea of Japan station) to 25 %, firewood stored several
+          years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 4
@@ -6042,6 +7022,48 @@ kilns:
           between the setting and the front wall, the full height of the stacking
         status: printed
         page: p.93, p.205
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: height
         value: [6, 7]
@@ -6281,6 +7303,50 @@ kilns:
         value: good reduction in the grand feu; light salting of the firebox near the end
         status: printed
         page: p.111
+      - what: fuel_species
+        value: split oak and birch, then bundles of branches and twigs
+        status: printed
+        page: p.111
+        note: the petit feu on oak and birch, the grand feu on the bundles; Quercus petraea and Betula
+          pendula by kiln-fuelwood-by-region.md [E6] (snippets)
+      - what: fuel_moisture
+        value: [10.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Paris''s driest month, 10.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.0, 19.06]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Quercus 17.00–18.30 and Betula 18.10–19.06 LHV; the
+          branch bundles 17.8–19.1 ([F2] Table 10, broad-leaf forest residues)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.0, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.52]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [41.38, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 3.28]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: [1766, 2825]
@@ -6463,6 +7529,48 @@ kilns:
         status: assumed
         reason: from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
           p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the Meaders kilns are 'wood-fueled' (kiln-fuelwood-by-region.md [U3]); southern groundhogs
+          burned pine slabs ([U1], [U2]), North Carolina's, by analogy
+      - what: fuel_moisture
+        value: [10.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Athens, Georgia''s driest month, 10.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: crown_height
         value: 48
@@ -6612,6 +7720,48 @@ kilns:
         status: assumed
         reason: from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
           p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the Meaders kilns are 'wood-fueled' (kiln-fuelwood-by-region.md [U3]); southern groundhogs
+          burned pine slabs ([U1], [U2]), North Carolina's, by analogy
+      - what: fuel_moisture
+        value: [10.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Athens, Georgia''s driest month, 10.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 5
@@ -6794,6 +7944,49 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's kiln, "a Pompeii-era design like Miravet" 
           (p.160)
+      - what: fuel_species
+        value: long wood, then wood chips, bundles, grass, slash and thin slats
+        status: printed
+        page: pp.158–160
+        note: grass is in no source read; the province's main pine is P. halepensis (kiln-fuelwood-by-region.md
+          [E3]), not named as fuel
+      - what: fuel_moisture
+        value: [11.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Barcelona''s driest month, 11.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.93, 19.04]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.2, 49.99]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.98, 6.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.6, 45.79]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.3, 0.74]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: width
         value: 96
@@ -6975,6 +8168,54 @@ kilns:
         status: printed
         page: p.153, p.154
         figure: Fig 6-3
+      - what: fuel_species
+        value: heather and any brushwood
+        status: printed
+        page: pp.153–154
+        note: Erica or Calluna, not confirmed (kiln-fuelwood-by-region.md [E4]); no analysis of heather
+          in any source read; taken as deciduous branches
+      - what: fuel_moisture
+        value: [7.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Madrid''s driest month, 7.6 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.8, 19.1]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.0, 49.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.1, 6.52]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [41.38, 45.08]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.96, 3.28]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
     chamber:
       - what: diameter
         value: 60
@@ -7093,6 +8334,51 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: pine
+        status: printed
+        page: pp.156–157
+        quote: fired with pine
+        note: Pinus pinaster, the only pine the forest inventory names for Ourense (kiln-fuelwood-by-region.md
+          [E3])
+      - what: fuel_moisture
+        value: [7.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Madrid''s driest month, 7.6 % (Bilbao''s 11.0 %;
+          neither of Ourense''s kind; kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several
+          years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: diameter
         value: 84
@@ -8206,6 +9492,34 @@ kilns:
         status: printed
         page: pp.208–209
         note: the drip rate itself isn't printed
+      - what: fuel_species
+        value: '#2 diesel'
+        status: printed
+        page: p.208, p.209
+        note: 'kerosene and #1 also burn clean; once fired on free crankcase oil (p.209)'
+      - what: fuel_heating_value
+        value: [42.1, 43.3]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s 18,610 BTU/lb (p.209) is 43.3 MJ/kg, basis not printed;
+          AFDC''s net 128,488 BTU/gal is 42.1 MJ/kg at the book''s sg 0.85 ([F6]); [F3]''s light fuel
+          oil 42.4'
+        condition: net (research A1)
+      - what: fuel_carbon
+        value: [85.0, 86.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 86 % (p.196), 86.2 % ([F3]), 85–86 % ([F2])'
+      - what: fuel_hydrogen
+        value: [13.0, 13.7]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 13 % (p.196), 13.7 % ([F3])'
+      - what: fuel_sulphur
+        value: [0.1, 0.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
     chamber:
       - what: volume
         value: [45, 60]
@@ -8445,6 +9759,47 @@ kilns:
         status: assumed
         reason: as Olsen's Hollyweird tube, held at cone 11-plus (p.117), which shares this kiln's 8
           ft chamber, 55 in dimension, ¾ in grate bars and 5 in air tube and may be the same kiln
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Olsen's own kiln; the place isn't printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 2
@@ -8632,6 +9987,49 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; as the fast-fire kiln (p.139)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: 'New Hampshire''s firewoods: pine, hemlock, spruce, aspen, maple, birch, ash, beech, oak,
+          hickory (kiln-fuelwood-by-region.md [N1]); none named for this kiln'
+      - what: fuel_moisture
+        value: [10.2, 30.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Concord''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 30 %: New Hampshire''s ''seasoned around 30%'' after 6–8 months'' drying ([N1], basis
+          not stated)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: 40
@@ -8769,6 +10167,47 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; as the fast-fire kiln (p.139)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names the wood; Douglas-fir is western Oregon's main tree (a snippet only, kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [10.5, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Portland''s driest month, 10.5 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: volume
         value: [8, 10]
@@ -8945,6 +10384,60 @@ kilns:
           the skewbacks
         status: printed
         page: p.135
+      - what: fuel_species
+        value: steam coal, Grade B
+        status: printed
+        page: p.133
+        quote: Steam coal, Grade B
+        note: 'India''s non-coking Grade B: useful heat value 5,600–6,200 kcal/kg, so ash plus moisture
+          19.6–23.9 % (kiln-fuels.md §4)'
+      - what: fuel_heating_value
+        value: [23.0, 26.8]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §4: the old Grade B maps onto GCV grades G4–G6, 5,501–6,400 kcal/kg ([F7]
+          p.15)'
+        condition: gross, as equilibrated at 60 % RH and 40 °C (research A1)
+      - what: fuel_carbon
+        value: [68.0, 78.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal, C 68–78 % (average 71.5, [F3]), 72.5 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [3.5, 5.6]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 3.5–5.0 % ([F3]), 5.6 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: 11.0
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: [F2] Table 19''s coal'
+        condition: dry basis (research A1)
+      - what: fuel_nitrogen
+        value: [0.8, 1.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 0.8–1.5 % ([F3]), 1.3 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_sulphur
+        value: 0.94
+        unit: percent
+        bound: <=
+        status: assumed
+        reason: 'kiln-fuels.md §4: < 0.5 % ([F3]), 0.94 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_unit_mass
+        value: 21
+        unit: pound
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
+          isn''t described: a question for the owner'
+        condition: a shovelful (research A1)
     chamber:
       - what: diameter
         value: 84
@@ -9234,6 +10727,48 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: hardwood
+        status: printed
+        page: p.155
+        quote: hardwood logs 2 to 6 in
+      - what: fuel_moisture
+        value: [5.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from New Delhi''s driest month, 5.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 18.67]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: diameter
         value: 60
@@ -9459,6 +10994,48 @@ kilns:
         status: printed
         page: p.93
         figure: Fig 4-35
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 7
@@ -9641,6 +11218,47 @@ kilns:
         status: printed
         page: pp.85–86
         condition: pots 13–24 in (33–61 cm) tall, set without shelves, levelled on saggar setters
+      - what: fuel_species
+        value: wood, kind not printed (kindling bundles)
+        status: assumed
+        reason: no source names Tachikui's wood; red pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: length
         value: 120
@@ -9899,6 +11517,47 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names Tobe's wood; pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
     chamber:
       - what: chamber_count
         value: 7

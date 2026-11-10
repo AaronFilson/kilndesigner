@@ -81,7 +81,7 @@ together. Statuses as the dataset's. The chimney's section is given where printe
 |---|---|---|---|---|---|
 | `anagama-hole` | no grate | entrance and firebox 2 × 2 ft (both) | 576 | 4½–7 in wide (scaled) | printed p.84; scales 15–23 × 29–45 in (oval) |
 | `bae-gilgama` | no grate | a round-headed mouth, not sized | – | – | drawing Fig 4-69 |
-| `bidai` | 14 in ash pit; its mouth not sized | mouth 9 in wide; an air and stoke opening 12–14 in (Fig 8-7) | 108–126 (if 9 wide × 12–14 high) | a grid of 9 × 9 in channels | printed pp.94, 201; which dimension the 12–14 in is isn't said |
+| `bidai` | Fig 8-7's side view labels AIR over the 14 in ash pit, STOKING above it; the plan's front opening is 12–14 in wide | the stoking opening above; its height not legible; Fig 4-36's mouth 9 in wide | 168–196 below (12–14 × 14) | a grid of 9 × 9 in channels | printed p.201, read on the page image 2026-11-10; uncertain |
 | `blakebrough-sturt` | the channel's bottom, not sized | side stoke hole 10–15 in high | – | – | scaled (width foreshortened) |
 | `breda-bottle` | ash pit 2 ft wide × 3½ ft deep | not sized | (1,008 if that is its mouth) | the bottle, 12 ft across at its base | printed Fig 6-50; whether 2 × 3½ ft is the pit's mouth isn't said |
 | `chappell-domura` | not sized | not sized | – | 12 × 12 in tapering to 9 × 9 | – |
@@ -118,7 +118,8 @@ together. Statuses as the dataset's. The chimney's section is given where printe
 Against the chimney, where both are printed (Derived): the fast-fire's mouths below the grate are
 2.0–2.7 × its 81 in² chimney and above it 1.5–2.2 ×; the Church kiln's ash pits 1.4–2.8 × (one or
 both fireboxes); Singh's ash pits 6.0 × and stoke holes 1.4 ×; Hollyweird's stoke hole 0.3 × (its
-grate-level air holes not sized); the Bidai stoke opening 1.3–1.6 × one 9 × 9 in channel.
+grate-level air holes not sized); the Bidai air opening 2.1–2.4 × one 9 × 9 in channel of its
+chimney grid.
 
 ## 4. For the engine (proposed, B4)
 
