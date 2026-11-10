@@ -6,12 +6,20 @@
 # air-set mortar (p.32); updraft, forced draft by gas pressure (p.170); exit flue 40½ sq in to
 # start (p.173); MR-750 and MR-100 burners, 75,000 and 100,000 BTU/hr at 8 in. w.c. (p.222); no
 # fibre (p.175).
-# Assumed: the chamber isn't dimensioned. It holds 16 cu ft with the width equal to the depth and
-# the height 1¼ times the width (p.170): 28.1 × 28.1 × 35.1 in to the springline. Eight MR-750s:
+# Assumed: the chamber isn't dimensioned. The 16 cu ft is stacking space (pp.169–170, ADR 0017
+# decision 14) in a chamber 25 % taller than wide (p.170: "An Olsen 16 kiln kit has a 25% height
+# increase"), built round it by the book's own clearances (kit-stacking-space.md §2): 4½ in of
+# combustion space each side for the MR-750's 2½ in head (p.171, Fig 6-63; 6 in, the band's other
+# end, for a 4 in tip), 2½ in under the setter shelf (p.172), the arch on top (p.74): 34.9 in
+# square, 43.7 in to the springline, the stacking 25.9 × 25.9 × 41.2 in (it was 28.1 × 28.1 ×
+# 35.1 in, the stacking alone, until 2026-11-10). Precedence (11-09-26.md §A): nothing printed or
+# scaled; the book's rules for the burner the design uses over the band's middle; not rounded to
+# the brick module (p.142), a builder's choice. Eight MR-750s:
 # the inlet equal to the exit flue, "more than adequate" up to 40 cu ft (p.173), in 2½ in ports,
 # the Olsen 24 kit's (olsen-kit-24, p.174: 50 sq in for ten burners); 40½ sq in ÷ 4.9 sq in is 8.
-# They fall 11.8 in apart round the floor, inside Olsen's 9–12 in (p.171). MR-750s are the smaller
-# of the kits' burners (p.222: updrafts use more, smaller burners). Walls 7 in: a 4½ in course of
+# They fall 15.2 in apart round the floor, over Olsen's 9–12 in (p.171): the count is the inlet's,
+# not the spacing's (a question for the burners' sizing, ADR 0017 decision 13). MR-750s are the
+# smaller of the kits' burners (p.222: updrafts use more, smaller burners). Walls 7 in: a 4½ in course of
 # 2600 IFB backed by a 2½ in rowlock of 2500 IFB, the kits' grades (p.32) in Olsen's 7 in IFB wall
 # (p.176). A No. 1 arch of 4½ in 2600 IFB at 1½ in per foot of span, on featheredge skewbacks
 # (p.171, p.176). A 4½ in floor of 2600 IFB (p.173: floors are 4½–5 in). A hinged door
@@ -26,12 +34,12 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 28.1 in
-  depth: 28.1 in
-  height: 35.1 in # 1¼ × the width (p.170)
+  width: 34.9 in # the 25.9 in stacking + 4½ in a side (kit-stacking-space.md §2)
+  depth: 34.9 in
+  height: 43.7 in # 1¼ × the width (p.170): 2½ in under the setter shelf + 41.2 in of stacking
 roof:
   type: sprung_arch
-  rise: 3.52 in # 1½ in per foot of span: a No. 1 featheredge arch
+  rise: 4.37 in # 1½ in per foot of span (4.3625 in, up): a No. 1 featheredge arch
 loading:
   type: door
   face: front

@@ -12,7 +12,7 @@ p.243 (installation); Fig 6-63 (p.172) for floor-burner placement. No drawing of
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Size | 24 cu ft | a 34.6 in cube | assumed shape |
+| Size | 24 cu ft of stacking space (pp.169–170) | 43.6 in square, 37.1 in to the springline: the 34.6 in stacking cube with 4½ in of combustion space a side and 2½ in under the setter shelf (kit-stacking-space.md §2; ADR 0017 decision 14; until 2026-11-10 the cube alone) | assumed by the book's clearances |
 | Burners | eight perimeter and two bottom (p.174) | ten MR-750: eight round the edge, `centre: 2` down the middle of the floor | matches; where under the setting the two go isn't printed (question 1) |
 | Inlet | 50 in² | ten 2½ in ports, 49 in² | matches |
 | Exit flue | 45 in² to start | 9 × 5 in | matches |

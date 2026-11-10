@@ -11,7 +11,7 @@ Olsen, *The Kiln Book*, 4th ed.: p.170 (caption 6-61), p.171 (photo), p.174 (exi
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Size | 50 ft³ | a 44.2 in cube | assumed shape |
+| Size | 50 ft³ of stacking space (pp.169–170) | 53.2 in square, 46.7 in to the springline: the 44.2 in stacking cube with 4½ in of combustion space a side and 2½ in under the setter shelf (kit-stacking-space.md §2; ADR 0017 decision 14; until 2026-11-10 the cube alone) | assumed by the book's clearances |
 | Exit flue | 90 in² to start | 9½ × 9½ in in the arch | matches |
 | Inlet | about 20 % less than the exit (p.174 rule) | fifteen 2½ in ports, 74 in² | matches the rule |
 | Car | a car kiln (photo) | see the design file | as modelled there |

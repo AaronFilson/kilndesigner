@@ -8663,21 +8663,6 @@ kilns:
         page: p.174
         note: the kits are sized in cu ft of stacking space (pp.169–170)
       - what: width
-        value: 55.7
-        unit: inch
-        status: assumed
-        reason: a cube of 100 cu ft (Principle 1, pp.74–75; p.170)
-      - what: depth
-        value: 55.7
-        unit: inch
-        status: assumed
-        reason: a cube of 100 cu ft
-      - what: springline_height
-        value: 55.7
-        unit: inch
-        status: assumed
-        reason: a cube of 100 cu ft
-      - what: width
         value: [64.7, 67.7]
         unit: inch
         status: assumed
@@ -8756,12 +8741,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 55.7
+        value: 64.7
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 6.97
+        value: 8.09
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -8787,11 +8772,12 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 100 
-        cu ft as the chamber's inside to the springline, with no combustion space round the setting
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took the 100 cu ft as the chamber's inside to the springline, with no combustion space
       - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 100 ft³ of stacking
-        needs a chamber of 141–154 ft³ to the springline (kit-stacking-space.md); the design file''s is
-        the stacking alone'
+        needs a chamber of 141–154 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the
+        design file to it at 4½ in of combustion space (the MR-750''s rule, p.171): 64.7 in square,
+        58.2 in to the springline'
 
   olsen-kit-16:
     name: Olsen 16 kit, Bob and Sandy Kinzie
@@ -8863,21 +8849,6 @@ kilns:
         value: height 25 % greater than width
         status: printed
         page: p.170
-      - what: width
-        value: 28.1
-        unit: inch
-        status: assumed
-        reason: 16 cu ft with the width equal to the depth and the height 1¼ × the width (p.170)
-      - what: depth
-        value: 28.1
-        unit: inch
-        status: assumed
-        reason: 16 cu ft with the width equal to the depth and the height 1¼ × the width (p.170)
-      - what: springline_height
-        value: 35.1
-        unit: inch
-        status: assumed
-        reason: 1¼ × the width (p.170)
       - what: width
         value: [34.9, 37.1]
         unit: inch
@@ -8965,12 +8936,12 @@ kilns:
         status: assumed
         reason: Olsen's kits and updrafts (p.171, p.176)
       - what: span
-        value: 28.1
+        value: 34.9
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 3.52
+        value: 4.37
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -9001,15 +8972,16 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170, p.173); the design file 
-        takes 16 cu ft as the chamber's inside to the springline, with no combustion space round the
-        setting (the updraft-test files add 4½ in a side, p.76, p.171)
+      - the book sizes the kits in cu ft of stacking space (pp.169–170, p.173); until 2026-11-10 the
+        design file took 16 cu ft as the chamber's inside to the springline, with no combustion space
+        round the setting (the updraft-test files add 4½ in a side, p.76, p.171)
       - no firing time is printed for this kiln; p.170–171 says only that more than 25 % extra 
         height reduces evenness "in a normal 8–12 h firing" of a forced-draft updraft (said of 
         updrafts in general)
       - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 16 ft³ of stacking needs
-        a chamber of 31–37 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
-        alone'
+        a chamber of 31–37 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 34.9 in square, 43.7 in to the
+        springline'
 
   olsen-kit-24:
     name: Olsen 24 kit
@@ -9103,21 +9075,6 @@ kilns:
         status: printed
         page: p.174
         note: the kits are sized in cu ft of stacking space (pp.169–170)
-      - what: width
-        value: 34.6
-        unit: inch
-        status: assumed
-        reason: a cube of 24 cu ft (Principle 1, pp.74–75; p.170)
-      - what: depth
-        value: 34.6
-        unit: inch
-        status: assumed
-        reason: a cube of 24 cu ft (pp.74–75)
-      - what: springline_height
-        value: 34.6
-        unit: inch
-        status: assumed
-        reason: a cube of 24 cu ft (pp.74–75)
       - what: width
         value: [43.6, 46.6]
         unit: inch
@@ -9213,12 +9170,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 34.6
+        value: 43.6
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 4.33
+        value: 5.45
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -9253,13 +9210,14 @@ kilns:
       - the kits use MR-750 or MR-100 burners (p.222); the No. 32 orifice and the simple
         mixer's 54,000 BTU/hr (pp.220–221) are the book's general example of orifice sizing, not
         the kit 24's burners (the user, 2026-11-09)
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 24 cu
-        ft as the chamber's inside to the springline, with no combustion space round the setting
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took 24 cu ft as the chamber's inside to the springline, with no combustion space
       - 'p.221 was read on the page image (PDF 206), "When firing my Olsen 24 with propane ... retaining
         the natural gas orifice (#32)"'
       - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 24 ft³ of stacking needs
-        a chamber of 41–47 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
-        alone'
+        a chamber of 41–47 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 43.6 in square, 37.1 in to the
+        springline'
 
   olsen-kit-50:
     name: Olsen 50 car kiln
@@ -9315,21 +9273,6 @@ kilns:
         status: printed
         page: p.170
         figure: Fig 6-61
-      - what: width
-        value: 44.2
-        unit: inch
-        status: assumed
-        reason: a cube of 50 cu ft (Principle 1, pp.74–75; p.170)
-      - what: depth
-        value: 44.2
-        unit: inch
-        status: assumed
-        reason: a cube of 50 cu ft
-      - what: springline_height
-        value: 44.2
-        unit: inch
-        status: assumed
-        reason: a cube of 50 cu ft
       - what: width
         value: [53.2, 56.2]
         unit: inch
@@ -9406,12 +9349,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 44.2
+        value: 53.2
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 5.53
+        value: 6.65
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -9437,13 +9380,14 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 50 cu
-        ft as the chamber's inside to the springline, with no combustion space round the setting
-      - p.174 says kilns over 50 cu ft "require larger exit flues in order to fire evenly", a rule 
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took 50 cu ft as the chamber's inside to the springline, with no combustion space
+      - p.174 says kilns over 50 cu ft "require larger exit flues in order to fire evenly", a rule
         rather than an observation of this kiln
       - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 50 ft³ of stacking needs
-        a chamber of 77–85 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
-        alone'
+        a chamber of 77–85 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 53.2 in square, 46.7 in to the
+        springline'
 
   olsen-oil-drip:
     name: Olsen's gravity-drip oil kiln

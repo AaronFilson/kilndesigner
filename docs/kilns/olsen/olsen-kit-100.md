@@ -12,7 +12,7 @@ p.222, p.235; Fig 6-63 (p.172) for floor-burner placement in updrafts. No figure
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Size | 100 cu ft | a 55.7 in cube | assumed shape (Principle 1) |
+| Size | 100 cu ft of stacking space (pp.169–170) | 64.7 in square, 58.2 in to the springline: the 55.7 in stacking cube with 4½ in of combustion space a side and 2½ in under the setter shelf (kit-stacking-space.md §2; ADR 0017 decision 14; until 2026-11-10 the cube alone) | assumed by the book's clearances |
 | Inlet | 100 in² | twenty 2½ in ports, 98 in² | matches |
 | Exit flue | at least 120 in², up to 140 in² | 11 × 11 in, 121 in², in the arch | matches |
 | Burners | MR-750 / MR-100 family, count not printed | twenty MR-750 round the floor | assumed |
