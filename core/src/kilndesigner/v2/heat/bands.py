@@ -4,10 +4,10 @@ printed figure can be tested inside v2's band.
 **Corner runs.** The nominal run; each input at each end of its band with the rest nominal (its
 swing, which also says which end raises each result); then, for each result, the two corners: every
 input at the end that lowers it, and every input at the end that raises it. The result's band runs
-from the least to the most of all those runs (the corners are its ends unless the result isn't
-monotone in an input, which the swings would show). 2n + 1 runs and two more per result, each run
-shared by every result it gives; a run repeated with the same inputs is run once. A result a run
-can't give (a cone not reached) is +∞.
+from the least to the most of all those runs, every result's corners included (each is a corner
+of the inputs' box; its own two are its ends unless the result isn't monotone in an input). 2n + 1
+runs and two more per result, each run shared by every result it gives; a run repeated with the
+same inputs is run once. A result a run can't give (a cone not reached) is +∞.
 
 What the inputs are and how a run uses them is the caller's (`Input.ends`, the runner): v2's own
 are listed where its models take them (the emissivity class and the grey gases, `kiln.py`; the
@@ -70,18 +70,21 @@ def corner_runs(run: Runner, inputs: Sequence[Input]) -> dict[str, Band]:
     base = {i.name: i.nominal for i in inputs}
     nominal = at(base)
     ends = {(i.name, k): at({**base, i.name: e}) for i in inputs for k, e in enumerate(i.ends)}
-    bands: dict[str, Band] = {}
-    for res, value in nominal.items():
-        low_set = dict(base)
-        high_set = dict(base)
-        swings: list[tuple[str, float, float]] = []
+    swings: dict[str, tuple[tuple[str, float, float], ...]] = {}
+    for res in nominal:
+        low_set, high_set = dict(base), dict(base)
+        each: list[tuple[str, float, float]] = []
         for i in inputs:
             a, b = ends[(i.name, 0)][res], ends[(i.name, 1)][res]
-            swings.append((i.name, a, b))
+            each.append((i.name, a, b))
             low_set[i.name], high_set[i.name] = (i.ends[0], i.ends[1]) if a <= b else i.ends[::-1]
-        runs = [value, at(low_set)[res], at(high_set)[res]] + [x for _, a, b in swings
-                                                             for x in (a, b)]  # fmt: skip
-        band = Band(res, value, min(runs), max(runs), tuple(swings))
+        at(low_set)
+        at(high_set)
+        swings[res] = tuple(each)
+    bands: dict[str, Band] = {}
+    for res, value in nominal.items():
+        runs = [d[res] for d in done.values()]  # every run is a corner of the inputs' box
+        band = Band(res, value, min(runs), max(runs), swings[res])
         bands[res] = Band(res, value, band.low, band.high, band.swings, (_step(band, inputs),))
     return bands
 
