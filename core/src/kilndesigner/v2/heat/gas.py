@@ -18,8 +18,9 @@ h_products the equilibrium mixture's enthalpy at T, 1 atm (both on GRI-Mech's fo
 With λ ≥ 1 and T at 25 °C it is the fuel's net heating value: for gas Cantera's, for wood the
 source's less the water's evaporation (FAO eq. 3).
 
-The tables span 300–3000 K, inside the NASA polynomials' 200–3500 K; a temperature outside is
-refused (ADR 0009), as is λ below 0.8 (the lowest checked: cantera-tespy-review.md §2; richer
+The tables span 250–3000 K, inside the NASA polynomials' 200–3500 K (Cantera's transport fits
+start at 300 K, so the room's air below it is extrapolated); a temperature outside is refused
+(ADR 0009), as is λ below 0.8 (the lowest checked: cantera-tespy-review.md §2; richer
 flames make soot, which gas-phase equilibrium doesn't).
 """
 
@@ -37,7 +38,10 @@ from kilndesigner.working import Step
 
 type Vector = NDArray[np.float64]
 
-T_MIN, T_MAX = 300.0, 3000.0  # K: the tables
+# K: the tables. From 250 K so an unfired kiln's gas, the room's air, is in them: the NASA
+# polynomials hold from 200 K; Cantera's transport fits start at 300 K and are extrapolated below
+# (only the first minutes' convection uses them)
+T_MIN, T_MAX = 250.0, 3000.0
 T_STEP = 10.0
 LAMBDA_MIN = 0.8
 T_REF = 298.15
@@ -141,7 +145,8 @@ class Products:
         if not T_MIN <= t <= T_MAX:
             raise RangeError(
                 f"gas at {t - 273.15:.0f} °C: the tables span {T_MIN - 273.15:.0f}–"
-                f"{T_MAX - 273.15:.0f} °C (GRI-Mech's NASA polynomials 200–3500 K)"
+                f"{T_MAX - 273.15:.0f} °C (GRI-Mech's NASA polynomials 200–3500 K; transport "
+                "fitted from 300 K)"
             )
 
     def h(self, t: float) -> float:

@@ -44,10 +44,6 @@ CONE_10_FAST = 1305 + 273.15
 # Extension, Wood Heating, Table 1; wood-fuel.md [W4]; Olsen p.143 "less than a quarter")
 QUARTER_CORD_DRY_KG = 0.25 * si(Q_(2070, "lb"), "kg")
 
-NOT_YET = pytest.mark.xfail(
-    strict=True, reason="the firing model (build order step 6) isn't built yet"
-)
-
 
 def _box_areas(kiln_path: Path, lining: float) -> tuple[float, float, float]:
     """The chamber's inside area (walls, floor, the arch and its end segments), the outside area
@@ -124,7 +120,6 @@ def test_the_must_fail_check_is_not_trivially_true() -> None:
 # --- the documented firings, on the whole model (build order step 6) ----------------------------
 
 
-@NOT_YET
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_fast_fire_reaches_cone_10_inside_3_5_h_on_its_own_draft() -> None:
@@ -136,7 +131,16 @@ def test_fast_fire_reaches_cone_10_inside_3_5_h_on_its_own_draft() -> None:
     assert t < 3.5 * HOUR
 
 
-@NOT_YET
+@pytest.mark.slow
+@pytest.mark.geometry
+def test_the_fast_fire_stands_with_four_times_the_load() -> None:
+    """The load is a test input (the book prints none): with four times it, 220 kg, the
+    draft-limited fire still reaches cone 10 inside 3½ h, so the verdict doesn't hang on it."""
+    t = heat_cases.fast_fire_max(heavier=4.0).reached(CONE_10_FAST)
+    assert t is not None
+    assert t < 3.5 * HOUR
+
+
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_fast_fire_follows_its_p309_log_within_its_drafts_air() -> None:
@@ -147,7 +151,6 @@ def test_fast_fire_follows_its_p309_log_within_its_drafts_air() -> None:
     assert result.worst_air_share <= 1.0
 
 
-@NOT_YET
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_fast_fire_burns_under_a_quarter_cord() -> None:
@@ -157,7 +160,6 @@ def test_fast_fire_burns_under_a_quarter_cord() -> None:
     assert result.fuel_kg < QUARTER_CORD_DRY_KG
 
 
-@NOT_YET
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_w15_ifb_updraft_fires_easily_in_about_8_h_on_ten_burners() -> None:

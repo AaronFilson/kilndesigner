@@ -74,6 +74,34 @@ RATING_BASIS = (
     "1,100 and 2,550 BTU/ft³ for natural gas and propane (p.227, Rule 4; kiln-reference.md)"
 )
 
+# --- solids --------------------------------------------------------------------------------------
+
+FIRED_CLAY_CP = Sourced(
+    800.0,
+    "Lienhard Table A.2, brick, fired clay, at 24 °C (masonry-materials.md §1.1 [M1]); then VDI "
+    "Heat Atlas fireclay c_p from 400 °C (§2.3 [M2]): v1's ware curve (heat review #1)",
+)
+FIRED_CLAY_AT = 24.0 + 273.15
+SHELL_EMISSIVITY = {"painted": 0.95, "oxidised_steel": 0.79, "rolled_steel_sheet": 0.6}
+SHELL_REFERENCE = "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52] (v1's heatloss)"
+
+# Hot-face emissivity lines ε₀ = a + 10⁻⁵·b·T (T in K), radiation-exchange.md §5, and the
+# hemispherical share of the normal value for insulators, 0.95–1.0 (Jones et al. [R6] Fig. 6)
+EMISSIVITY_LINES = {
+    # Osborn 1985 via IFRF CF148 [R5] and Jones et al. [R6]: fire brick, 673–1673 K
+    "dense-medium": (0.84, -20.0, (673.0, 1673.0), "Osborn 1985: fire brick, medium Al2O3"),
+    "dense-low": (0.90, -10.0, (673.0, 1673.0), "Osborn 1985: fire brick, low Al2O3"),
+    # Hampartsoumian 1990 via Jones et al. [R6] Table A2: Morgan MPK lightweight refractories
+    "ifb-mpk125": (0.53, 8.0, (1063.0, 1350.0), "Hampartsoumian 1990: MPK 125"),
+    "ifb-mpk140": (0.21, 25.3, (1073.0, 1350.0), "Hampartsoumian 1990: MPK 140"),
+}
+HEMISPHERICAL = Sourced(
+    0.95,
+    "Jones, Mason & Williams 2019 [R6] Fig. 6: an insulator's hemispherical emissivity is 0.95–1.0 "
+    "of its normal value; CIBSE's 0.95 for smooth non-metals (thermal-properties.md §7)",
+    "the band's low end",
+)
+
 # --- the gas tables ------------------------------------------------------------------------------
 
 GRI30 = (
