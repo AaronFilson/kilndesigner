@@ -343,7 +343,7 @@ England's Ceramic HAZ bottle-oven survey reports.
 | Item here | Fifth round | Status |
 |---|---|---|
 | §8 joint thickness | NBS test joints 1/16 and 1/8 in; HW "thin"; no maximum | Partial |
-| §7 / §21 refractory bearing | still no allowable; BNZ maximum mean temperature per IFB grade; IFB C16 values (JM, TC, BNZ) | Partial |
+| §7 / §21 refractory bearing | still no allowable; BNZ maximum mean temperature per IFB grade; IFB C16 values (JM, TC, BNZ). 2026-11-09: Morgan sheets 2010 and 2016 read (`refractory-bearing.md` [B21], [B22]): K-23, TC-23, IFB 23 Tile, K-25 at 10 psi to 2200 °F; K-26, K-23 HS, JM and BNZ still none | Partial |
 | `refractory-bearing.md` §B4.1 friction | Oliveira et al. 2021 read: μ 0.60 cold, 0.50–0.53 at 300–900 °C | Verified |
 | Mortar bond, air vs heat setting, two rings | NBS RP1219/1461/1534; HWI; ring-separation tests | Verified |
 

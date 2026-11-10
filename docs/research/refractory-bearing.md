@@ -126,8 +126,9 @@ values "are subject to normal manufacturing variation".
 | kaolite-2600-li | Morgan Kaolite 2600 LI Gun | 950 to 1,700 psi (6.55 to 11.72 MPa) dried 24 h at 105 °C; fired values 225 to 900 psi "layout ambiguous" | dried | Snippet; do not use until the PDF is read | [B17] |
 
 Notes
-- The 2025 Morgan K and JM sheets are image or encoded PDFs; this session could not re-extract them.
-  Their values rest on the earlier verified reading in `door-headers.md` §D5.1.
+- The 2025 Morgan JM sheet is an image or encoded PDF; this session could not re-extract it.
+  Its values rest on the earlier verified reading in `door-headers.md` §D5.1. The 2025 K sheet
+  [B10] was read directly on 2026-11-09 and agrees: K23 / K25 / K26 CCS 145 / 188.5 / 188.5 psi.
 - Castable CCS falls by up to half from dried (220 °F) to fired values, so the engine must use the
   value at or below the service temperature class, not the dried value.
 - CCS of IFB is read on the 4½ by 4½ in. face; the same brick bears on a 2½ in. edge in a lintel
@@ -144,8 +145,10 @@ Notes
 | Jet D.P. | "ASTM C-16 Schedule 2, % deformation, Load Test at 2460 °F": **1.3 %** | 25 psi by C16 §7.1, not printed | Verified | [B8], [B2] |
 | Smithfield | "ASTM C-16 Schedule 3 % deformation, Load Test at 2640 °F": **-6.8 %** (6.8 % subsidence; the sheet prints a minus sign) | 25 psi by C16 §7.1, not printed | Verified | [B9], [B2] |
 | K-23 (Morgan 01:2013) | ASTM C16 at 10 psi: 0 % after 1½ h at 2,000 °F; 0.3 % after 1½ h at 2,200 °F. K-25: 0 and 0.1 % | 10 psi, as printed | Verified (repo) | [B11] via [H22] |
+| K-23, TC-23, IFB 23 Tile, K-25 (Thermal Ceramics 02:2010) | "Deformation under hot load, % @ 10 psi, ASTM C 16", 1½ h: K-23 0 % at 2000 °F (1093 °C), 0.3 % at 2200 °F (1204 °C); TC-23 0.1 to 0.2 % at 2000 °F, 2200 °F "-"; IFB 23 Tile 0 % at 2000 °F, 2200 °F "-"; K-25 0 % at 2000 °F, 0.1 % at 2200 °F. Values printed without sign | 10 psi, as printed | Verified (PDF read 2026-11-09) | [B21] |
+| K-23, TC-23, K-23 HS, K-25, K-26 (Morgan 02/2016) | "Deformation under hot load, ASTM C 16, 10 psi (0.07 MPa), %", 1.5 h: K-23 0 % at 2000 °F, 0.3 % at 2200 °F; TC-23 0 and 0.3 %; K-25 0 and 0.1 %; **K-23 HS and K-26 "-" (not given)** | 10 psi, as printed | Verified (PDF read 2026-11-09) | [B22] |
 | BNZ PA-20, PA-23 | hot load deformation 10 psi, 1.5 h, about -0.5 % at 2000 °F; other grades and 2200 °F cells unreadable | 10 psi | Snippet | [B14] |
-| K26, JM23, JM26, JM28, JM30 | no load test on the sheets read | | NOT FOUND | [B10], [B12] |
+| K26, JM23, JM26, JM28, JM30 | no load test on the sheets read. The 2025 K-series sheet [B10] was read directly on 2026-11-09: it has no hot-load line for K23, K25, K26 or Insalcor; the 2016 sheet [B22] prints "-" for K-26 | | NOT FOUND (K26 Verified absent) | [B10], [B12], [B22] |
 | Kast-O-Lite 30 LI Plus, Mizzou | no hot load line | | NOT FOUND (Verified absent) | [B15], [B16] |
 | Kast-O-Lite 26, Kaolite 2600 LI | not searched past the CCS | | NOT FOUND | |
 | Historic JM IFB | "Load test: none reported" | | Verified (OCR) | [B13] |
@@ -238,7 +241,7 @@ superimposed load. These ratios are arithmetic on sheet values, not an allowable
 | Cold CCS, Mizzou Castable Plus | 5,500 dried; 3,500 at 1,500 °F; 3,000 at 2,000 °F | Verified (repo) |
 | Cold CCS, Kast-O-Lite 26, Kaolite 2600 LI | none | NOT FOUND / Snippet only |
 | Hot C16 test load, dense firebrick | 25 psi (C16 §7.1), applied by the standard, so the sheets' subsidence values (Jet D.P. 1.3 % at 2460 °F; Smithfield 6.8 % at 2640 °F; KX-99 0.6 % at 2640 °F) correspond to 25 psi only if the maker ran C16 as written; KX-99's sheet does not print the load | [B2], [B7], [B8], [B9] |
-| Hot test load, IFB | 10 psi, 1½ h, K-23 and K-25 only (0 to 0.3 % at 2000 to 2200 °F) | Verified (repo) [B11]. Maker's own condition, not in C16 or C155 |
+| Hot test load, IFB | 10 psi, 1½ h: K-23 0 / 0.3 %, K-25 0 / 0.1 % at 2000 / 2200 °F; TC-23 0.1 to 0.2 % (2010) or 0 % (2016) at 2000 °F, 0.3 % at 2200 °F (2016); IFB 23 Tile 0 % at 2000 °F | Verified [B11], [B21], [B22]. Labelled ASTM C16 by the maker. The owner reports (2026-11-09) that C16 tests at 10 psi at the stated temperature, which contradicts the 25 psi-only reading of [B2] §7.1 above; [B2] needs re-reading (possibly a separate IFB load or a different edition) |
 | Hot load for K26, JM-series, castables | none | NOT FOUND |
 | Allowable bearing stress, cold or hot | **none** | NOT FOUND |
 | Factor of safety on CCS or on the C16 load | **none** | NOT FOUND |
@@ -257,13 +260,16 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 3. Any statement that the hot limit equals the C16 test load (25 psi dense, 10 psi IFB).
 4. Smithfield cold crushing strength; Kast-O-Lite 26 LI data sheet; Kaolite 2600 LI CCS read from the
    PDF; Morgan K-28.
-5. Hot load subsidence for K26, JM23 to JM30, Kast-O-Lite 30 LI Plus, Mizzou; the load (psi) printed
+5. Hot load subsidence for K26 (absent from [B10] and [B22]), K-23 HS, any IFB above 2200 °F, JM23 to JM30, BNZ grades, Kast-O-Lite 30 LI Plus, Mizzou; the load (psi) printed
    on KX-99's hot-load line.
 6. Hot (elevated-temperature) CCS or hot MOR of any product on these sheets.
 7. Bearing on the edge or end of IFB (the lintel case) versus the 4½ by 4½ in. face tested in C133.
 8. HWI Handbook of Refractory Practice, Gilchrist, Chesters, Schacht, Routschka, Caniglia, AISE: no
    accessible text on allowable loads or skewback stress.
-9. Current-edition ASTM text: C16, C27, C133, C155 above are the 2007/2008 reapproved editions from a
+9. C16 load: [B2] was recorded as 25 psi only ("There is no 10 psi load in C16"); the owner says C16
+   tests at 10 psi at the stated temperature. Re-read C16 (2026-11-09 fetch returned compressed
+   binary) and correct §B1.2 and §B3.
+10. Current-edition ASTM text: C16, C27, C133, C155 above are the 2007/2008 reapproved editions from a
    public mirror; the current editions were not compared.
 
 ---
@@ -287,6 +293,8 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 - [B17] Morgan Thermal Ceramics, *Kaolite 2600 LI Gun / Kaolite 2600LI* sheets. Search extract only. https://www.morganthermalceramics.com/media/11772/kaolite-2600li-_eng.pdf
 - [B18] Elsevier ScienceDirect Topics, "Allowable Compressive Stress - an overview" (book excerpts). Search extract only; the page returned 403. https://www.sciencedirect.com/topics/engineering/allowable-compressive-stress
 - [B19] US Patent 4,505,210, *Multiple hearth furnace chamber*. Search extract only (scanned PDF). https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/4505210
+- [B21] Thermal Ceramics (Morgan Crucible), *K-23, TC-23, IFB 23 Tile, K-25*, Datasheet Code US 114-3, 02:2010, p. 2. PDF read 2026-11-09 (supplied by the owner; file `114-3-data-sheet-k23 & k25 brick.pdf`).
+- [B22] Morgan Thermal Ceramics, *IFB up to 2600°F (1427°C): K-23, TC-23, K-23-HS, K-25, K-26*, Datasheet Code US 1-14-3, updated 02/2016, p. 2. PDF read 2026-11-09 (supplied by the owner; file `199290_DATA-TC-114-3.pdf`).
 - [B20] Gajjar P., Pereira J., Luchini B., Sinnema S., Lourenço P., Put P., "Characterisation of mortarless refractory masonry joints under elevated temperatures", *Engineering Structures* (2023), doi 10.1016/j.engstruct.2022.115234. Record read: https://zenodo.org/records/7965714 ; friction table by search extract only. Cites Oliveira R.L.G., Rodrigues J.P.C., Pereira J.M., Lourenço P.B., Marschall H.U., "Normal and tangential behaviour of dry joints in refractory masonry", *Engineering Structures* (2021), https://www.sciencedirect.com/science/article/abs/pii/S0141029621007501 (not read).
 - [H3] BIA Technical Note 31A: see `door-headers.md`.
 - [H1], [H23], [H24]: see `door-headers.md` sources (BIA Technical Notes; Giles, *Structural Design of Refractory Concrete*; US 10,155,210 B2).
