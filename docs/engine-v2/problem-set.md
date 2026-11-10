@@ -88,9 +88,9 @@ burn, and it sets λ, which sets the flue loss. Olsen's chimney rules (p.80, Rul
 | Mechanism | Matters for | Source | v1 |
 |---|---|---|---|
 | Convection, gas to surfaces | the gas's temperature over the walls and ware | (forced-flow correlations; none read for a kiln) | infinite: every hot face at the chamber's temperature |
-| Gas radiation, CO₂ and H₂O | the dominant transfer above about 1000 °C; flue gas leaving hotter than the ware (+8 to +35 % fuel, heat review #2) | Hottel/Leckner or a weighted-sum-of-grey-gases fit (radiation-exchange.md §4, being researched); Cantera's is unsuitable (cantera-tespy-review.md §5) | none |
+| Gas radiation, CO₂ and H₂O | the dominant transfer above about 1000 °C; flue gas leaving hotter than the ware (+8 to +35 % fuel, heat review #2) | Hottel's framework with Alberti et al.'s charts (radiation-exchange.md §6: the method is sourced, its correlations aren't yet in hand); Cantera's is unsuitable (cantera-tespy-review.md §5) | none |
 | Radiation between faces | floor and door cold, crown hot; the ware's lag | `thermal/radiation.py`: Howell C-11, C-14, Lienhard eq. 10.42, checked | built, not coupled |
-| Hot emissivity of refractories | the exchange's size | not found yet (radiation-exchange.md §4) | – |
+| Hot emissivity of refractories | the exchange's size | found in part (radiation-exchange.md §5), extrapolated past the measured range by the user's decision (§5.5) | – |
 | The setting | an obstruction to radiation and flow, and a heat sink | no closed-form factors; options in radiation-exchange.md §3 | a heat sink only |
 | Flame luminosity (soot) | wood and oil flames radiate far more than clean gas | not sourced | none |
 
@@ -280,8 +280,10 @@ range.
    on an across-width roof arch, an info note for a dome too thin to stand, and `buttressed`
    taken on trust (§3.2).
 5. **The kits' printed volumes are stacking space** (pp.169–170, p.173), but the design files take
-   them as the chamber to the springline; the kit-24's burners are uncertain between ten MR-750s
-   (750,000 BTU/hr) and ten simple mixers on its printed #32 orifice (540,000; p.220–222).
+   them as the chamber to the springline; they are to be resized (ADR 0017 decision 14). The kits
+   use Gas Appliance MR-750 or MR-100 burners (p.222), and the engine picks the one that sizes
+   best; the No. 32 orifice (pp.220–221) is the book's general example of orifice sizing, not the
+   kit 24's burner (decisions 13, 16).
 6. **The ware's reaction heats** (dehydroxylation, water) remain unsourced; bisque and raw-glaze
    firings take more heat than v1 or v2 can count.
 7. **No hot material data for statics** (§3.1): creep, hot E, hot MOR and allowable bearing stay out.

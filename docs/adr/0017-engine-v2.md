@@ -1,6 +1,8 @@
 # 17. Engine v2: heat and statics rebuilt from first principles on the reference kilns
 
-- **Status:** accepted. The statics design waits for the software survey.
+- **Status:** accepted. The software survey reported on 2026-11-09
+  (`docs/research/statics-software.md`, with pairs of tools in `statics-combinations.md`); the
+  statics design starts from it.
 - **Date:** 2026-11-09
 
 ## Context
@@ -153,7 +155,8 @@ is built.
 - the ware's reaction heats (not sourced);
 - fibre anchoring;
 - thermal stress, creep, spalling, hot modulus of rupture and hot cohesion, which have no data
-  (`refractory-movement-and-mortar.md` §3). The survey may change this.
+  (`refractory-movement-and-mortar.md` §3). The survey kept this: the software is there, the
+  data isn't (`statics-software.md` §16).
 
 Each is said in the working where it would matter.
 
