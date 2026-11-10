@@ -102,6 +102,7 @@ class Firing:
     main: int = 0  # the first setting's zone
     steps: tuple[Step, ...] = field(default=())
     air_share_smooth: Vector = field(default_factory=lambda: np.zeros(0))
+    state: Vector = field(default_factory=lambda: np.zeros(0))  # every unknown at the end
 
     @property
     def t_gas(self) -> Vector:
@@ -207,11 +208,15 @@ def fire(
     stop_at: Target | None = None,
     sample: float = 60.0,
     rtol: float = 1e-5,
+    start: Vector | None = None,
 ) -> Firing:
-    """Fire the model from cold to ``t_end`` (s), or until a setting reaches ``stop_at`` (K, or
-    (setting, K)); record when they reach each of ``targets``."""
+    """Fire the model from cold (or from ``start``, a firing's end state, the walls and settings
+    as they were) for ``t_end`` (s), or until a setting reaches ``stop_at`` (K, or (setting, K));
+    record when they reach each of ``targets``."""
     bal = Balance(model, air_row=isinstance(mode, MaxFire))
     lay = bal.lay
+    if start is not None and (len(start) != lay.size or lay.air >= 0):
+        raise FiringError("a firing carries on from one of the same model, not at max fire")
     room = model.t_room
     stop = _mark(stop_at) if stop_at is not None else None
     wanted: set[tuple[int, float]] = {_mark(x) for x in targets}
@@ -236,6 +241,9 @@ def fire(
             y[lay.gases[zone]] = mode.at(0.0)[0]
         else:
             y[lay.setting] = mode.at(0.0)[0]
+    if start is not None:
+        y = np.asarray(start, dtype=float).copy()
+        y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else y[lay.fuel]
     current: dict[str, Any] = {"y": y, "t": 0.0, "start": 0.0}
     rows = _rows(mode, model, lay, lambda: current["y"], lambda: (current["t"], current["start"]))
 
@@ -365,7 +373,7 @@ def _record(
     energy = {name: float(v) * (1.0 if i == 0 else 1e6) for i, (name, v) in enumerate(pairs)}
     names = tuple(g.name for g in model.gas)
     firing = Firing(t, tg, ts, fuel, share, energy, events, completed, message, names,
-                    model.setting.zone, air_share_smooth=smooth)  # fmt: skip
+                    model.setting.zone, air_share_smooth=smooth, state=y[-1].copy())  # fmt: skip
     return replace(firing, steps=(*model.steps, *_working(model, mode, firing)))
 
 

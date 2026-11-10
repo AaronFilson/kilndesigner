@@ -302,23 +302,41 @@ def _faces(
     notes: list[str] = []
     soil: Ground | None = None
     area = {n: float(a) for n, a in zip(traced.names, traced.areas, strict=True)}
+    rooms = [k for k, g in enumerate(c.gas) if g.kind == "chamber"]
+    if len(rooms) > 1 and on_ground:
+        on_ground = False
+        notes.append("the chambers' floors on the ground: one ground a model so far, so their "
+                     "undersides are taken as adiabatic (the soil stores and loses little "
+                     "over a firing behind a thick floor, 11-09-26.md §I step 7)")  # fmt: skip
     for name in traced.names:
         if name not in c.built or name == "firebox roof":
             continue
         built, zone = c.built[name]
-        if built in ("grate", "open"):
-            continue
+        face, _, tag = name.rpartition(" ")
+        if not tag.isdigit():
+            face, tag = name, ""
+        if built in ("grate", "open") or (built == "between" and face == "front"):
+            continue  # an opening, or the back of a wall between chambers
         layers = _layers(kiln, built, door)
         t = sum(x.thickness for x in layers)
         a_in = area[name]
-        face = name.rsplit(" ", 1)[0] if name.rsplit(" ", 1)[-1].isdigit() else name
         back, back_zone, back_line = "", 0, None
         if face in WALL_FACES:
-            sides = face_sides(face, c.width, c.depth, c.height, rise)
-            a_out = grown(a_in, sides, t)
+            room = c.rooms[rooms.index(zone)] if c.rooms and zone in rooms else None
+            w, d, h = ((room.hi[0] - room.lo[0], room.hi[1] - room.lo[1], room.hi[2] - room.lo[2])
+                       if room else (c.width, c.depth, c.height))  # fmt: skip
+            a_out = grown(a_in, face_sides(face, w, d, h, rise), t)
         else:
             a_out = a_in * _duct_growth(kiln, c, built, t)
-        if face == "floor" and under and zoned:
+        if built == "between" and face == "back":
+            back = f"front {int(tag) + 1}"
+            back_zone = c.built[back][1]
+            a_out = area[back]
+            back_line = line(_emissivity(layers[-1].name))
+            outside = Outside("adiabatic", None, t_room)
+        elif built == "between":
+            outside = Outside("adiabatic", None, t_room)  # the flue holes' sides, in that wall
+        elif face == "floor" and under and zoned:
             back, back_zone = "firebox roof", c.built["firebox roof"][1]
             a_out = area["firebox roof"]
             back_line = line(_emissivity(layers[-1].name))
@@ -346,8 +364,6 @@ def _faces(
         wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
         faces.append(Face(name, wall, line(_emissivity(layers[0].name)), zone, back, back_zone,
                           back_line))  # fmt: skip
-    if path and not zoned and under:
-        notes.append("the fireboxes under the floor aren't zones: no space for them was traced")
     return faces, soil, notes
 
 
@@ -356,9 +372,13 @@ def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float) -> float:
     (Derived: each wall's outside grows by the thickness on each edge, as a box chamber's)."""
     if built == "chimney" and kiln.draft is not None and kiln.draft.chimney is not None:
         inside = kiln.draft.chimney.inside
-        if inside is not None and inside.width is not None and inside.depth is not None:
-            a, b = si(inside.width, "m"), si(inside.depth, "m")
-            return (a + b + 4 * t) / (a + b)
+        assert inside is not None  # the chimney zone is built only from its given section
+        across = inside.width if inside.width is not None else inside.diameter
+        along = inside.depth if inside.depth is not None else inside.diameter
+        assert across is not None
+        assert along is not None
+        a, b = si(across, "m"), si(along, "m")
+        return (a + b + 4 * t) / (a + b)  # a round one's circumference grows as (d + 2t)/d
     fire = kiln.heat.fire
     if built == "firebox" and fire is not None:
         fb = fire.fireboxes[0]

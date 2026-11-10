@@ -260,7 +260,7 @@ def smooth(
     wg = np.zeros_like(g) if wg is None else wg.copy()
     x, w = x.copy(), w.copy()
     tol = -1e-12 * area.max()
-    for _ in range(20):
+    while True:  # each round holds more entries at zero (a held one stays at zero), so it ends
         r = np.diag(w.sum(axis=1) + wg.sum(axis=0)) + w
         lam = np.linalg.lstsq(r, area - x.sum(axis=1) - g.sum(axis=0), rcond=None)[0]
         x2 = x + w * (lam[:, None] + lam[None, :])
@@ -268,12 +268,11 @@ def smooth(
         low, low_g = x2 < tol, g2 < tol
         if not (low.any() or low_g.any()):
             rows = x2.sum(axis=1) + g2.sum(axis=0) - area
-            if np.abs(rows).max() > 1e-9 * area.max():
-                break  # a row left with nothing to correct
+            if np.abs(rows).max() > 1e-9 * area.max():  # a row left with nothing to correct
+                raise GeometryError("the closure drove an exchange area negative: too few rays")
             return np.maximum(x2, 0.0), np.maximum(g2, 0.0)
         low |= low.T
         x[low], w[low], g[low_g], wg[low_g] = 0.0, 0.0, 0.0, 0.0
-    raise GeometryError("the closure drove an exchange area negative: too few rays")
 
 
 def trace(
@@ -424,10 +423,8 @@ class _Zoned:
             selfs = 2 * (k * cl + np.expm1(-k * cl))
             np.add.at(gg[i], (cz, cz), selfs)
             for u in range(p):
-                for v in range(u + 1, p):
+                for v in range(u + 1, p):  # the ray with p crossings has every pair
                     ok = (cl[:, u] > 0) & (cl[:, v] > 0)
-                    if not ok.any():
-                        continue
                     sep = ca[ok, v] - (ca[ok, u] + cl[ok, u])
                     f = np.exp(-k * np.maximum(sep, 0.0)) * absorbed[ok, u] * absorbed[ok, v]
                     np.add.at(gg[i], (cz[ok, u], cz[ok, v]), f)

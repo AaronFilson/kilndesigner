@@ -378,6 +378,166 @@ def test_the_fast_fires_whole_gas_path_as_one_enclosure() -> None:
 
 
 @pytest.mark.geometry
+@pytest.mark.parametrize(
+    ("design", "zones"),
+    [
+        ("olsen/groundhog-basic", ["firebox", "chamber"]),
+        ("corbel-firebox-crossdraft", ["firebox", "chamber", "chimney"]),
+    ],
+)
+def test_fireboxes_against_a_wall_as_zones(design: str, zones: list[str]) -> None:
+    """A firebox against the front wall (the groundhog's) or a side wall (the corbel-roofed
+    cross-draft's), from its grate up, with its inlets or mouth through the wall: a gas zone of
+    the enclosure; a chimney only where the design gives one beside the kiln (the groundhog's
+    exits are several, so its draft isn't the chimney zone's)."""
+    c = ch.chamber(load_design(ROOT / "examples" / f"{design}.yaml"), path=True)
+    assert [g.name for g in c.gas] == zones
+    names = {z.name for z in c.zones}
+    assert {"grate", "firebox walls", "firebox roof", "inlet flues"} <= names
+    assert c.built["inlet flues"][0] == "walls"
+    assert c.built["firebox roof"][0] == "firebox"
+    r = rays.trace(list(c.zones), c.patches, rays=10_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+    assert r.gas_volumes == pytest.approx([g.volume for g in c.gas], rel=2e-2)
+
+
+@pytest.mark.geometry
+@pytest.mark.parametrize(
+    ("design", "change", "zones"),
+    [
+        ("groundhog-basic", {"heat.fire.fireboxes.0.position": "back", "draft.exits": None,
+                             "draft.flue_wall": "front"}, ["firebox", "chamber"]),
+        ("fast-fire", {"draft.flue_wall": "front", "spy_holes": None,
+                       "draft.flue_port": {"diameter": "8 in"},
+                       "draft.chimney.inside": {"diameter": "9 in"}},
+         ["firebox", "chamber", "chimney"]),
+    ],
+)  # fmt: skip
+def test_the_paths_other_layouts(design: str, change: dict[str, Any], zones: list[str]) -> None:
+    """A firebox against the back wall; a chimney at the front, its round flue and round stack
+    taken as squares of their areas: each a zone of the enclosure, the regions tiling every
+    ray's path."""
+    data = _data(design)
+    for key, value in change.items():
+        node: Any = data
+        *parents, last = key.split(".")
+        for p in parents:
+            node = node[int(p)] if p.isdigit() else node[p]
+        node[last] = value
+    from kilndesigner.model import Kiln
+
+    c = ch.chamber(Kiln.model_validate(data), path=True)
+    assert [g.name for g in c.gas] == zones
+    r = rays.trace(list(c.zones), c.patches, rays=5_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+
+
+def _data(name: str) -> dict[str, Any]:
+    import yaml
+
+    path = OLSEN / f"{name}.yaml"
+    if not path.exists():
+        path = ROOT / "examples" / f"{name}.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def test_what_the_path_leaves_out() -> None:
+    """A chimney that isn't the path's zone: none given, an updraft's, one in a side wall; and a
+    trough sunk in a chamber's floor, its own fire (the two-chamber kiln's second firebox, p.206),
+    no firebox zone of its own."""
+    from kilndesigner.model import Kiln
+
+    fires = ch._fires(load_design(OLSEN / "olsen-two-chamber.yaml"))  # pyright: ignore[reportPrivateUsage]
+    assert [f.side for f in fires] == ["front"]
+    lay = ch._layout(load_design(OLSEN / "fast-fire.yaml"), _run("fast-fire"), 1)  # pyright: ignore[reportPrivateUsage]
+    for change in ({"draft.chimney": None}, {"draft.type": "up"}, {"draft.flue_wall": "left"}):
+        data = _data("fast-fire")
+        for key, value in change.items():
+            *parents, last = key.split(".")
+            node: Any = data
+            for p in parents:
+                node = node[p]
+            node[last] = value
+        assert ch._stack(Kiln.model_validate(data), lay) is None  # pyright: ignore[reportPrivateUsage]
+
+
+def _run(name: str) -> Any:
+    from kilndesigner.massing import run_of
+
+    return run_of(load_design(OLSEN / f"{name}.yaml"))
+
+
+@pytest.mark.geometry
+def test_a_changing_width_and_the_older_under_floor_layout() -> None:
+    """A tunnel whose width changes (Ellington's): the steps between its slices are its side
+    walls; fireboxes still running along the run under the floor (fast-fire-anderson's): their
+    inlets moved onto the floor at their size, said."""
+    c = ch.cavity(load_design(OLSEN / "ellington-new-hog.yaml"))
+    assert sorted(z.name for z in c.zones) == sorted(BOX_FACES)
+    anderson = ch.chamber(load_design(OLSEN / "fast-fire-anderson.yaml"))
+    assert any("moved onto the floor at its size" in n for n in anderson.notes)
+
+
+def test_openings_in_a_round_wall_are_left_out() -> None:
+    """A round chamber's wall isn't flat: an exit flue, burner ports, exit holes and spy holes in
+    it are left out, each said."""
+    k = _design(
+        "olsen-crossdraft-36",
+        {"draft.flue_port": {"width": "9 in", "height": "4.5 in"},
+         "heat.gas.burners.port": {"diameter": "3 in"},
+         "spy_holes": {"holes": [_hole("back")]}},
+    )  # fmt: skip
+    round_ = ch.Chamber((), (), 1.0, 1.0, 1.0, 0.0, shape="round")
+    patches, notes = ch.openings(k, round_)
+    assert patches == []
+    said = " ".join(notes)
+    assert "exit flue in a round wall" in said
+    assert "burner ports in a round wall" in said
+    assert "spy hole 1" in said
+    exits = [{"through": "back", "count": 2, "port": {"width": "4.5 in", "height": "9 in"}}]
+    k = _design("fast-fire", {"draft.flue_port": None, "draft.exits": exits})
+    patches, notes = ch.openings(k, round_)
+    assert "exit flues 1 in a round wall" in " ".join(notes)
+
+
+def test_an_opening_that_cant_be_slid_onto_its_face() -> None:
+    """Off its face's plane, larger than the face, or clamped into a notch: left out."""
+    square = np.array([[[0, 0, 0], [1, 0, 0], [1, 1, 0]], [[0, 0, 0], [1, 1, 0], [0, 1, 0]]], float)
+    off = rays.Patch("p", "f", (0.5, 0.5, 0.1), (1, 0, 0), (0, 1, 0), (0.1, 0.1))
+    assert ch._slid(off, square) is None  # pyright: ignore[reportPrivateUsage]
+    big = rays.Patch("p", "f", (0.5, 0.5, 0.0), (1, 0, 0), (0, 1, 0), (0.6, 0.1))
+    assert ch._slid(big, square) is None  # pyright: ignore[reportPrivateUsage]
+    ell = np.array([[[0, 0, 0], [1, 0, 0], [1, 0.4, 0]], [[0, 0, 0], [1, 0.4, 0], [0, 0.4, 0]],
+                    [[0, 0.4, 0], [0.4, 0.4, 0], [0.4, 1, 0]],
+                    [[0, 0.4, 0], [0.4, 1, 0], [0, 1, 0]]], float)  # fmt: skip
+    notch = rays.Patch("p", "f", (0.8, 0.8, 0.0), (1, 0, 0), (0, 1, 0), (0.1, 0.1))
+    assert ch._slid(notch, ell) is None  # pyright: ignore[reportPrivateUsage]
+
+
+@pytest.mark.geometry
+def test_a_face_wound_the_wrong_way_is_turned() -> None:
+    """A face whose tessellation would face away from the gas (tested here against a solid it
+    isn't part of) has its triangles turned."""
+    from build123d import Box, Pos
+
+    a = Pos(0, 0, 0) * Box(10, 10, 10)
+    far = Pos(100, 0, 0) * Box(10, 10, 10)
+    face = a.faces()[0]
+    assert np.allclose(ch._oriented(face, far), ch._oriented(face, a)[:, [0, 2, 1]])  # pyright: ignore[reportPrivateUsage]
+
+
+def test_a_source_with_every_ray_escaping() -> None:
+    """In an open scene with gas zones, a face whose rays all escape adds nothing."""
+    up = rays.Zone("up", np.array([[[0, 0, 0], [1, 0, 0], [1, 1, 0]],
+                                   [[0, 0, 0], [1, 1, 0], [0, 1, 0]]], float))  # fmt: skip
+    r = rays.trace([up], rays=200, closed=False, regions=HALVES, gas=("a", "b"), ks=(0.5,))
+    assert r.lost == 200
+    assert not r.tallies[0.5].gs1.any()
+
+
+@pytest.mark.geometry
 def test_crossing_gas_paths() -> None:
     """The Fireworks kiln: two tubes crossing at right angles over one fire zone, their vaults
     meeting in a groin: one gas zone, its floor the 9 × 9 ft plan, its volume the crossing's

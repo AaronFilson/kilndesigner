@@ -222,10 +222,10 @@ def _inside(boxes: tuple[tuple[Point, Point], ...], p: Point) -> bool:
     return any(all(lo[i] <= p[i] < hi[i] for i in range(3)) for lo, hi in boxes)
 
 
-def _namer(lay: _Layout, zones: list[_Zone], solid: Any) -> Any:
-    """Name a face of a piece (mm): skip the cuts' faces (gas on both sides in the whole solid);
-    find its zone from a point a step into the gas, and name it by the zone's kind and the way it
-    faces."""
+def _namer(lay: _Layout, zones: list[_Zone], solid: Any, planes: list[tuple[int, float]]) -> Any:
+    """Name a face of a piece (mm): skip the cuts' faces (on a cut plane, gas on both sides in the
+    whole solid); find its zone from a point a step into the gas, and name it by the zone's kind
+    and the way it faces."""
     chambers = [k for k, z in enumerate(zones) if z.kind == "chamber"]
     many = len(chambers) > 1
 
@@ -233,7 +233,8 @@ def _namer(lay: _Layout, zones: list[_Zone], solid: Any) -> Any:
         planar = face.geom_type.name == "PLANE"
         p = face.center() if planar else face.position_at(0.5, 0.5)
         n = face.normal_at(p)
-        if planar and solid.is_inside(p + n * EPS) and solid.is_inside(p - n * EPS):
+        on_cut = any(abs((p.X, p.Y, p.Z)[a] - v) < 1e-3 for a, v in planes)
+        if planar and on_cut and solid.is_inside(p + n * EPS) and solid.is_inside(p - n * EPS):
             return None  # a cut: gas on both sides
         inward = -n if piece.is_inside(p - n * EPS) else n
         q = (p.X + inward.X * EPS, p.Y + inward.Y * EPS, p.Z + inward.Z * EPS)
@@ -295,7 +296,7 @@ def _oriented(face: Any, piece: Any) -> Any:
     from build123d import Vector
 
     t = face_triangles([face])
-    if len(t) == 0:
+    if len(t) == 0:  # pragma: no cover - a sliver OCCT tessellates to nothing
         return t
     cr = np.cross(t[:, 1] - t[:, 0], t[:, 2] - t[:, 0])
     k = int(np.argmax(np.linalg.norm(cr, axis=1)))
@@ -437,20 +438,20 @@ def _plan(
             xl = f.face
         else:
             xr = f.face
-    yo = yc
+    yo, yi = yc, yf  # where fireboxes under the floor may run to: under the flue wall too
     if stack is not None:
         if stack.wall == "back":
             yc, yo = stack.inside, stack.outside
         else:
-            yf = stack.inside
-    for axis, v in ((0, xl), (0, xr), (1, yf), (1, yc), (1, yo), (2, z0)):
+            yf, yi = stack.inside, stack.outside
+    for axis, v in ((0, xl), (0, xr), (1, yf), (1, yc), (1, yo), (1, yi), (2, z0)):
         if abs(v) < INF and (axis, v) not in planes:
             planes.append((axis, v))
     edges = [yf, *lay.cuts, yc]
     zones: list[_Zone] = []
     for f in fires:
         if f.side == "under":
-            boxes: tuple[tuple[Point, Point], ...] = (((xl, yf, -INF), (xr, yo, z0)),)
+            boxes: tuple[tuple[Point, Point], ...] = (((xl, yi, -INF), (xr, yo, z0)),)
         elif f.side == "front":
             boxes = (((-INF, -INF, -INF), (INF, yf, INF)),)
         elif f.side == "back":
@@ -471,7 +472,7 @@ def _plan(
         if stack.wall == "back":
             boxes = (((-INF, yc, z0), (INF, INF, INF)), ((-INF, yo, -INF), (INF, INF, z0)))
         else:
-            boxes = (((-INF, -INF, z0), (INF, yf, INF)),)
+            boxes = (((-INF, -INF, z0), (INF, yf, INF)), ((-INF, -INF, -INF), (INF, yi, z0)))
         boxes = tuple(b for b in boxes if b[1][2] > b[0][2])
         start = stack.stack[0][1] if sign > 0 else stack.stack[1][1]
         zones.append(_Zone("chimney", "chimney", boxes, top=stack.stack[1][2],
@@ -557,7 +558,7 @@ def cavity(kiln: Kiln, segments: int = 1, path: bool = False) -> Chamber:
         mid = [(lo_ + h) / 2 for lo_, h in zip(lo, hi, strict=True)]
         solid = solid + Pos(mid[0], mid[1], mid[2]) * Box(size[0], size[1], size[2])
     plan, planes = _plan(lay, n, fires, stack)
-    namer = _namer(lay, plan, solid)
+    namer = _namer(lay, plan, solid, planes)
     groups: dict[str, list[Any]] = {}
     volumes = np.zeros(len(plan))
     for piece in _pieces(solid, planes):
