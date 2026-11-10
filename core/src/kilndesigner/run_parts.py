@@ -39,6 +39,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
+from kilndesigner.common_wall import between_layers
 from kilndesigner.geometry import SOLID_KINDS, ArchShape, DomeShape, Part, bulge_fill, thicknesses
 from kilndesigner.model import Dome, FlatRoof, Kiln, SprungArch
 from kilndesigner.shape import Arch, SailDome, along_arch
@@ -124,7 +125,7 @@ def run_layout(kiln: Kiln) -> RunLayout:
     from kilndesigner.shell import sizes_of
 
     c = kiln.chamber
-    between = sum(si(x.thickness, "mm") for x in kiln.lining.walls)
+    between = sum(t for _, t in between_layers(kiln, "mm"))
     depth = si(c.depth, "mm")
     slope = math.radians(si(c.slope, "degree")) if c.slope is not None else 0.0
     sizes = tuple(sizes_of(kiln, "mm")) if c.sizes is not None else ()
@@ -179,7 +180,7 @@ def run_parts(kiln: Kiln) -> list[Part]:
     stepped = run.step > 1e-6 or run.stepped
     faces = ("left", "right", "front", "back")
     layers = {f: thicknesses(kiln, f) for f in faces}
-    walls = [(x.material, si(x.thickness, "mm")) for x in kiln.lining.walls]
+    walls = between_layers(kiln, "mm")
     reach = {f: sum(th for _, th in layers[f]) for f in faces}
     x0, x1 = -w / 2 - reach["left"], w / 2 + reach["right"]
     y0, y1 = run.front(0) - reach["front"], run.back(n - 1) + reach["back"]

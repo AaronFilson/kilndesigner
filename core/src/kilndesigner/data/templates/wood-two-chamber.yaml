@@ -52,6 +52,9 @@ lining:
   walls:
     - material: ifb-k26 # brick not named: Olsen's wood-kiln hot face (p.26)
       thickness: 9 in
+  between: # the 9 in wall between the chambers, as printed (Fig 8-17)
+    - material: ifb-k26
+      thickness: 9 in
 heat:
   fire:
     fuel: wood

@@ -969,9 +969,20 @@ def _row_note(kiln: Kiln, us: bool) -> Finding:
             ),
             reference="run_parts.py; Olsen, The Kiln Book, 4th ed., Fig 4-153, p.127",
         )
+    from kilndesigner.common_wall import carries_arches
+
+    if kiln.lining.between is not None:
+        how = "as the design gives it (lining.between)"
+    elif carries_arches(kiln):
+        how = (
+            "a common wall carrying the arches either side, built 4½ in thicker than the others "
+            "and never narrower than the two arches' feet on it (Olsen p.46)"
+        )
+    else:
+        how = "as thick as the side walls"
     text = (
         f"The {n} chambers stand in a row, each wall between them "
-        f"{length_text(run.between, us)} thick, as thick as the side walls. "
+        f"{length_text(run.between, us)} thick, {how}. "
     )
     reference = "run_parts.py; Olsen, The Kiln Book, 4th ed."
     if run.sizes:

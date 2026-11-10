@@ -192,7 +192,9 @@ def test_chambers_of_different_sizes_take_their_own_volume() -> None:
     assert chamber_shape(bidai).volume == pytest.approx(expected * 0.0254**3, rel=1e-9)
     run = run_layout(bidai)
     assert run.front(0) == pytest.approx(-21 * 25.4)
-    assert run.back(2) - run.front(0) == pytest.approx((124 + 2 * 9.5) * 25.4)
+    # Two common walls of 18 in: 4½ in thicker than the 9½ in walls, then as wide as the two 9 in
+    # arches' feet on each (Olsen p.46)
+    assert run.back(2) - run.front(0) == pytest.approx((124 + 2 * 18) * 25.4)
     assert run.springline(1) == pytest.approx(run.floor(1) + 42 * 25.4)
     assert run.stepped
     # Each chamber's arch is its own: three arches, each over its own depth

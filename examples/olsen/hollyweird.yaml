@@ -22,8 +22,9 @@
 # (masonry-materials.md §5.3). The domes 6 in thick, "best" for most castings (p.59), rising 2¾ in
 # per foot of the 55 in span, 12.6 in, the middle of his 2½–3 in/ft for domes (p.51); so the walls
 # stand 35.4 in to the springline. Walls and floor 9 in of medium-duty firebrick (Olsen's
-# intermediate duty, p.18), as the book gives no grade: the 13 in common wall is then 4½ in thicker than the others,
-# as Olsen builds a wall between two chambers (p.46). The domes are buttressed: Olsen buttresses a
+# intermediate duty, p.18), as the book gives no grade: the 13 in common wall (Fig 4-110, entered as
+# printed, lining.between) is then about 4½ in thicker than the others, as Olsen builds a wall
+# between two chambers (p.46). The domes are buttressed: Olsen buttresses a
 # cast dome's walls "extremely well" (p.59). The dug-out ash pit, walked through into the chamber,
 # puts the floor on the ground. Both fireboxes run across the 55 in chamber, their grates their
 # full size, the second's bars ¾ in apart as the first's.
@@ -61,6 +62,9 @@ lining:
   walls:
     - material: firebrick-medium-duty-smithfield
       thickness: 9 in
+  between: # the 13 in wall between the chambers, as printed (Fig 4-110)
+    - material: firebrick-medium-duty-smithfield
+      thickness: 13 in
   roof:
     - material: kaolite-2600-li # "Thermal Ceramics K-26 IFB castable" (p.116)
       thickness: 6 in

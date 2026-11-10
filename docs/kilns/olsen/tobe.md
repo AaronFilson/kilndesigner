@@ -39,6 +39,19 @@ About 15,600 ft³; 2345 °F; 2,549 kW lost at top temperature (every chamber hot
 outside Rayleigh number, 1.9 × 10¹¹, is past the convection correlation's checked range (warning
 W1).
 
+## v2 statics (2026-11-10)
+
+The walls between the chambers are now 18 in (Olsen's common wall, 4½ in thicker than the others
+and never narrower than the two 9 in arches' feet on it, p.46; the engine's default), so the run
+is 8½ in longer a wall and each floor steps 45.9 in. Along the row each chamber's arch stands cold,
+the ends' supports (the firebox, the earth, the chimney) giving 210 lbf/ft; hot, with dense brick's
+25 psi crushing stand-in carried over from IFB by analogy its 10 ft arches have no admissible state,
+without it one, so that verdict isn't given (`docs/planning/11-09-26.md` §H item 9). With 9½ in
+walls between the chambers, a 103 in tall wall between 10 ft arches had a mechanism even without
+sliding.
+
 ## Open questions for the user
 
 1. Does "required 40 tons of wood to fire" (p.90) mean the largest chamber or the whole kiln?
+2. How thick were the walls between the chambers, and the arches? (Assumed: 18 in by Olsen's
+   p.46, and 9 in as Bidai's.)

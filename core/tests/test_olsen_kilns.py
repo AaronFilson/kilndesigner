@@ -43,6 +43,10 @@ WARNED: dict[str, dict[str, str]] = {
     "kenzan-muffle": {
         "masonry.thickness": "the 4 in wall, floor and roof as built aren't whole bricks",
     },
+    "hollyweird": {
+        "masonry.thickness": "the book's 13 in wall between the chambers (Fig 4-110) isn't whole "
+        "9, 4½ and 2½ in bricks",
+    },
     "ninodaguia": {
         "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
     },

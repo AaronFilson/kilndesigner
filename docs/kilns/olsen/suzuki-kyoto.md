@@ -44,6 +44,14 @@ are left as they were.
 77.9 m³ in all; 1285 °C; 777.4 kW lost with each chamber held at its own cone (803.5 kW with all
 seven at cone 10, the steady-state upper bound used before 2026-11-09).
 
+## v2 statics (2026-11-10)
+
+The walls between the chambers are now 18 in (Olsen's common wall, never narrower than the two 9 in
+arches' feet on it, p.46; the engine's default), so the run is longer and each floor steps 24.3 in.
+Along the row every chamber stands cold and hot, the ends' supports giving 0–1 lbf/ft cold and
+about 35 hot; each ring's foot against the taller wall behind it is a springer coursed into that
+wall.
+
 ## Open questions for the user
 
 1. Fig 4-35: are the bays drawn on both sides of each chamber doors, stoke porches, or both?

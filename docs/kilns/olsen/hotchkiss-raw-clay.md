@@ -37,6 +37,12 @@ The build finishes with no errors. Chamber 820 ft³; heat loss 381.5 kW, likely 
 because all the clay is treated as fired; priced materials $10,867. Each floor steps 28.3 in. The
 fired raw clay has no service rating, so the report flags it as information.
 
+Since 2026-11-10 the walls between the chambers are 20 in (Olsen's common wall, never narrower than
+the two 10 in arches' feet on it, p.46; the engine's default), so each floor steps 32.3 in and the
+figures above have grown with the run. In v2's statics every chamber stands cold and hot, each
+arch's back foot a springer coursed into the taller wall behind it, as "each arch roped until the
+arch below was finished to buttress it" (p.55–56).
+
 ## Open questions
 
 1. Fig 2-44 p.56: how wide and how tall is the entrance door? Is there one per chamber? With

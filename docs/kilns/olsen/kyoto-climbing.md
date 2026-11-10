@@ -26,6 +26,14 @@ Step A (2026-11-09) added the flues between chambers.
 
 1110 ft³; heat loss 512 kW (all ten chambers at top at once); engine chimney 18.5 ft.
 
+## v2 statics (2026-11-10)
+
+The walls between the chambers are now 18 in (Olsen's common wall, never narrower than the two 9 in
+arches' feet on it, p.46; the engine's default), so the run is longer and each floor steps 19.7 in.
+Along the row every chamber stands cold and hot, the ends' supports giving 0 cold and 7.6 lbf/ft
+hot. The arch, its 20.7 in rise a hair past a semicircle on the 41⅓ in span, is laid level on its
+walls; each ring's foot against the taller wall behind it is a springer coursed into that wall.
+
 ## Open questions for the user
 
 1. Figs 4-31, 4-32: how far along the span does a reduction chamber's peak stand, and the two

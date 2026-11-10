@@ -224,6 +224,11 @@ references used. The plans print the working, so a builder can check it.
 
 ## Milestones
 
+**2026-11-09: engine v2 replaces v1** (`docs/adr/0017-engine-v2.md`; `11-09-26.md` §H).
+- The heat and statics milestones below describe v1. Their results aren't to be relied on until
+  v2 is rebuilt.
+- Engine v2 is the focus until it works as a whole: statics first, then heat.
+
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
 | **M0** | **Foundations** | uv workspace, ruff, pyright strict, pytest, CI, ADRs, the design-file schema | A typed Python monorepo with strict CI from the first commit |
@@ -623,6 +628,42 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   reversible expansion and drying shrinkage, a measured arch rise, rampant-arch thrust, the
   catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
   Refractory Practice* not reached online.
+
+## Follow-up research: hot emissivities and gas radiation (2026-11-09)
+
+For radiation between the chamber's faces (`11-09-26.md` §G; `docs/research/radiation-exchange.md`
+§4–§6). The user's note: firebrick and IFB have changed little in 30–40 years, so older
+references serve.
+
+- **IFB emissivity above 1077 °C: search for more.**
+  - The measured lines (Morgan's MPK grades, Hampartsoumian 1990) stop at 1350 K. IFB is used
+    well past that: K-26 and JM 26 are classified to 1430 °C, and cone 10 is about 1285 °C.
+  - Until data are found, the engine extrapolates the measured lines and says so in the
+    working (the user's decision, 2026-11-09).
+  - Where to look:
+    - Touloukian and DeWitt vol. 8. Its master index (ADA129117, public on archive.org) shows
+      no brick, firebrick or IFB emissivity in it, so read only its mullite (aluminium silicate)
+      pages, 1685 and 1687, as a guide.
+      - Vol. 8 is on DTIC (ADA951942): download it in a browser, as DTIC refuses scripts. It
+        was down for maintenance on 2026-11-09.
+      - It is also a borrow-only scan on archive.org (`thermophysicalpr0008purd`).
+      - The DSIAC report DSIAC-BCO-2022-222 (DTIC AD1194128, June 2022) lists the rest of the
+        TPRC series on DTIC: vol. 7, metals (ADA951941); vol. 9, coatings (ADA951943, for kiln
+        wash and high-emissivity coatings).
+      - The electronic version, CINDAS's TPMD, is commercial;
+    - Gray et al. (1989) and Hampartsoumian (1990) in full;
+    - Jackson and Yen (1994) on ceramic-fibre insulation;
+    - the makers' technical bulletins (Morgan/Thermal Ceramics, HWI, Allied);
+    - NBS/NIST and NASA reports.
+  - Also the chemistry of K-23, K-26, JM 23 and JM 26, so each can be matched to a measured
+    grade.
+- **Osborn (1985):** what "low", "medium" and "high" alumina mean in his fire-brick classes. A
+  kiln's dense brick reads 0.75–0.79 in one class and 0.55–0.63 in the next.
+- **Fibre above 1127 °C, castables, kiln wash, glazed ware and element wire** at firing
+  temperatures.
+- **Gas radiation:** Alberti, Weber and Mancini's CO₂ and H₂O correlations (Combust. Flame 2015,
+  2016) with their spreadsheets, or a weighted-sum-of-grey-gases table; and a soot model for
+  luminous flames (wood, reduction).
 
 ## Open questions
 

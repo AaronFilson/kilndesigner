@@ -102,6 +102,13 @@ heat:
         length: 46 in # Fig 4-36
         step: 24 in # (drawing) Fig 4-36: the grate slab 18 in up, chamber 1's floor 42 in up
         inlets: 6 # six flues into chamber 1 (Fig 8-7, p.201); five piers between them (Fig 4-36's plan)
+        # Through chamber 1's front wall, which "leans in to 38 in, where the arch begins" (p.94–95):
+        # (scaled: Fig 8-7, p.201, from the plan's 26 in and 14 in, ±1 in) each 4–5½ in wide, a
+        # half-brick, 4½ in; their height isn't drawn: 9 in, Olsen's standard 4½ × 9 in flue (p.96),
+        # assumed
+        inlet:
+          width: 4.5 in
+          height: 9 in
         stoke_hole: # (drawing) mouth 9 in wide (Fig 4-36); stoking opening 14 in (Fig 8-7)
           width: 9 in
           height: 14 in

@@ -20,6 +20,17 @@ dependencies = [
     # Firing simulation results: Parquet files, queried with DuckDB (ADR 0007)
     "pyarrow>=21",
     "duckdb>=1.4",
+    # Steel frames, rods and posts for engine v2's statics (the user, 2026-11-10)
+    "pynitefea>=3.2.1",
+    # Engine v2's heat model (the user, 2026-11-10; thermal-combinations.md, build order):
+    # Monte Carlo view factors (trimesh + embreex), the firing as a DAE on SUNDIALS IDA
+    # (scikit-sundae), the ground in 2-D (scikit-fem), the gas path (fluids) and convection (ht)
+    "trimesh>=5.2.0",
+    "embreex>=4.4.0.post1",
+    "scikit-sundae>=1.2.0",
+    "scikit-fem>=12.0.2",
+    "fluids>=1.3.1",
+    "ht>=1.2.0",
 ]
 
 [build-system]

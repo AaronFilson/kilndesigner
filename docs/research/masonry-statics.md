@@ -96,6 +96,18 @@ Heyman, *Equilibrium of Shell Structures* (1977) is quoted here through Lau only
 | Lune weight (Eq. 2.5) | w_i = θ·ρ·(r³ − r′³)/3 · [cos β − cos γ − (γ − β)·sin δ], "r = a + t, r' = a – t, ρ is the material unit weight" | [M2] p. 36 | **Verified on the page image** (as reconstructed) |
 | Centroid (Eq. 2.6) | x_cg = 3(r⁴ − r′⁴)/(8(r³ − r′³)) · sin(θ/2)/θ · [(γ − β)(2 + 4 sin²δ) + (8 sin δ)(cos γ − cos β) − sin 2γ + sin 2β] / [cos β − cos γ + (β − γ) sin γ] | [M2] p. 36 | **Read on the page image.** As printed the denominator's last term is (β − γ) sin γ, which for a hemispherical lune (β = 0, γ = π/2) gives 1 − π/2 < 0, a negative centroid: likely a typo for −(γ − β) sin δ, Eq. 2.5's bracket. With δ = 0 the engine uses the bracket cos β − cos γ, which integrating over the shell confirms (thin hemisphere: x_cg = πa/4) |
 | Hoop forces, least thickness | "With hoop forces ... For a hemispherical dome, the modified thrust line method predicts a minimum t/R of 0.041" | [M2] p. 55 | Verified on the page image |
+| Why 0.069 exceeds Heyman's | "Heyman's analytical analysis was accurate under his assumptions, including the negation of hoop forces. His assessment of minimum t/R ratios, which were lower than the ratios calculated by the modified thrust line analyses without hoop forces, used thrust lines of domes at incipient collapse; however, the modified thrust line program's thrust line solutions were for stable dome geometries." | [M2] p. 55 | Verified (text extracted 2026-11-10) |
+| The search behind it | t/R tested at "0.001, 0.01, 0.02, 0.03, 0.04, 0.05, 0.10, 0.15, and 0.20"; "the program first tried a distance about a/3000 below the extrados, and if needed, gradually moved the thrust line toward the intrados in increments between a/3000 and a/300. The program allowed the thrust line to approach within a/3000 of the extrados in the remainder of the dome, but not touch either surface"; without hoops "For t/R = 0.05, the program found a solution up to α = 86°" | [M2] pp. 45, 50 | Verified (text extracted 2026-11-10) |
+| Hinges allowed | "the thrust line may touch the dome surfaces at no more than two hinge locations per lune; additional contact points put the structure at incipient collapse" | [M2] p. 33 | Verified (text extracted 2026-11-10) |
+
+**Lau's 0.069 against v2's 0.0428 (settled 2026-11-10).** v2's lunes need t/R 0.0428, Heyman's
+analytical lune value (0.042, hoop forces negated). Lau's 0.069 is where his program, testing
+t/R 0.05 and then 0.10 and keeping the thrust line off both surfaces, stopped finding no-hoop
+solutions for a hemisphere; by his own account (p. 55) his minima exceed Heyman's because he
+sought stable, not incipient-collapse, thrust lines. N2+ is restated accordingly
+(`engine-v2-negative-cases.md` §7). One thing stays unread: Eq. 2.5 takes r = a + t, r' = a − t
+(t half the thickness), while his hoop result 0.041 agrees with the full-thickness values
+(Heyman, TNA): which t his charts use isn't stated in the text read.
 | Eqs 3.3–3.5 | as reconstructed above; condition "provided that nθ′ ≤ 180°", for "a lune with θ ≤ 90°" | [M2] p. 57 | **Verified on the page image** |
 | Eq. 3.1 | h = H / [a θ (sin α − sin δ)] | [M2] p. 56 | **Verified on the page image** |
 | Eq. 3.7 | y_TL = k·a(cos δ − cos α), "k is given in Table 3.1 for a lune of θ = 1°"; the worked example is the *height* of the thrust line's last point, not a thrust | [M2] p. 62 | Verified on the page image |
@@ -163,6 +175,16 @@ line-of-thrust search), not built. Also: with crowns at different heights (both 
 examples) the groins meet the higher vault's side, not the middle; no source read covers it.
 The groin stays unchecked.
 
+**Built in v2 (2026-11-10, `v2/statics/cross_vault.py`).** The slice-by-slice search: the groin
+solid itself cut both ways by vertical planes into chains of voussoirs (the thrust lines kept
+inside the shell at every joint), each family carrying half its strip's weight, any vertical force
+passed where two slices cross. That is [M3]'s cross diagram, an orthogonal network, in block form,
+with the kilns' walls all round as the supports instead of [M3]'s four corners; crowns at different
+heights need nothing special, as the solid is cut as it is. The two families' compressive stress
+fields add to one in equilibrium with the weight (Derived), so a state of the grid is a state of
+the vault (a lower bound). No number from [M3] is used; its corner-supported case (N6) isn't the
+kilns' case and isn't reproduced.
+
 ## M5. A catenary meeting the next chamber's at a step
 
 Searched again: noborigama construction, stepped multi-chamber vaults, Johanna kiln (St John's),
@@ -188,14 +210,36 @@ shown, not checked (`frame_checks.py` ~line 733, `door.py` BEARING_NOTE).
 Next: Trinks Vol. I (1923) pp. 196, 238 (library or HathiTrust search-only); Huerta (2004);
 Heyman (1977) pp. 109–114 directly; Maia Avelino et al. (2021) full text.
 
+## M8. A ring's foot against a taller wall: the springer (tas-de-charge) (2026-11-10)
+
+On a climbing kiln each chamber's arch along the draft ends against the wall behind it, which
+rises past its springline to the next chamber's. The engine's layout (`run_parts.py`) trims the
+ring at that wall's face, so its foot ends against a vertical face, which friction alone can't
+carry (v2's row section, `v2/statics/row.py`). Built, the foot sits on the wall. The construction
+for a vault's foot bonded into its wall is the tas-de-charge:
+
+| Item | Text | Source | Status |
+|---|---|---|---|
+| Courses | the lower courses "laid in horizontal courses and bonded into the wall, forming a solid mass"; they "help bond the ribs, vault and walls together"; they "generally rise about one-third of the height of the vault" and, projecting forward, reduce the span that must be vaulted | Encyclopædia Britannica, 11th ed. (1911), vol. 26, p.437, "Tas-de-Charge", as the Wikipedia article quotes it [M8] | Secondary (the 1911 text via Wikipedia; the original not read) |
+| Beds | "The beds of these courses are not radial as those of the average voussoirs, but horizontal" | Fehér 2021, abstract [M9] | Verified (abstract) |
+
+**For the engine (v2's row section).** Where a chamber's ring is trimmed at the taller wall
+behind it, the ring below the radial joint that meets the wall's face at the extrados (or at the
+wall's top, if that is lower) is laid in the wall's level courses and bonded to them, each course
+one block; the voussoirs start at that joint. No number is taken from these sources, only the
+construction. Hotchkiss's arches, each "roped until the arch below was finished to buttress it"
+(Olsen p.55–56), were carried by the wall below in the same way.
+
 ---
 
 ## Sources
 
 - [M1] M. Monaco, I. Bergamasco, M. Betti, "A no-tension analysis for a brick masonry vault with lunette", *J. Mech. Mater. Struct.* 13(5) (2018) 703–714, doi 10.2140/jomms.2018.13.703. https://msp.org/jomms/2018/13-5/jomms-v13-n5-p09-s.pdf . Read in full. (Same as `blocked-items.md` [K20].)
-- [M2] W. W. Lau, *Equilibrium Analysis of Masonry Domes*, S.M. thesis, MIT, 2006. https://web.mit.edu/masonry/papers/wwLau_SMBT_2006.pdf . Full text extracted (172 pp.); Ch. 3 read. (Same as `domes-over-doors.md` [D3], `blocked-items.md` [K11].)
+- [M2] W. W. Lau, *Equilibrium Analysis of Masonry Domes*, S.M. thesis, MIT, 2006. https://web.mit.edu/masonry/papers/wwLau_SMBT_2006.pdf . Full text extracted (172 pp.); Ch. 3 read; Ch. 2.4 (the modified thrust line method) read 2026-11-10. (Same as `domes-over-doors.md` [D3], `blocked-items.md` [K11].)
 - [M3] R. Maia Avelino, A. Iannuzzo, T. Van Mele, P. Block, "New strategies to assess the safety of unreinforced masonry structures using thrust network analysis", SAHC 2020 (12th Int. Conf. Structural Analysis of Historical Constructions), P. Roca, L. Pelà, C. Molins (eds). https://www.scipedia.com/wd/images/d/d5/Draft_Content_643225908p732.pdf . Read in full.
 - [M4] P. Block, J. Ochsendorf, "Lower-bound analysis of vaulted masonry structures", SAHC 2008, Bath (slides). https://web.mit.edu/masonry/thrustNetwork/SAHC08_ppt_block-ochsendorf.pdf . Read.
 - [M5] Wisconsin Admin. Code SPS 321.28/321.29 (search extract). https://docs.legis.wisconsin.gov/document/administrativecode/SPS%20321.29(6)(d)
 - [M7] C. Intrigila, N. A. Nodargi, P. Bisegna, "The unbuilt Musmeci parabolic cross vault reinvented as a dry-masonry structure", SAHC 2020. https://www.scipedia.com/wd/images/d/df/Draft_Content_303700414p1109.pdf . Text extracted (14 pp.), §1–4 read.
 - [M6] W. Trinks, *Industrial Furnaces*, Vol. II (Wiley, 1925; 1926 printing). https://archive.org/details/industrialfurnac0000wtri ; https://archive.org/details/industrialfurnac0002trin . Full text (OCR) searched.
+- [M8] "Tas-de-charge", Wikipedia, quoting H. Chisholm (ed.), *Encyclopædia Britannica*, 11th ed., Cambridge University Press, 1911, vol. 26, p.437. https://en.wikipedia.org/wiki/Tas-de-charge . Read 2026-11-10.
+- [M9] K. Fehér, "Tas-de-charge – An Essential Part of Gothic Vault", *Periodica Polytechnica Architecture* 52(1) (2021) 21–31, doi 10.3311/PPar.16889. https://pp.bme.hu/ar/article/view/16889 . Abstract read 2026-11-10.

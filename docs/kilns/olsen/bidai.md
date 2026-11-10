@@ -38,7 +38,8 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 | Doors | one per chamber, 20 in, one side | 20 × 38 in, each chamber, right wall, 8 in off each chamber's middle (to fit the 36 in chamber 3) | matches (height assumed) |
 | Firebox | semicircular front, 46 in long, 18 in ash-pit section, grate slab 18 in up | box 73 × 46 in, grate 14 × 21 in, 14 in ash pit, step 24 in | partly: no round front |
 | Flame-diffusing blocks | three pointed blocks | none | not expressible |
-| Inlet flues | six (Fig 8-7) | six, engine size | matches the count; size not printed |
+| Inlet flues | six (Fig 8-7) | six, 4½ in wide (scaled, Fig 8-7, ±1 in) and 9 in high (assumed: Olsen's standard 4½ × 9 in flue, p.96), through chamber 1's front wall, which "leans in to 38 in, where the arch begins" (p.94–95) and carries the arch (2026-11-10; before, the firebox's whole mouth was cut through that wall) | count printed; width scaled; height assumed |
+| Wall between chambers | "6 × 12" and "7 × 12" marked (uncertain) | 18 in: Olsen's common wall, 4½ in thicker than the others and never narrower than the two 9 in arches' feet on it (p.46), the engine's default | assumed |
 | Stoke hole | mouth 9 in; opening 14 in (Fig 8-7) | 9 × 14 in | matches (drawing) |
 | Middle-chamber side stoke hole | aizashiguchi 15 in up | none | expressible now (`stoke_holes`, chamber 2's side wall, 15 in up); not given, as its size isn't printed |
 | Spy holes | one round hole high in each arch near its back; chamber 2's 56 in up | three in chamber 1's door (default) | expressible now (`spy_holes.holes`, by chamber, in a wall or through the arch); not given, as their size isn't printed and only chamber 2's height is (question 2) |

@@ -628,10 +628,10 @@ def _catenary_parts(kiln: Kiln) -> list[Part]:
             lo, hi = (-w / 2, ys[0], 0.0), (w / 2, ys[1], h)
             parts.append(Part(name, mat, kind(mat), lo, hi, face=face, profile=inside))
             reached += th
+    from kilndesigner.common_wall import between_layers
+
     for chamber, y in between:
-        for i, (mat, th) in enumerate(
-            (x.material, si(x.thickness, "mm")) for x in kiln.lining.walls
-        ):
+        for i, (mat, th) in enumerate(between_layers(kiln, "mm")):
             parts.append(
                 Part(
                     f"division/{i + 1}-{mat}-chamber-{chamber}", mat, kind(mat), (-w / 2, y, 0.0),

@@ -28,7 +28,7 @@ Cone 11.
 | Front firebox | 36 in, dug-out ash pit as the walkway (Fig 4-110, p.117) | 55 × 36 in, grate, on the ground | matches |
 | Inlet flue, stoke hole | one 15 × 18 in, one 9 × 13½ in, in the door bricking, with air holes at grate level (p.117) | as printed | matches; the air holes aren't modelled |
 | Second firebox | 15 in grate between the chambers, side door (Fig 4-110 "DOOR") | a front firebox 15 × 55 in | differs: no firebox between chambers, and no side stoke door |
-| Between the chambers | a 13 in wall; three large exit flues across the second grate (p.116) | a 9 in wall with 4 flue holes, 4½ × 9 in (the engine's Kyoto rule) | differs: the flue count and size can't be set |
+| Between the chambers | a 13 in wall; three large exit flues across the second grate (p.116) | the 13 in wall as printed (`lining.between`, 2026-11-10; it was 9 in) with 4 flue holes, 4½ × 9 in (the engine's Kyoto rule) | the wall matches; the flue count and size can't be set |
 | Secondary air | a 5 in clay tube with a shutter, under the second grate (p.116) | none | not expressible |
 | Steps | 12, 18 and 6 in (Fig 4-110) | the engine's chamber step | differs |
 | Domes | two cast K-26 domes (p.116) | dome, 6 in Kaolite 2600-LI | matches (thickness assumed) |
@@ -40,6 +40,10 @@ Cone 11.
 
 The build finishes with no errors. Chamber 335 ft³; top temperature 2361 °F (cone 11); heat loss
 159.3 kW; priced materials $6,731.
+
+v2 statics (2026-11-10): each chamber's cast dome, sliced into arches across the 55 in width
+(Heyman's slicing), stands cold and hot on its buttressed walls; the most any strip needs of the
+buttress is 143.6 lbf/ft hot (`docs/planning/11-09-26.md` §H item 10).
 
 ## Open questions
 

@@ -310,6 +310,8 @@ ASTM C133 for MOR and CCS, C134 density. All Verified from the data sheets.
 | BNZ PA-23 | 2300 °F | 44 pcf (705) | 115 | 140 | see note | −0.0 % at 2250 °F | [F14] |
 | BNZ PA-26 | 2600 °F | 49 pcf (785) | 180 | 240 | see note | −0.1 % at 2550 °F | [F14] |
 
+- The 2010 and 2016 Morgan K sheets, with TC-23, IFB 23 Tile, K-23 HS, older K-26 values, C210
+  reheat shrinkage and C16 hot load, are transcribed in full in `morgan-k-ifb-sheets.md`.
 - Morgan K-20 and K-28: **NOT FOUND**. The current K sheet (BR.02, 1 Jan 2025) lists only K23,
   K25, K26 and Insalcor. K23's 32.0 pcf matches `electric-and-thermal.md` §4.1.
 - TJM columns were matched by position in a ten-column table (TJM 23 is column 1, TJM 26 column 7,
