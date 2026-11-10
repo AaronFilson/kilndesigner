@@ -163,6 +163,16 @@ line-of-thrust search), not built. Also: with crowns at different heights (both 
 examples) the groins meet the higher vault's side, not the middle; no source read covers it.
 The groin stays unchecked.
 
+**Built in v2 (2026-11-10, `v2/statics/cross_vault.py`).** The slice-by-slice search: the groin
+solid itself cut both ways by vertical planes into chains of voussoirs (the thrust lines kept
+inside the shell at every joint), each family carrying half its strip's weight, any vertical force
+passed where two slices cross. That is [M3]'s cross diagram, an orthogonal network, in block form,
+with the kilns' walls all round as the supports instead of [M3]'s four corners; crowns at different
+heights need nothing special, as the solid is cut as it is. The two families' compressive stress
+fields add to one in equilibrium with the weight (Derived), so a state of the grid is a state of
+the vault (a lower bound). No number from [M3] is used; its corner-supported case (N6) isn't the
+kilns' case and isn't reproduced.
+
 ## M5. A catenary meeting the next chamber's at a step
 
 Searched again: noborigama construction, stepped multi-chamber vaults, Johanna kiln (St John's),

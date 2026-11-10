@@ -17,9 +17,6 @@ NOT_MODELLED = {
     # stands cold; hot, its verdict rests on dense brick's 25 psi crushing stand-in, carried over
     # from IFB by analogy (a question for the user), so it isn't given
     "tobe": "dense brick's hot crushing",
-    # vaults crossing in a groin: a 3-D force pattern or 3-D blocks
-    "church-skaelskor": "groin",
-    "fireworks-edmonton": "groin",
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }
@@ -100,3 +97,16 @@ def test_what_holds_the_sail_domes(results: dict[str, KilnStatics]) -> None:
         r = results[kid]
         assert r.kind == "sail dome"
         assert r.numbers["least on the walls' buttress, hot"] / lbft == pytest.approx(hot, abs=1.0)
+
+
+@pytest.mark.slow
+@pytest.mark.geometry
+def test_what_holds_the_crossing_vaults(results: dict[str, KilnStatics]) -> None:
+    """The two crossing vaults, sliced both ways: the least peak push on the buttressed walls, hot:
+    the Church kiln's 7 ft crossing about 209 lbf/ft, the Fireworks kiln's 9 ft one 299."""
+    lbft = 4.4482216152605 / 0.3048
+    want = {"church-skaelskor": 208.6, "fireworks-edmonton": 299.2}
+    for kid, hot in want.items():
+        r = results[kid]
+        assert r.kind == "crossing vault"
+        assert r.numbers["least peak push on the walls, hot"] / lbft == pytest.approx(hot, abs=1.0)

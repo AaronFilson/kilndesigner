@@ -51,8 +51,12 @@ Notes: `docs/research/olsen-kilns.md`, `church-skaelskor`.
 ## Results from the build
 
 - Chamber 236 ft³; 2345 °F; heat loss 44.79 kW; priced materials $14,453 (no price for K-26).
-- The groin where the two vaults meet isn't checked (no source covers it). Each vault is checked as
-  a barrel.
+- The groin where the two vaults meet isn't checked by v1 (no source covers it). Each vault is
+  checked as a barrel.
+- v2 statics (2026-11-10): the groin solid cut both ways into slices, coupled where they cross
+  (`docs/planning/11-09-26.md` §H item 11), stands cold and hot on its buttressed walls; the
+  least peak push on the walls is 188.9 lbf/ft cold, 208.6 hot. It stands down to a 1.58 in shell
+  cold, so the 6 in cast is 3.8 times the thinnest.
 - Firebox 1: 36 in above the grate, 18 in ash pit (33 % below), grate 13½ in below the floor.
   Firebox 2: 24 in above, 18 in below (43 %).
 - The engine puts the door on the front wall, which is the anagama firebox's wall.

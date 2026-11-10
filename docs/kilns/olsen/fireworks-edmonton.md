@@ -40,6 +40,10 @@ one chimney are at the back.
 The build finishes with no errors. Chamber 431 ft³; top temperature 2345 °F (cone 10); heat loss
 66.94 kW; priced materials $18,287. The damper note gives a 16.5 in shelf slot.
 
+v2 statics (2026-11-10): the groin solid cut both ways into slices, coupled where they cross
+(`docs/planning/11-09-26.md` §H item 11), stands cold and hot on its buttressed walls; the least
+peak push on the walls is 255.9 lbf/ft cold, 299.2 hot.
+
 ## Open questions
 
 1. Fig 7-2 p.178: which wall holds the groundhog's three-flue chimney? It is drawn opposite the
@@ -48,6 +52,9 @@ The build finishes with no errors. Chamber 431 ft³; top temperature 2345 °F (c
 2. Fig 7-7 p.181: how tall are the two chimneys, and what are their sections?
 3. p.183 gives 3½–4½ ft to the ceiling's vertex. Your starting heights were 5 and 6 ft. Which
    should stand?
+4. Fig 7-7: how thick is the cover of stones or shards on the roof? v2's statics would carry it
+   as a layer over the shell; it is left out now (`docs/planning/11-09-26.md`, "For the user
+   later", v2 question 9).
 
 ## Scaled off the figures (step A, 2026-11-09)
 

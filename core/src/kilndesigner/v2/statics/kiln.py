@@ -14,8 +14,10 @@ missing physics, and `missing` names it.
 - **Round domes on round walls**: rings of revolution with hoop compression (`dome.py`).
 - **Domes over square, oblong or curved plans** (sail domes): sliced into arches across the width,
   each on its walls (`sail.py`).
+- **Crossing vaults**: slices both ways through the groin solid, coupled where they cross
+  (`cross_vault.py`).
 - **No roof**: free-standing walls under their own weight.
-- Refused, each with its reason: crossing vaults, and fibre roofs hung in steel.
+- Refused, with its reason: fibre roofs hung in steel.
 """
 
 from __future__ import annotations
@@ -25,7 +27,7 @@ from dataclasses import dataclass, field
 
 from kilndesigner.model import CatenaryArch, Dome, FlatRoof, Kiln, OpenTop, SprungArch
 from kilndesigner.units import Q_, si
-from kilndesigner.v2.statics import sail, sources
+from kilndesigner.v2.statics import cross_vault, sail, sources
 from kilndesigner.v2.statics.arch import SUPPORT, catenary_ring
 from kilndesigner.v2.statics.dome import kiln_dome, kiln_not_modelled
 from kilndesigner.v2.statics.rigid import Problem, Status, assemble, force_on, solve
@@ -83,11 +85,7 @@ def statics(kiln: Kiln) -> KilnStatics:
         )
     assert isinstance(roof, SprungArch)
     if roof.crossing is not None:
-        return _refused(
-            "crossing vault",
-            "two vaults crossing in a groin carry their load to the corners in three dimensions: "
-            "a force pattern (cross or fan; SAHC 2020 §4.3) or 3-D blocks are needed, not built",
-        )
+        return _crossing(kiln)
     if roof.along or (kiln.chamber.chambers > 1 and not roof.tube):
         return _row(kiln)
     try:
@@ -103,6 +101,7 @@ def _refused(kind: str, why: str) -> KilnStatics:
 
 ROW = "arches along the draft"
 SAIL = "sail dome"
+CROSSING = "crossing vault"
 ANALOGY = (
     "dense brick's hot crushing: with the 25 psi stand-in carried over from IFB by analogy (a "
     "question for the user) there is no admissible state hot, without it one; real hot crushing "
@@ -127,6 +126,25 @@ def _sail(kiln: Kiln) -> KilnStatics:
         numbers[f"least on the walls' buttress, {state}"] = r.least
         steps += r.steps
     return KilnStatics(SAIL, stands, numbers, missing, tuple(steps))
+
+
+def _crossing(kiln: Kiln) -> KilnStatics:
+    """Two vaults crossing in a groin, sliced both ways and coupled where the slices cross; a hot
+    verdict that rests only on a crushing stand-in by analogy isn't given."""
+    why = cross_vault.not_modelled(kiln)
+    if why is not None:
+        return _refused(CROSSING, why)
+    stands: dict[str, bool | None] = {}
+    numbers: dict[str, float] = {}
+    steps: list[Step] = []
+    missing: str | None = None
+    for state in STATES:
+        r = cross_vault.analyse(kiln, state)
+        stands[state] = None if r.analogy else r.stands
+        missing = ANALOGY if r.analogy else missing
+        numbers[f"least peak push on the walls, {state}"] = r.peak
+        steps += r.steps
+    return KilnStatics(CROSSING, stands, numbers, missing, tuple(steps))
 
 
 def _row(kiln: Kiln) -> KilnStatics:
