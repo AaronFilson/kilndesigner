@@ -235,6 +235,55 @@ def test_an_inlet_narrower_than_its_channel_is_said() -> None:
     assert "narrower or wider than its share" in (path.steps[0].note or "")
 
 
+# The fast-fire's intakes, the dataset's (firebox-air-intakes.md §3): two mouths below the grate,
+# 162–216 in², and above it, 121.5–175.5 in²
+FAST_FIRE_INTAKES = dr.Intakes(
+    (162 * IN**2, 216 * IN**2), (121.5 * IN**2, 175.5 * IN**2), "the dataset's, derived"
+)
+
+
+def test_the_intakes_in_parallel() -> None:
+    """Below the grate a mouth (0.5) and the grate's ζ on its own area; above it an orifice,
+    1/C²; the two at one pressure drop: K_eq = A_ref²/(Σ A_i/√K_i)² on the most primary area."""
+    g = 2 * 12 * 24 * IN**2
+    e = dr.intakes(FAST_FIRE_INTAKES, g, (1.73, 2.52), 2)
+    a_p, a_s = 162 * IN**2, 121.5 * IN**2
+    k_p = 0.5 + 2.52 * (a_p / g) ** 2
+    want = (216 * IN**2 / (a_p / math.sqrt(k_p) + a_s * 0.65)) ** 2
+    assert e.k == pytest.approx(want)
+    assert e.k_lo is not None
+    assert e.k_lo < e.k
+    assert e.area * e.branches == pytest.approx(216 * IN**2)
+    shut = dr.intakes(dr.Intakes((0.0, 0.0), (0.01, 0.01)), 0.0, None, 1)
+    assert shut.k == pytest.approx(1 / 0.65**2)
+    with pytest.raises(ValueError, match="needs an air intake"):
+        dr.Intakes((0.0, 0.0))
+    with pytest.raises(ValueError, match="least to its most"):
+        dr.Intakes((0.2, 0.1))
+
+
+def test_the_intakes_open_the_fast_fires_draft() -> None:
+    """With the openings above the grate as well, the path draws more than through the ash-pit
+    mouths alone; closing the intakes to half draws less; a share outside (0, 1] is refused."""
+    k = load_design(OLSEN / "fast-fire.yaml")
+    alone = dr.kiln_path(k, grate_bar=0.75 * IN)
+    both = dr.kiln_path(k, grate_bar=0.75 * IN, intake=FAST_FIRE_INTAKES)
+    assert both.elements[0].name.startswith(dr.INTAKE)
+    assert not any(e.kind == "grate" for e in both.elements)
+    assert "the dataset's" in (both.steps[0].note or "")
+    t = {"firebox": 1500.0, "chamber": 1400.0, "chimney": 1000.0}
+    assert dr.draw(both, t, WOOD).air > dr.draw(alone, t, WOOD).air
+    half = both.opened(0.5)
+    assert dr.draw(half, t, WOOD).air < dr.draw(both, t, WOOD).air
+    assert both.opened(1.0) is both
+    with pytest.raises(ValueError, match="share"):
+        both.opened(0.0)
+    bare = dr.kiln_path(k, intake=FAST_FIRE_INTAKES)
+    assert bare.elements[0].k == pytest.approx(
+        dr.intakes(FAST_FIRE_INTAKES, 2 * 12 * 24 * IN**2, None, 2).k
+    )
+
+
 def test_without_the_bars_size_the_grate_is_left_out_and_said() -> None:
     path = dr.kiln_path(load_design(OLSEN / "fast-fire.yaml"))
     assert not any(e.kind == "grate" for e in path.elements)

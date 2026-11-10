@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Literal
 
 import numpy as np
@@ -155,6 +155,73 @@ class Path:
     def most(self) -> Path:
         """The path at its band's most-air end: a smooth wall, each fitting's lower coefficient."""
         return Path(self.elements, self.t_room, self.pressure, 0.0, self.steps, True)
+
+    def opened(self, share: float) -> Path:
+        """The path with its air intakes a ``share`` open (the stoker's bricks): each intake's area
+        × the share, so its coefficient on the full area ÷ share² (`Intakes`)."""
+        if not 0 < share <= 1:
+            raise ValueError("the intakes are open by a share of more than 0, at most 1")
+        if share == 1:
+            return self
+        els = tuple(
+            replace(e, k=e.k / share**2, k_lo=None if e.k_lo is None else e.k_lo / share**2)
+            if e.name.startswith(INTAKE) else e
+            for e in self.elements
+        )  # fmt: skip
+        return Path(els, self.t_room, self.pressure, self.rough, self.steps, self.most_air)
+
+
+INTAKE = "air intakes"  # the name an intakes element starts with
+# An opening in a wall or a bricked door into the firebox: an orifice, C 0.65–0.70
+# (combustion-and-masonry.md §4.2 [S42]; Prahl & Emmons' 0.68 for windows, as COMPF2 takes it,
+# grates-and-fuel-beds.md [G11]), K = 1/C² on its own area
+ORIFICE_C = (0.65, 0.70)
+
+
+@dataclass(frozen=True)
+class Intakes:
+    """A firebox set's air intakes, all its fireboxes together (m²), each a band (least, most):
+    below the grate (the ash-pit mouths, primary air through the grate and the bed) and above it
+    (the stoke holes and air holes, secondary air over the bed); where they come from
+    (`firebox-air-intakes.md`; the dataset's `primary_air` and `secondary_air`)."""
+
+    primary: tuple[float, float]
+    secondary: tuple[float, float] = (0.0, 0.0)
+    reference: str = ""
+
+    def __post_init__(self) -> None:
+        for lo, hi in (self.primary, self.secondary):
+            if not 0 <= lo <= hi:
+                raise ValueError("an intake's area band runs from its least to its most, ≥ 0")
+        if self.primary[1] + self.secondary[1] <= 0:
+            raise ValueError("a firebox needs an air intake")
+
+
+def intakes(
+    ins: Intakes, grate_area: float, grate_k: tuple[float, float] | None, branches: int
+) -> Element:
+    """The intakes as one inlet: the openings below the grate (a mouth flush in the wall, 3-1's
+    0.50, then the grate's ζ on its own area, Idelchik 8-9) in parallel with those above it (an
+    orifice, K = 1/C²), at one pressure drop, Σ A_i/√K_i; on the most primary area. Its band's
+    least-air end the least areas at the higher coefficients, its most-air end the most at the
+    lower."""
+    ref_area = ins.primary[1] if ins.primary[1] > 0 else ins.secondary[1]
+
+    def k_eq(primary: float, secondary: float, zeta: float, c: float) -> float:
+        k_p = SHARP_ENTRANCE + (zeta * (primary / grate_area) ** 2 if grate_area > 0 else 0.0)
+        flow = (primary / math.sqrt(k_p) if primary > 0 else 0.0) + secondary * c
+        return (ref_area / flow) ** 2
+
+    z_lo, z_hi = grate_k if grate_k is not None else (0.0, 0.0)
+    least = k_eq(ins.primary[0], ins.secondary[0], z_hi, ORIFICE_C[0])
+    most = k_eq(ins.primary[1], ins.secondary[1], z_lo, ORIFICE_C[1])
+    note = (
+        f"below the grate {ins.primary[0] / 0.0254**2:.0f}–{ins.primary[1] / 0.0254**2:.0f} in², "
+        f"above it {ins.secondary[0] / 0.0254**2:.0f}–{ins.secondary[1] / 0.0254**2:.0f} in²: "
+        f"K {least:.2f}–{most:.2f} on {ref_area / 0.0254**2:.0f} in²"
+    )
+    return Element(f"{INTAKE}, below and above the grate, in parallel", "inlet", "room",
+                   ref_area / branches, branches, k=least, k_lo=most, note=note)  # fmt: skip
 
 
 def k_re(re: float) -> float:
@@ -466,14 +533,22 @@ def _port_area(w: float, h: float, rnd: bool) -> float:
     return math.pi * w * w / 4 if rnd else w * h
 
 
-def kiln_path(kiln: Kiln, *, grate_bar: float | None = None, rough: float = ROUGH) -> Path:
+def kiln_path(
+    kiln: Kiln,
+    *,
+    grate_bar: float | None = None,
+    rough: float = ROUGH,
+    intake: Intakes | None = None,
+) -> Path:
     """The gas path of a design: under-floor stoked fireboxes or gas burners' ports, the chamber,
     the exit flue and the chimney, as the design gives them (z from the chamber's floor).
 
     ``grate_bar``: the grate's bar thickness (m), which the design file doesn't carry (the
     fast-fire's ¾ in rod is printed, Olsen p.204); without it the grate's loss is left out and
-    said so. Refused: a design with no chimney or exit flue given (the engine's rule-sized
-    defaults are v1's and aren't a kiln's own draft), and paths v2 doesn't build yet."""
+    said so. ``intake``: the fireboxes' air intakes (ADR 0017 decision 9; the design file holds
+    none: the dataset's areas); without them, the design's ash-pit mouths alone. Refused: a
+    design with no chimney or exit flue given (the engine's rule-sized defaults are v1's and
+    aren't a kiln's own draft), and paths v2 doesn't build yet."""
     draft = kiln.draft
     if draft is None or draft.chimney is None:
         raise NotModelledError(
@@ -510,12 +585,29 @@ def kiln_path(kiln: Kiln, *, grate_bar: float | None = None, rough: float = ROUG
         fw = si(fb.width, "m")
         fh = si(fb.height, "m") if fb.height is not None else fw
         pit = si(fb.ash_pit, "m") if fb.ash_pit is not None else fh
-        els.append(inlet("ash-pit mouth (the firebox's width by the ash pit's depth)", fw * pit, n))
-        if fb.grate is not None and fb.grate.gap is not None and grate_bar is not None:
-            gw, gl = si(fb.grate.width, "m"), si(fb.grate.length, "m")
-            els.append(grate("grate, round bars (Idelchik 8-9)", gw, gl, si(fb.grate.gap, "m"),
-                             grate_bar, n))  # fmt: skip
+        barred = fb.grate is not None and fb.grate.gap is not None and grate_bar is not None
+        g_area = si(fb.grate.width, "m") * si(fb.grate.length, "m") * n if fb.grate else 0.0
+        if intake is not None:
+            k_g = None
+            if barred:
+                assert fb.grate is not None
+                assert fb.grate.gap is not None
+                assert grate_bar is not None
+                k_g = bar_grate(si(fb.grate.gap, "m"), grate_bar)
+            els.append(intakes(intake, g_area, k_g, n))
+            notes.append(f"the air intakes: {intake.reference}")
         else:
+            els.append(inlet("ash-pit mouth (the firebox's width by the ash pit's depth)",
+                             fw * pit, n))  # fmt: skip
+            notes.append("the air intakes: the design's ash-pit mouths alone (no others given)")
+            if barred:
+                assert fb.grate is not None
+                assert fb.grate.gap is not None
+                assert grate_bar is not None
+                gw, gl = si(fb.grate.width, "m"), si(fb.grate.length, "m")
+                els.append(grate("grate, round bars (Idelchik 8-9)", gw, gl,
+                                 si(fb.grate.gap, "m"), grate_bar, n))  # fmt: skip
+        if not barred:
             notes.append("the grate's loss left out: its bars' size isn't given")
         notes.append("the fuel bed's resistance: no source, left out")
         els.append(column("firebox and inlet flue, grate to the chamber floor", "firebox",

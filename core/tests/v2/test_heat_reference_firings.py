@@ -169,6 +169,18 @@ def test_fast_fire_burns_under_a_quarter_cord() -> None:
 
 @pytest.mark.slow
 @pytest.mark.geometry
+def test_the_logs_wood_on_its_drafts_own_air_is_under_a_quarter_cord() -> None:
+    """With all the air the chimney draws through the open intakes burning the wood (λ from the
+    draft, ADR 0017 decision 9: 1.1–4.5 through the log), the log takes the most wood a stoker
+    who never closed down would, and it is still under a quarter cord of the lightest wood."""
+    result = heat_cases.fast_fire_log("draft")
+    assert result.completed
+    assert result.lam.min() > 1.0
+    assert result.fuel_kg < QUARTER_CORD_DRY_KG
+
+
+@pytest.mark.slow
+@pytest.mark.geometry
 def test_w15_ifb_updraft_fires_easily_in_about_8_h_on_ten_burners() -> None:
     """Olsen p.226: a 36 ft³ IFB updraft "will have a minimum of 10 such burners and will probably
     fire easily in eight hours": a general statement, not a built kiln (no design file)."""

@@ -4,11 +4,17 @@ IDA held to a piecewise-linear log failed on its kinks until stopped and restart
 
 Modes (problem set §2.2), each the fuel's row:
 - **max fire**: a stoked kiln as hard as its own draft lets it burn: the air the chimney draws with
-  the damper open (`draft.py`, at each zone's temperature) burns the fuel at the products' λ; a
-  stoker's firing is anything slower, so a printed time is checked against this;
+  the damper open (`draft.py`, at each zone's temperature, through the fireboxes' intakes) burns
+  the fuel at the products' λ; for coal, no more than the grates burn (`air.py`, the bed's most:
+  the rest of the air passes as excess); a stoker's firing is anything slower, so a printed time
+  is checked against this;
 - **fixed input**: burners at a rating (or any fixed fuel rate);
 - **a schedule** of temperatures held by a zone's gas (the first setting's, unless given), or by
-  the first setting, the fuel what it takes.
+  the first setting, the fuel what it takes. Its air (ADR 0017 decision 9): the stoker's, matched
+  to the products' λ, the draft checked after for the most it draws; or the draft's own, all the
+  air the chimney draws through the intakes a share open burning the fuel, so λ follows from the
+  draft through the firing, above the products' λ with the intakes wide, below it (reduction)
+  with them closed down.
 """
 
 from __future__ import annotations
@@ -24,6 +30,7 @@ from numpy.typing import NDArray
 from scipy.optimize import root
 from sksundae.ida import IDA  # pyright: ignore[reportMissingTypeStubs]
 
+from kilndesigner.v2.heat.air import COAL_BED_REFERENCE, MIXING_NOTE, REDUCTION, WOOD_BED_NOTE
 from kilndesigner.v2.heat.gas import T_MAX, T_MIN
 from kilndesigner.v2.heat.zone import FUEL_SCALE, Balance, Layout, State, ZoneModel
 from kilndesigner.working import Step
@@ -37,6 +44,7 @@ SOURCES = (
 
 
 START_TOL = 1e-3  # the algebraic rows at a start (kW, K, Pa/10): IDA refines from there
+REDUCED = 0.999  # λ under this is reduction (λ 1 itself comes out to IDA's tolerance)
 
 
 class FiringError(ValueError):
@@ -50,24 +58,37 @@ class MaxFire:
 
 @dataclass(frozen=True)
 class FixedInput:
-    """A fixed fuel rate (kg/s): burners at their rating."""
+    """A fixed fuel rate (kg/s): burners at their rating, or a stoker's steady rate. ``air``: the
+    products' own at their λ, or the draft's own through the intakes ``opened`` a share open (λ
+    from the draft: below 1, reduction, when the stoker feeds more than the air burns)."""
 
     fuel: float
+    air: Literal["stoker", "draft"] = "stoker"
+    opened: float = 1.0
+
+    def __post_init__(self) -> None:
+        if not 0 < self.opened <= 1:
+            raise FiringError("the intakes are open by a share of more than 0, at most 1")
 
 
 @dataclass(frozen=True)
 class Schedule:
     """Temperatures (K) at times (s), held by the gas (of zone ``zone``, else the first setting's)
-    or by the first setting, linear between."""
+    or by the first setting, linear between. ``air``: the stoker's, at the products' λ, or the
+    draft's own through the intakes ``opened`` a share open (λ from the draft)."""
 
     held: Literal["gas", "setting"]
     points: tuple[tuple[float, float], ...]
     zone: int | None = None
+    air: Literal["stoker", "draft"] = "stoker"
+    opened: float = 1.0
 
     def __post_init__(self) -> None:
         ts = [p[0] for p in self.points]
         if len(ts) < 2 or any(b <= a for a, b in itertools.pairwise(ts)):
             raise FiringError("a schedule needs two or more points at increasing times")
+        if not 0 < self.opened <= 1:
+            raise FiringError("the intakes are open by a share of more than 0, at most 1")
 
     def at(self, t: float, start: float = -math.inf) -> tuple[float, float]:
         """The scheduled temperature and its rate (K/s) at t, on the first piece that ends after
@@ -103,6 +124,8 @@ class Firing:
     steps: tuple[Step, ...] = field(default=())
     air_share_smooth: Vector = field(default_factory=lambda: np.zeros(0))
     state: Vector = field(default_factory=lambda: np.zeros(0))  # every unknown at the end
+    lam: Vector = field(default_factory=lambda: np.zeros(0))  # λ at each output time
+    bed_share: float = math.nan  # the most of the grates' most the fuel took (coal)
 
     @property
     def t_gas(self) -> Vector:
@@ -146,35 +169,65 @@ class Firing:
 
 @dataclass
 class _Rows:
-    """The mode's rows for one piece of time: the fuel's, and a setting it holds."""
+    """The mode's rows for one piece of time: the fuel's, and a setting it holds; and the air
+    the stream carries, from the state, the gas's temperatures and the fuel (None: the
+    products' own at their λ)."""
 
     fuel_row: Callable[[State, float], float]
     held: tuple[int, Callable[[State, float], float]] | None
     algebraic: list[int]
+    air: Callable[[Vector, Vector, float], float | None] = field(
+        default_factory=lambda: _stokers_air
+    )
+
+
+def _stokers_air(v: Vector, tg: Vector, f: float) -> float | None:
+    """The stoker's air: the products' own at their λ (None)."""
+    return None
+
+
+def _drafts_air(
+    mode: FixedInput | Schedule, model: ZoneModel, bal: Balance
+) -> Callable[[Vector, Vector, float], float | None]:
+    """The air a mode's stream carries: the stoker's, or the draft's own through the intakes as
+    opened, at the gas's temperatures with the fuel burning (`Balance.drawn`)."""
+    if mode.air == "stoker":
+        return _stokers_air
+    if model.path is None:
+        raise FiringError("the draft's own air needs the kiln's draft, and its path isn't built")
+    opened = model.path.opened(mode.opened)
+
+    def drafts(v: Vector, tg: Vector, f: float) -> float | None:
+        return bal.drawn(opened, tg, f)
+
+    return drafts
 
 
 def _rows(
     mode: Mode,
     model: ZoneModel,
-    lay: Layout,
+    bal: Balance,
     y: Callable[[], Vector],
     now: Callable[[], tuple[float, float]],
 ) -> _Rows:
     """The mode's rows; ``now`` gives the time and the start of the piece being integrated."""
+    lay = bal.lay
     alg = lay.algebraic
     if isinstance(mode, MaxFire):
         if lay.air < 0:
             raise FiringError("max fire needs the kiln's draft, and its path couldn't be built")
         per = model.products.air
+        bed = model.bed if model.bed is not None else math.inf
 
         def fuel_max(s: State, cap: float) -> float:
             v = y()
-            return (v[lay.fuel] - v[lay.air] / per) * FUEL_SCALE
+            return (v[lay.fuel] - min(v[lay.air] / per, bed)) * FUEL_SCALE
 
-        return _Rows(fuel_max, None, alg)
+        return _Rows(fuel_max, None, alg, lambda v, tg, f: float(v[lay.air]))
+    air = _drafts_air(mode, model, bal)
     if isinstance(mode, FixedInput):
         fuel = mode.fuel
-        return _Rows(lambda s, c: (y()[lay.fuel] - fuel) * FUEL_SCALE, None, alg)
+        return _Rows(lambda s, c: (y()[lay.fuel] - fuel) * FUEL_SCALE, None, alg, air)
     sched = mode
     if sched.held == "gas":
         zone = sched.zone if sched.zone is not None else model.setting.zone
@@ -182,7 +235,7 @@ def _rows(
         def gas_held(s: State, cap: float) -> float:
             return y()[lay.gases[zone]] - sched.at(*now())[0]
 
-        return _Rows(gas_held, None, alg)
+        return _Rows(gas_held, None, alg, air)
 
     def setting_rate(s: State, cap: float) -> float:
         return (cap * sched.at(*now())[1] - s.q_setting) / 1e3
@@ -190,7 +243,7 @@ def _rows(
     def setting_held(s: State, cap: float) -> float:
         return y()[lay.setting] - sched.at(*now())[0]
 
-    return _Rows(setting_rate, (0, setting_held), [*alg, lay.setting])
+    return _Rows(setting_rate, (0, setting_held), [*alg, lay.setting], air)
 
 
 type Target = float | tuple[int, float]
@@ -246,12 +299,13 @@ def fire(
         y = np.asarray(start, dtype=float).copy()
         y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else y[lay.fuel]
     current: dict[str, Any] = {"y": y, "t": 0.0, "start": 0.0}
-    rows = _rows(mode, model, lay, lambda: current["y"], lambda: (current["t"], current["start"]))
+    rows = _rows(mode, model, bal, lambda: current["y"], lambda: (current["t"], current["start"]))
 
     def resfn(t: float, yy: Vector, yp: Vector, res: Vector) -> None:
         current["y"], current["t"] = yy, t
         tg = np.clip(yy[list(lay.gases)], T_MIN, T_MAX)
-        bal.fill(yy, yp, res, tg, float(yy[lay.fuel]), rows.fuel_row, rows.held)
+        fuel = float(yy[lay.fuel])
+        bal.fill(yy, yp, res, tg, fuel, rows.fuel_row, rows.held, rows.air(yy, tg, fuel))
 
     times: list[Vector] = []
     ys: list[NDArray[np.float64]] = []
@@ -363,19 +417,42 @@ def _record(
             f"{T_MIN - 273.15:.0f} °C"
         )
     smooth = np.full(len(t), math.nan)
+    p = model.products
+    lam = np.full(len(t), p.air_ratio)
     if lay.air >= 0:
-        share = fuel * model.products.air / np.maximum(y[:, lay.air], 1e-12)
+        share = fuel * p.air / np.maximum(y[:, lay.air], 1e-12)
+        lam = p.air_ratio / np.maximum(share, 1e-12)
     elif model.path is not None:
         share, smooth = _shares(model, bal, t, tg, fuel)
+        if isinstance(mode, Schedule | FixedInput) and mode.air == "draft":
+            lam = _drawn_lam(model, bal, mode, t, tg, fuel)
     else:
         share = np.full(len(t), math.nan)
+    bed = float(fuel.max() / model.bed) if model.bed is not None else math.nan
     acc = y[-1, lay.acc :]
     pairs = zip(lay.acc_names, acc, strict=True)
     energy = {name: float(v) * (1.0 if i == 0 else 1e6) for i, (name, v) in enumerate(pairs)}
     names = tuple(g.name for g in model.gas)
     firing = Firing(t, tg, ts, fuel, share, energy, events, completed, message, names,
-                    model.setting.zone, air_share_smooth=smooth, state=y[-1].copy())  # fmt: skip
+                    model.setting.zone, air_share_smooth=smooth, state=y[-1].copy(), lam=lam,
+                    bed_share=bed)  # fmt: skip
     return replace(firing, steps=(*model.steps, *_working(model, mode, firing)))
+
+
+def _drawn_lam(
+    model: ZoneModel, bal: Balance, mode: Schedule | FixedInput, t: Vector,
+    tg: NDArray[np.float64], fuel: Vector,
+) -> Vector:  # fmt: skip
+    """λ through a firing on the draft's own air: the air drawn through the intakes as opened,
+    at SHARE_POINTS times (linear between), over what the fuel burnt at λ 1 needs."""
+    assert model.path is not None
+    opened = model.path.opened(mode.opened)
+    p = model.products
+    pick = np.unique(np.linspace(0, len(t) - 1, min(len(t), SHARE_POINTS)).astype(int))
+    lam = [p.air_ratio * bal.drawn(opened, tg[i], float(fuel[i])) / max(float(fuel[i]) * p.air,
+                                                                       1e-12)
+           for i in pick]  # fmt: skip
+    return np.interp(t, t[pick], np.array(lam))
 
 
 SHARE_POINTS = 60  # the draft's air found at this many times, the share between them linear
@@ -458,4 +535,36 @@ def _working(model: ZoneModel, mode: Mode, f: Firing) -> tuple[Step, ...]:
             if model.path is not None
             else "not worked out: the kiln's draft path isn't built",
         ),
+        _lam_step(model, mode, f),
     )
+
+
+def _lam_step(model: ZoneModel, mode: Mode, f: Firing) -> Step:
+    """λ through the firing (ADR 0017 decision 9), how it was set, and the fuel bed's share."""
+    lam = f.lam[np.isfinite(f.lam)]
+    low, high = (float(lam.min()), float(lam.max())) if len(lam) else (math.nan, math.nan)
+    value = f"{low:.2f}–{high:.2f}"
+    if low < REDUCED:
+        below = f.times[f.lam < REDUCED]
+        value += f"; reduction (λ < 1) from {below[0] / 3600:.2f} to {below[-1] / 3600:.2f} h"
+    if low < REDUCTION[0]:
+        value += f"; below {REDUCTION[0]}, the least checked: the products held there"
+    if isinstance(mode, MaxFire):
+        how = "max fire: the draft's air burns the fuel at the products' λ"
+        if model.bed is not None:
+            how += (
+                f", no more than the grates' {model.bed * 3600:.0f} kg/h dry (at most "
+                f"{f.bed_share:.2f} of it), the rest of the air in excess"
+            )
+    elif mode.air == "draft":
+        how = f"the draft's own air through the intakes {mode.opened:.0%} open burns the fuel " + (
+            "the schedule takes" if isinstance(mode, Schedule) else "fed at a fixed rate"
+        )
+    else:
+        how = "the stoker's (or the burners'), at the products' λ"
+    note = MIXING_NOTE if model.products.fuel.kind != "gas" else None
+    if model.products.fuel.kind == "wood":
+        note = f"{MIXING_NOTE}; {WOOD_BED_NOTE}"
+    elif model.products.fuel.kind == "coal":
+        note = f"{MIXING_NOTE}; {COAL_BED_REFERENCE}"
+    return Step(name="λ through the firing", value=value, inputs={"how": how}, note=note)

@@ -84,7 +84,7 @@ def _join(parts: list[fi.Firing]) -> fi.Firing:
     cut = [slice(None)] + [slice(1, None)] * (len(parts) - 1)
     cat = [np.concatenate([getattr(p, k)[c] for p, c in zip(parts, cut, strict=True)])
            for k in ("times", "t_gases", "t_settings", "fuel_rate", "air_share",
-                     "air_share_smooth")]  # fmt: skip
+                     "air_share_smooth", "lam")]  # fmt: skip
     events: dict[tuple[int, float], float] = {}
     base = 0.0
     for p in parts:
@@ -93,9 +93,9 @@ def _join(parts: list[fi.Firing]) -> fi.Firing:
         base = float(p.times[-1])
     last = parts[-1]
     return replace(first, times=cat[0], t_gases=cat[1], t_settings=cat[2], fuel_rate=cat[3],
-                   air_share=cat[4], air_share_smooth=cat[5], energy=last.energy, events=events,
-                   completed=all(p.completed for p in parts), message=last.message,
-                   state=last.state, steps=last.steps)  # fmt: skip
+                   air_share=cat[4], air_share_smooth=cat[5], lam=cat[6], energy=last.energy,
+                   events=events, completed=all(p.completed for p in parts),
+                   message=last.message, state=last.state, steps=last.steps)  # fmt: skip
 
 
 def _working(

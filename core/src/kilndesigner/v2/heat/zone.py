@@ -54,7 +54,8 @@ from numpy.typing import NDArray
 
 from kilndesigner.thermal.transient import HeatCapacity
 from kilndesigner.v2.heat import sources as src
-from kilndesigner.v2.heat.draft import Path, Table, pressure
+from kilndesigner.v2.heat.air import REDUCTION, burnt
+from kilndesigner.v2.heat.draft import Path, Table, draw, pressure
 from kilndesigner.v2.heat.gas import Products
 from kilndesigner.v2.heat.gasrad import GasExchange, ZonesExchange
 from kilndesigner.v2.heat.ground import Ground
@@ -102,9 +103,10 @@ class Line:
         return np.clip(self.factor * (self.a + 1e-5 * self.b * t), 0.05, 1.0)
 
 
-def line(key: str) -> Line:
+def line(key: str, factor: float = src.HEMISPHERICAL.value) -> Line:
+    """A sourced hot-face line, at a hemispherical share of the normal value (0.95–1.0)."""
     a, b, measured, ref = src.EMISSIVITY_LINES[key]
-    return Line(key, a, b, measured, f"{ref} (radiation-exchange.md §5)")
+    return Line(key, a, b, measured, f"{ref} (radiation-exchange.md §5)", factor)
 
 
 @dataclass(frozen=True)
@@ -197,6 +199,7 @@ class ZoneModel:
     path: Path | None = None
     path_zones: tuple[tuple[str, int], ...] = ()
     burns: int = 0
+    bed: float | None = None  # the most dry fuel the grates burn (kg/s); None: the air alone
 
     def __post_init__(self) -> None:
         if not self.settings:
@@ -379,12 +382,21 @@ class Balance:
         self.tall = np.array([model.gas[z].flow.height for z in self.zone_of[self.conv]])
         self.path_zone = dict(model.path_zones)
         self.stoked = model.products.fuel.kind in ("wood", "coal")  # oil drips at a set rate
+        self._drawn: dict[tuple[float | bool, ...], float] = {}
 
-    def convection(self, t_gas: Vector, fuel: float, t: Vector) -> Vector:
+    def air_used(self, fuel: float, air: float | None) -> float:
+        """The air the stream carries (kg/s): the products' own at their λ unless given, and at
+        least what λ 0.8 holds (`air.burnt` holds the products there, the firing says so)."""
+        p = self.m.products
+        if air is None:
+            return fuel * p.air
+        return max(air, REDUCTION[0] / p.air_ratio * fuel * p.air)
+
+    def convection(self, t_gas: Vector, fuel: float, t: Vector, air: float | None = None) -> Vector:
         """h (W/(m²·K)) on each surface (0 on an opening): its zone's duct flow, at least
         Churchill–Chu's natural convection on it; a setting at least its passages' value."""
         p = self.m.products
-        m_gas = max(fuel * p.mass, 1e-9)
+        m_gas = max(fuel * (p.mass - p.air) + self.air_used(fuel, air), 1e-9)
         forced, speed = np.empty(self.g), np.empty(self.g)
         for z, gz in enumerate(self.m.gas):
             rho, mu, k, cp = p.props(min(max(float(t_gas[z]), 300.0), 3000.0))
@@ -429,19 +441,34 @@ class Balance:
         q = ex.net(float(t_gas[0]), t, eps)
         return q, np.array([-float(q.sum())])
 
-    def released(self, t_gas: Vector, fuel: float) -> Vector:
-        """F·[H_in − H_out] in each zone: air before the burning zone, the products from it."""
+    def released(self, t_gas: Vector, fuel: float, air: float | None = None) -> Vector:
+        """[H_in − H_out] in each zone (W): the air before the burning zone, the products from it
+        with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`)."""
         p, b = self.m.products, self.m.burns
-        h_out = np.array([p.air * p.h_air(float(t)) if z < b else p.mass * p.h(float(t))
-                          for z, t in enumerate(t_gas)])  # fmt: skip
-        h_in = np.concatenate([[p.air * p.h_air(p.t_air)], h_out[:-1]])
-        h_in[b] += p.fuel_enthalpy
-        return fuel * (h_in - h_out)
+        a = self.air_used(fuel, air)
+        out = np.array([a * p.h_air(float(t)) if z < b else burnt(p, fuel, a, float(t)).flow
+                        for z, t in enumerate(t_gas)])  # fmt: skip
+        into = np.concatenate([[a * p.h_air(p.t_air)], out[:-1]])
+        into[b] += fuel * p.fuel_enthalpy
+        return into - out
 
-    def state(self, y: Vector, t_gas: Vector, fuel: float) -> State:
+    def drawn(self, path: Path, t_gas: Vector, fuel: float) -> float:
+        """The air the draft draws (kg/s) at the zones' temperatures with the fuel burning, by
+        bisection (`draft.draw`); the last few kept, as IDA asks again at the same gas."""
+        key = (path.most_air, *(float(x) for x in t_gas), fuel)
+        if key not in self._drawn:
+            if len(self._drawn) > 16:
+                self._drawn.clear()
+            temps = {name: float(t_gas[self.path_zone.get(name, 0)])
+                     for name in ("firebox", "chamber", "chimney", *self.path_zone)}  # fmt: skip
+            p = self.m.products
+            self._drawn[key] = draw(path, temps, p, fuel * (p.mass - p.air)).air
+        return self._drawn[key]
+
+    def state(self, y: Vector, t_gas: Vector, fuel: float, air: float | None = None) -> State:
         t, eps = self.temps(y, t_gas)
         q_rad, q_gas = self.radiation(t_gas, t, eps)
-        h = self.convection(t_gas, fuel, t)
+        h = self.convection(t_gas, fuel, t, air)
         z = self.zone_of
         conv = np.where(self.convects, h * self.areas * (t_gas[z] - t), 0.0)
         into = q_rad + conv
@@ -453,7 +480,7 @@ class Balance:
             q_backs[k] = into[i]
         return State(
             into[self.i_face], q_backs, into[self.i_set], float(q_rad[self.loss].sum()),
-            self.released(t_gas, fuel), h, out,
+            self.released(t_gas, fuel, air), h, out,
         )  # fmt: skip
 
     def draft_residual(self, t_gas: Vector, fuel: float, m_air: float) -> float:
@@ -463,7 +490,8 @@ class Balance:
         assert path is not None
         temps = {name: float(t_gas[self.path_zone.get(name, 0)])
                  for name in ("firebox", "chamber", "chimney", *self.path_zone)}  # fmt: skip
-        return pressure(path, m_air, temps, self.m.products, None if self.stoked else fuel)
+        p = self.m.products  # the gas: the air drawn and the fuel's own mass (and its water)
+        return pressure(path, m_air, temps, p, fuel * (p.mass - p.air))
 
     def fill(
         self,
@@ -474,12 +502,14 @@ class Balance:
         fuel: float,
         fuel_row: Callable[[State, float], float],
         held: tuple[int, Callable[[State, float], float]] | None = None,
+        air: float | None = None,
     ) -> State:
         """Every row: each zone's gas, the walls, the settings and the accumulators here; the
         fuel's from the mode, given the state and the first setting's heat capacity (J/K); a
-        setting the mode holds, (index, its row)."""
+        setting the mode holds, (index, its row); the air the stream carries, where the mode
+        gives it (else the products' own at their λ)."""
         lay, m = self.lay, self.m
-        s = self.state(y, t_gas, fuel)
+        s = self.state(y, t_gas, fuel, air)
         res[list(lay.gases)] = (s.released - s.out) / 1e3
         for k, f in enumerate(m.faces):
             hot, c0, out = lay.walls[k]

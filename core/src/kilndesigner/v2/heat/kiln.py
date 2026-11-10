@@ -21,6 +21,7 @@ from kilndesigner.model import Dome, Kiln, SprungArch
 from kilndesigner.thermal.surface import StillAirSurface
 from kilndesigner.thermal.transient import HeatCapacity, Layer
 from kilndesigner.units import si
+from kilndesigner.v2.heat import air as air_mod
 from kilndesigner.v2.heat import chamber as ch
 from kilndesigner.v2.heat import draft as dr
 from kilndesigner.v2.heat import gas, gasrad, rays
@@ -33,6 +34,7 @@ from kilndesigner.v2.heat.zone import (
     Face,
     Flow,
     Gas,
+    Line,
     Opening,
     Setting,
     ZoneModel,
@@ -132,13 +134,26 @@ def _layer(x: object) -> Layer:
     return Layer(x.material, si(x.thickness, "m"), m.k, rho, cp)
 
 
-def _emissivity(material_id: str) -> str:
+type Emissivity = Literal["nominal", "low", "high"]
+# The emissivity class as a band (ADR 0017 decision 17): each brick's measured lines, the lower and
+# the higher at kiln temperatures (radiation-exchange.md §5: MPK 140 under MPK 125, Osborn's
+# medium-alumina fire brick under his low-alumina), and the hemispherical share of the normal
+# value, 0.95–1.0 (Jones et al. [R6] Fig. 6)
+EMISSIVITY_CLASS: dict[str, tuple[dict[str, str], float]] = {
+    "nominal": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-medium"},
+                src.HEMISPHERICAL.value),
+    "low": ({"insulating_firebrick": "ifb-mpk140", "dense_firebrick": "dense-medium"}, 0.95),
+    "high": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-low"}, 1.0),
+}  # fmt: skip
+
+
+def _emissivity(material_id: str, cls: Emissivity = "nominal") -> Line:
+    """A brick's hot-face emissivity line in an emissivity class (`EMISSIVITY_CLASS`)."""
     kind = material(material_id).kind
-    if kind == "insulating_firebrick":
-        return "ifb-mpk125"
-    if kind == "dense_firebrick":
-        return "dense-medium"
-    raise NotModelledError(f"{material_id}: no hot-face emissivity sourced for {kind}")
+    keys, factor = EMISSIVITY_CLASS[cls]
+    if kind not in keys:
+        raise NotModelledError(f"{material_id}: no hot-face emissivity sourced for {kind}")
+    return line(keys[kind], factor)
 
 
 def _layers(kiln: Kiln, built: str, door: str | None) -> tuple[Layer, ...]:
@@ -188,13 +203,19 @@ def heat_model(
     ground_soil: Soil = DRY,
     path: bool = False,
     segments: int = 1,
+    intake: dr.Intakes | None = None,
+    bed_rate: float | None = None,
+    emissivity: Emissivity = "nominal",
 ) -> ZoneModel:
     """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
     back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
     brick (H13): the fuel burns in the firebox, the floor over it a wall between the two zones,
     the chimney's walls taking heat from the leaving gas; without, the one chamber is the zone the
     fire burns in, as built first. A floor on the ground (``chamber.on_ground`` or a foundation,
-    as v1 reads it) loses into the soil (`ground.py`)."""
+    as v1 reads it) loses into the soil (`ground.py`). ``intake``: the fireboxes' air intakes for
+    the draft (`draft.Intakes`); ``bed_rate``: a coal bed's burning rate on its grates (kg/(m²·s)
+    as fired, `air.COAL_BED`), the most the stoker can burn; ``emissivity``: the class's band end
+    (`EMISSIVITY_CLASS`)."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
@@ -223,17 +244,18 @@ def heat_model(
     exchange: gasrad.GasExchange | gasrad.ZonesExchange = (
         gasrad.exchange_zones(traced, grey, pwc) if many else gasrad.exchange_for(traced, grey, pwc)
     )
-    faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room)
+    faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room, emissivity)
     notes = [*c.notes, *notes]
     fire_zone = kinds.index("firebox") if "firebox" in kinds else rooms[0]
     openings = _openings(c, rooms[0])
     gases = _gases(kiln, c, loads, rooms)
     table, draft_path = None, None
     try:
-        draft_path = dr.kiln_path(kiln, grate_bar=grate_bar)
+        draft_path = dr.kiln_path(kiln, grate_bar=grate_bar, intake=intake)
         table = dr.table(draft_path, prod, fuel=rated_fuel(kiln, fuel))
     except dr.NotModelledError as e:
         notes.append(f"the draft isn't worked out: {e}")
+    bed = _bed(kiln, fuel, bed_rate, notes)
     path_zones = tuple((g.name, k) for k, g in enumerate(c.gas)) if many else ()
     steps = (
         *prod.steps,
@@ -250,7 +272,9 @@ def heat_model(
             value="; ".join(f"{f.name}" + (f" | {f.back}" if f.back else "") + ": "
                             + " + ".join(f"{x.thickness * 1e3:.0f} mm {x.name}"
                                          for x in f.wall.layers) for f in faces),
-            inputs={f.name: f.emissivity.reference for f in faces[:1]},
+            inputs={f.name: f.emissivity.reference for f in faces[:1]}
+            | {"the emissivity class": f"{emissivity}: {EMISSIVITY_CLASS[emissivity][0]}, × "
+               f"{EMISSIVITY_CLASS[emissivity][1]:.2f} hemispherical"},
             note="hot-face emissivity lines extrapolated past their measured range (the user's "
             "decision, radiation-exchange.md §5.5); a wall between two zones (|) has a face in "
             "each",
@@ -279,8 +303,31 @@ def heat_model(
     )  # fmt: skip
     return ZoneModel(
         prod, exchange, traced.names, tuple(faces), tuple(settings), tuple(openings), gases,
-        t_room, table, steps, soil, draft_path, path_zones, fire_zone,
+        t_room, table, steps, soil, draft_path, path_zones, fire_zone, bed,
     )  # fmt: skip
+
+
+def _bed(kiln: Kiln, fuel: gas.Fuel, rate: float | None, notes: list[str]) -> float | None:
+    """The most dry fuel the grates burn (kg/s): a coal bed's rate on the grates' area; wood's
+    has no source (the draft's air alone)."""
+    fire = kiln.heat.fire
+    if fire is None or fuel.kind == "gas":
+        return None
+    if fuel.kind == "wood":
+        notes.append(air_mod.WOOD_BED_NOTE)
+        return None
+    if rate is None:
+        notes.append(f"{fuel.kind}: the bed's burning rate not given, the draft's air alone")
+        return None
+    area = sum(si(b.grate.width, "m") * si(b.grate.length, "m") * b.count
+               for b in fire.fireboxes if b.grate is not None)  # fmt: skip
+    if area <= 0:
+        notes.append("no grate given: the bed's rate has no area to act on, the air alone")
+        return None
+    most = air_mod.bed_most(fuel, area, rate)
+    notes.append(f"the grates, {area:.2f} m², burn at most {rate * 3600:.0f} kg/(m²·h) as fired "
+                 f"({air_mod.COAL_BED_REFERENCE})")  # fmt: skip
+    return most
 
 
 def _settings(
@@ -306,7 +353,13 @@ def _settings(
 
 
 def _faces(
-    kiln: Kiln, c: ch.Chamber, traced: rays.Rays, ground_soil: Soil, path: bool, t_room: float
+    kiln: Kiln,
+    c: ch.Chamber,
+    traced: rays.Rays,
+    ground_soil: Soil,
+    path: bool,
+    t_room: float,
+    cls: Emissivity = "nominal",
 ) -> tuple[list[Face], Ground | None, list[str]]:
     """The walls behind the surfaces: each its layers, its area growing to its outside, and what
     its outer face loses to; the floor over fireboxes that are zones a wall between the two."""
@@ -352,14 +405,14 @@ def _faces(
             back = f"front {int(tag) + 1}"
             back_zone = c.built[back][1]
             a_out = area[back]
-            back_line = line(_emissivity(layers[-1].name))
+            back_line = _emissivity(layers[-1].name, cls)
             outside = Outside("adiabatic", None, t_room)
         elif built == "between":
             outside = Outside("adiabatic", None, t_room)  # the flue holes' sides, in that wall
         elif face == "floor" and under and zoned:
             back, back_zone = "firebox roof", c.built["firebox roof"][1]
             a_out = area["firebox roof"]
-            back_line = line(_emissivity(layers[-1].name))
+            back_line = _emissivity(layers[-1].name, cls)
             outside = Outside("adiabatic", None, t_room)
         elif face == "floor" and under:
             outside = Outside("adiabatic", None, t_room)
@@ -382,7 +435,7 @@ def _faces(
         else:
             outside = Outside("air", _surface(kiln, c, face, built, t, shell, rise), t_room)
         wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
-        faces.append(Face(name, wall, line(_emissivity(layers[0].name)), zone, back, back_zone,
+        faces.append(Face(name, wall, _emissivity(layers[0].name, cls), zone, back, back_zone,
                           back_line))  # fmt: skip
     return faces, soil, notes
 
