@@ -156,16 +156,17 @@ def strips(kiln: Kiln, shell: SphereShell, n: int = STRIPS) -> list[Strip]:
     return out
 
 
-def conditions(kiln: Kiln, sec: Section, state: State, analogy: bool = True) -> Problem:
+def conditions(kiln: Kiln, sec: Section, state: State, crushing: bool = True) -> Problem:
     """μ cold or hot at the masonry's joints, 0 where it meets the buttress (unsourced, the band's
-    low end); hot, the crushing stand-in of the shell's and the walls' materials."""
+    low end); hot, the crushing stand-in of the shell's and the walls' materials (without
+    ``crushing``, compression unlimited, Heyman's)."""
     mu = sources.MU_COLD.value if state == "cold" else sources.MU_HOT.value
     shell_mat = kiln.lining.for_face("roof")[0].material
     wall_mat = kiln.lining.walls[0].material
 
     def stand_in(tag: str) -> float | None:
         m = shell_mat if tag == VOUSSOIR else wall_mat if tag.startswith(("wall", "skew")) else None
-        if m is None or (not analogy and sources.by_analogy(m)):
+        if m is None or not crushing:
             return None
         s = sources.crushing(m)
         return None if s is None else s.value
@@ -183,13 +184,13 @@ def conditions(kiln: Kiln, sec: Section, state: State, analogy: bool = True) -> 
 @dataclass(frozen=True)
 class SailResult:
     """One state of a kiln's domes: whether every strip stands, the largest least push on the
-    walls' buttress (N per metre of wall), whether a hot verdict rests on a stand-in by analogy,
-    and the working."""
+    walls' buttress (N per metre of wall), whether a hot verdict rests on the crushing stand-ins
+    alone, and the working."""
 
     state: State
     stands: bool
     least: float
-    analogy: bool
+    on_stand_in: bool
     steps: tuple[Step, ...]
 
 
@@ -207,23 +208,20 @@ def analyse(kiln: Kiln, state: State) -> SailResult:
             sol = solve(p, cost, 1)
             if sol.status is not Status.OPTIMAL:
                 stands = False
-                decided = conditions(kiln, s.section, state, analogy=False)
-                rescued = (
-                    rescued
-                    and decided.crush != p.crush
-                    and (solve(decided).status is Status.OPTIMAL)
-                )
+                free = conditions(kiln, s.section, state, crushing=False)
+                rescued = rescued and state == "hot" and (solve(free).status is Status.OPTIMAL)
                 continue
             if sol.value / 2 > least:
                 least, worst_at = sol.value / 2, s.at
-    analogy = not stands and rescued
-    steps = _steps(kiln, state, count, stands, least, worst_at, analogy)
-    return SailResult(state, stands, least if stands else math.nan, analogy, steps)
+    on_stand_in = not stands and rescued
+    steps = _steps(kiln, state, count, stands, least, worst_at, on_stand_in)
+    return SailResult(state, stands, least if stands else math.nan, on_stand_in, steps)
 
 
 def _steps(
-    kiln: Kiln, state: State, count: int, stands: bool, least: float, at: float, analogy: bool
-) -> tuple[Step, ...]:
+    kiln: Kiln, state: State, count: int, stands: bool, least: float, at: float,
+    on_stand_in: bool,
+) -> tuple[Step, ...]:  # fmt: skip
     roof = kiln.roof
     assert isinstance(roof, Dome)
     mu = sources.MU_COLD if state == "cold" else sources.MU_HOT
@@ -250,12 +248,12 @@ def _steps(
             "thrust); the largest of them",
             reference=METHOD,
         ))  # fmt: skip
-    if analogy:
+    if on_stand_in:
         steps.append(Step(
-            name="The hot verdict rests on a stand-in by analogy",
-            value="no admissible state with dense firebrick's 25 psi crushing stand-in, one "
-            "without it: not given (ADR 0009)",
-            reference=sources.C16_DENSE.reference,
-            note=sources.C16_DENSE.note,
+            name="The hot verdict rests on the crushing stand-ins",
+            value="a strip has no admissible state with the crushing stand-ins, one with "
+            "compression unlimited: not given (ADR 0009)",
+            reference=f"{sources.C16_DENSE.reference}; {sources.C16_IFB.reference}",
+            note=sources.ON_STAND_IN,
         ))  # fmt: skip
     return tuple(steps)

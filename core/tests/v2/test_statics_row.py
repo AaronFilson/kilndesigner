@@ -146,7 +146,7 @@ def test_a_level_row_on_its_frame() -> None:
     assert cold.least["back"] == pytest.approx(cold.least["front"], rel=1e-3)
     hot = analyse(rs, "hot")
     assert hot.stands
-    assert not hot.analogy
+    assert not hot.on_stand_in
     assert hot.most["front"] > hot.least["front"] > cold.least["front"]
     gripped = analyse(rs, "cold", support_friction=True)
     assert gripped.least["front"] <= cold.least["front"] + 1e-6
@@ -248,18 +248,45 @@ def test_one_chamber_under_an_uneven_arch_along_its_depth() -> None:
 
 @pytest.mark.geometry
 @pytest.mark.slow
-def test_a_hot_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() -> None:
-    """Tobe's 10 ft arches, 9 in rings of dense firebrick: hot, with the 25 psi crushing stand-in
-    carried over from IFB by analogy, no admissible state, without it one. That verdict rests on
-    an unsourced value, so it isn't given (ADR 0009): the missing data is said instead."""
+def test_a_hot_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
+    """Tobe's 10 ft arches, 9 in rings of dense firebrick: hot, with dense brick's 25 psi C16
+    stand-in at every joint, no admissible state; with compression unlimited, one. The stand-in is
+    a load the brick carries in C16, a lower bound on its hot strength, so that verdict rests on a
+    strength no source gives: it isn't given (ADR 0009), the missing data said instead."""
     kiln = cut_to(olsen("tobe"), 2)
     rs = row_section(kiln)
     hot = analyse(rs, "hot")
     assert not hot.stands
-    assert hot.analogy
-    assert solve(conditions(rs, "hot", analogy=False)).status is Status.OPTIMAL
-    assert any("analogy" in s.name for s in hot.steps)
+    assert hot.on_stand_in
+    assert solve(conditions(rs, "hot", crushing=False)).status is Status.OPTIMAL
+    assert any(s.name == "The hot verdict rests on the crushing stand-ins" for s in hot.steps)
     r = statics(kiln)
     assert r.stands == {"cold": True, "hot": None}
     assert r.all_stand is None
-    assert "dense brick's hot crushing" in str(r.missing)
+    assert "hot crushing strength" in str(r.missing)
+
+
+@pytest.mark.geometry
+@pytest.mark.slow
+def test_tobe_hot_needs_thirty_psi() -> None:
+    """Tobe's seven chambers hot (μ 0.50): with the dense stand-in at every joint the row stands
+    from 29.73 psi, not at 25 (C16's load) or 29; the ring's stand-in or the walls' alone leaves a
+    state, the two together none (11-10-26.md §D2)."""
+    from dataclasses import replace
+
+    rs = row_section(olsen("tobe"))
+    p = conditions(rs, "hot")
+
+    def at(psi: float, keep: str = "") -> Status:
+        crush = []
+        for j, c in zip(rs.section.joints, p.crush, strict=True):
+            ring = {rs.section.bodies[j.a].tag, rs.section.bodies[j.b].tag} == {"voussoir"}
+            dropped = (keep == "ring" and not ring) or (keep == "walls" and ring)
+            crush.append(None if c is None or dropped else c * psi / 25)
+        return solve(replace(p, crush=tuple(crush))).status
+
+    assert at(25) is Status.INFEASIBLE
+    assert at(29) is Status.INFEASIBLE
+    assert at(30) is Status.OPTIMAL
+    assert at(25, keep="ring") is Status.OPTIMAL
+    assert at(25, keep="walls") is Status.OPTIMAL

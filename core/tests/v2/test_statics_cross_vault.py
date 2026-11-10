@@ -101,7 +101,7 @@ def test_the_church_kilns_vault_stands_and_pushes_its_walls() -> None:
     walls: an admissible state cold, the least peak push on the walls about 189 lbf/ft."""
     cold = analyse(olsen("church-skaelskor"), "cold")
     assert cold.stands
-    assert not cold.analogy
+    assert not cold.on_stand_in
     assert cold.peak / LBFT == pytest.approx(188.9, abs=0.5)
     assert cold.steps[0].value.endswith("an admissible state")
     assert "least peak push" in cold.steps[1].name
@@ -175,13 +175,14 @@ def test_what_the_slicing_refuses() -> None:
     assert r.steps[0].name == "Not modelled"
 
 
-def test_a_hot_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() -> None:
-    """The Fireworks kiln's vaults in 6 in of dense firebrick: with the 25 psi stand-in carried
-    over from IFB by analogy, halved for each family of slices, no state hot; without it one; the
-    verdict isn't given, the missing data said."""
+def test_a_hot_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
+    """The Fireworks kiln's vaults in 6 in of dense firebrick: with the 25 psi C16 stand-in,
+    halved for each family of slices, no state hot; with compression unlimited one; the stand-in
+    being a lower bound on the brick's hot strength, the verdict isn't given, the missing data
+    said."""
     kiln = with_shell(olsen("fireworks-edmonton"), ("firebrick-medium-duty-smithfield", 6))
     r = statics(kiln)
     assert r.stands == {"cold": True, "hot": None}
-    assert "dense brick's hot crushing" in str(r.missing)
-    assert any("analogy" in s.name for s in r.steps)
+    assert "hot crushing strength" in str(r.missing)
+    assert any(s.name == "The hot verdict rests on the crushing stand-ins" for s in r.steps)
     assert si(Q_(r.numbers["least peak push on the walls, cold"], "N/m"), "lbf/ft") > 255.9

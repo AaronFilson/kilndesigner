@@ -98,6 +98,9 @@ def test_the_crushing_stand_ins_by_material() -> None:
     assert sources.crushing("firebrick-medium-duty-smithfield") is sources.C16_DENSE
     assert sources.crushing("kast-o-lite-26-li-plus") is None
     assert sources.C16_IFB.value == pytest.approx(68947.57, rel=1e-6)  # 10 psi
+    assert sources.C16_DENSE.value == pytest.approx(172368.9, rel=1e-6)  # 25 psi, C16 §7.1
+    assert "Smithfield medium duty 6.8 %" in sources.C16_DENSE.reference
+    assert "lower bound" in str(sources.C16_DENSE.note)
     assert sources.density("ifb-k23") == 513.0
 
 

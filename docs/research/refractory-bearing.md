@@ -228,6 +228,49 @@ superimposed load. These ratios are arithmetic on sheet values, not an allowable
 
 ---
 
+## B6. Dense firebrick under C16's 25 psi: the makers' results (2026-11-10, for engine v2)
+
+For gap 11 and the owner's statics question 1: real hot-load and creep data for the library's
+dense classes, to put dense brick's 25 psi stand-in on the same footing as IFB's 10 psi. Marks:
+**Read** (the PDF's text extracted here with pypdf, or the page read), **Snippet**, **NOT FOUND**.
+
+| Material (library id) | Hot-load datum, as printed | Load | Status | Source |
+|---|---|---|---|---|
+| Alsey Pilot D.P., super duty, PCE 33 (no library id) | "ASTM C-16 Schedule 3 [% deformation] … Load Test at 2640°F 1.3"; "ASTM C-113 Schedule B [% linear] … Reheat Change at 2550°F 0.6%"; MOR 1300 psi; 139 lb/ft³; "Revised: December 19th 2019" | 25 psi by C16 §7.1 (the sheet names C16, not the load) | Read | [B23] |
+| Alsey Jet D.P., high duty, PCE 32–32½ (`firebrick-high-duty-jet-dp`) | "ASTM C-16 Schedule 3 [% deformation] … Load Test at 2640°F 1.3"; reheat change at 2550 °F −0.1; MOR 1100 psi; "Cold Crush 3500"; 133.7 lb/ft³; "Revised: December 9th 2019". The 2013 revision [B8] printed "ASTM C-16 Schedule 2 … Load Test at 2460 °F 1.3": the same 1.3 under another schedule, so one revision misprints the schedule (not resolved) | 25 psi by C16 §7.1 | Read | [B24], [B8] |
+| Alsey Smithfield, medium duty, PCE 29 (`firebrick-medium-duty-smithfield`) | "ASTM C-16 Schedule 3 [% deformation] … Load Test at 2640°F -6.8"; "Reheat Change at 2550°F -2.8"; MOR 977 psi; no cold crush line; 130.2 lb/ft³; "Revised: December 19th 2019" | 25 psi by C16 §7.1 | Read | [B25] |
+| HWI KX-99, super duty (`hard-firebrick-kx99`) | hot-load deformation at 2640 °F 0.6 % (load not printed); creep 0.2 % between 20 and 50 h at 2192 °F under 28.4 psi (2.0 kg/cm²) | as printed | Verified (2026-10-30) | [B7] |
+| 43 brands of US fire-clay brick, 1920s (no library id) | "Standard A. S. T. M. method for No. 1 fire brick (25 pounds per square inch at 1,350° C. for one and one-half hours)": 0.35 to 8.60 % deformation, two brands failed (Table 7); held 10 h instead, "did not essentially alter the results"; 25 psi at 1,450 °C for 1½ h is "a very severe test and one in which, under ordinary conditions, a fire-clay refractory of satisfactory quality would undoubtedly fail", yet brick preheated at 1,400 °C for 5 h "in nearly every instance not only withstood the test" | 25 psi, as printed | Read | [B26] |
+| Low-porosity fireclay brick for glass-furnace regenerators | creep "within 0.2 %" under 0.1–0.3 MPa (14.5–43.5 psi) at 1200 and 1280 °C | as extracted | Snippet (the page returned 403) | [B28] |
+| Fireclay classes A and B, Soviet blast-furnace stoves | deformation and creep rate at 900–1400 °C under 1–10 kg/cm² (14–142 psi); values behind the paywall | — | Snippet (conclusions only) | [B29] |
+| ASTM C832 (creep under load) | Orton's lab runs it at "a 25 psi compressive stress for 50 hours", other stresses "up to 100 psi" on request; no dense-firebrick result found | — | Snippet | [B27] |
+
+**What this settles.** ASTM C16 has one load, 25 psi, held at its schedules' temperatures
+(S1 2370 °F, S2 2460 °F, S3 2640 °F; §B1.2). The makers of the library's three dense fireclay
+classes report their C16 results at Schedule 3: super and high duty 1.3 %, medium duty 6.8 %
+subsidence in 1½ h at 2640 °F; KX-99 0.6 % at the same temperature. NBS's 1925 survey printed the
+load itself, 25 psi at 1,350 °C, on 43 brands (0.35–8.6 %). So 25 psi is the hot load these classes
+are tested and reported under, as 10 psi is for IFB (Morgan's K sheets, §B3), and on the same
+footing: a load the brick carries hot with a stated subsidence, not a strength. Neither is a
+crushing strength: no source gives the hot crushing strength of either (gaps 3, 6, 11). In v2 both
+are stand-ins for it, flagged so (`v2/statics/sources.py`): C16_DENSE is sourced, no longer by
+analogy.
+
+**What the stand-in means for a verdict.** A load a brick is known to carry is a lower bound on
+its strength. Where a section stands with the stand-in at every joint, it stands. Where it has no
+admissible state with the stand-ins but one with compression unlimited (Heyman's), the verdict
+rests on the true hot strength, which no source gives, so v2 doesn't give it (ADR 0009) and says
+so (`sources.ON_STAND_IN`); where it has none even with compression unlimited, it falls.
+
+**Still not found:** a hot crushing strength (or hot MOR) of any dense class at kiln temperatures;
+a creep result (C832) for any of the library's dense classes; the C16 result of the porous
+fireclay (`fireclay-brick-porous-norton`); which Jet D.P. revision prints the right schedule.
+NBS's "Long-Time Load Tests on Commercial Classes of Fire-Clay Brick" (25 psi, holds of 1½ h at
+2460 °F, 24 h at 2400 °F, 100 h at 2200–2500 °F, 500 h at 2200 °F, by a search extract) would be the
+creep data to read: not reachable here (ResearchGate 403; no NIST copy found).
+
+---
+
 ## What the engine can use
 
 | Need | Usable now | Basis |
@@ -240,7 +283,7 @@ superimposed load. These ratios are arithmetic on sheet values, not an allowable
 | Cold CCS, Kast-O-Lite 30 LI Plus | 2,700 dried; 2,300 fired 1,500 °F; 1,300 fired 2,000 °F | Verified (repo) |
 | Cold CCS, Mizzou Castable Plus | 5,500 dried; 3,500 at 1,500 °F; 3,000 at 2,000 °F | Verified (repo) |
 | Cold CCS, Kast-O-Lite 26, Kaolite 2600 LI | none | NOT FOUND / Snippet only |
-| Hot C16 test load, dense firebrick | 25 psi (C16 §7.1), applied by the standard, so the sheets' subsidence values (Jet D.P. 1.3 % at 2460 °F; Smithfield 6.8 % at 2640 °F; KX-99 0.6 % at 2640 °F) correspond to 25 psi only if the maker ran C16 as written; KX-99's sheet does not print the load | [B2], [B7], [B8], [B9] |
+| Hot C16 test load, dense firebrick | 25 psi (C16 §7.1), applied by the standard, so the sheets' subsidence values (Jet D.P. 1.3 % at 2460 °F; Smithfield 6.8 % at 2640 °F; KX-99 0.6 % at 2640 °F) correspond to 25 psi only if the maker ran C16 as written; KX-99's sheet does not print the load. 2026-11-10 (§B6): Alsey's 2019 sheets, Schedule 3 at 2640 °F: Pilot D.P. 1.3 %, Jet D.P. 1.3 %, Smithfield 6.8 %; NBS 1925, 25 psi printed, 43 brands 0.35–8.6 % at 1,350 °C. v2's stand-in, sourced | [B2], [B7], [B8], [B9], [B23]–[B26] |
 | Hot test load, IFB | 10 psi, 1½ h: K-23 0 / 0.3 %, K-25 0 / 0.1 % at 2000 / 2200 °F; TC-23 0.1 to 0.2 % (2010) or 0 % (2016) at 2000 °F, 0.3 % at 2200 °F (2016); IFB 23 Tile 0 % at 2000 °F | Verified [B11], [B21], [B22]. Labelled ASTM C16 by the maker. The owner reports (2026-11-09) that C16 tests at 10 psi held 90 min at the stated temperature, matching the sheets' 1½ h, which contradicts the 25 psi-only reading of [B2] §7.1 above; [B2] needs re-reading (possibly a separate IFB load or a different edition) |
 | Hot load for K26, JM-series, castables | none | NOT FOUND |
 | Allowable bearing stress, cold or hot | **none** | NOT FOUND |
@@ -280,6 +323,9 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
     cover IFB), creep under load (ASTM C832) of K-23/K-26/JM grades and of medium-duty fireclay
     at 1,100–1,300 °C, any measured skewback or crown stress in a kiln or furnace arch, and the
     stress–strain curve of IFB at temperature (it sets how much growth the brick itself takes up).
+    **2026-11-10 (§B6):** the dense classes' C16 results at 25 psi found and read (Alsey's 2019
+    sheets, NBS 1925): dense brick's 25 psi is now sourced, on IFB's footing, no longer by analogy.
+    Hot crushing strength and creep (C832) of the library's classes are still not found.
 
 ---
 
@@ -305,5 +351,12 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 - [B21] Thermal Ceramics (Morgan Crucible), *K-23, TC-23, IFB 23 Tile, K-25*, Datasheet Code US 114-3, 02:2010, p. 2. PDF read 2026-11-09 (supplied by the owner; file `114-3-data-sheet-k23 & k25 brick.pdf`).
 - [B22] Morgan Thermal Ceramics, *IFB up to 2600°F (1427°C): K-23, TC-23, K-23-HS, K-25, K-26*, Datasheet Code US 1-14-3, updated 02/2016, p. 2. PDF read 2026-11-09 (supplied by the owner; file `199290_DATA-TC-114-3.pdf`).
 - [B20] Gajjar P., Pereira J., Luchini B., Sinnema S., Lourenço P., Put P., "Characterisation of mortarless refractory masonry joints under elevated temperatures", *Engineering Structures* (2023), doi 10.1016/j.engstruct.2022.115234. Record read: https://zenodo.org/records/7965714 ; friction table by search extract only. Cites Oliveira R.L.G., Rodrigues J.P.C., Pereira J.M., Lourenço P.B., Marschall H.U., "Normal and tangential behaviour of dry joints in refractory masonry", *Engineering Structures* (2021), https://www.sciencedirect.com/science/article/abs/pii/S0141029621007501 (not read).
+- [B23] Alsey Refractories, *PILOT D.P.* product data, super duty dry press firebrick, revised 19 Dec 2019. https://cdn.shopify.com/s/files/1/0661/0537/6825/files/PDS_PILOT_D.P._Super_Duty_Firebrick.pdf (linked from https://www.alsey.com/pages/data-sheets). PDF text extracted and read 2026-11-10.
+- [B24] Alsey Refractories, *JET D.P.* product data, high duty dry press firebrick, revised 9 Dec 2019. https://cdn.shopify.com/s/files/1/0661/0537/6825/files/PDS_JET_D.P._High_Duty_Firebrick.pdf . Read 2026-11-10.
+- [B25] Alsey Refractories, *Smithfield Unbranded* product data, medium duty dry press firebrick, revised 19 Dec 2019. https://cdn.shopify.com/s/files/1/0661/0537/6825/files/PDS_Smithfield_Unbranded_Medium_Duty_Firebrick.pdf . Read 2026-11-10.
+- [B26] R. F. Geller, *Testing of Fire-Clay Brick with Special Reference to their Use in Coal-Fired Boiler Settings*, Technologic Papers of the Bureau of Standards No. 279, vol. 19 (1925), pp. 97–149; §IV.5 and Table 7 (pp. 103, 121–124). https://nvlpubs.nist.gov/nistpubs/nbstechnologic/nbstechnologicpaperT279.pdf . OCR text of the scan extracted and read 2026-11-10.
+- [B27] Orton Ceramic Foundation, "Refractory testing" (creep under load: 25 psi for 50 hours, up to 100 psi). https://www.ortonceramic.com/refractory . Search extract only.
+- [B28] "Compressive Creep Behavior of Low Porosity Fireclay Bricks (LPFBs) for Glass Furnace Regenerator", *Key Engineering Materials* 680, p. 352. https://www.scientific.net/KEM.680.352 . Search extract only (403).
+- [B29] E. A. Gin'yar, R. S. Mal'chenko, N. V. Pitak, K. A. Mikhailova, "Physicochemical and thermodynamic properties of aluminosilicate products for the blast heaters of blast furnaces", *Refractories* 10 (1969) 630–636, doi 10.1007/BF01295356 (from *Ogneupory* 1969 no. 10, pp. 31–39). Conclusions only (paywalled).
 - [H3] BIA Technical Note 31A: see `door-headers.md`.
 - [H1], [H23], [H24]: see `door-headers.md` sources (BIA Technical Notes; Giles, *Structural Design of Refractory Concrete*; US 10,155,210 B2).
