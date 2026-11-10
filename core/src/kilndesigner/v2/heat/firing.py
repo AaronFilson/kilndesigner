@@ -263,10 +263,12 @@ def fire(
     sample: float = 60.0,
     rtol: float = 1e-5,
     start: Vector | None = None,
+    max_steps: int = 50_000,
 ) -> Firing:
     """Fire the model from cold (or from ``start``, a firing's end state, the walls and settings
     as they were) for ``t_end`` (s), or until a setting reaches ``stop_at`` (K, or (setting, K));
-    record when they reach each of ``targets``."""
+    record when they reach each of ``targets``. ``max_steps``: IDA's budget for each piece of the
+    schedule; spent, the firing stops there, not completed, and says so."""
     bal = Balance(model, air_row=isinstance(mode, MaxFire))
     lay = bal.lay
     if start is not None and (len(start) != lay.size or lay.air >= 0):
@@ -318,7 +320,7 @@ def fire(
         pending = [m for m in marks if m not in events]
         opts: dict[str, Any] = {
             "algebraic_idx": rows.algebraic, "calc_initcond": "yp0", "rtol": rtol,
-            "atol": _atol(lay), "linsolver": "sparse", "sparsity": sp, "max_num_steps": 50_000,
+            "atol": _atol(lay), "linsolver": "sparse", "sparsity": sp, "max_num_steps": max_steps,
         }  # fmt: skip
         if pending:
             where = [lay.settings[k] for k, _ in pending]

@@ -19,10 +19,9 @@ import yaml
 
 from kilndesigner.designfile import load_design
 from kilndesigner.model import Kiln
-from kilndesigner.v2.heat import bands
+from kilndesigner.v2.heat import bands, gas
 from kilndesigner.v2.heat import draft as dr
 from kilndesigner.v2.heat import firing as fi
-from kilndesigner.v2.heat import gas
 from kilndesigner.v2.heat import kiln as hk
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -124,12 +123,16 @@ def fast_fire_log(air: str = "stoker", opened: float = 1.0) -> fi.Firing:
 
 # 2·10⁴ rays a zone for the band's runs: each run's own noise well inside the bands it draws
 BAND_RAYS = 20_000
+# IDA's budget for each of the log's pieces in a band run: a nominal piece takes under 300 steps;
+# one the stoker can't follow (the gas driven toward the tables' 3000 K) stops there
+LOG_STEPS = 1_000
 MAX_TIME, LOG_WOOD, LOG_AIR = (
     "max fire to cone 10 (h)", "the log's wood (kg, dry)", "the log's air over the draft's most"
 )  # fmt: skip
 FAST_FIRE_INPUTS = (
     bands.Input("emissivity class", ("low", "high"), "nominal",
-                "radiation-exchange.md §5: each brick's lines, the lower and the higher, × 0.95–1.0"),
+                "radiation-exchange.md §5: each brick's lines, the lower and the higher, "
+                "× 0.95–1.0"),
     bands.Input("grey gases", ("bordbar2014", "dorigon2013"), "bordbar2014",
                 "thermal-software.md §6.1: the two HITEMP-2010 WSGG sets"),
     bands.Input("the draft", ("least", "most"), "least",
@@ -175,10 +178,17 @@ def _band_max(key: tuple[Hashable, ...]) -> float | None:
 
 def fast_fire_run(s: Mapping[str, Hashable]) -> dict[str, float | None]:
     """One band run: the max fire's time to cone 10 (λ doesn't touch it: run once for the rest)
-    and p.309's log's wood and air."""
+    and p.309's log's wood and air; a log the run can't follow (no consistent state: the draft
+    can't carry its ramp at that corner) gives neither (+∞ in the band)."""
     key = tuple(s[i.name] if i.name != "λ" else "stoker" for i in FAST_FIRE_INPUTS)
     mode = fi.Schedule("setting", LOG_POINTS, air=s["λ"])  # pyright: ignore[reportArgumentType]
-    log = fi.fire(_band_variant(s), mode, LOG[-1][0] * 60.0, sample=300.0)
+    try:
+        log = fi.fire(_band_variant(s), mode, LOG[-1][0] * 60.0, sample=300.0,
+                      max_steps=LOG_STEPS)  # fmt: skip
+    except fi.FiringError:
+        log = None
+    if log is None or not log.completed:  # the gas driven past the tables, or no start
+        return {MAX_TIME: _band_max(key), LOG_WOOD: None, LOG_AIR: None}
     return {MAX_TIME: _band_max(key), LOG_WOOD: log.fuel_kg, LOG_AIR: log.worst_air_share}
 
 

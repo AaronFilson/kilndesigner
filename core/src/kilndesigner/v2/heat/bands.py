@@ -88,7 +88,8 @@ def corner_runs(run: Runner, inputs: Sequence[Input]) -> dict[str, Band]:
 
 def _step(b: Band, inputs: Sequence[Input]) -> Step:
     """The band's working: its ends, and the inputs by how far each swings it."""
-    order = sorted(b.swings, key=lambda s: -abs(s[2] - s[1]) if math.isfinite(s[2] - s[1]) else 0)
+    order = sorted(b.swings, key=lambda s: -abs(s[2] - s[1]) if math.isfinite(s[2] - s[1])
+                   else -math.inf)  # fmt: skip
     return Step(
         name=f"The band: {b.result}",
         value=f"{b.low:.4g}–{b.high:.4g} (nominal {b.nominal:.4g})",

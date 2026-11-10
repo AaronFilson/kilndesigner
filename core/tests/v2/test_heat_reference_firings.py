@@ -181,6 +181,28 @@ def test_the_logs_wood_on_its_drafts_own_air_is_under_a_quarter_cord() -> None:
 
 @pytest.mark.slow
 @pytest.mark.geometry
+def test_the_fast_fires_printed_figures_lie_inside_its_bands() -> None:
+    """ADR 0017 decision 17: each uncertain input's band carried to the results by corner runs
+    (`bands.py`; `heat_cases.FAST_FIRE_INPUTS`: the emissivity class, the grey gases, the draft's
+    band, the wood's, the load, the setting's passages, λ). The book's figures inside v2's bands:
+    cone 10 inside 3½ h at every corner of the max fire's band (p.139); p.309's log within the
+    draft's air in its band, as it was fired; its wood under a quarter cord of the lightest wood
+    in its band (p.143; a cord's weight is the book side's band, 2,070–4,200 lb: the lightest is
+    the least wood). The log's bands run to +∞ where a corner can't follow it at all (four times
+    the load on the wettest wood: the stoker couldn't have), so its figures are tested inside."""
+    b = heat_cases.fast_fire_bands()
+    max_fire, wood, air = (b[k] for k in (heat_cases.MAX_TIME, heat_cases.LOG_WOOD,
+                                          heat_cases.LOG_AIR))  # fmt: skip
+    assert max_fire.high < 3.5
+    assert air.low <= 1.0 <= air.high
+    assert wood.low < QUARTER_CORD_DRY_KG
+    assert air.nominal < 1.0
+    assert wood.nominal < QUARTER_CORD_DRY_KG
+    assert all(x.steps[0].name.startswith("The band") for x in b.values())
+
+
+@pytest.mark.slow
+@pytest.mark.geometry
 def test_w15_ifb_updraft_fires_easily_in_about_8_h_on_ten_burners() -> None:
     """Olsen p.226: a 36 ft³ IFB updraft "will have a minimum of 10 such burners and will probably
     fire easily in eight hours": a general statement, not a built kiln (no design file)."""

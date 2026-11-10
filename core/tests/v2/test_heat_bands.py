@@ -46,5 +46,7 @@ def test_a_result_not_given_is_infinite() -> None:
     t = bands.corner_runs(run, INPUTS[:1])["t"]
     assert t.low == 1.0
     assert math.isinf(t.high)
+    both = bands.corner_runs(run, INPUTS[:2])["t"]  # x's infinite swing sorts first, over y's
+    assert next(iter(both.steps[0].inputs)) == "x"
     with pytest.raises(ValueError, match="each input once"):
         bands.corner_runs(run, (INPUTS[0], INPUTS[0]))
