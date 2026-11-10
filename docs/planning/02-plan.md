@@ -224,6 +224,11 @@ references used. The plans print the working, so a builder can check it.
 
 ## Milestones
 
+**2026-11-09: engine v2 replaces v1** (`docs/adr/0017-engine-v2.md`; `11-09-26.md` §H).
+- The heat and statics milestones below describe v1. Their results aren't to be relied on until
+  v2 is rebuilt.
+- Engine v2 is the focus until it works as a whole: statics first, then heat.
+
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
 | **M0** | **Foundations** | uv workspace, ruff, pyright strict, pytest, CI, ADRs, the design-file schema | A typed Python monorepo with strict CI from the first commit |

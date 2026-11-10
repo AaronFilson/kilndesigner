@@ -21,3 +21,4 @@ Each one is written once; a later change gets a new record that replaces the old
 | [0014](0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault | proposed | 2026-10-29 |
 | [0015](0015-firing-simulation.md) | The firing simulation: implicit finite volumes per face, the chamber as one node | proposed | 2026-10-29 |
 | [0016](0016-mcp-server.md) | AI assistants reach the engine through an MCP server that returns the working | proposed | 2026-11-06 |
+| [0017](0017-engine-v2.md) | Engine v2 replaces v1: heat and statics rebuilt from first principles on the reference kilns, statics first | accepted | 2026-11-09 |
