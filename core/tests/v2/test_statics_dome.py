@@ -119,12 +119,11 @@ def test_the_round_kilns_domes_stand() -> None:
 def test_hot_crushing_at_the_domes_joints() -> None:
     """Hot, each masonry joint takes the C16 stand-in of its bodies' materials as a stress block,
     its depth per radian the arc at its mean distance from the axis; the hoops and the band none.
-    IFB's 10 psi is decided, dense brick's 25 psi by analogy, a castable has none."""
+    IFB's 10 psi and dense brick's 25 psi (C16's loads), a castable none."""
     dense = "firebrick-medium-duty-smithfield"
-    assert stand_ins("ifb-k23", "ifb-k23", analogy=False) == {
+    assert stand_ins("ifb-k23", "ifb-k23") == {
         "ring": 10 * PSI, "skewback": 10 * PSI, "wall": 10 * PSI}  # fmt: skip
     assert stand_ins(dense, dense)["ring"] == pytest.approx(25 * PSI)
-    assert stand_ins(dense, dense, analogy=False) == {}
     assert set(stand_ins("kast-o-lite-26-li-plus", dense)) == {"skewback", "wall"}
     shell = DomeShell.from_span_rise(84 * IN, 24 * IN, 9 * IN, 2085.0, rings=20)
     wall = (13.5 * IN, 48 * IN, 2085.0, 19)
@@ -143,10 +142,11 @@ def test_hot_crushing_at_the_domes_joints() -> None:
     assert solve(crushed).status is Status.INFEASIBLE
 
 
-def test_a_hot_dome_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() -> None:
+def test_a_hot_dome_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
     """A 50 ft hemisphere of dense firebrick, 18 in thick on a 36 in wall (singh-coal grown): it
-    stands cold; hot, with the 25 psi stand-in carried over from IFB by analogy there is no
-    admissible state, without it one, so the hot verdict isn't given."""
+    stands cold; hot, with the 25 psi C16 stand-in there is no admissible state, with compression
+    unlimited one; the stand-in being a lower bound on the brick's hot strength, the hot verdict
+    isn't given."""
     sc = olsen("singh-coal")
     roof = sc.roof
     assert isinstance(roof, Dome)
@@ -163,8 +163,8 @@ def test_a_hot_dome_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() 
     })  # fmt: skip
     hot = kiln_dome(big, "hot")
     assert not hot.stands
-    assert hot.analogy
-    assert "by analogy alone" in str(hot.steps[1].note)
+    assert hot.on_stand_in
+    assert "no verdict: the brick's hot crushing strength" in str(hot.steps[1].note)
     r = statics(big)
     assert r.stands == {"cold": True, "hot": None}
-    assert "dense brick's hot crushing" in str(r.missing)
+    assert "hot crushing strength" in str(r.missing)

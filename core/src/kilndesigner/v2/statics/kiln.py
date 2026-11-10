@@ -79,9 +79,9 @@ def statics(kiln: Kiln) -> KilnStatics:
         results = {s: kiln_dome(kiln, s) for s in STATES}
         return KilnStatics(
             "dome of revolution",
-            {s: None if r.analogy else r.stands for s, r in results.items()},
+            {s: None if r.on_stand_in else r.stands for s, r in results.items()},
             {f"springing push, {s}": r.thrust for s, r in results.items()},
-            ANALOGY if any(r.analogy for r in results.values()) else None,
+            ON_STAND_IN if any(r.on_stand_in for r in results.values()) else None,
             tuple(step for r in results.values() for step in r.steps),
         )
     assert isinstance(roof, SprungArch)
@@ -103,16 +103,12 @@ def _refused(kind: str, why: str) -> KilnStatics:
 ROW = "arches along the draft"
 SAIL = "sail dome"
 CROSSING = "crossing vault"
-ANALOGY = (
-    "dense brick's hot crushing: with the 25 psi stand-in carried over from IFB by analogy (a "
-    "question for the user) there is no admissible state hot, without it one; real hot crushing "
-    "and creep data, and the shell's temperature through its thickness, are to decide it"
-)
+ON_STAND_IN = sources.ON_STAND_IN
 
 
 def _sail(kiln: Kiln) -> KilnStatics:
     """A dome over a square, oblong or curved plan, sliced into arches across its width; a hot
-    verdict that rests only on a crushing stand-in by analogy isn't given."""
+    verdict that rests on the crushing stand-ins alone isn't given."""
     why = sail.not_modelled(kiln)
     if why is not None:
         return _refused(SAIL, why)
@@ -122,8 +118,8 @@ def _sail(kiln: Kiln) -> KilnStatics:
     missing: str | None = None
     for state in STATES:
         r = sail.analyse(kiln, state)
-        stands[state] = None if r.analogy else r.stands
-        missing = ANALOGY if r.analogy else missing
+        stands[state] = None if r.on_stand_in else r.stands
+        missing = ON_STAND_IN if r.on_stand_in else missing
         numbers[f"least on the walls' buttress, {state}"] = r.least
         steps += r.steps
     return KilnStatics(SAIL, stands, numbers, missing, tuple(steps))
@@ -131,7 +127,7 @@ def _sail(kiln: Kiln) -> KilnStatics:
 
 def _crossing(kiln: Kiln) -> KilnStatics:
     """Two vaults crossing in a groin, sliced both ways and coupled where the slices cross; a hot
-    verdict that rests only on a crushing stand-in by analogy isn't given."""
+    verdict that rests on the crushing stand-ins alone isn't given."""
     why = cross_vault.not_modelled(kiln)
     if why is not None:
         return _refused(CROSSING, why)
@@ -141,16 +137,16 @@ def _crossing(kiln: Kiln) -> KilnStatics:
     missing: str | None = None
     for state in STATES:
         r = cross_vault.analyse(kiln, state)
-        stands[state] = None if r.analogy else r.stands
-        missing = ANALOGY if r.analogy else missing
+        stands[state] = None if r.on_stand_in else r.stands
+        missing = ON_STAND_IN if r.on_stand_in else missing
         numbers[f"least peak push on the walls, {state}"] = r.peak
         steps += r.steps
     return KilnStatics(CROSSING, stands, numbers, missing, tuple(steps))
 
 
 def _row(kiln: Kiln) -> KilnStatics:
-    """The section along a row of chambers, cold and hot; a hot verdict that rests only on a
-    crushing stand-in carried over by analogy isn't given, the missing data said instead."""
+    """The section along a row of chambers, cold and hot; a hot verdict that rests on the
+    crushing stand-ins alone isn't given, the missing data said instead."""
     try:
         rs = row_section(kiln)
     except NotModelledError as e:
@@ -161,8 +157,8 @@ def _row(kiln: Kiln) -> KilnStatics:
     missing: str | None = None
     for state in STATES:
         r = analyse_row(rs, state)
-        stands[state] = None if r.analogy else r.stands
-        missing = ANALOGY if r.analogy else missing
+        stands[state] = None if r.on_stand_in else r.stands
+        missing = ON_STAND_IN if r.on_stand_in else missing
         for end, v in r.least.items():
             numbers[f"least on the {rs.support} at the {end}, {state}"] = v
         for end, v in r.most.items():

@@ -50,10 +50,14 @@ C16_IFB = Sourced(
 )
 C16_DENSE = Sourced(
     25 * PSI,
-    "ASTM C16-03 §7.1, the load test for dense shapes: 'Apply a load of 25 psi (172 kPa)' "
-    "(refractory-bearing.md B1.2)",
-    "the user's IFB stand-in carried over to dense firebrick by analogy, a question for the user; "
-    "dense fireclay subsides 1.3–6.8 % under it at 2460–2640 °F, so it is not a safe limit",
+    "ASTM C16-03 §7.1: 'Apply a load of 25 psi (172 kPa)', the load its schedules hold dense "
+    "brick at for 1½ h; the library's classes by their makers' C16 results, Alsey (rev. 2019): "
+    "Pilot D.P. super duty 1.3 %, Jet D.P. high duty 1.3 %, Smithfield medium duty 6.8 % at "
+    "2640 °F (Schedule 3); NBS Technologic Paper 279 (Geller 1925): 25 psi at 1,350 °C for 1½ h, "
+    "43 brands 0.35–8.6 % (refractory-bearing.md B6)",
+    "a stand-in for dense firebrick's hot crushing strength, which no source gives, on the same "
+    "footing as IFB's 10 psi (the user's decision, 2026-11-10): the load the brick carries in "
+    "ASTM C16, a lower bound on its strength; real hot crushing and creep data are to be found",
 )
 
 COURSE = Sourced(
@@ -104,9 +108,9 @@ def density_reference(material_id: str) -> str:
 
 
 def crushing(material_id: str) -> Sourced | None:
-    """The hot crushing stand-in for a material, by its kind: IFB the C16 10 psi the user
-    decided; dense firebrick C16's 25 psi by analogy; any other: none (Heyman's unlimited
-    compression)."""
+    """The hot crushing stand-in for a material, by its kind: IFB C16's 10 psi, the user's
+    decision; dense firebrick C16's 25 psi, on the same footing; any other: none (Heyman's
+    unlimited compression)."""
     kind = material(material_id).kind
     if kind == "insulating_firebrick":
         return C16_IFB
@@ -115,8 +119,11 @@ def crushing(material_id: str) -> Sourced | None:
     return None
 
 
-def by_analogy(material_id: str) -> bool:
-    """Whether the material's crushing stand-in is carried over by analogy rather than decided
-    (dense firebrick's 25 psi, a question for the user): a verdict that rests on it alone isn't
-    given (ADR 0009), the missing data said instead."""
-    return crushing(material_id) is C16_DENSE
+ON_STAND_IN = (
+    "the brick's hot crushing strength: no admissible state hot with the crushing stand-ins at "
+    "every joint, one with compression unlimited. The stand-ins are loads the brick carries in "
+    "ASTM C16, lower bounds on its hot strength, so the verdict rests on a strength no source "
+    "gives and isn't given (ADR 0009); real hot crushing and creep data, and the masonry's "
+    "temperature through its thickness, are to decide it"
+)
+"""Why a hot verdict that rests on the crushing stand-ins alone isn't given."""

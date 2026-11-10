@@ -230,7 +230,7 @@ def slices(kiln: Kiln, n: int = SLICES) -> list[Slice]:
     return out
 
 
-def _problem(kiln: Kiln, sl: Slice, state: State, analogy: bool) -> Problem:
+def _problem(kiln: Kiln, sl: Slice, state: State, crushing: bool) -> Problem:
     shell = kiln.lining.for_face("roof")[0].material
     bodies = [Body(f"voussoir {k + 1} of the slice at {sl.at:.3f} m", w, (s, 0.0), material=shell)
               for k, (w, s) in enumerate(sl.loads)]  # fmt: skip
@@ -247,7 +247,7 @@ def _problem(kiln: Kiln, sl: Slice, state: State, analogy: bool) -> Problem:
     mu = (sources.MU_COLD if state == "cold" else sources.MU_HOT).value
     stand_in = sources.crushing(shell)
     crush: tuple[float | None, ...] = ()
-    if state == "hot" and stand_in is not None and (analogy or not sources.by_analogy(shell)):
+    if state == "hot" and stand_in is not None and crushing:
         crush = (stand_in.value / 2,) * len(joints)  # half each family's
     return Problem(Section(tuple(bodies), tuple(joints), sl.width), (mu,) * len(joints), crush)
 
@@ -258,10 +258,10 @@ def _holding(sl: Slice, s: float) -> int:
     return min(max(k, 0), len(sl.voussoirs) - 1)
 
 
-def _grid(kiln: Kiln, sls: list[Slice], state: State, analogy: bool) -> tuple[bool, float]:
+def _grid(kiln: Kiln, sls: list[Slice], state: State, crushing: bool) -> tuple[bool, float]:
     """The grid's LP: every slice's equilibrium and joints, a vertical force passed at each
     crossing, and t ≥ each slice's push per metre of wall, t least: (a state exists, t in N/m)."""
-    probs = [_problem(kiln, sl, state, analogy) for sl in sls]
+    probs = [_problem(kiln, sl, state, crushing) for sl in sls]
     asms = [assemble(p) for p in probs]
     cols = [0, *itertools.accumulate(a.nvar for a in asms)]
     rows = [0, *itertools.accumulate(len(a.b_eq) for a in asms)]
@@ -315,13 +315,13 @@ def _grid(kiln: Kiln, sls: list[Slice], state: State, analogy: bool) -> tuple[bo
 @dataclass(frozen=True)
 class CrossResult:
     """One state of a crossing vault: whether the grid has an admissible state, the least peak
-    push on the walls (N per metre of wall), whether a hot verdict rests on a stand-in by analogy,
-    and the working."""
+    push on the walls (N per metre of wall), whether a hot verdict rests on the crushing stand-ins
+    alone, and the working."""
 
     state: State
     stands: bool
     peak: float
-    analogy: bool
+    on_stand_in: bool
     steps: tuple[Step, ...]
 
 
@@ -330,17 +330,15 @@ def analyse(kiln: Kiln, state: State, n: int = SLICES) -> CrossResult:
     if why is not None:
         raise NotModelledError(why)
     sls = slices(kiln, n)
-    stands, peak = _grid(kiln, sls, state, analogy=True)
-    shell = kiln.lining.for_face("roof")[0].material
-    analogy = (not stands and state == "hot" and sources.by_analogy(shell)
-               and _grid(kiln, sls, state, analogy=False)[0])  # fmt: skip
+    stands, peak = _grid(kiln, sls, state, crushing=True)
+    on_stand_in = not stands and state == "hot" and _grid(kiln, sls, state, crushing=False)[0]
     return CrossResult(
-        state, stands, peak, analogy, _steps(kiln, state, sls, stands, peak, analogy)
+        state, stands, peak, on_stand_in, _steps(kiln, state, sls, stands, peak, on_stand_in)
     )
 
 
 def _steps(
-    kiln: Kiln, state: State, sls: list[Slice], stands: bool, peak: float, analogy: bool
+    kiln: Kiln, state: State, sls: list[Slice], stands: bool, peak: float, on_stand_in: bool
 ) -> tuple[Step, ...]:
     roof = kiln.roof
     assert isinstance(roof, SprungArch)
@@ -371,12 +369,12 @@ def _steps(
             "buttress must give at its most loaded place",
             reference=METHOD,
         ))  # fmt: skip
-    if analogy:
+    if on_stand_in:
         steps.append(Step(
-            name="The hot verdict rests on a stand-in by analogy",
-            value="no admissible state with dense firebrick's 25 psi crushing stand-in, one "
-            "without it: not given (ADR 0009)",
-            reference=sources.C16_DENSE.reference,
-            note=sources.C16_DENSE.note,
+            name="The hot verdict rests on the crushing stand-ins",
+            value="no admissible state with the crushing stand-in, halved for each family, one "
+            "with compression unlimited: not given (ADR 0009)",
+            reference=f"{sources.C16_DENSE.reference}; {sources.C16_IFB.reference}",
+            note=sources.ON_STAND_IN,
         ))  # fmt: skip
     return tuple(steps)

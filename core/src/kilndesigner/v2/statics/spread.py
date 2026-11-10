@@ -22,8 +22,10 @@ on its moved blocks: Ochsendorf's static method in the deformed configuration.
 
 **The path.** The supports move out step by step. The hinge starts where the unmoved arch's least
 thrust touches the intrados; where the arch moved about it has no admissible state, the hinge moves
-to the next joint toward the crown or the springing if the arch moved about that one has (a hinge
-"admissible" in the moved geometry, as Coccia et al. relocate theirs). The collapse spread is the
+to the next joint toward the crown if the arch moved about that one has (a hinge "admissible" in the
+moved geometry, as Coccia et al. relocate theirs, "slightly toward the center"; let it move toward
+the springing too and Ochsendorf's arch would stand to a 19.3 % increase, past its 16.5 %, Run).
+The collapse spread is the
 last spread with an admissible state, the last step halved until it is under ``tol`` of the
 thickness. Checked against Ochsendorf's test arch as Coccia et al. give it (a semicircle of 16
 voussoirs, 50 mm thick on a 220 mm mean radius, t/R 0.23: collapse measured at a 15.4 % increase of
