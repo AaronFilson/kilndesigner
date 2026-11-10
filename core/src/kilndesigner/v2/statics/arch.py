@@ -28,6 +28,7 @@ from dataclasses import dataclass, replace
 
 import numpy as np
 
+from kilndesigner.shape import CatenaryCurve
 from kilndesigner.v2.statics.blocks import G
 from kilndesigner.v2.statics.rigid import (
     Body,
@@ -230,6 +231,63 @@ def on_walls(
                 if side == s:
                     joints.append(Joint(idx, body, pts, ((-s, 0.0),) * 2, d))
     return Section(tuple(bodies), tuple(joints), d)
+
+
+def ring_section(
+    intrados: list[tuple[float, float]],
+    extrados: list[tuple[float, float]],
+    density: float,
+    depth: float = 1.0,
+) -> Section:
+    """A ring of any shape: voussoirs between consecutive pairs of intrados and extrados points
+    (m, in order from the right springing to the left), each the quadrilateral between them (its
+    weight ρ·g·d × area at its centroid), its joints the segments from each intrados point to its
+    extrados point; two fixed supports beyond the end joints."""
+    n = len(intrados) - 1
+    if n < 2 or len(extrados) != n + 1:
+        raise ValueError("a ring needs matching intrados and extrados points, three at least")
+    bodies: list[Body] = []
+    for k in range(n):
+        area, cx, cz = _polygon([intrados[k], intrados[k + 1], extrados[k + 1], extrados[k]])
+        bodies.append(Body(f"voussoir {k + 1}", density * G * depth * area, (cx, cz), False,
+                           VOUSSOIR))  # fmt: skip
+    (xr, zr), (xl, zl) = intrados[0], intrados[-1]
+    bodies.append(Body("support R", 0.0, (xr, zr), True, SUPPORT))
+    bodies.append(Body("support L", 0.0, (xl, zl), True, SUPPORT))
+    joints: list[Joint] = []
+    for k in range(n + 1):
+        (xi, zi), (xe, ze) = intrados[k], extrados[k]
+        dx, dz = xe - xi, ze - zi
+        length = math.hypot(dx, dz)
+        normal = (-dz / length, dx / length)  # across the joint, the way the ring runs on
+        a = n if k == 0 else k - 1
+        b = n + 1 if k == n else k
+        joints.append(Joint(a, b, ((xi, zi), (xe, ze)), (normal, normal), depth))
+    return Section(tuple(bodies), tuple(joints), depth)
+
+
+def catenary_ring(
+    span: float, height: float, thickness: float, density: float, depth: float = 1.0,
+    voussoirs: int = 40,
+) -> Section:  # fmt: skip
+    """A catenary arch from the floor, ``span`` wide there and ``height`` high to its crown,
+    inside (the engine's `shape.CatenaryCurve`, z = h + a − a·cosh(x/a)); its ring ``thickness``
+    thick normal to the curve; voussoirs of equal length along the intrados, the joints normal to
+    it; the feet on fixed supports cut square to the curve."""
+    curve = CatenaryCurve(span, height)
+    a = curve.a
+    half = a * math.sinh(span / 2 / a)  # the intrados's half length
+    intrados: list[tuple[float, float]] = []
+    extrados: list[tuple[float, float]] = []
+    for k in range(voussoirs + 1):
+        s = half - 2 * half * k / voussoirs  # from the right foot to the left
+        x = a * math.asinh(s / a)
+        z = curve.z(x)
+        c = math.cosh(x / a)
+        nx, nz = math.sinh(x / a) / c, 1 / c  # the outward normal
+        intrados.append((x, z))
+        extrados.append((x + thickness * nx, z + thickness * nz))
+    return ring_section(intrados, extrados, density, depth)
 
 
 def _polygon(pts: list[tuple[float, float]]) -> tuple[float, float, float]:

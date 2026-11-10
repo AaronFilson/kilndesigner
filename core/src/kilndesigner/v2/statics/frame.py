@@ -31,6 +31,7 @@ converges as the slices are refined (`converge`).
 
 from __future__ import annotations
 
+import itertools
 import math
 from dataclasses import dataclass
 from functools import cache
@@ -167,9 +168,19 @@ class Frame:
 
 
 def _grid(frame: Frame, edges: FloatArray) -> FloatArray:
-    z = set(np.round(np.linspace(0.0, frame.bay, max(2, round(frame.bay / GRID)) + 1), 9))
-    z |= {round(float(e), 9) for e in edges} | {round(float(s), 9) for s in frame.stations}
-    return np.array(sorted(z))
+    """The buttress's nodes: the slices' edges and the posts (a post within a quarter grid step
+    of an edge snapped onto it), each interval between them split evenly about every half inch.
+    No member much shorter than its neighbours: PyNite's stability check calls that singular."""
+    marks = [float(e) for e in edges]
+    for s in frame.stations:
+        if min(abs(s - m) for m in marks) > GRID / 4:
+            marks.append(float(s))
+    marks.sort()
+    out: list[float] = [marks[0]]
+    for a, b in itertools.pairwise(marks):
+        k = max(1, round((b - a) / GRID))
+        out += [a + (b - a) * i / k for i in range(1, k + 1)]
+    return np.array(out)
 
 
 def build(frame: Frame, edges: FloatArray, steel: HotSteel) -> tuple[Any, FloatArray]:

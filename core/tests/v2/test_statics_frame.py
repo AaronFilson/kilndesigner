@@ -95,6 +95,16 @@ def test_hot_rods_give_the_growth_back() -> None:
     assert r.steel.ke == pytest.approx(0.78)
 
 
+def test_a_post_mid_bay_holds_the_middle() -> None:
+    """A third post a side mid-bay, tied across: the buttress is continuous over it, so the angle
+    works less than on two posts, the slicing converging all the same."""
+    three = Frame(FAST_FIRE.angle, FAST_FIRE.rod, FAST_FIRE.bay, FAST_FIRE.rod_length,
+                  FAST_FIRE.post_height, 3)  # fmt: skip
+    two = couple(FAST_FIRE, 7.08 * LBFT, 176.0 * LBFT, 27 * IN, 0.008, 70.0, 5)
+    held = couple(three, 7.08 * LBFT, 176.0 * LBFT, 27 * IN, 0.008, 70.0, 5)  # post mid-slice
+    assert held.angle_stress < two.angle_stress
+
+
 def test_rigid_brick_loads_the_ends() -> None:
     """No cap (rigid brick, no crushing): the stiff ends of the bay take the growth, more than the
     middle; finer slices load the end strips harder (the probe's divergence)."""

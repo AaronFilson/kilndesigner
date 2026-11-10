@@ -325,6 +325,9 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
     least = solve(p, force_on(assemble(p), ground, GROUND, 0), 1)
     r_s = shell.radius * math.sin(shell.springing)
     thrust = least.value / r_s if least.status is Status.OPTIMAL else math.nan
+    hot_note = mu.note
+    if state == "hot":
+        hot_note = f"{mu.note}; the crushing stand-in isn't applied to the dome's joints yet"
     steps = (
         Step(
             name="The dome as rings of revolution",
@@ -340,7 +343,7 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
             name=f"Friction ({state})",
             value=f"μ = {mu.value}",
             reference=mu.reference,
-            note=mu.note,
+            note=hot_note,
         ),
         Step(
             name="An admissible state on the wall",

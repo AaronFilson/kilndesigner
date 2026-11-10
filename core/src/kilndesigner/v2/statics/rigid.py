@@ -107,34 +107,40 @@ class Section:
 
 
 def section_from_blocks(
-    blocks: Sequence[Block], contacts: Sequence[Contact], depth: float | None = None
+    blocks: Sequence[Block],
+    contacts: Sequence[Contact],
+    depth: float | None = None,
+    axis: int = 0,
+    origin: float = 0.0,
 ) -> Section:
-    """A section from blocks that are prisms along y and their contacts: each contact with its
-    normals in the x–z plane becomes a joint; a planar one keeps the two ends of its polygon, a
-    curved one its sampled points in order along it. ``depth`` (m) defaults to the blocks' extent
-    along y."""
+    """A section from blocks that are prisms across it and their contacts: each contact with its
+    normals in the section's plane becomes a joint; a planar one keeps the two ends of its
+    polygon, a curved one its sampled points in order along it. The section's horizontal is x
+    (``axis`` 0: a slice along y, across the chamber) or y (1: a slice along x, along the run),
+    measured from ``origin`` (m). ``depth`` (m) defaults to the blocks' extent across."""
+    h, across = axis, 1 - axis
     bodies = tuple(
         Body(
             b.name,
             b.weight,
-            (float(b.centroid[0]), float(b.centroid[2])),
+            (float(b.centroid[h]) - origin, float(b.centroid[2])),
             b.fixed,
             b.tag,
             b.material,
-            tuple((ld.point[0], ld.point[2], ld.force[0], ld.force[2]) for ld in b.loads),
+            tuple((ld.point[h] - origin, ld.point[2], ld.force[h], ld.force[2]) for ld in b.loads),
         )
         for b in blocks
     )
     if depth is None:
-        lo = min(float(b.lo[1]) for b in blocks) * blocks[0].unit
-        hi = max(float(b.hi[1]) for b in blocks) * blocks[0].unit
+        lo = min(float(b.lo[across]) for b in blocks) * blocks[0].unit
+        hi = max(float(b.hi[across]) for b in blocks) * blocks[0].unit
         depth = hi - lo
     joints: list[Joint] = []
     for c in contacts:
-        n2 = c.normals[:, [0, 2]]
-        if np.any(np.abs(c.normals[:, 1]) > 1e-6):
+        n2 = c.normals[:, [h, 2]]
+        if np.any(np.abs(c.normals[:, across]) > 1e-6):
             continue  # a face across the slice
-        pts = c.points[:, [0, 2]]
+        pts = c.points[:, [h, 2]] - np.array([origin, 0.0])
         if c.planar:
             n = n2[0] / float(np.linalg.norm(n2[0]))
             t = np.array([-n[1], n[0]])

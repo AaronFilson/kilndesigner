@@ -18,6 +18,7 @@ from kilndesigner.v2.statics.section import (
     analyse,
     cross_section,
     not_modelled,
+    stations,
 )
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -213,6 +214,21 @@ def test_a_kiln_on_a_slope_weighs_cos_slope_in_its_section() -> None:
     assert r.stands
     assert xs.support == "buttress"
     assert r.least == pytest.approx(0.0, abs=1e-6)
+
+
+def test_a_chamber_whose_width_changes_is_one_kiln_a_station() -> None:
+    """Kannofen's four arch sections 1.5 m apart (Fig 6-37): each station a kiln of its own
+    width, the arch's rise scaled with it (it keeps its shape); any other kiln is itself."""
+    kf = olsen("kannofen")
+    st = stations(kf)
+    assert [round(at, 3) for at, _ in st] == [0.0, 1.5, 3.0, 4.5]
+    base_w, base_rise = kf.chamber.width, kf.roof.rise  # type: ignore[union-attr]
+    for _, k in st:
+        assert k.chamber.widths is None
+        ratio = (k.chamber.width / base_w).to("").magnitude
+        assert (k.roof.rise / base_rise).to("").magnitude == pytest.approx(ratio)  # type: ignore[union-attr]
+    ff = olsen("fast-fire")
+    assert stations(ff) == [(0.0, ff)]
 
 
 def test_what_isnt_cut_into_a_cross_section() -> None:

@@ -108,6 +108,23 @@ class CrossSection:
     ring_material: str = ""
 
 
+def stations(kiln: Kiln) -> list[tuple[float, Kiln]]:
+    """A chamber whose width changes along its depth (``chamber.widths``) as one kiln a printed
+    station, at its distance from the front (m): the width there, the arch's rise scaled with it
+    (the design model's rule: the arch keeps its shape). Any other kiln: itself."""
+    widths = kiln.chamber.widths
+    if widths is None or not isinstance(kiln.roof, SprungArch):
+        return [(0.0, kiln)]
+    base = si(kiln.chamber.width, "m")
+    out: list[tuple[float, Kiln]] = []
+    for w in widths:
+        ratio = si(w.width, "m") / base
+        chamber = kiln.chamber.model_copy(update={"width": w.width, "widths": None})
+        roof = kiln.roof.model_copy(update={"rise": kiln.roof.rise * ratio})
+        out.append((si(w.at, "m"), kiln.model_copy(update={"chamber": chamber, "roof": roof})))
+    return out
+
+
 def default_support(kiln: Kiln) -> Support:
     """The design's: a buttressed arch (masonry, earth or a platform holds it in service) gets a
     buttress whose demand is computed; any other a frame."""
