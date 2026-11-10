@@ -7243,6 +7243,32 @@ kilns:
         unit: inch
         status: assumed
         reason: a cube of 100 cu ft
+      - what: width
+        value: [64.7, 67.7]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 55.7 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
+      - what: depth
+        value: [64.7, 67.7]
+        unit: inch
+        status: assumed
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: 58.2
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the 55.7 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [141.0, 154.4]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.4–1.5 × the stacking; 154–170 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7329,6 +7355,9 @@ kilns:
     notes:
       - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 100 
         cu ft as the chamber's inside to the springline, with no combustion space round the setting
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 100 ft³ of stacking
+        needs a chamber of 141–154 ft³ to the springline (kit-stacking-space.md); the design file''s is
+        the stacking alone'
 
   olsen-kit-16:
     name: Olsen 16 kit, Bob and Sandy Kinzie
@@ -7415,6 +7444,33 @@ kilns:
         unit: inch
         status: assumed
         reason: 1¼ × the width (p.170)
+      - what: width
+        value: [37.1, 42.2]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 30.2 in cube, or 28.1 in square and 25 % taller
+          (p.170), plus 4½–6 in of combustion space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
+      - what: depth
+        value: [37.1, 42.2]
+        unit: inch
+        status: assumed
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: [32.7, 37.6]
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the stacking's 30.2 or 35.1 in, the arch on
+          top (p.74)
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [29.2, 34.9]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.8–2.2 × the stacking; 32.1–38.1 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7516,6 +7572,9 @@ kilns:
       - no firing time is printed for this kiln; p.170–171 says only that more than 25 % extra 
         height reduces evenness "in a normal 8–12 h firing" of a forced-draft updraft (said of 
         updrafts in general)
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 16 ft³ of stacking needs
+        a chamber of 29–35 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
+        alone'
 
   olsen-kit-24:
     name: Olsen 24 kit
@@ -7624,6 +7683,32 @@ kilns:
         unit: inch
         status: assumed
         reason: a cube of 24 cu ft (pp.74–75)
+      - what: width
+        value: [43.6, 46.6]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 34.6 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
+      - what: depth
+        value: [43.6, 46.6]
+        unit: inch
+        status: assumed
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: 37.1
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the 34.6 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [40.9, 46.7]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.7–1.9 × the stacking; 44.9–51.6 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7737,6 +7822,9 @@ kilns:
         ft as the chamber's inside to the springline, with no combustion space round the setting
       - 'p.221 was read on the page image (PDF 206), "When firing my Olsen 24 with propane ... retaining
         the natural gas orifice (#32)"'
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 24 ft³ of stacking needs
+        a chamber of 41–47 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
+        alone'
 
   olsen-kit-50:
     name: Olsen 50 car kiln
@@ -7807,6 +7895,32 @@ kilns:
         unit: inch
         status: assumed
         reason: a cube of 50 cu ft
+      - what: width
+        value: [53.2, 56.2]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 44.2 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
+      - what: depth
+        value: [53.2, 56.2]
+        unit: inch
+        status: assumed
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: 46.7
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the 44.2 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [76.5, 85.4]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.5–1.7 × the stacking; 83.9–94.1 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7892,6 +8006,9 @@ kilns:
         ft as the chamber's inside to the springline, with no combustion space round the setting
       - p.174 says kilns over 50 cu ft "require larger exit flues in order to fire evenly", a rule 
         rather than an observation of this kiln
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 50 ft³ of stacking needs
+        a chamber of 77–85 ft³ to the springline (kit-stacking-space.md); the design file''s is the stacking
+        alone'
 
   olsen-oil-drip:
     name: Olsen's gravity-drip oil kiln
@@ -11136,6 +11253,31 @@ extras:
     name: Olsen 36 kilns
     fuel: gas
     draft: up
+    chamber:
+      - what: stacking_volume
+        value: 36
+        unit: ft**3
+        status: assumed
+        reason: the kits are named by their stacking space, as the 16 (p.173) and the 24 (p.174)
+      - what: width
+        value: [48.6, 51.6]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 39.6 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber 36 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: 42.1
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the 39.6 in stacking, the arch on top (p.74)
+        condition: the chamber 36 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [57.6, 65.0]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.6–1.8 × the stacking; 63.2–71.7 ft³ with the arch (p.171)'
+        condition: to the springline, the chamber 36 ft³ of stacking needs (research A6)
     service:
       - what: builder
         value: Giancarlo Scapin's Olsen 36 car kiln, Schio, Italy
