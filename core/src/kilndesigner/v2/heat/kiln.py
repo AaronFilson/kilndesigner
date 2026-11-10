@@ -23,6 +23,7 @@ from kilndesigner.v2.heat import chamber as ch
 from kilndesigner.v2.heat import draft as dr
 from kilndesigner.v2.heat import gas, gasrad, rays
 from kilndesigner.v2.heat import sources as src
+from kilndesigner.v2.heat.ground import DRY, Ground, Soil, ground
 from kilndesigner.v2.heat.walls import CellWall, Outside, face_sides, grown, linear_area
 from kilndesigner.v2.heat.zone import (
     CONVECTION_NOTE,
@@ -134,8 +135,10 @@ def heat_model(
     n_rays: int = 100_000,
     seed: int = 20261110,
     grate_bar: float | None = None,
+    ground_soil: Soil = DRY,
 ) -> ZoneModel:
-    """The kiln's zone model at an air ratio λ, with its load."""
+    """The kiln's zone model at an air ratio λ, with its load. A floor on the ground (the design's
+    ``chamber.on_ground`` or a foundation, as v1 reads it) loses into the soil (`ground.py`)."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
@@ -163,8 +166,10 @@ def heat_model(
     shell = src.SHELL_EMISSIVITY[kiln.shell.finish]
     fire = kiln.heat.fire
     under = fire is not None and any(b.position == "under" for b in fire.fireboxes)
+    on_ground = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not under
     faces: list[Face] = []
     notes: list[str] = list(c.notes)
+    soil: Ground | None = None
     for name in traced.names:
         if name not in WALL_FACES:
             continue
@@ -178,6 +183,14 @@ def heat_model(
             notes.append(
                 "the floor over the fireboxes: its underside adiabatic (the fireboxes aren't "
                 "zones yet)"
+            )
+        elif name == "floor" and on_ground:
+            outside = Outside("ground", None, t_room)
+            soil = ground(a_out, ground_soil)
+            notes.append(
+                f"the floor on the ground: {soil.soil.reference}, the floor as the disc of its "
+                f"{a_out:.2f} m² ({soil.nodes} nodes), the soil round it adiabatic, the far sides "
+                "at the room's temperature"
             )
         else:
             o = sides[0] + 2 * t, sides[1] + 2 * t
@@ -242,5 +255,5 @@ def heat_model(
     )  # fmt: skip
     return ZoneModel(
         prod, exchange, traced.names, tuple(faces), setting, tuple(openings), flow, t_room,
-        table, steps,
+        table, steps, soil,
     )  # fmt: skip

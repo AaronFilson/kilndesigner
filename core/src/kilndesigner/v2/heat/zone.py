@@ -43,6 +43,7 @@ from kilndesigner.v2.heat import sources as src
 from kilndesigner.v2.heat.draft import Table
 from kilndesigner.v2.heat.gas import Products
 from kilndesigner.v2.heat.gasrad import GasExchange
+from kilndesigner.v2.heat.ground import Ground
 from kilndesigner.v2.heat.walls import CellWall
 from kilndesigner.working import Step
 
@@ -139,11 +140,15 @@ class ZoneModel:
     t_room: float
     draft: Table | None = None
     steps: tuple[Step, ...] = field(default=())
+    ground: Ground | None = None
 
     def __post_init__(self) -> None:
         named = {f.name for f in self.faces} | {o.name for o in self.openings} | {"setting"}
         if named != set(self.names):
             raise ValueError(f"every surface needs a wall, the setting or an opening: {named}")
+        on_soil = [f.name for f in self.faces if f.wall.outside.kind == "ground"]
+        if len(on_soil) != (self.ground is not None):
+            raise ValueError("a ground needs one wall on it, and a wall on the ground its ground")
 
 
 @dataclass(frozen=True)
@@ -156,6 +161,8 @@ class Layout:
     setting: int
     acc: int  # the first accumulator
     size: int
+    grounded: int = -1  # the wall on the ground, or -1
+    soil: tuple[int, int] = (0, 0)  # the ground's free nodes: first, count
 
     ACC: ClassVar[tuple[str, ...]] = (
         "fuel kg", "fuel heat", "flue", "walls", "setting", "openings",
@@ -163,9 +170,11 @@ class Layout:
 
     @property
     def algebraic(self) -> list[int]:
+        """The algebraic unknowns: a grounded wall's outer face has the disc's soil as its
+        capacity, so it is differential."""
         out = [self.tg, self.fuel]
-        for hot, _, out_face in self.walls:
-            out += [hot, out_face]
+        for k, (hot, _, out_face) in enumerate(self.walls):
+            out += [hot] if k == self.grounded else [hot, out_face]
         return out
 
 
@@ -175,9 +184,14 @@ def layout(model: ZoneModel) -> Layout:
     for f in model.faces:
         walls.append((i, i + 1, i + 1 + f.wall.cells))
         i += f.wall.cells + 2
+    grounded, soil = -1, (0, 0)
+    if model.ground is not None:
+        grounded = next(k for k, f in enumerate(model.faces) if f.wall.outside.kind == "ground")
+        soil = (i, len(model.ground.free))
+        i += soil[1]
     setting = i
     acc = setting + 1
-    return Layout(0, 1, tuple(walls), setting, acc, acc + len(Layout.ACC))
+    return Layout(0, 1, tuple(walls), setting, acc, acc + len(Layout.ACC), grounded, soil)
 
 
 @dataclass(frozen=True)
@@ -268,7 +282,15 @@ class Balance:
             q = f.wall.flows(y[hot], cells, y[out])
             res[hot] = (s.q_walls[k] - q[0]) / 1e3
             res[c0:out] = f.wall.capacity(cells) * yp[c0:out] - (q[:-1] - q[1:])
-            res[out] = q[-1] - f.wall.outer_loss(y[out])
+            if k == lay.grounded:
+                g = m.ground
+                assert g is not None
+                u0, n = lay.soil
+                u, up = y[u0 : u0 + n], yp[u0 : u0 + n]
+                res[out] = q[-1] - g.into(u, y[out], m.t_room, yp[out])
+                res[u0 : u0 + n] = g.rows(u, up, y[out], m.t_room)
+            else:
+                res[out] = q[-1] - f.wall.outer_loss(y[out])
         cap = m.setting.mass * float(m.setting.heat_capacity.cp(np.array([y[lay.setting]]))[0])
         if setting_row is None:
             res[lay.setting] = (cap * yp[lay.setting] - s.q_setting) / 1e3
@@ -302,4 +324,14 @@ class Balance:
         for a in range(lay.acc, lay.size):
             sp[a, a] = 1
             sp[a, hub] = 1
+        g = self.m.ground
+        if g is not None:
+            u0 = lay.soil[0]
+            out = lay.walls[lay.grounded][2]
+            kff = g.stiffness[g.free][:, g.free]
+            rows, cols = kff.nonzero()
+            sp[u0 + rows, u0 + cols] = 1
+            near = np.flatnonzero(np.asarray(abs(g.stiffness[g.free][:, g.disc]).sum(axis=1)))
+            sp[u0 + near, out] = 1
+            sp[out, u0 + near] = 1
         return sp
