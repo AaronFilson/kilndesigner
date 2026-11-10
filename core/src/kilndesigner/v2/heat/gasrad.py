@@ -187,6 +187,52 @@ class GasExchange:
         return q
 
 
+@dataclass(frozen=True)
+class ZonesExchange:
+    """Several gas zones in one enclosure (the zone method as Monnaemang 2015 eqs. 3.11–3.14 give
+    it for any number of gas zones): per grey gas (the clear gas first) the surfaces' s s, the
+    gas zones' g s (G × n) and their g g (G × G). The radiosity solve is `GasExchange`'s with each
+    zone's emission; a gas zone gains Σ_i g_z s_i (J_i − E_z) + Σ_w g_z g_w (E_w − E_z), so with
+    the surfaces' rows closed the enclosure conserves energy exactly (Derived)."""
+
+    areas: Vector
+    deas: tuple[tuple[Matrix, Matrix, Matrix], ...]
+    wsgg: WSGG | None
+    pwc: float
+
+    @property
+    def zones(self) -> int:
+        return self.deas[0][1].shape[0]
+
+    def surface_weights(self, t: Vector) -> Matrix:
+        if self.wsgg is None:
+            return np.ones((len(t), 1))
+        a = self.wsgg.weights(t)
+        return np.column_stack([1.0 - a.sum(axis=1), a])
+
+    def gas_weights(self, t_gas: Vector) -> Matrix:
+        """(G, J + 1): each gas zone's emission shares, the clear gas's 0 first."""
+        if self.wsgg is None:
+            return np.zeros((len(t_gas), 1))
+        a = self.wsgg.weights(t_gas)
+        return np.column_stack([np.zeros(len(t_gas)), a])
+
+    def net(self, t_gas: Vector, temps: Vector, eps: Vector) -> tuple[Vector, Vector]:
+        """Net radiation into each surface and into each gas zone (W)."""
+        a = self.areas
+        ws, wg = self.surface_weights(temps), self.gas_weights(t_gas)
+        bs, bg = SIGMA * temps**4, SIGMA * t_gas**4
+        q = np.zeros(len(a))
+        qg = np.zeros(len(t_gas))
+        for m, (ss, gs, gg) in enumerate(self.deas):
+            es, eg = ws[:, m] * bs, wg[:, m] * bg
+            lhs = np.diag(a) - (1 - eps)[:, None] * ss
+            j = np.linalg.solve(lhs, a * eps * es + (1 - eps) * (gs.T @ eg))
+            q += eps * (ss @ j + gs.T @ eg - a * es)
+            qg += gs @ j - gs.sum(axis=1) * eg + gg @ eg - gg.sum(axis=1) * eg
+        return q, qg
+
+
 class Traced(Protocol):
     """A trace that gives the direct exchange areas for a grey gas, as `rays.Rays` does."""
 
@@ -196,8 +242,28 @@ class Traced(Protocol):
     def exchange(self, k: float) -> tuple[Matrix, Vector]: ...
 
 
+class TracedZones(Protocol):
+    """A trace with gas zones, as `rays.Rays` traced with regions is."""
+
+    @property
+    def areas(self) -> Vector: ...
+
+    def exchange_zones(self, k: float) -> tuple[Matrix, Matrix, Matrix]: ...
+
+
+def grey_ks(wsgg: WSGG | None, pwc: float) -> list[float]:
+    """The absorption coefficients (1/m) of the clear gas and each grey gas: k_j = κ_j·pwc."""
+    return [0.0] if wsgg is None else [0.0, *(float(k) * pwc for k in wsgg.kappa)]
+
+
 def exchange_for(traced: Traced, wsgg: WSGG | None, pwc: float) -> GasExchange:
     """The direct exchange areas for each grey gas from a trace: the clear gas at k = 0, grey gas
     j at k_j = κ_j·(p_H₂O + p_CO₂) (1/m, with pwc in atm)."""
-    ks: Sequence[float] = [0.0] if wsgg is None else [0.0, *(float(k) * pwc for k in wsgg.kappa)]
+    ks: Sequence[float] = grey_ks(wsgg, pwc)
     return GasExchange(traced.areas, tuple(traced.exchange(k) for k in ks), wsgg, pwc)
+
+
+def exchange_zones(traced: TracedZones, wsgg: WSGG | None, pwc: float) -> ZonesExchange:
+    """As `exchange_for`, for a trace with gas zones (traced at `grey_ks`)."""
+    deas = tuple(traced.exchange_zones(k) for k in grey_ks(wsgg, pwc))
+    return ZonesExchange(traced.areas, deas, wsgg, pwc)

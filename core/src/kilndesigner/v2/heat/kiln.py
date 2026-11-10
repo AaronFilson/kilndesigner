@@ -143,6 +143,11 @@ def heat_model(
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
     c = ch.chamber(kiln)
+    if len(c.gas) > 1 or c.shape != "box":
+        raise NotModelledError(
+            f"one gas zone in a box chamber so far: a {c.shape} chamber with {len(c.gas)} gas "
+            "zone(s) is traced (chamber.py) but its walls wait for the zones in series"
+        )
     roof = kiln.roof
     rise = si(roof.rise, "m") if isinstance(roof, SprungArch | Dome) else 0.0
     lo, hi = np.asarray(load.lo), np.asarray(load.hi)
@@ -205,9 +210,8 @@ def heat_model(
         faces.append(Face(name, wall, line(_emissivity(layers[0].name))))
     openings: list[Opening] = []
     for p in c.patches:
-        if p.name == "exit flue":
-            assert kiln.draft is not None
-            openings.append(Opening(p.name, "flue", kiln.draft.flue_wall))
+        if p.name.startswith("exit flue"):
+            openings.append(Opening(p.name, "flue", p.face))
         elif p.name.startswith(("inlet flue", "burner port")):
             openings.append(Opening(p.name, "flame"))
         else:
