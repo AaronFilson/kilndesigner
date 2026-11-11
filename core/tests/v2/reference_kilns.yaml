@@ -6852,6 +6852,15 @@ kilns:
         status: printed
         page: p.165
         figure: Fig 6-47
+      - what: exit_flue_area
+        value: [126, 179]
+        unit: inch**2
+        status: derived
+        page: p.165
+        figure: Fig 6-47
+        reason: the flame rises round the muffle to the open top, through the annulus between the
+          22 in inside (derived above) and the muffle's printed 16–18 in, π/4·(22² − d²) (C1)
+        condition: the open top's way out past the muffle
     structure:
       - what: construction
         value: >-

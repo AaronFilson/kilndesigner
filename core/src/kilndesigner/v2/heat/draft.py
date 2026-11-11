@@ -352,6 +352,38 @@ def _branch(
     return lift, loss
 
 
+def _bracket(
+    f: Callable[[float], float], c: float, width: float, cap: float = math.inf
+) -> tuple[float, float]:
+    """An interval round ``c`` where an increasing ``f`` changes sign, f(lo) ≤ 0 ≤ f(hi), widened
+    by doubling steps; its top no further than ``cap``, where f ≥ 0."""
+    lo, hi = c - width, min(c + width, cap)
+    step = width
+    while f(lo) > 0:
+        lo, hi = lo - 2 * step, lo
+        step *= 2
+    step = width
+    while hi < cap and f(hi) < 0:
+        lo, hi = hi, min(hi + 2 * step, cap)
+        step *= 2
+    return lo, hi
+
+
+def _quadratic(m: float, lifts: Sequence[float], r: Sequence[float]) -> float:
+    """Where to start a junction's draft: D with Σ √((B_i − D)/R_i) = m, each branch's loss taken
+    as R_i·m_i² (exact for losses in the velocity head alone), by bisection on arithmetic."""
+    r = [max(x, 1e-300) for x in r]
+    hi = max(lifts)
+    lo = hi - max(1.0, abs(hi))
+    while sum(math.sqrt(max(b - lo, 0.0) / x) for b, x in zip(lifts, r, strict=True)) < m:
+        lo = hi - 2 * (hi - lo)
+    for _ in range(60):
+        mid = (lo + hi) / 2
+        flow = sum(math.sqrt(max(b - mid, 0.0) / x) for b, x in zip(lifts, r, strict=True))
+        lo, hi = (mid, hi) if flow > m else (lo, mid)
+    return (lo + hi) / 2
+
+
 def _split(
     path: Path, e: Element, m_air: float, m_gas: float, props: _Props, shares: list[Any]
 ) -> tuple[float, float]:
@@ -369,25 +401,25 @@ def _split(
         return top, 0.0
     ratio = m_gas / m_air
     free = [i for i, b in enumerate(e.parts) if all(x.kind == "column" for x in b)]
+    lossy = [i for i in range(len(e.parts)) if i not in free]
+    cur = [m_air / max(len(lossy), 1)] * len(e.parts)  # each branch's last flow, to start from
+
+    def loss(i: int, m: float) -> float:
+        return _branch(path, e.parts[i], m, m * ratio, props)[1]
 
     def share(i: int, d: float) -> float:
-        need = lifts[i] - d
-        if need <= 0:
+        if lifts[i] <= d:
             return 0.0
+        need = math.log(lifts[i] - d)
 
-        def gap(u: float) -> float:
-            m = math.exp(u)
-            return _branch(path, e.parts[i], m, m * ratio, props)[1] - need
+        def gap(u: float) -> float:  # on logs: a loss runs as a power of the flow, so near linear
+            return math.log(max(loss(i, math.exp(u)), 1e-300)) - need
 
-        lo = hi = math.log(m_air)
-        while gap(lo) > 0:
-            lo -= 2.0
-        while gap(hi) < 0:
-            hi += 2.0
-        return math.exp(find_root(gap, lo, hi, xtol=1e-12))
+        cur[i] = math.exp(find_root(gap, *_bracket(gap, math.log(cur[i]), 0.05), xtol=1e-12))
+        return cur[i]
 
     def excess(d: float) -> float:
-        return sum(share(i, d) for i in range(len(e.parts)) if i not in free) - m_air
+        return sum(share(i, d) for i in lossy) - m_air
 
     held = max((lifts[i] for i in free), default=-math.inf)
     if free and excess(held) <= 0:
@@ -395,13 +427,11 @@ def _split(
         each = [0.0 if i in free else share(i, d) for i in range(len(e.parts))]
         each[free[0]] = m_air - sum(each)
     else:  # the branches with losses carry it all (a free branch's buoyancy is under D)
-        hi = max(lifts[i] for i in range(len(e.parts)) if i not in free)
-        step = max(1.0, abs(hi))
-        lo = max(hi - step, held)
-        while excess(lo) < 0:
-            step *= 2
-            lo = hi - step
-        d = find_root(excess, lo, hi, xtol=1e-10)
+        hi = max(lifts[i] for i in lossy)
+        d0 = _quadratic(m_air, [lifts[i] for i in lossy], [loss(i, cur[i]) / cur[i] ** 2
+                                                            for i in lossy])  # fmt: skip
+        lo, up = _bracket(lambda x: -excess(x), d0, max(0.05 * (hi - d0), 1e-9), hi)
+        d = find_root(excess, lo, up, xtol=1e-10)
         each = [0.0 if i in free else share(i, d) for i in range(len(e.parts))]
     shares.append((e.name, tuple(each)))
     lift = sum(s * b for s, b in zip(each, lifts, strict=True)) / max(sum(each), 1e-300)

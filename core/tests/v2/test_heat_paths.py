@@ -265,6 +265,39 @@ def test_an_updraft_kit_whose_chamber_is_its_stack() -> None:
     assert 0.85 * est < got < est
 
 
+def _family(kid: str) -> float:
+    k = load_design(ROOT / DATA[kid]["design"])
+    path = dr.kiln_path(k, inputs=pi.inputs(kid))
+    return dr.draw(path, _hot(path), WOOD).air
+
+
+def test_each_familys_draft_against_a_bernoulli_estimate() -> None:
+    """At 1300 °C, each family's draft against the buoyancy of its whole hot column over its main
+    flues' velocity heads alone (K 1.5 a hole through a wall, 1.0 a turn or a top, 0.5 a mouth in
+    the room's air; no friction, no Reynolds factor), from the book's sizes: a groundhog with a
+    chimney (Meaders-Cheever, p.112), a climbing row (Kawaii, p.97), a downdraft through its floor
+    (Singh, Fig 5-10), an updraft with no chimney (Miravet, Fig 6-19). Friction and Idelchik's
+    finer coefficients take 0–20 % off."""
+    from kilndesigner.run_parts import run_layout
+
+    hole = 45 * IN**2
+    cheever = _bernoulli(8 * FT, [(6 * hole, 1.5, False), (6 * hole, 1.0, False),
+                                  (540 * IN**2, 1.0, False)])  # fmt: skip
+    run = run_layout(load_design(OLSEN / "kawaii.yaml"))
+    top = math.tan(math.radians(11.6)) * (run.length * 1e-3 + 18.5 * IN) + 68 * IN
+    kawaii = _bernoulli(top, [(84 * 14 * IN**2, 0.5, True), *[(350 * IN**2, 1.5, False)] * 4,
+                              (450 * IN**2, 1.5, False), (450 * IN**2, 1.0, False),
+                              (450 * IN**2, 1.0, False)])  # fmt: skip
+    singh = _bernoulli(30 * FT + 22.5 * IN, [(4236 * IN**2, 0.5, True), (1440 * IN**2, 1.5, False),
+                                             (432 * IN**2, 1.5, False), (384 * IN**2, 1.0, False),
+                                             (576 * IN**2, 1.0, False)])  # fmt: skip
+    miravet = _bernoulli(126 * IN, [(486 * IN**2, 0.5, True), (1260 * IN**2, 1.5, False),
+                                    (255 * IN**2, 1.5, False)])  # fmt: skip
+    for kid, est in (("meaders-cheever", cheever), ("kawaii", kawaii), ("singh-coal", singh),
+                     ("miravet", miravet)):  # fmt: skip
+        assert 0.8 * est < _family(kid) < 1.05 * est, kid
+
+
 def test_a_gas_updraft_with_no_flue_takes_p78s_to_the_kits_20_percent() -> None:
     """Updraft test kiln 4 (4 × 4 × 5 ft of stacking): no exit flue given, so p.78's inlet =
     exit, the 18 burner ports' area, to the kits' 20 % more (pp.173–174): the band's two ends in
@@ -502,6 +535,84 @@ def test_a_tube_cut_into_segments() -> None:
     assert dr.draw(cut, temps, WOOD).air > 0
     level = dr.kiln_path(load_design(OLSEN / "fast-fire.yaml"), segments=3)
     assert "chamber 2" not in level.zones  # a level tube's middle third has no climb
+
+
+def test_the_design_alone_and_its_variations() -> None:
+    """The forms on the design files with nothing from the dataset, and on changed ones: a mouth
+    the only intake, a firebox set's own intakes and its grate's bars, fireboxes the engine lays
+    past the chamber, a chimney the design leaves out (its band counting the fireboxes under the
+    floor, p.140), several of one size, a flat, open or catenary roof over an updraft, exits at
+    two heights in one set, a connection with no run."""
+    moveros = dr.kiln_path(load_design(OLSEN / "moveros-umbrella.yaml"))
+    assert moveros.elements[0].name == "the firebox's mouth (its stoke hole)"
+    assert moveros.elements[0].area == pytest.approx(22 * 27 * IN**2)
+    church = dr.kiln_path(load_design(OLSEN / "church-skaelskor.yaml"), inputs=pi.inputs(
+        "church-skaelskor", intake=(dr.Intakes((0.1, 0.1)),), grate_bar=0.75 * IN))  # fmt: skip
+    group = church.elements[0]
+    assert group.parts[0][0].name.startswith(dr.INTAKE)
+    assert "the design's ash-pit mouth and stoke hole" in (church.steps[0].note or "")
+    assert group.parts[0][0].k > dr.intakes(dr.Intakes((0.1, 0.1)), 0.0, None, 1).k  # the bars
+    hotch = dr.kiln_path(load_design(OLSEN / "hotchkiss-raw-clay.yaml"),
+                         inputs=pi.inputs("hotchkiss-raw-clay", one_per_chamber=False))  # fmt: skip
+    assert "stand past the chamber's width" in (hotch.steps[0].note or "")
+    bare = dr.kiln_path(_kiln("fast-fire", {"draft.chimney": None}), grate_bar=0.75 * IN)
+    col = next(e for e in bare.elements if e.name == "chimney" and e.kind == "column")
+    down = (36 + 3.375 + 6 + 6.5) * IN  # the chamber to its crown, the fireboxes and ash pits
+    assert col.rise + 3.75 * IN == pytest.approx(2 * down)
+    two = dr.kiln_path(load_design(OLSEN / "kawaii.yaml"),
+                       inputs=pa.Inputs(stack=pa.Stack(count=2)))  # fmt: skip
+    assert "2 chimneys side by side" in (two.steps[0].note or "")
+    for roof, top in (({"type": "flat"}, 43.7), ({"type": "catenary_arch"}, 43.7)):
+        kit = dr.kiln_path(_kiln("olsen-kit-16", {"roof": roof}))
+        els = {e.name: e for e in kit.elements}
+        assert els["chamber, inlet to the exit flue's middle"].rise == pytest.approx(top * IN)
+    opened = dr.kiln_path(_kiln("miravet", {"roof": {"type": "open"}, "draft.exits": None}))
+    assert opened.elements[-1].area == pytest.approx((96 * IN) ** 2)
+    kenzan = dr.kiln_path(load_design(OLSEN / "kenzan-muffle.yaml"),
+                          inputs=pi.inputs("kenzan-muffle"))  # fmt: skip
+    top = kenzan.elements[-1]  # the annulus round the muffle (p.165), π/4·(22² − 18² … 16²) in²
+    assert top.area == pytest.approx(math.pi / 4 * (22**2 - 18**2) * IN**2, rel=5e-3)
+    assert kenzan.most().elements[-1].area == pytest.approx(
+        math.pi / 4 * (22**2 - 16**2) * IN**2, rel=5e-3
+    )
+    places = [{"across": "0 in", "along": "0 in"}, {"across": "40 in", "along": "40 in"}]
+    mixed = _kiln("miravet", {"draft.exits": [{"through": "roof", "port": {"diameter": "6 in"},
+                                               "places": places}]})  # fmt: skip
+    assert "at their mean height" in (dr.kiln_path(mixed).steps[0].note or "")
+    flush = _kiln("fujiwara-bizen", {"draft.run_to_chimney": "0 in"})
+    names = [e.name for e in dr.kiln_path(flush).elements]
+    assert "exit flues into the connection" in names
+    assert "the connection to the chimney" not in names
+    kato = dr.kiln_path(load_design(OLSEN / "kato-coal.yaml"), inputs=pi.inputs("kato-coal"))
+    conn = next(e for e in kato.elements if e.name == "the channels and connection to the chimney")
+    assert conn.sides == pytest.approx((20 * IN, 18 * IN))
+    assert kato.left_out == ()
+    tab = dr.table(kato, WOOD, zones=("firebox", "chamber", "chimney", *kato.zones))
+    assert tab.at(1573.15) > 0
+
+
+def test_inputs_that_cant_be_bands_or_flues() -> None:
+    with pytest.raises(ValueError, match="least to its most"):
+        pa.Band(0.2, 0.1, "")
+    with pytest.raises(ValueError, match="its width, its height or its area"):
+        pa.Flues()
+
+
+@pytest.mark.parametrize(
+    ("name", "change", "inputs", "words"),
+    [
+        ("bowen-mountain", {"heat.gas.burners.count": 20}, None, "burner ports aren't laid out"),
+        ("kawaii", {"chamber.slope": "59 degree"}, None, "no flues through the wall after"),
+        ("moveros-umbrella", {}, pa.Inputs(stack=pa.Stack(
+            height=pa.Band(3.0, 3.0, "a test"), width=pa.Band(0.2, 0.2, "a test"),
+            depth=pa.Band(0.2, 0.2, "a test"))), "an open top under a chimney"),
+    ],
+)  # fmt: skip
+def test_forms_the_book_doesnt_draw_are_refused(
+    name: str, change: dict[str, Any], inputs: pa.Inputs | None, words: str
+) -> None:
+    with pytest.raises(dr.NotModelledError, match=words):
+        dr.kiln_path(_kiln(name, change), inputs=inputs)
 
 
 @pytest.mark.parametrize(

@@ -98,17 +98,19 @@ class Flues:
     """Openings the design doesn't give (or gives otherwise), each size a band (m): ``count`` of
     them, each ``width`` across and ``height`` tall, round of diameter ``width`` when ``round``.
     One left out is p.78's: the count with both sizes given (as many as the area takes), else a
-    size, the area over the count (one where it isn't given) and the other size."""
+    size, the area over the count (one where it isn't given) and the other size. Or their whole
+    ``area`` alone (each square): an open top's way out past what stands in it."""
 
     width: Band | None = None
     count: int | None = None
     height: Band | None = None
     round: bool = False
     source: str = ""
+    area: Band | None = None
 
     def __post_init__(self) -> None:
-        if self.width is None and self.height is None:
-            raise ValueError("give a set of flues its width or its height")
+        if self.width is None and self.height is None and self.area is None:
+            raise ValueError("give a set of flues its width, its height or its area")
 
 
 @dataclass(frozen=True)
@@ -342,7 +344,7 @@ class _Build:
             return float(self.run.floor(k)) * MM
         return k * self.depth / self.nodes * math.sin(self.slope)
 
-    def z_at(self, y: float, z: float, k: int = 0) -> float:
+    def z_at(self, y: float, z: float) -> float:
         """A point laid out level (m: y along the run, z up from its chamber's floor) where the
         kiln stands: a single chamber turned up its slope (`massing.place`), a row's chambers
         stepped (`run_parts`), so a row's points are already at their height."""
@@ -402,12 +404,10 @@ class _Build:
         stage = self.inputs.stage
         if stage is not None and not 0 <= stage < self.nodes:
             raise NotModelledError(f"no chamber {stage + 1} to stoke: the kiln has {self.nodes}")
-        front = self.feeds()
-        if stage is not None and not self.inputs.front_open:
-            front = []
+        front = self.feeds() if stage is None or self.inputs.front_open else []
+        if not front:
             self.notes.append("the front's intakes closed for the stage")
-        if not front and stage is None:
-            raise NotModelledError("no way in for the air: no firebox, burner or stoke hole")
+        assert front or stage is not None  # every heat source has a way in at the front
         els = self.join(front, 0) if front else []
         for k in range(self.nodes):
             if stage == k:
@@ -461,14 +461,14 @@ class _Build:
                     "front as the engine lays them"
                 )
                 out.append(self.trough(0))
-            elif mine and mine[0].trough:
+            elif mine[0].trough:
                 # Troughs sunk in the chambers' floors: the first chamber's is the front's fire;
                 # a later chamber's burns in its stage, its air through that chamber's sides
                 if any(b.chamber == 1 for b in mine):
                     out.append(self.trough(0))
-            elif mine and mine[0].kiln_side == "up":
+            elif mine[0].kiln_side == "up":
                 out.append(self.under(fb, len(mine), ins))
-            elif mine:
+            else:
                 out.append(self.wall(fb, mine, ins))
         return out
 
@@ -555,7 +555,7 @@ class _Build:
                 els.append(dr.grate("grate, round bars (Idelchik 8-9)", si(g.width, "m"),
                                     si(g.length, "m"), si(g.gap, "m"), self.inputs.grate_bar,
                                     n))  # fmt: skip
-        if not barred:
+        if g is not None and not barred:
             self.notes.append("the grate's loss left out: its bars' size isn't given")
         self.notes.append("the fuel bed's resistance: no source, left out")
         els.append(dr.column("firebox and inlet flue, grate to the chamber floor", zone,
@@ -638,7 +638,7 @@ class _Build:
             k = fb.inlets
             z_mid = b.level * MM + ih / 2
             what = "inlet flues"
-            given = self.kiln_inlet_note(b, fb, holes)
+            given = self.kiln_inlet_note(b, fb)
             if given:
                 self.notes.append(given)
         else:
@@ -672,7 +672,7 @@ class _Build:
         # the chamber's inside face (a side firebox's along its middle)
         y_fire: float = (b.lo[1] + b.hi[1]) / 2 * MM
         faces = {"front": self.site.front * MM, "back": self.site.back * MM}
-        y_pass = faces[side] if side in faces else y_fire
+        y_pass = faces.get(side, y_fire)
         z_fire, z_pass = self.z_at(y_fire, g), self.z_at(y_pass, z_mid)
         els.append(dr.column(f"{zone}, the fire to its {what}' middle", zone, z_pass - z_fire))
         els.append(dr.duct(f"{zone}, the gas's run off the grate (half its length)", zone, fw,
@@ -683,7 +683,7 @@ class _Build:
         els.append(dr.outlet(f"{zone}'s {what} into the chamber", zone, a, k * n))
         return _Feed(f"the {zone}", els, 0, z_pass)
 
-    def kiln_inlet_note(self, b: Any, fb: Any, holes: dict[str, Any]) -> str:
+    def kiln_inlet_note(self, b: Any, fb: Any) -> str:
         """Where the engine's layout merges a firebox's inlet flues into one slot (more than fit
         side by side), the path keeps the design's count and size: said."""
         from kilndesigner.firebox_parts import inlets_fit
@@ -708,6 +708,12 @@ class _Build:
         (the area of the path's anchor, `anchor`): the count with both sizes given, else the
         missing size over the count (one where it isn't given); ``cap`` the most a height may be
         (m), its firebox's."""
+        if f.area is not None:
+            count = f.count or 1
+            side = math.sqrt(f.area.end(self.most) / count)
+            self.notes.append(f"the {what}: {f.area.lo / IN**2:.0f}–{f.area.hi / IN**2:.0f} in² "
+                              f"({f.source})")  # fmt: skip
+            return count, side, side, False
         w = f.width.end(self.most) if f.width is not None else None
         h = f.height.end(self.most) if f.height is not None else None
         if w is not None and (f.round or h is not None) and f.count is not None:
@@ -861,8 +867,7 @@ class _Build:
                     column_to(nxt, self.floor(k + 1) - z_cut)]  # fmt: skip
         from kilndesigner.run_parts import flue_rows
 
-        rows = flue_rows(self.kiln)
-        row = rows[k] if k < len(rows) else None
+        row = next((r for r in flue_rows(self.kiln) if r.chamber == k + 1), None)
         f = self.inputs.between
         if f is not None:
             count, w, h, _ = self.flues(f, "flues between the chambers")
@@ -941,14 +946,16 @@ class _Build:
         last = self.nodes - 1
         wall = d.flue_wall if d is not None else "back"
         if isinstance(kiln.roof, OpenTop):
-            if kiln.chamber.shape == "round":
-                a = math.pi * self.width**2 / 4
+            if self.inputs.exits is not None:  # past what stands in it (Kenzan's muffle)
+                count, w, h, _ = self.flues(self.inputs.exits, "open top's way out")
+                side = math.sqrt(count * w * h)
             else:
-                a = self.width * self.depth
-            side = math.sqrt(a)
-            self.notes.append("the open top the exit, its area the chamber's plan; what covers "
-                              "the setting there has no source: left out")  # fmt: skip
-            self.left.append("whatever covers the open top's setting (not sized)")
+                a = (math.pi * self.width**2 / 4 if kiln.chamber.shape == "round"
+                     else self.width * self.depth)  # fmt: skip
+                side = math.sqrt(a)
+                self.notes.append("the open top the exit, its area the chamber's plan; what "
+                                  "covers the setting there has no source: left out")  # fmt: skip
+                self.left.append("whatever covers the open top's setting (not sized)")
             return [_Exit("the open top", 1, side, side, False, "top",
                           self.top_z(last), 0.0)]  # fmt: skip
         if d is not None and d.flue_port is not None:
@@ -1076,21 +1083,17 @@ class _Build:
             if fire.fuel == "oil" and isinstance(self.inputs.intake, dr.Intakes):
                 ins = self.inputs.intake
                 return ins.primary[1] + ins.secondary[1], "the drip ports (the oil's inlets)"
-        if self.n > 1 and skip != "flues between the chambers":
-            from kilndesigner.run_parts import flue_rows
+        from kilndesigner.firebox_parts import burner_port_in
+        from kilndesigner.run_parts import flue_rows
 
-            rows = flue_rows(kiln)
-            if rows:
-                r = rows[0]
-                return r.count * r.width * (r.top - r.bottom) * MM**2, "the flues between chambers"
+        rows = flue_rows(kiln) if self.n > 1 else []
+        if rows and skip != "flues between the chambers":
+            r = rows[0]
+            return r.count * r.width * (r.top - r.bottom) * MM**2, "the flues between chambers"
         g = kiln.heat.gas
-        if g is not None:
-            from kilndesigner.firebox_parts import burner_port_in
-
-            size = burner_port_in(kiln)
-            count = g.burners.wanted
-            if size is not None and count is not None:
-                return count * _area(size[0] * IN, size[1] * IN, size[2]), "the burner ports"
+        size = burner_port_in(kiln) if g is not None else None
+        if g is not None and size is not None and g.burners.wanted is not None:
+            return g.burners.wanted * _area(size[0] * IN, size[1] * IN, size[2]), "the burner ports"
         need = f"the {skip}" if skip else "the chimney's section"
         raise NotModelledError(
             f"{need}: not given, and p.78's rule (inlet = exit = chimney section) has nothing to "
@@ -1283,10 +1286,7 @@ class _Build:
         from kilndesigner.gas import kiln_top_in
 
         start = min(max(kiln_top_in(self.kiln) * IN - base, 0.0), tall)
-        els: list[Element] = []
-        if start > 0:
-            els.append(dr.duct("chimney, straight to the kiln's top", zone, cw, cd, start, n,
-                               rnd=rnd))  # fmt: skip
+        els = [dr.duct("chimney, straight to the kiln's top", zone, cw, cd, start, n, rnd=rnd)]
         rest = tall - start
         for i in range(TAPER_STEPS):
             f = (i + 0.5) / TAPER_STEPS

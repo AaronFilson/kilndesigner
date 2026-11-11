@@ -368,6 +368,42 @@ flows, Derived) use it; where none is given, say "below the diagram's Re" in the
 | several fireboxes or flues meeting (refused now) | 7-29 head-on, 7-7 from the side |
 | bag wall, setting (left out) | 8-4 for a wall with through-gaps; no diagram for a setting (8-22's checkers are 230 mm brick lattices) |
 
+### C1: how every kiln's path takes them (`heat/paths.py`, 2026-11-10)
+
+- **Branches that meet** (several firebox sets into one chamber, exit sets into one chimney or the
+  room, a chamber's side stoke holes beside the front's path) end each in its own exit into the
+  space they share: a chamber, a collection box, a bottle or the room, far larger than any
+  branch's flue, so each branch's own 11-1 exit (or 4-1 expansion) is its junction loss and no tee
+  is needed; 7-7 and 7-29 are for streams meeting in passages of comparable section (Derived
+  reading of their diagrams' F_b/F_c and F_1b/F_c of 0.1–1). The split: every branch with flow has
+  the same draft across it (buoyancy less losses), the junction's; Idelchik's item 8 (the
+  downstream fittings' influence not allowed for) holds as for any series of his elements.
+- **A firebox into its inlet flues**: 3-9's sudden contraction on the flues' velocity, F₁ the
+  firebox's section across its run (its width × its height over the grate); from a large space,
+  3-1's 0.50.
+- **Flues into a collection or a bottle**: 4-1's (1 − F₀/F₂)² on the flues' velocity, F₀ their
+  whole area; several flues turning up into one chimney the same, (1 − n·F₀/F₁)² at the turn's
+  most-air end.
+- **The flues between chambers**: 8-4, a wall with through-gaps, the approach section the upstream
+  chamber's width × its springline height; on the holes' own velocity the jet's term is
+  ζ·f² = (0.5 + τ√(1 − f))(1 − f) + (1 − f)², τ by the wall's thickness over the holes' d_h, its
+  friction term λl/d_h taken as the holes' own duct (Darcy at their Re, laminar below 2000). At
+  the kilns' f of 0.05–0.15 that is 1.16–1.40 velocity heads through a wall over 2 d_h thick (τ
+  ≈ 0.02) and 1.60 at f 0.05 through one d_h thick (τ 0.24); Kawaii's 18 in walls, f 0.095, 1.29
+  (Derived). The diagram is drawn for Re
+  ≥ 10⁵ and its low-Re form isn't transcribed: below its Re, said, as item 9 allows for turbulent
+  flow.
+- **Where no size is printed**: Olsen's p.78 (natural draft, inlet flue = exit flue = chimney
+  section) carries the one area the kiln gives along its path, an assumption with its page; a
+  chimney's height no source gives is a band from the book's own rules (Fig 5-2, Rule 5 p.80;
+  Principle 8 p.81 and Bizen's 3 × the rise, p.101). Nothing here sizes an air intake: those not
+  printed are left out, the path's air an upper bound.
+- **A side opening above the neutral plane draws nothing**: the draft at a height z inside a
+  chamber under suction D at its floor is D − (ρ_a − ρ_g)·g·z (Derived from the hydrostatics the
+  pressure balance already uses), so a stoke hole high in a chamber that is barely under suction
+  (its front wide open, a narrow chimney entry downstream) admits no air; the path counts no flow
+  backwards through it, said in `draft.py`.
+
 ### Convection: replacing the flat plate (`heat/zone.py`)
 
 | Surfaces | Correlation | Range | Kiln (Derived, §2) |

@@ -27,6 +27,9 @@ from kilndesigner.v2.heat import draft as dr
 from kilndesigner.v2.heat.paths import Band, Flues, Inputs, Stack
 
 GIVEN = ("printed", "derived", "scaled", "drawing")
+# C1's own words take the dataset's assumptions too (each with its reason); a chimney's height
+# doesn't: an assumed one is the design file's, which holds it
+WITH_ASSUMED = (*GIVEN, "assumed")
 # The book draws each chamber's own firebox (a himae or a stoking channel along its front wall);
 # their design files lay as many fireboxes side by side at the first chamber's front (the owner's
 # question 3, `11-10-26.md` §B, B4–B6): the path takes the book's
@@ -38,8 +41,10 @@ def _kiln(kid: str) -> dict[str, Any]:
 
 
 def _band(kiln: dict[str, Any], what: str, unit: str = "m") -> Band | None:
-    """The union of a kiln's given numeric facts of one kind, as a band with its pages."""
-    fs = [f for f in ref.facts(kiln, "flow", what, *GIVEN) if ref.numeric(f)]
+    """The union of a kiln's numeric facts of one kind (a chimney's height only as the book gives
+    it), as a band with its pages."""
+    statuses = GIVEN if what == "chimney_height" else WITH_ASSUMED
+    fs = [f for f in ref.facts(kiln, "flow", what, *statuses) if ref.numeric(f)]
     if not fs:
         return None
     spans = [ref.span(f, unit) for f in fs]
@@ -49,7 +54,7 @@ def _band(kiln: dict[str, Any], what: str, unit: str = "m") -> Band | None:
 
 
 def _count(kiln: dict[str, Any], what: str) -> int | None:
-    fs = [f for f in ref.facts(kiln, "flow", what, *GIVEN) if ref.numeric(f)]
+    fs = [f for f in ref.facts(kiln, "flow", what, *WITH_ASSUMED) if ref.numeric(f)]
     return int(ref.raw(fs[0])[0]) if fs else None
 
 
@@ -58,7 +63,8 @@ def _flues(kiln: dict[str, Any], kind: str) -> Flues | None:
     height = _band(kiln, f"{kind}_height")
     count = _count(kiln, f"{kind}_count")
     if width is None and height is None:
-        return None
+        area = _band(kiln, f"{kind}_area", "m**2")  # their whole area only (the exits')
+        return None if area is None else Flues(count=count, area=area, source=area.source)
     source = ", ".join(b.source for b in (width, height) if b is not None)
     return Flues(width, count, height, source=source)
 
