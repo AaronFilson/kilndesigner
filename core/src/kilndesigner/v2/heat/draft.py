@@ -85,6 +85,7 @@ LEFT_OUT = (
 SHARP_ENTRANCE = 0.5  # 3-1: an entrance flush in a wall, any edge
 EXIT = (1.0, 1.06)  # 11-1: a free exit, uniform, and a developed (m = 7) profile
 LAMINAR_RE = 2000.0  # Idelchik §2: laminar below Re 2000
+TURBULENT_RE = 2300.0  # Lienhard eq. 7.41: the turbulent correlations from here (zone.py's)
 # Diagram 2-1: laminar friction in a rectangle, λ = k₁·64/Re, k₁ against a₀/b₀ (short ÷ long)
 K1_RATIO = (0.0, 0.1, 0.2, 0.4, 0.6, 0.8, 1.0)
 K1 = (1.50, 1.34, 1.20, 1.02, 0.94, 0.90, 0.89)
@@ -273,10 +274,17 @@ def k_re(re: float) -> float:
 
 
 def darcy(re: float, rel_rough: float, k1: float = 1.0) -> float:
-    """Darcy's friction factor: Idelchik's k₁·64/Re below Re 2000 (diagram 2-1), Colebrook above
-    (fluids' Clamond), on the hydraulic diameter."""
+    """Darcy's friction factor: Idelchik's k₁·64/Re below Re 2000 (diagram 2-1), Colebrook from
+    Re 2300 (fluids' Clamond; Lienhard's start of the turbulent correlations, as `zone.py`'s), on
+    the hydraulic diameter; between, straight from the one to the other (Derived: a bridge, so the
+    pressure balance has no step there for the max fire's Newton iteration to fail on, C3a)."""
     if re < LAMINAR_RE:
         return k1 * 64.0 / max(re, 1e-3)
+    if re < TURBULENT_RE:
+        w = (re - LAMINAR_RE) / (TURBULENT_RE - LAMINAR_RE)
+        return (1 - w) * k1 * 64.0 / LAMINAR_RE + w * float(
+            friction_factor(TURBULENT_RE, rel_rough)
+        )
     return float(friction_factor(re, rel_rough))
 
 

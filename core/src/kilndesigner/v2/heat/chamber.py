@@ -263,6 +263,7 @@ def _namer(lay: _Layout, zones: list[_Zone], solid: Any, planes: list[tuple[int,
     and the way it faces."""
     chambers = [k for k, z in enumerate(zones) if z.kind == "chamber"]
     many = len(chambers) > 1
+    fires = sum(z.kind == "firebox" for z in zones) > 1  # each firebox zone's faces its own
 
     def name(piece: Any, face: Any) -> tuple[str, Any, Any] | None:
         planar = face.geom_type.name == "PLANE"
@@ -276,7 +277,8 @@ def _namer(lay: _Layout, zones: list[_Zone], solid: Any, planes: list[tuple[int,
         k = next(i for i, z in enumerate(zones) if _inside(z.boxes, q))
         z = zones[k]
         if z.kind == "firebox":
-            return _fire_name(z, p, inward, planar), p, inward
+            side = z.name.removeprefix("firebox") if fires else ""  # " left": "grate left"
+            return _fire_name(z, p, inward, planar) + side, p, inward
         if z.kind == "chimney":
             return _chimney_name(z, p, inward), p, inward
         i = chambers.index(k)
@@ -496,6 +498,10 @@ def _plan(
     for axis, v in ((0, xl), (0, xr), (1, yf), (1, yc), (1, yo), (1, yi), (2, z0)):
         if abs(v) < INF and (axis, v) not in planes:
             planes.append((axis, v))
+    for f in fires:  # a wall firebox's own end wall: its roof and walls kept apart from its
+        # passage's, which may lie in their planes (one face would be named by one point on it)
+        if f.side != "under" and (f.axis, f.outer) not in planes:
+            planes.append((f.axis, f.outer))
     edges = [yf, *lay.cuts, yc]
     zones: list[_Zone] = []
     for f in fires:
@@ -543,18 +549,33 @@ def _rooms(lay: _Layout, n: int, kiln: Kiln) -> tuple[Room, ...]:
                  for k in range(n))  # fmt: skip
 
 
+FIRE_PARTS = ("grate", "firebox walls", "firebox roof", "inlet flues")
+
+
+def fire_part(name: str) -> tuple[str, str]:
+    """A firebox zone's surface name as (its part, its zone's side): "grate" → ("grate", ""),
+    "firebox roof left" → ("firebox roof", "left") where several firebox zones each have their
+    own; ("", "") for any other surface."""
+    for part in FIRE_PARTS:
+        if name == part or name.startswith(part + " "):
+            return part, name[len(part) + 1 :]
+    return "", ""
+
+
 def _built(kiln: Kiln, name: str, chambers: int, plan: list[_Zone]) -> tuple[str, int]:
     """The lining face a surface is built in and the gas zone it faces: the walls between chambers
     ("between") take their flue holes' sides too; a firebox's surfaces its own lining ("firebox"),
     the floor over it and its inlet flues the floor's; the chimney's its brick ("chimney"), its
     channel through the flue wall that wall's."""
     names = [z.name for z in plan]
-    if name in ("grate", "firebox walls", "firebox roof", "inlet flues"):
-        k = next(i for i, z in enumerate(plan) if z.kind == "firebox")
+    part, side = fire_part(name)
+    if part:
+        k = (names.index(f"firebox {side}") if side
+             else next(i for i, z in enumerate(plan) if z.kind == "firebox"))  # fmt: skip
         under = plan[k].band[0] == 2  # under the floor: the floor roofs it, its inlets in it
         return {"grate": "grate", "firebox walls": "firebox",
                 "inlet flues": "floor" if under else "walls",
-                "firebox roof": "floor" if under else "firebox"}[name], k  # fmt: skip
+                "firebox roof": "floor" if under else "firebox"}[part], k  # fmt: skip
     if name in ("exit flue", "chimney walls", "chimney top"):
         k = names.index("chimney")
         wall = kiln.draft.flue_wall if kiln.draft is not None else "back"

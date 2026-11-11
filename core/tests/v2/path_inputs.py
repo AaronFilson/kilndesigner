@@ -34,6 +34,11 @@ WITH_ASSUMED = (*GIVEN, "assumed")
 # their design files lay as many fireboxes side by side at the first chamber's front (the owner's
 # question 3, `11-10-26.md` §B, B4–B6): the path takes the book's
 ONE_PER_CHAMBER = frozenset({"suzuki-kyoto", "tobe", "hotchkiss-raw-clay"})
+# The six kilns with nothing on their gas path sized (C1's refused six): their paths are built only
+# on Olsen's Rule 6 seeding p.78 (`paths.Inputs.rule6`, the owner's question 8, C1, open), asked
+# for by the tests that run them, `inputs(kid, rule6=True)`, and every result on it says so
+RULE_6 = frozenset({"anagama-hole", "falcone-pompeii", "fireworks-edmonton", "kannofen",
+                    "kitade-tojilo", "la-borne"})  # fmt: skip
 
 
 def _kiln(kid: str) -> dict[str, Any]:

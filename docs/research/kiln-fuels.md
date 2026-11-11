@@ -75,8 +75,10 @@ its top end is gross.
 | `kato-coal` (Tajimi) | "coal", kind not printed (p.131) | generic coal: net 27.9 MJ/kg dry, 24.8 as received at 10 % moisture, ash 14 % dry | C 68–78 % (71.5), H 3.5–5.0 % (4.5), N 0.8–1.5 %, S < 0.5 % dry [F3]; C 72.5, H 5.6, O 11.0, N 1.3, S 0.94 % [F2] | [F3], [F2] |
 
 So coal **needn't stay refused**: each coal kiln has a sourced band, Singh's from its printed grade,
-Kato's a generic one (said so in the working). The shovelful has one open figure, Taylor's 21 lb
-(9.5 kg), a shoveler's best load, not a kiln's shovel [F8]; its band is a question for the owner.
+Kato's a generic one (said so in the working). The shovelful has Taylor's two figures [F8], under
+4 lb of rice coal on one man's own shovel and the 21 lb (9.5 kg) best load of a shovel sized to its
+material, neither a kiln's shovel: C3a carries 4–21 lb as the stated band, its ends a question for
+the owner.
 
 ## 1. Sources
 
@@ -179,7 +181,12 @@ resolve).
 Gutenberg #6435, <https://www.gutenberg.org/cache/epub/6435/pg6435.txt> (Read through the fetch
 tool): "it was found that a first-class man would do his biggest day's work with a shovel load of
 about 21 pounds"; shovels were issued to "hold a load of 21 pounds of whatever class of material
-they were to handle", "a small shovel for ore, say, or a large one for ashes".
+they were to handle", "a small shovel for ore, say, or a large one for ashes". Before that, one
+man's own shovel: "he would frequently go from shoveling ore, with a load of about 30 pounds per
+shovel, to handling rice coal, with a load on the same shovel of less than 4 pounds" (read through
+the fetch tool, 2026-11-10, part C3a). So a shovelful of coal runs from under 4 lb (rice coal on a
+shovel that took 30 lb of ore) to the 21 lb a shovel sized to its material holds: C3a carries
+**4–21 lb** as the coal shovel's stated band (§4; the owner's question 2 below stays open).
 
 ## 2. Wood
 
@@ -247,8 +254,9 @@ oak and birch (medians 48.0). Pettersen stays unread; [F1] is now the source for
   kilns, generally. Carried as the generic coal of [F3] and [F2]: net 27.9 MJ/kg dry, ash 14 % dry,
   C 68–78 %, H 3.5–5.6 %, O 11 %, N 0.8–1.5 %, S < 0.5–0.94 %. Said in the working as generic.
 - **The shovelful**: [F8]'s 21 lb (9.5 kg) is a shoveler's best sustained load, with shovels sized
-  to hold it whatever the material; neither kiln's shovel is described. A single sourced point:
-  its band is the owner's question (§6).
+  to hold it whatever the material; neither kiln's shovel is described. [F8] also gives one man's
+  own shovel taking under 4 lb of rice coal (and about 30 lb of ore): C3a carries 4–21 lb (1.8–9.5
+  kg) as a stated band, its ends [F8]'s (the owner's question, §6, stays open).
 
 ## 5. Each kiln's fuel
 
@@ -318,7 +326,8 @@ bundles stay unconverted; a Kyoto kiln burned 1,500 bundles of pine in 46 h ([K1
 
 1. **Moisture**: the band runs from each site's outdoor equilibrium moisture to 25 % ("stored several
    years", [F2]). Kiln wood stored only a summer is 25–35 %: should any kiln take the wetter band?
-2. **The coal shovel**: the only open figure is Taylor's 21 lb best load. Carry 21 lb as the point,
-   or a band (whose ends would be the owner's)?
+2. **The coal shovel**: Taylor's two figures, under 4 lb of rice coal on one man's own shovel and
+   the 21 lb best load of a sized shovel, are carried as the band 4–21 lb (C3a). Take it, or your
+   own ends?
 3. **Olsen's 140,000 BTU/gal** for #2 diesel is gross: take the net band 42.1–43.3 MJ/kg (128,500–
    132,000 BTU/gal) for the oil kiln's printed 60–75 gal?

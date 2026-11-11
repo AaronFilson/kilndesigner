@@ -50,7 +50,7 @@ from kilndesigner.v2.heat import draft as dr
 from kilndesigner.v2.heat import firing as fi
 from kilndesigner.v2.heat import kiln as hk
 from kilndesigner.v2.heat import series as se
-from kilndesigner.v2.heat.paths import Band, Inputs, Stack
+from kilndesigner.v2.heat.paths import Inputs
 from kilndesigner.v2.heat.zone import ZoneModel
 
 HOUR, IN = 3600.0, 0.0254
@@ -107,17 +107,8 @@ def _climbing(n: int, front: str = "the front, to 1000 °C") -> tuple[Phase, ...
 # Kitade's chimney, which nothing in the book sizes (C1's refusal): Olsen's Rule 6, the chimney ¼ to
 # ⅕ of the chamber's width and seldom under 9 × 9 in at its base (pp.79–80; kiln-reference.md
 # "Chimney size"), its 48 in chamber 9.6–12 in square; p.78 carries the exits from it, and its
-# height is the climbing kiln's band (p.81, p.101). The band the other C3 agent builds for the six
-# kilns with nothing sized (C1's question 8), built here the same way until theirs is merged.
-RULE_6 = "Olsen pp.79–80, Rule 6: the chimney ¼ to ⅕ of the chamber's width, seldom under 9 × 9 in"
-
-
-def rule_6(width: float) -> Stack:
-    """A chimney's section by Rule 6 (m): a square of a fifth to a quarter of the chamber's width,
-    no less than 9 in."""
-    lo, hi = max(width / 5, 9 * IN), max(width / 4, 9 * IN)
-    return Stack(width=Band(lo, hi, RULE_6), depth=Band(lo, hi, RULE_6), source=RULE_6)
-
+# height is the climbing kiln's band (p.81, p.101): `paths.Inputs.rule6`, C3a's band for the six
+# kilns with nothing sized (C1's question 8), the path's working saying so
 
 PLANS: dict[str, Plan] = {
     # p.93: the firebox stoked 15 h to 1000 °C (the main firebox isn't in the design: the first
@@ -167,7 +158,7 @@ PLANS: dict[str, Plan] = {
     "hotchkiss-raw-clay": Plan("hotchkiss-raw-clay", _climbing(6, "chamber 1's trough, to 1000 °C"),
                                zoned=False),
     "kitade-tojilo": Plan("kitade-tojilo", (Phase("the chamber", 0, side=False),),
-                          inputs={"stack": rule_6(48 * IN)}),
+                          inputs={"rule6": True}),
     "bae-gilgama": Plan("bae-gilgama", (Phase("the chamber", 0, side=False),)),
 }  # fmt: skip
 ROWS = tuple(PLANS)

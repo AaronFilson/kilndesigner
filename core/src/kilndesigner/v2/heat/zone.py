@@ -56,7 +56,7 @@ from kilndesigner.thermal.transient import HeatCapacity
 from kilndesigner.v2.heat import sources as src
 from kilndesigner.v2.heat.air import REDUCTION, burnt
 from kilndesigner.v2.heat.draft import Path, Table, draw, pressure
-from kilndesigner.v2.heat.gas import Products
+from kilndesigner.v2.heat.gas import T_MIN, Products
 from kilndesigner.v2.heat.gasrad import GasExchange, ZonesExchange
 from kilndesigner.v2.heat.ground import Ground
 from kilndesigner.v2.heat.walls import CellWall
@@ -258,11 +258,20 @@ class ZoneModel:
     burns: int = 0
     bed: float | None = None  # the most dry fuel the grates burn (kg/s); None: the air alone
     elements: Elements | None = None
+    # Firebox zones side by side, each (zone, its share of the stream), the first zones of the
+    # path: the stream splits among them by their shares, the fuel too where it burns in them
+    fires: tuple[tuple[int, float], ...] = ()
     enters: int = 0
 
     def __post_init__(self) -> None:
         if not self.settings:
             raise ValueError("no heat result without a load (ADR 0017 decision 11)")
+        if self.fires and ([k for k, _ in self.fires] != list(range(len(self.fires)))
+                           or abs(sum(s for _, s in self.fires) - 1.0) > 1e-9):  # fmt: skip
+            raise ValueError("firebox zones side by side are the path's first, their shares one")
+        if 0 < self.enters < len(self.fires):  # side by side, none of them is before another
+            raise ValueError("a stream enters before the firebox zones side by side or past "
+                             "them, not among them")  # fmt: skip
         named = (
             {f.name for f in self.faces} | {f.back for f in self.faces if f.back}
             | {o.name for o in self.openings} | {s.name for s in self.settings}
@@ -474,14 +483,18 @@ class Balance:
         return h
 
     def temps(self, y: Vector, t_gas: Vector) -> tuple[Vector, Vector]:
-        """Every surface's temperature and emissivity."""
+        """Every surface's temperature and emissivity; a wall's face or a setting at least the
+        engine's floor, `gas.T_MIN`, in the exchange and the convection (Derived: T⁴ rises again
+        below absolute zero, so a face's balance has a second root there, far below any kiln's,
+        that a solver can land on; the floor leaves it one, the wall's conduction still in its
+        own row. A firing whose gas falls below the floor is refused, `firing._record`)."""
         lay, n = self.lay, len(self.m.names)
         t = np.empty(n)
-        hot = np.array([y[h] for h, _, _ in lay.walls])
+        hot = np.maximum([y[h] for h, _, _ in lay.walls], T_MIN)
         t[self.i_face] = hot
         for k, i in self.back:
-            t[i] = y[lay.walls[k][2]]
-        t[self.i_set] = y[list(lay.settings)]
+            t[i] = max(y[lay.walls[k][2]], T_MIN)
+        t[self.i_set] = np.maximum(y[list(lay.settings)], T_MIN)
         t[self.room] = self.m.t_room
         for i, z in self.flame:
             t[i] = t_gas[z]
@@ -506,17 +519,32 @@ class Balance:
     def released(self, t_gas: Vector, fuel: float, air: float | None = None) -> Vector:
         """[H_in − H_out] in each zone (W): the air before the burning zone, the products from it
         with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`); no
-        stream before the zone it enters (``enters``)."""
+        stream before the zone it enters (``enters``). Firebox zones side by side
+        (`ZoneModel.fires`), where the stream enters through them, each take their share of the
+        room's air, and of the fuel where it burns in them, at the stream's λ (`air.burnt` is
+        linear in the two together), and the next zone takes what they give out together; a
+        stream entering past them (a stage's) passes none of them."""
         p, b, e = self.m.products, self.m.burns, self.m.enters
         if self.m.elements is not None:  # no stream: the elements' heat enters their faces
             return np.zeros(len(t_gas))
         a = self.air_used(fuel, air)
-        out = np.array([0.0 if z < e else a * p.h_air(float(t)) if z < b
+        group = dict(self.m.fires) if e == 0 else {}
+        lit = b in group  # the fuel burns in the firebox zones side by side
+        out = np.array([0.0 if z < e else a * p.h_air(float(t)) if z < b and not lit
                         else burnt(p, fuel, a, float(t)).flow
                         for z, t in enumerate(t_gas)])  # fmt: skip
+        out = out * np.array([group.get(z, 1.0) for z in range(len(t_gas))])
+        room = a * p.h_air(p.t_air)
         into = np.concatenate([[0.0], out[:-1]])
-        into[e] += a * p.h_air(p.t_air)
-        into[b] += fuel * p.fuel_enthalpy
+        into[e] += room
+        if group:  # the path's first zones (`ZoneModel`), a chamber always after them
+            n = len(group)
+            into[:n] = [s * room for _, s in self.m.fires]
+            into[n] = float(out[:n].sum())
+        if lit:
+            into[: len(group)] += [s * fuel * p.fuel_enthalpy for _, s in self.m.fires]
+        else:
+            into[b] += fuel * p.fuel_enthalpy
         return into - out
 
     def drawn(self, path: Path, t_gas: Vector, fuel: float) -> float:
