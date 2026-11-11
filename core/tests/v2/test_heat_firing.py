@@ -15,11 +15,13 @@ import pytest
 import yaml
 
 from kilndesigner.designfile import load_design
+from kilndesigner.library import Material, material
 from kilndesigner.model import Kiln
 from kilndesigner.model import Layer as DesignLayer
 from kilndesigner.units import Q_
 from kilndesigner.v2.heat import air as air_mod
 from kilndesigner.v2.heat import firing as fi
+from kilndesigner.v2.heat import gas
 from kilndesigner.v2.heat import kiln as hk
 from kilndesigner.v2.heat.zone import ACC, Balance, ZoneModel
 
@@ -146,7 +148,7 @@ def test_other_grey_gases() -> None:
         assert name in step.value
 
 
-def test_what_the_heat_model_refuses() -> None:
+def test_what_the_heat_model_refuses(monkeypatch: pytest.MonkeyPatch) -> None:
     ff = load_design(OLSEN / "fast-fire.yaml")
     with pytest.raises(hk.NotModelledError, match="the wood's moisture"):
         hk.fuel_of(ff, None)
@@ -161,29 +163,39 @@ def test_what_the_heat_model_refuses() -> None:
     assert hk.fuel_of(singh, coal) is coal  # each kiln's own fuel (ADR 0017 decision 12)
     with pytest.raises(hk.NotModelledError, match="the design burns wood"):
         hk.fuel_of(ff, coal)
-    with pytest.raises(hk.NotModelledError, match="elements"):
-        hk.fuel_of(load_design(OLSEN / "electric-car-45.yaml"), None)
+    electric = load_design(OLSEN / "electric-car-45.yaml")
+    assert hk.fuel_of(electric, None) is gas.ELECTRIC  # its elements as face sources (C2)
     both = {"fuel": "natural_gas", "burners": {"rating": "36000 BTU/hr", "count": 2},
             "supply": {"type": "line", "pressure": "8 inch_H2O"}}  # fmt: skip
     with pytest.raises(hk.NotModelledError, match="one kind of heat"):
         hk.fuel_of(_design("fast-fire", {"heat.gas": both}), None)
+    hybrid = _design("electric-car-45", {"heat.gas": both})
+    with pytest.raises(hk.NotModelledError, match="hybrid"):
+        hk.fuel_of(hybrid, None)
     propane = _design("olsen-crossdraft-36", {"heat.gas.fuel": "propane"})
     assert hk.fuel_of(propane, None).name == "propane"
     outside = replace(hc.FAST_FIRE_LOAD, hi=(9 * IN, 12.5 * IN, 40 * IN))
     with pytest.raises(hk.NotModelledError, match="inside its chamber"):
         hk.heat_model(ff, outside, 1.0, hc.WOOD, n_rays=1_000)
     with pytest.raises(hk.NotModelledError, match="no hot-face emissivity"):
-        hk._emissivity("kaowool-blanket-8pcf")  # pyright: ignore[reportPrivateUsage]
-    cast = DesignLayer(material="kast-o-lite-26-li-plus", thickness=Q_(2, "in"))
+        hk._emissivity("calcium-silicate-promasil-1100")  # pyright: ignore[reportPrivateUsage]
+    # Every library material has a c_p now (a castable the class value, C2): a board without one
+    board = DesignLayer(material="calcium-silicate-promasil-1100", thickness=Q_(2, "in"))
+
+    def no_cp(mid: str) -> Material:
+        return material(mid).model_copy(update={"specific_heat": None})
+
+    monkeypatch.setattr(hk, "material", no_cp)
     with pytest.raises(hk.NotModelledError, match="no specific heat"):
-        hk._layer(cast)  # pyright: ignore[reportPrivateUsage]
-    given = cast.model_copy(update={"specific_heat": Q_(1.0, "kJ/(kg*K)")})
+        hk._layer(board)  # pyright: ignore[reportPrivateUsage]
+    given = board.model_copy(update={"specific_heat": Q_(1.0, "kJ/(kg*K)")})
     assert hk._layer(given).heat_capacity.cp(np.array([800.0]))[0] == pytest.approx(1000.0)  # pyright: ignore[reportPrivateUsage]
+    monkeypatch.undo()
     no_rating = _design("olsen-crossdraft-36", {"heat.gas.burners.rating": None})
     assert hk.rated_fuel(no_rating, hk.fuel_of(no_rating, None)) is None
-    round_ = load_design(OLSEN / "kenzan-muffle.yaml")
-    with pytest.raises(hk.NotModelledError, match="box chambers only"):
-        hk.heat_model(round_, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=1_000)
+    round_ = load_design(OLSEN / "kenzan-muffle.yaml")  # a round chamber is taken (C2), but the
+    with pytest.raises(hk.NotModelledError, match="inside its chamber"):  # fast-fire's box pokes
+        hk.heat_model(round_, hc.FAST_FIRE_LOAD, 1.0, hc.WOOD, n_rays=1_000)  # out of it
 
 
 def test_the_whole_path_closes_and_cools_along_it() -> None:

@@ -94,14 +94,53 @@ SHELL_REFERENCE = "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]
 
 # Hot-face emissivity lines ε₀ = a + 10⁻⁵·b·T (T in K), radiation-exchange.md §5, and the
 # hemispherical share of the normal value for insulators, 0.95–1.0 (Jones et al. [R6] Fig. 6)
-EMISSIVITY_LINES = {
+type LineData = (
+    tuple[float, float, tuple[float, float], str]
+    | tuple[float, float, tuple[float, float], str, float]
+)
+EMISSIVITY_LINES: dict[str, LineData] = {
     # Osborn 1985 via IFRF CF148 [R5] and Jones et al. [R6]: fire brick, 673–1673 K
     "dense-medium": (0.84, -20.0, (673.0, 1673.0), "Osborn 1985: fire brick, medium Al2O3"),
     "dense-low": (0.90, -10.0, (673.0, 1673.0), "Osborn 1985: fire brick, low Al2O3"),
     # Hampartsoumian 1990 via Jones et al. [R6] Table A2: Morgan MPK lightweight refractories
     "ifb-mpk125": (0.53, 8.0, (1063.0, 1350.0), "Hampartsoumian 1990: MPK 125"),
     "ifb-mpk140": (0.21, 25.3, (1073.0, 1350.0), "Hampartsoumian 1990: MPK 140"),
+    # Fletcher and Williams 1984 via Jones et al. [R6]: fibre board, 45 % Al2O3, its fibres normal
+    # to the face (a folded module's hot face) or parallel to it (a laid blanket's), 600–1400 K,
+    # ε₀ = a + 10⁻⁵·b·T + 10⁻⁸·c·T² (radiation-exchange.md §5.3)
+    "fibre-normal": (
+        1.27,
+        -48.5,
+        (600.0, 1400.0),
+        "Fletcher and Williams 1984: fibre board, fibres normal to the face",
+        2.84,
+    ),
+    "fibre-parallel": (
+        1.47,
+        -91.1,
+        (600.0, 1400.0),
+        "Fletcher and Williams 1984: fibre board, fibres parallel to the face",
+        14.4,
+    ),
 }
+# An aluminosilicate castable's specific heat where its maker gives none: the VDI class value the
+# library holds for Kast-O-Lite 30 LI Plus (sillimanite; high-duty fireclay, mullite and VDI's
+# lightweight L1540 within 2 % of it at every temperature: castables.md §14.3), per unit mass, so
+# the same for an insulating or a dense castable of the class
+CASTABLE_CP_FROM = "kast-o-lite-30-li-plus"
+CASTABLE_CP_NOTE = (
+    "an aluminosilicate castable with no maker's specific heat takes the VDI class value "
+    "(sillimanite; fireclay to mullite within 2 %), castables.md §14.3"
+)
+# No castable's hot-face emissivity is measured (radiation-exchange.md §4): an insulating
+# castable's is carried as the band from the lightweight refractories' (MPK 140, MPK 125) to the
+# dense fire brick's low-alumina line, its nominal the IFB's MPK 125; a dense castable as dense
+# fire brick
+CASTABLE_EMISSIVITY_NOTE = (
+    "a castable's hot face takes a stated band (no castable measured, radiation-exchange.md §4): "
+    "an insulating castable from MPK 140 to low-alumina fire brick, nominal MPK 125; a dense one "
+    "as dense fire brick"
+)
 HEMISPHERICAL = Sourced(
     0.95,
     "Jones, Mason & Williams 2019 [R6] Fig. 6: an insulator's hemispherical emissivity is 0.95–1.0 "

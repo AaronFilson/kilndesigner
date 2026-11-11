@@ -89,8 +89,9 @@ TURBULENT_RE = 2300.0  # Gnielinski's range starts here (Lienhard eq. 7.41)
 
 @dataclass(frozen=True)
 class Line:
-    """A hot-face emissivity line, ε = f·(a + 10⁻⁵·b·T), extrapolated past its measured range
-    (the user's decision for refractories, radiation-exchange.md §5.5) and kept in 0.05–1."""
+    """A hot-face emissivity line, ε = f·(a + 10⁻⁵·b·T + 10⁻⁸·c·T²), extrapolated past its
+    measured range (the user's decision for refractories, radiation-exchange.md §5.5) and kept in
+    0.05–1."""
 
     name: str
     a: float
@@ -98,15 +99,18 @@ class Line:
     measured: tuple[float, float]
     reference: str
     factor: float = src.HEMISPHERICAL.value
+    c: float = 0.0
 
     def __call__(self, t: Vector) -> Vector:
-        return np.clip(self.factor * (self.a + 1e-5 * self.b * t), 0.05, 1.0)
+        return np.clip(self.factor * (self.a + 1e-5 * self.b * t + 1e-8 * self.c * t * t), 0.05,
+                       1.0)  # fmt: skip
 
 
 def line(key: str, factor: float = src.HEMISPHERICAL.value) -> Line:
     """A sourced hot-face line, at a hemispherical share of the normal value (0.95–1.0)."""
-    a, b, measured, ref = src.EMISSIVITY_LINES[key]
-    return Line(key, a, b, measured, f"{ref} (radiation-exchange.md §5)", factor)
+    a, b, measured, ref, *c = src.EMISSIVITY_LINES[key]
+    return Line(key, a, b, measured, f"{ref} (radiation-exchange.md §5)", factor,
+                c[0] if c else 0.0)  # fmt: skip
 
 
 @dataclass(frozen=True)
@@ -180,10 +184,61 @@ class Gas:
     flow: Flow
 
 
+ELEMENTS_NOTE = (
+    "elements as face sources (ADR 0017 H11): their power enters the hot faces of the walls they "
+    "line, shared by area; at the supply's fixed voltage it falls as the wire's resistance rises, "
+    "P(T) = P_design·Ct(T_design)/Ct(T) with Kanthal's temperature factor (the library's alloy), "
+    "the wire at its faces' hot-face temperature (Ct changes under 1 % over the 100 K a wire runs "
+    "above the kiln: v1's electric.WIRE_ABOVE_KILN); the coils' own emissivity and the vent's air "
+    "aren't modelled"
+)
+
+
+@dataclass(frozen=True)
+class Elements:
+    """Electric elements as face sources: each lined face (its index in the model's faces) and
+    its share of the power (by area); the power (W) at the design's wire temperature (K) and
+    Kanthal's Ct table ((K, factor) rows); the supply; the wire (diameter m, length m of each
+    element, the count) where known, for its surface load."""
+
+    faces: tuple[tuple[int, float], ...]
+    power: float
+    design: float
+    ct: tuple[tuple[float, float], ...]
+    voltage: float
+    phases: int = 1
+    wire: tuple[float, float, int] | None = None
+    reference: str = ""
+
+    def factor(self, t: float) -> float:
+        """Kanthal's Ct at a wire temperature (K), linear between the table's rows, held past
+        its ends."""
+        ts, cs = zip(*self.ct, strict=True)
+        return float(np.interp(t, ts, cs))
+
+    def most(self, t_wire: float) -> float:
+        """The elements' power (W) with the wire at ``t_wire``: V²/R(T) at the fixed voltage."""
+        return self.power * self.factor(self.design) / self.factor(t_wire)
+
+    @property
+    def current(self) -> float:
+        """The line current at the design's power (A): P/V, or P/(√3·V) on three phases."""
+        return self.power / ((3**0.5 if self.phases == 3 else 1.0) * self.voltage)
+
+    @property
+    def surface_load(self) -> float | None:
+        """W per m² of wire surface at the design's power, where the wire is known."""
+        if self.wire is None:
+            return None
+        d, length, n = self.wire
+        return self.power / (n * np.pi * d * length)
+
+
 @dataclass(frozen=True)
 class ZoneModel:
     """Everything the DAE needs, in the exchange's surface order; the gas zones in the gas's
-    order along the path, the fuel burning in zone ``burns``."""
+    order along the path, the fuel burning in zone ``burns``; or electric elements as face
+    sources (``elements``: the "fuel" is their power, W, and no stream passes)."""
 
     products: Products
     exchange: GasExchange | ZonesExchange
@@ -200,6 +255,7 @@ class ZoneModel:
     path_zones: tuple[tuple[str, int], ...] = ()
     burns: int = 0
     bed: float | None = None  # the most dry fuel the grates burn (kg/s); None: the air alone
+    elements: Elements | None = None
 
     def __post_init__(self) -> None:
         if not self.settings:
@@ -383,6 +439,15 @@ class Balance:
         self.path_zone = dict(model.path_zones)
         self.stoked = model.products.fuel.kind in ("wood", "coal")  # oil drips at a set rate
         self._drawn: dict[tuple[float | bool, ...], float] = {}
+        el = model.elements
+        self.sources = np.zeros(len(model.faces))  # each face's share of the elements' power
+        for k, share in el.faces if el is not None else ():
+            self.sources[k] = share
+
+    def wire(self, y: Vector) -> float:
+        """The elements' wire temperature (K): their faces' hot faces, by their shares."""
+        hot = np.array([y[h] for h, _, _ in self.lay.walls])
+        return float(np.dot(self.sources, hot) / max(self.sources.sum(), 1e-12))
 
     def air_used(self, fuel: float, air: float | None) -> float:
         """The air the stream carries (kg/s): the products' own at their λ unless given, and at
@@ -445,6 +510,8 @@ class Balance:
         """[H_in − H_out] in each zone (W): the air before the burning zone, the products from it
         with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`)."""
         p, b = self.m.products, self.m.burns
+        if self.m.elements is not None:  # no stream: the elements' heat enters their faces
+            return np.zeros(len(t_gas))
         a = self.air_used(fuel, air)
         out = np.array([a * p.h_air(float(t)) if z < b else burnt(p, fuel, a, float(t)).flow
                         for z, t in enumerate(t_gas)])  # fmt: skip
@@ -511,11 +578,12 @@ class Balance:
         lay, m = self.lay, self.m
         s = self.state(y, t_gas, fuel, air)
         res[list(lay.gases)] = (s.released - s.out) / 1e3
+        power = fuel if m.elements is not None else 0.0  # W: the elements' "fuel" is their power
         for k, f in enumerate(m.faces):
             hot, c0, out = lay.walls[k]
             cells = y[c0:out]
             q = f.wall.flows(y[hot], cells, y[out])
-            res[hot] = (s.q_walls[k] - q[0]) / 1e3
+            res[hot] = (s.q_walls[k] + power * self.sources[k] - q[0]) / 1e3
             res[c0:out] = f.wall.capacity(cells) * yp[c0:out] - (q[:-1] - q[1:])
             if f.back:
                 res[out] = (q[-1] + s.q_backs[k]) / 1e3
@@ -539,10 +607,10 @@ class Balance:
             res[lay.air] = self.draft_residual(t_gas, fuel, float(y[lay.air])) / AIR_SCALE
         a = lay.acc
         net = m.products.net_heat
-        walls = s.q_walls.sum() + s.q_backs.sum()
-        res[a] = yp[a] - fuel
+        walls = s.q_walls.sum() + s.q_backs.sum() + power  # the elements' heat goes in a wall
+        res[a] = yp[a] - (fuel if m.elements is None else 0.0)
         res[a + 1] = yp[a + 1] - fuel * net / 1e6
-        res[a + 2] = yp[a + 2] - (fuel * net - float(s.released.sum())) / 1e6
+        res[a + 2] = yp[a + 2] - (fuel * net - power - float(s.released.sum())) / 1e6
         res[a + 3] = yp[a + 3] - float(walls) / 1e6
         res[a + 4] = yp[a + 4] - float(s.q_settings.sum()) / 1e6
         res[a + 5] = yp[a + 5] - s.q_openings / 1e6

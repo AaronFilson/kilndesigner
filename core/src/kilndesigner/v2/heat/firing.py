@@ -32,7 +32,7 @@ from sksundae.ida import IDA  # pyright: ignore[reportMissingTypeStubs]
 
 from kilndesigner.v2.heat.air import COAL_BED_REFERENCE, MIXING_NOTE, REDUCTION, WOOD_BED_NOTE
 from kilndesigner.v2.heat.gas import T_MAX, T_MIN
-from kilndesigner.v2.heat.zone import FUEL_SCALE, Balance, Layout, State, ZoneModel
+from kilndesigner.v2.heat.zone import ELEMENTS_NOTE, FUEL_SCALE, Balance, Layout, State, ZoneModel
 from kilndesigner.working import Step
 
 type Vector = NDArray[np.float64]
@@ -217,6 +217,14 @@ def _rows(
     """The mode's rows; ``now`` gives the time and the start of the piece being integrated."""
     lay = bal.lay
     alg = lay.algebraic
+    el = model.elements
+    if isinstance(mode, MaxFire) and el is not None:  # the elements full on: V²/R at the wire's T
+
+        def power_max(s: State, cap: float) -> float:
+            v = y()
+            return (v[lay.fuel] - el.most(bal.wire(v))) / 1e3
+
+        return _Rows(power_max, None, alg)
     if isinstance(mode, MaxFire):
         if lay.air < 0:
             raise FiringError("max fire needs the kiln's draft, and its path couldn't be built")
@@ -424,7 +432,7 @@ def _record(
         )
     smooth = np.full(len(t), math.nan)
     p = model.products
-    lam = np.full(len(t), p.air_ratio)
+    lam = np.full(len(t), p.air_ratio if model.elements is None else math.nan)
     if lay.air >= 0:
         share = fuel * p.air / np.maximum(y[:, lay.air], 1e-12)
         lam = p.air_ratio / np.maximum(share, 1e-12)
@@ -541,7 +549,28 @@ def _working(model: ZoneModel, mode: Mode, f: Firing) -> tuple[Step, ...]:
             if model.path is not None
             else "not worked out: the kiln's draft path isn't built",
         ),
-        _lam_step(model, mode, f),
+        _lam_step(model, mode, f) if model.elements is None else _elements_step(model, mode, f),
+    )
+
+
+def _elements_step(model: ZoneModel, mode: Mode, f: Firing) -> Step:
+    """The elements through the firing: their power, the most they give at the wire's
+    temperature, the supply and the wire's surface load."""
+    el = model.elements
+    assert el is not None
+    how = {MaxFire: "full on", FixedInput: "at a fixed power", Schedule: "as the schedule takes"}
+    load = el.surface_load
+    return Step(
+        name="The elements",
+        value=f"{f.fuel_rate.min() / 1e3:.2f}–{f.fuel_rate.max() / 1e3:.2f} kW, {how[type(mode)]}",
+        inputs={
+            "design": f"{el.power / 1e3:.2f} kW at {el.design - 273.15:.0f} °C (Ct "
+            f"{el.factor(el.design):.3f}); cold {el.most(293.15) / 1e3:.2f} kW",
+            "supply": f"{el.voltage:.0f} V, {el.phases} phase, {el.current:.1f} A",
+            "surface load": f"{load * 0.0254**2:.2f} W/in²" if load is not None else "no wire",
+        },
+        reference=el.reference or None,
+        note=ELEMENTS_NOTE,
     )
 
 
