@@ -179,7 +179,12 @@ resolve).
 Gutenberg #6435, <https://www.gutenberg.org/cache/epub/6435/pg6435.txt> (Read through the fetch
 tool): "it was found that a first-class man would do his biggest day's work with a shovel load of
 about 21 pounds"; shovels were issued to "hold a load of 21 pounds of whatever class of material
-they were to handle", "a small shovel for ore, say, or a large one for ashes".
+they were to handle", "a small shovel for ore, say, or a large one for ashes". Before that, one
+man's own shovel: "he would frequently go from shoveling ore, with a load of about 30 pounds per
+shovel, to handling rice coal, with a load on the same shovel of less than 4 pounds" (read through
+the fetch tool, 2026-11-10, part C3a). So a shovelful of coal runs from under 4 lb (rice coal, the
+finest size, on a shovel that took 30 lb of ore) to the 21 lb a shovel sized to its material holds:
+C3a carries **4–21 lb** as the coal shovel's stated band (§4; the owner's question 2 below stays open).
 
 ## 2. Wood
 
@@ -247,8 +252,9 @@ oak and birch (medians 48.0). Pettersen stays unread; [F1] is now the source for
   kilns, generally. Carried as the generic coal of [F3] and [F2]: net 27.9 MJ/kg dry, ash 14 % dry,
   C 68–78 %, H 3.5–5.6 %, O 11 %, N 0.8–1.5 %, S < 0.5–0.94 %. Said in the working as generic.
 - **The shovelful**: [F8]'s 21 lb (9.5 kg) is a shoveler's best sustained load, with shovels sized
-  to hold it whatever the material; neither kiln's shovel is described. A single sourced point:
-  its band is the owner's question (§6).
+  to hold it whatever the material; neither kiln's shovel is described. [F8] also gives one man's
+  own shovel taking under 4 lb of rice coal (and about 30 lb of ore): C3a carries 4–21 lb (1.8–9.5
+  kg) as a stated band, its ends [F8]'s (the owner's question, §6, stays open).
 
 ## 5. Each kiln's fuel
 

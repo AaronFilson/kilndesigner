@@ -300,8 +300,6 @@ def fire(
     y[list(lay.gases)] = [600.0 if z < b else max(1800.0 - 300.0 * (z - b), 900.0)
                           for z in range(len(lay.gases))]  # fmt: skip
     y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else 0.005
-    if lay.air >= 0:
-        y[lay.air] = 0.05
     y[lay.acc :] = 0.0
     if isinstance(mode, Schedule):
         if mode.held == "gas":
@@ -312,6 +310,10 @@ def fire(
     if start is not None:
         y = np.asarray(start, dtype=float).copy()
         y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else y[lay.fuel]
+    # At max fire, the draft's air with every zone at each of START_GAS in turn, and the fuel it
+    # burns: on the fire's side of the cold kiln's root (no draft, no air, no fire)
+    guesses = [_start_air(model, lay, y, t) for t in START_GAS] if lay.air >= 0 else [y]
+    y = guesses[0]
     current: dict[str, Any] = {"y": y, "t": 0.0, "start": 0.0}
     rows = _rows(mode, model, bal, lambda: current["y"], lambda: (current["t"], current["start"]))
 
@@ -328,7 +330,8 @@ def fire(
     sp = bal.sparsity()
     for t0, t1 in itertools.pairwise(breaks):
         current["start"] = t0
-        y = _consistent(resfn, y, rows.algebraic, t0, lay.size)
+        others = guesses[1:] if t0 == breaks[0] else ()
+        y = _consistent(resfn, y, rows.algebraic, t0, lay.size, others)
         pending = [m for m in marks if m not in events]
         opts: dict[str, Any] = {
             "algebraic_idx": rows.algebraic, "calc_initcond": "yp0", "rtol": rtol,
@@ -359,6 +362,24 @@ def fire(
     return _record(model, bal, mode, t_all, y_all, events, completed, message)
 
 
+START_GAS = (900.0, 1500.0, 600.0)  # K: the gas in every zone for a max fire's air, in turn
+
+
+def _start_air(model: ZoneModel, lay: Layout, y: Vector, t_gas: float) -> Vector:
+    """A max fire's start guess: ``y`` with the air the draft draws with every zone's gas at
+    ``t_gas`` (`draft.draw`) and the fuel that air burns. A big kiln's cold root (no draft, no
+    air, no fire) lies near a small fixed guess; where the first guess doesn't converge to a
+    consistent state, the next is tried (`_consistent`)."""
+    from kilndesigner.v2.heat.draft import draw
+
+    assert model.path is not None
+    temps = dict.fromkeys(("firebox", "chamber", "chimney", *model.path.zones), t_gas)
+    out = y.copy()
+    out[lay.air] = draw(model.path, temps, model.products).air
+    out[lay.fuel] = out[lay.air] / model.products.air
+    return out
+
+
 def _events(pending: list[tuple[int, float]], where: list[int], stop: Any) -> Any:
     """IDA's events: each setting rising through its targets, the stop target terminal."""
 
@@ -387,25 +408,30 @@ def _consistent(
     alg: list[int],
     t: float,
     size: int,
+    others: Sequence[Vector] = (),
 ) -> Vector:
-    """The algebraic unknowns solved with everything else held (IDA then finds y′)."""
+    """The algebraic unknowns solved with everything else held (IDA then finds y′), from ``y``,
+    else from each of ``others`` in turn."""
     res = np.zeros(size)
     yp = np.zeros(size)
+    message = ""
+    for guess in (y, *others):
 
-    def part(x: Vector) -> Vector:
-        yy = y.copy()
-        yy[alg] = x
-        resfn(t, yy, yp, res)
-        return res[alg].copy()
+        def part(x: Vector, g: Vector = guess) -> Vector:
+            yy = g.copy()
+            yy[alg] = x
+            resfn(t, yy, yp, res)
+            return res[alg].copy()
 
-    sol = root(part, y[alg], method="hybr")
-    if np.abs(part(sol.x)).max() > START_TOL:
-        sol = root(part, y[alg], method="lm")  # Levenberg–Marquardt, slower and surer
-    if np.abs(part(sol.x)).max() > START_TOL:  # a least-squares minimum isn't a start
-        raise FiringError(f"no consistent start at {t / 3600:.2f} h: {sol.message}")
-    out = y.copy()
-    out[alg] = sol.x
-    return out
+        sol = root(part, guess[alg], method="hybr")
+        if np.abs(part(sol.x)).max() > START_TOL:
+            sol = root(part, guess[alg], method="lm")  # Levenberg–Marquardt, slower and surer
+        if np.abs(part(sol.x)).max() <= START_TOL:  # a least-squares minimum isn't a start
+            out = guess.copy()
+            out[alg] = sol.x
+            return out
+        message = str(sol.message)
+    raise FiringError(f"no consistent start at {t / 3600:.2f} h: {message}")
 
 
 def _record(

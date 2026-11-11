@@ -256,10 +256,16 @@ class ZoneModel:
     burns: int = 0
     bed: float | None = None  # the most dry fuel the grates burn (kg/s); None: the air alone
     elements: Elements | None = None
+    # Firebox zones side by side, each (zone, its share of the stream), the first zones of the
+    # path: the stream splits among them by their shares, the fuel too where it burns in them
+    fires: tuple[tuple[int, float], ...] = ()
 
     def __post_init__(self) -> None:
         if not self.settings:
             raise ValueError("no heat result without a load (ADR 0017 decision 11)")
+        if self.fires and ([k for k, _ in self.fires] != list(range(len(self.fires)))
+                           or abs(sum(s for _, s in self.fires) - 1.0) > 1e-9):  # fmt: skip
+            raise ValueError("firebox zones side by side are the path's first, their shares one")
         named = (
             {f.name for f in self.faces} | {f.back for f in self.faces if f.back}
             | {o.name for o in self.openings} | {s.name for s in self.settings}
@@ -508,15 +514,30 @@ class Balance:
 
     def released(self, t_gas: Vector, fuel: float, air: float | None = None) -> Vector:
         """[H_in − H_out] in each zone (W): the air before the burning zone, the products from it
-        with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`)."""
+        with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`).
+        Firebox zones side by side (`ZoneModel.fires`) each take their share of the room's air,
+        and of the fuel where it burns in them, at the stream's λ (`air.burnt` is linear in the
+        two together), and the next zone takes what they give out together."""
         p, b = self.m.products, self.m.burns
         if self.m.elements is not None:  # no stream: the elements' heat enters their faces
             return np.zeros(len(t_gas))
         a = self.air_used(fuel, air)
-        out = np.array([a * p.h_air(float(t)) if z < b else burnt(p, fuel, a, float(t)).flow
+        group = dict(self.m.fires)
+        lit = b in group  # the fuel burns in the firebox zones side by side
+        out = np.array([a * p.h_air(float(t)) if z < b and not lit
+                        else burnt(p, fuel, a, float(t)).flow
                         for z, t in enumerate(t_gas)])  # fmt: skip
-        into = np.concatenate([[a * p.h_air(p.t_air)], out[:-1]])
-        into[b] += fuel * p.fuel_enthalpy
+        out = out * np.array([group.get(z, 1.0) for z in range(len(t_gas))])
+        room = a * p.h_air(p.t_air)
+        into = np.concatenate([[room], out[:-1]])
+        if group:  # the path's first zones (`ZoneModel`), a chamber always after them
+            n = len(group)
+            into[:n] = [s * room for _, s in self.m.fires]
+            into[n] = float(out[:n].sum())
+        if lit:
+            into[: len(group)] += [s * fuel * p.fuel_enthalpy for _, s in self.m.fires]
+        else:
+            into[b] += fuel * p.fuel_enthalpy
         return into - out
 
     def drawn(self, path: Path, t_gas: Vector, fuel: float) -> float:

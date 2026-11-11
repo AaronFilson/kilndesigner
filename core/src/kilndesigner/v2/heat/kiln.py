@@ -12,7 +12,7 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
 
@@ -337,8 +337,9 @@ def heat_model(
         liner = tuple(chimney) == flue_liner()
         notes.append(FLUE_LINER_NOTE if liner else "the chimney's walls: given")
     fire_zone = kinds.index("firebox") if "firebox" in kinds else rooms[0]
+    fires = fire_shares(kiln, c)
     openings = _openings(c, rooms[0])
-    gases = _gases(kiln, c, loads, rooms)
+    gases = _gases(kiln, c, loads, rooms, fires)
     table, draft_path = None, None
     try:
         draft_path = dr.kiln_path(kiln, grate_bar=grate_bar, intake=intake, inputs=path_inputs,
@@ -382,7 +383,9 @@ def heat_model(
         ),
         Step(name="The gas zones", value=", ".join(f"{g.name} {g.volume * 1e3:.0f} L"
                                                    for g in c.gas),
-             note=f"the fuel burns in the {c.gas[fire_zone].name}" if many else None),
+             inputs={c.gas[k].name: f"{s:.0%} of the fuel and its air" for k, s in fires},
+             note=(SHARES_NOTE if fires else f"the fuel burns in the {c.gas[fire_zone].name}")
+             if many else None),
         Step(
             name="Convection inside",
             value=CONVECTION,
@@ -397,7 +400,7 @@ def heat_model(
     )  # fmt: skip
     return ZoneModel(
         prod, exchange, traced.names, tuple(faces), tuple(settings), tuple(openings), gases,
-        t_room, table, steps, soil, draft_path, path_zones, fire_zone, bed, elements,
+        t_room, table, steps, soil, draft_path, path_zones, fire_zone, bed, elements, fires,
     )  # fmt: skip
 
 
@@ -525,7 +528,11 @@ def _faces(
     fire = kiln.heat.fire
     under = fire is not None and any(b.position == "under" for b in fire.fireboxes)
     on_ground = (kiln.chamber.on_ground or kiln.chamber.foundation is not None) and not under
-    zoned = "firebox roof" in traced.names
+    # The floor's underside where fireboxes under it are a zone (its back); a wall firebox's
+    # roof is a wall of its own
+    roofs = [n for n in traced.names if ch.fire_part(n)[0] == "firebox roof"]
+    under_roof = next((n for n in roofs if c.built[n][0] == "floor"), None)
+    boxes = _fire_boxes(kiln, c)
     faces: list[Face] = []
     notes: list[str] = []
     soil: Ground | None = None
@@ -540,9 +547,10 @@ def _faces(
     if shaped:
         notes.append(SHAPED_NOTE)
     for name in traced.names:
-        if name not in c.built or name == "firebox roof":
+        if name not in c.built or name == under_roof:
             continue
         built, zone = c.built[name]
+        own = boxes[zone][0].box if zone in boxes else None  # a firebox zone's own firebox
         face, _, tag = name.rpartition(" ")
         if not tag.isdigit():
             face, tag = name, ""
@@ -563,7 +571,7 @@ def _faces(
                 sides = _own_sides(c, name)
             a_out = grown(a_in, sides, t)
         else:
-            a_out = a_in * _duct_growth(kiln, c, built, t)
+            a_out = a_in * _duct_growth(kiln, c, built, t, own)
         if built == "between" and face == "back":
             back = f"front {int(tag) + 1}"
             back_zone = c.built[back][1]
@@ -572,9 +580,9 @@ def _faces(
             outside = Outside("adiabatic", None, t_room)
         elif built == "between":
             outside = Outside("adiabatic", None, t_room)  # the flue holes' sides, in that wall
-        elif face == "floor" and under and zoned:
-            back, back_zone = "firebox roof", c.built["firebox roof"][1]
-            a_out = area["firebox roof"]
+        elif face == "floor" and under and under_roof is not None:
+            back, back_zone = under_roof, c.built[under_roof][1]
+            a_out = area[under_roof]
             back_line = _emissivity(layers[-1].name, cls)
             outside = Outside("adiabatic", None, t_room)
         elif face == "floor" and under:
@@ -593,16 +601,19 @@ def _faces(
                 f"{a_out:.2f} m² ({soil.nodes} nodes), the soil round it adiabatic, the far sides "
                 "at the room's temperature"
             )
-        elif name in ("inlet flues", "exit flue"):
+        elif ch.fire_part(name)[0] == "inlet flues" or name == "exit flue":
             outside = Outside("adiabatic", None, t_room)
-            notes.append(f"the {name}' sides: their brick's far side adiabatic (a channel "
-                         "through a wall stores heat, its loss is the wall's)")  # fmt: skip
+            what = "exit flue" if name == "exit flue" else "inlet flues"
+            said = (f"the {what}' sides: their brick's far side adiabatic (a channel through a "
+                    "wall stores heat, its loss is the wall's)")  # fmt: skip
+            if said not in notes:
+                notes.append(said)
         elif face in shaped:
             f0 = shaped[face][0]
             surface = StillAirSurface(f0.orientation, f0.characteristic_length(t), shell)
             outside = Outside("air", surface, t_room)
         else:
-            outside = Outside("air", _surface(kiln, c, face, built, t, shell, rise), t_room)
+            outside = Outside("air", _surface(kiln, c, face, built, t, shell, rise, own), t_room)
         wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
         faces.append(Face(name, wall, _emissivity(layers[0].name, cls), zone, back, back_zone,
                           back_line))  # fmt: skip
@@ -646,9 +657,10 @@ def _grows(faces: list[FaceShape], t: float) -> float:
     return sum(f.area_at(t) for f in faces) / sum(f.inside_area for f in faces)
 
 
-def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float) -> float:
+def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float, own: Any = None) -> float:
     """A firebox's or a chimney's walls round their box: the outside perimeter over the inside's
-    (Derived: each wall's outside grows by the thickness on each edge, as a box chamber's)."""
+    (Derived: each wall's outside grows by the thickness on each edge, as a box chamber's); a
+    firebox zone's own firebox where given (``own``), else the design's first."""
     if built == "chimney" and kiln.draft is not None and kiln.draft.chimney is not None:
         inside = kiln.draft.chimney.inside
         assert inside is not None  # the chimney zone is built only from its given section
@@ -660,22 +672,30 @@ def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float) -> float:
         return (a + b + 4 * t) / (a + b)  # a round one's circumference grows as (d + 2t)/d
     fire = kiln.heat.fire
     if built == "firebox" and fire is not None:
-        fb = fire.fireboxes[0]
+        fb = own if own is not None else fire.fireboxes[0]
         a, b = si(fb.width, "m"), si(fb.length, "m")
         return (a + b + 4 * t) / (a + b)
     return 1.0
 
 
 def _surface(
-    kiln: Kiln, c: ch.Chamber, face: str, built: str, t: float, shell: float, rise: float
+    kiln: Kiln,
+    c: ch.Chamber,
+    face: str,
+    built: str,
+    t: float,
+    shell: float,
+    rise: float,
+    own: Any = None,
 ) -> StillAirSurface:
-    """The still air outside a wall: v1's surfaces at the wall's own size."""
+    """The still air outside a wall: v1's surfaces at the wall's own size (a firebox zone's own
+    firebox's where given)."""
     if built == "chimney" and kiln.draft is not None and kiln.draft.chimney is not None:
         return StillAirSurface("vertical", si(kiln.draft.chimney.height, "m"), shell)
     if built == "firebox":
         fire = kiln.heat.fire
         assert fire is not None
-        fb = fire.fireboxes[0]
+        fb = own if own is not None else fire.fireboxes[0]
         tall = si(fb.height, "m") if fb.height is not None else si(fb.width, "m")
         return StillAirSurface("vertical", tall, shell)
     sides = face_sides(face, c.width, c.depth, c.height, rise)
@@ -707,11 +727,68 @@ def _openings(c: ch.Chamber, first: int) -> list[Opening]:
     return out
 
 
-def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tuple[Gas, ...]:
-    """Each zone's convection's flow, as a duct: across a chamber (cross-draft: its width ×
-    height, along the setting's length; else its plan, down the setting's height), along a
-    firebox's channels, up the chimney; each section's hydraulic diameter, 2ab/(a + b)."""
+def _fire_boxes(kiln: Kiln, c: ch.Chamber) -> dict[int, list[Any]]:
+    """Each firebox zone's fireboxes as the engine lays them (`firebox_parts.firebox_boxes`, one
+    box a firebox), grouped by the side they stand on as `chamber._fires` groups them: the zone's
+    index → its boxes; troughs are their chamber's own fire, in no firebox zone."""
+    zones = {g.name: k for k, g in enumerate(c.gas) if g.kind == "firebox"}
+    if not zones:
+        return {}
+    from kilndesigner.firebox_parts import firebox_boxes
+
+    laid = [b for b in firebox_boxes(kiln) if not b.trough]
+    sides = {ch.SIDES[b.kiln_side] for b in laid}
+    out: dict[int, list[Any]] = {}
+    for b in laid:
+        side = ch.SIDES[b.kiln_side]
+        out.setdefault(zones["firebox" if len(sides) == 1 else f"firebox {side}"], []).append(b)
+    return out
+
+
+def _grate_area(fb: Any) -> float:
+    """A firebox's grate area (m²), or its hearth's where it is fired on its floor (no grate)."""
+    g = fb.grate
+    if g is not None:
+        return si(g.width, "m") * si(g.length, "m")
+    return si(fb.width, "m") * si(fb.length, "m")
+
+
+def fire_shares(kiln: Kiln, c: ch.Chamber) -> tuple[tuple[int, float], ...]:
+    """Each firebox zone's share of the fuel and of its air where several are zones (one on each
+    side the fireboxes stand): its grates' area over all the grates' (a firebox fired on its
+    floor, its hearth's), the design giving no other split; () for one firebox zone or none."""
+    by_zone = _fire_boxes(kiln, c)
+    if len(by_zone) < 2:
+        return ()
+    areas = {k: sum(_grate_area(b.box) for b in bs) for k, bs in by_zone.items()}
+    total = sum(areas.values())
+    return tuple((k, a / total) for k, a in sorted(areas.items()))
+
+
+SHARES_NOTE = (
+    "the fuel and its air split among the firebox zones by their grates' areas (a firebox fired on "
+    "its floor by its hearth's; the design gives no other split): each zone burns its share at "
+    "the stream's λ, the chamber takes their products together"
+)
+
+
+def _gases(
+    kiln: Kiln,
+    c: ch.Chamber,
+    loads: list[Load],
+    rooms: list[int],
+    fires: tuple[tuple[int, float], ...] = (),
+) -> tuple[Gas, ...]:
+    """Each zone's convection's flow, as a duct: across a chamber (cross-draft: its mean section,
+    the zone's volume over its length, along the setting's length; else its plan, down the
+    setting's height), along a firebox's channels, up the chimney; each section's hydraulic
+    diameter, 2ab/(a + b), a cross-draft's on its width and mean height; natural convection's
+    walls the springline's height, or the mean height under an arch from the floor. Where
+    several firebox zones share the stream (``fires``: each zone's share), each zone's section
+    over its share, so the stream's whole flow gives each its own velocity."""
     across = kiln.draft is not None and kiln.draft.type == "cross"
+    shares = dict(fires)
+    boxes = _fire_boxes(kiln, c) if shares else {}
     out: list[Gas] = []
     for k, g in enumerate(c.gas):
         if g.kind == "chamber":
@@ -730,17 +807,22 @@ def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tu
                 plan = cs.floor()
                 out.append(Gas(g.name, Flow(plan, x.hi[2] - x.lo[2], 4 * plan / cs.perimeter(),
                                             h)))  # fmt: skip
-            elif across:
-                out.append(Gas(g.name, Flow(w * h, x.hi[1] - x.lo[1], hydraulic(w, h), h)))
+            elif across:  # its mean section across the run, the zone's volume over its length:
+                # the arch or vault over the springline counted (one from the floor has no wall)
+                section = g.volume / d
+                tall = h if h > 0 else section / w
+                out.append(Gas(g.name, Flow(section, x.hi[1] - x.lo[1],
+                                            hydraulic(w, section / w), tall)))  # fmt: skip
             else:
-                out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2], hydraulic(w, d), h)))
+                tall = h if h > 0 else g.volume / (w * d)
+                out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2], hydraulic(w, d), tall)))
         elif g.kind == "firebox":
             fire = kiln.heat.fire
             assert fire is not None
-            fb = fire.fireboxes[0]
+            fb = boxes[k][0].box if k in shares else fire.fireboxes[0]
             fw, fl = si(fb.width, "m"), si(fb.length, "m")
             fh = si(fb.height, "m") if fb.height is not None else fw
-            n = sum(b.count for b in fire.fireboxes)
+            n = len(boxes[k]) / shares[k] if k in shares else sum(b.count for b in fire.fireboxes)
             out.append(Gas(g.name, Flow(fw * fh * n, fl, hydraulic(fw, fh), fh)))
         else:
             assert kiln.draft is not None

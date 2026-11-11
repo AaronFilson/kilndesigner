@@ -72,6 +72,15 @@ MID_HEIGHT = (
     "the gas taken across each cut between a tube's segments at the tube's mid-height (half the "
     "crown's height): an assumption, the well-stirred zones say nothing of where it crosses"
 )
+RULE_6 = (
+    "Olsen pp.79–80, Rule 6 (the chimney ¼ to ⅕ of the chamber's diameter, seldom under 9 × 9 in "
+    "at the base in natural draft)"
+)
+RULE_6_NOTE = (
+    "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band, the owner's "
+    "question 8 (C1, 11-10-26.md), open"
+)
+MIN_CHIMNEY = 9 * 0.0254  # m: "seldom under 9 x 9in" (p.80)
 TAPER_STEPS = 8  # a tapered chimney's friction summed over this many slices
 
 
@@ -147,7 +156,10 @@ class Inputs:
       chamber, the book's troughs (the owner's question 3), not side by side at the front;
     - ``updraft``: the dataset's draft where the design has none (the oil-drip kiln's);
     - ``stackless``: the dataset prints no stack (Tamba's end chamber, "open chimney holes and no
-      stack", p.88): the last chamber's exits open to the room through its roof.
+      stack", p.88): the last chamber's exits open to the room through its roof;
+    - ``rule6``: where nothing on the path is sized, seed p.78 with Olsen's Rule 6, the chimney's
+      side ⅕ to ¼ of the chamber's width and at least 9 in (pp.79–80), a band (the owner's question
+      8, C1: open, so it is asked for, and every path on it says so).
     """
 
     grate_bar: float | None = None
@@ -162,6 +174,7 @@ class Inputs:
     one_per_chamber: bool = False
     updraft: bool = False
     stackless: bool = False
+    rule6: bool = False
 
 
 def kiln_path(
@@ -1094,12 +1107,27 @@ class _Build:
         size = burner_port_in(kiln) if g is not None else None
         if g is not None and size is not None and g.burners.wanted is not None:
             return g.burners.wanted * _area(size[0] * IN, size[1] * IN, size[2]), "the burner ports"
+        if self.inputs.rule6:
+            return self.rule6()
         need = f"the {skip}" if skip else "the chimney's section"
         raise NotModelledError(
             f"{need}: not given, and p.78's rule (inlet = exit = chimney section) has nothing to "
             "size them by: no inlet, exit or between flues, burner ports or chimney section is "
             "given in the design or the dataset"
         )
+
+    def rule6(self) -> tuple[float, str]:
+        """Olsen's Rule 6 (pp.79–80) as p.78's anchor: the chimney's side ⅕ of the chamber's
+        width at the band's least-air end, ¼ at its most, neither under 9 in ("seldom under 9 x
+        9in"); its area the kiln's whole chimney section, shared among its chimneys. Said, with
+        the owner's question it rests on."""
+        lo, hi = max(self.width / 5, MIN_CHIMNEY), max(self.width / 4, MIN_CHIMNEY)
+        side = hi if self.most else lo
+        self.notes.append(
+            f"the chimney's section by {RULE_6} on the chamber's {self.width / IN:.0f} in width, "
+            f"{lo / IN:.1f}–{hi / IN:.1f} in square: it {RULE_6_NOTE}"
+        )
+        return side * side, f"Rule 6's chimney section ({RULE_6})"
 
     # --- the chimney -------------------------------------------------------------------------
 
