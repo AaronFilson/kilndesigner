@@ -182,9 +182,9 @@ about 21 pounds"; shovels were issued to "hold a load of 21 pounds of whatever c
 they were to handle", "a small shovel for ore, say, or a large one for ashes". Before that, one
 man's own shovel: "he would frequently go from shoveling ore, with a load of about 30 pounds per
 shovel, to handling rice coal, with a load on the same shovel of less than 4 pounds" (read through
-the fetch tool, 2026-11-10, part C3a). So a shovelful of coal runs from under 4 lb (rice coal, the
-finest size, on a shovel that took 30 lb of ore) to the 21 lb a shovel sized to its material holds:
-C3a carries **4–21 lb** as the coal shovel's stated band (§4; the owner's question 2 below stays open).
+the fetch tool, 2026-11-10, part C3a). So a shovelful of coal runs from under 4 lb (rice coal on a
+shovel that took 30 lb of ore) to the 21 lb a shovel sized to its material holds: C3a carries
+**4–21 lb** as the coal shovel's stated band (§4; the owner's question 2 below stays open).
 
 ## 2. Wood
 
