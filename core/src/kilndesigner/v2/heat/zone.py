@@ -237,8 +237,10 @@ class Elements:
 @dataclass(frozen=True)
 class ZoneModel:
     """Everything the DAE needs, in the exchange's surface order; the gas zones in the gas's
-    order along the path, the fuel burning in zone ``burns``; or electric elements as face
-    sources (``elements``: the "fuel" is their power, W, and no stream passes)."""
+    order along the path, the fuel burning in zone ``burns``, the stream entering at zone
+    ``enters`` (0: through the front; a staged firing's stoked zone with the fire mouth shut, its
+    air through that chamber's side holes, no stream through the zones before it); or electric
+    elements as face sources (``elements``: the "fuel" is their power, W, and no stream passes)."""
 
     products: Products
     exchange: GasExchange | ZonesExchange
@@ -256,6 +258,7 @@ class ZoneModel:
     burns: int = 0
     bed: float | None = None  # the most dry fuel the grates burn (kg/s); None: the air alone
     elements: Elements | None = None
+    enters: int = 0
 
     def __post_init__(self) -> None:
         if not self.settings:
@@ -465,13 +468,15 @@ class Balance:
         forced, speed = np.empty(self.g), np.empty(self.g)
         for z, gz in enumerate(self.m.gas):
             rho, mu, k, cp = p.props(min(max(float(t_gas[z]), 300.0), 3000.0))
-            speed[z] = m_gas / (rho * gz.flow.area)
+            speed[z] = m_gas / (rho * gz.flow.area) if z >= self.m.enters else 0.0  # still gas
             forced[z] = duct_h(rho, mu, k, cp, speed[z], gz.flow.duct, gz.flow.length)
         c = self.conv
         zones = self.zone_of[c]
         h = np.zeros(len(t))
         h[c] = np.maximum(forced[zones], natural_h(p, t_gas[zones], t[c], self.tall))
         for s, i in zip(self.m.settings, self.i_set, strict=True):
+            if s.zone < self.m.enters:  # no stream through its passages: Churchill–Chu's alone
+                continue
             rho, mu, k, cp = p.props(min(max(float(t_gas[s.zone]), 300.0), 3000.0))
             h[i] = max(h[i], passage_h(rho, mu, k, cp, float(speed[s.zone]), 2 * s.gap))
         return h
@@ -508,14 +513,17 @@ class Balance:
 
     def released(self, t_gas: Vector, fuel: float, air: float | None = None) -> Vector:
         """[H_in − H_out] in each zone (W): the air before the burning zone, the products from it
-        with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`)."""
-        p, b = self.m.products, self.m.burns
+        with any air past their λ mixed in, or at the stream's own λ below it (`air.burnt`); no
+        stream before the zone it enters (``enters``)."""
+        p, b, e = self.m.products, self.m.burns, self.m.enters
         if self.m.elements is not None:  # no stream: the elements' heat enters their faces
             return np.zeros(len(t_gas))
         a = self.air_used(fuel, air)
-        out = np.array([a * p.h_air(float(t)) if z < b else burnt(p, fuel, a, float(t)).flow
+        out = np.array([0.0 if z < e else a * p.h_air(float(t)) if z < b
+                        else burnt(p, fuel, a, float(t)).flow
                         for z, t in enumerate(t_gas)])  # fmt: skip
-        into = np.concatenate([[a * p.h_air(p.t_air)], out[:-1]])
+        into = np.concatenate([[0.0], out[:-1]])
+        into[e] += a * p.h_air(p.t_air)
         into[b] += fuel * p.fuel_enthalpy
         return into - out
 
