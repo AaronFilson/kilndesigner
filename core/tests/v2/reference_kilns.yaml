@@ -26,9 +26,10 @@
 #   scaled   measured off a figure from a dimension printed on it (figure, spread);
 #   drawing  read off a figure with no printed dimension and not scaled (figure);
 #   assumed  not in the book: the design file's value, or a value sourced in docs/research (the
-#            round of 2026-11-10's research A: each kiln's fuel, intakes and the kits' chambers,
-#            their reasons naming the file), with its reason and the Olsen page of any rule it
-#            follows. No value is here without a source.
+#            round of 2026-11-10's research A: each kiln's fuel, intakes and the kits' chambers;
+#            part C2: each kiln's setting, one band a chamber zone, kiln-settings.md; their
+#            reasons naming the file), with its reason and the Olsen page of any rule it follows.
+#            No value is here without a source.
 schema: 1
 book: Frederick L. Olsen, The Kiln Book, 4th ed.
 kilns:
@@ -86,6 +87,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [335, 1684]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.584 m³; 1–3 layers of shelves over 3.057 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.584 m³ as v2 traces it; the envelope''s plan 3.057 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 5.25
@@ -307,6 +314,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [192, 1081]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.767 m³; 1–5 layers of shelves over 1.347 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.767 m³ as v2 traces it; the envelope''s plan 1.347 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 16
@@ -535,6 +548,24 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [190, 1050]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.774 m³; 1–5 layers of shelves over 1.226 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.774 m³ as v2 traces it; the envelope''s plan 1.226 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [229, 1321]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.377 m³; 1–6 layers of shelves over 1.375 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.377 m³ as v2 traces it; the envelope''s plan 1.375 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [165, 911]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.410 m³; 1–5 layers of shelves over 1.059 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.410 m³ as v2 traces it; the envelope''s plan 1.059 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 3
@@ -1050,6 +1081,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
         condition: the oil drip
+      - what: setting
+        value: [167, 858]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.544 m³; 1–5 layers of shelves over 0.732 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.544 m³ as v2 traces it; the envelope''s plan 0.732 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: 6
@@ -1203,6 +1240,12 @@ kilns:
         value: "10"
         status: assumed
         reason: as Olsen fired his own fibre kiln (p.62)
+      - what: setting
+        value: [130, 742]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.933 m³; 1–6 layers of shelves over 0.743 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.933 m³ as v2 traces it; the envelope''s plan 0.743 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 40
@@ -1439,6 +1482,12 @@ kilns:
           chamber length of at least 48 in would help to even up the firing
         status: printed
         page: p.128
+      - what: setting
+        value: [78, 353]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.084 m³; 1–2 layers of shelves over 0.666 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.084 m³ as v2 traces it; the envelope''s plan 0.666 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 60
@@ -1759,6 +1808,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [2892, 17708]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 45.192 m³; 1–12 layers of shelves over 9.244 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 45.192 m³ as v2 traces it; the envelope''s plan 9.244 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 180
@@ -1974,6 +2029,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [102, 560]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.419 m³; 1–4 layers of shelves over 0.888 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.419 m³ as v2 traces it; the envelope''s plan 0.888 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 50
@@ -2223,6 +2284,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [458, 2520]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.692 m³; 1–5 layers of shelves over 2.903 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.692 m³ as v2 traces it; the envelope''s plan 2.903 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 7
@@ -2437,6 +2504,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [305, 1707]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.118 m³; 1–4 layers of shelves over 2.961 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.118 m³ as v2 traces it; the envelope''s plan 2.961 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 117
@@ -2698,6 +2771,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the cone of his element design example (pp.258–260)
+      - what: setting
+        value: [292, 1799]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.127 m³; 1–6 layers of shelves over 2.253 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.127 m³ as v2 traces it; the envelope''s plan 2.253 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 45
@@ -2831,6 +2910,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [688, 3052]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 10.498 m³; 1–2 layers of shelves over 3.002 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 10.498 m³ as v2 traces it; the envelope''s plan 3.002 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 24
@@ -3124,6 +3209,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [18000, 18144]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware printed, 18,000–18,144 kg (p.160); no shelves (p.160) (the chamber zone''s 28.689 m³ as v2 traces it; the envelope''s plan 10.408 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 118
@@ -3406,6 +3497,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [40, 159]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.457 m³; 1–3 layers of shelves over 0.250 m² at 20.5–22 lb a 12 × 24 in shelf (the chamber zone''s 0.457 m³ as v2 traces it; the envelope''s plan 0.250 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [12, 16]
@@ -3776,6 +3873,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [35, 184]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.508 m³; 1–4 layers of shelves over 0.244 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.508 m³ as v2 traces it; the envelope''s plan 0.244 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 18
@@ -3956,6 +4059,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [831, 4801]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.195 m³; 1–6 layers of shelves over 5.059 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.195 m³ as v2 traces it; the envelope''s plan 5.059 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 9
@@ -4272,6 +4381,18 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [402, 2244]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.801 m³; 1–5 layers of shelves over 2.739 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.801 m³ as v2 traces it; the envelope''s plan 2.739 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [212, 1129]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.010 m³; 1–4 layers of shelves over 1.611 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.010 m³ as v2 traces it; the envelope''s plan 1.611 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: shape
         value: >-
@@ -4641,6 +4762,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [505, 2560]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.833 m³; 1–3 layers of shelves over 4.860 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.833 m³ as v2 traces it; the envelope''s plan 4.860 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: [29, 48]
@@ -4896,6 +5023,18 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [279, 1547]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.816 m³; 1–4 layers of shelves over 2.582 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.816 m³ as v2 traces it; the envelope''s plan 2.582 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [421, 2345]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.709 m³; 1–4 layers of shelves over 4.006 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.709 m³ as v2 traces it; the envelope''s plan 4.006 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 2
@@ -5197,6 +5336,42 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [264, 1501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.901 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.901 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [264, 1501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.901 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.901 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 6
@@ -5429,6 +5604,12 @@ kilns:
         value: "10"
         status: assumed
         reason: Olsen salts at cone 9–10 (p.128)
+      - what: setting
+        value: [61, 352]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.894 m³; 1–6 layers of shelves over 0.372 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.894 m³ as v2 traces it; the envelope''s plan 0.372 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 16
@@ -5656,6 +5837,12 @@ kilns:
         status: printed
         page: p.171
         condition: said of large updrafts; this kiln is fired that way
+      - what: setting
+        value: [1164, 7822]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 17.923 m³; 1–13 layers of shelves over 4.529 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 17.923 m³ as v2 traces it; the envelope''s plan 4.529 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 500
@@ -5832,6 +6019,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [509, 3226]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 7.334 m³; 1–7 layers of shelves over 3.509 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 7.334 m³ as v2 traces it; the envelope''s plan 3.509 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 4.5
@@ -6111,6 +6304,12 @@ kilns:
         reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
           isn''t described: a question for the owner'
         condition: a shovelful (research A1)
+      - what: setting
+        value: [504, 2858]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 7.476 m³; 1–6 layers of shelves over 2.838 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 7.476 m³ as v2 traces it; the envelope''s plan 2.838 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 250
@@ -6394,6 +6593,30 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [285, 1640]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.204 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.204 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [289, 1654]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.256 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.256 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [289, 1654]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.256 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.256 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [285, 1640]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.204 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.204 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 4
@@ -6651,6 +6874,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [17, 83]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.265 m³; 1–5 layers of shelves over 0.053 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.265 m³ as v2 traces it; the envelope''s plan 0.053 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 2.5
@@ -6786,6 +7015,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [287, 1606]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.142 m³; 1–5 layers of shelves over 1.970 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.142 m³ as v2 traces it; the envelope''s plan 1.970 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 4
@@ -7066,6 +7301,66 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [208, 1220]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 0.921 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 0.921 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 8: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 9: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [211, 1284]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 10: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: height
         value: [6, 7]
@@ -7349,6 +7644,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [4990, 34276]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 75.035 m³; 1–11 layers of shelves over 24.997 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 75.035 m³ as v2 traces it; the envelope''s plan 24.997 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [1766, 2825]
@@ -7573,6 +7874,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [280, 1512]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.923 m³; 1–4 layers of shelves over 2.290 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.923 m³ as v2 traces it; the envelope''s plan 2.290 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: 48
@@ -7764,6 +8071,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [126, 578]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.668 m³; 1–2 layers of shelves over 1.347 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.668 m³ as v2 traces it; the envelope''s plan 1.347 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 5
@@ -7989,6 +8302,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [981, 6458]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 14.753 m³; 1–10 layers of shelves over 4.883 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 14.753 m³ as v2 traces it; the envelope''s plan 4.883 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 96
@@ -8218,6 +8537,12 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
           14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
         condition: dry basis (research A1)
+      - what: setting
+        value: [149, 843]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.224 m³; 1–6 layers of shelves over 0.822 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.224 m³ as v2 traces it; the envelope''s plan 0.822 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 60
@@ -8381,6 +8706,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [264, 1469]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.814 m³; 1–5 layers of shelves over 1.778 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.814 m³ as v2 traces it; the envelope''s plan 1.778 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 84
@@ -8535,6 +8866,12 @@ kilns:
         value: "10"
         status: assumed
         reason: Rule 1 and its dense-brick figure are for Olsen's high fire (p.226)
+      - what: setting
+        value: [78, 417]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.104 m³; 1–4 layers of shelves over 0.604 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.104 m³ as v2 traces it; the envelope''s plan 0.604 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 36
@@ -8655,6 +8992,12 @@ kilns:
         value: "10"
         status: assumed
         reason: 2600 IFB is "excellent for cone 10" (pp.25–27)
+      - what: setting
+        value: [301, 1995]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.367 m³; 1–8 layers of shelves over 2.002 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.367 m³ as v2 traces it; the envelope''s plan 2.002 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 100
@@ -8837,6 +9180,12 @@ kilns:
         status: printed
         page: p.170
         quote: fires quite evenly
+      - what: setting
+        value: [64, 382]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.931 m³; 1–6 layers of shelves over 0.433 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.931 m³ as v2 traces it; the envelope''s plan 0.433 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 16
@@ -9068,6 +9417,12 @@ kilns:
           temperature distribution
         status: printed
         page: p.221
+      - what: setting
+        value: [91, 538]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.270 m³; 1–5 layers of shelves over 0.772 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.270 m³ as v2 traces it; the envelope''s plan 0.772 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 24
@@ -9261,6 +9616,12 @@ kilns:
         value: "10"
         status: assumed
         reason: 2600 IFB is "excellent for cone 10" (pp.25–27)
+      - what: setting
+        value: [167, 1023]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.374 m³; 1–6 layers of shelves over 1.260 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.374 m³ as v2 traces it; the envelope''s plan 1.260 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 50
@@ -9467,6 +9828,12 @@ kilns:
         unit: percent
         status: assumed
         reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
+      - what: setting
+        value: [113, 690]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.619 m³; 1–6 layers of shelves over 0.836 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.619 m³ as v2 traces it; the envelope''s plan 0.836 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [45, 60]
@@ -9617,6 +9984,24 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's gas rules (Rule 1, p.226)
+      - what: setting
+        value: [286, 1715]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.245 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.245 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [288, 1722]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.274 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.274 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [286, 1715]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.245 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.245 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 3
@@ -9747,6 +10132,18 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 2
@@ -9977,6 +10374,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [81, 442]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.132 m³; 1–4 layers of shelves over 0.686 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.132 m³ as v2 traces it; the envelope''s plan 0.686 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 40
@@ -10155,6 +10558,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [19, 85]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.255 m³; 1–2 layers of shelves over 0.171 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.255 m³ as v2 traces it; the envelope''s plan 0.171 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [8, 10]
@@ -10385,6 +10794,12 @@ kilns:
         reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
           isn''t described: a question for the owner'
         condition: a shovelful (research A1)
+      - what: setting
+        value: [422, 2159]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.657 m³; 1–7 layers of shelves over 1.138 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.657 m³ as v2 traces it; the envelope''s plan 1.138 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 84
@@ -10716,6 +11131,12 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [183, 1032]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.780 m³; 1–7 layers of shelves over 0.822 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.780 m³ as v2 traces it; the envelope''s plan 0.822 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 60
@@ -10983,6 +11404,48 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [757, 4760]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.213 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.213 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [757, 4760]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.213 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.213 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 7
@@ -11206,6 +11669,48 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [542, 2349]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [542, 2349]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 120
@@ -11505,6 +12010,48 @@ kilns:
         status: assumed
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
+      - what: setting
+        value: [4146, 27881]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4146, 27881]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 7
@@ -11656,6 +12203,12 @@ kilns:
         status: assumed
         reason: the high fire Olsen's updraft rules are for; he checks the flue at about cone 8 
           (p.173)
+      - what: setting
+        value: [103, 637]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.528 m³; 1–8 layers of shelves over 0.557 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.528 m³ as v2 traces it; the envelope''s plan 0.557 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 2
@@ -11763,6 +12316,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [85, 501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.236 m³; 1–6 layers of shelves over 0.557 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.236 m³ as v2 traces it; the envelope''s plan 0.557 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 2
@@ -11860,6 +12419,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [143, 910]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.117 m³; 1–8 layers of shelves over 0.836 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.117 m³ as v2 traces it; the envelope''s plan 0.836 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 3
@@ -11957,6 +12522,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [236, 1536]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.451 m³; 1–8 layers of shelves over 1.486 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.451 m³ as v2 traces it; the envelope''s plan 1.486 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 4
