@@ -837,6 +837,13 @@ kilns:
         reading: uncertain
         condition: the air opening into the ash pit, below the stoking opening (research A2); the
           stoking opening's height isn't legible
+      - what: exit_flue_height
+        value: 12
+        unit: inch
+        status: printed
+        page: p.94
+        figure: Fig 4-36
+        note: the exit flue fact above, as a number; its width and count aren't printed (C1)
     structure:
       - what: roof_type
         value: >-
@@ -1850,6 +1857,20 @@ kilns:
         status: printed
         page: p.167, p.168
         figure: Fig 6-53
+      - what: inlet_flue_width
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.167
+        figure: Fig 6-51
+        note: the inlet flue fact above, as numbers; their count isn't printed (C1)
+      - what: inlet_flue_height
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.167
+        figure: Fig 6-51
+        note: the inlet flue fact above, as numbers; their count isn't printed (C1)
     structure:
       - what: dome_type
         value: a dome ceiling with chimney holes, under the bottle chimney
@@ -2110,6 +2131,34 @@ kilns:
           through salting
         status: printed
         page: p.243
+      - what: inlet_flue_count
+        value: 3
+        status: drawing
+        page: p.126
+        figure: Fig 4-149
+        note: the three openings in the inlet flue fact above (C1)
+      - what: inlet_flue_width
+        value: [3, 4]
+        unit: inch
+        status: scaled
+        page: p.126
+        figure: Fig 4-149
+        spread: 3–4 in, from the 3 ft, 5 ft and 9 in walls (7.2–9.9 px/in)
+        note: the scaled widths above, as numbers; their height isn't in a plan (C1)
+      - what: exit_flue_count
+        value: 3
+        status: drawing
+        page: p.126
+        figure: Fig 4-149
+        note: the three openings in the exit flue fact above (C1)
+      - what: exit_flue_width
+        value: [2.5, 3.5]
+        unit: inch
+        status: scaled
+        page: p.126
+        figure: Fig 4-149
+        spread: 2½–3½ in, from the 3 ft, 5 ft and 9 in walls
+        note: the scaled widths above, as numbers; their height isn't in a plan (C1)
     structure:
       - what: roof_type
         value: arched roofs sketched; direction and rise not printed
@@ -2331,6 +2380,22 @@ kilns:
         figure: Fig 7-3
         reason: two ash pits and walkways 14 in wide × 18 in deep, the type's drawing
         condition: below the grates, fully open (research A2)
+      - what: chimney_width
+        value: 13.5
+        unit: inch
+        status: printed
+        page: p.182
+        figure: Fig 7-9
+        condition: the single (anagama) chimney
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 13.5
+        unit: inch
+        status: printed
+        page: p.182
+        figure: Fig 7-9
+        condition: the single (anagama) chimney
+        note: the chimney section fact above, as numbers (C1)
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin
@@ -2607,6 +2672,18 @@ kilns:
         page: p.124
         figure: Fig 4-140
         reading: uncertain
+      - what: chimney_width
+        value: 9
+        unit: inch
+        status: printed
+        page: p.124
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 9
+        unit: inch
+        status: printed
+        page: p.124
+        note: the chimney section fact above, as numbers (C1)
     structure:
       - what: dome_type
         value: a cast dome over the teardrop plan, first cast too thin and thickened with more 
@@ -3578,6 +3655,13 @@ kilns:
         figure: Fig 5-39
         reason: two firebox mouths 13½ in wide, 12½ in tall (five courses) less the grate's 6–8 in
         condition: the firebox mouths above the grate, fully open (research A2)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: printed
+        page: p.204
+        figure: Fig 5-39
+        note: the grate's ¾ in round rod, as the grate fact above (C1, the draft path)
     structure:
       - what: roof_type
         value: sprung arch, a bonded arch of No. 1 arch bricks with straights, laid on a form, 
@@ -3858,6 +3942,11 @@ kilns:
         status: assumed
         reason: as the fast-fire's (p.140, p.199, p.204), the design file's firebox
         condition: the firebox mouths below the grate (research A2)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: the fast-fire design's ¾ in rod (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -4772,6 +4861,19 @@ kilns:
         value: six, 7 × 7½ in (three courses high), spread evenly along the back wall
         status: assumed
         reason: the scaled sizes rounded to the brick
+      - what: chimney_width
+        value: 102
+        unit: inch
+        status: assumed
+        reason: the kiln's full width (p.111, Fig 4-85), the design file's 102 in (C1)
+      - what: chimney_depth
+        value: [9, 30]
+        unit: inch
+        status: printed
+        page: p.111
+        figure: Fig 4-85
+        note: the 9–30 in inside, read as the depth of a full-width chimney as the kiln doc reads it
+          (C1)
     structure:
       - what: roof_type
         value: an arch springing from the floor, rising no more than a half-circle (a cylinder 
@@ -5040,6 +5142,33 @@ kilns:
         page: p.117
         reason: the stoke hole 9 × 13½ in in the door bricking; its grate-level air holes aren't sized
         condition: the front firebox's stoke hole (research A2)
+      - what: chimney_width
+        value: 15
+        unit: inch
+        status: printed
+        page: p.116
+        figure: Fig 4-110
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 24
+        unit: inch
+        status: printed
+        page: p.116
+        figure: Fig 4-110
+        note: the chimney section fact above, as numbers (C1)
+      - what: between_flue_count
+        value: 3
+        status: printed
+        page: p.116
+        note: the "three large exit flues" from the front chamber (C1)
+      - what: between_flue_width
+        value: [11, 13]
+        unit: inch
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: 7.1–7.8 px/in, from the 55 in and the printed 12 × 24 in shelves
+        note: the scaled gaps above, as numbers; their height isn't drawn (C1)
     structure:
       - what: dome_type
         value: two cast dome-shaped ceilings over a Bizen-style front chamber and a tube-style 
@@ -6276,6 +6405,20 @@ kilns:
         status: drawing
         page: p.131
         figure: Fig 5-4
+      - what: connection_width
+        value: 20
+        unit: inch
+        status: printed
+        page: p.131
+        figure: Fig 5-4
+        note: the damper fact's 20 in wide connection to the chimney (C1); it scales 23½ in on the
+          plan
+      - what: connection_height
+        value: 18
+        unit: inch
+        status: assumed
+        reason: the connection's height isn't printed; the three flue channels' printed 18 in depth
+          (p.131, Fig 5-4) (C1)
     structure:
       - what: roof_type
         value: an arch drawn thick over the chamber, the walls curving in to the crown
@@ -6709,6 +6852,15 @@ kilns:
         status: printed
         page: p.165
         figure: Fig 6-47
+      - what: exit_flue_area
+        value: [126, 179]
+        unit: inch**2
+        status: derived
+        page: p.165
+        figure: Fig 6-47
+        reason: the flame rises round the muffle to the open top, through the annulus between the
+          22 in inside (derived above) and the muffle's printed 16–18 in, π/4·(22² − d²) (C1)
+        condition: the open top's way out past the muffle
     structure:
       - what: construction
         value: >-
@@ -7854,6 +8006,22 @@ kilns:
         reason: a groundhog's chimney runs the kiln's width (pp.111–112, Fig 4-85); as 9 × 9 in the 
           firebox floor would be 36 times its section, outside the 4–10 of Olsen's wood kilns 
           (pp.76–77)
+      - what: inlet_flue_width
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.115
+        figure: Fig 4-105
+        note: the flue box labelled 9 × 4½ (in), as the design file's inlet; the count isn't printed
+          (C1)
+      - what: inlet_flue_height
+        value: 9
+        unit: inch
+        status: printed
+        page: p.115
+        figure: Fig 4-105
+        note: the flue box labelled 9 × 4½ (in), as the design file's inlet; the count isn't printed
+          (C1)
     structure:
       - what: roof_type
         value: a half-circle springing from the floor
@@ -9528,6 +9696,15 @@ kilns:
         page: p.207
         figure: Fig 8-20
         spread: ±1 in; the port flue ±1½ in
+      - what: primary_air
+        value: [405, 688.5]
+        unit: inch**2
+        status: scaled
+        page: p.207
+        figure: Fig 8-20
+        spread: ±1½ in on each port flue's 7½ × 24 in
+        condition: the three drip ports' flues, the air entering with the oil (p.209, a drip unit's
+          open air end); no grate (C1)
     structure:
       - what: roof_type
         value: a No. 1 arch of 4½ in K-26 IFB on featheredge skewbacks
@@ -9883,6 +10060,26 @@ kilns:
         figure: Fig 8-17
         reason: the second firebox's stoke hole 7 × 7 in
         condition: the second firebox (research A2)
+      - what: between_flue_count
+        value: 1
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the flue hole into the second chamber, the between flues fact above (C1)
+      - what: between_flue_width
+        value: 15
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers (C1)
+      - what: between_flue_height
+        value: 20
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers; drawn 28 in high (scaled) (C1)
     structure:
       - what: roof_type
         value: sprung arch across the 55 in width
@@ -10068,6 +10265,11 @@ kilns:
         value: 9 × 9 in
         status: assumed
         reason: ¼ to ⅕ of the chamber's width and seldom under 9 × 9 in (Rule 6, p.79–80)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: two fast-fire grates side by side (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -10228,6 +10430,11 @@ kilns:
         unit: inch
         status: assumed
         reason: the chimney shares the back wall, as in phoenix-nh (Fig 5-67)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: the fast-fire grate (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -11329,6 +11536,13 @@ kilns:
         status: printed
         page: p.88
         figure: Figs 4-18, 4-19
+      - what: chimney_count
+        value: 0
+        status: printed
+        page: p.88
+        figure: Figs 4-18, 4-19
+        condition: the end chamber's open chimney holes and no stack
+        note: the exit flue fact above, as a number (C1)
     structure:
       - what: roof_type
         value: a low vault of rough masonry; across the tube a near-semicircular, slightly pointed 
