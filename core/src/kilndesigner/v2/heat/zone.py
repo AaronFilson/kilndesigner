@@ -56,7 +56,7 @@ from kilndesigner.thermal.transient import HeatCapacity
 from kilndesigner.v2.heat import sources as src
 from kilndesigner.v2.heat.air import REDUCTION, burnt
 from kilndesigner.v2.heat.draft import Path, Table, draw, pressure
-from kilndesigner.v2.heat.gas import Products
+from kilndesigner.v2.heat.gas import T_MIN, Products
 from kilndesigner.v2.heat.gasrad import GasExchange, ZonesExchange
 from kilndesigner.v2.heat.ground import Ground
 from kilndesigner.v2.heat.walls import CellWall
@@ -483,14 +483,18 @@ class Balance:
         return h
 
     def temps(self, y: Vector, t_gas: Vector) -> tuple[Vector, Vector]:
-        """Every surface's temperature and emissivity."""
+        """Every surface's temperature and emissivity; a wall's face or a setting at least the
+        engine's floor, `gas.T_MIN`, in the exchange and the convection (Derived: T⁴ rises again
+        below absolute zero, so a face's balance has a second root there, far below any kiln's,
+        that a solver can land on; the floor leaves it one, the wall's conduction still in its
+        own row. A firing whose gas falls below the floor is refused, `firing._record`)."""
         lay, n = self.lay, len(self.m.names)
         t = np.empty(n)
-        hot = np.array([y[h] for h, _, _ in lay.walls])
+        hot = np.maximum([y[h] for h, _, _ in lay.walls], T_MIN)
         t[self.i_face] = hot
         for k, i in self.back:
-            t[i] = y[lay.walls[k][2]]
-        t[self.i_set] = y[list(lay.settings)]
+            t[i] = max(y[lay.walls[k][2]], T_MIN)
+        t[self.i_set] = np.maximum(y[list(lay.settings)], T_MIN)
         t[self.room] = self.m.t_room
         for i, z in self.flame:
             t[i] = t_gas[z]

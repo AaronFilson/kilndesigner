@@ -26,6 +26,7 @@ from kilndesigner.v2.heat import kiln as hk
 from kilndesigner.v2.heat import series
 from kilndesigner.v2.heat.air import burnt
 from kilndesigner.v2.heat.draft import Element
+from kilndesigner.v2.heat.gas import T_MIN
 from kilndesigner.v2.heat.zone import Balance, Layout, ZoneModel, layout
 
 IN = 0.0254
@@ -193,6 +194,26 @@ def test_a_max_fire_from_a_start_takes_the_starts_air(
     lit = series._lit(kato, layout(kato, True), None)  # pyright: ignore[reportPrivateUsage]
     fi.fire(kato, fi.MaxFire(), 60.0, sample=60.0, start=lit)
     assert seen == []
+
+
+@pytest.mark.geometry
+def test_a_face_has_one_balance_the_exchange_held_at_the_floor(kato: ZoneModel) -> None:
+    """T⁴ rises again below absolute zero, so a face's balance had a second root there: on the
+    merge with C3b, Olsen's two-chamber kiln's firebox roof started its max fire at −2247 K, and
+    the stage after it found no consistent start. The exchange and the convection now take a
+    face, its outer face where it has a zone behind it, and a setting at least `gas.T_MIN`, and
+    the wall's own conduction keeps the face's row monotonic below it."""
+    bal = Balance(kato)
+    lay = bal.lay
+    y = np.full(lay.size, 1200.0)
+    hot = lay.walls[0][0]
+    y[hot] = -2000.0
+    y[lay.settings[0]] = -50.0
+    t, eps = bal.temps(y, np.full(len(kato.gas), 1500.0))
+    assert t[bal.i_face[0]] == T_MIN
+    assert t[bal.i_set[0]] == T_MIN
+    assert t[bal.i_face[1]] == pytest.approx(1200.0)
+    assert np.all((eps > 0) & (eps <= 1))
 
 
 def test_the_friction_factor_has_no_step_at_transition() -> None:
