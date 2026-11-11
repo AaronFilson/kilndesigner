@@ -37,8 +37,8 @@ pytestmark = [pytest.mark.slow, pytest.mark.geometry]
 # The gas kilns whose burners the design names (count and model or rating) and that print or
 # assume no draft: each must reach its cone at every corner of its band (T1)
 T1 = (
-    "olsen-kit-16", "olsen-kit-24", "kaneko-car", "updraft-test-1", "updraft-test-2",
-    "updraft-test-3", "updraft-test-4", "bowen-mountain",
+    "olsen-kit-16", "olsen-kit-24", "olsen-kit-50", "olsen-kit-100", "kaneko-car",
+    "updraft-test-1", "updraft-test-2", "updraft-test-3", "updraft-test-4", "bowen-mountain",
 )  # fmt: skip
 
 
