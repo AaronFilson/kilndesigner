@@ -540,7 +540,7 @@ def _faces(
     if shaped:
         notes.append(SHAPED_NOTE)
     for name in traced.names:
-        if name not in c.built or name == "firebox roof":
+        if name not in c.built or (name == "firebox roof" and under):  # the floor's underside
             continue
         built, zone = c.built[name]
         face, _, tag = name.rpartition(" ")
