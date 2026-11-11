@@ -44,6 +44,10 @@ SOURCES = (
 
 
 START_TOL = 1e-3  # the algebraic rows at a start (kW, K, Pa/10): IDA refines from there
+# Powell's relative step to stop at: SciPy's 1.49e-8 can stop a large row's start short of
+# START_TOL (Suzuki's seven chambers: 1.8e-3 kW at its "converged" root, 3e-8 at this; its
+# unknowns run from kg/s of fuel to K, eight orders apart)
+START_XTOL = 1e-12
 REDUCED = 0.999  # λ under this is reduction (λ 1 itself comes out to IDA's tolerance)
 REACHED_TOL = 1e-3  # K: the temperatures' absolute tolerance in IDA (`_atol`)
 
@@ -75,14 +79,16 @@ class FixedInput:
 @dataclass(frozen=True)
 class Schedule:
     """Temperatures (K) at times (s), held by the gas (of zone ``zone``, else the first setting's)
-    or by the first setting, linear between. ``air``: the stoker's, at the products' λ, or the
-    draft's own through the intakes ``opened`` a share open (λ from the draft)."""
+    or by a setting (``setting``, the first unless given: a staged firing's stoked chamber), linear
+    between. ``air``: the stoker's, at the products' λ, or the draft's own through the intakes
+    ``opened`` a share open (λ from the draft)."""
 
     held: Literal["gas", "setting"]
     points: tuple[tuple[float, float], ...]
     zone: int | None = None
     air: Literal["stoker", "draft"] = "stoker"
     opened: float = 1.0
+    setting: int = 0
 
     def __post_init__(self) -> None:
         ts = [p[0] for p in self.points]
@@ -249,13 +255,17 @@ def _rows(
 
         return _Rows(gas_held, None, alg, air)
 
+    k = sched.setting
+    held = model.settings[k]
+
     def setting_rate(s: State, cap: float) -> float:
-        return (cap * sched.at(*now())[1] - s.q_setting) / 1e3
+        c = held.mass * float(held.heat_capacity.cp(np.array([y()[lay.settings[k]]]))[0])
+        return (c * sched.at(*now())[1] - s.q_settings[k]) / 1e3
 
     def setting_held(s: State, cap: float) -> float:
-        return y()[lay.setting] - sched.at(*now())[0]
+        return y()[lay.settings[k]] - sched.at(*now())[0]
 
-    return _Rows(setting_rate, (0, setting_held), [*alg, lay.setting], air)
+    return _Rows(setting_rate, (k, setting_held), [*alg, lay.settings[k]], air)
 
 
 type Target = float | tuple[int, float]
@@ -278,13 +288,17 @@ def fire(
     max_steps: int = 50_000,
 ) -> Firing:
     """Fire the model from cold (or from ``start``, a firing's end state, the walls and settings
-    as they were) for ``t_end`` (s), or until a setting reaches ``stop_at`` (K, or (setting, K));
-    record when they reach each of ``targets``. ``max_steps``: IDA's budget for each piece of the
-    schedule; spent, the firing stops there, not completed, and says so."""
+    as they were, in this mode's layout: at max fire the draft's air its own unknown) for ``t_end``
+    (s), or until a setting reaches ``stop_at`` (K, or (setting, K)); record when they reach each
+    of ``targets``. ``max_steps``: IDA's budget for each piece of the schedule; spent, the firing
+    stops there, not completed, and says so."""
     bal = Balance(model, air_row=isinstance(mode, MaxFire))
     lay = bal.lay
-    if start is not None and (len(start) != lay.size or lay.air >= 0):
-        raise FiringError("a firing carries on from one of the same model, not at max fire")
+    if start is not None and len(start) != lay.size:
+        raise FiringError("a firing carries on from one of the same model, in its mode's layout")
+    if isinstance(mode, Schedule) and not 0 <= mode.setting < len(model.settings):
+        raise FiringError(f"no setting {mode.setting + 1} to hold: the model has "
+                          f"{len(model.settings)}")  # fmt: skip
     room = model.t_room
     stop = _mark(stop_at) if stop_at is not None else None
     wanted: set[tuple[int, float]] = {_mark(x) for x in targets}
@@ -306,7 +320,7 @@ def fire(
             zone = mode.zone if mode.zone is not None else model.setting.zone
             y[lay.gases[zone]] = mode.at(0.0)[0]
         else:
-            y[lay.setting] = mode.at(0.0)[0]
+            y[lay.settings[mode.setting]] = mode.at(0.0)[0]
     if start is not None:
         y = np.asarray(start, dtype=float).copy()
         y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else y[lay.fuel]
@@ -423,9 +437,12 @@ def _consistent(
             resfn(t, yy, yp, res)
             return res[alg].copy()
 
-        sol = root(part, guess[alg], method="hybr")
+        tight = {"xtol": START_XTOL}
+        sol = root(part, guess[alg], method="hybr", options=tight)
         if np.abs(part(sol.x)).max() > START_TOL:
             sol = root(part, guess[alg], method="lm")  # Levenberg–Marquardt, slower and surer
+        if np.abs(part(sol.x)).max() > START_TOL:  # Powell's again, from LM's least squares
+            sol = root(part, sol.x, method="hybr", options=tight)
         if np.abs(part(sol.x)).max() <= START_TOL:  # a least-squares minimum isn't a start
             out = guess.copy()
             out[alg] = sol.x
@@ -532,7 +549,8 @@ def _working(model: ZoneModel, mode: Mode, f: Firing) -> tuple[Step, ...]:
         Schedule: "held to a schedule",
     }[type(mode)]
     if isinstance(mode, Schedule):
-        what += f" by the {mode.held}"
+        many = mode.held == "setting" and len(model.settings) > 1
+        what += f" by the {mode.held}" + (f" {mode.setting + 1}" if many else "")
     reached = ", ".join(
         (f"setting {s + 1} " if len(model.settings) > 1 else "")
         + f"{k - 273.15:.0f} °C at {v / 3600:.2f} h"

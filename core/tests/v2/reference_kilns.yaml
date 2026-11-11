@@ -11653,6 +11653,12 @@ kilns:
         status: assumed
         reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.213 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.213 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: fuel_unit_mass
+        value: [14.7, 17.0]
+        unit: kg
+        status: assumed
+        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, π/4 × 15² × 18 in³ = 0.0521 m³ (p.93), packed as a cord is stacked, pine''s oven-dry cord of 2,250–2,610 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]): an assumption, the owner''s question (11-10-26.md, C3b)'
+        condition: a bundle, oven-dry (research C3b)
     chamber:
       - what: chamber_count
         value: 7
@@ -11918,6 +11924,12 @@ kilns:
         status: assumed
         reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: fuel_unit_mass
+        value: [28.6, 58.1]
+        unit: kg
+        status: assumed
+        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, 15 × 15 × 30 in = 0.111 m³ (pp.86–87), packed as a cord is stacked, any species'' oven-dry cord of 2,070–4,200 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]; the wood isn''t named): an assumption, the owner''s question (11-10-26.md, C3b)'
+        condition: a bundle, oven-dry (research C3b)
     chamber:
       - what: length
         value: 120

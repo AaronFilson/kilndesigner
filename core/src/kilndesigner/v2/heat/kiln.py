@@ -550,7 +550,7 @@ def _faces(
     if shaped:
         notes.append(SHAPED_NOTE)
     for name in traced.names:
-        if name not in c.built or name == under_roof:
+        if name not in c.built or name == under_roof:  # the floor's underside, its back
             continue
         built, zone = c.built[name]
         own = boxes[zone][0].box if zone in boxes else None  # a firebox zone's own firebox

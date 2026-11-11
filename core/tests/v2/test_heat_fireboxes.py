@@ -136,6 +136,24 @@ def test_fireboxes_side_by_side_are_the_paths_first_zones(kato: ZoneModel) -> No
         replace(kato, fires=((1, 0.5), (2, 0.5)))
     with pytest.raises(ValueError, match="side by side"):
         replace(kato, fires=((0, 0.5), (1, 0.6)))
+    with pytest.raises(ValueError, match="not among them"):  # neither is before the other
+        replace(kato, enters=1)
+
+
+@pytest.mark.geometry
+def test_a_stream_entering_past_the_fireboxes_passes_none_of_them(kato: ZoneModel) -> None:
+    """A stage with the fire mouth shut, its air through the chamber's side holes
+    (`series.stage_model`, C3b): the firebox zones side by side carry no stream, and the chamber
+    takes the room's air and the fuel."""
+    m = series.stage_model(kato, 0, front_open=False)
+    assert (m.burns, m.enters) == (2, 2)
+    p = m.products
+    fuel_rate, air = 0.03, 0.03 * p.air * 1.2
+    q = Balance(m).released(np.array([900.0, 900.0, 1500.0]), fuel_rate, air)
+    assert q[0] == 0.0
+    assert q[1] == 0.0
+    assert q[2] == pytest.approx(air * p.h_air(p.t_air) + fuel_rate * p.fuel_enthalpy
+                                 - burnt(p, fuel_rate, air, 1500.0).flow, rel=1e-12)  # fmt: skip
 
 
 def test_a_start_is_tried_from_each_guess_in_turn() -> None:
