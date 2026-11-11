@@ -348,23 +348,18 @@ NO_PORT = {
 @pytest.mark.parametrize(
     ("name", "change", "words"),
     [
-        ("olsen-crossdraft-36", {}, "no chimney"),
-        ("fast-fire", {"draft.flue_port": None}, "one exit flue"),
-        ("fast-fire", {"draft.chimney_through": "crown"}, "crown"),
+        ("olsen-crossdraft-36", {}, "port size"),
         ("olsen-crossdraft-36", NO_PORT, "port size"),
-        ("fast-fire", {"draft.chimney": {"height": "14 ft"}}, "inside section"),
     ],
 )
 def test_paths_v2_doesnt_build_are_refused(name: str, change: dict[str, Any], words: str) -> None:
+    """The burners' ports unsized: nothing bounds the way in (C1 builds the rest: no chimney, a
+    crown chimney, several exits, fireboxes against a wall; `test_heat_paths.py`)."""
     with pytest.raises(dr.NotModelledError, match=words):
         dr.kiln_path(_design(name, change))
 
 
-def test_fireboxes_against_a_wall_are_refused() -> None:
-    front = {"count": 1, "position": "front", "width": "13.5 in", "length": "24 in",
-             "inlet": {"width": "9 in", "height": "4.5 in"}}  # fmt: skip
-    with pytest.raises(dr.NotModelledError, match="under the floor"):
-        dr.kiln_path(_design("fast-fire", {"heat.fire.fireboxes": [front]}))
+def test_one_kind_of_heat_at_a_time() -> None:
     both = {"fuel": "natural_gas", "burners": {"rating": "36000 BTU/hr", "count": 2},
             "supply": {"type": "line", "pressure": "8 inch_H2O"}}  # fmt: skip
     with pytest.raises(dr.NotModelledError, match="one kind of heat"):

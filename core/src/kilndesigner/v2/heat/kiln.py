@@ -232,6 +232,7 @@ def heat_model(
     bed_rate: float | None = None,
     emissivity: Emissivity = "nominal",
     chimney: Sequence[object] | None = None,
+    path_inputs: object = None,
 ) -> ZoneModel:
     """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
     back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
@@ -242,7 +243,9 @@ def heat_model(
     the draft (`draft.Intakes`); ``bed_rate``: a coal bed's burning rate on its grates (kg/(m²·s)
     as fired, `air.COAL_BED`), the most the stoker can burn; ``emissivity``: the class's band end
     (`EMISSIVITY_CLASS`); ``chimney``: the chimney's own walls, hot face first, where the book says
-    how it is built (`flue_liner()` for clay flue liners; the design file can't say)."""
+    how it is built (`flue_liner()` for clay flue liners; the design file can't say);
+    ``path_inputs``: what else the draft path needs that the design file can't say, the
+    dataset's (`paths.Inputs`)."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
     prod = gas.products(fuel, air_ratio, t_room)
@@ -281,7 +284,8 @@ def heat_model(
     gases = _gases(kiln, c, loads, rooms)
     table, draft_path = None, None
     try:
-        draft_path = dr.kiln_path(kiln, grate_bar=grate_bar, intake=intake)
+        draft_path = dr.kiln_path(kiln, grate_bar=grate_bar, intake=intake, inputs=path_inputs,
+                                  segments=segments)  # fmt: skip
         table = dr.table(draft_path, prod, fuel=rated_fuel(kiln, fuel))
     except dr.NotModelledError as e:
         notes.append(f"the draft isn't worked out: {e}")

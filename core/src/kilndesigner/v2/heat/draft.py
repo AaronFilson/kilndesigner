@@ -24,7 +24,18 @@ Stated, not sourced (each said in the working):
   bound (problem set §2.2).
 
 Elements carry the zone whose gas fills them ("firebox", "chamber", "chimney"): one well-stirred
-zone gives them all its temperature; zones in series give each its own.
+zone gives them all its temperature; zones in series give each its own. A zone the model doesn't
+have takes its path's alias (`Path.alias`: a chimney that isn't a zone of its own takes the last
+chamber's gas), then its kind ("chamber 3" → "chamber").
+
+**Parallel branches** (C1: several fireboxes, exit sets or chimneys, a chamber's side stoke holes
+beside the front's path): a group of branches from one node to the next, each branch its elements
+in order, the flow splitting so every branch has the same buoyancy less losses across it, the
+junction's draft D; no branch carries flow backwards (one whose buoyancy is under D carries none,
+said where it happens). Identical branches are one branch of ``branches`` (as before).
+
+**Geometric bands**: where a length is a band (a chimney's height no source gives, a scaled width),
+the path is built at each end and its most-air end carried beside it (`Path.alt`).
 """
 
 from __future__ import annotations
@@ -32,23 +43,21 @@ from __future__ import annotations
 import math
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
-from typing import Literal
+from typing import Any, Literal
 
 import numpy as np
-from fluids.atmosphere import ATMOSPHERE_1976  # pyright: ignore[reportMissingTypeStubs]
 from fluids.friction import friction_factor  # pyright: ignore[reportMissingTypeStubs]
 from numpy.typing import NDArray
 
 from kilndesigner.model import Kiln
 from kilndesigner.numeric import find_root
 from kilndesigner.thermal.air import air
-from kilndesigner.units import si
 from kilndesigner.v2.heat.gas import ATM, Products
 from kilndesigner.v2.heat.sources import O2_IN_AIR
 from kilndesigner.working import Step
 
 type Vector = NDArray[np.float64]
-type Kind = Literal["inlet", "grate", "duct", "fitting", "column"]
+type Kind = Literal["inlet", "grate", "duct", "fitting", "column", "parallel"]
 
 G = 9.80665
 R = 8314.462618  # J/(kmol·K)
@@ -108,7 +117,8 @@ class Element:
     hydraulic diameter (``k1`` Idelchik's laminar factor for its shape), a fitting's from ``k``
     (the least-air end of its band; ``k_lo`` the most-air end, the same unless two sources' values
     differ), times 6-7's Reynolds factor on the passage of diameter ``re_dh`` where it is given; a
-    column's buoyancy from ``rise`` (up +)."""
+    column's buoyancy from ``rise`` (up +). A parallel group (kind "parallel") holds its branches
+    in ``parts``, each its elements in order (`balance` splits the flow among them)."""
 
     name: str
     kind: Kind
@@ -125,6 +135,7 @@ class Element:
     re_dh: float = 0.0
     re_lo: bool = True  # the most-air end takes the Reynolds factor too
     sides: tuple[float, float] | None = None  # a rectangular duct's
+    parts: tuple[tuple[Element, ...], ...] = ()
 
     def coefficient(self, most: bool) -> float:
         """The fitting's coefficient at the band's least-air end, or its most-air end."""
@@ -135,11 +146,32 @@ class Element:
         return self.re_dh > 0 and (self.re_lo or not most)
 
 
+def _zones(els: Sequence[Element]) -> list[str]:
+    out: list[str] = []
+    for e in els:
+        names = [z for b in e.parts for z in _zones(b)] if e.kind == "parallel" else [e.zone]
+        for z in names:
+            if z != "room" and z not in out:
+                out.append(z)
+    return out
+
+
+def _open(e: Element, share: float) -> Element:
+    """An element with its air intakes a ``share`` open (`Path.opened`)."""
+    if e.kind == "parallel":
+        return replace(e, parts=tuple(tuple(_open(x, share) for x in b) for b in e.parts))
+    if not e.name.startswith(INTAKE):
+        return e
+    return replace(e, k=e.k / share**2, k_lo=None if e.k_lo is None else e.k_lo / share**2)
+
+
 @dataclass(frozen=True)
 class Path:
     """A gas path: its elements in order, the room's temperature and the air's pressure; drawn at
     its band's least-air end (rough walls, each fitting's higher coefficient), or its most-air end
-    (``most``: a smooth wall, the lower)."""
+    (``most``: a smooth wall, the lower). ``alias``: the zone each zone the model may not have
+    takes its gas from; ``alt``: the most-air end's elements, where a length is a band;
+    ``left_out``: what the path leaves out for want of a size, so its air is an upper bound."""
 
     elements: tuple[Element, ...]
     t_room: float
@@ -147,14 +179,24 @@ class Path:
     rough: float = ROUGH
     steps: tuple[Step, ...] = ()
     most_air: bool = False
+    alias: tuple[tuple[str, str], ...] = ()
+    alt: tuple[Element, ...] | None = None
+    left_out: tuple[str, ...] = ()
 
     @property
     def room_density(self) -> float:
         return self.pressure * M_AIR / (R * self.t_room)
 
+    @property
+    def zones(self) -> tuple[str, ...]:
+        """The gas zones its elements name, in the gas's order (not the room)."""
+        return tuple(_zones(self.elements))
+
     def most(self) -> Path:
-        """The path at its band's most-air end: a smooth wall, each fitting's lower coefficient."""
-        return Path(self.elements, self.t_room, self.pressure, 0.0, self.steps, True)
+        """The path at its band's most-air end: a smooth wall, each fitting's lower coefficient,
+        each length band at its most-air end."""
+        els = self.alt if self.alt is not None else self.elements
+        return replace(self, elements=els, rough=0.0, most_air=True, alt=None)
 
     def opened(self, share: float) -> Path:
         """The path with its air intakes a ``share`` open (the stoker's bricks): each intake's area
@@ -163,12 +205,8 @@ class Path:
             raise ValueError("the intakes are open by a share of more than 0, at most 1")
         if share == 1:
             return self
-        els = tuple(
-            replace(e, k=e.k / share**2, k_lo=None if e.k_lo is None else e.k_lo / share**2)
-            if e.name.startswith(INTAKE) else e
-            for e in self.elements
-        )  # fmt: skip
-        return Path(els, self.t_room, self.pressure, self.rough, self.steps, self.most_air)
+        alt = None if self.alt is None else tuple(_open(e, share) for e in self.alt)
+        return replace(self, elements=tuple(_open(e, share) for e in self.elements), alt=alt)
 
 
 INTAKE = "air intakes"  # the name an intakes element starts with
@@ -244,19 +282,130 @@ def darcy(re: float, rel_rough: float, k1: float = 1.0) -> float:
 
 @dataclass(frozen=True)
 class Draft:
-    """The air the path draws, the gas it carries, and each element's buoyancy and loss (Pa)."""
+    """The air the path draws, the gas it carries, and each element's buoyancy and loss (Pa); for
+    each parallel group, the air through each of its branches (kg/s)."""
 
     air: float  # kg/s
     gas: float  # kg/s
     terms: tuple[tuple[str, float, float], ...]
+    shares: tuple[tuple[str, tuple[float, ...]], ...] = ()
 
 
-def _state(path: Path, zone: str, temps: Mapping[str, float], prod: Products) -> tuple[float, ...]:
-    """ρ and μ of the fluid in a zone, at the path's pressure."""
-    if zone == "room":
-        return path.room_density, air(path.t_room).viscosity
-    rho, mu, _, _ = prod.props(temps[zone])
-    return rho * path.pressure / ATM, mu
+def zone_temperature(path: Path, zone: str, temps: Mapping[str, float]) -> float:
+    """A zone's gas temperature (K): its own, else its alias's (`Path.alias`, followed on), else
+    the kind of either ("chamber 3" → "chamber")."""
+    alias = dict(path.alias)
+    chain = [zone]
+    while chain[-1] in alias and len(chain) < 8:
+        chain.append(alias[chain[-1]])
+    for z in (*chain, *(c.split(" ", 1)[0] for c in chain)):
+        if z in temps:
+            return temps[z]
+    raise KeyError(f"no gas temperature for the path's {zone} zone")
+
+
+class _Props:
+    """ρ and μ of the fluid in each zone at the path's pressure, worked out once a balance."""
+
+    def __init__(self, path: Path, temps: Mapping[str, float], prod: Products) -> None:
+        self.path, self.temps, self.prod = path, temps, prod
+        self.cache: dict[str, tuple[float, float]] = {
+            "room": (path.room_density, air(path.t_room).viscosity)
+        }
+
+    def __call__(self, zone: str) -> tuple[float, float]:
+        if zone not in self.cache:
+            rho, mu, _, _ = self.prod.props(zone_temperature(self.path, zone, self.temps))
+            self.cache[zone] = (rho * self.path.pressure / ATM, mu)
+        return self.cache[zone]
+
+
+def _term(
+    path: Path, e: Element, m_air: float, m_gas: float, props: _Props, shares: list[Any]
+) -> tuple[str, float, float]:
+    """One element's (name, buoyancy, loss) at the path's air and gas flows (kg/s)."""
+    if e.kind == "parallel":
+        lift, loss = _split(path, e, m_air, m_gas, props, shares)
+        return e.name, lift, loss
+    rho, mu = props(e.zone)
+    if e.kind == "column":
+        return e.name, (path.room_density - rho) * G * e.rise, 0.0
+    m = (m_air if e.zone == "room" else m_gas) / e.branches
+    v = m / (rho * e.area)
+    k = e.coefficient(path.most_air)
+    if e.kind == "duct":
+        re = rho * v * e.dh / mu
+        k = darcy(re, path.rough / e.dh, e.k1) * e.length / e.dh
+    elif e.by_re(path.most_air):
+        k *= k_re(rho * v * e.re_dh / mu)
+    return e.name, 0.0, k * rho * v * v / 2
+
+
+def _branch(
+    path: Path, els: Sequence[Element], m_air: float, m_gas: float, props: _Props
+) -> tuple[float, float]:
+    """A branch's buoyancy and loss (Pa) at its own air and gas flows."""
+    lift = loss = 0.0
+    for e in els:
+        _, b, x = _term(path, e, m_air, m_gas, props, [])
+        lift, loss = lift + b, loss + x
+    return lift, loss
+
+
+def _split(
+    path: Path, e: Element, m_air: float, m_gas: float, props: _Props, shares: list[Any]
+) -> tuple[float, float]:
+    """A parallel group at its air and gas flows: the junction's draft D that every branch with
+    flow has across it, buoyancy less losses, the branches' flows summing to the group's (each
+    carries the group's gas per kg of air). Returned as the flow-weighted buoyancy and that less
+    D, so the group adds D to the path's balance; each branch's air goes into ``shares``. A
+    branch whose buoyancy is under D carries nothing (no flow backwards); a branch with no loss
+    at all (an opening left out for want of its size) holds D at its buoyancy and takes what the
+    others don't."""
+    lifts = [_branch(path, b, 0.0, 0.0, props)[0] for b in e.parts]
+    top = max(lifts)
+    if m_air <= 0:
+        shares.append((e.name, tuple(0.0 for _ in e.parts)))
+        return top, 0.0
+    ratio = m_gas / m_air
+    free = [i for i, b in enumerate(e.parts) if all(x.kind == "column" for x in b)]
+
+    def share(i: int, d: float) -> float:
+        need = lifts[i] - d
+        if need <= 0:
+            return 0.0
+
+        def gap(u: float) -> float:
+            m = math.exp(u)
+            return _branch(path, e.parts[i], m, m * ratio, props)[1] - need
+
+        lo = hi = math.log(m_air)
+        while gap(lo) > 0:
+            lo -= 2.0
+        while gap(hi) < 0:
+            hi += 2.0
+        return math.exp(find_root(gap, lo, hi, xtol=1e-12))
+
+    def excess(d: float) -> float:
+        return sum(share(i, d) for i in range(len(e.parts)) if i not in free) - m_air
+
+    held = max((lifts[i] for i in free), default=-math.inf)
+    if free and excess(held) <= 0:
+        d = held
+        each = [0.0 if i in free else share(i, d) for i in range(len(e.parts))]
+        each[free[0]] = m_air - sum(each)
+    else:  # the branches with losses carry it all (a free branch's buoyancy is under D)
+        hi = max(lifts[i] for i in range(len(e.parts)) if i not in free)
+        step = max(1.0, abs(hi))
+        lo = max(hi - step, held)
+        while excess(lo) < 0:
+            step *= 2
+            lo = hi - step
+        d = find_root(excess, lo, hi, xtol=1e-10)
+        each = [0.0 if i in free else share(i, d) for i in range(len(e.parts))]
+    shares.append((e.name, tuple(each)))
+    lift = sum(s * b for s, b in zip(each, lifts, strict=True)) / max(sum(each), 1e-300)
+    return lift, lift - d
 
 
 def balance(
@@ -268,23 +417,10 @@ def balance(
 ) -> Draft:
     """Each element's buoyancy and loss at an air flow (kg/s); ``gas_of`` gives the gas flow."""
     m_gas = gas_of(m_air)
-    rho_room = path.room_density
-    terms: list[tuple[str, float, float]] = []
-    for e in path.elements:
-        rho, mu = _state(path, e.zone, temps, prod)
-        m = (m_air if e.zone == "room" else m_gas) / e.branches
-        if e.kind == "column":
-            terms.append((e.name, (rho_room - rho) * G * e.rise, 0.0))
-            continue
-        v = m / (rho * e.area)
-        k = e.coefficient(path.most_air)
-        if e.kind == "duct":
-            re = rho * v * e.dh / mu
-            k = darcy(re, path.rough / e.dh, e.k1) * e.length / e.dh
-        elif e.by_re(path.most_air):
-            k *= k_re(rho * v * e.re_dh / mu)
-        terms.append((e.name, 0.0, k * rho * v * v / 2))
-    return Draft(m_air, m_gas, tuple(terms))
+    props = _Props(path, temps, prod)
+    shares: list[Any] = []
+    terms = tuple(_term(path, e, m_air, m_gas, props, shares) for e in path.elements)
+    return Draft(m_air, m_gas, terms, tuple(shares))
 
 
 def pressure(
@@ -347,6 +483,13 @@ class Table:
         return float(np.interp(t, self.temps, self.air))
 
 
+def _upper(path: Path) -> str:
+    """What the path leaves out for want of a size, as the table's working says it."""
+    if not path.left_out:
+        return ""
+    return f"; an upper bound, too, for want of: {'; '.join(path.left_out)}"
+
+
 TABLE_TEMPS = np.array([
     300, 350, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500, 1600, 1700,
     1800, 2000, 2200,
@@ -356,11 +499,14 @@ TABLE_TEMPS = np.array([
 def table(
     path: Path,
     prod: Products,
-    zones: Sequence[str] = ("firebox", "chamber", "chimney"),
+    zones: Sequence[str] | None = None,
     fuel: float | None = None,
 ) -> Table:
-    """The draft table: the air at each gas temperature, every hot zone at it (one zone), at the
-    least-air end of the band and at its most-air end (`Path.most`)."""
+    """The draft table: the air at each gas temperature, every hot zone at it (one zone: the
+    standard three and every zone the path names), at the least-air end of the band and at its
+    most-air end (`Path.most`)."""
+    if zones is None:
+        zones = ("firebox", "chamber", "chimney", *path.zones, *path.most().zones)
     rough, smooth = [], []
     smooth_path = path.most()
     for t in TABLE_TEMPS:
@@ -380,7 +526,7 @@ def table(
             "λ": f"{prod.air_ratio:.3f}",
         },
         reference=f"{IDELCHIK}; fluids 1.3 (Clamond's Colebrook); Cantera's gas",
-        note=f"{ROUGH_NOTE}; {FITTINGS_NOTE}; {LEFT_OUT}",
+        note=f"{ROUGH_NOTE}; {FITTINGS_NOTE}; {LEFT_OUT}" + _upper(path),
     )
     return Table(TABLE_TEMPS.copy(), r, s, (*path.steps, step))
 
@@ -485,22 +631,25 @@ def turn_up(
     b1: float,
     a_flue: float,
     a_stack: float,
+    branches: int = 1,
 ) -> Element:
     """A flue turning up into its chimney, on the flue's velocity: with the chimney's depth along
     the flue at most twice the flue's height, 6-6 × k_Re; deeper, a band from Idelchik's own stack
-    example, the sudden expansion (1 − F₀/F₁)² alone (Table 1-11, 4-1), to 6-6 held at b₁/b₀ 2."""
+    example, the sudden expansion (1 − F₀/F₁)² alone (Table 1-11, 4-1), to 6-6 held at b₁/b₀ 2.
+    Several flues side by side into one chimney (``branches``): each its own turn, the expansion
+    on the chimney's share each flue takes (its area over the flues' together)."""
     z = elbow(b1 / b0, across / b0)
     dh = hydraulic(across, b0)
     if b1 / b0 <= TURN_B[-1]:
         note = f"6-6 at b₁/b₀ {b1 / b0:.2f}, a₀/b₀ {across / b0:.2f}: ζ₁ {z:.2f}"
-        return Element(name, "fitting", zone, a_flue, k=z, re_dh=dh, note=note)
-    expansion = (1 - a_flue / a_stack) ** 2
+        return Element(name, "fitting", zone, a_flue, branches, k=z, re_dh=dh, note=note)
+    sudden = (1 - min(a_flue * branches / a_stack, 1.0)) ** 2
     note = (
         f"a chimney {b1 / b0:.1f} × the flue's height deep: 6-6 held at b₁/b₀ 2, {z:.2f} × k_Re, "
-        f"to the sudden expansion {expansion:.2f} (Idelchik's stack, Table 1-11)"
+        f"to the sudden expansion {sudden:.2f} (Idelchik's stack, Table 1-11)"
     )
-    return Element(name, "fitting", zone, a_flue, k=z, k_lo=expansion, re_dh=dh, re_lo=False,
-                   note=note)  # fmt: skip
+    return Element(name, "fitting", zone, a_flue, branches, k=z, k_lo=sudden, re_dh=dh,
+                   re_lo=False, note=note)  # fmt: skip
 
 
 def entrance(name: str, zone: str, area: float, branches: int = 1) -> Element:
@@ -518,19 +667,55 @@ def column(name: str, zone: str, rise: float) -> Element:
     return Element(name, "column", zone, rise=rise)
 
 
+def contraction(name: str, zone: str, a0: float, a1: float, branches: int = 1) -> Element:
+    """Gas passing from a passage of area ``a1`` into a narrower one of ``a0`` (each branch's),
+    its inlet in the end wall with a blunt edge: Idelchik's 3-9, ζ = 0.5(1 − F₀/F₁) on the narrow
+    passage's velocity (Re > 10⁴); from a large space it is 3-1's 0.50 (`entrance`)."""
+    f = min(a0 / a1, 1.0) if a1 > 0 else 0.0
+    k = SHARP_ENTRANCE * (1 - f)
+    return Element(name, "fitting", zone, a0, branches, k=k, note=f"3-9 at F₀/F₁ {f:.2f}: {k:.2f}")
+
+
+def expansion(name: str, zone: str, a0: float, a2: float, branches: int = 1) -> Element:
+    """Gas leaving a passage of area ``a0`` (each branch's) into a wider one of ``a2``: Idelchik's
+    4-1, the sudden expansion ζ = (1 − F₀/F₂)² on the narrow passage's velocity (Re > 3.5·10³);
+    into a large space it is the free exit (`outlet`)."""
+    f = min(a0 / a2, 1.0) if a2 > 0 else 0.0
+    k = (1 - f) ** 2
+    return Element(name, "fitting", zone, a0, branches, k=k, note=f"4-1 at F₀/F₂ {f:.2f}: {k:.2f}")
+
+
+def gaps(
+    name: str,
+    zone: str,
+    count: int,
+    width: float,
+    height: float,
+    thickness: float,
+    approach: float,
+) -> tuple[Element, Element]:
+    """A wall with through-gaps, ``count`` holes ``width`` × ``height`` through a wall
+    ``thickness`` thick across a passage of ``approach`` area (a bag wall, the flue holes between
+    two chambers): Idelchik's 8-4, ζ = [(0.5 + τ√(1 − f))(1 − f) + (1 − f)² + λl/d_h]/f² on the
+    approach velocity, f the holes' share of the section, τ by l/d_h. On the holes' own velocity
+    that is ζ·f²; its friction term is the holes' own (`duct`, Darcy at their Re), so the jet's
+    part is returned with the friction's duct beside it. The diagram is for Re ≥ 10⁵ (its low-Re
+    form not transcribed): below its Re, said (item 9)."""
+    area = count * width * height
+    f = min(area / approach, 1.0)
+    l_dh = thickness / hydraulic(width, height)
+    tau = grid_tau(l_dh)
+    k = (0.5 + tau * math.sqrt(1 - f)) * (1 - f) + (1 - f) ** 2
+    note = f"8-4 at f {f:.2f}, l/d_h {l_dh:.2f} (τ {tau:.2f}): ζ {k:.2f} on the holes' velocity"
+    jet = Element(name, "fitting", zone, width * height, count, k=k, note=note)
+    return jet, duct(f"{name}, through the wall", zone, width, height, thickness, count)
+
+
 # --- a path from a design file -------------------------------------------------------------------
 
 
 class NotModelledError(ValueError):
     """The design doesn't give what the path needs, or v2 doesn't build this path yet."""
-
-
-def _thickness(kiln: Kiln, face: str) -> float:
-    return sum(si(x.thickness, "m") for x in kiln.lining.for_face(face))  # pyright: ignore[reportArgumentType]
-
-
-def _port_area(w: float, h: float, rnd: bool) -> float:
-    return math.pi * w * w / 4 if rnd else w * h
 
 
 def kiln_path(
@@ -539,175 +724,23 @@ def kiln_path(
     grate_bar: float | None = None,
     rough: float = ROUGH,
     intake: Intakes | None = None,
+    inputs: Any = None,
+    segments: int = 1,
 ) -> Path:
-    """The gas path of a design: under-floor stoked fireboxes or gas burners' ports, the chamber,
-    the exit flue and the chimney, as the design gives them (z from the chamber's floor).
+    """The gas path of a design as built, from its air intakes to its chimney's top (C1:
+    `paths.py`, which holds the forms). ``grate_bar``: the grate's bar thickness (m), which the
+    design file doesn't carry (the fast-fire's ¾ in rod is printed, Olsen p.204); without it the
+    grate's loss is left out and said so. ``intake``: the fireboxes' air intakes (ADR 0017
+    decision 9; the design file holds none: the dataset's areas); without them, the design's
+    openings. ``inputs``: what else the design file can't say (`paths.Inputs`), the dataset's;
+    the two above fill its fields where it leaves them out. ``segments``: a single chamber cut
+    into that many zones along its length, as the heat model cuts it. Refused, naming the input,
+    where nothing bounds a piece of the path."""
+    from kilndesigner.v2.heat import paths
 
-    ``grate_bar``: the grate's bar thickness (m), which the design file doesn't carry (the
-    fast-fire's ¾ in rod is printed, Olsen p.204); without it the grate's loss is left out and
-    said so. ``intake``: the fireboxes' air intakes (ADR 0017 decision 9; the design file holds
-    none: the dataset's areas); without them, the design's ash-pit mouths alone. Refused: a
-    design with no chimney or exit flue given (the engine's rule-sized defaults are v1's and
-    aren't a kiln's own draft), and paths v2 doesn't build yet."""
-    draft = kiln.draft
-    if draft is None or draft.chimney is None:
-        raise NotModelledError(
-            "the design gives no chimney, so its draft can't be worked out (the engine's "
-            "rule-sized chimney isn't the kiln's own)"
-        )
-    if draft.flue_port is None or draft.exits is not None or draft.chimneys != 1:
-        raise NotModelledError(
-            "v2's draft takes one exit flue (draft.flue_port) into one chimney; several exits "
-            "or chimneys aren't built yet"
-        )
-    if draft.chimney_through != "beside" or draft.type == "up":
-        raise NotModelledError("a chimney through the crown or over an up-draft isn't built yet")
-    t_room = si(kiln.site.ambient, "K")
-    pressure = ATM
-    notes: list[str] = []
-    if kiln.site.elevation is not None:
-        z_site = si(kiln.site.elevation, "m")
-        pressure = float(ATMOSPHERE_1976(z_site).P)
-        notes.append(f"{z_site:.0f} m up: {pressure:.0f} Pa (US Standard Atmosphere 1976, fluids)")
-    els: list[Element] = []
-    fire, gas_heat = kiln.heat.fire, kiln.heat.gas
-    if fire is not None and gas_heat is None:
-        boxes = fire.fireboxes
-        if len(boxes) != 1 or boxes[0].position != "under" or boxes[0].inlet is None:
-            raise NotModelledError(
-                "v2's draft takes one set of fireboxes under the floor with their inlet flues; "
-                "fireboxes against a wall aren't built yet"
-            )
-        fb = boxes[0]
-        assert fb.inlet is not None
-        n = fb.count
-        t_floor = _thickness(kiln, "floor")
-        fw = si(fb.width, "m")
-        fh = si(fb.height, "m") if fb.height is not None else fw
-        pit = si(fb.ash_pit, "m") if fb.ash_pit is not None else fh
-        barred = fb.grate is not None and fb.grate.gap is not None and grate_bar is not None
-        g_area = si(fb.grate.width, "m") * si(fb.grate.length, "m") * n if fb.grate else 0.0
-        if intake is not None:
-            k_g = None
-            if barred:
-                assert fb.grate is not None
-                assert fb.grate.gap is not None
-                assert grate_bar is not None
-                k_g = bar_grate(si(fb.grate.gap, "m"), grate_bar)
-            els.append(intakes(intake, g_area, k_g, n))
-            notes.append(f"the air intakes: {intake.reference}")
-        else:
-            els.append(inlet("ash-pit mouth (the firebox's width by the ash pit's depth)",
-                             fw * pit, n))  # fmt: skip
-            notes.append("the air intakes: the design's ash-pit mouths alone (no others given)")
-            if barred:
-                assert fb.grate is not None
-                assert fb.grate.gap is not None
-                assert grate_bar is not None
-                gw, gl = si(fb.grate.width, "m"), si(fb.grate.length, "m")
-                els.append(grate("grate, round bars (Idelchik 8-9)", gw, gl,
-                                 si(fb.grate.gap, "m"), grate_bar, n))  # fmt: skip
-        if not barred:
-            notes.append("the grate's loss left out: its bars' size isn't given")
-        notes.append("the fuel bed's resistance: no source, left out")
-        els.append(column("firebox and inlet flue, grate to the chamber floor", "firebox",
-                          t_floor + fh))  # fmt: skip
-        run = si(fb.grate.length, "m") / 2 if fb.grate is not None else si(fb.length, "m") / 2
-        els.append(duct("firebox, the gas's run off the grate (half its length)", "firebox",
-                        fw, fh, run, n))  # fmt: skip
-        iw, ih = fb.inlet.size_in()
-        ia = _port_area(iw * 0.0254, ih * 0.0254, fb.inlet.round)
-        k = n * fb.inlets
-        share = fw / fb.inlets  # each inlet's share of the channel's width
-        els.append(turn("into the inlet flue, a sharp turn up", "firebox", share, fh, ia / share,
-                        k))  # fmt: skip
-        if abs(iw * 0.0254 - share) > 1e-3:
-            notes.append(
-                "an inlet flue narrower or wider than its share of the channel: 6-6 taken on its "
-                "area over that share (6-6 keeps the side normal to the turn)"
-            )
-        els.append(duct("inlet flue, through the floor", "firebox", iw * 0.0254, ih * 0.0254,
-                        t_floor, k, rnd=fb.inlet.round))  # fmt: skip
-        els.append(outlet("inlet flue into the chamber", "firebox", ia, k))
-        z_in = 0.0
-    elif gas_heat is not None and fire is None:
-        from kilndesigner.firebox_parts import burner_port_in
-
-        size = burner_port_in(kiln)
-        count = gas_heat.burners.count
-        if size is None or count is None or gas_heat.burners.wall == "floor":
-            raise NotModelledError(
-                "the burners' port size or count isn't given, or they fire up through the "
-                "floor (not built yet)"
-            )
-        pw, ph = size[0] * 0.0254, size[1] * 0.0254
-        pa = _port_area(pw, ph, size[2])
-        wall = _thickness(kiln, gas_heat.burners.wall)
-        els.append(inlet("burner ports, room air round the burners", pa, count))
-        els.append(duct("burner ports, through the wall", "room", pw, ph, wall, count,
-                        rnd=size[2]))  # fmt: skip
-        els.append(outlet("burner ports into the chamber", "room", pa, count))
-        notes.append(
-            "all the air taken as drawn through the burner ports by the draft: the venturi's own "
-            "pumping isn't modelled (no source), and the burner tube in the port is ignored"
-        )
-        z_in = (
-            si(gas_heat.burners.up, "m")
-            if gas_heat.burners.up is not None
-            else (
-                0.0635 + ph / 2  # a 2½ in course up, as the engine lays the ports (Pitelka [S4])
-            )
-        )
-    else:
-        raise NotModelledError("v2's draft takes one kind of heat: fireboxes or gas burners")
-    ew, eh = (x * 0.0254 for x in draft.flue_port.size_in())
-    ea = _port_area(ew, eh, draft.flue_port.round)
-    z_exit = eh / 2  # at the foot of the flue wall, as the engine lays it
-    els.append(column("chamber, inlet to the exit flue's middle", "chamber", z_exit - z_in))
-    els.append(entrance("exit flue, sharp entrance", "chamber", ea))
-    els.append(duct("exit flue, through the flue wall", "chamber", ew, eh,
-                    _thickness(kiln, draft.flue_wall), rnd=draft.flue_port.round))  # fmt: skip
-    chim = draft.chimney
-    if chim.inside is None:
-        raise NotModelledError("the chimney's inside section isn't given")
-    rnd = chim.inside.diameter is not None
-    if chim.inside.diameter is not None:
-        cw = cd = si(chim.inside.diameter, "m")
-        ca = math.pi * cw * cw / 4
-    else:
-        assert chim.inside.width is not None
-        assert chim.inside.depth is not None
-        cw, cd = si(chim.inside.width, "m"), si(chim.inside.depth, "m")
-        ca = cw * cd
-    run = si(draft.run_to_chimney, "m")
-    if run > 0:
-        els.append(duct("the run to the chimney", "chimney", ew, eh, run,
-                        rnd=draft.flue_port.round))  # fmt: skip
-    # A round flue or chimney as the square of its area (Idelchik item 12: as circular)
-    side = math.sqrt(math.pi / 4)
-    fa, fb0 = (ew * side, eh * side) if draft.flue_port.round else (ew, eh)
-    els.append(turn_up("turn up into the chimney", "chimney", fa, fb0, cd * (side if rnd else 1),
-                       ea, ca))  # fmt: skip
-    height = si(chim.height, "m") - z_exit
-    els.append(column("chimney", "chimney", height))
-    els.append(duct("chimney", "chimney", cw, cd, height, rnd=rnd))
-    els.append(outlet("chimney top", "chimney", ca))
-    odd = [e.name for e in els if e.sides is not None
-           and not 0.5 <= e.sides[0] / e.sides[1] <= 2.0]  # fmt: skip
-    if odd:
-        notes.append(
-            "turbulent friction as a circle's on D_h for "
-            + ", ".join(odd)
-            + ": past Idelchik's 0.5–2 side ratio for that (item 17), none other read"
-        )
-    steps = (
-        Step(
-            name="The gas path",
-            value=" → ".join(e.name for e in els if e.kind != "column"),
-            inputs={e.name: f"Δz {e.rise:.3f} m" for e in els if e.kind == "column"}
-            | {e.name: e.note for e in els if e.note},
-            reference=f"the design file; the fittings from {IDELCHIK}; friction fluids 1.3",
-            note="; ".join([*notes, FITTINGS_NOTE]),
-        ),
-    )
-    return Path(tuple(els), t_room, pressure, rough, steps)
+    given = inputs if isinstance(inputs, paths.Inputs) else paths.Inputs()
+    if given.grate_bar is None and grate_bar is not None:
+        given = replace(given, grate_bar=grate_bar)
+    if given.intake is None and intake is not None:
+        given = replace(given, intake=intake)
+    return paths.kiln_path(kiln, given, rough=rough, segments=segments)
