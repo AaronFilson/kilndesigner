@@ -153,6 +153,20 @@ def test_a_start_is_tried_from_each_guess_in_turn() -> None:
         fi._consistent(resfn, np.array([0.0]), [0], 0.0, 1, (np.array([1.0]),))  # pyright: ignore[reportPrivateUsage]
 
 
+def test_the_friction_factor_has_no_step_at_transition() -> None:
+    """Darcy's friction: Idelchik's laminar k₁·64/Re below Re 2000, Colebrook from 2300, straight
+    between (a bridge, so the max fire's Newton iteration has no step to fail on: Miravet's)."""
+    rough, k1 = 0.02, 0.89
+    below, at, mid = dr.darcy(1999.999, rough, k1), dr.darcy(2000.0, rough, k1), dr.darcy(
+        2150.0, rough, k1)  # fmt: skip
+    top = dr.darcy(2300.0, rough, k1)
+    assert at == pytest.approx(below, rel=1e-5)
+    assert at == pytest.approx(k1 * 64 / 2000)
+    assert mid == pytest.approx((at + top) / 2)
+    assert dr.darcy(2299.999, rough, k1) == pytest.approx(top, rel=1e-5)
+    assert top > at  # Colebrook's rough pipe lies above the laminar value there
+
+
 # --- Rule 6 seeding p.78 -------------------------------------------------------------------------
 
 

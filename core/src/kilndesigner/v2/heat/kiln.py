@@ -287,6 +287,7 @@ def heat_model(
     chimney: Sequence[object] | None = None,
     path_inputs: object = None,
     wire: tuple[float, float, int] | None = None,
+    cavity: ch.Chamber | None = None,
 ) -> ZoneModel:
     """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
     back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
@@ -300,7 +301,9 @@ def heat_model(
     how it is built (`flue_liner()` for clay flue liners; the design file can't say);
     ``path_inputs``: what else the draft path needs that the design file can't say, the
     dataset's (`paths.Inputs`); ``wire``: an electric kiln's element wire (diameter m, length m
-    of each, the count), for its surface load, where the book prints it.
+    of each, the count), for its surface load, where the book prints it; ``cavity``: the chamber
+    `chamber.chamber(kiln, segments, path)` builds, where the caller has it (a band's corners
+    build the model on one solid several times, C3a).
 
     Every chamber shape `chamber.py` traces is taken: a round chamber's or a crossing's walls grow
     to their outsides as the engine's own shape grows them (`shape.chamber_shape`). An electric
@@ -311,7 +314,7 @@ def heat_model(
     prod = gas.still_air(t_room) if electric else gas.products(fuel, air_ratio, t_room)
     if electric:
         wsgg = "transparent"
-    c = ch.chamber(kiln, segments=segments, path=path)
+    c = cavity if cavity is not None else ch.chamber(kiln, segments=segments, path=path)
     loads = [load] if isinstance(load, Load) else list(load)
     kinds = [g.kind for g in c.gas]
     rooms = [k for k, g in enumerate(c.gas) if g.kind == "chamber"]
