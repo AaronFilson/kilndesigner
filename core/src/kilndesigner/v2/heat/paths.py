@@ -80,7 +80,7 @@ RULE_6_NOTE = (
     "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band, the owner's "
     "question 8 (C1, 11-10-26.md), open"
 )
-MIN_CHIMNEY = 9 * 0.0254  # m: "seldom under 9 x 9in" (p.80)
+MIN_CHIMNEY = 9 * 0.0254  # m: a chimney seldom under 9 × 9 in at the base (p.80)
 TAPER_STEPS = 8  # a tapered chimney's friction summed over this many slices
 
 
@@ -1118,9 +1118,9 @@ class _Build:
 
     def rule6(self) -> tuple[float, str]:
         """Olsen's Rule 6 (pp.79–80) as p.78's anchor: the chimney's side ⅕ of the chamber's
-        width at the band's least-air end, ¼ at its most, neither under 9 in ("seldom under 9 x
-        9in"); its area the kiln's whole chimney section, shared among its chimneys. Said, with
-        the owner's question it rests on."""
+        width at the band's least-air end, ¼ at its most, neither under 9 in (a chimney seldom
+        under 9 × 9 in); its area the kiln's whole chimney section, shared among its chimneys.
+        Said, with the owner's question it rests on."""
         lo, hi = max(self.width / 5, MIN_CHIMNEY), max(self.width / 4, MIN_CHIMNEY)
         side = hi if self.most else lo
         self.notes.append(

@@ -34,7 +34,7 @@ pytestmark = [pytest.mark.slow, pytest.mark.geometry]
 # --- T1: every single-chamber fuel kiln with a cone or a top temperature, printed or assumed ------
 
 # Printed: the oil drip's cone 10 (p.208), Fireworks' cone 10+ (p.181), Singh's coal kiln's cone 10
-# (p.133), Anderson's cone 10 (p.142), Kato's 2372 °F (p.131), Falcone's 1760 °F "usually" (p.160),
+# (p.133), Anderson's cone 10 (p.142), Kato's 2372 °F (p.131), Falcone's usual 1760 °F (p.160),
 # La Borne's 1300 °C by the firebox (p.111). Assumed, each with its reason in the dataset: the
 # rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed)
 T1 = (
@@ -78,8 +78,8 @@ def test_t1_reaches_its_target_on_its_own_draft(kid: str) -> None:
 
 
 def test_t1_falcone_reaches_its_most_printed_temperature() -> None:
-    """Falcone's kiln is fired "usually" to 1760 °F and "at most" to 1922 °F (p.160): v2's hardest
-    firing reaches the most too, at every corner of its band (on Rule 6's flues)."""
+    """Falcone's kiln is usually fired to 1760 °F, at most to 1922 °F (p.160): v2's hardest firing
+    reaches the most too, at every corner of its band (on Rule 6's flues)."""
     most = sc.heat_fact("falcone-pompeii", "top_temperature", "K", which=1)[0]
     assert most == pytest.approx(1050.0 + 273.15, abs=0.2)
     b = sc.max_band_to("falcone-pompeii", most)
@@ -117,7 +117,8 @@ def test_t2_its_printed_time_is_no_faster_than_its_hardest_firing(kid: str, hour
 def test_t2_the_stage_times_stand() -> None:
     """Stage times (problem set §6), each the printed stage's time against v2's hardest firing from
     cold, so the stage stands from any state the stages before it leave: Moveros' about 6 h
-    stoked faster (p.154) and La Borne's grand feu, about a day "for intense heat" (p.111)."""
+    stoked faster (p.154) and La Borne's grand feu, about a day of branches and twigs for intense
+    heat (p.111)."""
     assert sc.max_band("moveros-umbrella").high < _printed("moveros-umbrella", "stage_time",
                                                            which=1)  # fmt: skip
     grand_feu = sc.heat_fact("la-borne", "stage_time", "hour", 1)[0]
@@ -187,8 +188,8 @@ def test_t3_the_oil_drips_gallons_are_no_less_than_its_hardest_firing() -> None:
 
 
 def test_katos_printed_rates_against_its_draft_and_grates() -> None:
-    """Kato's coal above 2000 °F (p.131): 3–4 shovels every 20 minutes in oxidation, 10–12 in "very
-    heavy reduction", over the shovel's band (4–21 lb): at its 2372 °F the draft's air burns the
+    """Kato's coal above 2000 °F (p.131): 3–4 shovels every 20 minutes in oxidation, 10–12 in very
+    heavy reduction, over the shovel's band (4–21 lb): at its 2372 °F the draft's air burns the
     oxidation rate at λ ≥ 1 for some shovel, the reduction rate overruns the air (λ < 1) for some
     shovel, and the grates' most (200 kg/(m²·h)) takes the reduction rate for some shovel."""
     burns = sc.burnt_at_top(sc.KATO)
@@ -224,8 +225,8 @@ def test_t4_andersons_table_5_2_within_its_drafts_air() -> None:
 
 
 def test_t5_la_bornes_tunnel_falls_front_to_back() -> None:
-    """T5: "the temperature falls along the tunnel, so the ware is graded high-fire, middle-fire and
-    earthenware by thirds", about 1300 °C by the firebox, 1200 °C in the middle, about 1100 °C at
+    """T5: the temperature falls along the tunnel, so the ware is graded high-fire, middle-fire and
+    earthenware by thirds, about 1300 °C by the firebox, 1200 °C in the middle, about 1100 °C at
     the rear (p.111): the tunnel in three segments, the front's setting at 1300 °C, the middle's and
     the rear's colder in that order (the ordering; the book's own figures beside in the plan)."""
     f = sc.evenness("la-borne", 3)
@@ -240,7 +241,7 @@ def test_t5_la_bornes_tunnel_falls_front_to_back() -> None:
 
 
 def test_t5_the_groundhogs_back_fires_cooler() -> None:
-    """T5: "a groundhog runs hot along the crown and cool along the bottom of the back wall" (p.75,
+    """T5: a groundhog runs hot along the crown and cool along the bottom of the back wall (p.75,
     Fig 3-6): its chamber in two segments, the back's setting cooler than the front's when the
     front's reaches cone 10 (top to bottom needs zones stacked up the chamber: not built)."""
     f = sc.evenness("groundhog-basic", 2)

@@ -335,8 +335,8 @@ def shovels_kg(count: float) -> tuple[float, float]:
     return count * SHOVEL_LB[0] * LB, count * SHOVEL_LB[1] * LB
 
 
-# Kato's coal above 2000 °F (p.131; the dataset's `fuel_rate` facts, printed): "10 to 12 shovels of
-# coal every 20 minutes" in reduction, "3 to 4" in oxidation, the kiln's two fireboxes together
+# Kato's coal above 2000 °F (p.131; the dataset's `fuel_rate` facts, printed): 10 to 12 shovels of
+# coal every 20 minutes in reduction, 3 to 4 in oxidation, the kiln's two fireboxes together
 KATO = "kato-coal"
 KATO_SHOVELS_PER_20_MIN = {"reduction": (10.0, 12.0), "oxidation": (3.0, 4.0)}
 

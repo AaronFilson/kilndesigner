@@ -202,8 +202,9 @@ def test_rule_6_seeds_p78_where_nothing_on_the_path_is_sized() -> None:
 
 @pytest.mark.geometry
 def test_rule_6_is_never_under_nine_inches() -> None:
-    """The Kannofen's 1.05 m (41.3 in) tunnel: a fifth of it is 8.3 in, under the "seldom under 9 x
-    9in" (p.80), so the band runs 9–10.3 in; an updraft, its exit flue p.78's of that section."""
+    """The Kannofen's 1.05 m (41.3 in) tunnel: a fifth of it is 8.3 in, under the 9 × 9 in a
+    chimney is seldom under (p.80), so the band runs 9–10.3 in; an updraft, its exit flue p.78's of
+    that section."""
     path = dr.kiln_path(loads.design("kannofen"), inputs=pi.inputs("kannofen", rule6=True))
     assert _named(path, "exit flue, sharp entrance").area == pytest.approx((9 * IN) ** 2)
     assert _named(path.most(), "exit flue, sharp entrance").area == pytest.approx((1.05 / 4) ** 2)

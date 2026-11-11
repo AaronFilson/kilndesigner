@@ -75,8 +75,10 @@ its top end is gross.
 | `kato-coal` (Tajimi) | "coal", kind not printed (p.131) | generic coal: net 27.9 MJ/kg dry, 24.8 as received at 10 % moisture, ash 14 % dry | C 68–78 % (71.5), H 3.5–5.0 % (4.5), N 0.8–1.5 %, S < 0.5 % dry [F3]; C 72.5, H 5.6, O 11.0, N 1.3, S 0.94 % [F2] | [F3], [F2] |
 
 So coal **needn't stay refused**: each coal kiln has a sourced band, Singh's from its printed grade,
-Kato's a generic one (said so in the working). The shovelful has one open figure, Taylor's 21 lb
-(9.5 kg), a shoveler's best load, not a kiln's shovel [F8]; its band is a question for the owner.
+Kato's a generic one (said so in the working). The shovelful has Taylor's two figures [F8], under
+4 lb of rice coal on one man's own shovel and the 21 lb (9.5 kg) best load of a shovel sized to its
+material, neither a kiln's shovel: C3a carries 4–21 lb as the stated band, its ends a question for
+the owner.
 
 ## 1. Sources
 
@@ -324,7 +326,8 @@ bundles stay unconverted; a Kyoto kiln burned 1,500 bundles of pine in 46 h ([K1
 
 1. **Moisture**: the band runs from each site's outdoor equilibrium moisture to 25 % ("stored several
    years", [F2]). Kiln wood stored only a summer is 25–35 %: should any kiln take the wetter band?
-2. **The coal shovel**: the only open figure is Taylor's 21 lb best load. Carry 21 lb as the point,
-   or a band (whose ends would be the owner's)?
+2. **The coal shovel**: Taylor's two figures, under 4 lb of rice coal on one man's own shovel and
+   the 21 lb best load of a sized shovel, are carried as the band 4–21 lb (C3a). Take it, or your
+   own ends?
 3. **Olsen's 140,000 BTU/gal** for #2 diesel is gross: take the net band 42.1–43.3 MJ/kg (128,500–
    132,000 BTU/gal) for the oil kiln's printed 60–75 gal?
