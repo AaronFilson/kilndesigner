@@ -18,6 +18,7 @@ import numpy as np
 
 from kilndesigner.library import material
 from kilndesigner.model import Dome, Kiln, SprungArch
+from kilndesigner.shape import FaceShape
 from kilndesigner.thermal.surface import StillAirSurface
 from kilndesigner.thermal.transient import HeatCapacity, Layer
 from kilndesigner.units import si
@@ -31,6 +32,8 @@ from kilndesigner.v2.heat.walls import CellWall, Outside, face_sides, grown, lin
 from kilndesigner.v2.heat.zone import (
     CONVECTION,
     CONVECTION_NOTE,
+    ELEMENTS_NOTE,
+    Elements,
     Face,
     Flow,
     Gas,
@@ -80,7 +83,9 @@ def fuel_of(kiln: Kiln, wood: Wood | gas.Fuel | None) -> gas.Fuel:
     wood (`site.wood`) on the surrogate's analysis."""
     heat = kiln.heat
     if heat.electric is not None and heat.gas is None and heat.fire is None:
-        raise NotModelledError("elements as face sources are build order step 10, not built yet")
+        return gas.ELECTRIC  # elements as face sources (`elements_of`): the chamber holds air
+    if heat.electric is not None:
+        raise NotModelledError("elements beside burners or a fire (a hybrid) aren't modelled yet")
     if heat.gas is not None and heat.fire is None:
         f = heat.gas.fuel
         return gas.propane() if f == "propane" else gas.natural_gas()
@@ -122,10 +127,15 @@ def _layer(x: object) -> Layer:
     assert isinstance(x, DesignLayer)
     m = material(x.material)
     rho = si(parse_quantity(m.density), "kg/m**3")
-    if m.specific_heat is None:
-        if x.specific_heat is None:
-            raise NotModelledError(f"{x.material}: no specific heat sourced or given")
+    if m.specific_heat is None and x.specific_heat is not None:
         cp = HeatCapacity.constant(si(x.specific_heat, "J/(kg*K)"))
+    elif m.specific_heat is None and m.kind in ("insulating_castable", "dense_castable"):
+        cls = material(src.CASTABLE_CP_FROM).specific_heat  # castables.md §14.3's class value
+        assert cls is not None
+        ts, cs = cls.to_points()
+        cp = HeatCapacity(tuple(ts), tuple(cs))
+    elif m.specific_heat is None:
+        raise NotModelledError(f"{x.material}: no specific heat sourced or given")
     else:
         ts, cs = m.specific_heat.to_points()
         if m.kind == "dense_firebrick" and ts[0] > src.FIRED_CLAY_AT:
@@ -140,11 +150,52 @@ type Emissivity = Literal["nominal", "low", "high"]
 # medium-alumina fire brick under his low-alumina), and the hemispherical share of the normal
 # value, 0.95–1.0 (Jones et al. [R6] Fig. 6)
 EMISSIVITY_CLASS: dict[str, tuple[dict[str, str], float]] = {
-    "nominal": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-medium"},
-                src.HEMISPHERICAL.value),
-    "low": ({"insulating_firebrick": "ifb-mpk140", "dense_firebrick": "dense-medium"}, 0.95),
-    "high": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-low"}, 1.0),
+    "nominal": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-medium",
+                 "fibre_blanket": "fibre-normal", "insulating_castable": "ifb-mpk125",
+                 "dense_castable": "dense-medium", "stone": "dense-medium",
+                 "building_brick": "dense-medium"}, src.HEMISPHERICAL.value),
+    "low": ({"insulating_firebrick": "ifb-mpk140", "dense_firebrick": "dense-medium",
+             "fibre_blanket": "fibre-parallel", "insulating_castable": "ifb-mpk140",
+             "dense_castable": "dense-medium", "stone": "dense-medium",
+             "building_brick": "dense-medium"}, 0.95),
+    "high": ({"insulating_firebrick": "ifb-mpk125", "dense_firebrick": "dense-low",
+              "fibre_blanket": "fibre-normal", "insulating_castable": "dense-low",
+              "dense_castable": "dense-low", "stone": "dense-low",
+              "building_brick": "dense-low"}, 1.0),
 }  # fmt: skip
+# Stone (granite) and building brick have no hot-face emissivity in any source read
+# (radiation-exchange.md §4): carried as the dense fire brick's band, the nearest measured silicate
+# ceramics, said in the working (`_class_notes`)
+# A fibre blanket's hot face: a folded module shows its fibres end on, the normal-fibre line its
+# nominal; a laid blanket's lie parallel, the band's low end (radiation-exchange.md §5.3)
+
+
+CASTABLES = ("insulating_castable", "dense_castable")
+FIBRE_NOTE = (
+    "a fibre blanket's hot face takes Fletcher and Williams' fibre board lines (radiation-"
+    "exchange.md §5.3): fibres normal to the face (a folded module's) nominal, parallel (a laid "
+    "blanket's) the band's low end"
+)
+
+
+def _class_notes(faces: Sequence[Face]) -> list[str]:
+    """What the walls take from a class rather than their own material: a castable's specific
+    heat and hot-face emissivity, a fibre blanket's emissivity."""
+    layers = [x.name for f in faces for x in f.wall.layers]
+    hot = {material(f.wall.layers[0].name).kind for f in faces}
+    out: list[str] = []
+    if any(material(x).specific_heat is None and material(x).kind in CASTABLES for x in layers):
+        out.append(src.CASTABLE_CP_NOTE)
+    if hot & set(CASTABLES):
+        out.append(src.CASTABLE_EMISSIVITY_NOTE)
+    if "fibre_blanket" in hot:
+        out.append(FIBRE_NOTE)
+    if hot & {"stone", "building_brick"}:
+        out.append(
+            "stone or building brick at the hot face: no hot emissivity measured "
+            "(radiation-exchange.md §4), carried as the dense fire brick's band"
+        )
+    return out
 
 
 def _emissivity(material_id: str, cls: Emissivity = "nominal") -> Line:
@@ -208,6 +259,8 @@ def _layers(
 def _grey(
     prod: gas.Products, wsgg: Literal["bordbar2014", "dorigon2013", "transparent"]
 ) -> tuple[gasrad.WSGG | None, float, float]:
+    if prod.fuel is gas.ELECTRIC:  # air: no CO₂ or H₂O to radiate
+        return None, 0.0, math.nan
     pwc, mr = prod.radiating(NOMINAL)
     if wsgg == "bordbar2014":
         return gasrad.bordbar2014(min(max(mr, 0.01), 4.0)), pwc, mr
@@ -233,6 +286,7 @@ def heat_model(
     emissivity: Emissivity = "nominal",
     chimney: Sequence[object] | None = None,
     path_inputs: object = None,
+    wire: tuple[float, float, int] | None = None,
 ) -> ZoneModel:
     """The kiln's zone model at an air ratio λ, with its load (one per chamber zone, front to
     back). With ``path`` the fireboxes and the chimney are gas zones of their own, with their own
@@ -245,16 +299,19 @@ def heat_model(
     (`EMISSIVITY_CLASS`); ``chimney``: the chimney's own walls, hot face first, where the book says
     how it is built (`flue_liner()` for clay flue liners; the design file can't say);
     ``path_inputs``: what else the draft path needs that the design file can't say, the
-    dataset's (`paths.Inputs`)."""
+    dataset's (`paths.Inputs`); ``wire``: an electric kiln's element wire (diameter m, length m
+    of each, the count), for its surface load, where the book prints it.
+
+    Every chamber shape `chamber.py` traces is taken: a round chamber's or a crossing's walls grow
+    to their outsides as the engine's own shape grows them (`shape.chamber_shape`). An electric
+    kiln's elements are face sources on the walls they line (`elements_of`), its gas still air."""
     fuel = fuel_of(kiln, wood)
     t_room = si(kiln.site.ambient, "K")
-    prod = gas.products(fuel, air_ratio, t_room)
+    electric = fuel is gas.ELECTRIC
+    prod = gas.still_air(t_room) if electric else gas.products(fuel, air_ratio, t_room)
+    if electric:
+        wsgg = "transparent"
     c = ch.chamber(kiln, segments=segments, path=path)
-    if c.shape != "box":
-        raise NotModelledError(
-            f"a {c.shape} chamber is traced (chamber.py) but its walls' outside areas aren't "
-            "worked out yet: box chambers only"
-        )
     loads = [load] if isinstance(load, Load) else list(load)
     kinds = [g.kind for g in c.gas]
     rooms = [k for k, g in enumerate(c.gas) if g.kind == "chamber"]
@@ -275,7 +332,7 @@ def heat_model(
         gasrad.exchange_zones(traced, grey, pwc) if many else gasrad.exchange_for(traced, grey, pwc)
     )
     faces, soil, notes = _faces(kiln, c, traced, ground_soil, path, t_room, emissivity, chimney)
-    notes = [*c.notes, *notes]
+    notes = [*c.notes, *notes, *_class_notes(faces)]
     if chimney and any(g.kind == "chimney" for g in c.gas):
         liner = tuple(chimney) == flue_liner()
         notes.append(FLUE_LINER_NOTE if liner else "the chimney's walls: given")
@@ -290,6 +347,8 @@ def heat_model(
     except dr.NotModelledError as e:
         notes.append(f"the draft isn't worked out: {e}")
     bed = _bed(kiln, fuel, bed_rate, notes)
+    elements = elements_of(kiln, faces, dict(zip(traced.names, traced.areas, strict=True)), wire,
+                           c.shape) if electric else None  # fmt: skip
     path_zones = tuple((g.name, k) for k, g in enumerate(c.gas)) if many else ()
     steps = (
         *prod.steps,
@@ -333,12 +392,71 @@ def heat_model(
             note=f"{CONVECTION_NOTE}; {src.SETTING_GAP_NOTE}",
         ),
         *(table.steps if table is not None else ()),
+        *((_elements_working(elements, faces),) if elements is not None else ()),
         Step(name="Said about the model", value="; ".join(notes) if notes else "nothing"),
     )  # fmt: skip
     return ZoneModel(
         prod, exchange, traced.names, tuple(faces), tuple(settings), tuple(openings), gases,
-        t_room, table, steps, soil, draft_path, path_zones, fire_zone, bed,
+        t_room, table, steps, soil, draft_path, path_zones, fire_zone, bed, elements,
     )  # fmt: skip
+
+
+def elements_of(
+    kiln: Kiln,
+    faces: Sequence[Face],
+    areas: dict[str, float],
+    wire: tuple[float, float, int] | None,
+    shape: str = "box",
+) -> Elements:
+    """The design's elements as face sources: the walls they line (a round chamber's one wall),
+    each its share of the power by area; the power the design gives, else the circuit's
+    continuous limit, 80 % of the breaker (v1's electric.CONTINUOUS_FRACTION, NEC 210.20(A)); at
+    the firing's top temperature (its cone at its final rate), Kanthal's Ct (the library's
+    alloy)."""
+    from kilndesigner.cones import cone_temperature
+    from kilndesigner.electric import CONTINUOUS_FRACTION
+    from kilndesigner.library import alloy
+
+    el = kiln.heat.electric
+    assert el is not None
+    walls = {"wall"} if shape == "round" else set(el.walls)
+    lined = [k for k, f in enumerate(faces) if f.name.split(" ")[0] in walls]
+    if not lined:
+        raise NotModelledError(f"the elements' walls {sorted(walls)} aren't among the faces traced")
+    total = sum(areas[faces[k].name] for k in lined)
+    shares = tuple((k, areas[faces[k].name] / total) for k in lined)
+    supply = el.supply
+    volts, phases = si(supply.voltage, "V"), supply.phase
+    if el.power is not None:
+        power = si(el.power, "W")
+    else:
+        power = (3**0.5 if phases == 3 else 1.0) * volts * CONTINUOUS_FRACTION * si(
+            supply.breaker, "A")  # fmt: skip
+    f = kiln.firing
+    top = (si(f.top_temperature, "K") if f.top_temperature is not None
+           else si(cone_temperature(str(f.cone), f.final_rate), "K"))  # fmt: skip
+    a = alloy(el.alloy)
+    ct = tuple((t + 273.15, c) for t, c in a.ct)
+    return Elements(shares, power, top, ct, volts, phases, wire,
+                    f"{a.name}: {a.source}; the power the design's")  # fmt: skip
+
+
+def _elements_working(el: Elements, faces: Sequence[Face]) -> Step:
+    load = el.surface_load
+    return Step(
+        name="The elements",
+        value=", ".join(f"{faces[k].name} {share:.0%}" for k, share in el.faces)
+        + f" of {el.power / 1e3:.2f} kW",
+        formula="P(T) = P_design·Ct(T_design)/Ct(T); I = P/V (√3·V on three phases); surface "
+        "load P/(n·π·d·L)",
+        inputs={
+            "supply": f"{el.voltage:.0f} V, {el.phases} phase, {el.current:.1f} A",
+            "cold": f"{el.most(293.15) / 1e3:.2f} kW",
+            "surface load": f"{load * 0.0254**2:.2f} W/in²" if load is not None else "no wire",
+        },
+        reference=el.reference,
+        note=ELEMENTS_NOTE,
+    )
 
 
 def _bed(kiln: Kiln, fuel: gas.Fuel, rate: float | None, notes: list[str]) -> float | None:
@@ -374,10 +492,12 @@ def _settings(
     for j, (x, k) in enumerate(zip(loads, rooms, strict=True)):
         room = c.rooms[j] if c.rooms else whole
         lo, hi = np.asarray(x.lo), np.asarray(x.hi)
-        fits = np.all(hi > lo) and np.all(lo >= room.lo) and np.all(hi <= room.hi)
-        if not fits:
+        # in the chamber's own gas (an arch's or a dome's included), over its own room
+        fits = c.holds(x.lo, x.hi) and room.lo[1] <= (lo[1] + hi[1]) / 2 <= room.hi[1]
+        if not (np.all(hi > lo) and fits):
             raise NotModelledError(
-                "the setting's envelope must lie inside its chamber, under its springline"
+                "the setting's envelope must lie inside its chamber, in its gas (a box's corners, "
+                "edges and faces inside the traced solid)"
             )
         name = "setting" if len(loads) == 1 else f"setting {j + 1}"
         boxes.append(rays.box_zone(name, x.lo, x.hi))
@@ -416,6 +536,9 @@ def _faces(
         notes.append("the chambers' floors on the ground: one ground a model so far, so their "
                      "undersides are taken as adiabatic (the soil stores and loses little "
                      "over a firing behind a thick floor, 11-09-26.md §I step 7)")  # fmt: skip
+    shaped = _shaped_faces(kiln) if c.shape != "box" else {}
+    if shaped:
+        notes.append(SHAPED_NOTE)
     for name in traced.names:
         if name not in c.built or name == "firebox roof":
             continue
@@ -429,11 +552,16 @@ def _faces(
         t = sum(x.thickness for x in layers)
         a_in = area[name]
         back, back_zone, back_line = "", 0, None
-        if face in WALL_FACES:
+        if face in shaped:
+            a_out = a_in * _grows(shaped[face], t)
+        elif face in WALL_FACES:
             room = c.rooms[rooms.index(zone)] if c.rooms and zone in rooms else None
             w, d, h = ((room.hi[0] - room.lo[0], room.hi[1] - room.lo[1], room.hi[2] - room.lo[2])
                        if room else (c.width, c.depth, c.height))  # fmt: skip
-            a_out = grown(a_in, face_sides(face, w, d, h, rise), t)
+            sides = face_sides(face, w, d, h, rise)
+            if min(sides) <= 0:  # no wall under an arch from the floor: the face's own rectangle
+                sides = _own_sides(c, name)
+            a_out = grown(a_in, sides, t)
         else:
             a_out = a_in * _duct_growth(kiln, c, built, t)
         if built == "between" and face == "back":
@@ -457,7 +585,9 @@ def _faces(
             )
         elif face == "floor" and on_ground:
             outside = Outside("ground", None, t_room)
-            soil = ground(a_out, ground_soil)
+            # the far sides 8 m off (step 7), or four of the disc's radii under a bigger floor
+            # (La Borne's, 27 × 11 ft), as far as the mesh's own rule asks
+            soil = ground(a_out, ground_soil, max(8.0, 4.0 * math.sqrt(a_out / math.pi)))
             notes.append(
                 f"the floor on the ground: {soil.soil.reference}, the floor as the disc of its "
                 f"{a_out:.2f} m² ({soil.nodes} nodes), the soil round it adiabatic, the far sides "
@@ -467,12 +597,53 @@ def _faces(
             outside = Outside("adiabatic", None, t_room)
             notes.append(f"the {name}' sides: their brick's far side adiabatic (a channel "
                          "through a wall stores heat, its loss is the wall's)")  # fmt: skip
+        elif face in shaped:
+            f0 = shaped[face][0]
+            surface = StillAirSurface(f0.orientation, f0.characteristic_length(t), shell)
+            outside = Outside("air", surface, t_room)
         else:
             outside = Outside("air", _surface(kiln, c, face, built, t, shell, rise), t_room)
         wall = CellWall(name, layers, linear_area(a_in, a_out, t), outside)
         faces.append(Face(name, wall, _emissivity(layers[0].name, cls), zone, back, back_zone,
                           back_line))  # fmt: skip
     return faces, soil, notes
+
+
+SHAPED_NOTE = (
+    "the walls' outside areas and outer surfaces from the engine's own chamber shape "
+    "(shape.chamber_shape, v1's heat loss): a round chamber's wall and floor as the outline moved "
+    "out by each face's thickness, its dome the sphere moved out over the wall's outside circle; "
+    "a crossing's walls, floor and vaults as crossing.crossing_faces grows them"
+)
+
+
+def _shaped_faces(kiln: Kiln) -> dict[str, list[FaceShape]]:
+    """A round or crossing chamber's faces as the engine's shape grows them through the lining
+    (`shape.chamber_shape`), keyed by v2's names: a round chamber's wall is v1's four quarters,
+    its roof the dome's cap or the flat lid; a crossing's names are the same in both."""
+    from kilndesigner.shape import chamber_shape
+
+    shape = chamber_shape(kiln)
+    out: dict[str, list[FaceShape]] = {}
+    for f in shape.faces():
+        name = "wall" if shape.round and f.face in ("left", "right", "back", "front") else f.face
+        out.setdefault(name, []).append(f)
+    return out
+
+
+def _own_sides(c: ch.Chamber, name: str) -> tuple[float, float]:
+    """A traced face's own bounding rectangle in its plane (m): its extent along the two axes it
+    lies across (the steps of a tapering arch from the floor, Ellington's, have no room's wall
+    height to take)."""
+    tris = next(z.triangles for z in c.zones if z.name == name).reshape(-1, 3)
+    span = tris.max(axis=0) - tris.min(axis=0)
+    a, b = sorted(span)[1:]
+    return float(a), float(b)
+
+
+def _grows(faces: list[FaceShape], t: float) -> float:
+    """A face's outside area over its inside area, ``t`` (m) out through its lining."""
+    return sum(f.area_at(t) for f in faces) / sum(f.inside_area for f in faces)
 
 
 def _duct_growth(kiln: Kiln, c: ch.Chamber, built: str, t: float) -> float:
@@ -550,7 +721,16 @@ def _gases(kiln: Kiln, c: ch.Chamber, loads: list[Load], rooms: list[int]) -> tu
             w = room.hi[0] - room.lo[0] if room else c.width
             d = room.hi[1] - room.lo[1] if room else c.depth
             h = room.hi[2] - room.lo[2] if room else c.height
-            if across:
+            if c.shape == "round":  # up or down a cylinder, its plan a disc
+                out.append(Gas(g.name, Flow(math.pi * w * w / 4, x.hi[2] - x.lo[2], w, h)))
+            elif c.shape == "crossing":  # up the crossing's plan, the two tubes' union
+                from kilndesigner.crossing import crossing_shape
+
+                cs = crossing_shape(kiln)
+                plan = cs.floor()
+                out.append(Gas(g.name, Flow(plan, x.hi[2] - x.lo[2], 4 * plan / cs.perimeter(),
+                                            h)))  # fmt: skip
+            elif across:
                 out.append(Gas(g.name, Flow(w * h, x.hi[1] - x.lo[1], hydraulic(w, h), h)))
             else:
                 out.append(Gas(g.name, Flow(w * d, x.hi[2] - x.lo[2], hydraulic(w, d), h)))

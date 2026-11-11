@@ -336,6 +336,38 @@ def products(fuel: Fuel, air_ratio: float, t_air: float) -> Products:
     return replace(p, steps=_working(p))
 
 
+ELECTRIC = Fuel("electricity (the elements' heat; the chamber's gas is air)", "gas")
+
+
+@cache
+def still_air(t_air: float) -> Products:
+    """An electric kiln's chamber gas: air, no fuel and no stream through it (the elements heat
+    the faces they line; a vent's flow isn't modelled). Its tables are air's (Cantera, as the
+    products' are), its CO₂ and H₂O nil: a transparent gas. Per unit of "fuel", the elements'
+    joule: no air, no products, one joule net."""
+    g = _gas()
+    temps = np.arange(T_MIN - T_STEP, T_MAX + T_STEP / 2, T_STEP)
+    cols: dict[str, list[float]] = {k: [] for k in ("h", "rho", "mu", "k", "cp")}
+    for t in temps:
+        g.TPX = float(t), ATM, f"O2:1.0, N2:{src.N2_PER_O2}"
+        cols["h"].append(float(g.enthalpy_mass))
+        cols["rho"].append(float(g.density))
+        cols["mu"].append(float(g.viscosity))
+        cols["k"].append(float(g.thermal_conductivity))
+        cols["cp"].append(float(g.cp_mass))
+    arr = {k: np.array(v) for k, v in cols.items()}
+    nil = np.zeros(len(temps))
+    steps = (
+        Step(name="The gas", value="air, its tables Cantera's (GRI-Mech 3.0 thermodynamics and "
+             "transport); no fuel burns and no stream passes", reference=src.GRI30,
+             note="an electric kiln's vent flow isn't modelled: its air is still"),
+    )  # fmt: skip
+    return Products(
+        ELECTRIC, 1.0, t_air, 0.0, 0.0, 1.0, temps, arr["h"], arr["rho"], arr["mu"], arr["k"],
+        arr["cp"], nil, nil, nil, steps, arr["h"],
+    )  # fmt: skip
+
+
 def _working(p: Products) -> tuple[Step, ...]:
     f = p.fuel
     if f.kind == "gas":

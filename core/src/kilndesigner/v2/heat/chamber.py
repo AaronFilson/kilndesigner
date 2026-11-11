@@ -38,7 +38,7 @@ from typing import Any, Literal
 
 import numpy as np
 
-from kilndesigner.model import Kiln, OpenTop
+from kilndesigner.model import Dome, Kiln, OpenTop
 from kilndesigner.units import si
 from kilndesigner.v2.heat.rays import Patch, Region, Zone, face_triangles
 
@@ -91,9 +91,27 @@ class Chamber:
     built: dict[str, tuple[str, int]] = field(default_factory=dict[str, tuple[str, int]])
     rooms: tuple[Room, ...] = ()
     shape: Literal["box", "round", "crossing"] = "box"
+    solid: Any = field(default=None, compare=False)  # the chambers' own gas volume (mm), or None
 
     def regions(self) -> list[Region]:
         return [Region(k, lo, hi) for k, g in enumerate(self.gas) for lo, hi in g.regions]
+
+    def holds(self, lo: Point, hi: Point) -> bool:
+        """Whether a box (m) lies in the chambers' gas: its corners, edges' middles and faces'
+        middles inside the solid (a box in a convex chamber, or in one tube of a crossing); with
+        no solid kept, inside the rooms' boxes."""
+        if self.solid is None:
+            return any(all(r.lo[i] <= lo[i] and hi[i] <= r.hi[i] for i in range(3))
+                       for r in self.rooms)  # fmt: skip
+        from build123d import Vector
+
+        pts = [
+            tuple(v / MM for v in (lo[0] + (hi[0] - lo[0]) * a, lo[1] + (hi[1] - lo[1]) * b,
+                                   lo[2] + (hi[2] - lo[2]) * c))
+            for a in (0.0, 0.5, 1.0) for b in (0.0, 0.5, 1.0) for c in (0.0, 0.5, 1.0)
+            if (a, b, c) != (0.5, 0.5, 0.5)
+        ]  # fmt: skip
+        return all(self.solid.is_inside(Vector(*p)) for p in pts)
 
 
 # --- the solid ---------------------------------------------------------------------------------
@@ -172,6 +190,9 @@ def _solid(kiln: Kiln, run: Any, lay: _Layout) -> tuple[Any, str]:
             # An arch springing from the floor: massing draws it as a cell of its own size
             c = replace(c, rise=_roof_top(kiln, run))
         parts.append(Pos(0, c.y, 0) * _cavity(kiln, run, c, 0.0))
+        if c.kind == "box" and isinstance(kiln.roof, Dome) and (c.rise is not None or c.span):
+            parts.append(Pos(0, c.y, 0) * _sail(c, c.rise if c.rise is not None
+                                                 else _roof_top(kiln, run)))  # fmt: skip
     if run.chambers > 1:
         from kilndesigner.run_parts import flue_rows
 
@@ -186,6 +207,20 @@ def _solid(kiln: Kiln, run: Any, lay: _Layout) -> tuple[Any, str]:
     for p in parts[1:]:
         solid = solid + p
     return solid, "round" if lay.round else "box"
+
+
+def _sail(cell: Any, rise: float) -> Any:
+    """A sail dome over a chamber of its own size (mm): the sphere through its four top corners,
+    ``rise`` over them at its middle (`shape.SailDome`), above its springline. Massing draws a
+    dome over chambers of different sizes only as brick (run_parts.py), never as a shell, so
+    without this the chambers were traced flat at their springline (Hollyweird's, B1)."""
+    from build123d import Box, Pos, Sphere
+
+    from kilndesigner.shape import SailDome
+
+    dome = SailDome(cell.width, cell.length, rise)
+    over = Pos(0, 0, cell.z1 + rise / 2) * Box(cell.width, cell.length, rise)
+    return (Pos(0, 0, cell.z1 + dome.centre) * Sphere(dome.radius)) & over
 
 
 def _pieces(solid: Any, planes: list[tuple[int, float]]) -> list[Any]:
@@ -559,6 +594,7 @@ def cavity(kiln: Kiln, segments: int = 1, path: bool = False) -> Chamber:
         raise NotModelledError("segments cut a single box chamber; chambers in a row are zones")
     lay = _layout(kiln, run, segments)
     solid, shape = _solid(kiln, run, lay)
+    chambers_only = solid
     if shape == "crossing":
         lay = _Layout(lay.width, lay.chambers, (), ())
     n = len(lay.cuts) + 1
@@ -597,7 +633,7 @@ def cavity(kiln: Kiln, segments: int = 1, path: bool = False) -> Chamber:
         f0, b0, h0 = -si(c.depth, "mm") / 2, si(c.depth, "mm") / 2, si(c.height, "mm")
     return Chamber(
         tuple(zones), (), lay.width * MM, (b0 - f0) * MM, h0 * MM, float(volumes.sum()), (),
-        gas, built, _rooms(lay, n, kiln), shape,  # type: ignore[arg-type]
+        gas, built, _rooms(lay, n, kiln), shape, chambers_only,  # type: ignore[arg-type]
     )  # fmt: skip
 
 
