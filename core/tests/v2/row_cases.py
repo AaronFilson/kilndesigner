@@ -53,12 +53,13 @@ from kilndesigner.v2.heat import series as se
 from kilndesigner.v2.heat.paths import Band, Inputs, Stack
 from kilndesigner.v2.heat.zone import ZoneModel
 
-HOUR, DAY, IN = 3600.0, 86400.0, 0.0254
+HOUR, IN = 3600.0, 0.0254
 ROW_RAYS = 20_000  # 2·10⁴ a zone, as B4's and C2's bands (the nominal within 0.1 % of 10⁵)
 RTOL = 1e-4  # IDA's: Bidai's four stage times within 0.05 % of 1e-5's, in half the time
 SAMPLE = 3600.0
-RED = 1000 + 273.15  # side stoking begins at about 1000 °C (Olsen p.93, Suzuki; p.86, Tamba)
-RED_SOURCE = "Olsen p.93 (Suzuki: the firebox to 1832 °F before side stoking), p.86 (Tamba)"
+# Side stoking begins at about 1000 °C: Olsen p.93 (Suzuki: the firebox to 1832 °F before side
+# stoking), p.86 (Tamba: the first stoke holes to about 1832 °F)
+RED = 1000 + 273.15
 # A stage's longest at max fire, past which it isn't reached (+∞ in the band): above the longest
 # stage the book prints, Tamba's 36 h preheat, by two thirds again
 LIMIT = 60 * HOUR
@@ -466,11 +467,6 @@ def held_band(kid: str) -> dict[str, bands.Band]:
 # pine, kiln-fuelwood-by-region.md [K1]), any species 2,070–4,200 lb (Tamba's, not named). That a
 # bundle packs as a cord is stacked is the assumption (the owner's question)
 CORD_FT3 = 128.0
-BUNDLE_SOURCE = (
-    "a bundle's gross volume packed as a cord is stacked: USU Extension, Wood Heating, Table 1's "
-    "oven-dry cord weights over 128 ft³ (wood-fuel.md [W4]); no source weighs a bundle "
-    "(kiln-fuelwood-by-region.md §3): an assumption"
-)
 
 
 def bundle_kg(volume_m3: float, pine: bool) -> tuple[float, float]:

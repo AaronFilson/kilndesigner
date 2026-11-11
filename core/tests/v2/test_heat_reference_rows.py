@@ -104,6 +104,17 @@ def test_suzuki_burns_its_bundles_in_chambers_1_to_3() -> None:
     assert b.low <= 450 * lo / 1e3
 
 
+@pytest.mark.parametrize("chamber", range(3))
+def test_suzuki_burns_75_bundles_a_side_in_each_of_chambers_1_to_3(chamber: int) -> None:
+    """T3, p.93: "approximately 75 bundles per side and seven hours" for each reduction chamber:
+    150 bundles each, no less than v2's held run burns in that chamber's 7 h at the stoker's λ 1,
+    even at the light end of a bundle's band."""
+    lo, _ = rc.bundle("suzuki-kyoto")
+    s = rc.run("suzuki-kyoto", rc.NOMINAL, True)
+    assert s is not None
+    assert s.fuel[1 + chamber] <= 150 * lo
+
+
 def test_suzukis_stoking_rate_reduces() -> None:
     """p.93: from the fourth hour one bundle every 3–4 minutes from each side "to give a reducing
     atmosphere": 30–40 bundles an hour, even at the light end of a bundle's band more than the most
