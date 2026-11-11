@@ -26,7 +26,7 @@ from kilndesigner.v2.heat import kiln as hk
 from kilndesigner.v2.heat import series
 from kilndesigner.v2.heat.air import burnt
 from kilndesigner.v2.heat.draft import Element
-from kilndesigner.v2.heat.zone import Balance, ZoneModel
+from kilndesigner.v2.heat.zone import Balance, Layout, ZoneModel, layout
 
 IN = 0.0254
 HOUR = 3600.0
@@ -169,6 +169,30 @@ def test_a_start_is_tried_from_each_guess_in_turn() -> None:
     assert got[0] == pytest.approx(6.0)
     with pytest.raises(fi.FiringError, match="no consistent start"):
         fi._consistent(resfn, np.array([0.0]), [0], 0.0, 1, (np.array([1.0]),))  # pyright: ignore[reportPrivateUsage]
+
+
+@pytest.mark.geometry
+def test_a_max_fire_from_a_start_takes_the_starts_air(
+    kato: ZoneModel, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """From cold a max fire's air is guessed from the draft with the gas at each of `START_GAS`;
+    from a start (a stage's, lit by `series._lit`) the start's own air and fuel are the guess, not
+    overwritten: on the merge with C3b, overwriting them sent Olsen's two-chamber kiln's front
+    stage to the fire-out branch of the draft's balance, its nominal never reaching its cone."""
+    seen: list[float] = []
+    real = fi._start_air  # pyright: ignore[reportPrivateUsage]
+
+    def spy(model: ZoneModel, lay: Layout, y: np.ndarray, t_gas: float) -> np.ndarray:
+        seen.append(t_gas)
+        return real(model, lay, y, t_gas)
+
+    monkeypatch.setattr(fi, "_start_air", spy)
+    fi.fire(kato, fi.MaxFire(), 60.0, sample=60.0)
+    assert seen == list(fi.START_GAS)
+    seen.clear()
+    lit = series._lit(kato, layout(kato, True), None)  # pyright: ignore[reportPrivateUsage]
+    fi.fire(kato, fi.MaxFire(), 60.0, sample=60.0, start=lit)
+    assert seen == []
 
 
 def test_the_friction_factor_has_no_step_at_transition() -> None:

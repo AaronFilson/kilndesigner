@@ -324,9 +324,11 @@ def fire(
     if start is not None:
         y = np.asarray(start, dtype=float).copy()
         y[lay.fuel] = mode.fuel if isinstance(mode, FixedInput) else y[lay.fuel]
-    # At max fire, the draft's air with every zone at each of START_GAS in turn, and the fuel it
-    # burns: on the fire's side of the cold kiln's root (no draft, no air, no fire)
-    guesses = [_start_air(model, lay, y, t) for t in START_GAS] if lay.air >= 0 else [y]
+    # At max fire from cold, the draft's air with every zone at each of START_GAS in turn, and the
+    # fuel it burns: on the fire's side of the cold kiln's root (no draft, no air, no fire). From a
+    # start (a stage's, lit by `series._lit`) its own air and fuel are the guess
+    cold = lay.air >= 0 and start is None
+    guesses = [_start_air(model, lay, y, t) for t in START_GAS] if cold else [y]
     y = guesses[0]
     current: dict[str, Any] = {"y": y, "t": 0.0, "start": 0.0}
     rows = _rows(mode, model, bal, lambda: current["y"], lambda: (current["t"], current["start"]))
@@ -380,10 +382,11 @@ START_GAS = (900.0, 1500.0, 600.0)  # K: the gas in every zone for a max fire's 
 
 
 def _start_air(model: ZoneModel, lay: Layout, y: Vector, t_gas: float) -> Vector:
-    """A max fire's start guess: ``y`` with the air the draft draws with every zone's gas at
-    ``t_gas`` (`draft.draw`) and the fuel that air burns. A big kiln's cold root (no draft, no
-    air, no fire) lies near a small fixed guess; where the first guess doesn't converge to a
-    consistent state, the next is tried (`_consistent`)."""
+    """A max fire's start guess from cold: ``y`` with the air the draft draws with every zone's
+    gas at ``t_gas`` (`draft.draw`) and the fuel that air burns. A big kiln's cold root (no draft,
+    no air, no fire) lies near a small fixed guess; where the first guess doesn't converge to a
+    consistent state, the next is tried (`_consistent`). A stage's start (`series._lit`) is its
+    own guess, not overwritten."""
     from kilndesigner.v2.heat.draft import draw
 
     assert model.path is not None
