@@ -302,10 +302,6 @@ class Layout:
         return self.gases[0]
 
     @property
-    def setting(self) -> int:
-        return self.settings[0]
-
-    @property
     def algebraic(self) -> list[int]:
         """The algebraic unknowns: a grounded wall's outer face has the disc's soil as its
         capacity, so it is differential."""
@@ -396,10 +392,6 @@ class State:
     released: Vector
     h: Vector
     out: Vector  # what each zone's gas gives up
-
-    @property
-    def q_setting(self) -> float:
-        return float(self.q_settings[0])
 
 
 class Balance:

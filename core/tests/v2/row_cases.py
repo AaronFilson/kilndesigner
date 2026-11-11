@@ -372,11 +372,12 @@ INPUTS: dict[str, tuple[bands.Input, ...]] = {
     "hotchkiss-raw-clay": (),
 }
 # Held to the book's times, at the stoker's λ 1 (the least air, so the least fuel at that pace). A
-# held run on all the draft's own air (λ from the draft, the band's other end) failed in IDA 1.6 h
-# into Bidai's dogi ramp (the corrector's convergence): that air enters every residual through the
-# draft's bisection, so any kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a
-# parallel branch coming on) is a jump IDA meets; not traced further, the plan doc's open item.
-# Each held run takes minutes, so the suite runs the nominal alone
+# held run on all the draft's own air (λ from the draft, the band's other end) runs on Suzuki
+# (4.38 t for chambers 1–3, against 3.02 t at λ 1) but failed in IDA 1.6 h into Bidai's dogi ramp
+# (the corrector's convergence): that air enters every residual through the draft's bisection, so
+# any kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a parallel branch coming
+# on) is a jump IDA meets; not traced further, the plan doc's open item. Each held run takes
+# minutes, so the suite runs the nominal alone
 HELD_INPUTS: dict[str, tuple[bands.Input, ...]] = {"suzuki-kyoto": (), "tamba": ()}
 FAST = Corner("least", "most", True, True)
 SLOW = Corner("most", "least", False, False)

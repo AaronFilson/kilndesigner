@@ -67,7 +67,7 @@ def test_suzuki_fires_inside_56_h() -> None:
 def test_suzuki_each_chamber_reaches_its_printed_cone(chamber: int) -> None:
     """Fig 4-35: cone 10 in chambers 1 and 2, 8–9 in 3 to 6 (9 taken, the hotter, as the design),
     bisque cone 1 in chamber 7: each reached in its stage (the band's nominal run)."""
-    s = rc.run("suzuki-kyoto")
+    s = rc.run("suzuki-kyoto", rc.NOMINAL)  # called as the band calls it: its cached run
     assert s is not None
     peak = float(s.firing.t_settings[:, chamber].max())
     assert peak >= rc.cones("suzuki-kyoto")[chamber] - 1e-3
@@ -75,7 +75,7 @@ def test_suzuki_each_chamber_reaches_its_printed_cone(chamber: int) -> None:
 
 def test_suzuki_the_kiln_reaches_cone_8_to_9() -> None:
     """p.93's text: the kiln to cone 8–9: every chamber but the bisque one at least cone 8."""
-    s = rc.run("suzuki-kyoto")
+    s = rc.run("suzuki-kyoto", rc.NOMINAL)  # called as the band calls it: its cached run
     assert s is not None
     cone_8 = si(cone_temperature("8", 60), "K")
     assert np.all(s.firing.t_settings[:, :6].max(axis=0) >= cone_8)
@@ -85,7 +85,7 @@ def test_suzuki_the_cone_falls_along_the_kiln() -> None:
     """T5, Fig 4-35's evenness: "each chamber is side-stoked to its own temperature", the cone
     falling along the kiln: no chamber driven past its own by the stages before it (its peak
     under the next cone up), so the peaks fall as the printed cones do."""
-    s = rc.run("suzuki-kyoto")
+    s = rc.run("suzuki-kyoto", rc.NOMINAL)  # called as the band calls it: its cached run
     assert s is not None
     peaks = s.firing.t_settings.max(axis=0)
     nxt = [si(cone_temperature(c, 60), "K") for c in ("11", "11", "10", "10", "10", "10", "2")]
