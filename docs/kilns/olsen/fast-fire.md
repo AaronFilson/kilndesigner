@@ -18,9 +18,9 @@ text), p.142–143, p.199, p.204–205 (Figs 8-13, 8-14), p.309 (firing log). No
 | Arch | 4½" IFB, featheredge skewbacks, No. 1 arch (Fig 5-35, p.140) | sprung arch, rise 3⅜ in | matches; rise from the 1½ in/ft rule |
 | Door | whole front, laid in rowlock (Fig 5-35, p.140) | whole front wall, bricked | matches |
 | Spy holes | pull-out cone-hole plugs; a 2½ × 2½ in hole open at top centre (p.141) | three 2¼ × 2½ in in the door (engine default), and a 2½ × 2½ in hole at the door's top centre (`spy_holes.holes`), its top at the arch's inside (derived) | the top hole matches; the plugs' number and places not given |
-| Fireboxes | two, 13½ × 40½ in, S plan, under the floor (Figs 5-37, 5-39; p.204) | 2 under, 13½ × 40½ in | matches; the S plan not expressible. Mouths at opposite ends could be given now (`mouth`), but two fireboxes of one size share their fields, and which is fed from which end isn't printed |
-| Grate | 12–13 × 24–27 in, ¾ in gaps, 6–7 in up (Fig 5-39, Fig 8-13, p.199) | 12 × 24 in, ¾ in, 6½ in ash pit | matches |
-| Inlet flues | 4½ × 13½ in, one at each firebox's closed end (Fig 5-39, p.141) | 13½ × 4½ in, one each | matches |
+| Fireboxes | two, 13½ × 40½ in, under the floor "along the front and back wall" (p.204) in an S: side by side with one wall between, the front one open at the right, the back one at the left (Fig 5-37); "LOW DUTY FIREBRICK 90 required" (Fig 5-39) | 2 under, `runs: across`, `mouth: [right, left]`, 13½ × 40½ in, each far end under the far side wall (Fig 5-44); `lining`: 4½ in Alsey Smithfield, certified to low duty (masonry-materials.md §2.2) | matches (2026-11-10; before, they ran front to back side by side across the width, their inlets 114 mm under the side walls) |
+| Grate | 12–13 × 24–27 in, ¾ in gaps, 6–7 in up (Fig 5-39, Fig 8-13, p.199) | 12 × 24 in, ¾ in, 6½ in ash pit | matches; the engine lays the grate from the mouth, where p.204 puts it "as far back in the firebox as possible, so that part of it is directly under the inlet flue" |
+| Inlet flues | 4½ × 13½ in, one at each firebox's closed end (Fig 5-39, p.141), against the side wall (Fig 5-44) | 4½ in at the far end, against the side wall; on the floor 11¼ in of the 13½ | the two 13½ in channels and the 4½ in wall between them take 31½ in, so on the assumed 27 in depth each channel reaches 2¼ in under the front or back wall (question below) |
 | Bag wall | rowlock rows along the inlet flues (Fig 5-44) | — | not expressible |
 | Exit flue | 9 × 7½ in at the back at floor level (Fig 5-35, Fig 5-40) | 9 × 7½ in, back | matches |
 | Chimney | 9 × 9 in × 14 ft, tied to the back wall (Figs 5-36, 5-37) | 9 × 9 in, 14 ft, run 0 | matches |
@@ -36,7 +36,9 @@ arch bricks and 2 straights. Wood use not worked out (no sourced heating value).
 ## Open questions
 
 - Chamber depth: not printed. Fig 5-37's foundation is 45" × 40½": is the chamber 27" deep, or
-  deeper?
+  deeper? Its two 13½ in firebox channels and the wall between them take 31½ in, which with the
+  front and back walls on the foundation's outer rows is a 31½ in deep chamber (40½ in outside),
+  inside the 30 ± 3 in scaled off Fig 5-35; on 27 in each inlet flue opens 11¼ in of its 13½ in.
 - p.141: how many cone holes are in the door, and how high?
 - Fig 5-36: the damper's size and height above the kiln.
 

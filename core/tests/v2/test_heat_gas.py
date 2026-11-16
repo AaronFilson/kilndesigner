@@ -4,7 +4,9 @@ available heat, NIST's methane, FAO's wood formula and the review's wood tables.
 
 from __future__ import annotations
 
+import fuel as own
 import pytest
+import reference as ref
 
 from kilndesigner.combustion import available_heat
 from kilndesigner.v2.heat import gas, sources
@@ -118,6 +120,87 @@ def test_refusals() -> None:
         gas.wood(0.6, 19e6)
     with pytest.raises(gas.RangeError, match="not wood"):
         gas.wood(0.12, 30e6)
+
+
+# --- coal and oil, and each kiln's own fuel (ADR 0017 decision 12; kiln-fuels.md) ------------
+
+DIESEL = gas.solid("#2 diesel", "oil", (0.8645, 0.1335, 0.0, 0.0, 0.002, 0.0), 0.0, 42.7e6, "test")
+COAL = gas.solid("generic coal", "coal", (0.715, 0.045, 0.11, 0.013, 0.0047, 0.14), 0.10, 27.9e6,
+                 "test")  # fmt: skip
+
+
+def test_oils_stoichiometric_air() -> None:
+    """C 86.45 %, H 13.35 %: (0.8645/12.011 + 0.1335/4.032) kmol O2 a kg, × 137.7 kg of air a
+    kmol O2 = 14.47 kg; no water, so the net heat is the heating value (the S left out)."""
+    p = gas.products(DIESEL, 1.0, ROOM)
+    assert DIESEL.name == "#2 diesel"  # its analysis sums to 100 %: not scaled
+    o2 = 0.8645 / 12.011 + 0.1335 / (4 * 1.008)
+    assert p.air == pytest.approx(o2 * (31.998 + sources.N2_PER_O2 * 28.014), rel=2e-3)
+    assert p.net_heat == pytest.approx(42.7e6, rel=1e-4)
+    assert p.mass == pytest.approx(1 - 0.002 + p.air, rel=1e-9)
+
+
+def test_coal_burns_to_its_heating_value_less_its_water() -> None:
+    """Per kg dry coal: the net 27.9 MJ less the 0.111 kg of water's evaporation; the ash stays
+    in the bed (its 14 % isn't in the gas); the analysis scaled to sum to 100 % is said."""
+    p = gas.products(COAL, 1.2, ROOM)
+    u = 0.10 / 0.90
+    assert p.net_heat == pytest.approx(27.9e6 - 2.44e6 * u, rel=1e-4)
+    assert p.mass == pytest.approx(COAL.gas_forming + u + p.air, rel=1e-9)
+    assert sum(COAL.composition) == pytest.approx(1.0)
+    assert "scaled" in COAL.name
+    assert "ash stays in the bed" in (p.steps[0].note or "")
+    assert gas.net_from_gross(20e6, 0.06, 0.40, 0.004) == pytest.approx(
+        20e6 - (212.2 * 6 + 0.8 * 40.4) * 1e3
+    )
+
+
+def test_solid_fuels_outside_their_sources_are_refused() -> None:
+    with pytest.raises(gas.RangeError, match="coal the sources give"):
+        gas.solid("c", "coal", COAL.composition, 0.1, 35e6, "")
+    with pytest.raises(gas.RangeError, match="moisture"):
+        gas.solid("c", "coal", COAL.composition, 0.6, 27e6, "")
+    with pytest.raises(gas.RangeError, match="needs carbon"):
+        gas.solid("c", "coal", (0.0, 0.1, 0.1, 0.0, 0.0, 0.1), 0.1, 27e6, "")
+
+
+FUEL_KILNS = sorted(
+    kid
+    for kid, k in ref.load()["kilns"].items()
+    if any(f.get("what") == "fuel_species" for f in k.get("heat") or [])
+)
+
+
+def test_every_fuel_kiln_has_its_own_fuel() -> None:
+    """The 38 kilns that burn wood, coal or oil (the dataset, research A1)."""
+    assert len(FUEL_KILNS) == 38
+    kinds = {f.kind for kid in FUEL_KILNS for f in own.own_fuels(kid)}
+    assert kinds == {"wood", "coal", "oil"}
+    assert [f.kind for f in own.own_fuels("blakebrough-sturt")] == ["wood", "oil"]
+
+
+@pytest.mark.slow
+@pytest.mark.parametrize("kid", FUEL_KILNS)
+def test_each_kilns_own_fuel_burns_to_its_heating_value(kid: str) -> None:
+    """Each fuel at its bands' least, middle and most: the products' net heat is its heating
+    value less its water's evaporation (FAO UBET eq. 3)."""
+    for end in ("least", "mid", "most"):
+        for f in own.own_fuels(kid, end):  # pyright: ignore[reportArgumentType]
+            p = gas.products(f, 1.2, ROOM)
+            assert p.net_heat == pytest.approx(f.net_dry - 2.44e6 * f.water_per_kg, rel=2e-4)
+
+
+def test_singh_s_grade_b_coal_is_netted_from_its_gross() -> None:
+    """Grade B's 23.0–26.8 MJ/kg gross (equilibrated) with 2–6 % moisture (assumed) and the
+    generic analysis's middles (H 4.55 %, O + N 12.15 %): 23.0/0.94 − 0.975 = 23.49 to
+    26.8/0.98 − 0.975 = 26.37 MJ/kg net dry (EN ISO 18125)."""
+    least, most = own.own_fuels("singh-coal", "least")[0], own.own_fuels("singh-coal", "most")[0]
+    assert least.moisture == pytest.approx(0.06)
+    assert most.moisture == pytest.approx(0.02)
+    step = (212.2 * 4.55 + 0.8 * 12.15) * 1e3
+    assert least.net_dry == pytest.approx(23.0e6 / 0.94 - step, rel=1e-6)
+    assert most.net_dry == pytest.approx(26.8e6 / 0.98 - step, rel=1e-6)
+    assert least.composition[5] == pytest.approx(0.2175 - 0.06, abs=1e-3)
 
 
 def test_the_working_names_the_fuel_and_its_sources() -> None:

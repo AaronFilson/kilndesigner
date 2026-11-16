@@ -4,14 +4,20 @@
 #
 # From the book: chamber 27 in wide, 36–40 in to the springline (36 used); 4½ in 2300 °F IFB walls
 # and arch, a No. 1 arch on featheredge skewbacks (1½ in per foot of span); fireboxes 13½ × 40½ in
-# and five courses tall, 12½ in, a sixth added only for high altitude (Fig 5-39, as the user reads
-# it; the text says "6 bricks tall", p.140); the grate 6–7 in up, as p.199 gives for the 12½ in
-# firebox of a 12–16 ft³ fast-fire kiln (6½ in of ash pit, 6 in above); grates 12–13 × 24–27 in,
-# bars ¾ in apart; inlet flues 4½ × 13½ in; exit flue 9 × 7½ in at the back at floor level;
-# chimney 9 × 9 in, 14 ft, tied to the back wall. The whole front is the door, laid in rowlock
-# (Fig 5-35), with pull-out cone-hole plugs and a 2½ × 2½ in hole left open at the top centre
-# (p.141). Fig 5-36 (drawing) shows a slide damper across the chimney above the kiln; a passive
-# damper air hole can go in the chimney's back (p.141).
+# "placed along the front and back wall" (p.204) in an S, side by side with one wall between, the
+# front one open at the right and the back one at the left, each inlet flue at its closed end
+# (Fig 5-37), where the flame rises against the side wall (Fig 5-44); built of straight low-duty
+# firebrick, "90 required" (Fig 5-39): Alsey Smithfield, certified to low duty as well as medium
+# (masonry-materials.md §2.2 [M9]); five courses tall, 12½ in, a sixth added only for high altitude
+# (Fig 5-39, as the user reads it; the text says "6 bricks tall", p.140); the grate 6–7 in up, as
+# p.199 gives for the 12½ in firebox of a 12–16 ft³ fast-fire kiln (6½ in of ash pit, 6 in above);
+# grates 12–13 × 24–27 in, bars ¾ in apart; inlet flues 4½ × 13½ in ("4½ in × the width of the
+# firebox", p.141), so with the chamber's 27 in depth (assumed) the two 13½ in channels and the
+# wall between (31½ in, Fig 5-37) reach 2¼ in under the front and back walls; exit flue 9 × 7½ in
+# at the back at floor level; chimney 9 × 9 in, 14 ft, tied to the back wall. The whole front is
+# the door, laid in rowlock (Fig 5-35), with pull-out cone-hole plugs and a 2½ × 2½ in hole left
+# open at the top centre (p.141). Fig 5-36 (drawing) shows a slide damper across the chimney above
+# the kiln; a passive damper air hole can go in the chimney's back (p.141).
 # The open top-centre hole is a spy hole of its own size (spy_holes.holes), its top at the arch's
 # inside over the door's middle (derived).
 # Not modelled: the cone holes' number, places and size (not given: engine default, three
@@ -51,6 +57,8 @@ heat:
     fireboxes:
       - count: 2
         position: under
+        runs: across # "placed along the front and back wall" (p.204)
+        mouth: [right, left] # the S: the front one open at the right, the back at the left (Fig 5-37)
         width: 13.5 in
         length: 40.5 in
         height: 6 in # above the grate: five courses, 12½ in, less the 6½ in below it
@@ -59,9 +67,12 @@ heat:
           length: 24 in
           gap: 0.75 in
         ash_pit: 6.5 in # the grate 6–7 in up (p.199)
-        inlet:
+        inlet: # "4½ in × the width of the firebox" at its closed end (p.141, Fig 5-39)
           width: 13.5 in
           height: 4.5 in
+        lining: # "LOW DUTY FIREBRICK 90 required" (Fig 5-39)
+          - material: firebrick-medium-duty-smithfield
+            thickness: 4.5 in
 draft:
   type: down
   flue_wall: back

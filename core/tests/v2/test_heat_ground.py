@@ -100,5 +100,5 @@ def test_a_thin_floor_on_the_ground_fires() -> None:
 def test_a_ground_needs_its_wall() -> None:
     m = hc.fast_fire_model()
     with pytest.raises(ValueError, match="a ground needs one wall"):
-        ZoneModel(m.products, m.exchange, m.names, m.faces, m.setting, m.openings, m.flow,
+        ZoneModel(m.products, m.exchange, m.names, m.faces, m.settings, m.openings, m.gas,
                   m.t_room, ground=gr.ground(1.0))  # fmt: skip

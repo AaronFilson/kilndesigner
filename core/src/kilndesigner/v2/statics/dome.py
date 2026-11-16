@@ -246,13 +246,12 @@ def problem(sec: Section, mu: float, crush: dict[str, float] | None = None) -> P
     return Problem(sec, tuple(mus), tuple(stresses) if crush is not None else ())
 
 
-def stand_ins(shell: str, wall: str, analogy: bool = True) -> dict[str, float]:
-    """The hot crushing stand-ins by body tag, from the shell's and the wall's materials; without
-    ``analogy``, none carried over by analogy (dense brick's 25 psi)."""
+def stand_ins(shell: str, wall: str) -> dict[str, float]:
+    """The hot crushing stand-ins by body tag, from the shell's and the wall's materials."""
     out: dict[str, float] = {}
     for tags, material in (((RING,), shell), ((SKEWBACK, WALL), wall)):
         s = sources.crushing(material)
-        if s is not None and (analogy or not sources.by_analogy(material)):
+        if s is not None:
             out.update(dict.fromkeys(tags, s.value))
     return out
 
@@ -315,14 +314,14 @@ def kiln_not_modelled(kiln: Kiln) -> str | None:
 class DomeResult:
     """A round kiln's dome on its wall, in one state: whether it stands with hoop compression and
     as lunes, the least push at its springing per metre of circumference (on fixed ground), whether
-    a hot verdict rests on a crushing stand-in by analogy alone, and the working."""
+    a hot verdict rests on the crushing stand-ins alone, and the working."""
 
     state: str
     stands: bool
     stands_as_lunes: bool
     thrust: float  # N/m of the springing's circumference
     steps: tuple[Step, ...]
-    analogy: bool = False
+    on_stand_in: bool = False
 
 
 def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
@@ -349,9 +348,8 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
     crush = stand_ins(*materials) if state == "hot" else None
     sec = section(shell, True, (wall_t, height, wall_rho, courses), overburden=loads)
     ok = solve(problem(sec, mu.value, crush)).status is Status.OPTIMAL
-    decided = stand_ins(*materials, analogy=False)
-    analogy = (not ok and crush is not None and decided != crush
-               and solve(problem(sec, mu.value, decided)).status is Status.OPTIMAL)  # fmt: skip
+    on_stand_in = (not ok and crush is not None
+                   and solve(problem(sec, mu.value)).status is Status.OPTIMAL)  # fmt: skip
     lunes = section(shell, False, (wall_t, height, wall_rho, courses), overburden=loads)
     ok_lunes = solve(problem(lunes, mu.value)).status is Status.OPTIMAL  # crown: a point, no block
     ground = section(shell, True, overburden=loads)
@@ -364,7 +362,7 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
         hot_note = f"{mu.note}; the hot crushing stand-ins at the masonry's joints: " + ", ".join(
             f"{t} {v / sources.PSI:.0f} psi" for t, v in crush.items()
         )
-        hot_note += "; no verdict where it rests on one by analogy alone" if analogy else ""
+        hot_note += f"; no verdict: {sources.ON_STAND_IN}" if on_stand_in else ""
     steps = (
         Step(
             name="The dome as rings of revolution",
@@ -396,4 +394,4 @@ def kiln_dome(kiln: Kiln, state: str = "cold", rings: int = 40) -> DomeResult:
             "(Lau 2006 Eq. 3.1)",
         ),
     )
-    return DomeResult(state, ok, ok_lunes, thrust, steps, analogy)
+    return DomeResult(state, ok, ok_lunes, thrust, steps, on_stand_in)

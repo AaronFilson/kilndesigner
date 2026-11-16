@@ -37,6 +37,10 @@ HEAT = frozenset((
     "gas_pressure", "orifice", "oil_rate", "nozzle", "element_power", "voltage", "current",
     "surface_load", "atmosphere", "schedule", "damper_schedule", "ware", "setting", "evenness",
     "altitude", "wall_heat_loss", "wall_heat_storage", "cold_face_temperature",
+    # each kiln's own fuel (research A1, docs/research/kiln-fuels.md): the wood, oil or coal, its
+    # moisture (% wet basis), net heating value (dry), composition (% dry) and a unit's weight
+    "fuel_species", "fuel_moisture", "fuel_heating_value", "fuel_carbon", "fuel_hydrogen",
+    "fuel_oxygen", "fuel_nitrogen", "fuel_sulphur", "fuel_ash", "fuel_unit_mass",
 ))  # fmt: skip
 CHAMBER = frozenset((
     "volume", "stacking_volume", "width", "depth", "height", "springline_height", "crown_height",
@@ -51,6 +55,17 @@ FLOW = frozenset((
     "grate_area", "ash_pit", "inlet_flue", "exit_flue", "exit_flue_area", "between_flues",
     "chimney_count", "chimney_height", "chimney_section", "chimney_run", "damper", "burner_port",
     "stoke_hole", "spy_hole", "passive_air", "bag_wall", "salt_port",
+    # the firebox's air intakes (research A2, docs/research/firebox-air-intakes.md): below the
+    # grate (the ash-pit mouth) and above it (the stoke hole and air holes), as open areas
+    "primary_air", "secondary_air",
+    # the draft path's sizes as numbers (C1, v2/heat/paths.py), restating a fact above where the
+    # book prints them in words: a grate bar's thickness, a chimney's inside sides (a round one's
+    # diameter as its width; a count of 0, no stack), flues' counts, widths and heights, the
+    # connection into the chimney
+    "grate_bar", "chimney_width", "chimney_depth", "exit_flue_count", "exit_flue_width",
+    "exit_flue_height", "inlet_flue_count", "inlet_flue_width", "inlet_flue_height",
+    "between_flue_count", "between_flue_width", "between_flue_height", "connection_width",
+    "connection_height",
 ))  # fmt: skip
 STRUCTURE = frozenset((
     "roof_type", "span", "rise", "rise_per_ft", "ring_thickness", "arch_material", "skewback",

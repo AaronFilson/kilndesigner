@@ -5,6 +5,7 @@ and the zone method's own energy balance."""
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import numpy as np
 import pytest
@@ -117,6 +118,43 @@ def test_black_isothermal_walls_exchange_only_with_the_gas() -> None:
     want = (gs * (ag * SIGMA * tg**4 - aw * SIGMA * tw**4)[:, None]).sum(axis=0)
     assert np.allclose(q, want, rtol=1e-12)
     assert len(gx.deas) == 5
+
+
+def test_gas_zones_conserve_energy_and_at_one_temperature_are_one_zone() -> None:
+    """The unit cube traced as two gas zones (its halves): at one gas temperature the surfaces
+    get what one zone gives them; with the zones at two temperatures the hotter loses more; the
+    enclosure conserves energy to round-off either way."""
+    from build123d import Box, Pos
+
+    from kilndesigner.v2.heat import rays
+
+    def name(face: Any) -> str:
+        c = face.center()
+        n = round(c.X, 3), round(c.Y, 3), round(c.Z - 0.5, 3)
+        return {(-0.5, 0, 0): "left", (0.5, 0, 0): "right", (0, -0.5, 0): "front",
+                (0, 0.5, 0): "back", (0, 0, -0.5): "floor"}.get(n, "roof")  # fmt: skip
+
+    zones = rays.solid_zones(Pos(0, 0, 0.5) * Box(1, 1, 1), name, tol=0.01, scale=1.0)
+    big = 10.0
+    regions = (rays.Region(0, (-big, -big, -big), (0.0, big, big)),
+               rays.Region(1, (0.0, -big, -big), (big, big, big)))  # fmt: skip
+    w = gr.bordbar2014(1.0)
+    r = rays.trace(zones, rays=40_000, regions=regions, gas=("a", "b"), ks=gr.grey_ks(w, 0.3))
+    zx = gr.exchange_zones(r, w, 0.3)
+    assert zx.zones == 2
+    temps = np.array([900.0, 950.0, 1000.0, 1100.0, 800.0, 1200.0])
+    eps = np.array([0.6, 0.6, 0.7, 0.5, 0.8, 0.6])
+    q, qg = zx.net(np.array([1400.0, 1400.0]), temps, eps)
+    one = gr.exchange_for(r, w, 0.3).net(1400.0, temps, eps)
+    assert np.abs(q - one).max() < 1e-3 * np.abs(one).max()
+    assert q.sum() + qg.sum() == pytest.approx(0.0, abs=1e-6 * np.abs(q).max())
+    q, qg = zx.net(np.array([1500.0, 1300.0]), temps, eps)
+    assert q.sum() + qg.sum() == pytest.approx(0.0, abs=1e-6 * np.abs(q).max())
+    assert qg[0] < qg[1] < 0
+    clear = gr.exchange_zones(r, None, 0.0)
+    q, qg = clear.net(np.array([1500.0, 1300.0]), temps, eps)
+    assert not qg.any()
+    assert clear.gas_weights(np.array([1500.0])).shape == (1, 1)
 
 
 def test_the_gas_loses_what_the_surfaces_gain() -> None:

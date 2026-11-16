@@ -5,11 +5,17 @@
 # (p.174); IFB 2500/2600 laid in air-set mortar (p.32); updraft, forced draft by gas pressure
 # (p.170); MR-750 and MR-100 burners, 75,000 and 100,000 BTU/hr at 8 in. w.c. (p.222); no fibre
 # (p.175).
-# Assumed: the chamber isn't dimensioned. It is a cube of 100 cu ft (Principle 1, p.74–75; p.170),
-# 55.7 in a side to the springline. Twenty MR-750s: 100 sq in of inlet in 2½ in ports, the Olsen
-# 24 kit's (olsen-kit-24, p.174: 50 sq in for ten burners); 100 sq in ÷ 4.9 sq in is 20, the most
-# Olsen puts on one manifold (p.235). They fall 10.2 in apart round the floor, inside Olsen's
-# 9–12 in (p.171). MR-750s are the smaller of the kits' burners (p.222: updrafts use more, smaller
+# Assumed: the chamber isn't dimensioned. The 100 cu ft is stacking space (pp.169–170, ADR 0017
+# decision 14), a 55.7 in cube (Principle 1, p.74–75; p.170), and the chamber is built round it by
+# the book's own clearances (kit-stacking-space.md §2): 4½ in of combustion space each side for the
+# MR-750's 2½ in head (p.171, Fig 6-63; 6 in, the band's other end, for a 4 in tip), 2½ in under
+# the setter shelf (p.172), the arch on top (p.74): 64.7 in square, 58.2 in to the springline (it
+# was the 55.7 in cube of the stacking alone, until 2026-11-10). Precedence (11-09-26.md §A):
+# nothing printed or scaled; the book's rules for the burner the design uses over the band's
+# middle; not rounded to the brick module (p.142), a builder's choice. Twenty MR-750s: 100 sq in
+# of inlet in 2½ in ports, the Olsen 24 kit's (olsen-kit-24, p.174: 50 sq in for ten burners);
+# 100 sq in ÷ 4.9 sq in is 20, the most Olsen puts on one manifold (p.235). They fall 12.0 in apart
+# round the floor, at Olsen's 9–12 in's top (p.171). MR-750s are the smaller of the kits' burners (p.222: updrafts use more, smaller
 # burners). The exit flue at the book's 120 sq in minimum: flues in an arch are started small
 # (p.173–174); square, 11 in a side. Walls 7 in: a 4½ in course of 2600 IFB backed by a 2½ in
 # rowlock of 2500 IFB, the kits' grades (p.32) in Olsen's 7 in IFB wall (p.176). A No. 1 arch of
@@ -25,12 +31,12 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 55.7 in
-  depth: 55.7 in
-  height: 55.7 in
+  width: 64.7 in # the 55.7 in stacking + 4½ in a side (kit-stacking-space.md §2)
+  depth: 64.7 in
+  height: 58.2 in # 2½ in under the setter shelf + the 55.7 in stacking
 roof:
   type: sprung_arch
-  rise: 6.97 in # 1½ in per foot of span: a No. 1 featheredge arch
+  rise: 8.09 in # 1½ in per foot of span: a No. 1 featheredge arch
 loading:
   type: door
   face: front

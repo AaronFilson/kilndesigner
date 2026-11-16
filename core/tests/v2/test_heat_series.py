@@ -1,88 +1,123 @@
-"""v2's zones in series (`heat/series.py`): two chambers in a row, the gas leaving the first at its
-temperature into the second; one zone alone is `firing.fire`'s zone; the balance closes."""
+"""v2's zones in series from the design (`heat/series.py`, B3): chambers in a row and a tube cut
+into segments as gas zones of one enclosure, the walls between chambers with a face in each, and
+a staged firing with each chamber's stage time. The loads and the stoking rates are test inputs:
+the book prints neither for these kilns."""
 
 from __future__ import annotations
 
-from dataclasses import replace
-from typing import Any
+from functools import cache
+from pathlib import Path
 
-import heat_cases as hc
 import numpy as np
 import pytest
 
+from kilndesigner.designfile import load_design
+from kilndesigner.v2.heat import chamber as ch
 from kilndesigner.v2.heat import firing as fi
 from kilndesigner.v2.heat import kiln as hk
+from kilndesigner.v2.heat import rays
 from kilndesigner.v2.heat import series as se
-from kilndesigner.v2.heat.zone import Opening, ZoneModel
+from kilndesigner.v2.heat.zone import ZoneModel
 
 pytestmark = [pytest.mark.slow, pytest.mark.geometry]
+OLSEN = Path(__file__).resolve().parents[3] / "examples" / "olsen"
 HOUR = 3600.0
-# The second chamber's door to the first: the 9 × 4½ in flue at the foot of its front wall
-HOLE = {"spy_holes": {"holes": [{"port": {"width": "9 in", "height": "4.5 in"},
-                                 "wall": "front", "up": "2.25 in"}]}}  # fmt: skip
+WOOD = hk.Wood(0.12, 19e6, "TEST INPUT: FAO's air-dried 12 %, Forest Research's 19 MJ/kg")
+CONE_10 = 1285 + 273.15
 
 
-def _relink(m: ZoneModel, swap: dict[str, Opening]) -> ZoneModel:
-    return replace(m, openings=tuple(swap.get(o.name, o) for o in m.openings))
+def _loads(c: ch.Chamber) -> list[hk.Load]:
+    """TEST INPUT: each room's envelope 0.1 m in from its walls and floor, to 0.9 of its height,
+    at 360 kg per m³ (the fast-fire's test setting, 55 kg in 0.152 m³)."""
+    out = []
+    for r in c.rooms:
+        lo = (r.lo[0] + 0.1, r.lo[1] + 0.1, 0.1)
+        hi = (r.hi[0] - 0.1, r.hi[1] - 0.1, 0.9 * r.hi[2])
+        vol = float(np.prod(np.subtract(hi, lo)))
+        out.append(hk.Load(360.0 * vol, lo, hi, 0.8, "TEST INPUT: 360 kg/m³ of envelope"))
+    return out
 
 
-@pytest.fixture(scope="module")
-def pair() -> tuple[ZoneModel, ZoneModel, float]:
-    """Two of W15's IFB cubes in a row (test inputs, `heat_cases.py`): the burners in the first,
-    its exit flue into the second, the second's own flue out."""
-    k1 = hc._crossdraft(hc.FLUE | hc.IFB)  # pyright: ignore[reportPrivateUsage]
-    k2 = hc._crossdraft(hc.FLUE | hc.IFB | HOLE)  # pyright: ignore[reportPrivateUsage]
-    m1 = hk.heat_model(k1, hc.CROSSDRAFT_LOAD, 1.15, n_rays=20_000)
-    m2 = hk.heat_model(k2, hc.CROSSDRAFT_LOAD, 1.15, n_rays=20_000)
-    first = _relink(m1, {"exit flue": Opening("exit flue", "zone", zone=1)})
-    second = _relink(m2, {"spy hole 1": Opening("spy hole 1", "zone", zone=0)})
-    return first, second, hc._burners(k1, m1)  # pyright: ignore[reportPrivateUsage]
+@cache
+def _model(name: str, segments: int = 1) -> ZoneModel:
+    k = load_design(OLSEN / f"{name}.yaml")
+    return hk.heat_model(k, _loads(ch.cavity(k, segments=segments)), 1.2, WOOD, n_rays=10_000,
+                         segments=segments)  # fmt: skip
 
 
-def test_one_zone_alone_is_the_single_zone(pair: tuple[Any, Any, float]) -> None:
-    m = hk.heat_model(hc._crossdraft(hc.FLUE | hc.IFB), hc.CROSSDRAFT_LOAD, 1.15, n_rays=20_000)  # pyright: ignore[reportPrivateUsage]
-    fuel = pair[2]
-    one = se.fire_series([m], fi.FixedInput(fuel), 2 * HOUR)
-    alone = fi.fire(m, fi.FixedInput(fuel), 2 * HOUR)
-    assert one.t_setting[-1, 0] == pytest.approx(alone.t_setting[-1], abs=0.05)
-    assert one.t_gas[-1, 0] == pytest.approx(alone.t_gas[-1], abs=0.05)
-    assert one.energy["flue"] == pytest.approx(alone.energy["flue"], rel=1e-4)
+def test_the_two_chamber_kilns_front_firebox_zone_closes() -> None:
+    """Its front firebox as a gas zone (B2's path): the front wall round the firebox's passage is
+    a surface of its own ("front 1"), not taken for a cut because its centroid lies in the
+    passage, so no ray leaves the enclosure (about 4 % of chamber 1's rays escaped, B3's
+    finding)."""
+    k = load_design(OLSEN / "olsen-two-chamber.yaml")
+    c = ch.chamber(k, path=True)
+    assert [g.kind for g in c.gas] == ["firebox", "chamber", "chamber"]
+    assert "front 1" in [z.name for z in c.zones]
+    r = rays.trace(list(c.zones), c.patches, rays=2_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas])  # fmt: skip
+    assert r.lost == 0
 
 
-def test_two_chambers_in_a_row(pair: tuple[Any, Any, float]) -> None:
-    """The second chamber's gas is cooler than the first's and its setting lags; the fuel's heat
-    is the flue, the walls, the settings and the openings and links, to round-off."""
-    first, second, fuel = pair
-    f = se.fire_series([first, second], fi.FixedInput(fuel), 6 * HOUR, targets=((0, 1173.15),))
-    assert np.all(f.t_gas[10:, 0] > f.t_gas[10:, 1])
-    assert f.t_setting[-1, 0] > f.t_setting[-1, 1] + 50
+def test_two_chambers_in_a_row_fired_in_stages() -> None:
+    """Olsen's two-chamber kiln: each chamber a zone, the wall between them a wall with a face in
+    each; stoked in turn at a test rate, the first chamber's gas preheats the second, whose stage
+    is the shorter; the stages' records join, the balance closing over both."""
+    m = _model("olsen-two-chamber")
+    between = next(f for f in m.faces if f.back)
+    assert (between.name, between.back, between.zone, between.back_zone) == (
+        "back 1", "front 2", 0, 1,
+    )  # fmt: skip
+    rate = 60.0 / 3600
+    stages = [se.Stage(i, fi.FixedInput(rate), CONE_10, 30 * HOUR) for i in (0, 1)]
+    s = se.fire_stages(m, stages, sample=1800.0)
+    first, second = s.times
+    assert first is not None
+    assert second is not None
+    assert second < first
+    f = s.firing
+    assert f.reached(CONE_10, 0) == pytest.approx(first, rel=1e-6)
+    assert f.reached(CONE_10, 1) == pytest.approx(first + second, rel=1e-6)
+    assert np.all(np.diff(f.times) > 0)
     e = f.energy
     closure = e["fuel heat"] - e["flue"] - e["walls"] - e["setting"] - e["openings"]
-    assert abs(closure) < 1e-6 * e["fuel heat"]
-    assert e["flue"] > 0
-    t900 = f.reached(0, 1173.15)
-    assert t900 is not None
-    assert t900 < 6 * HOUR
-    assert f.reached(1, 1173.15) is None
-    assert f.steps[0].name == "Zones in series"
+    assert abs(closure) < 1e-9 * e["fuel heat"]
+    assert e["fuel kg"] == pytest.approx(rate * f.times[-1], rel=1e-6)
+    assert s.steps[0].name == "The stages"
+    assert se.stage_model(m, 1).burns == 1
 
 
-def test_a_schedule_held_in_the_first_zone(pair: tuple[Any, Any, float]) -> None:
-    first, second, _ = pair
-    pts = ((0.0, 294.26), (HOUR, 900.0), (2 * HOUR, 1100.0))
-    for held in ("gas", "setting"):
-        f = se.fire_series([first, second], fi.Schedule(held, pts), 2 * HOUR,  # pyright: ignore[reportArgumentType]
-                           stop_at=(0, 2000.0))  # fmt: skip
-        col = f.t_gas if held == "gas" else f.t_setting
-        assert col[-1, 0] == pytest.approx(1100.0, abs=0.01)
-        assert f.fuel_rate[-1] > 0
+def test_a_tube_in_segments_cools_along_its_length() -> None:
+    """The anagama in a hole as a tube of four segments, the fire at its front: each segment's
+    gas and setting cooler than the one before."""
+    m = _model("anagama-hole", segments=4)
+    assert len(m.gas) == 4
+    f = fi.fire(m, fi.FixedInput(40.0 / 3600), 6 * HOUR, sample=1800.0)
+    assert np.all(np.diff(f.t_gases[-1]) < 0)
+    assert np.all(np.diff(f.t_settings[-1]) < 0)
 
 
-def test_one_fuel_for_the_row(pair: tuple[Any, Any, float]) -> None:
-    first, second, fuel = pair
-    other = hk.heat_model(hc._crossdraft(hc.FLUE | hc.IFB), hc.CROSSDRAFT_LOAD, 1.0, n_rays=5_000)  # pyright: ignore[reportPrivateUsage]
-    with pytest.raises(fi.FiringError, match="one fuel"):
-        se.fire_series([first, other], fi.FixedInput(fuel), HOUR)
-    f = se.fire_series([first, second], fi.FixedInput(fuel), 12 * HOUR, stop_at=(0, 1000.0))
-    assert f.reached(0, 1000.0) is not None
-    assert f.times[-1] < 12 * HOUR
+def test_a_stage_short_of_its_target_and_a_zone_held() -> None:
+    """A stage whose chamber doesn't reach its target in its limit has no time; a schedule held
+    by another zone's gas holds that zone's."""
+    m = _model("olsen-two-chamber")
+    s = se.fire_stages(m, [se.Stage(0, fi.FixedInput(0.001), CONE_10, 600.0)], sample=300.0)
+    assert s.times == (None,)
+    assert "not in" in s.steps[0].value
+    pts = ((0.0, 294.26), (1800.0, 700.0))
+    f = fi.fire(m, fi.Schedule("gas", pts, zone=1), 1800.0, sample=300.0)
+    assert f.t_gases[-1, 1] == pytest.approx(700.0, abs=0.01)
+
+
+def test_what_a_staged_firing_refuses() -> None:
+    m = _model("olsen-two-chamber")
+    with pytest.raises(fi.FiringError, match="no chamber 3"):
+        se.stage_model(m, 2)
+    with pytest.raises(fi.FiringError, match="needs a stage"):
+        se.fire_stages(m, [])
+    with pytest.raises(fi.FiringError, match="carries on"):
+        fi.fire(m, fi.FixedInput(0.01), 60.0, start=np.zeros(3))
+    with pytest.raises(hk.NotModelledError, match="one load for each"):
+        hk.heat_model(load_design(OLSEN / "olsen-two-chamber.yaml"), _loads(
+            ch.cavity(load_design(OLSEN / "olsen-two-chamber.yaml")))[:1], 1.2, WOOD,
+            n_rays=1_000)  # fmt: skip

@@ -511,12 +511,12 @@ def _support(tag: str) -> bool:
 
 
 def conditions(
-    rs: RowSection, state: State, support_friction: bool = False, analogy: bool = True
+    rs: RowSection, state: State, support_friction: bool = False, crushing: bool = True
 ) -> Problem:
     """μ cold or hot at the masonry's joints; where masonry meets the ends' supports or the
     earth 0, or with ``support_friction`` the masonry's own (no coefficient is sourced for brick
     on steel or earth); hot, the crushing stand-in at every joint of a material that has one
-    (without ``analogy``, only the stand-ins decided, not those carried over by analogy)."""
+    (without ``crushing``, compression unlimited, Heyman's)."""
     sec = rs.section
     mu = sources.MU_COLD.value if state == "cold" else sources.MU_HOT.value
     mus: list[float] = []
@@ -528,12 +528,10 @@ def conditions(
         stresses = [
             s.value
             for m in (a.material, b.material)
-            if m is not None
-            and (s := sources.crushing(m)) is not None
-            and (analogy or not sources.by_analogy(m))
+            if m is not None and (s := sources.crushing(m)) is not None
         ]
         crush.append(min(stresses) if state == "hot" and stresses else None)
-    return Problem(sec, tuple(mus), tuple(crush) if state == "hot" else ())
+    return Problem(sec, tuple(mus), tuple(crush) if state == "hot" and crushing else ())
 
 
 @dataclass(frozen=True)
@@ -547,9 +545,9 @@ class RowResult:
     most: dict[str, float]
     solution: Solution
     steps: tuple[Step, ...]
-    analogy: bool = False
-    """Hot, no admissible state with the crushing stand-ins, but one without those carried over by
-    analogy: the verdict rests on them alone."""
+    on_stand_in: bool = False
+    """Hot, no admissible state with the crushing stand-ins, but one with compression unlimited:
+    the verdict rests on them alone (`sources.ON_STAND_IN`)."""
 
 
 def analyse(rs: RowSection, state: State, support_friction: bool = False) -> RowResult:
@@ -562,10 +560,10 @@ def analyse(rs: RowSection, state: State, support_friction: bool = False) -> Row
     cost = ends["front"] + ends["back"]
     sol = solve(p, cost, 1)
     stands = sol.status is Status.OPTIMAL
-    analogy = False
+    on_stand_in = False
     if state == "hot" and not stands:
-        decided = conditions(rs, state, support_friction, analogy=False)
-        analogy = decided.crush != p.crush and solve(decided).status is Status.OPTIMAL
+        free = conditions(rs, state, support_friction, crushing=False)
+        on_stand_in = solve(free).status is Status.OPTIMAL
     least = {end: (float(c @ sol.x) / depth if sol.x is not None else math.nan)
              for end, c in ends.items()}  # fmt: skip
     most: dict[str, float] = {}
@@ -573,8 +571,8 @@ def analyse(rs: RowSection, state: State, support_friction: bool = False) -> Row
         top = solve(p, cost, -1)
         most = {end: (float(c @ top.x) / depth if top.x is not None else top.value)
                 for end, c in ends.items()}  # fmt: skip
-    steps = _analysis_steps(rs, state, support_friction, stands, least, most, analogy)
-    return RowResult(state, stands, least, most, sol, steps, analogy)
+    steps = _analysis_steps(rs, state, support_friction, stands, least, most, on_stand_in)
+    return RowResult(state, stands, least, most, sol, steps, on_stand_in)
 
 
 def _per_metre(v: float) -> str:
@@ -590,7 +588,7 @@ def _analysis_steps(
     stands: bool,
     least: dict[str, float],
     most: dict[str, float],
-    analogy: bool,
+    on_stand_in: bool,
 ) -> tuple[Step, ...]:
     mu = sources.MU_COLD if state == "cold" else sources.MU_HOT
     steps = list(rs.steps)
@@ -616,15 +614,13 @@ def _analysis_steps(
         "settle); each end's share of it",
         reference=METHOD,
     ))  # fmt: skip
-    if analogy:
+    if on_stand_in:
         steps.append(Step(
-            name="The hot verdict rests on a stand-in by analogy",
-            value="no admissible state with dense firebrick's 25 psi crushing stand-in at every "
-            "joint, one without it: not given (ADR 0009)",
-            reference=sources.C16_DENSE.reference,
-            note="the stand-in is carried over from the user's IFB decision by analogy, a question "
-            "for the user; real hot crushing and creep data (refractory-bearing.md gap 11) and the "
-            "ring's temperature through its thickness (the heat model) are to decide it",
+            name="The hot verdict rests on the crushing stand-ins",
+            value="no admissible state with the crushing stand-in at every joint, one with "
+            "compression unlimited: not given (ADR 0009)",
+            reference=f"{sources.C16_DENSE.reference}; {sources.C16_IFB.reference}",
+            note=sources.ON_STAND_IN,
         ))  # fmt: skip
     if most:
         steps.append(Step(

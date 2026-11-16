@@ -81,7 +81,7 @@ def test_a_shell_too_thin_for_its_span_falls() -> None:
     cold, hot = analyse(k, "cold"), analyse(k, "hot")
     assert not cold.stands
     assert not hot.stands
-    assert not hot.analogy
+    assert not hot.on_stand_in
     assert math.isnan(cold.least)
     assert statics(k).stands == {"cold": False, "hot": False}
 
@@ -116,11 +116,11 @@ def test_what_the_slicing_refuses() -> None:
     assert r.steps[0].name == "Not modelled"
 
 
-def test_a_hot_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() -> None:
+def test_a_hot_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
     """A wide, flat dense-brick sail dome (Miravet widened to 16 ft, rising 12 in): the stress
-    block takes about ρgL²/(8fσ) of each joint, whatever its thickness, so with the 25 psi stand-in
-    carried over from IFB by analogy no state stands hot, and without it one does; the verdict
-    isn't given."""
+    block takes about ρgL²/(8fσ) of each joint, whatever its thickness, so with the 25 psi C16
+    stand-in no state stands hot, and with compression unlimited one does; the stand-in being a
+    lower bound on the brick's hot strength, the verdict isn't given."""
     kiln = olsen("miravet")
     wide = kiln.chamber.model_copy(update={"width": Q_(16, "ft"), "depth": Q_(16, "ft")})
     roof = kiln.roof
@@ -129,8 +129,8 @@ def test_a_hot_verdict_resting_on_dense_bricks_stand_in_alone_isnt_given() -> No
         update={"rise": Q_(12, "inch")})})  # fmt: skip
     hot = analyse(k, "hot")
     assert not hot.stands
-    assert hot.analogy
-    assert any("analogy" in s.name for s in hot.steps)
+    assert hot.on_stand_in
+    assert any(s.name == "The hot verdict rests on the crushing stand-ins" for s in hot.steps)
     r = statics(k)
     assert r.stands["hot"] is None
-    assert "dense brick's hot crushing" in str(r.missing)
+    assert "hot crushing strength" in str(r.missing)

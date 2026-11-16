@@ -25,8 +25,11 @@
 #   derived  arithmetic on printed numbers (reason: the arithmetic);
 #   scaled   measured off a figure from a dimension printed on it (figure, spread);
 #   drawing  read off a figure with no printed dimension and not scaled (figure);
-#   assumed  not in the book: the design file's value and its reason, with the Olsen page of any
-#            rule it follows. No value is here without a source.
+#   assumed  not in the book: the design file's value, or a value sourced in docs/research (the
+#            round of 2026-11-10's research A: each kiln's fuel, intakes and the kits' chambers;
+#            part C2: each kiln's setting, one band a chamber zone, kiln-settings.md; their
+#            reasons naming the file), with its reason and the Olsen page of any rule it follows.
+#            No value is here without a source.
 schema: 1
 book: Frederick L. Olsen, The Kiln Book, 4th ed.
 kilns:
@@ -43,6 +46,53 @@ kilns:
         reason: no temperature printed; cone 10 from the anagama-style kiln built at 
           Höhr-Grenzhausen in 2003 (hohr-2003, p.122); masonry-materials.md §4a.7 puts such a clay's
           ceiling near cone 10–11
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the book names neither the wood nor a place (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [335, 1684]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.584 m³; 1–3 layers of shelves over 3.057 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.584 m³ as v2 traces it; the envelope''s plan 3.057 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 5.25
@@ -135,6 +185,14 @@ kilns:
         condition: the flue's width; its depth isn't drawn
         note: a vertical flue up the back to the hill's surface, drawn with a width arrow and no 
           number; not entered in the design (engine-sized chimney)
+      - what: primary_air
+        value: 576
+        unit: inch**2
+        status: derived
+        page: p.84
+        figure: Fig 4-5
+        reason: the printed 2 × 2 ft entrance and firebox
+        condition: no grate; the entrance admits the fuel and all the air (research A2)
     structure:
       - what: roof_type
         value: the cavity's own roof, a rounded teardrop section dug and fired in the clay bank
@@ -214,6 +272,54 @@ kilns:
           cool for black, carbonized ware
         status: printed
         page: p.108
+      - what: fuel_species
+        value: slab wood, kind not printed
+        status: assumed
+        reason: pp.107–108 print slab wood; built at an NCECA conference in the USA (kiln-fuelwood-by-region.md)
+        note: Korean kilns burn pine dried a year ([G1]), a tradition, not this kiln's wood
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [192, 1081]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.767 m³; 1–5 layers of shelves over 1.347 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.767 m³ as v2 traces it; the envelope''s plan 1.347 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 16
@@ -376,6 +482,7 @@ kilns:
       - firing time
       - wood per firing
       - the firebox door's size
+      - 'research A2: the firebox mouth''s size (the only air intake; no grate)'
     notes:
       - the slope is printed both as 20 % (text, p.108) and 20° (Fig 4-67); the design uses 20 % 
         (11.3°)
@@ -399,6 +506,66 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [190, 1050]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.774 m³; 1–5 layers of shelves over 1.226 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.774 m³ as v2 traces it; the envelope''s plan 1.226 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [229, 1321]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.377 m³; 1–6 layers of shelves over 1.375 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.377 m³ as v2 traces it; the envelope''s plan 1.375 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [165, 911]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.410 m³; 1–5 layers of shelves over 1.059 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.410 m³ as v2 traces it; the envelope''s plan 1.059 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 3
@@ -690,6 +857,24 @@ kilns:
         spread: heights ±3 in, diameter ±½ in, from the printed 19 ft 5 in, 42, 46, 36, 59, 65, 59 
           and 56 in
         note: the scales give chamber 2's printed 56 in as 52–56½ in
+      - what: primary_air
+        value: [168, 196]
+        unit: inch**2
+        status: derived
+        page: p.201
+        figure: Fig 8-7
+        reason: the front opening 12–14 in wide in the plan × the 14 in ash pit, which the side view
+          labels AIR, with STOKING above it (read on the page image, 2026-11-10)
+        reading: uncertain
+        condition: the air opening into the ash pit, below the stoking opening (research A2); the
+          stoking opening's height isn't legible
+      - what: exit_flue_height
+        value: 12
+        unit: inch
+        status: printed
+        page: p.94
+        figure: Fig 4-36
+        note: the exit flue fact above, as a number; its width and count aren't printed (C1)
     structure:
       - what: roof_type
         value: >-
@@ -831,6 +1016,84 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: wood sticks, kind not printed
+        status: assumed
+        reason: p.205 prints the sticks' size; no source names Sturt's wood (kiln-fuelwood-by-region.md
+          [A1])
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Sydney''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_species
+        value: '#2 diesel, for the oil drip'
+        status: assumed
+        reason: 'the oil isn''t named (p.208, Fig 8-21); the book''s drip-oil practice is #2 diesel (pp.207–209)'
+      - what: fuel_heating_value
+        value: [42.1, 43.3]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s 18,610 BTU/lb (p.209) is 43.3 MJ/kg, basis not printed;
+          AFDC''s net 128,488 BTU/gal is 42.1 MJ/kg at the book''s sg 0.85 ([F6]); [F3]''s light fuel
+          oil 42.4'
+        condition: net (research A1); the oil drip
+      - what: fuel_carbon
+        value: [85.0, 86.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 86 % (p.196), 86.2 % ([F3]), 85–86 % ([F2])'
+        condition: the oil drip
+      - what: fuel_hydrogen
+        value: [13.0, 13.7]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 13 % (p.196), 13.7 % ([F3])'
+        condition: the oil drip
+      - what: fuel_sulphur
+        value: [0.1, 0.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
+        condition: the oil drip
+      - what: setting
+        value: [167, 858]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.544 m³; 1–5 layers of shelves over 0.732 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.544 m³ as v2 traces it; the envelope''s plan 0.732 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: 6
@@ -948,6 +1211,7 @@ kilns:
       - exit flues and chimney
       - cone, firing time, wood and oil per firing
       - what holds the catenary's feet (the design's frame.catenary warning)
+      - 'research A2: the side stoke hole''s width and the channel firebox''s air intakes'
     notes:
       - not the Tasmanian fibre kiln (blakebrough-tasmania)
       - the text's "width of the 6ft chamber" and the drawing's 45 in across the front disagree on 
@@ -983,6 +1247,12 @@ kilns:
         value: "10"
         status: assumed
         reason: as Olsen fired his own fibre kiln (p.62)
+      - what: setting
+        value: [130, 742]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.933 m³; 1–6 layers of shelves over 0.743 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.933 m³ as v2 traces it; the envelope''s plan 0.743 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 40
@@ -1219,6 +1489,12 @@ kilns:
           chamber length of at least 48 in would help to even up the firing
         status: printed
         page: p.128
+      - what: setting
+        value: [78, 353]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.084 m³; 1–2 layers of shelves over 0.666 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.084 m³ as v2 traces it; the envelope''s plan 0.666 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 60
@@ -1496,6 +1772,55 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: chestnut
+        status: printed
+        page: p.166
+        quote: chestnut slats
+        note: Castanea sativa (kiln-fuelwood-by-region.md [E2]); [F1] has one chestnut analysis only
+      - what: fuel_moisture
+        value: [11.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Barcelona''s driest month, 11.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 18.67]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [2892, 17708]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 45.192 m³; 1–12 layers of shelves over 9.244 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 45.192 m³ as v2 traces it; the envelope''s plan 9.244 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 180
@@ -1587,6 +1912,20 @@ kilns:
         status: printed
         page: p.167, p.168
         figure: Fig 6-53
+      - what: inlet_flue_width
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.167
+        figure: Fig 6-51
+        note: the inlet flue fact above, as numbers; their count isn't printed (C1)
+      - what: inlet_flue_height
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.167
+        figure: Fig 6-51
+        note: the inlet flue fact above, as numbers; their count isn't printed (C1)
     structure:
       - what: dome_type
         value: a dome ceiling with chimney holes, under the bottle chimney
@@ -1648,6 +1987,7 @@ kilns:
       - door size; inlet flue count
       - band size
       - wood moisture
+      - 'research A2: whether the 2 × 3½ ft ash pit (Fig 6-50) is its mouth; the stoke opening''s size'
   chappell-domura:
     name: John Chappell's Domura tandem kiln, its salt chamber
     design: examples/olsen/chappell-domura.yaml
@@ -1668,6 +2008,54 @@ kilns:
         value: "10"
         status: assumed
         reason: Olsen salts at cone 9–10 (p.128); not given for this kiln
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the drawing shows wood fireboxes (p.126); Japanese kilns burn pine, by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]; Domura not located) to 25 %, firewood stored several years
+          ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [102, 560]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.419 m³; 1–4 layers of shelves over 0.888 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.419 m³ as v2 traces it; the envelope''s plan 0.888 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 50
@@ -1804,6 +2192,34 @@ kilns:
           through salting
         status: printed
         page: p.243
+      - what: inlet_flue_count
+        value: 3
+        status: drawing
+        page: p.126
+        figure: Fig 4-149
+        note: the three openings in the inlet flue fact above (C1)
+      - what: inlet_flue_width
+        value: [3, 4]
+        unit: inch
+        status: scaled
+        page: p.126
+        figure: Fig 4-149
+        spread: 3–4 in, from the 3 ft, 5 ft and 9 in walls (7.2–9.9 px/in)
+        note: the scaled widths above, as numbers; their height isn't in a plan (C1)
+      - what: exit_flue_count
+        value: 3
+        status: drawing
+        page: p.126
+        figure: Fig 4-149
+        note: the three openings in the exit flue fact above (C1)
+      - what: exit_flue_width
+        value: [2.5, 3.5]
+        unit: inch
+        status: scaled
+        page: p.126
+        figure: Fig 4-149
+        spread: 2½–3½ in, from the 3 ft, 5 ft and 9 in walls
+        note: the scaled widths above, as numbers; their height isn't in a plan (C1)
     structure:
       - what: roof_type
         value: arched roofs sketched; direction and rise not printed
@@ -1854,6 +2270,7 @@ kilns:
       - arch shape, direction and rise
       - damper size
       - which of the two kilns the shared chimney was sized for
+      - 'research A2: the salt firebox''s mouth and air intakes'
     notes:
       - the printed volumes disagree with the drawing (40 ft³ printed against about 57 ft³ drawn; 50
         against 45); Flagged in the notes
@@ -1873,6 +2290,55 @@ kilns:
         status: assumed
         reason: from its sister the Fireworks kiln (p.181, cone 10-plus) and the Kanayama kiln 
           (p.189, cone 9/10)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Danish firewoods are beech, oak, ash, spruce, pine (kiln-fuelwood-by-region.md [E5]);
+          none named for this kiln
+      - what: fuel_moisture
+        value: [11.2, 23.1]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Copenhagen''s driest month, 11.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 23 %, split wood dried one or two summers to 15–30 % of its dry weight ([E5], 13–23
+          % wet)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [458, 2520]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.692 m³; 1–5 layers of shelves over 2.903 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.692 m³ as v2 traces it; the envelope''s plan 2.903 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 7
@@ -1973,6 +2439,30 @@ kilns:
         page: p.182
         figure: Fig 7-9
         condition: the groundhog chimney
+      - what: primary_air
+        value: 504
+        unit: inch**2
+        status: derived
+        page: p.179
+        figure: Fig 7-3
+        reason: two ash pits and walkways 14 in wide × 18 in deep, the type's drawing
+        condition: below the grates, fully open (research A2)
+      - what: chimney_width
+        value: 13.5
+        unit: inch
+        status: printed
+        page: p.182
+        figure: Fig 7-9
+        condition: the single (anagama) chimney
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 13.5
+        unit: inch
+        status: printed
+        page: p.182
+        figure: Fig 7-9
+        condition: the single (anagama) chimney
+        note: the chimney section fact above, as numbers (C1)
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin
@@ -2038,6 +2528,53 @@ kilns:
         value: "10"
         status: assumed
         reason: from the Gulgong racer, Olsen's cast-dome wood cross-draft (gulgong-racer, p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no place printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [305, 1707]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.118 m³; 1–4 layers of shelves over 2.961 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.118 m³ as v2 traces it; the envelope''s plan 2.961 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 117
@@ -2208,6 +2745,18 @@ kilns:
         page: p.124
         figure: Fig 4-140
         reading: uncertain
+      - what: chimney_width
+        value: 9
+        unit: inch
+        status: printed
+        page: p.124
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 9
+        unit: inch
+        status: printed
+        page: p.124
+        note: the chimney section fact above, as numbers (C1)
     structure:
       - what: dome_type
         value: a cast dome over the teardrop plan, first cast too thin and thickened with more 
@@ -2269,6 +2818,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the ash pit''s mouth (primary air)'
     notes:
       - the dome's first casting was too thin and had to be thickened (Fig 4-146), the nearest thing
         to a structural failure printed for these kilns, with no size for the thin casting
@@ -2298,6 +2848,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the cone of his element design example (pp.258–260)
+      - what: setting
+        value: [292, 1799]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.127 m³; 1–6 layers of shelves over 2.253 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.127 m³ as v2 traces it; the envelope''s plan 2.253 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 45
@@ -2389,6 +2945,54 @@ kilns:
         value: wood, stoked from the front and through the side stoke holes
         status: printed
         page: p.114
+      - what: fuel_species
+        value: pine slabs
+        status: assumed
+        reason: his Hart Square groundhog fires 'fast burning pine slabs' (kiln-fuelwood-by-region.md
+          [U2]); Catawba Valley kilns burned pine ([U1]); the species not named
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Charlotte''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [688, 3052]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 10.498 m³; 1–2 layers of shelves over 3.002 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 10.498 m³ as v2 traces it; the envelope''s plan 3.002 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 24
@@ -2529,6 +3133,23 @@ kilns:
         status: printed
         page: p.114, p.115
         figure: Fig 4-102
+      - what: primary_air
+        value: 364.5
+        unit: inch**2
+        status: derived
+        page: p.114
+        figure: Fig 4-97
+        reason: three air holes 13½ in wide × 9 in high, one under each front stoke hole, the count as
+          the figure draws it
+        condition: under the front stoke holes (research A2)
+      - what: secondary_air
+        value: 648
+        unit: inch**2
+        status: derived
+        page: p.114
+        figure: Fig 4-97
+        reason: three front stoke holes 13½ × 16 in, the count as the figure draws it
+        condition: the front stoke holes, fully open; the side stoke holes left out (research A2)
     structure:
       - what: roof_type
         value: an arch springing from the floor, rising less than a half-circle, keeping its shape 
@@ -2624,6 +3245,53 @@ kilns:
         page: p.160
         condition: 80,000 bricks, replica tiles and bricks for restoring Pompeii
         note: short tons (18 metric t printed beside)
+      - what: fuel_species
+        value: long wooden slats, kind not printed
+        status: assumed
+        reason: p.160 prints long slats; no source names the wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [11.5, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Naples''s driest month, 11.5 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [18000, 18144]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware printed, 18,000–18,144 kg (p.160); no shelves (p.160) (the chamber zone''s 28.689 m³ as v2 traces it; the envelope''s plan 10.408 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 118
@@ -2729,6 +3397,7 @@ kilns:
       - vault rise and thickness
       - exit-flue and stoking-port sizes
       - firing schedule; wood species and moisture
+      - 'research A2: the stoking port''s and its under-air supply''s sizes'
     notes:
       - the printed 848 ft³ is the box to 79 in; the design file adds the vault above it (about 
         1,010 ft³)
@@ -2863,6 +3532,54 @@ kilns:
         note: >-
           Fig 5-43 (on p.141) reads 4½–5 in at the front; p.151 gives the fast-fire kiln a 4 in
           front space
+      - what: fuel_species
+        value: wood of any kind
+        status: printed
+        page: p.139
+        quote: a quarter of a cord of wood of any kind
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [40, 159]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.457 m³; 1–3 layers of shelves over 0.250 m² at 20.5–22 lb a 12 × 24 in shelf (the chamber zone''s 0.457 m³ as v2 traces it; the envelope''s plan 0.250 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [12, 16]
@@ -3017,6 +3734,31 @@ kilns:
         status: printed
         page: pp.141–142
         figure: Fig 5-44
+      - what: primary_air
+        value: [162, 216]
+        unit: inch**2
+        status: derived
+        page: p.140, p.199, p.204
+        figure: Fig 5-39
+        reason: two firebox mouths 13½ in wide below a grate 6–7 in up (p.199) on legs 7–8 in tall
+          (p.204)
+        condition: the firebox mouths below the grate, fully open (research A2); whether they were partly
+          closed isn't printed
+      - what: secondary_air
+        value: [121.5, 175.5]
+        unit: inch**2
+        status: derived
+        page: p.140, p.199, p.204
+        figure: Fig 5-39
+        reason: two firebox mouths 13½ in wide, 12½ in tall (five courses) less the grate's 6–8 in
+        condition: the firebox mouths above the grate, fully open (research A2)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: printed
+        page: p.204
+        figure: Fig 5-39
+        note: the grate's ¾ in round rod, as the grate fact above (C1, the draft path)
     structure:
       - what: roof_type
         value: sprung arch, a bonded arch of No. 1 arch bricks with straights, laid on a form, 
@@ -3173,6 +3915,54 @@ kilns:
         note: >-
           Aspen's elevation, read by the user from the book (the digits are cut off in the scan);
           the book doesn't say this kiln used the high-altitude sizes
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names Anderson Ranch's wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [6.1, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Grand Junction''s driest month, 6.1 % (Denver''s
+          8.6 %; neither a mountain valley; kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored
+          several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [35, 184]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.508 m³; 1–4 layers of shelves over 0.244 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.508 m³ as v2 traces it; the envelope''s plan 0.244 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 18
@@ -3249,6 +4039,17 @@ kilns:
         status: assumed
         reason: the fast-fire design at sea level; 13½ × 13½ in at high altitude not stated for this
           kiln
+      - what: primary_air
+        value: [162, 216]
+        unit: inch**2
+        status: assumed
+        reason: as the fast-fire's (p.140, p.199, p.204), the design file's firebox
+        condition: the firebox mouths below the grate (research A2)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: the fast-fire design's ¾ in rod (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -3304,6 +4105,55 @@ kilns:
           atmosphere
         status: printed
         page: pp.178–179
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Alberta's firewoods are birch, maple, poplar, willow, larch, pine and spruce (kiln-fuelwood-by-region.md
+          [C1]); none named for this kiln
+      - what: fuel_moisture
+        value: [9.3, 35.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Edmonton''s driest month, 9.3 % (kiln-fuelwood-by-region.md
+          [S1]) to 35 %: Alberta''s advice is at least one summer''s drying ([C1]), and wood stored a
+          summer holds 25–35 % ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [831, 4801]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.195 m³; 1–6 layers of shelves over 5.059 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.195 m³ as v2 traces it; the envelope''s plan 5.059 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 9
@@ -3418,6 +4268,15 @@ kilns:
         status: drawing
         page: p.181
         figure: Fig 7-6
+      - what: primary_air
+        value: 504
+        unit: inch**2
+        status: derived
+        page: p.179
+        figure: Fig 7-3
+        reason: two ash pits 14 in wide × 18 in deep, the type's drawing; the door's adjustable air (Fig
+          7-4) isn't sized
+        condition: below the grates, fully open (research A2)
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin over the fire 
@@ -3568,6 +4427,61 @@ kilns:
           Bizen clay
         status: printed
         page: p.99
+      - what: fuel_species
+        value: red pine (akamatsu), with pine needles
+        status: assumed
+        reason: Bizen kilns burn red pine (kiln-fuelwood-by-region.md [K2]–[K4], read); the book prints
+          split logs, sticks, fireplace logs and pine needles (pp.103–104)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13); the needles burn
+          hotter, LHV about 21 MJ/kg ([F1] Table A1)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [402, 2244]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.801 m³; 1–5 layers of shelves over 2.739 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.801 m³ as v2 traces it; the envelope''s plan 2.739 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [212, 1129]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.010 m³; 1–4 layers of shelves over 1.611 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.010 m³ as v2 traces it; the envelope''s plan 1.611 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: shape
         value: >-
@@ -3793,6 +4707,13 @@ kilns:
         page: p.101
         figure: Fig 4-55
         spread: ±1 in on the heights, ±3 in along the wall
+      - what: primary_air
+        value: 1008
+        unit: inch**2
+        status: derived
+        page: p.102
+        reason: the fire-mouth hole 3½ × 2 ft when open
+        condition: no grate; the fire mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: sprung arches along the draft, one per chamber, semicircular, held by masonry
@@ -3887,6 +4808,55 @@ kilns:
         status: printed
         page: p.119
         condition: Olsen's advice for reducing a groundhog, given with the Gulgong racer
+      - what: fuel_species
+        value: pine
+        status: assumed
+        reason: 'southern US groundhogs: pine and pine slabs in the Catawba Valley (kiln-fuelwood-by-region.md
+          [U1], [U2]); the species not named'
+      - what: fuel_moisture
+        value: [10.2, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the Georgia and North Carolina stations'' driest
+          month, 10.2 % (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several years ([F2]
+          Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [505, 2560]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.833 m³; 1–3 layers of shelves over 4.860 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.833 m³ as v2 traces it; the envelope''s plan 4.860 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: [29, 48]
@@ -4018,6 +4988,19 @@ kilns:
         value: six, 7 × 7½ in (three courses high), spread evenly along the back wall
         status: assumed
         reason: the scaled sizes rounded to the brick
+      - what: chimney_width
+        value: 102
+        unit: inch
+        status: assumed
+        reason: the kiln's full width (p.111, Fig 4-85), the design file's 102 in (C1)
+      - what: chimney_depth
+        value: [9, 30]
+        unit: inch
+        status: printed
+        page: p.111
+        figure: Fig 4-85
+        note: the 9–30 in inside, read as the depth of a full-width chimney as the kiln doc reads it
+          (C1)
     structure:
       - what: roof_type
         value: an arch springing from the floor, rising no more than a half-circle (a cylinder 
@@ -4047,6 +5030,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox''s mouths and air intakes'
     notes:
       - the text and Fig 4-85 differ on the chimney (5–10 against 5–12 ft), the width (7–10 against 
         the drawing's 5–10 ft firebox) and the length (12–24 ft against a 10–20 ft ware platform) 
@@ -4100,6 +5084,59 @@ kilns:
         figure: Fig 4-110
         reading: uncertain
         note: the 12 × 18 label is faint
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Olsen's home pottery; its place isn't printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [279, 1547]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.816 m³; 1–4 layers of shelves over 2.582 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.816 m³ as v2 traces it; the envelope''s plan 2.582 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [421, 2345]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.709 m³; 1–4 layers of shelves over 4.006 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.709 m³ as v2 traces it; the envelope''s plan 4.006 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 2
@@ -4237,6 +5274,40 @@ kilns:
         status: drawing
         page: p.116
         figure: Fig 4-108
+      - what: secondary_air
+        value: 121.5
+        unit: inch**2
+        status: derived
+        page: p.117
+        reason: the stoke hole 9 × 13½ in in the door bricking; its grate-level air holes aren't sized
+        condition: the front firebox's stoke hole (research A2)
+      - what: chimney_width
+        value: 15
+        unit: inch
+        status: printed
+        page: p.116
+        figure: Fig 4-110
+        note: the chimney section fact above, as numbers (C1)
+      - what: chimney_depth
+        value: 24
+        unit: inch
+        status: printed
+        page: p.116
+        figure: Fig 4-110
+        note: the chimney section fact above, as numbers (C1)
+      - what: between_flue_count
+        value: 3
+        status: printed
+        page: p.116
+        note: the "three large exit flues" from the front chamber (C1)
+      - what: between_flue_width
+        value: [11, 13]
+        unit: inch
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: 7.1–7.8 px/in, from the 55 in and the printed 12 × 24 in shelves
+        note: the scaled gaps above, as numbers; their height isn't drawn (C1)
     structure:
       - what: dome_type
         value: two cast dome-shaped ceilings over a Bizen-style front chamber and a tube-style 
@@ -4352,6 +5423,84 @@ kilns:
           the book gives none; a firing listing for the kiln asks for high-fire work, and Lincoln 60 is
           a stoneware clay that bloats at cone 11, so cone 10 is near its ceiling (masonry-materials.md
           §4a.1, §4a.6)
+      - what: fuel_species
+        value: wood, kind not printed (the fuel isn't named)
+        status: assumed
+        reason: the captions show firebox and side stoking (p.57); no source names the wood (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.8, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Sacramento''s driest month, 8.8 %, if the kiln stood
+          near its clay''s Lincoln, California (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored
+          several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [264, 1501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.901 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.901 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [266, 1510]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.934 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.934 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [264, 1501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.901 m³; 1–6 layers of shelves over 1.510 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.901 m³ as v2 traces it; the envelope''s plan 1.510 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 6
@@ -4536,6 +5685,7 @@ kilns:
       - flue sizes and counts between chambers
       - main firebox size
       - chimney section
+      - 'research A2: the main firebox''s mouth and the side stoke holes'' sizes'
     notes:
       - the design file's loss is likely overstated, as it takes the whole raw-clay wall as fired 
         (its header)
@@ -4583,6 +5733,12 @@ kilns:
         value: "10"
         status: assumed
         reason: Olsen salts at cone 9–10 (p.128)
+      - what: setting
+        value: [61, 352]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.894 m³; 1–6 layers of shelves over 0.372 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.894 m³ as v2 traces it; the envelope''s plan 0.372 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 16
@@ -4810,6 +5966,12 @@ kilns:
         status: printed
         page: p.171
         condition: said of large updrafts; this kiln is fired that way
+      - what: setting
+        value: [1164, 7822]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 17.923 m³; 1–13 layers of shelves over 4.529 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 17.923 m³ as v2 traces it; the envelope''s plan 4.529 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 500
@@ -4943,6 +6105,55 @@ kilns:
         status: printed
         page: p.162
         note: read on the page image, 2026-11-09
+      - what: fuel_species
+        value: beech
+        status: assumed
+        reason: a Höhr-Grenzhausen salt-glaze pottery formerly fired beech billets (kiln-fuelwood-by-region.md
+          [E1], read); the book prints long planks (p.163, drawing)
+      - what: fuel_moisture
+        value: [10.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Luxembourg''s and Berlin''s driest month, 10.6 %
+          (kiln-fuelwood-by-region.md [S1]; no Westerwald station) to 25 %, firewood stored several years
+          ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.0, 18.6]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Fagus wood LHV min–max (median 17.67)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [509, 3226]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 7.334 m³; 1–7 layers of shelves over 3.509 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 7.334 m³ as v2 traces it; the envelope''s plan 3.509 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: length
         value: 4.5
@@ -5096,6 +6307,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood and salt per firing
+      - 'research A2: the two firebox mouths'' sizes (photo only)'
     notes:
       - the notes read the firebox label as 1400cm across the firebox front; the page shows it 
         running along the ash pit (the design's direction), and printed 1400cm (the notes' digits); 
@@ -5155,6 +6367,78 @@ kilns:
         status: printed
         page: p.131
         figure: Fig 5-4
+      - what: fuel_species
+        value: coal, kind not printed
+        status: printed
+        page: p.131
+        note: the book speaks of bituminous coal for kilns generally (p.196)
+      - what: fuel_moisture
+        value: 10
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3])'
+        condition: as received (research A1)
+      - what: fuel_heating_value
+        value: 27.9
+        unit: MJ/kg
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3]); 24.8 MJ/kg as received at 10 %'
+        condition: net, dry basis (research A1)
+      - what: fuel_ash
+        value: 14
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal ([F3])'
+        condition: dry basis (research A1)
+      - what: fuel_carbon
+        value: [68.0, 78.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal, C 68–78 % (average 71.5, [F3]), 72.5 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [3.5, 5.6]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 3.5–5.0 % ([F3]), 5.6 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: 11.0
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: [F2] Table 19''s coal'
+        condition: dry basis (research A1)
+      - what: fuel_nitrogen
+        value: [0.8, 1.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 0.8–1.5 % ([F3]), 1.3 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_sulphur
+        value: 0.94
+        unit: percent
+        bound: <=
+        status: assumed
+        reason: 'kiln-fuels.md §4: < 0.5 % ([F3]), 0.94 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_unit_mass
+        value: 21
+        unit: pound
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
+          isn''t described: a question for the owner'
+        condition: a shovelful (research A1)
+      - what: setting
+        value: [504, 2858]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 7.476 m³; 1–6 layers of shelves over 2.838 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 7.476 m³ as v2 traces it; the envelope''s plan 2.838 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 250
@@ -5320,6 +6604,20 @@ kilns:
         status: drawing
         page: p.131
         figure: Fig 5-4
+      - what: connection_width
+        value: 20
+        unit: inch
+        status: printed
+        page: p.131
+        figure: Fig 5-4
+        note: the damper fact's 20 in wide connection to the chimney (C1); it scales 23½ in on the
+          plan
+      - what: connection_height
+        value: 18
+        unit: inch
+        status: assumed
+        reason: the connection's height isn't printed; the three flue channels' printed 18 in depth
+          (p.131, Fig 5-4) (C1)
     structure:
       - what: roof_type
         value: an arch drawn thick over the chamber, the walls curving in to the crown
@@ -5375,6 +6673,7 @@ kilns:
       - arch thickness; side-wall thickness
       - firebox heights (scaled only)
       - ware and saggar load
+      - 'research A2: the fire mouth''s height (its width printed 2 ft 6 in) and the ash pit''s mouth'
     notes:
       - olsen-kilns.md's "Not given" for this kiln still lists firing hours as lost, though the same
         entry reads "over 50 hours" (the user's reading)
@@ -5395,6 +6694,72 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [285, 1640]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.204 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.204 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [289, 1654]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.256 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.256 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [289, 1654]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.256 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.256 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [285, 1640]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.204 m³; 1–6 layers of shelves over 1.698 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.204 m³ as v2 traces it; the envelope''s plan 1.698 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 4
@@ -5585,6 +6950,7 @@ kilns:
       - flue count per wall
       - door size, the dogi's side stoke holes
       - the bracing's size
+      - 'research A2: the dogi''s mouth and air intakes'
     notes:
       - the "(30.5 x 38cm)" step is a misprint for 30.5 to 38 cm (Flagged in the notes)
 
@@ -5610,6 +6976,53 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Fig 6-47 prints 'FIREBOX (wood)'; Japanese kilns burn pine, by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [17, 83]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.265 m³; 1–5 layers of shelves over 0.053 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.265 m³ as v2 traces it; the envelope''s plan 0.053 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 2.5
@@ -5668,6 +7081,15 @@ kilns:
         status: printed
         page: p.165
         figure: Fig 6-47
+      - what: exit_flue_area
+        value: [126, 179]
+        unit: inch**2
+        status: derived
+        page: p.165
+        figure: Fig 6-47
+        reason: the flame rises round the muffle to the open top, through the annulus between the
+          22 in inside (derived above) and the muffle's printed 16–18 in, π/4·(22² − d²) (C1)
+        condition: the open top's way out past the muffle
     structure:
       - what: construction
         value: >-
@@ -5687,6 +7109,7 @@ kilns:
       - outer height; firebox length and place
       - temperature and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and the ash pit''s intake'
   kitade-tojilo:
     name: Kitade Tojilo chamber kiln, Kutani
     design: examples/olsen/kitade-tojilo.yaml
@@ -5702,6 +7125,54 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: long wood slabs, kind not printed
+        status: assumed
+        reason: p.202 prints long slabs; no source names Kutani's wood; pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [8.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from the three Japanese stations'' driest month, 8.7 %
+          (kiln-fuelwood-by-region.md [S1]; no Sea of Japan station) to 25 %, firewood stored several
+          years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [287, 1606]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.142 m³; 1–5 layers of shelves over 1.970 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.142 m³ as v2 traces it; the envelope''s plan 1.970 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 4
@@ -5842,6 +7313,22 @@ kilns:
         reading: flagged
         note: the arrow scales 20–24 in against the 12 in hole (step A); the hole centres scale 22 
           and 71 in from the end
+      - what: primary_air
+        value: 432
+        unit: inch**2
+        status: derived
+        page: p.202
+        figure: Fig 8-11
+        reason: two air draft and ash pit holes 12 in wide × 18 in tall
+        condition: below the grate, fully open (research A2)
+      - what: secondary_air
+        value: 63
+        unit: inch**2
+        status: derived
+        page: p.202
+        figure: Fig 8-11
+        reason: the stoke hole 9 × 7 in
+        condition: the stoke hole (research A2)
     structure:
       - what: roof_type
         value: arched
@@ -5924,6 +7411,108 @@ kilns:
           between the setting and the front wall, the full height of the stacking
         status: printed
         page: p.93, p.205
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [208, 1220]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 0.921 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 0.921 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 8: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [213, 1293]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 9: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [211, 1284]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        condition: 'chamber 10: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: height
         value: [6, 7]
@@ -6087,6 +7676,7 @@ kilns:
       - chimney
       - flue count per wall
       - cone, firing time and fuel per firing (the Suzuki kiln's are its own)
+      - 'research A2: the stoke holes'' (takaguchi) and the main firebox''s intakes'
     notes:
       - a type, not one kiln; the design file draws one from the book's ranges
 
@@ -6162,6 +7752,56 @@ kilns:
         value: good reduction in the grand feu; light salting of the firebox near the end
         status: printed
         page: p.111
+      - what: fuel_species
+        value: split oak and birch, then bundles of branches and twigs
+        status: printed
+        page: p.111
+        note: the petit feu on oak and birch, the grand feu on the bundles; Quercus petraea and Betula
+          pendula by kiln-fuelwood-by-region.md [E6] (snippets)
+      - what: fuel_moisture
+        value: [10.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Paris''s driest month, 10.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.0, 19.06]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Quercus 17.00–18.30 and Betula 18.10–19.06 LHV; the
+          branch bundles 17.8–19.1 ([F2] Table 10, broad-leaf forest residues)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.0, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.52]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [41.38, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 3.28]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 3 and 6, deciduous wood and branches (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [4990, 34276]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 75.035 m³; 1–11 layers of shelves over 24.997 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 75.035 m³ as v2 traces it; the envelope''s plan 24.997 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [1766, 2825]
@@ -6326,6 +7966,7 @@ kilns:
       - flue and chimney sizes
       - wood per firing
       - ware load
+      - 'research A2: the firebox mouth and the ash pit''s intake under the brick grate'
     notes:
       - the design's 11 × 27 ft box with a 7 ft springline and a 33 in rise gives 2650 ft³, inside 
         the printed 1766–2825 ft³
@@ -6343,6 +7984,54 @@ kilns:
         status: assumed
         reason: from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
           p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the Meaders kilns are 'wood-fueled' (kiln-fuelwood-by-region.md [U3]); southern groundhogs
+          burned pine slabs ([U1], [U2]), North Carolina's, by analogy
+      - what: fuel_moisture
+        value: [10.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Athens, Georgia''s driest month, 10.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [280, 1512]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.923 m³; 1–4 layers of shelves over 2.290 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.923 m³ as v2 traces it; the envelope''s plan 2.290 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: crown_height
         value: 48
@@ -6476,6 +8165,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox mouth and its air intakes'
     notes:
       - the two flues hidden behind the post are placed at ±5 in in the design (kiln doc question)
 
@@ -6491,6 +8181,54 @@ kilns:
         status: assumed
         reason: from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
           p.119)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: the Meaders kilns are 'wood-fueled' (kiln-fuelwood-by-region.md [U3]); southern groundhogs
+          burned pine slabs ([U1], [U2]), North Carolina's, by analogy
+      - what: fuel_moisture
+        value: [10.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Athens, Georgia''s driest month, 10.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [126, 578]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.668 m³; 1–2 layers of shelves over 1.347 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.668 m³ as v2 traces it; the envelope''s plan 1.347 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 5
@@ -6581,6 +8319,22 @@ kilns:
         reason: a groundhog's chimney runs the kiln's width (pp.111–112, Fig 4-85); as 9 × 9 in the 
           firebox floor would be 36 times its section, outside the 4–10 of Olsen's wood kilns 
           (pp.76–77)
+      - what: inlet_flue_width
+        value: 4.5
+        unit: inch
+        status: printed
+        page: p.115
+        figure: Fig 4-105
+        note: the flue box labelled 9 × 4½ (in), as the design file's inlet; the count isn't printed
+          (C1)
+      - what: inlet_flue_height
+        value: 9
+        unit: inch
+        status: printed
+        page: p.115
+        figure: Fig 4-105
+        note: the flue box labelled 9 × 4½ (in), as the design file's inlet; the count isn't printed
+          (C1)
     structure:
       - what: roof_type
         value: a half-circle springing from the floor
@@ -6627,6 +8381,7 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
+      - 'research A2: the firebox mouth and its air intakes'
     notes:
       - a row of unlabelled openings is drawn along the foot of the front arch (air holes?)
 
@@ -6672,6 +8427,55 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's kiln, "a Pompeii-era design like Miravet" 
           (p.160)
+      - what: fuel_species
+        value: long wood, then wood chips, bundles, grass, slash and thin slats
+        status: printed
+        page: pp.158–160
+        note: grass is in no source read; the province's main pine is P. halepensis (kiln-fuelwood-by-region.md
+          [E3]), not named as fuel
+      - what: fuel_moisture
+        value: [11.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Barcelona''s driest month, 11.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.93, 19.04]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.2, 49.99]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.98, 6.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.6, 45.79]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.3, 0.74]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 1, all wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [981, 6458]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 14.753 m³; 1–10 layers of shelves over 4.883 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 14.753 m³ as v2 traces it; the envelope''s plan 4.883 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 96
@@ -6760,6 +8564,14 @@ kilns:
         status: printed
         page: p.158
         figure: Fig 6-19
+      - what: primary_air
+        value: 486
+        unit: inch**2
+        status: derived
+        page: p.158
+        figure: Fig 6-19
+        reason: the firebox mouth 27 in high × 18 in wide
+        condition: no grate; the mouth admits the fuel and the air (research A2)
     structure:
       - what: dome_type
         value: a dome on the cubic chamber
@@ -6845,6 +8657,60 @@ kilns:
         status: printed
         page: p.153, p.154
         figure: Fig 6-3
+      - what: fuel_species
+        value: heather and any brushwood
+        status: printed
+        page: pp.153–154
+        note: Erica or Calluna, not confirmed (kiln-fuelwood-by-region.md [E4]); no analysis of heather
+          in any source read; taken as deciduous branches
+      - what: fuel_moisture
+        value: [7.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Madrid''s driest month, 7.6 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.8, 19.1]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.0, 49.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.1, 6.52]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [41.38, 45.08]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.96, 3.28]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 6, deciduous branches (interquartile); the net value CEN/TS
+          14961''s broad-leaf forest residues, 18.4–19.1 daf ([F2] Table 10), less their ash'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [149, 843]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.224 m³; 1–6 layers of shelves over 0.822 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.224 m³ as v2 traces it; the envelope''s plan 0.822 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 60
@@ -6905,6 +8771,14 @@ kilns:
         page: p.153
         figure: Fig 6-3
         note: checked on the page image, 2026-10-31 (the width was once read as 28 in)
+      - what: primary_air
+        value: 594
+        unit: inch**2
+        status: derived
+        page: p.153
+        figure: Fig 6-3
+        reason: the firebox mouth 27 in high × 22 in wide
+        condition: the mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: open; shards over the pots
@@ -6955,6 +8829,57 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: pine
+        status: printed
+        page: pp.156–157
+        quote: fired with pine
+        note: Pinus pinaster, the only pine the forest inventory names for Ourense (kiln-fuelwood-by-region.md
+          [E3])
+      - what: fuel_moisture
+        value: [7.6, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Madrid''s driest month, 7.6 % (Bilbao''s 11.0 %;
+          neither of Ourense''s kind; kiln-fuelwood-by-region.md [S1]) to 25 %, firewood stored several
+          years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [264, 1469]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.814 m³; 1–5 layers of shelves over 1.778 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.814 m³ as v2 traces it; the envelope''s plan 1.778 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 84
@@ -7019,6 +8944,14 @@ kilns:
         value: 1½ in holes through the floor bricks; their count isn't printed
         status: printed
         page: pp.156–157
+      - what: primary_air
+        value: 486
+        unit: inch**2
+        status: derived
+        page: pp.156–157
+        figure: Fig 6-14
+        reason: the firebox mouth 27 in high × 18 in wide
+        condition: the mouth admits the fuel and the air (research A2)
     structure:
       - what: roof_type
         value: open; shards over the setting
@@ -7101,6 +9034,12 @@ kilns:
         value: "10"
         status: assumed
         reason: Rule 1 and its dense-brick figure are for Olsen's high fire (p.226)
+      - what: setting
+        value: [78, 417]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.104 m³; 1–4 layers of shelves over 0.604 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.104 m³ as v2 traces it; the envelope''s plan 0.604 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 36
@@ -7221,6 +9160,12 @@ kilns:
         value: "10"
         status: assumed
         reason: 2600 IFB is "excellent for cone 10" (pp.25–27)
+      - what: setting
+        value: [301, 1995]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.367 m³; 1–8 layers of shelves over 2.002 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.367 m³ as v2 traces it; the envelope''s plan 2.002 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 100
@@ -7229,20 +9174,31 @@ kilns:
         page: p.174
         note: the kits are sized in cu ft of stacking space (pp.169–170)
       - what: width
-        value: 55.7
+        value: [64.7, 67.7]
         unit: inch
         status: assumed
-        reason: a cube of 100 cu ft (Principle 1, pp.74–75; p.170)
+        reason: 'kit-stacking-space.md §2: the stacking a 55.7 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
       - what: depth
-        value: 55.7
+        value: [64.7, 67.7]
         unit: inch
         status: assumed
-        reason: a cube of 100 cu ft
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
       - what: springline_height
-        value: 55.7
+        value: 58.2
         unit: inch
         status: assumed
-        reason: a cube of 100 cu ft
+        reason: 2½ in under the setter shelf (p.172) plus the 55.7 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 100 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [141.0, 154.4]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.4–1.5 × the stacking; 154–170 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7296,12 +9252,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 55.7
+        value: 64.7
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 6.97
+        value: 8.09
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -7327,8 +9283,12 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 100 
-        cu ft as the chamber's inside to the springline, with no combustion space round the setting
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took the 100 cu ft as the chamber's inside to the springline, with no combustion space
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 100 ft³ of stacking
+        needs a chamber of 141–154 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the
+        design file to it at 4½ in of combustion space (the MR-750''s rule, p.171): 64.7 in square,
+        58.2 in to the springline'
 
   olsen-kit-16:
     name: Olsen 16 kit, Bob and Sandy Kinzie
@@ -7388,6 +9348,12 @@ kilns:
         status: printed
         page: p.170
         quote: fires quite evenly
+      - what: setting
+        value: [64, 382]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.931 m³; 1–6 layers of shelves over 0.433 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.931 m³ as v2 traces it; the envelope''s plan 0.433 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 16
@@ -7401,20 +9367,33 @@ kilns:
         status: printed
         page: p.170
       - what: width
-        value: 28.1
+        value: [34.9, 37.1]
         unit: inch
         status: assumed
-        reason: 16 cu ft with the width equal to the depth and the height 1¼ × the width (p.170)
+        reason: 'kit-stacking-space.md §2: a chamber 25 % taller than wide (p.170, "An Olsen 16 kiln kit
+          has a 25% height increase") holding 16 ft³ of stacking with 4½–6 in of combustion space each
+          side (p.171, Fig 6-63)'
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
       - what: depth
-        value: 28.1
+        value: [34.9, 37.1]
         unit: inch
         status: assumed
-        reason: 16 cu ft with the width equal to the depth and the height 1¼ × the width (p.170)
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
       - what: springline_height
-        value: 35.1
+        value: [43.7, 46.4]
         unit: inch
         status: assumed
-        reason: 1¼ × the width (p.170)
+        reason: 1.25 × the width (p.170); the stacking 41.2–43.9 in tall over 2½ in under the setter
+          shelf (p.172), the arch on top (p.74)
+        condition: the chamber its printed 16 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [30.8, 36.9]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.9–2.3 × the stacking; 32.9–39.4 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7474,12 +9453,12 @@ kilns:
         status: assumed
         reason: Olsen's kits and updrafts (p.171, p.176)
       - what: span
-        value: 28.1
+        value: 34.9
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 3.52
+        value: 4.37
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -7510,12 +9489,16 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170, p.173); the design file 
-        takes 16 cu ft as the chamber's inside to the springline, with no combustion space round the
-        setting (the updraft-test files add 4½ in a side, p.76, p.171)
+      - the book sizes the kits in cu ft of stacking space (pp.169–170, p.173); until 2026-11-10 the
+        design file took 16 cu ft as the chamber's inside to the springline, with no combustion space
+        round the setting (the updraft-test files add 4½ in a side, p.76, p.171)
       - no firing time is printed for this kiln; p.170–171 says only that more than 25 % extra 
         height reduces evenness "in a normal 8–12 h firing" of a forced-draft updraft (said of 
         updrafts in general)
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 16 ft³ of stacking needs
+        a chamber of 31–37 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 34.9 in square, 43.7 in to the
+        springline'
 
   olsen-kit-24:
     name: Olsen 24 kit
@@ -7602,6 +9585,12 @@ kilns:
           temperature distribution
         status: printed
         page: p.221
+      - what: setting
+        value: [91, 538]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.270 m³; 1–5 layers of shelves over 0.772 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.270 m³ as v2 traces it; the envelope''s plan 0.772 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 24
@@ -7610,20 +9599,31 @@ kilns:
         page: p.174
         note: the kits are sized in cu ft of stacking space (pp.169–170)
       - what: width
-        value: 34.6
+        value: [43.6, 46.6]
         unit: inch
         status: assumed
-        reason: a cube of 24 cu ft (Principle 1, pp.74–75; p.170)
+        reason: 'kit-stacking-space.md §2: the stacking a 34.6 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
       - what: depth
-        value: 34.6
+        value: [43.6, 46.6]
         unit: inch
         status: assumed
-        reason: a cube of 24 cu ft (pp.74–75)
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
       - what: springline_height
-        value: 34.6
+        value: 37.1
         unit: inch
         status: assumed
-        reason: a cube of 24 cu ft (pp.74–75)
+        reason: 2½ in under the setter shelf (p.172) plus the 34.6 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 24 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [40.9, 46.7]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.7–1.9 × the stacking; 44.9–51.6 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7693,12 +9693,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 34.6
+        value: 43.6
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 4.33
+        value: 5.45
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -7733,10 +9733,14 @@ kilns:
       - the kits use MR-750 or MR-100 burners (p.222); the No. 32 orifice and the simple
         mixer's 54,000 BTU/hr (pp.220–221) are the book's general example of orifice sizing, not
         the kit 24's burners (the user, 2026-11-09)
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 24 cu
-        ft as the chamber's inside to the springline, with no combustion space round the setting
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took 24 cu ft as the chamber's inside to the springline, with no combustion space
       - 'p.221 was read on the page image (PDF 206), "When firing my Olsen 24 with propane ... retaining
         the natural gas orifice (#32)"'
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 24 ft³ of stacking needs
+        a chamber of 41–47 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 43.6 in square, 37.1 in to the
+        springline'
 
   olsen-kit-50:
     name: Olsen 50 car kiln
@@ -7780,6 +9784,12 @@ kilns:
         value: "10"
         status: assumed
         reason: 2600 IFB is "excellent for cone 10" (pp.25–27)
+      - what: setting
+        value: [167, 1023]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.374 m³; 1–6 layers of shelves over 1.260 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.374 m³ as v2 traces it; the envelope''s plan 1.260 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: stacking_volume
         value: 50
@@ -7793,20 +9803,31 @@ kilns:
         page: p.170
         figure: Fig 6-61
       - what: width
-        value: 44.2
+        value: [53.2, 56.2]
         unit: inch
         status: assumed
-        reason: a cube of 50 cu ft (Principle 1, pp.74–75; p.170)
+        reason: 'kit-stacking-space.md §2: the stacking a 44.2 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
       - what: depth
-        value: 44.2
+        value: [53.2, 56.2]
         unit: inch
         status: assumed
-        reason: a cube of 50 cu ft
+        reason: as the width (p.170, p.171)
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
       - what: springline_height
-        value: 44.2
+        value: 46.7
         unit: inch
         status: assumed
-        reason: a cube of 50 cu ft
+        reason: 2½ in under the setter shelf (p.172) plus the 44.2 in stacking, the arch on top (p.74)
+        condition: the chamber its printed 50 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [76.5, 85.4]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.5–1.7 × the stacking; 83.9–94.1 ft³ with a No. 1 arch rising
+          1½ in a foot (p.171)'
+        condition: to the springline, the chamber its stacking needs (research A6)
     lining:
       - what: wall
         value: IFB 2500/2600 laid in Harbison-Walker Sairset air-set mortar
@@ -7857,12 +9878,12 @@ kilns:
         status: assumed
         reason: p.171, p.176
       - what: span
-        value: 44.2
+        value: 53.2
         unit: inch
         status: assumed
-        reason: the assumed chamber width
+        reason: the assumed chamber width (research A6's, at 4½ in of combustion space)
       - what: rise
-        value: 5.53
+        value: 6.65
         unit: inch
         status: assumed
         reason: 1½ in per foot of span, a No. 1 featheredge arch (p.25, p.51, p.171, p.176)
@@ -7888,10 +9909,14 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - the book sizes the kits in cu ft of stacking space (pp.169–170); the design file takes 50 cu
-        ft as the chamber's inside to the springline, with no combustion space round the setting
-      - p.174 says kilns over 50 cu ft "require larger exit flues in order to fire evenly", a rule 
+      - the book sizes the kits in cu ft of stacking space (pp.169–170); until 2026-11-10 the design
+        file took 50 cu ft as the chamber's inside to the springline, with no combustion space
+      - p.174 says kilns over 50 cu ft "require larger exit flues in order to fire evenly", a rule
         rather than an observation of this kiln
+      - 'research A6 (2026-11-10): by the book''s own clearances (pp.170–172) the 50 ft³ of stacking needs
+        a chamber of 77–85 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
+        to it at 4½ in of combustion space (the MR-750''s rule, p.171): 53.2 in square, 46.7 in to the
+        springline'
 
   olsen-oil-drip:
     name: Olsen's gravity-drip oil kiln
@@ -7943,6 +9968,40 @@ kilns:
         status: printed
         page: pp.208–209
         note: the drip rate itself isn't printed
+      - what: fuel_species
+        value: '#2 diesel'
+        status: printed
+        page: p.208, p.209
+        note: 'kerosene and #1 also burn clean; once fired on free crankcase oil (p.209)'
+      - what: fuel_heating_value
+        value: [42.1, 43.3]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s 18,610 BTU/lb (p.209) is 43.3 MJ/kg, basis not printed;
+          AFDC''s net 128,488 BTU/gal is 42.1 MJ/kg at the book''s sg 0.85 ([F6]); [F3]''s light fuel
+          oil 42.4'
+        condition: net (research A1)
+      - what: fuel_carbon
+        value: [85.0, 86.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 86 % (p.196), 86.2 % ([F3]), 85–86 % ([F2])'
+      - what: fuel_hydrogen
+        value: [13.0, 13.7]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: 13 % (p.196), 13.7 % ([F3])'
+      - what: fuel_sulphur
+        value: [0.1, 0.3]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §3: the book''s #2 diesel 0.3 % (p.209); [F3]''s light fuel oil 0.1 %'
+      - what: setting
+        value: [113, 690]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.619 m³; 1–6 layers of shelves over 0.836 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.619 m³ as v2 traces it; the envelope''s plan 0.836 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [45, 60]
@@ -8004,6 +10063,15 @@ kilns:
         page: p.207
         figure: Fig 8-20
         spread: ±1 in; the port flue ±1½ in
+      - what: primary_air
+        value: [405, 688.5]
+        unit: inch**2
+        status: scaled
+        page: p.207
+        figure: Fig 8-20
+        spread: ±1½ in on each port flue's 7½ × 24 in
+        condition: the three drip ports' flues, the air entering with the oil (p.209, a drip unit's
+          open air end); no grate (C1)
     structure:
       - what: roof_type
         value: a No. 1 arch of 4½ in K-26 IFB on featheredge skewbacks
@@ -8093,6 +10161,24 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's gas rules (Rule 1, p.226)
+      - what: setting
+        value: [286, 1715]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.245 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.245 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [288, 1722]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.274 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.274 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [286, 1715]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 4.245 m³; 1–7 layers of shelves over 1.626 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 4.245 m³ as v2 traces it; the envelope''s plan 1.626 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 3
@@ -8182,6 +10268,59 @@ kilns:
         status: assumed
         reason: as Olsen's Hollyweird tube, held at cone 11-plus (p.117), which shares this kiln's 8
           ft chamber, 55 in dimension, ¾ in grate bars and 5 in air tube and may be the same kiln
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Olsen's own kiln; the place isn't printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 2
@@ -8310,6 +10449,34 @@ kilns:
           outside
         status: printed
         page: p.206
+      - what: secondary_air
+        value: 49
+        unit: inch**2
+        status: derived
+        page: p.206
+        figure: Fig 8-17
+        reason: the second firebox's stoke hole 7 × 7 in
+        condition: the second firebox (research A2)
+      - what: between_flue_count
+        value: 1
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the flue hole into the second chamber, the between flues fact above (C1)
+      - what: between_flue_width
+        value: 15
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers (C1)
+      - what: between_flue_height
+        value: 20
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers; drawn 28 in high (scaled) (C1)
     structure:
       - what: roof_type
         value: sprung arch across the 55 in width
@@ -8361,6 +10528,55 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; as the fast-fire kiln (p.139)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: 'New Hampshire''s firewoods: pine, hemlock, spruce, aspen, maple, birch, ash, beech, oak,
+          hickory (kiln-fuelwood-by-region.md [N1]); none named for this kiln'
+      - what: fuel_moisture
+        value: [10.2, 30.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Concord''s driest month, 10.2 % (kiln-fuelwood-by-region.md
+          [S1]) to 30 %: New Hampshire''s ''seasoned around 30%'' after 6–8 months'' drying ([N1], basis
+          not stated)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [81, 442]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.132 m³; 1–4 layers of shelves over 0.686 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.132 m³ as v2 traces it; the envelope''s plan 0.686 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: 40
@@ -8452,6 +10668,11 @@ kilns:
         value: 9 × 9 in
         status: assumed
         reason: ¼ to ⅕ of the chamber's width and seldom under 9 × 9 in (Rule 6, p.79–80)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: two fast-fire grates side by side (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -8484,6 +10705,7 @@ kilns:
       - every dimension (Fig 5-67 has none)
       - cone and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - Studio Potter Vol. 7, No. 2 would hold the sizes the book leaves out
   phoenix-wright:
@@ -8497,6 +10719,53 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; as the fast-fire kiln (p.139)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names the wood; Douglas-fir is western Oregon's main tree (a snippet only, kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [10.5, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Portland''s driest month, 10.5 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [19, 85]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 0.255 m³; 1–2 layers of shelves over 0.171 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 0.255 m³ as v2 traces it; the envelope''s plan 0.171 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: volume
         value: [8, 10]
@@ -8570,6 +10839,11 @@ kilns:
         unit: inch
         status: assumed
         reason: the chimney shares the back wall, as in phoenix-nh (Fig 5-67)
+      - what: grate_bar
+        value: 0.75
+        unit: inch
+        status: assumed
+        reason: the fast-fire grate (p.204), as the design file's grate (C1)
     structure:
       - what: roof_type
         value: sprung No. 1 arch on featheredge skewbacks
@@ -8605,6 +10879,7 @@ kilns:
       - every dimension
       - cone and firing time
       - wood per firing
+      - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - >-
         the design file says this kiln "gave the type its name"; olsen-kilns.md says the name Phoenix
@@ -8672,6 +10947,66 @@ kilns:
           the skewbacks
         status: printed
         page: p.135
+      - what: fuel_species
+        value: steam coal, Grade B
+        status: printed
+        page: p.133
+        quote: Steam coal, Grade B
+        note: 'India''s non-coking Grade B: useful heat value 5,600–6,200 kcal/kg, so ash plus moisture
+          19.6–23.9 % (kiln-fuels.md §4)'
+      - what: fuel_heating_value
+        value: [23.0, 26.8]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §4: the old Grade B maps onto GCV grades G4–G6, 5,501–6,400 kcal/kg ([F7]
+          p.15)'
+        condition: gross, as equilibrated at 60 % RH and 40 °C (research A1)
+      - what: fuel_carbon
+        value: [68.0, 78.0]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: generic coal, C 68–78 % (average 71.5, [F3]), 72.5 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [3.5, 5.6]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 3.5–5.0 % ([F3]), 5.6 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: 11.0
+        unit: percent
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: [F2] Table 19''s coal'
+        condition: dry basis (research A1)
+      - what: fuel_nitrogen
+        value: [0.8, 1.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §4: 0.8–1.5 % ([F3]), 1.3 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_sulphur
+        value: 0.94
+        unit: percent
+        bound: <=
+        status: assumed
+        reason: 'kiln-fuels.md §4: < 0.5 % ([F3]), 0.94 % ([F2])'
+        condition: dry basis (research A1)
+      - what: fuel_unit_mass
+        value: 21
+        unit: pound
+        bound: '~'
+        status: assumed
+        reason: 'kiln-fuels.md §4: Taylor''s best shovel load, about 21 lb ([F8]); the kiln''s shovel
+          isn''t described: a question for the owner'
+        condition: a shovelful (research A1)
+      - what: setting
+        value: [422, 2159]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 6.657 m³; 1–7 layers of shelves over 1.138 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 6.657 m³ as v2 traces it; the envelope''s plan 1.138 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 84
@@ -8842,6 +11177,23 @@ kilns:
         status: printed
         page: p.134
         figure: Fig 5-10
+      - what: primary_air
+        value: 3456
+        unit: inch**2
+        status: derived
+        page: p.134
+        figure: Fig 5-11
+        reason: four fireboxes, each "AIR SOURCE AND COAL ASH PIT 36 X 24" in
+        condition: below the grates, fully open (research A2)
+      - what: secondary_air
+        value: 780
+        unit: inch**2
+        status: derived
+        page: p.134
+        figure: Fig 5-11
+        reason: four stoke holes 15 × 13 in; the fire mouth open hours 1–3, bricked up from hour 4 (p.133,
+          Table 5-1)
+        condition: the stoke holes when open (research A2)
     structure:
       - what: dome_type
         value: a round dome on the cylindrical wall
@@ -8944,6 +11296,54 @@ kilns:
         status: assumed
         reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
           temperature the book prints (p.160)
+      - what: fuel_species
+        value: hardwood
+        status: printed
+        page: p.155
+        quote: hardwood logs 2 to 6 in
+      - what: fuel_moisture
+        value: [5.9, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from New Delhi''s driest month, 5.9 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 18.67]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 49.1]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.2]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.99, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.4, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 3, deciduous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [183, 1032]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.780 m³; 1–7 layers of shelves over 0.822 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.780 m³ as v2 traces it; the envelope''s plan 0.822 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: diameter
         value: 60
@@ -9038,6 +11438,7 @@ kilns:
       - firebox width (printed note half-legible)
       - wood per firing
       - ware and saggar load
+      - 'research A2: the coal pit''s mouth (its width scaled 12–16½ in only)'
     notes:
       - >-
         the side entrance from the firebox: olsen-kilns.md has 12–15 in (read by the user), kiln-reference.md's
@@ -9168,6 +11569,96 @@ kilns:
         status: printed
         page: p.93
         figure: Fig 4-35
+      - what: fuel_species
+        value: pine (split pine, 松割木)
+        status: assumed
+        reason: Kyoto's climbing kilns burned split pine (kiln-fuelwood-by-region.md [K1], read); the
+          species not named, red pine by analogy ([K2]–[K5])
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.5, 19.88]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table A1, Pinus wood LHV min–max (median 19.13)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.75, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [6.06, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 45.33]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.5]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [757, 4760]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.213 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.213 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [761, 4780]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.291 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.291 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [757, 4760]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 11.213 m³; 1–8 layers of shelves over 4.292 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 11.213 m³ as v2 traces it; the envelope''s plan 4.292 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: fuel_unit_mass
+        value: [14.7, 17.0]
+        unit: kg
+        status: assumed
+        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, π/4 × 15² × 18 in³ = 0.0521 m³ (p.93), packed as a cord is stacked, pine''s oven-dry cord of 2,250–2,610 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]): an assumption, the owner''s question (11-10-26.md, C3b)'
+        condition: a bundle, oven-dry (research C3b)
     chamber:
       - what: chamber_count
         value: 7
@@ -9282,6 +11773,7 @@ kilns:
       - walls, arch shape and thickness, slope, the step between chambers
       - firebox size, flues, chimney
       - ware load
+      - 'research A2: the side stoke bays'' and the main firebox''s intakes'
     notes:
       - the stage times add up to the printed total, 15 + 3 × 7 + 4 × 5 = 56 h (derived)
       - a bundle's gross volume is π × 7.5² × 18 in³ = 1.84 ft³ (derived); no weight is printed
@@ -9349,6 +11841,95 @@ kilns:
         status: printed
         page: pp.85–86
         condition: pots 13–24 in (33–61 cm) tall, set without shelves, levelled on saggar setters
+      - what: fuel_species
+        value: wood, kind not printed (kindling bundles)
+        status: assumed
+        reason: no source names Tachikui's wood; red pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [542, 2349]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [545, 2360]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.076 m³; no shelves (pp.85–86) (the chamber zone''s 9.076 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [542, 2349]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
+      - what: fuel_unit_mass
+        value: [28.6, 58.1]
+        unit: kg
+        status: assumed
+        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, 15 × 15 × 30 in = 0.111 m³ (pp.86–87), packed as a cord is stacked, any species'' oven-dry cord of 2,070–4,200 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]; the wood isn''t named): an assumption, the owner''s question (11-10-26.md, C3b)'
+        condition: a bundle, oven-dry (research C3b)
     chamber:
       - what: length
         value: 120
@@ -9472,6 +12053,13 @@ kilns:
         status: printed
         page: p.88
         figure: Figs 4-18, 4-19
+      - what: chimney_count
+        value: 0
+        status: printed
+        page: p.88
+        figure: Figs 4-18, 4-19
+        condition: the end chamber's open chimney holes and no stack
+        note: the exit flue fact above, as a number (C1)
     structure:
       - what: roof_type
         value: a low vault of rough masonry; across the tube a near-semicircular, slightly pointed 
@@ -9563,6 +12151,8 @@ kilns:
       - the firebox stage's wood
       - a bundle's weight
       - the doors' size; the number of side stoke holes per chamber
+      - 'research A2: the dogi''s mouth and air intakes (the side stoke holes only scaled, about 7 in
+        round)'
     notes:
       - the front is unloaded within half a day (pp.87–88); not recorded as a cooling time, as the 
         notes don't say from when
@@ -9605,6 +12195,89 @@ kilns:
         value: "10"
         status: assumed
         reason: not given for this kiln; the Suzuki kiln's hottest chambers (Fig 4-35, p.93)
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: no source names Tobe's wood; pine by analogy only (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [9.7, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from Kobe''s driest month, 9.7 % (kiln-fuelwood-by-region.md
+          [S1]) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [4146, 27881]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4153, 27915]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [4146, 27881]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
         value: 7
@@ -9708,6 +12381,7 @@ kilns:
       - the other six chambers' sizes
       - walls, arch, flues, firebox, chimney, slope
       - cone and firing time
+      - 'research A2: the fireboxes'' intakes'
     notes:
       - 25 × 10 × 10 ft is 2,500 ft³; seven such chambers would be 17,500 ft³ against the printed 
         15,000, so the others are smaller, 2,143 ft³ on average (derived)
@@ -9755,6 +12429,12 @@ kilns:
         status: assumed
         reason: the high fire Olsen's updraft rules are for; he checks the flue at about cone 8 
           (p.173)
+      - what: setting
+        value: [103, 637]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.528 m³; 1–8 layers of shelves over 0.557 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.528 m³ as v2 traces it; the envelope''s plan 0.557 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 2
@@ -9862,6 +12542,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [85, 501]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 1.236 m³; 1–6 layers of shelves over 0.557 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 1.236 m³ as v2 traces it; the envelope''s plan 0.557 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 2
@@ -9959,6 +12645,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [143, 910]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.117 m³; 1–8 layers of shelves over 0.836 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.117 m³ as v2 traces it; the envelope''s plan 0.836 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 3
@@ -10056,6 +12748,12 @@ kilns:
         value: "10"
         status: assumed
         reason: the high fire of Olsen's updraft rules (p.173)
+      - what: setting
+        value: [236, 1536]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.451 m³; 1–8 layers of shelves over 1.486 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.451 m³ as v2 traces it; the envelope''s plan 1.486 m²)'
+        condition: 'the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: width
         value: 4
@@ -11136,6 +13834,31 @@ extras:
     name: Olsen 36 kilns
     fuel: gas
     draft: up
+    chamber:
+      - what: stacking_volume
+        value: 36
+        unit: ft**3
+        status: assumed
+        reason: the kits are named by their stacking space, as the 16 (p.173) and the 24 (p.174)
+      - what: width
+        value: [48.6, 51.6]
+        unit: inch
+        status: assumed
+        reason: 'kit-stacking-space.md §2: the stacking a 39.6 in cube (p.170) plus 4½–6 in of combustion
+          space each side (p.171, Fig 6-63)'
+        condition: the chamber 36 ft³ of stacking needs (research A6)
+      - what: springline_height
+        value: 42.1
+        unit: inch
+        status: assumed
+        reason: 2½ in under the setter shelf (p.172) plus the 39.6 in stacking, the arch on top (p.74)
+        condition: the chamber 36 ft³ of stacking needs (research A6)
+      - what: volume
+        value: [57.6, 65.0]
+        unit: ft**3
+        status: assumed
+        reason: 'kit-stacking-space.md §2: 1.6–1.8 × the stacking; 63.2–71.7 ft³ with the arch (p.171)'
+        condition: to the springline, the chamber 36 ft³ of stacking needs (research A6)
     service:
       - what: builder
         value: Giancarlo Scapin's Olsen 36 car kiln, Schio, Italy

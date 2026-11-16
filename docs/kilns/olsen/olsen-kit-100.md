@@ -12,7 +12,7 @@ p.222, p.235; Fig 6-63 (p.172) for floor-burner placement in updrafts. No figure
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Size | 100 cu ft | a 55.7 in cube | assumed shape (Principle 1) |
+| Size | 100 cu ft of stacking space (pp.169–170) | 64.7 in square, 58.2 in to the springline: the 55.7 in stacking cube with 4½ in of combustion space a side and 2½ in under the setter shelf (kit-stacking-space.md §2; ADR 0017 decision 14; until 2026-11-10 the cube alone) | assumed by the book's clearances |
 | Inlet | 100 in² | twenty 2½ in ports, 98 in² | matches |
 | Exit flue | at least 120 in², up to 140 in² | 11 × 11 in, 121 in², in the arch | matches |
 | Burners | MR-750 / MR-100 family, count not printed | twenty MR-750 round the floor | assumed |
@@ -24,8 +24,9 @@ No change in this pass.
 
 ## Key results
 
-108 ft³; heat loss 26.8 kW; Ward's input 1.08 million BTU/hr against 1.5 million from twenty
-MR-750s; arch frame L4×4×¼.
+154 ft³ (with the arch); heat loss 33.4 kW; Ward's input 1.54 million BTU/hr against 1.5 million
+from twenty MR-750s (v1, 2026-11-10, the chamber resized from its stacking; it was 108 ft³, 26.8 kW
+and 1.08 million BTU/hr on the stacking alone, arch frame L4×4×¼).
 
 ## Open questions for the user
 

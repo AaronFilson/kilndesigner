@@ -5,8 +5,15 @@
 # draft by gas pressure (p.170); eight perimeter and two bottom burners, 50 sq in of inlet in all
 # (p.174); MR-750 and MR-100 burners, 75,000 and 100,000 BTU/hr at 8 in. w.c. (p.222); the
 # natural-gas orifice, #32 (p.221); exit flue 45 sq in to start (p.173–174); no fibre (p.175).
-# Assumed: the chamber isn't dimensioned. It is a cube of 24 cu ft (Principle 1, p.74–75; p.170),
-# 34.6 in a side to the springline. MR-750s, the smaller of the kits' two burners (p.222: updrafts
+# Assumed: the chamber isn't dimensioned. The 24 cu ft is stacking space (pp.169–170, ADR 0017
+# decision 14), a 34.6 in cube (Principle 1, p.74–75; p.170), and the chamber is built round it by
+# the book's own clearances (kit-stacking-space.md §2): 4½ in of combustion space each side for the
+# MR-750's 2½ in head (p.171, Fig 6-63; 6 in, the band's other end, is for a 4 in tip, and the
+# MR-100's head isn't found), 2½ in under the setter shelf (p.172), the arch on top (p.74): 43.6 in
+# square, 37.1 in to the springline (it was the 34.6 in cube of the stacking alone, until
+# 2026-11-10). Precedence (11-09-26.md §A): nothing printed or scaled; the book's rules for the
+# burner the design uses over the band's middle; not rounded to the brick module (p.142), a
+# builder's choice. MR-750s, the smaller of the kits' two burners (p.222: updrafts
 # use more, smaller burners). Ports 2½ in round: 50 sq in over ten burners, a trifle over the 2½ in
 # tip (p.173). Walls 7 in: a 4½ in course of 2600 IFB backed by a 2½ in rowlock of 2500 IFB, the
 # kits' grades (p.32) in Olsen's 7 in IFB wall (p.176). A No. 1 arch of 4½ in 2600 IFB at 1½ in per
@@ -25,12 +32,12 @@ units: us
 firing:
   cone: "10"
 chamber:
-  width: 34.6 in
-  depth: 34.6 in
-  height: 34.6 in
+  width: 43.6 in # the 34.6 in stacking + 4½ in a side (kit-stacking-space.md §2)
+  depth: 43.6 in
+  height: 37.1 in # 2½ in under the setter shelf + the 34.6 in stacking
 roof:
   type: sprung_arch
-  rise: 4.33 in # 1½ in per foot of span: a No. 1 featheredge arch
+  rise: 5.45 in # 1½ in per foot of span: a No. 1 featheredge arch
 loading:
   type: door
   face: front

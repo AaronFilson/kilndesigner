@@ -60,6 +60,15 @@ def test_masonry_is_bought_in_the_units_it_is_sold_in() -> None:
     assert bom.total == pytest.approx(624.00 + 450.00 + 166.10)
     assert bom.prices_checked == "2026-10-21"
     assert "No price found for: JM 28 brick." in [f.message for f in bom.findings]
+    # The total says what it leaves out, so it isn't read as the whole bill (B4 step 9)
+    assert bom.left_out() == ["JM 28 brick"]
+    assert bom.total_text() == "$1,240, leaving out 1 unpriced: JM 28 brick"
+    assert bom.total_text(cents=True).startswith("$1,240.10, leaving out")
+    bricks = [_quantity("ifb-k23", "K-23 brick", "bricks", 10)]
+    priced = bill_of_materials(FRONT_LOADER, Masonry(quantities=bricks, cut_list=[], findings=[]),
+                               None)  # fmt: skip
+    assert priced.left_out() == []
+    assert priced.total_text() == "$62"
 
 
 def test_wire_is_bought_to_the_next_half_pound_with_a_tenth_spare() -> None:

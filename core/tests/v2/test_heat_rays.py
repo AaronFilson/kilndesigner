@@ -122,27 +122,38 @@ def test_the_engines_sprung_arch_against_the_covered_formula() -> None:
     from kilndesigner.massing import _cavity, cells, run_of  # pyright: ignore[reportPrivateUsage]
 
     kiln = load_design(OLSEN / "fast-fire.yaml")
-    _, volume, (w, d, h) = ch.cavity(kiln)
+    whole = ch.cavity(kiln)
+    volume, w, h = whole.volume, whole.width, whole.height
     run = run_of(kiln)
     (cell,) = [c for c in cells(kiln, run) if c.kind == "box"]
     cut = _cavity(kiln, run, cell, 0.0).split(Plane.XY.offset(h * 1e3), keep=Keep.ALL)
-    walls = ch._classify(w * 1e3, d * 1e3)  # pyright: ignore[reportPrivateUsage]
 
     def name(face: Any) -> str | None:
         c = face.center()
         if abs(c.Z - h * 1e3) < 1e-3 and face.geom_type.name == "PLANE":
             return None  # the cut at the springline
-        return "roof" if h * 1e3 < c.Z else walls(face)
+        if h * 1e3 < c.Z:
+            return "roof"
+        if abs(c.Z) < 1e-3:
+            return "floor"
+        if abs(face.normal_at(c).Y) > 0.999:
+            return "front" if c.Y < 0 else "back"
+        return "left" if c.X < 0 else "right"
 
     crown = rays.solid_zones(Compound(children=list(cut)), name)
     crown.sort(key=lambda z: BOX_FACES.index(z.name))
     r = rays.trace(crown, rays=N, volume=volume)
+    d = whole.depth
     arch = Arch(w, si_rise(kiln))
     exact_crown = arch.arc_length * d + 2 * arch.segment_area
     assert r.areas[BOX_FACES.index("roof")] == pytest.approx(exact_crown, rel=2e-3)
     exact = covered(box(w, d, h), "roof", float(r.areas[BOX_FACES.index("roof")])).view
     assert np.abs(r.view().view - exact).max() < 4e-3
     assert volume == pytest.approx(w * d * h + arch.segment_area * d, rel=1e-6)
+    # The chamber's own naming: the end walls' segments over the springline with their walls
+    a = {z.name: rays.trace([z], rays=10, closed=False).areas[0] for z in whole.zones}
+    assert a["roof"] == pytest.approx(arch.arc_length * d, rel=2e-3)
+    assert a["back"] == pytest.approx(w * h + arch.segment_area, rel=2e-3)
 
 
 def si_rise(kiln: Any) -> float:
@@ -159,7 +170,9 @@ def test_the_fast_fires_own_chamber_with_its_openings_and_setting() -> None:
     names = [p.name for p in c.patches]
     assert names == ["exit flue", "inlet flue 1", "inlet flue 2", "spy hole 1"]
     inlets = [p for p in c.patches if p.name.startswith("inlet")]
-    assert [round(p.area / IN**2, 2) for p in inlets] == [60.75, 60.75]
+    # 4½ in along each firebox × the 11¼ in of its 13½ in width the 27 in floor exposes
+    assert [round(p.area / IN**2, 2) for p in inlets] == [50.62, 50.62]
+    assert not any("moved onto the floor" in n for n in c.notes)
     xs = sorted(p.centre[0] for p in inlets)
     assert xs[0] < 0 < xs[1]  # one each side: the S
     setting = rays.box_zone("setting", (-9 * IN, -9 * IN, 9 * IN), (9 * IN, 12.5 * IN, 33 * IN))
@@ -181,9 +194,366 @@ def test_the_fast_fires_own_chamber_with_its_openings_and_setting() -> None:
 
 
 @pytest.mark.geometry
-def test_chambers_v2_doesnt_take_yet_are_refused() -> None:
-    with pytest.raises(ch.NotModelledError, match="one straight box"):
-        ch.cavity(load_design(OLSEN / "olsen-two-chamber.yaml"))
+def test_what_the_chamber_still_refuses() -> None:
+    bent = _design("anagama-hole", {"chamber.bend": "30 degree"})
+    with pytest.raises(ch.NotModelledError, match="bent run"):
+        ch.cavity(bent)
+    with pytest.raises(ch.NotModelledError, match="chambers in a row are zones"):
+        ch.cavity(load_design(OLSEN / "olsen-two-chamber.yaml"), segments=2)
+    with pytest.raises(ch.NotModelledError, match="one segment or more"):
+        ch.cavity(load_design(OLSEN / "anagama-hole.yaml"), segments=0)
+
+
+def _areas(c: ch.Chamber) -> dict[str, float]:
+    out: dict[str, float] = {}
+    for z in c.zones:
+        t = z.triangles
+        out[z.name] = float(0.5 * np.linalg.norm(np.cross(t[:, 1] - t[:, 0], t[:, 2] - t[:, 0]),
+                                                 axis=1).sum())  # fmt: skip
+    return out
+
+
+def _cylinder(names: tuple[str, ...], r: float, h: float) -> Any:
+    """A closed cylinder's exact factors: floor to roof by coaxial discs (Lienhard Table 10.3
+    case 3), the rest by summation and reciprocity."""
+    from kilndesigner.thermal.radiation import Enclosure, coaxial_discs
+
+    disc, side = math.pi * r * r, 2 * math.pi * r * h
+    f_fr = coaxial_discs(r, r, h)
+    f_ws = disc * (1 - f_fr) / side
+    f = {("floor", "roof"): f_fr, ("floor", "wall"): 1 - f_fr, ("roof", "floor"): f_fr,
+         ("roof", "wall"): 1 - f_fr, ("wall", "floor"): f_ws, ("wall", "roof"): f_ws,
+         ("wall", "wall"): 1 - 2 * f_ws}  # fmt: skip
+    view = np.array([[f.get((a, b), 0.0) for b in names] for a in names])
+    areas = tuple({"floor": disc, "roof": disc, "wall": side}[n] for n in names)
+    return Enclosure(names, areas, view)
+
+
+@pytest.mark.geometry
+def test_a_round_chamber_against_coaxial_discs() -> None:
+    """A round chamber under a flat roof (`round-electric`): its floor sees its roof as two
+    coaxial discs do, the wall the rest; its areas and volume the cylinder's."""
+    c = ch.chamber(load_design(ROOT / "examples" / "round-electric.yaml"))
+    assert c.shape == "round"
+    r_, h = c.width / 2, c.height
+    a = _areas(c)
+    assert a["floor"] == pytest.approx(math.pi * r_**2, rel=3e-3)
+    assert a["wall"] == pytest.approx(2 * math.pi * r_ * h, rel=3e-3)
+    assert c.volume == pytest.approx(math.pi * r_**2 * h, rel=3e-3)
+    traced = rays.trace(list(c.zones), rays=N, volume=c.volume)
+    exact = _cylinder(traced.names, r_, h)
+    assert np.abs(traced.view().view - exact.view).max() < 6e-3
+
+
+@pytest.mark.geometry
+def test_a_dome_over_a_round_chamber_against_the_covered_formula() -> None:
+    """Breda's bottle kiln: the dome a spherical cap of area π(a² + rise²) over the cylinder's
+    top, its factors as `radiation.covered` gives them (Lienhard Exs. 10.1, 10.3). Its exits
+    through the dome aren't carved (said)."""
+    k = load_design(OLSEN / "breda-bottle.yaml")
+    c = ch.chamber(k)
+    assert any("curved roof" in n for n in c.notes)
+    r_, h, rise = c.width / 2, c.height, si_rise(k)
+    cap = math.pi * (r_**2 + rise**2)
+    assert _areas(c)["roof"] == pytest.approx(cap, rel=3e-3)
+    traced = rays.trace(list(c.zones), rays=N, volume=c.volume)
+    dome = float(traced.areas[traced.index("roof")])
+    exact = covered(_cylinder(traced.names, r_, h), "roof", dome)
+    assert np.abs(traced.view().view - exact.view).max() < 6e-3
+
+
+@pytest.mark.geometry
+def test_an_open_top_is_its_own_face() -> None:
+    c = ch.chamber(load_design(OLSEN / "kenzan-muffle.yaml"))
+    assert sorted(z.name for z in c.zones) == ["floor", "open top", "wall"]
+    a = _areas(c)
+    assert a["open top"] == pytest.approx(a["floor"], rel=1e-3)
+
+
+@pytest.mark.geometry
+def test_a_sail_dome_and_a_catenary() -> None:
+    """A box under a sail dome (`dome-castable-kiln`): the dome's area and each wall's segment
+    over the springline as `shape.SailDome` gives them; a catenary (Ward's parabola,
+    `catenary-gas-kiln`): its vault's area the parabola's length times the depth. Each closed:
+    Cauchy's volume from the rays within 0.5 % of the solid's."""
+    from kilndesigner.shape import SailDome
+
+    k = load_design(ROOT / "examples" / "dome-castable-kiln.yaml")
+    c = ch.chamber(k)
+    w, d, h = c.width, c.depth, c.height
+    dome = SailDome(w, d, si_rise(k))
+    a = _areas(c)
+    assert a["roof"] == pytest.approx(dome.area(), rel=3e-3)
+    assert a["left"] == pytest.approx(d * h + dome.segment(w / 2, d), rel=3e-3)
+    assert a["front"] == pytest.approx(w * h + dome.segment(d / 2, w), rel=3e-3)
+    traced = rays.trace(list(c.zones), rays=50_000)
+    assert traced.volume == pytest.approx(c.volume, rel=5e-3)
+    k = load_design(ROOT / "examples" / "catenary-gas-kiln.yaml")
+    c = ch.chamber(k)
+    assert sorted(z.name for z in c.zones) == ["back", "floor", "front", "roof"]
+    half, top = c.width / 2, c.height
+    xs = half * (2 * np.arange(25) / 24 - 1)
+    curve = np.column_stack([xs, top * (1 - (xs / half) ** 2)])
+    length = float(np.linalg.norm(np.diff(curve, axis=0), axis=1).sum())
+    assert _areas(c)["roof"] == pytest.approx(length * c.depth, rel=2e-3)
+    traced = rays.trace(list(c.zones), rays=50_000)
+    assert traced.volume == pytest.approx(c.volume, rel=5e-3)
+
+
+@pytest.mark.geometry
+def test_chambers_in_a_row_are_gas_zones() -> None:
+    """Olsen's two-chamber kiln: each chamber a gas zone, joined through the flue holes in the
+    wall between them; that wall's two faces and the holes' sides built in it; each zone's
+    volume from its own chords within 1 %; Hottel's rows; each chamber's floor sees its own gas
+    more than the other's."""
+    c = ch.chamber(load_design(OLSEN / "olsen-two-chamber.yaml"))
+    assert [g.name for g in c.gas] == ["chamber 1", "chamber 2"]
+    names = {z.name for z in c.zones}
+    assert {"back 1", "front 2", "flues 1", "flues 2", "front 1", "back 2"} <= names
+    assert c.built["back 1"] == ("between", 0)
+    assert c.built["front 2"] == ("between", 1)
+    assert c.built["flues 2"] == ("between", 1)
+    assert c.built["front 1"] == ("front", 0)
+    assert c.built["roof 2"] == ("roof", 1)
+    assert len(c.rooms) == 2
+    k = 0.5
+    r = rays.trace(list(c.zones), c.patches, rays=30_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(k,))  # fmt: skip
+    assert r.gas_volumes == pytest.approx([g.volume for g in c.gas], rel=1e-2)
+    ss, gs, gg = r.exchange_zones(k)
+    assert np.abs(ss.sum(axis=1) + gs.sum(axis=0) - r.areas).max() < 1e-12
+    assert gs.sum(axis=1) + gg.sum(axis=1) == pytest.approx(4 * k * r.gas_volumes, rel=1e-2)
+    f1, f2 = r.index("floor 1"), r.index("floor 2")
+    assert gs[0, f1] > 5 * gs[1, f1]
+    assert gs[1, f2] > 5 * gs[0, f2]
+
+
+@pytest.mark.geometry
+def test_a_tube_cut_into_segments() -> None:
+    """The anagama in a hole cut into four segments: four gas zones of a quarter of the volume
+    each, each wall split at the cuts (a quarter of the whole each), the front wall in the first
+    and the back in the last; the regions tile every ray's path."""
+    k = load_design(OLSEN / "anagama-hole.yaml")
+    whole = _areas(ch.cavity(k))
+    c = ch.cavity(k, segments=4)
+    assert len(c.gas) == 4
+    assert [g.volume for g in c.gas] == pytest.approx([c.volume / 4] * 4, rel=1e-6)
+    a = _areas(c)
+    assert sum(a[f"left {i}"] for i in range(1, 5)) == pytest.approx(whole["left"], rel=1e-6)
+    assert a["left 2"] == pytest.approx(whole["left"] / 4, rel=1e-6)
+    assert "front 1" in a
+    assert "back 4" in a
+    assert "front 2" not in a
+    r = rays.trace(list(c.zones), rays=10_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.3,))  # fmt: skip
+    assert r.gas_volumes == pytest.approx([c.volume / 4] * 4, rel=2e-2)
+
+
+@pytest.mark.geometry
+def test_the_fast_fires_whole_gas_path_as_one_enclosure() -> None:
+    """H13: the fireboxes (from the grate up, their inlet flues through the floor) and the chimney
+    (its channel through the back wall and its stack) as gas zones of the chamber's enclosure:
+    the floor's underside the fireboxes' roof, the grate the fire; each zone's volume by its own
+    chords (Cauchy) within 1 %; the inlet and exit flues no longer openings."""
+    c = ch.chamber(load_design(OLSEN / "fast-fire.yaml"), path=True)
+    assert [(g.name, g.kind) for g in c.gas] == [
+        ("firebox", "firebox"), ("chamber", "chamber"), ("chimney", "chimney"),
+    ]  # fmt: skip
+    a = _areas(c)
+    assert {"grate", "firebox walls", "firebox roof", "inlet flues", "exit flue",
+            "chimney walls", "chimney top"} <= set(a)  # fmt: skip
+    assert a["grate"] == pytest.approx(2 * 13.5 * 40.5 * IN**2, rel=1e-6)
+    assert a["chimney top"] == pytest.approx(81 * IN**2, rel=1e-6)
+    assert c.built["firebox roof"] == ("floor", 0)
+    assert c.built["firebox walls"] == ("firebox", 0)
+    assert c.built["chimney walls"] == ("chimney", 2)
+    assert c.built["floor"] == ("floor", 1)
+    assert [p.name for p in c.patches] == ["spy hole 1"]
+    stack = 9 * 9 * IN**2 * (14 * 12 * IN + 4.5 * IN)
+    assert c.gas[2].volume == pytest.approx(stack + 9 * 7.5 * 9 * IN**3, rel=1e-6)
+    r = rays.trace(list(c.zones), c.patches, rays=20_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+    assert r.gas_volumes == pytest.approx([g.volume for g in c.gas], rel=1e-2)
+
+
+@pytest.mark.geometry
+@pytest.mark.parametrize(
+    ("design", "zones"),
+    [
+        ("olsen/groundhog-basic", ["firebox", "chamber"]),
+        ("corbel-firebox-crossdraft", ["firebox", "chamber", "chimney"]),
+    ],
+)
+def test_fireboxes_against_a_wall_as_zones(design: str, zones: list[str]) -> None:
+    """A firebox against the front wall (the groundhog's) or a side wall (the corbel-roofed
+    cross-draft's), from its grate up, with its inlets or mouth through the wall: a gas zone of
+    the enclosure; a chimney only where the design gives one beside the kiln (the groundhog's
+    exits are several, so its draft isn't the chimney zone's)."""
+    c = ch.chamber(load_design(ROOT / "examples" / f"{design}.yaml"), path=True)
+    assert [g.name for g in c.gas] == zones
+    names = {z.name for z in c.zones}
+    assert {"grate", "firebox walls", "firebox roof", "inlet flues"} <= names
+    assert c.built["inlet flues"][0] == "walls"
+    assert c.built["firebox roof"][0] == "firebox"
+    r = rays.trace(list(c.zones), c.patches, rays=10_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+    assert r.gas_volumes == pytest.approx([g.volume for g in c.gas], rel=2e-2)
+
+
+@pytest.mark.geometry
+@pytest.mark.parametrize(
+    ("design", "change", "zones"),
+    [
+        ("groundhog-basic", {"heat.fire.fireboxes.0.position": "back", "draft.exits": None,
+                             "draft.flue_wall": "front"}, ["firebox", "chamber"]),
+        ("corbel-firebox-crossdraft", {"heat.fire.fireboxes.0.position": "right"},
+         ["firebox", "chamber", "chimney"]),
+        ("fast-fire", {"draft.flue_wall": "front", "spy_holes": None,
+                       "draft.flue_port": {"diameter": "8 in"},
+                       "draft.chimney.inside": {"diameter": "9 in"}},
+         ["firebox", "chamber", "chimney"]),
+    ],
+)  # fmt: skip
+def test_the_paths_other_layouts(design: str, change: dict[str, Any], zones: list[str]) -> None:
+    """A firebox against the back wall; a chimney at the front, its round flue and round stack
+    taken as squares of their areas: each a zone of the enclosure, the regions tiling every
+    ray's path."""
+    data = _data(design)
+    for key, value in change.items():
+        node: Any = data
+        *parents, last = key.split(".")
+        for p in parents:
+            node = node[int(p)] if p.isdigit() else node[p]
+        node[last] = value
+    from kilndesigner.model import Kiln
+
+    c = ch.chamber(Kiln.model_validate(data), path=True)
+    assert [g.name for g in c.gas] == zones
+    r = rays.trace(list(c.zones), c.patches, rays=5_000, regions=c.regions(),
+                   gas=[g.name for g in c.gas], ks=(0.5,))  # fmt: skip
+    assert r.lost == 0
+
+
+def _data(name: str) -> dict[str, Any]:
+    import yaml
+
+    path = OLSEN / f"{name}.yaml"
+    if not path.exists():
+        path = ROOT / "examples" / f"{name}.yaml"
+    return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def test_what_the_path_leaves_out() -> None:
+    """A chimney that isn't the path's zone: none given, an updraft's, one in a side wall; and a
+    trough sunk in a chamber's floor, its own fire (the two-chamber kiln's second firebox, p.206),
+    no firebox zone of its own."""
+    from kilndesigner.model import Kiln
+
+    fires = ch._fires(load_design(OLSEN / "olsen-two-chamber.yaml"))  # pyright: ignore[reportPrivateUsage]
+    assert [f.side for f in fires] == ["front"]
+    lay = ch._layout(load_design(OLSEN / "fast-fire.yaml"), _run("fast-fire"), 1)  # pyright: ignore[reportPrivateUsage]
+    for change in ({"draft.chimney": None}, {"draft.type": "up"}, {"draft.flue_wall": "left"}):
+        data = _data("fast-fire")
+        for key, value in change.items():
+            *parents, last = key.split(".")
+            node: Any = data
+            for p in parents:
+                node = node[p]
+            node[last] = value
+        assert ch._stack(Kiln.model_validate(data), lay) is None  # pyright: ignore[reportPrivateUsage]
+
+
+def _run(name: str) -> Any:
+    from kilndesigner.massing import run_of
+
+    return run_of(load_design(OLSEN / f"{name}.yaml"))
+
+
+@pytest.mark.geometry
+def test_a_changing_width_and_the_older_under_floor_layout() -> None:
+    """A tunnel whose width changes (Ellington's): the steps between its slices are its side
+    walls; fireboxes still running along the run under the floor (fast-fire-anderson's): their
+    inlets moved onto the floor at their size, said."""
+    c = ch.cavity(load_design(OLSEN / "ellington-new-hog.yaml"))
+    assert sorted(z.name for z in c.zones) == sorted(BOX_FACES)
+    anderson = ch.chamber(load_design(OLSEN / "fast-fire-anderson.yaml"))
+    assert any("moved onto the floor at its size" in n for n in anderson.notes)
+
+
+def test_openings_in_a_round_wall_are_left_out() -> None:
+    """A round chamber's wall isn't flat: an exit flue, burner ports, exit holes and spy holes in
+    it are left out, each said."""
+    k = _design(
+        "olsen-crossdraft-36",
+        {"draft.flue_port": {"width": "9 in", "height": "4.5 in"},
+         "heat.gas.burners.port": {"diameter": "3 in"},
+         "spy_holes": {"holes": [_hole("back")]}},
+    )  # fmt: skip
+    round_ = ch.Chamber((), (), 1.0, 1.0, 1.0, 0.0, shape="round")
+    patches, notes = ch.openings(k, round_)
+    assert patches == []
+    said = " ".join(notes)
+    assert "exit flue in a round wall" in said
+    assert "burner ports in a round wall" in said
+    assert "spy hole 1" in said
+    exits = [{"through": "back", "count": 2, "port": {"width": "4.5 in", "height": "9 in"}}]
+    k = _design("fast-fire", {"draft.flue_port": None, "draft.exits": exits})
+    patches, notes = ch.openings(k, round_)
+    assert "exit flues 1 in a round wall" in " ".join(notes)
+
+
+def test_an_opening_that_cant_be_slid_onto_its_face() -> None:
+    """Off its face's plane, larger than the face, or clamped into a notch: left out."""
+    square = np.array([[[0, 0, 0], [1, 0, 0], [1, 1, 0]], [[0, 0, 0], [1, 1, 0], [0, 1, 0]]], float)
+    off = rays.Patch("p", "f", (0.5, 0.5, 0.1), (1, 0, 0), (0, 1, 0), (0.1, 0.1))
+    assert ch._slid(off, square) is None  # pyright: ignore[reportPrivateUsage]
+    big = rays.Patch("p", "f", (0.5, 0.5, 0.0), (1, 0, 0), (0, 1, 0), (0.6, 0.1))
+    assert ch._slid(big, square) is None  # pyright: ignore[reportPrivateUsage]
+    ell = np.array([[[0, 0, 0], [1, 0, 0], [1, 0.4, 0]], [[0, 0, 0], [1, 0.4, 0], [0, 0.4, 0]],
+                    [[0, 0.4, 0], [0.4, 0.4, 0], [0.4, 1, 0]],
+                    [[0, 0.4, 0], [0.4, 1, 0], [0, 1, 0]]], float)  # fmt: skip
+    notch = rays.Patch("p", "f", (0.8, 0.8, 0.0), (1, 0, 0), (0, 1, 0), (0.1, 0.1))
+    assert ch._slid(notch, ell) is None  # pyright: ignore[reportPrivateUsage]
+
+
+@pytest.mark.geometry
+def test_a_face_wound_the_wrong_way_is_turned() -> None:
+    """A face whose tessellation would face away from the gas (tested here against a solid it
+    isn't part of) has its triangles turned."""
+    from build123d import Box, Pos
+
+    a = Pos(0, 0, 0) * Box(10, 10, 10)
+    far = Pos(100, 0, 0) * Box(10, 10, 10)
+    face = a.faces()[0]
+    assert np.allclose(ch._oriented(face, far), ch._oriented(face, a)[:, [0, 2, 1]])  # pyright: ignore[reportPrivateUsage]
+
+
+def test_a_source_with_every_ray_escaping() -> None:
+    """In an open scene with gas zones, a face whose rays all escape adds nothing."""
+    up = rays.Zone("up", np.array([[[0, 0, 0], [1, 0, 0], [1, 1, 0]],
+                                   [[0, 0, 0], [1, 1, 0], [0, 1, 0]]], float))  # fmt: skip
+    r = rays.trace([up], rays=200, closed=False, regions=HALVES, gas=("a", "b"), ks=(0.5,))
+    assert r.lost == 200
+    assert not r.tallies[0.5].gs1.any()
+
+
+@pytest.mark.geometry
+def test_crossing_gas_paths() -> None:
+    """The Fireworks kiln: two tubes crossing at right angles over one fire zone, their vaults
+    meeting in a groin: one gas zone, its floor the 9 × 9 ft plan, its volume the crossing's
+    (`groin.CrossingShape`) and from the rays' chords."""
+    from kilndesigner.groin import CrossingShape, tubes
+
+    k = load_design(OLSEN / "fireworks-edmonton.yaml")
+    c = ch.chamber(k)
+    assert c.shape == "crossing"
+    assert len(c.gas) == 1
+    assert _areas(c)["floor"] == pytest.approx((9 * 12 * IN) ** 2, rel=1e-6)
+    assert c.volume == pytest.approx(CrossingShape(tubes(k, "m")).volume(), rel=5e-3)
+    traced = rays.trace(list(c.zones), rays=50_000)
+    assert traced.volume == pytest.approx(c.volume, rel=5e-3)
 
 
 def _design(name: str, change: dict[str, Any]) -> Any:
@@ -277,17 +647,46 @@ def test_openings_that_fit_stay_where_the_layout_puts_them() -> None:
 
 @pytest.mark.geometry
 def test_a_flat_roof_is_the_roof() -> None:
-    k = _design("olsen-crossdraft-36", {"roof": {"type": "flat"}})
-    zones, volume, (w, d, h) = ch.cavity(k)
-    assert sorted(z.name for z in zones) == sorted(BOX_FACES)
-    assert volume == pytest.approx(w * d * h, rel=1e-9)
+    c = ch.cavity(_design("olsen-crossdraft-36", {"roof": {"type": "flat"}}))
+    assert sorted(z.name for z in c.zones) == sorted(BOX_FACES)
+    assert c.volume == pytest.approx(c.width * c.depth * c.height, rel=1e-9)
 
 
-def test_several_exit_flues_are_refused() -> None:
-    exits = [{"through": "back", "count": 2, "port": {"width": "4.5 in", "height": "9 in"}}]
+@pytest.mark.geometry
+def test_openings_on_the_shapes_faces() -> None:
+    """Exit holes (`draft.exits`) where the engine cuts them, slid onto their face when the
+    layout puts them past its edge; a firebox's inlets through its wall; openings with no flat
+    face to go on (a catenary's side, a round wall) left out; each said."""
+    c = ch.chamber(load_design(OLSEN / "kahler-salt.yaml"))
+    exits = [p for p in c.patches if p.name.startswith("exit flue")]
+    assert exits
+    assert {p.face for p in exits} == {"floor"}
+    assert any("onto its face" in n for n in c.notes)
+    sturt = ch.chamber(load_design(OLSEN / "blakebrough-sturt.yaml"))
+    assert not sturt.patches
+    assert any("not on a flat right" in n for n in sturt.notes)
+    singh = ch.chamber(load_design(OLSEN / "singh-coal.yaml"))
+    assert any("round wall" in n for n in singh.notes)
+    tamba = ch.chamber(load_design(OLSEN / "tamba.yaml"))
+    inlets = [p for p in tamba.patches if p.name.startswith("inlet flue")]
+    assert len(inlets) == 4
+    assert {p.face for p in inlets} == {"front 1"}
+    r = rays.trace(list(tamba.zones), tamba.patches, rays=2_000, regions=tamba.regions(),
+                   gas=[g.name for g in tamba.gas])  # fmt: skip
+    assert r.lost == 0
+
+
+def test_several_exit_flues_are_carved() -> None:
+    exits = [
+        {"through": "back", "count": 2, "port": {"width": "4.5 in", "height": "9 in"}},
+        {"through": "floor", "count": 1, "port": {"width": "4.5 in", "height": "4.5 in"}},
+    ]
     k = _design("fast-fire", {"draft.flue_port": None, "draft.exits": exits})
-    with pytest.raises(ch.NotModelledError, match="several exit flues"):
-        ch.openings(k, DIMS)
+    patches, _ = ch.openings(k, DIMS)
+    flues = [p for p in patches if p.name.startswith("exit flue")]
+    assert [p.name for p in flues] == ["exit flue 1.1", "exit flue 1.2", "exit flue 2.1"]
+    assert [p.face for p in flues] == ["back", "back", "floor"]
+    assert flues[0].centre[0] == pytest.approx(-flues[1].centre[0])
 
 
 def test_the_closure_refuses_a_negative_exchange_area() -> None:
@@ -310,6 +709,75 @@ def test_an_opening_off_its_face_is_refused() -> None:
     nowhere = rays.Patch("hole", "door", (0.0, 0.0, 0.0), (1, 0, 0), (0, 1, 0), (0.1, 0.1))
     with pytest.raises(rays.GeometryError, match="not a zone"):
         rays.trace(z, [nowhere], rays=100)
+
+
+BIG = 10.0
+HALVES = (
+    rays.Region(0, (-BIG, -BIG, -BIG), (0.0, BIG, BIG)),
+    rays.Region(1, (0.0, -BIG, -BIG), (BIG, BIG, BIG)),
+)
+KS = (0.3, 3.0)
+
+
+@pytest.fixture(scope="module")
+def halves() -> rays.Rays:
+    """The unit cube as two gas zones, its left and right halves."""
+    return rays.trace(_cube_zones(), rays=50_000, regions=HALVES, gas=("a", "b"), ks=KS)
+
+
+def test_two_gas_zones_obey_hottels_summation_rules(halves: rays.Rays) -> None:
+    """A surface's row, Σ_j s_i s_j + Σ_z g_z s_i = A_i, exact after the closure; a gas zone's,
+    Σ_i g_z s_i + Σ_w g_z g_w = 4kV_z, within the noise; each half's volume from its own chords
+    (Cauchy per zone); the zones' g s sum to the one-zone trace's."""
+    assert halves.gas_volumes == pytest.approx([0.5, 0.5], rel=5e-3)
+    for k in (0.0, *KS):
+        ss, gs, gg = halves.exchange_zones(k)
+        assert np.abs(ss.sum(axis=1) + gs.sum(axis=0) - halves.areas).max() < 1e-12
+        assert np.abs(ss - ss.T).max() < 1e-14
+        assert np.abs(gg - gg.T).max() < 1e-14
+        rows = gs.sum(axis=1) + gg.sum(axis=1)
+        assert rows == pytest.approx(4 * k * halves.gas_volumes, rel=2e-3, abs=1e-12)
+        _, one = halves.exchange(k)
+        assert np.abs(gs.sum(axis=0) - one).max() < 1e-3
+    _, gs0, gg0 = halves.exchange_zones(0.0)
+    assert not gs0.any()
+    assert not gg0.any()
+    # The left wall sees the gas of its own half far more than the other's
+    left = halves.index("left")
+    _, gs, _ = halves.exchange_zones(3.0)
+    assert gs[0, left] > 3 * gs[1, left]
+
+
+def test_gas_zones_tile_the_rays_path() -> None:
+    zones = _cube_zones()
+    gap = (rays.Region(0, (-BIG, -BIG, -BIG), (-0.1, BIG, BIG)), HALVES[1])
+    with pytest.raises(rays.GeometryError, match="isn't covered"):
+        rays.trace(zones, rays=200, regions=gap, gas=("a", "b"))
+    overlap = (rays.Region(0, (-BIG, -BIG, -BIG), (0.1, BIG, BIG)), HALVES[1])
+    with pytest.raises(rays.GeometryError, match="isn't covered"):
+        rays.trace(zones, rays=200, regions=overlap, gas=("a", "b"))
+    with pytest.raises(rays.GeometryError, match="need their regions"):
+        rays.trace(zones, rays=200, gas=("a",))
+    with pytest.raises(rays.GeometryError, match="need their regions"):
+        rays.trace(zones, rays=200, regions=HALVES, gas=("a",))
+
+
+def test_an_untraced_absorption_coefficient_is_refused(halves: rays.Rays) -> None:
+    with pytest.raises(rays.GeometryError, match="wasn't traced"):
+        halves.exchange_zones(1.0)
+
+
+def test_a_spheres_halves_absorb_its_closed_form() -> None:
+    """A sphere's two halves as gas zones: their g s sum to the one-zone closed form, 1 − 2[1 −
+    (1 + a)e^(−a)]/a² of the wall's emission, a = kD; each half half of it by symmetry."""
+    s: Any = trimesh.creation.icosphere(subdivisions=4, radius=0.5)
+    wall = rays.Zone("wall", np.asarray(s.triangles)[:, [0, 2, 1]])
+    kd = 1.0
+    r = rays.trace([wall], rays=50_000, regions=HALVES, gas=("a", "b"), ks=(kd,))
+    _, gs, _ = r.exchange_zones(kd)
+    eps = 1 - 2 * (1 - (1 + kd) * math.exp(-kd)) / kd**2
+    assert gs.sum() / r.areas[0] == pytest.approx(eps, abs=5e-3)
+    assert gs[0, 0] == pytest.approx(gs[1, 0], rel=2e-2)
 
 
 def test_an_opening_carved_from_a_face() -> None:

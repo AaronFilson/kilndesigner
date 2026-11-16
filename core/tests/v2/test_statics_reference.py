@@ -14,9 +14,10 @@ ROOT = Path(__file__).resolve().parents[3]
 OLSEN = ROOT / "examples" / "olsen"
 
 NOT_MODELLED = {
-    # stands cold; hot, its verdict rests on dense brick's 25 psi crushing stand-in, carried over
-    # from IFB by analogy (a question for the user), so it isn't given
-    "tobe": "dense brick's hot crushing",
+    # stands cold; hot, no admissible state with dense brick's 25 psi C16 stand-in at every joint
+    # (it needs 29.7 psi), one with compression unlimited: the verdict rests on the brick's hot
+    # strength, of which the stand-in is a lower bound, so it isn't given (11-10-26.md §D2)
+    "tobe": "hot crushing strength",
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }

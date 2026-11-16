@@ -12,7 +12,7 @@ for floor-burner placement. No drawing of this kiln.
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Size | 16 cu ft, height 1¼ × width | 28.1 × 28.1 × 35.1 in | matches |
+| Size | 16 cu ft of stacking space (pp.169–170), the kiln 25 % taller than wide (p.170) | 34.9 in square, 43.7 in to the springline: 25.9 × 25.9 × 41.2 in of stacking with 4½ in of combustion space a side and 2½ in under the setter shelf (kit-stacking-space.md §2; ADR 0017 decision 14; until 2026-11-10 the stacking alone, 28.1 × 28.1 × 35.1 in) | assumed by the book's clearances |
 | Exit flue | 40½ in² to start | 9 × 4½ in in the arch | matches |
 | Burners | not printed | eight MR-750 round the floor, 2½ in ports | assumed |
 | Door, walls, arch | not printed | hinged door, 7 in IFB, No. 1 arch | assumed |
@@ -22,7 +22,9 @@ No change in this pass: the photo shows nothing measurable.
 
 ## Key results
 
-17.1 ft³; heat loss 9.0 kW; Ward's input 171,000 BTU/hr.
+32.9 ft³ (with the arch); heat loss 13.0 kW; Ward's input 329,000 BTU/hr (v1, 2026-11-10, the
+chamber resized from its stacking; it was 17.1 ft³, 9.0 kW and 171,000 BTU/hr on the stacking
+alone).
 
 ## Open questions for the user
 
