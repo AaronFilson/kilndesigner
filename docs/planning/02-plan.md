@@ -154,6 +154,8 @@ kilndesigner/                 uv workspace
     masonry/                  brick coursing, arch bricks, cut list, counts
     plans/                    Typst templates → PDF; DXF sheets
     materials/                the materials library, from manufacturers' data sheets
+    v2/                       engine v2 (ADR 0017): heat/ and statics/; replaces v1's
+                              thermal, combustion and statics checks when it stands in
   cli/                        Typer: build, check, simulate, export
   api/                        FastAPI; OpenAPI contract; SQLAlchemy 2 + Alembic
   worker/                     arq tasks: simulate, build geometry, render plans
@@ -183,7 +185,12 @@ kilndesigner/                 uv workspace
 | [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
 | [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
 | [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
+| [0015](../adr/0015-firing-simulation.md) | The firing is simulated by a 1D finite-volume wall per face (proposed; v1, replaced by 0017's heat model) |
 | [0016](../adr/0016-mcp-server.md) | AI assistants reach the engine through an MCP server that returns the working (proposed) |
+| [0017](../adr/0017-engine-v2.md) | Engine v2: heat and statics rebuilt from first principles, validated on the reference kilns (accepted) |
+
+ADRs 0002–0016 are still marked proposed, though M0–M8 shipped on them. Accepting the ones
+still in force (and marking 0015 superseded by 0017 once v2 stands in) is the owner's call.
 
 ## The engineering, by kiln type
 
@@ -228,6 +235,51 @@ references used. The plans print the working, so a builder can check it.
 - The heat and statics milestones below describe v1. Their results aren't to be relied on until
   v2 is rebuilt.
 - Engine v2 is the focus until it works as a whole: statics first, then heat.
+
+### Where things stand (2026-11-17)
+
+- **Merged to `main`:** M0–M4, M6 and M8 (on v1); engine v2's statics and heat (PR #12).
+  M7 is on hold; M5 and M9 haven't started.
+- **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"):
+  - 48 of 51 printed figures inside the bands;
+  - N1–N6 all fail;
+  - 51 kilns stand hot (Tobe waits on the lower-bound rule);
+  - 44 + 5 kilns reach their cone, with 2 open items and 2 with no burner input.
+- **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
+  found what stands in the way:
+  1. v2 can't run a design file on its own. The setting, the draft-path inputs and the fuel data
+     are built in `core/tests/v2/` (`loads.py`, `path_inputs.py`, `fuel.py`), and λ is passed in
+     rather than taken from the draft. These move into the engine and the design model.
+  2. There's no front door. v2 returns SI dataclasses; the surfaces read v1's pydantic `Report`.
+     The fix is one `v2.design(kiln) -> V2Report` with units and working.
+  3. v2 imports two v1 heat modules (`gas`, `electric`), and both pull in `heatloss`. Move the
+     constants to leaf modules and add an import-linter contract for v2.
+  4. Castables, the bill, hardware, the frame, movement and foundations read v1's heat output.
+     Split v1's heat modules into sizing (kept) and physics (removed) before removing v1.
+  5. Heat and statics share no hot state. A bridge from the faces' temperatures is what Tobe hot
+     needs.
+  6. Duplication inside v2: two `kiln_path`, `Band`, `Sourced` and `hydraulic`, and four
+     `NotModelledError`.
+- **The inputs v2 needs** are in [11-17-26-inputs.md](11-17-26-inputs.md), checked against
+  sources outside the book first. Concrete's c_p(θ) is now quoted from EN 1992-1-2 §3.3.2. Singh's
+  top is narrowed to 800–1000 °C. Dense brick's hot strength and IFB emissivity above 1077 °C
+  are still not found. The rest need the owner.
+
+### Next, in order
+
+1. **Fold the test-side engine knowledge into the engine** (review items 1 and 6). Nothing new
+   needs to be sourced for it.
+2. **The v2 front door and the bridge to statics** (items 2 and 5). This lets Tobe hot be
+   worked out instead of waiting on a strength figure.
+3. **Make the suite faster:** a `bands` marker for the corner runs and an on-disk cache of
+   their results. The full `pytest --cov` takes about an hour.
+4. **Stacked zones up a chamber.** These make every top-to-bottom evenness figure testable.
+5. **Reduction (λ < 1) as the fuel band's other end**, and the held runs rerun on all the
+   draft's air.
+6. **Switch the surfaces to v2**, after the split in item 4; then design the levels afresh
+   (decision 3).
+7. The owner's answers ([11-17-26-inputs.md](11-17-26-inputs.md)) settle the open items as they
+   come in.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
@@ -294,7 +346,10 @@ references used. The plans print the working, so a builder can check it.
     ground (YAML does); chamber kilns' arches along the draft aren't drawn;
   - Olsen's Table 1-12 wall: the engine's 445 BTU/ft²·h against his 360, recorded, not tested.
 
-### What's next
+### What's next (2026-10-29; superseded)
+
+_Superseded by ADR 0017 (2026-11-09): no more work goes into v1's physics, so items 1–3 below
+stand only as they carry into v2. See "Where things stand" under Milestones._
 
 The plan put M5 (hosted) after M4, but neither first user needs accounts yet, and what they do
 need is still open. In order:
@@ -524,6 +579,10 @@ client is ready, since the CLI can produce the client's plans before the app exi
     example, a published h_r or hot-face-down case with numbers, available heat at kiln flue
     temperatures, a catenary's thrust, a three-phase element design, a BOM waste or curved-brick
     cutting allowance.
+  - **Since ADR 0017 (2026-11-09)** these notebooks and v1's tests no longer count as evidence
+    for heat and statics. v2's bar is decision 17: the book's printed figures inside v2's bands,
+    N1–N6 failing in the numbers, all 53 reference kilns standing. Its tests are in
+    `core/tests/v2/`. Notebooks for v2's solvers are still to do.
 - **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
   + lost; a longer element at the same voltage never draws more power; brick counts cover the
   wall volume.
@@ -571,7 +630,8 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   open cores heated from above, or a measured kiln floor on such a course), and the block's
   conductivity above. Until then a platform is solid concrete on dry soil, the side that
   over-states the heat reaching the ground and the platform's top.
-- **Concrete's specific heat** (EN 1992-1-2 §3.3.2, not yet recorded): wanted so the firing
+- **Concrete's specific heat** (EN 1992-1-2 §3.3.2: quoted on 2026-11-17 in
+  `11-17-26-inputs.md`; still to move into `blocked-items.md` §20 and the library): wanted so the firing
   simulation can carry a platform's own layer; today the simulation's floor goes into dry soil
   without it.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
@@ -661,9 +721,10 @@ references serve.
   kiln's dense brick reads 0.75–0.79 in one class and 0.55–0.63 in the next.
 - **Fibre above 1127 °C, castables, kiln wash, glazed ware and element wire** at firing
   temperatures.
-- **Gas radiation:** Alberti, Weber and Mancini's CO₂ and H₂O correlations (Combust. Flame 2015,
-  2016) with their spreadsheets, or a weighted-sum-of-grey-gases table; and a soot model for
-  luminous flames (wood, reduction).
+- **Gas radiation: closed for CO₂ and H₂O.** v2 uses published WSGG sets (Bordbar 2014 by
+  default, Dorigon 2013 as the alternative; `core/src/kilndesigner/v2/heat/gasrad.py`), within
+  about ±10 % of Alberti's line-by-line tables. Still open: a soot model for luminous flames
+  (wood, reduction), which ADR 0017 leaves out until sourced.
 
 ## Open questions
 
