@@ -513,8 +513,12 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - **The four updraft tests:** no new gap. p.74, read on the second scan
        (`docs/research/Scanned_20261025-1022.pdf`), matches.
 
-     **The check is done** (2026-11-18): every kiln with a design was read against its pages.
-     Across the 52 kilns, the gaps fall into these groups:
+     **The check is done** (2026-11-18): every kiln with a design was read against its pages,
+     and an audit of the dataset confirmed each of the 52 carries the check's note. The 41
+     extras, the kilns and worked examples without plans or scale drawings, are skipped (the
+     owner, 2026-11-18). Left for later, if wanted: the 52 facts in the 52 kilns still marked
+     `reading: uncertain`, mostly faint or unclear labels; some only the owner's copy can settle, as it
+     settled Fig 4-27. Across the 52 kilns, the gaps fall into these groups:
      1. **The fire's way in.** The designs often lack the opening the book draws or measures:
         - a firebox's air opening narrower than the firebox (Bidai, Kawaii, the
           multi-directional kilns, Conrad's);
