@@ -287,6 +287,9 @@ references used. The plans print the working, so a builder can check it.
      open (an area fraction) or closed. Fire the rows in each state, and model the first chamber
      cooling with the mouth open while the chambers above fire. This replaces the mouth-shut and
      mouth-open corners for Fujiwara, Bidai and Tamba.
+   - Stoke holes are covered after each stoking (§3). A stage's air comes from upstream gas and
+     the printed side inlets, not the stoke holes. Rework the rows' stage air to match, and
+     correct the intakes derived from stoke holes (the two-chamber kiln's 49 in² first).
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
