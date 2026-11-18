@@ -243,7 +243,8 @@ references used. The plans print the working, so a builder can check it.
 - **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"):
   - 48 of 51 printed figures inside the bands;
   - N1–N6 all fail;
-  - 51 kilns stand hot (Tobe waits on the lower-bound rule);
+  - 51 kilns stand hot. Tobe stands cold, and its hot verdict is "not given" under the
+    lower-bound rule (accepted 2026-11-17);
   - 44 + 5 kilns reach their cone, with 2 open items and 2 with no burner input.
 - **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
   found what stands in the way:
