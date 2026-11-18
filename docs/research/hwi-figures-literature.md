@@ -16,6 +16,18 @@ layer only), **Derived** (arithmetic here). Quotes are short. No page image or c
 Section 9 pages carry no printed label, so each item cites the bulletin's catalogue number and date, and
 the PDF page once.
 
+**Checked by the coordinator (2026-11-18).** Agreed with this note:
+- The Emisshield curves, re-digitised independently from the vector paths (rotation applied, the
+  same label calibration). Every value in §1.1's table agreed within 0.01.
+- The wire-fibre bar chart, re-read at 250 dpi (agreed within 0.2 on the chart's scale).
+- The superduty matrix.
+
+Corrected, marked "coordinator" below:
+- The SRU table (PDF 322), whose cells were misplaced, and its reading as three layers.
+- The INSBOARD matrix (PDF 252): completed, every row Verified.
+- The source of the engine's 0.6 shell emissivity.
+- The alkali exception that the 2004 blanket bulletin drops.
+
 Result in one paragraph: the only curves in the bound-in bulletins are the Emisshield emissivity plot (PDF
 241), the KAST-O-LITE k plots (PDF 280, done in the first pass) and two bar charts (PDF 234 and 237, PDF
 244). There is no hot-MOR, creep, expansion or temperature-profile curve in Section 9, and no k curve for
@@ -142,8 +154,9 @@ description or source. Reported, not adopted.
 The engine radiates with the library's emissivities. This bulletin's only measured-looking data are metal
 curves with no method. Three things it does show, as a reported range: bare cold-rolled steel at 0.82 to 0.72
 over 0–500 °F (the shell's temperatures; the engine uses 0.6 for rolled sheet and 0.79 for oxidised steel,
-`radiation-exchange.md`), a coated steel near 0.81–0.90, and a vendor's 0.2–0.5 for uncoated refractory
-above 3000 °F, a temperature no kiln reaches. Not adopted.
+`heatloss.py` and `v2/heat/sources.py`, sourced in `electric-and-thermal.md`'s emissivity table), a
+coated steel near 0.81–0.90, and a vendor's 0.2–0.5 for uncoated refractory above 3000 °F, a
+temperature no kiln reaches. Not adopted.
 
 ---
 
@@ -192,12 +205,19 @@ brick only as a measure of how the bond decides spalling. No fireclay or IFB spa
 
 ### 3.1 INSBOARD application matrix (bulletin HW 102, 09/03, PDF 252)
 
-Columns 2300LW, 2300HD, 2600, 3000. Verified on the 130 dpi clip (lower part) and the 75 dpi sheet (upper
-part, so the upper rows are Read from the lower-resolution image):
+Columns 2300LW, 2300HD, 2600, 3000. Every row **Verified** on a 130 dpi render of the whole page
+(coordinator, 2026-11-18; the agent had the upper rows from a 75 dpi sheet only and two rows were
+missing):
 
 | Application | 2300LW | 2300HD | 2600 | 3000 |
 |---|---|---|---|---|
+| Full Thickness Furnace Linings | | x | x | x |
+| Board over Blanket Linings | x | x | x | x |
+| Refractory Backup Insulation | x | x | x | x |
+| Rigid High Temperature Gaskets | x | x | | |
 | Hot Face Linings for Ceramic Kilns & Petrochemical Furnaces | | | x | x |
+| Glass Tank Side & End Wall Insulation | x | x | x | x |
+| Insulation with High Velocities | x | x | x | x |
 | Hot Gas Duct Linings | x | x | x | x |
 | Expansion Joint Material | x | x | | |
 | Heat Shields for Personnel Protection | x | x | x | x |
@@ -209,11 +229,10 @@ part, so the upper rows are Read from the lower-resolution image):
 | High Temperature Muffles | x | x | x | |
 | Heat Treating Furnaces | x | | | |
 
-The upper rows (full-thickness linings, board over blanket, backup insulation, rigid gaskets) were not
-re-read at higher resolution. They are in the 75 dpi sheet: full thickness linings under 2300HD, 2600 and
-3000; board over blanket and refractory backup insulation under most columns. Treat them as Read-level, not
-Verified. The ceramic-kiln hot-face row is the one that matters: only the 2600 and 3000 boards are ticked.
+The ceramic-kiln hot-face row is the one that matters: only the 2600 and 3000 boards are ticked.
 That fits the INSBOARD continuous limits (2600 and 3000 °F, periphery.md §9.3) but is not a test result.
+The same page (Verified): "standard size of 36" x 48" with thicknesses of ¼", ½", 1", 1½" and 2"", three
+types "for applications that range from 2300°F to 3000°F".
 
 ### 3.2 Superduty fireclay application matrix (bulletin HW 89R, 4/04, PDF 264)
 
@@ -239,9 +258,12 @@ That fits the INSBOARD continuous limits (2600 and 3000 °F, periphery.md §9.3)
 | Cement preheaters | | | x | x |
 
 "Ceramic kiln" is not a row. The matrix lists coarse-grain KX-99-BF and KX-99 (both high fired) for
-checkers and charcoal furnaces, and regular-fired CLIPPER DP and ALAMO for floors and ducts. The text beside
-it (Read): KX-99 and KX-99-BF "resistance to alkalies and carbon monoxide". A statement of intended use,
-not a limit.
+checkers and charcoal furnaces, and regular-fired CLIPPER DP and ALAMO for floors and ducts. The text above
+it (Verified, coordinator): KX-99-BF has "very good thermal shock resistance for this type brick" and
+"excellent resistance to attack by alkalies and carbon monoxide"; KX-99 "similar strength and resistance
+to alkalies and carbon monoxide"; CLIPPER DP "very good resistance to thermal shock and alkali attack";
+ALAMO "intended for general service conditions", in 9 × 4.5 × 2.5 and 3 in sizes. Statements of intended
+use, not limits; they bear on wood, soda and salt kilns (alkali) and reduction (CO).
 
 ### 3.3 Application zone diagrams with lining callouts
 
@@ -250,11 +272,12 @@ service temperatures below.
 
 | PDF, bulletin | Zone or location | Product called for | Temperature or condition printed | Kiln-like? |
 |---|---|---|---|---|
-| 322, HW170 (11/02), sulfur recovery thermal reactor (Read, table checked on the image) | Burner throat, hot face | brick TUFLINE 98 DM; monolithic NOVACON 95 (most severe) | "Most Severe = Oxygen Enrichment (up to 3,000°F)"; "Severe = Higher Temperatures (2,400-2,700°F)"; "Less Severe = Lower Temperatures (2,000-2,400°F)" | Yes: burner block |
-| same | Burner throat, back-up | brick G-3000 LI; monolithic KAST-O-LITE 30 LI G (most severe) | | Yes: IFB back-up |
-| same | Combustion chamber, hot face | KORUNDAL XD, KORUNDAL XD DM, GREENAL-90; monolithic GREENPAK-90-P, GREENCAST-94 PLUS (severe); UFALA UCR, KRUZITE-70, NOVACON 95, GREENCAST-94(-GR) PLUS, GREENPAK-90-P (less severe) | | Yes: hot face |
-| same | Combustion chamber, back-up | brick G-28 LI, G-3000 LI; monolithic KAST-O-LITE 30 LI G (severe), 26 LI G (less severe) | | Yes: IFB with insulating castable back-up |
-| same | Checker wall; tube sheet | KORUNDAL XD, GREENAL-90, UFALA UCR; monolithic NOVACON 95, GREENCAST-94 PLUS | | Partly |
+| 322, HW170 (11/02), sulfur recovery thermal reactor (**Verified** cell by cell on a 130 dpi render, coordinator, 2026-11-18; the agent's first version misplaced several cells) | Burner throat, hot face | brick: TUFLINE 98 DM (most severe); KORUNDAL XD, GREENAL-90 (severe); UFALA UCR (less severe). Monolith: NOVACON 95 (most severe); GREENPAK-90-P, GREENCAST 94 PLUS (severe); GREENCAST-94 PLUS, GREENPAK-90-P (less severe) | "Most Severe = Oxygen Enrichment (up to 3,000°F)"; "Severe = Higher Temperatures (2,400-2,700°F)"; "Less Severe = Lower Temperatures (2,000-2,400°F)" | Yes: burner block |
+| same | Burner throat, back-up | none listed at any severity | | |
+| same | Combustion chamber, hot face | brick: KORUNDAL XD (most severe); KORUNDAL XD, GREENAL-90 (severe); KRUZITE-70 (less severe). Monolith: none (most severe, severe); NOVACON 95, GREENCAST-94-GR PLUS (less severe) | | Yes: hot face |
+| same | Combustion chamber, back-up | brick: G-3000 LI (most severe); G-28 LI, G-3000 LI (severe); G-28 LI (less severe). Monolith: KAST-O-LITE 30 LI G (most severe, severe); KAST-O-LITE 26 LI G (less severe) | | Yes: IFB or insulating castable back-up |
+| same | Checker wall (brick only) | KORUNDAL XD DM, H-W CORUNDUM DM (most severe); KORUNDAL XD, GREENAL-90 (severe); UFALA UCR (less severe) | | Partly |
+| same | Tube sheet (monolith only) | NOVACON 95 (most severe); GREENCAST-94 PLUS (severe); GREENCAST-94 PLUS, GREENCAST-94-GR PLUS (less severe) | | Partly |
 | 322 note 1 | Mortar | "Mortar for laying brick linings with KORUNDAL®, GREENAL and TUFLINE® SERIES BRICK, use KORUNDAL® BOND." | | Yes (mortar) |
 | 314, HW 117R (2/03), cupola upper stack to melt zone (Read) | Charge zone | premium TUFLINE 90, UFALA XCR, UFALA; work-horse ALADIN 80, KRUZITE-70, KX-99 | "600 - 2000 °F Temperature"; abrasion from charging, thermal shock | No: cupola; but KX-99 is the dense fireclay named for a 600–2000 °F zone |
 | 314 | Preheat zone | premium TUFLINE 90, GREENAL-80, ALADIN 85; work-horse ALADIN 80, KRUZITE-70, KX-99 | "2000 - 2400 °F Temperature"; "Thermal Shock Reduced" | No |
@@ -272,12 +295,14 @@ service temperatures below.
 | 328, CFB | Loop drawing (cross-over duct, cyclone, combustor, loop seal) | KX-99 BF, KALA, NIKE 60 AR, GREFCON 70GR; phosphate plastics | "thermal cycling", "severe abrasion" | No |
 
 Not shown in any callout: a car top, a door, a flue or stack lining of a kiln, a thickness, a hot-face to
-cold-face temperature. The only drawing of a layered lining is the SRU table, which pairs a dense hot face
-with IFB (G-28 LI, G-3000 LI) and an insulating gun mix (KAST-O-LITE 26 LI G, 30 LI G) behind it. This is a
-sourced example of the dense-face-over-IFB-and-castable layering, in a reducing, 2000–3000 °F service. The
-choice of the 26 LI G for the less severe (2000–2400 °F) and 30 LI G for the severe (2400–2700 °F) and most
-severe cases follows each material's rating (26 LI G 2600 °F, 30 LI G 3000 °F, PDF 281–282) but is a
-selection, not a rule.
+cold-face temperature. The only layered lining is the SRU table's combustion chamber: a dense hot face
+backed by IFB (G-28 LI, G-3000 LI) in the BRICK column or by an insulating castable (KAST-O-LITE 26 LI G,
+30 LI G) in the MONOLITH column. The two columns are alternatives, a brick lining or a monolithic one, not
+three layers; at the most severe level the table pairs a brick hot face (KORUNDAL XD) with no monolith
+hot face but a castable back-up, so the two may be mixed. No thickness is printed. The 26 LI G is listed
+for the less severe service (2000–2400 °F) and the 30 LI G for the severe and most severe (2400–3000 °F),
+which follows each material's rating (26 LI G 2600 °F, 30 LI G 3000 °F, PDF 281–282) but is a selection,
+not a rule.
 
 ---
 
@@ -285,7 +310,7 @@ selection, not a rule.
 
 | Where | What | Status |
 |---|---|---|
-| HW 99R (01/04), PDF 248 | "there is no curing or dry out time when using INSWOOL® ceramic fiber blankets. These linings can be fired to peak operating temperature immediately after installation." Fibre "unaffected by most chemicals. The only exceptions are hydrofluoric and phosphoric acid." | Read (first pass has it) |
+| HW 99R (01/04), PDF 248 | "there is no curing or dry out time when using INSWOOL® ceramic fiber blankets. These linings can be fired to peak operating temperature immediately after installation." Fibre "unaffected by most chemicals. The only exceptions are hydrofluoric and phosphoric acid." This bulletin names no alkali; the 2005 text, MP-22 (PDF 112), reads "The exceptions are phosphoric acid, hydrofluoric acid and strong alkalies", and its ropes and braids paragraph "concentrated alkalies" (coordinator, text layer) | Read |
 | HW 99R, PDF 248 | Typical uses: HP "Furnace Door Linings"; HTZ "Refractory and Ceramic Kilns"; blanket heading "Lower Heat Storage: Faster heat up and cool down … Reduces Fuel Consumption" | Read, from the 75 dpi sheet |
 | HW 96 (05/04), PDF 250–251 | Module layouts: parquet for 2000 °F and less; soldier course for 2000–2150 °F with one batten strip, over 2150 °F a double strip; FQW folded module "no blind welds" | Read (first pass §9.2) |
 | HW 98 (05/03), HW 97 (09/03), PDF 254–257 | Papers' uses include "Kiln Car Deck Covering" and "Ware Separator"; organic binder; k at mean temperatures | Read (first pass §9.4) |
@@ -335,6 +360,7 @@ Recorded as printed, no ruling. Sources: first pass periphery.md §13 (Read) plu
 | MC-25 PLUS | MP-12 (PDF 102) "to 2250°F" | HW 104R (11/02), PDF 317: 2550 | |
 | GREENKLEEN-60 PLUS MOR after 1500 °F | | HW190 PDF 270, HW104R 321: 2,000; HW 192 PDF 273: 5,000 | |
 | INSBOARD grades | MP-22: "2300, 2600, and 3000"; HD in 2300, 2600, 2800, 3000 | HW 102 (09/03), PDF 253: 2300 LW, 2300 HD, 2600, 3000 (no 2800) | |
+| INSWOOL's chemical exceptions | MP-22 (PDF 112): "phosphoric acid, hydrofluoric acid and strong alkalies" | HW 99R (01/04), PDF 248: "hydrofluoric and phosphoric acid" only | The bulletin drops the alkalies; MP-23's modules caution ("alkali laden") stands (coordinator) |
 | MIZZOU, KAST-O-LITE versions | "PLUS" products | 2002–2004 brochures without "PLUS" | different versions, not a contradiction |
 
 I did not find a contradiction between a Section 9 k, strength or expansion curve and a Section 3 curve, because
@@ -347,9 +373,9 @@ there is no such curve in Section 9.
 | Need | Finding | Status | Where it would go |
 |---|---|---|---|
 | Emissivity of a refractory hot face | Only a coating seller's "0.2–0.5" above 3000 °F; no curve for any refractory. Metal curves: cold rolled steel 0.82 at 0 °F, 0.72 at 500 °F, 0.48 at 1000 °F; M-1 coated steel 0.81 to 0.91 | Verified (graph, ±0.02); not adopted | `radiation-exchange.md` "not adopted" list; no code |
-| Shell emissivity at 200–500 °F | Cold rolled steel 0.77 at 250 °F, 0.72 at 500 °F (vendor, no method) against the engine's 0.6 for rolled sheet | Verified (graph, ±0.02); not adopted | `radiation-exchange.md` note |
+| Shell emissivity at 200–500 °F | Cold rolled steel 0.77 at 250 °F, 0.72 at 500 °F (vendor, no method) against the engine's 0.6 for rolled sheet | Verified (graph, ±0.02); not adopted | A note beside `electric-and-thermal.md`'s emissivity table (the source of `heatloss.py`'s 0.6) |
 | Castable thermal-shock and hot strength with added wire | 0 % wire: 24 spall cycles, HMOR 3,180 psi at 2000 °F; both fall as wire rises (§2.1) | Verified (graph by eye, ±0.5 on the chart scale) | `castables.md` context; coarse-aggregate low-cement castable only |
-| Layering of a hot face over IFB and insulating castable in a reducing 2000–3000 °F service | SRU thermal reactor: dense hot face, G-28 LI or G-3000 LI back-up, KAST-O-LITE 26 LI G or 30 LI G behind (§3.3) | Read, table checked on the image | Corroborates the layered-wall design; no thickness |
+| Layering of a hot face over IFB or insulating castable in a 2000–3000 °F service | SRU thermal reactor's combustion chamber: dense hot face, back-up of G-28 LI or G-3000 LI IFB, or of KAST-O-LITE 26 LI G or 30 LI G castable (§3.3) | Verified (coordinator) | Corroborates the two-layer wall; no thickness |
 | IFB or castable for a reducing atmosphere | "low iron … to resist detrimental reducing furnace conditions" (23 LI, 26 LI), FCC regenerator walls "Reducing environment" | Read | `castables.md`, `materials.yaml` notes (the library already carries 26 LI and 30 LI) |
 | Board for the hot face of a ceramic kiln | INSBOARD 2600 and 3000 only (HW 102, PDF 252) | Verified (clip) | `electric-and-thermal.md` §4 fibre note |
 | Fibre needs no dry-out | HW 99R (01/04) | Read | Already in the first pass |
@@ -365,8 +391,9 @@ there is no such curve in Section 9.
   at ≈1850 °F" for cold rolled steel is the point where the path leaves the plot (≈1860); it crosses 0
   at ≈1800 °F. The M-1 curve has a kink at 1500 °F that periphery.md's 1500 °F value (0.90) sits on.
 - With `materials.yaml`: none. No library value changes. The 30 LI discrepancy is already recorded (periphery.md §12).
-- With the other research notes: none. `radiation-exchange.md`'s emissivity for rolled steel (0.6) is below the
-  vendor's curve (0.72–0.77 at 250–500 °F); recorded in §1.3, not adopted.
+- With the other research notes: none. The engine's emissivity for rolled steel sheet (0.6, `heatloss.py`,
+  from `electric-and-thermal.md`) is below the vendor's curve (0.72–0.77 at 250–500 °F); recorded in §1.3,
+  not adopted.
 - Inside the handbook: §6.
 
 ---

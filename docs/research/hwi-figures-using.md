@@ -21,6 +21,12 @@ pt on the page. At 300 dpi the individual bricks are visible but the courses can
 brick by brick. UR-20 is therefore recorded by its captions and by what the drawings visibly show,
 not course by course. §2 says so again where it matters.
 
+**Checked by the coordinator (2026-11-18)** on fresh renders: UR-29's formulas 2-b and 3-a (400 dpi),
+UR-25's ninth-column heading and its note, UR-24's six drawings and captions (300 dpi), UR-20's eight
+captions and IR-6's nine circle-brick rows. All as recorded here. Corrections and additions are
+marked "coordinator": which case each UR-29 formula set is for, drawing 6's channel, the UR-19
+comparison, and the derivation of IR-6's chord and counts.
+
 ---
 
 ## 1. Joint construction for castables (UR-5, PDF 65)
@@ -93,8 +99,9 @@ only 9, 13½, 18 and 22½: the thicknesses repeat. All captions below are Verifi
 - **IFB or other backup:** the drawings show **no** insulating brick, no mortar, no anchors, no
   steel, no expansion joint. The only "backup" word is drawing 8's caption. Nothing about IFB in
   UR-20 (**Not shown**).
-- The first pass's UR-19 text: "Three or four stretcher courses to a header" for a 4½ in skin wall.
-  The drawing prints three (drawing 5), not four.
+- UR-19's text (first pass §3.5) ties a 4½ in skin wall on with a header every three or four
+  stretcher courses. Drawing 5 is a different wall, 13½ in, three stretcher courses to a header:
+  one case of the text's "three or four", not a conflict (coordinator).
 
 ### 2.2 Against Olsen and the engine
 
@@ -202,10 +209,12 @@ of the line's position are **estimated from the drawing**; the arrows are drawn 
 | 3 | "Built-up skewback / **A construction to be avoided.**" | Standard skews built up on stretcher-looking courses of the wall; the angle sits high on the stack. | The arrow, from the arch's toe, runs down across the wall's upper corner and meets the buckstay **below** the angle: the thrust passes **under and outside the support**, through the brickwork (estimated). This is the case UR-26 words as the line passing "through, or slightly above, the corner of the supporting steel" and the drawing breaks. |
 | 4 | "A 60° skewback with buttress block." | Skewback No. 60-9 sitting on a buttress block, which sits on a buttress angle bolted to the buckstay. The wall below is brick with a vertical strip of "Bulk Insulation" between the hot brick and the steel. Labels: Buckstay, Buttress Block, Skewback No. 60-9, Top of Skewback, Buttress Angle, Bulk Insulation. | No arrow drawn |
 | 5 | "Special skewback / A construction occasionaly used" (misspelled as printed) | A special skew with "Special Shapes" (three small blocks, marked with dots) built up on top of the wall, against the buckstay; a small I-shaped mark between buckstay and skew at the skew's foot (not readable: possibly a spacer or gap). | The arrow runs from the arch's lower brick across the top courses of the wall to the buckstay **below the skew** (estimated); no steel corner is drawn at the skew's foot |
-| 6 | "Arch with skewbacks supported outside of walls" | A skew carried on a channel (C-shaped steel, open side up) clear of the wall, the brick wall standing under it, no buckstay shown. | No arrow drawn |
+| 6 | "Arch with skewbacks supported outside of walls" | A skew held in a channel (C-shaped steel, web vertical, its open side toward the arch) standing outside the wall's face; the brick wall stands under the arch's springing, and no buckstay is shown. | No arrow drawn |
 
 - Printed note under the box (Verified): "A stretcher course should never be used immediately
   below the skewback." In drawings 1 and 2 the course under the skew is labelled "Header Course".
+- The two recommended captions are printed "A recommened construction" (sic), and drawing 5's
+  "occasionaly" (sic).
 - "Constructions to be avoided": **one**, drawing 3 (the built-up skewback). No span is named in
   any caption. The only span in the nearby text is UR-26's: "Built-up skews satisfy the requirements
   of narrow spans, four feet or less" (first pass §3.6).
@@ -249,12 +258,18 @@ for two radial bricks); d_g a given inside diameter; C_e, C_f outside chords; c_
 chords; N_e, N_f numbers used; N_t total; N_x the number of E to form a complete ring of outside
 diameter D_e; N_y the number of F for a complete ring of D_f.
 
+The page's text assigns the sets (Verified, coordinator): 1-a to 1-c "When one brick, E, is a
+straight, and the other, F, is a radial"; 2-a to 2-c when both are radial "with outside chord
+dimensions and inside chord dimensions unequal" (a word short: 2-a's πD_g/C_e = πD_g/C_f shows the
+outside chords are equal); 3-a to 3-c when both are radial and both chords of E differ from F's,
+"for a single combination"; 4-a to 4-c "for a series of combinations".
+
 The formulas as printed, and a check (**Derived**):
 
 | No. | As printed | Check |
 |---|---|---|
 | 1-a | N_f = 2πT / (C_f − c_f) | Correct: a full ring of radial bricks has N·C = πD_o and N·c = πD_i, so N(C − c) = π(D_o − D_i) = 2πT |
-| 2-a | N_t = πD_g / C_e = πD_g / C_f | Correct when the straight and the radial brick have the same outside chord (C_e = C_f) |
+| 2-a | N_t = πD_g / C_e = πD_g / C_f | Correct for set 2, two radial bricks with equal outside chords (C_e = C_f) |
 | 3-a | N_e c_e + N_f C_f = πD_g | **c_e is lower case**, confirmed on the image. With the outside diameter D_g, E's chord must be C_e: N_e C_e + N_f C_f = πD_g |
 | 4-a | N_e = N_x/(D_e − D_f) · (D_g − D_f) | Linear interpolation between a ring of all E (N_x) and none; correct |
 | 1-b | N_e = (πD_g − N_f C_f) / C_e | Correct, given N_f |
@@ -267,9 +282,11 @@ The formulas as printed, and a check (**Derived**):
 | 4-c | N_t = N_e + N_f | |
 
 - Against `rings.py` (docstring lines 6–11): N = π(D + 2L)/T outside, Σ nᵢtᵢ = πD inside,
-  n₂ = (πD − N t₁)/(t₂ − t₁), n₁ = N − n₂. These are HW's 2-a/3-a for the outside count, 3-b for
-  the inside, and 2-b **as corrected** (N total for N_f, inside diameter d_g for D_g). The engine
-  has the right form; the book's printed 2-b is the one that is wrong. No engine change.
+  n₂ = (πD − N t₁)/(t₂ − t₁), n₁ = N − n₂. The shapes of one series share the thick end T, the
+  outside chord, so `rings.py` is HW's set 2: its N is 2-a, its inside sum 3-b, and its n₂ is 2-b
+  **as corrected** (N total for N_f, inside diameter d_g for D_g). The engine has the right form;
+  the book's printed 2-b is the one that is wrong. No engine change. (The coordinator re-read 2-b
+  on a 400 dpi render: the subscript is f and the diameter a capital D_g, as printed above.)
 - The first pass's note that 3-a has a lower-case c_e is **confirmed** (Verified).
 
 ## 4. Castable and plastic installation: photographs and figures
@@ -347,7 +364,7 @@ Found by scanning every page for boxes and images, then viewing each hit. Verifi
 | UR-21 (81) | Count table and a photograph | §2.3 |
 | UR-22 (82) | Framed diagram | §3.2. Also a footnote beside the UR-25 text (below) |
 | UR-23, UR-24 (83, 84) | Framed drawings | §3.1, §3.3. UR-24's box ends with the stretcher-course note |
-| UR-25 (85) | Framed arch-constants table, a diagram, and a footnote | The footnote: "Assuming that the absolute lower limit for the rise of the line of thrust is ¼ inch (1/48) per foot of span, the rise (h) must exceed thickness (T) times the cosine of the central angle (θ) plus 1/48 span (S). This implies that T should not exceed: (h − S/48) / cosine θ/2." It also cites J. Spotts McDowell, "Sprung-Arch Roofs for High Temperature Furnaces", *Blast Furnace and Steel Plant*, September 1939. First pass: the formula is in `kiln-hardware.md` §4.3 (Read; not new) |
+| UR-25 (85) | Framed arch-constants table, a diagram, and a footnote | The footnote: "Assuming that the absolute lower limit for the rise of the line of thrust is ¼ inch (1/48) per foot of span, the rise (h) must exceed thickness (T) times the cosine of the central angle (θ) plus 1/48 span (S). This implies that T should not exceed: (h − S/48) / cosine θ/2." It also cites J. Spotts McDowell, "Sprung-Arch Roofs for High Temperature Furnaces" (printed "Roots"), *Blast Furnace and Steel Plant*, September 1939. The footnote's own text prints "times the of the cosine of the central angle (θ)", while its formula uses cos θ/2. First pass: the formula is in `kiln-hardware.md` §4.3 (Read; not new) |
 | UR-26 (86), UR-27 (87) | Framed tables | W/H/F and Hmax; checked cell by cell in the first pass |
 | UR-28 (88), UR-29 (89) | Framed diagrams | §3.4, §3.5 |
 
@@ -455,17 +472,24 @@ and 33-inch outside diameter for a 4½ inch lining." Verified:
 | 108-117-3 | 8 5/16 | 41 |
 | 120-129-3 | 8 3/8 | 45 |
 
-- The column is headed only "Chord (Inch)". It does not say inside or outside. **Derived:** it
-  tracks the inside arc π·ID/N within 0.25 in: π·24/12 = 6.28 (chord 6.53), π·60/24 = 7.85 (7.81),
-  π·120/45 = 8.38 (8.375). The outside arc π·OD/N is 8.64 to 9.01. So the printed chord is about the
-  inside face's width (estimated; HWI doesn't say). The count for the 4½ in lining is N ≈ π·OD/9 at
-  the larger sizes.
-- This was **not** in the first pass, and it bears on `blocked-items.md` §4 ("dome and circle brick
-  tables" Not found). It is **only a nine-size high-alumina table for the 3 in series 4½ in
-  lining**, 24 in to 129 in. `brick-shapes.md` (A.P. Green's catalogue, "complete circles", pp.111–163)
-  has the fuller set. Whether the shape is made in fireclay is not stated on the page. A kiln's
-  circle usually has an ID smaller than 24 in or is built of arch/wedge brick (IR-26–IR-29, first
-  pass §4.4), so this table is a cross-check for a larger round kiln, not a new route.
+- The column is headed only "Chord (Inch)". It does not say inside or outside. **Derived
+  (coordinator):** it is the brick's thin end, 9 × ID/OD, for a 9 in outside face. All nine rows
+  agree to the nearest 1/32 in: 9 × 24/33 = 6.545 (printed 6 17/32 = 6.531); 9 × 36/45 = 7.200
+  (7 3/16); 9 × 48/57 = 7.579 (7 19/32); 9 × 60/69 = 7.826 (7 13/16); 9 × 72/81 = 8.000 (8);
+  9 × 84/93 = 8.129 (8 1/8); 9 × 96/105 = 8.229 (8 7/32); 9 × 108/117 = 8.308 (8 5/16);
+  9 × 120/129 = 8.372 (8 3/8).
+- **Derived (coordinator):** every "Number Per Ring" is π·OD/9 rounded by IR-25's rule (a fraction
+  of 0.1 brick or more counts as a whole brick): 11.52 → 12, 15.71 → 16, 19.90 → 20, 24.09 → 24,
+  28.27 → 29, 32.46 → 33, 36.65 → 37, 40.84 → 41, 45.03 → 45. The two rounded down (24.09, 45.03)
+  are the two under 0.1.
+- This was **not** in the first pass. It is **only a nine-size high-alumina table for the 3 in
+  series 4½ in lining**, 24 in to 129 in, with no ring mixing two sizes; IR-30 (PDF 154) tables the
+  mixed rings by inch of diameter (`hwi-ring-arch-tables.md`). Circle-brick ring tables were already
+  in the repo from two older books: HW's 1906 catalogue (`blocked-items.md` §18) and A.P. Green's
+  (`brick-shapes.md`, p.117, "complete circles", pp.111–163). So the first pass's "`blocked-items.md`
+  §4 stays Not found" holds for dome brick only. Whether HW makes the shape in fireclay is not stated
+  on the page. The smallest size turns a 24 in ring; for smaller circles the arch and wedge tables
+  (IR-26 to IR-29, first pass §4.4) apply.
 
 ### 6.4 IR-7, IR-8, IR-9, IR-10 (PDF 131–134)
 
@@ -501,7 +525,7 @@ and 33-inch outside diameter for a 4½ inch lining." Verified:
 | A stretcher course below the skew | "A stretcher course should never be used immediately below the skewback"; headers drawn under the skew | Verified (UR-24) | A skew detail in `frame.py` or the plans' notes |
 | Ring formulas | The book's 1-a, 2-a, 3-b, 4-a, 4-b are right; 2-b and 3-a have misprints; `rings.py` has the correct 2-b | Verified (UR-29, PDF 89) | No change; the docstring may cite UR-29 |
 | Wall bonds | 9 in: alternate H/S. 13½ in: alternate, 3 H : 1 S, 3 S : 1 H, or 5 H : 1 S with an untied backup. 18 in and 22½ in: header hot face | Verified (captions, UR-20, PDF 80) | A bond note if the engine ever draws one; today none |
-| Circle brick counts, 24–129 in ID | N = 12 at 24 in to 45 at 120 in for the 4½ in lining, 3 in series, high alumina | Verified (IR-6, PDF 130) | A cross-check of `rings.py` for round kilns above 24 in |
+| Circle brick counts, 24–129 in ID | N = 12 at 24 in to 45 at 120 in for the 4½ in lining, 3 in series, high alumina; N = π·OD/9 by IR-25's rounding and the thin end 9 × ID/OD, all nine rows (Derived, coordinator) | Verified (IR-6, PDF 130) | A circle-brick method for `rings.py`, tested on IR-6 and IR-30 |
 | Brick shape sizes | IR-2 and IR-3 print the 3 in series sizes of `kiln-hardware.md` §5.1; larger straights in IR-5 | Verified (PDF 126, 127, 129) | No change; the equivalents are the same |
 | A cast arch | Castable sprung arch with a cast skew shoulder, same buckstay and tie-rod frame as a brick arch | Verified (UR-23, PDF 83) | The frame check applies to cast arches |
 | Ramming a plastic or ram mix | Aluminium 2½–3 in head, ⅛–¼ in overage, 3 in extra pass beside forms, ¼ in score between layers | Read, page viewed (UR-15, UR-18) | Only if the engine models a ram-mix skin (Olsen p.42) |
@@ -524,12 +548,15 @@ With the engine: none. `rings.py` is right where UR-29's formula 2-b is wrong.
 With the first pass (`hwi-handbook.md`):
 - §3.5: "Bonding drawings (UR-20): 9–22½ in walls" is right but there are **eight** drawings, with
   13½ in four times and 18 in twice.
-- §3.5 and §3.6: "Three or four stretcher courses to a header" is from the text; the drawing shows three.
+- §3.5: "three or four stretcher courses to a header" is about a 4½ in skin wall; drawing 5 is a
+  13½ in wall at three to one. Different walls, no conflict.
 - §3.6: UR-29's lower-case c_e in 3-a is confirmed; 2-b has a second misprint (N_f for N_t, D_g for
   d_g) that the first pass didn't record.
-- §4.3 and `blocked-items.md` §4: the first pass says "no table" of dome or circle brick; there is
-  a high-alumina circle brick table in IR-6 (PDF 130), nine sizes, 24 in to 129 in. The dome-brick
-  statement for IR-8 and IR-9 stands.
+- §4.3 and `blocked-items.md` §4: the first pass says §4 "(dome and circle brick tables) stays Not
+  found". The handbook has circle brick: IR-6 (PDF 130), nine high-alumina sizes, 24 in to 129 in,
+  and IR-30's ring table. Circle-brick tables were already in the repo from HW 1906
+  (`blocked-items.md` §18) and A.P. Green (`brick-shapes.md` p.117). The dome-brick statement for
+  IR-8 and IR-9 stands.
 - §4.3: IR-5 (PDF 129) wasn't read; §6.2 above.
 
 ## 9. Not shown, not readable, skipped
