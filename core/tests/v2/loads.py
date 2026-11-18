@@ -324,7 +324,7 @@ def mass(kid: str, volume: float, env: Envelope) -> Mass:
 
 @cache
 def _kilns() -> dict[str, Any]:
-    return ref.load()["kilns"]
+    return ref.with_designs()
 
 
 def dataset_bands(kid: str) -> list[tuple[float, float]]:

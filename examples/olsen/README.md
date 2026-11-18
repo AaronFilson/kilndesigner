@@ -22,7 +22,7 @@ Downdrafts: `kahler-salt`, `blakebrough-tasmania` (fibre), `fast-fire`, `fast-fi
 rules), `bowen-mountain`.
 
 Chamber and climbing kilns: `bidai`, `kawaii`, `kyoto-climbing` (the type), `suzuki-kyoto`, `tobe`,
-`fujiwara-bizen`, `kitade-tojilo`, `blakebrough-sturt`, `olsen-two-chamber`,
+`fujiwara-bizen`, `kitade-tojilo`, `blakebrough-sturt`,
 `olsen-three-chamber` (gas), `chappell-domura` (its salt chamber), `hotchkiss-raw-clay` (raw clay
 fired in place).
 
@@ -35,7 +35,9 @@ Multi-directional kilns: `fireworks-edmonton`, `church-skaelskor`.
 Round, bottle and folk kilns: `moveros-umbrella` (granite), `ninodaguia` (common brick),
 `singh-lowfire`, `miravet`, `falcone-pompeii`, `kenzan-muffle`, `breda-bottle`.
 
-Fifty-three kilns in all. Where the book names no grade of firebrick, the files take medium-duty
+Fifty-two kilns in all. Olsen's two-chamber kiln (pp.202, 206, Fig 8-17) is his proposed
+improvement of Kitade's, not a kiln the book says was built, so it isn't here: it is
+`examples/olsen-two-chamber.yaml`, a design (the owner, 2026-11-17). Where the book names no grade of firebrick, the files take medium-duty
 brick, the intermediate duty Olsen gives potters' kilns to about cone 10 (p.18); floors that roof a
 firebox take super-duty. Raw clay fired in place (Hotchkiss's blocks, the anagama's clay bank) is
 taken as porous fireclay brick, between low- and medium-duty brick, as the user judged and

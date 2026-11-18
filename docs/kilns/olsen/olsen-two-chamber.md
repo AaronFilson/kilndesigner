@@ -1,7 +1,15 @@
 # Olsen's two-chamber wood kiln, side-stoked (`olsen-two-chamber`)
 
 Two chambers in a row, each with its own firebox; the first stoked from the side. Design file:
-`examples/olsen/olsen-two-chamber.yaml`.
+`examples/olsen-two-chamber.yaml` (and the `wood-two-chamber` template).
+
+**Status: Olsen's unbuilt proposal, not a reference kiln (the owner, 2026-11-17).** On pp.202 and
+206 Olsen describes how he would improve Kitade's kiln (`kitade-tojilo`, Fig 8-11, which was
+built); the book doesn't say this design was built and fired. ADR 0017 decision 17 takes as
+references only kilns that stood and worked, so it left the reference set (53 → 52): its facts
+moved from `core/tests/v2/reference_kilns.yaml` to `core/tests/v2/design_kilns.yaml`, where the
+model's behaviour tests (a two-chamber row, its stages, the wall between) still read them, and
+nothing validated depends on it (`docs/planning/11-17-26-inputs.md` §8).
 
 ## Sources
 

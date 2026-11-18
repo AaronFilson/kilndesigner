@@ -1,0 +1,273 @@
+# Designs that aren't reference kilns, kept for the tests of the model's behaviour only: their
+# facts in the reference dataset's form (see reference_kilns.yaml's header), so the setting and
+# path helpers (loads.py, path_inputs.py, fuel.py) can read them. Nothing here validates v2
+# (ADR 0017 decision 17 takes only the kilns that were built).
+#
+# olsen-two-chamber: Olsen's proposed improvement of Kitade's built kiln (pp.202, 206, Fig 8-17),
+# never built as far as the book says; taken out of the reference set (the owner, 2026-11-17,
+# 11-17-26-inputs.md §8).
+kilns:
+  olsen-two-chamber:
+    name: Olsen's two-chamber wood kiln, side-stoked
+    design: examples/olsen-two-chamber.yaml
+    doc: docs/kilns/olsen/olsen-two-chamber.md
+    fuel: wood
+    draft: cross
+    heat:
+      - what: fuel_kind
+        value: wood
+        status: printed
+        page: p.202
+      - what: cone
+        value: "11"
+        status: assumed
+        reason: as Olsen's Hollyweird tube, held at cone 11-plus (p.117), which shares this kiln's 8
+          ft chamber, 55 in dimension, ¾ in grate bars and 5 in air tube and may be the same kiln
+      - what: fuel_species
+        value: wood, kind not printed
+        status: assumed
+        reason: Olsen's own kiln; the place isn't printed (kiln-fuelwood-by-region.md)
+      - what: fuel_moisture
+        value: [12.0, 25.0]
+        unit: percent
+        status: assumed
+        reason: 'not printed; kiln-fuels.md §5: from FAO UBET''s air-dried 12 % (wood-fuel.md [W3]; the
+          place isn''t printed) to 25 %, firewood stored several years ([F2] Table 12)'
+        condition: wet basis, as fired (research A1)
+      - what: fuel_heating_value
+        value: [17.6, 19.31]
+        unit: MJ/kg
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: net, per kg of oven-dry wood (research A1)
+      - what: fuel_carbon
+        value: [47.15, 50.72]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_hydrogen
+        value: [5.86, 6.46]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_oxygen
+        value: [42.1, 46.03]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: fuel_ash
+        value: [0.25, 0.81]
+        unit: percent
+        status: assumed
+        reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
+        condition: dry basis (research A1)
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
+      - what: setting
+        value: [254, 1259]
+        unit: kg
+        status: assumed
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.563 m³; 1–3 layers of shelves over 2.066 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.563 m³ as v2 traces it; the envelope''s plan 2.066 m²)'
+        condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
+    chamber:
+      - what: chamber_count
+        value: 2
+        status: printed
+        page: p.202, p.206
+      - what: width
+        value: 55
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the first chamber
+      - what: height
+        value: 48
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the first chamber
+        note: whether to the springline or the crown isn't said; the design file takes it to the 
+          crown
+      - what: depth
+        value: 8
+        unit: foot
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the first chamber, its length
+      - what: volume
+        value: 147
+        unit: ft**3
+        status: derived
+        page: p.206
+        reason: 55 in × 48 in × 8 ft as a box, the first chamber
+      - what: springline_height
+        value: 25.1
+        unit: inch
+        status: assumed
+        reason: 48 in to the crown less the assumed 22.9 in rise
+      - what: depth
+        value: 8
+        unit: foot
+        status: assumed
+        condition: the second chamber
+        reason: both chambers the first one's size, the only one printed
+    lining:
+      - what: wall_thickness
+        value: 9
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the wall between the chambers
+      - what: wall
+        value: 9 in of 2600 °F insulating brick (K-26), the floor and arch the same
+        status: assumed
+        reason: the book names no brick; Olsen's choice for a cone 10 wood kiln's hot face 
+          (pp.25–26), the thickness of the wall between the chambers
+    flow:
+      - what: firebox
+        value: >-
+          the first chamber's firebox at the side, 18 in (46 cm) below its floor; a fast-fire style metal
+          grate 9 in (23 cm) tall, the chamber's width and depth; air along the front wall, the primary
+          air while the space under the stoke hole is closed; close the front at the end so the chamber
+          cools slowly
+        status: printed
+        page: p.202
+      - what: ash_pit
+        value: 15
+        unit: inch
+        status: printed
+        page: p.202
+        condition: the first firebox
+      - what: firebox
+        value: the second chamber's firebox 14 in wide, its ash pit sunk under the inlet flue with 
+          the grate bisecting the flue
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+      - what: ash_pit
+        value: 15
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the second firebox
+      - what: ash_pit
+        value: 20
+        unit: inch
+        status: scaled
+        page: p.206
+        figure: Fig 8-17
+        spread: 19–21 in, ±1 in, from the printed 14 in and 9 in
+        condition: the second firebox, below its grate
+        note: the printed 15 in scales from the second chamber's floor line instead; the design file
+          keeps 15 in
+      - what: grate
+        value: bars ¾ in apart
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the second firebox
+      - what: grate
+        value: ¾ in gaps across the first firebox, 14 × 55 in
+        status: assumed
+        reason: as the fast-fire grate it copies (p.204); the second firebox's 14 in width (the only
+          one printed)
+      - what: stoke_hole
+        value: 7 × 7 in
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        condition: the second firebox
+      - what: between_flues
+        value: a flue hole 15 in wide × 20 in tall into the second chamber, the second grate at half
+          its height
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: drawn 28 in high (scaled); the second grate drawn about 5 in above the second 
+          chamber's floor and that floor about 9 in above the first's (scaled, ±1 in)
+      - what: passive_air
+        value: >-
+          a 5 in (12.5 cm) extruded square clay tube with perforated sides across the chamber under the
+          second grate, its holes smaller near the supply end and larger at the far end, with a shutter
+          outside
+        status: printed
+        page: p.206
+      - what: secondary_air
+        value: 49
+        unit: inch**2
+        status: derived
+        page: p.206
+        figure: Fig 8-17
+        reason: the second firebox's stoke hole 7 × 7 in
+        condition: the second firebox (research A2)
+      - what: between_flue_count
+        value: 1
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the flue hole into the second chamber, the between flues fact above (C1)
+      - what: between_flue_width
+        value: 15
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers (C1)
+      - what: between_flue_height
+        value: 20
+        unit: inch
+        status: printed
+        page: p.206
+        figure: Fig 8-17
+        note: the between flues fact above, as numbers; drawn 28 in high (scaled) (C1)
+    structure:
+      - what: roof_type
+        value: sprung arch across the 55 in width
+        status: assumed
+        reason: the roof isn't printed; 5 in per foot of span, the middle of Olsen's 4–6 in/ft on 
+          chamber kilns (p.296)
+      - what: span
+        value: 55
+        unit: inch
+        status: derived
+        page: p.206
+        figure: Fig 8-17
+        reason: the printed chamber width, which the design file's arch spans
+      - what: rise
+        value: 22.9
+        unit: inch
+        status: assumed
+        reason: 5 in per foot of the 55 in span (p.296)
+      - what: ring_thickness
+        value: 9
+        unit: inch
+        status: assumed
+        reason: as the walls, 9 in of K-26
+    service:
+      - what: builder
+        value: Olsen
+        status: printed
+        page: p.202
+    gaps:
+      - the draft (not stated)
+      - the second chamber's size
+      - roof shape and rise, walls other than the 9 in between the chambers
+      - exit flues and chimney
+      - the first firebox's height above its grate (so its 18 in drop can be entered)
+      - cone, firing time and fuel per firing
+    notes:
+      - it may be the Hollyweird tube (pp.116–117) or the chamber kiln whose ring arch opened almost
+        ½ in (olsen-chamber-p23, p.47); the book doesn't say
+      - the draft isn't stated (p.202); the design file takes cross-draft

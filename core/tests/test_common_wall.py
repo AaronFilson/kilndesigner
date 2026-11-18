@@ -45,7 +45,8 @@ def test_a_printed_wall_and_walls_that_carry_no_arch() -> None:
     """The design's own wall where the book prints it (Olsen's two-chamber kiln, 9 in, Fig 8-17);
     a dome row without one gets 4½ in more; a tube's walls between chambers carry no arch, nor a
     single chamber's."""
-    assert total(olsen("olsen-two-chamber")) == pytest.approx(9.0)
+    # Olsen's unbuilt design, in examples/ rather than examples/olsen/ (2026-11-17)
+    assert total(load_design(OLSEN.parent / "olsen-two-chamber.yaml")) == pytest.approx(9.0)
     holly = olsen("hollyweird")
     assert total(holly) == pytest.approx(13.0)
     plain = holly.model_copy(update={"lining": holly.lining.model_copy(update={"between": None})})

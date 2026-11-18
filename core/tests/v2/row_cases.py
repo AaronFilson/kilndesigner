@@ -148,12 +148,6 @@ PLANS: dict[str, Plan] = {
     "tobe": Plan("tobe", _climbing(7, "chamber 1's trough, to 1000 °C"), zoned=False),
     "kyoto-climbing": Plan("kyoto-climbing", _climbing(10, "chamber 1's trough, to 1000 °C"),
                            zoned=False),
-    # The dataset's intake is the second firebox's stoke hole (its condition, research A2), which
-    # the second chamber's stage doesn't reach (its side holes, not sized, are its air); the front
-    # firebox takes its own, the design's ash-pit mouth, not half the second's shared by count
-    "olsen-two-chamber": Plan("olsen-two-chamber", (
-        Phase("chamber 1", 0, side=False), Phase("chamber 2", 1),
-    ), inputs={"intake": (None, None)}),
     "bidai": Plan("bidai", _climbing(3)),
     "kawaii": Plan("kawaii", _climbing(4)),
     "hotchkiss-raw-clay": Plan("hotchkiss-raw-clay", _climbing(6, "chamber 1's trough, to 1000 °C"),
@@ -346,7 +340,6 @@ SLOPE = bands.Input(
 INPUTS: dict[str, tuple[bands.Input, ...]] = {
     "fujiwara-bizen": (LOAD, WOOD, DRAFT, MOUTH),
     "hollyweird": (LOAD, WOOD, DRAFT, MOUTH),
-    "olsen-two-chamber": (LOAD, WOOD, DRAFT, MOUTH),
     "kitade-tojilo": (LOAD, WOOD, DRAFT),
     "bae-gilgama": (LOAD, WOOD, DRAFT),
     "suzuki-kyoto": (TOGETHER,),

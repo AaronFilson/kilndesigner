@@ -50,10 +50,6 @@ WARNED: dict[str, dict[str, str]] = {
     "ninodaguia": {
         "masonry.thickness": "the 15½ in wall isn't whole 9 and 4½ in rings",
     },
-    "olsen-two-chamber": {
-        "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.97 of "
-        "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
-    },
     "olsen-three-chamber": {
         "frame.end": "each end wall standing alone would slide at the springing (μ_need 0.65 of "
         "a hot 0.50, review part 2 #3); the design has no frame, Olsen braces such walls",
@@ -74,7 +70,8 @@ def _family(check_id: str) -> str:
 
 def test_every_kiln_is_there() -> None:
     """Every kiln the book sizes (examples/olsen/README.md lists them, and the ones it can't)."""
-    assert len(KILNS) == 53
+    # 52: Olsen's two-chamber design (pp.202, 206) moved to examples/, never built (2026-11-17)
+    assert len(KILNS) == 52
     assert set(WARNED) <= {p.stem for p in KILNS}
 
 

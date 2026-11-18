@@ -31,11 +31,11 @@ def results() -> dict[str, KilnStatics]:
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) -> None:
-    assert len(results) == 53
+    assert len(results) == 52  # Olsen's unbuilt two-chamber design left the set (2026-11-17)
     falls = {k: r.stands for k, r in results.items() if r.all_stand is False}
     assert falls == {}, f"a reference kiln can't stand in v2: a model fault to find ({falls})"
     standing = {k for k, r in results.items() if r.all_stand}
-    assert len(standing) == 53 - len(NOT_MODELLED)
+    assert len(standing) == 52 - len(NOT_MODELLED)
     for kid, words in NOT_MODELLED.items():
         r = results[kid]
         assert r.all_stand is None
@@ -83,7 +83,7 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
         n = results[kid].numbers
         assert n["least on the buttress at the front, cold"] == pytest.approx(0.0, abs=1e-6)
     rows = {k for k, r in results.items() if r.kind == "arches along the draft"}
-    assert len(rows) == 10
+    assert len(rows) == 9  # 10 with Olsen's unbuilt two-chamber design, out since 2026-11-17
 
 
 @pytest.mark.slow

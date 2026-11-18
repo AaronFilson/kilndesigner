@@ -14,7 +14,7 @@ and time a firing took.
 The first pass is in three places:
 - `docs/engine-v2/problem-set.md`;
 - `core/tests/v2/reference_kilns.yaml`: what the book prints about each of the 53 kilns, with its
-  page and status;
+  page and status (52 since 2026-11-17, decision 17);
 - `docs/research/engine-v2-negative-cases.md`.
 
 It found:
@@ -106,7 +106,10 @@ The user, on v1's warnings and errors: "these have been so wrong for the whole t
       inputs;
     - every must-fail case, N1–N6 (`docs/research/engine-v2-negative-cases.md` §6), fails in the
       numbers;
-    - all 53 kilns as built stand.
+    - all 52 reference kilns as built stand. (53 until 2026-11-17: the owner took out Olsen's
+      two-chamber kiln, pp.202, 206, his proposed improvement of Kitade's, which the book doesn't
+      say was built. It stays as a design, `examples/olsen-two-chamber.yaml`;
+      `docs/planning/11-17-26-inputs.md` §8.)
 
 ## The heat model's starting design
 
