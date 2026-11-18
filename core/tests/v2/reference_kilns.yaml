@@ -9379,15 +9379,20 @@ kilns:
         status: printed
         page: p.153
         figure: Fig 6-3
-        note: checked on the page image, 2026-10-31 (the width was once read as 28 in)
+        note: checked on the page image, 2026-10-31 (the width was once read as 28 in). Read again at
+          zoom 8 on 2026-11-18, the mouth is a triangle, two stones leaning together, 22 in across
+          the base and 27 in to the apex; the design takes a 22 × 27 in rectangle (a gap)
       - what: primary_air
-        value: 594
+        value: 297
         unit: inch**2
         status: derived
         page: p.153
         figure: Fig 6-3
-        reason: the firebox mouth 27 in high × 22 in wide
+        reason: the firebox mouth a triangle 22 in across the base and 27 in tall, ½ × 22 × 27 in,
+          its sides drawn nearly straight
         condition: the mouth admits the fuel and the air (research A2)
+        note: 594 in² until 2026-11-18, the mouth taken as a 22 × 27 in rectangle, twice the drawn
+          triangle
     structure:
       - what: roof_type
         value: open; shards over the pots
@@ -9415,6 +9420,9 @@ kilns:
       - ware load
     notes:
       - the doc gives the scaled firebox height ±3 in, the design file's comment ±4 in
+      - checked against pp.153–154 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. The firing, started at the firebox mouth, brush pushed in after 2 h
+        and stoked faster for about 6 h, until flames come out of the top (p.154)
   ninodaguia:
     name: Niñodaguia kiln, northwest Spain
     design: examples/olsen/ninodaguia.yaml
@@ -9554,13 +9562,16 @@ kilns:
         status: printed
         page: pp.156–157
       - what: primary_air
-        value: 486
+        value: [451, 486]
         unit: inch**2
         status: derived
         page: pp.156–157
         figure: Fig 6-14
-        reason: the firebox mouth 27 in high × 18 in wide
+        reason: the firebox mouth 27 in high × 18 in wide, drawn round-headed (18 × 18 in under a
+          9 in half-circle, 451 in²) up to the rectangle (486 in²)
         condition: the mouth admits the fuel and the air (research A2)
+        note: 486 in² until 2026-11-18, the rectangle alone; the drawn round head read on the page
+          image the same day
     structure:
       - what: roof_type
         value: open; shards over the setting
@@ -9597,6 +9608,9 @@ kilns:
       - firebox plan
       - inlet flue count
       - wood per firing
+    notes:
+      - checked against pp.156–157 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged (its mouth an 18 × 27 in rectangle against the drawn round head)
   olsen-crossdraft-36:
     name: Olsen's 36 cu ft dense cross-draft
     design: examples/olsen/olsen-crossdraft-36.yaml

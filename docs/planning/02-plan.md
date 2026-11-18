@@ -496,6 +496,14 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - **Miravet:** "the two flues at the front of the dome, closest to the firebox, are closed"
        in the initial firing (p.159). A design's flues can't change over a firing, the same need
        as the fire mouth's states (item §2 above).
+     - **Moveros:** the firebox mouth is a triangle of two leaning stones, 22 in at the base and
+       27 in tall (Fig 6-3), about 297 in². The design takes a 22 × 27 in rectangle, 594 in². The
+       dataset now carries the triangle.
+     - **Niñodaguia:** its 18 × 27 in mouth is drawn round-headed, 451–486 in² in the dataset.
+       The design takes the rectangle.
+     - **The design schema:** a port (a stoke hole, an air inlet) is a rectangle or a circle.
+       The book draws triangular, round-headed and pointed openings (Moveros, Niñodaguia,
+       Hotchkiss, Bae), so their areas can only come in through the dataset.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
