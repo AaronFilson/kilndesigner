@@ -5244,6 +5244,14 @@ kilns:
         status: printed
         page: p.116
         figure: Fig 4-110
+      - what: stoke_hole
+        value: 9 × 13½ in
+        status: assumed
+        page: p.117
+        condition: the second, side-stoked firebox
+        reason: the side door has a stoke hole in the picture (read by the user, 2026-11-17), its size
+          not printed; the door's printed 9 × 13½ in
+        spread: 9 × 7 in (the two-chamber kiln's p.202 hole) to 9 × 13½ in
       - what: between_flues
         value: three large exit flues from the front chamber bisect the second firebox's grate area,
           giving air under and over its grate
