@@ -504,7 +504,37 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - **The oil-drip kiln:** Fig 8-20 draws each port flue's air entering at its foot past
        "DAMPER BRICKS", so the dataset's whole flue face is only the most-air end. The damper
        bricks' least isn't drawn.
-     - **The 36 ft³ cross-draft, the four kits, the three-chamber kiln:** no new gap.
+     - **The 36 ft³ cross-draft, the four kits, the three-chamber kiln, the Phoenix kilns,
+       Singh's two kilns:** no new gap.
+     - **Tamba:** Fig 4-16 draws the dogi's mouth, "STOKING" with "AIR" below it, and "the
+       firebox becomes the air supply" for the side stoking (p.86). The mouth isn't sized, so v2's
+       path takes the dogi's whole open end.
+     - **The four updraft tests:** not re-read. p.74 is missing from this repo's scan, and its
+       facts came from the second scan.
+
+     **The check is done** (2026-11-18): every kiln with a design was read against its pages,
+     except the updraft tests' p.74. Across the 52 kilns, the gaps fall into these groups:
+     1. **The fire's way in.** The designs often lack the opening the book draws or measures:
+        - a firebox's air opening narrower than the firebox (Bidai, Kawaii, the
+          multi-directional kilns, Conrad's);
+        - a floor-fired mouth (Bae, Moveros' triangle, Niñodaguia's round head, Fujiwara's air
+          duct);
+        - a main firebox (the Kyoto type, Suzuki, Tobe, Hotchkiss).
+        The dataset carries what the book shows. A design schema field for the ash pit's mouth,
+        and ports that aren't rectangles, would carry it into the designs.
+     2. **Openings that change over a firing:** the fire mouth, flues closed early (Miravet),
+        damper bricks (the oil drip).
+     3. **Two-way flow at openings:** Breda, the fast-fire, Anderson Ranch and Tamba print gas
+        out and air back in.
+     4. **Shapes a design can't take:**
+        - a row's pointed arch along the draft and its offset peak;
+        - a back chamber that falls and tapers (Hollyweird);
+        - the doors in a side wall under an arch;
+        - flues in a catenary's legs (Sturt's, not shown in the book).
+     5. **Readings that move a design's axes or size:**
+        - the Kyoto type's chamber along the draft;
+        - Hotchkiss's slope, 11–16° against 22°;
+        - Sturt's channel and inlet flues.
      - **The design schema:** a port (a stoke hole, an air inlet) is a rectangle or a circle.
        The book draws triangular, round-headed and pointed openings (Moveros, Niñodaguia,
        Hotchkiss, Bae), so their areas can only come in through the dataset.

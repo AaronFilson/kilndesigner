@@ -12448,6 +12448,16 @@ kilns:
         page: p.87
         figure: Fig 4-16
         note: checked on the page image, 2026-10-31
+      - what: firebox
+        value: the dogi's mouth at the low end, a sloping entrance labelled STOKING with AIR below
+          it and a "SPY & STOKE HOLE" above; after the firebox stage "the firebox becomes the air
+          supply" for the side stoking
+        status: printed
+        page: pp.86–87
+        figure: Fig 4-16
+        note: read on the page images, 2026-11-18; the mouth isn't sized, so v2's path takes the
+          dogi's whole open end (a gap). The text's air through the firebox, the front left open,
+          is the fire mouth's state recorded in 11-17-26-inputs.md §2 (Tamba open, p.87)
       - what: inlet_flue
         value: four arched firebox flue holes labelled 9 x 18 (in)
         status: printed
@@ -12602,8 +12612,11 @@ kilns:
         notes don't say from when
       - the design's tube is level (slope not printed) and springs 12 in up, though Figs 4-12 and 
         4-13 draw the section resting on the floor
-      - Fig 4-12's crown scales 35–40½ in, below Fig 4-16's faint 3½ ft by more than its spread 
+      - Fig 4-12's crown scales 35–40½ in, below Fig 4-16's faint 3½ ft by more than its spread
         (question 4 in the kiln doc)
+      - checked against pp.85–88 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged, its other gaps the owner's answers in inputs §9 (the slope, the round
+        bundles, the 16 in holes, the half-buried walls)
 
   tobe:
     name: Tobe Village climbing kiln, Shikoku
@@ -12985,6 +12998,9 @@ kilns:
       - how high the "plus" of the stacking is
     notes:
       - the evenness remark is this kiln's whole test result; the engine doesn't work out evenness
+      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
+        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
+        (kiln-reference.md, scan coverage); the design is unchanged
 
   updraft-test-2:
     name: Updraft test kiln 2, 2 × 3 × 4 ft stacking
@@ -13088,6 +13104,10 @@ kilns:
         reason: a No. 1 arch of 4½ in K-26 (p.171, p.176)
     gaps:
       - walls, roof, burner count and rating, flues, cone, firing time, who built them
+    notes:
+      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
+        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
+        (kiln-reference.md, scan coverage); the design is unchanged
 
   updraft-test-3:
     name: Updraft test kiln 3, 3 × 3 × 5 ft stacking
@@ -13191,6 +13211,10 @@ kilns:
         reason: a No. 1 arch of 4½ in K-26 (p.171, p.176)
     gaps:
       - walls, roof, burner count and rating, flues, cone, firing time, who built them
+    notes:
+      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
+        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
+        (kiln-reference.md, scan coverage); the design is unchanged
 
   updraft-test-4:
     name: Updraft test kiln 4, 4 × 4 × 5 ft stacking
@@ -13297,6 +13321,9 @@ kilns:
     notes:
       - "Olsen's conclusion from the four tests (p.74): with floor burners, equal height and width matter
         most"
+      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
+        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
+        (kiln-reference.md, scan coverage); the design is unchanged
 
 extras:
   bailey:
