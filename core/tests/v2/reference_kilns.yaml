@@ -1722,14 +1722,14 @@ kilns:
     draft: up
     heat:
       - what: fuel_per_firing
-        value: 2
-        unit: ton
+        value: 1800
+        unit: kg
         bound: "~"
         status: printed
         page: p.166
         quote: some 2 tons
-        reading: uncertain
-        note: the metric is cut at the gutter, "about 18[00?] kg"; 2 short tons are 1814 kg
+        note: the metric, cut at the gutter, read by the user as 1800 kg (2026-11-17); 2 short tons
+          are 1814 kg
       - what: fuel_kind
         value: chestnut slats 3 ft long
         status: printed
@@ -1767,11 +1767,11 @@ kilns:
         status: printed
         page: p.166
       - what: top_temperature
-        value: 1760
+        value: 2088
         unit: degF
         status: assumed
-        reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
-          temperature the book prints (p.160)
+        reason: not given; earthenware is rarely above cone 2 (the user, 2026-11-17), so cone 2, 1142 °C
+          by Orton's self-supporting cone at 60 °C/h (cones.yaml)
       - what: fuel_species
         value: chestnut
         status: printed

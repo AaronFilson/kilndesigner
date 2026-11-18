@@ -132,10 +132,10 @@ def test_t2_the_stage_times_stand() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the printed 1,814 kg lies 0.3 % under v2's least, 1,820 kg (the lightest "
-    "setting, the driest wood, λ 1, the narrowest passages): the setting's weight, the 1760 °F "
-    "top and the 10 h's shape (its 3 h preheat's end temperature) aren't printed, and the metric "
-    "beside 'some 2 tons' is cut at '18..' kg; 11-10-26.md, C3a question 8",
+    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies under v2's band "
+    "at cone 2 (2,370 kg to never, the load swinging it most); at the old 1760 °F it was 0.3 % "
+    "under 1,820 kg. The setting's weight and the top (earthenware, rarely above cone 2) aren't "
+    "printed; 11-17-26-inputs.md §5",
 )
 def test_t3_bredas_two_tons_lie_in_its_band() -> None:
     """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; short tons, 1814 kg as
