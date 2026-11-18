@@ -473,6 +473,13 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        - The springline above the floors is still open.
      - **Kähler:** no new gap. Fig 5-18's 40½ in, read at zoom 5, is the 36 in depth plus the
        4½ in front wall, which confirms the uncertain 36 in.
+     - **Kaneko:** no new gap.
+     - **The Kannofen:**
+       - Its two fireboxes have grate bars and ash pits, two arched stoking mouths with hinged
+         covers (Fig 6-39), and small openings at the ash pits' foot (Fig 6-37).
+       - None is sized: the figure is "NOT TO SCALE" and the photo's brick format isn't printed.
+       - The design's fireboxes have no grate and no mouth, so its path takes each firebox's whole
+         open end.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the

@@ -6557,8 +6557,10 @@ kilns:
       - cone and firing time in hours
       - ware load
     notes:
-      - the design file's 32 MR-100s give 3.2 million BTU/hr at 8 in. w.c., half Ward's rule (6.32 
+      - the design file's 32 MR-100s give 3.2 million BTU/hr at 8 in. w.c., half Ward's rule (6.32
         million); the book's slow several-day firing fits a modest input, but the burner is assumed
+      - checked against pp.170–172 on the page images, 2026-11-18 (the kiln-by-kiln check); no new
+        finding, the design unchanged
 
   kannofen:
     name: Kannofen, Höhr-Grenzhausen
@@ -6721,11 +6723,24 @@ kilns:
         note: two arched mouths in the photo; grate bars on both sides; a brick wall between the two
           ash pits
       - what: grate
-        value: grate bars in the middle and either side of the flue channels; four flue channels 15 
+        value: grate bars in the middle and either side of the flue channels; four flue channels 15
           cm wide; 25 and 40 cm marked between the channels and fireboxes (meaning unclear)
         status: printed
         page: p.162, p.163
         figure: Fig 6-37
+        note: read again at zoom 6 on 2026-11-18 as "25cm" twice, at the flue channels' foot, and
+          "64cm" (or "640m") along a vertical dashed line in the firebox, meaning unclear
+      - what: stoke_hole
+        value: two arched stoking mouths, each with a hinged steel cover swung aside, over the ash
+          pits' bricked fronts; Fig 6-37 draws small openings at the ash pits' foot, the air's way
+          in under the grates
+        status: drawing
+        page: p.163
+        figure: Figs 6-37, 6-39
+        note: not sized, the drawing "NOT TO SCALE" and the photo's brick format not printed (on
+          German NF or 2DF brick courses the mouths come out 28–58 cm, too loose to enter); the
+          mouths covered after each stoking (the owner, 2026-11-18). The design's fireboxes have no
+          grate and no mouth, so its path takes each firebox's whole open end (a gap, 2026-11-18)
       - what: firebox_length
         value: 1400
         unit: cm
@@ -6805,8 +6820,10 @@ kilns:
         running along the ash pit (the design's direction), and printed 1400cm (the notes' digits); 
         the design takes 140 cm
       - 1840cm, at the far end of the length's dimension line on Fig 6-37, fits no size (flagged)
-      - the design's draft type is up (an updraught tunnel kiln); no chimney is described on 
+      - the design's draft type is up (an updraught tunnel kiln); no chimney is described on
         pp.162–163, the exit flues venting into the shed's large space above the kiln (p.162)
+      - checked against pp.162–164 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged
 
   kato-coal:
     name: Mr Kato's coal downdraft, Tajimi
