@@ -236,18 +236,24 @@ references used. The plans print the working, so a builder can check it.
   v2 is rebuilt.
 - Engine v2 is the focus until it works as a whole: statics first, then heat.
 
-### Where things stand (2026-11-17)
+### Where things stand (2026-11-18)
 
 - **Merged to `main`:** M0–M4, M6 and M8 (on v1); engine v2's statics and heat (PR #12).
   M7 is on hold; M5 and M9 haven't started.
-- **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"):
-  - 48 of 51 printed figures inside the bands;
+- **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"; the full
+  suite of 2026-11-18, [the review](../reviews/2026-11-18-review.md) §1):
+  - 49 of 52 printed figures inside the bands. Suzuki's 60 bundles a side for chambers 4–7 (read
+    by the owner, 2026-11-17) is the one added. The other three are the open items: the 36 ft³
+    cross-draft, Singh's low-fire kiln and Breda's wood;
   - N1–N6 all fail;
   - 52 kilns stand hot, all v2 models (Blakebrough's fibre isn't modelled). Tobe has stood hot
     since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
     `11-17-26-inputs.md` §12). The lower-bound rule's "not given" stays for designs no one has
     built;
-  - 44 + 5 kilns reach their cone, with 2 open items and 2 with no burner input.
+  - the suite pins 37 kilns reaching their cone at every corner of their band (12 gas and
+    electric, 25 single chambers), and all 12 rows somewhere in theirs. That 7 of the rows reach
+    it at every corner comes from runs outside the suite before 2026-11-11, Tobe's on its old
+    lining. 2 kilns are open items and 2 print no burner input. (This was "44 + 5" before.)
 - **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
   found what stands in the way:
   1. v2 can't run a design file on its own. The setting, the draft-path inputs and the fuel data
@@ -267,44 +273,87 @@ references used. The plans print the working, so a builder can check it.
      `NotModelledError`.
 - **The inputs v2 needs** are in [11-17-26-inputs.md](11-17-26-inputs.md), checked against
   sources outside the book first. Concrete's c_p(θ) is now quoted from EN 1992-1-2 §3.3.2. Singh's
-  top is narrowed to 800–1000 °C. Dense brick's hot strength and IFB emissivity above 1077 °C
-  are still not found. The rest need the owner.
+  top is a band below 2100 °F, 800–1149 °C (the owner). Dense brick's hot strength and IFB
+  emissivity above 1077 °C are still not found; Tobe no longer needs the first, and the owner keeps
+  the second's extrapolation. Most of the answers aren't applied yet (next, item 1).
 
 ### Next, in order
 
-1. **Fold the test-side engine knowledge into the engine** (review items 1 and 6). Nothing new
-   needs to be sourced for it.
-2. **The v2 front door and the bridge to statics** (items 2 and 5). This puts the masonry's own
+Reordered 2026-11-18 ([the review](../reviews/2026-11-18-review.md)). The owner's answers of
+2026-11-17 overturn rules that the test-side code still carries. So they are applied first, and
+v2 is checked against its bar again, before item 2 folds that code into the engine. Otherwise the
+engine would take in rules the owner has overturned.
+
+1. **Finish this part: apply the 11-17 answers, then rerun the bar**
+   ([11-17-26-inputs.md](11-17-26-inputs.md); the review's §2 lists each one with its files).
+   Nothing new needs to be sourced except Singh's cover.
+   - **Principle 6 (§1):**
+     - where nothing is drawn, the chimney is ¼ of the chamber's width, not a ⅕–¼ band
+       (`paths.rule6`, `RULE_6_NOTE`);
+     - a part drawn to scale is sized from the drawing (the anagama in the hole's flue, about 6 in);
+     - Kitade's chimney is 12 in.
+   - **Stoke holes aren't intakes (§3).**
+     - A stage's air is the upstream gas plus the printed chamber inlets (Hollyweird's tube, the
+       two-chamber design's tube).
+     - The design's stoke hole is no longer taken as a fully open intake (`paths.intake_els`).
+       Today Hollyweird's back stage draws through its side door.
+     - The intakes the dataset derives from stoke holes are reworked: Kitade, Hollyweird's front,
+       Ellington and the two-chamber design. Singh's coal kiln's is printed open only in hours 1–3.
+   - **The fire mouth (§2):**
+     - a design setting per stage: open, an open fraction, or closed;
+     - the book's state as a dataset fact where it is printed (Tamba open, Kitade closed), and
+       every state reported elsewhere;
+     - the open mouth's cooling of the first chamber modelled;
+     - Tamba's slow corner stops shutting its mouth.
+   - **Kitade (§8):** a second chamber, its stage, the 12 in chimney and the mouth closed; then
+     rerun T1.
+   - **Tamba (§9):**
+     - 16 in side holes in the design, the dataset and the `tunnel` template together;
+     - the 14° slope waits on a sloped tube, engine work not listed before.
+   - **Singh (§4):** the top as a band from 800 to 1149 °C, in the dataset, the design and its
+     test. The porous shard cover needs a sourced packed-bed method first.
+   - **The 36 ft³ cross-draft (§6):** the band test over its lining, gas and cone.
+   - **Kähler and Blakebrough (§7):** the Rule 1 burner bands, so both are fired.
+   - **The two-chamber design (§8):** read p.202 again to sort its facts from Kitade's.
+   - **Then rerun the bar:** the full suite, and the rows' band corners outside it (Tobe's on its
+     new lining among them). Then restate "Where things stand".
+   - **Waiting on the owner** (the review's §5):
+     - the two-chamber design's place in the set;
+     - Breda's top;
+     - Blakebrough's band;
+     - Falcone's and the Kannofen's chimneys;
+     - Kitade's second chamber;
+     - Tamba as one tube;
+     - front stoke holes as intakes.
+2. **Fold the test-side engine knowledge into the engine** (module review items 1, 3 and 6).
+   Nothing new needs to be sourced for it.
+   - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and
+     `CONTINUOUS_FRACTION` to a leaf module, and add the import-linter contract for v2.
+   - ADR 0017's list of the v1 modules v2 may use is out of date. The amendment is the owner's.
+3. **The v2 front door and the bridge to statics** (items 2 and 5). This puts the masonry's own
    temperature through its thickness into the hot statics: the hot face weak, the cooler brick
    behind it carrying the load (HWI's UR-19 says walls are built for this). It fixes the model
    fault the owner named.
-3. **Make the suite faster:** a `bands` marker for the corner runs and an on-disk cache of
-   their results. The full `pytest --cov` takes about an hour.
-4. **Stacked zones up a chamber.** These make every top-to-bottom evenness figure testable.
-5. **Reduction (λ < 1) as the fuel band's other end**, and the held runs rerun on all the
+4. **Make the suite faster:** a `bands` marker for the corner runs and an on-disk cache of
+   their results. The full `pytest --cov` took 2 h 0 min on 2026-11-18 (about an hour on
+   2026-11-11).
+5. **Stacked zones up a chamber.** These make every top-to-bottom evenness figure testable.
+6. **Reduction (λ < 1) as the fuel band's other end**, and the held runs rerun on all the
    draft's air.
-6. **Switch the surfaces to v2**, after the split in item 4; then design the levels afresh
-   (decision 3).
-7. The owner's answers ([11-17-26-inputs.md](11-17-26-inputs.md)) settle the open items as they
-   come in.
-   - Principle 6 is answered (§1). The six unsized chimneys get scaled from Olsen's drawings.
-     The scans are the Windows clone's git-ignored `docs/research/kiln-reference.pdf`. Read there
-     on 2026-11-17 (`docs/research/olsen-figure-scaling.md`), with Fireworks, La Borne's back door
-     and the Kannofen still to measure.
-   - The fire mouth is answered (§2). It becomes a design setting per firing stage: open, partly
-     open (an area fraction) or closed. Fire the rows in each state, and model the first chamber
-     cooling with the mouth open while the chambers above fire. This replaces the mouth-shut and
-     mouth-open corners for Fujiwara, Bidai and Tamba.
-   - Stoke holes are covered after each stoking (§3). A stage's air comes from upstream gas and
-     the printed side inlets, not the stoke holes. Rework the rows' stage air to match, and
-     correct the intakes derived from stoke holes (the two-chamber kiln's 49 in² first).
-   - Kitade (p.202, Fig 8-11) is built, with two chambers. Olsen's two-chamber kiln is his
-     proposed improvement of it (§8). Kitade gets a second chamber. Whether Olsen's design stays
-     in the reference set is the owner's call.
-   - Tamba (§9): the figures scale 8½–14°. The owner's estimates for the series: 14° and side holes
-     of 16 in; the design and dataset are still to take them.
-   - Tobe (§12): it stood, so it is worked back (ADR 0017, decision 17 as amended). High-duty brick,
-     13½ in, standing hot on C16's 25 psi; a 9 in ring would have needed 30.5 psi.
+7. **Switch the surfaces to v2**, after the split in module review item 4; then design the levels
+   afresh (decision 3).
+8. **Small items** (the review's §4):
+   - concrete's specific heat into the library;
+   - from HWI's second reading (`hwi-handbook.md` §9):
+     - Fig 3.4's fireclay growth curve below 2400 °F for `movement.py`;
+     - the ring-table tests proposed in `hwi-ring-arch-tables.md`;
+     - Olsen's A-5 at 5′10″ checked on his page (HW and `rings.py` give 31 + 52, the
+       transcription 30 + 53).
+   - Done already:
+     - Tobe (§12): worked back from standing (ADR 0017, decision 17 as amended).
+     - Scaling the six unsized chimneys from Olsen's drawings: read on 2026-11-17
+       (`docs/research/olsen-figure-scaling.md`). Fireworks, La Borne's back door and the Kannofen
+       are still to measure.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
@@ -655,10 +704,10 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   open cores heated from above, or a measured kiln floor on such a course), and the block's
   conductivity above. Until then a platform is solid concrete on dry soil, the side that
   over-states the heat reaching the ground and the platform's top.
-- **Concrete's specific heat** (EN 1992-1-2 §3.3.2: quoted on 2026-11-17 in
-  `11-17-26-inputs.md`; still to move into `blocked-items.md` §20 and the library): wanted so the firing
-  simulation can carry a platform's own layer; today the simulation's floor goes into dry soil
-  without it.
+- **Concrete's specific heat:** found. EN 1992-1-2 §3.3.2 was quoted on 2026-11-17 in
+  `11-17-26-inputs.md` and is in `blocked-items.md` §20 since 2026-11-18. It is still to add to the
+  library, so the firing simulation can carry a platform's own layer; today the simulation's
+  floor goes into dry soil without it.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
   proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"

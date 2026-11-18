@@ -77,8 +77,9 @@ RULE_6 = (
     "at the base in natural draft)"
 )
 RULE_6_NOTE = (
-    "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band, the owner's "
-    "question 8 (C1, 11-10-26.md), open"
+    "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band. The owner's "
+    "answer (2026-11-17, 11-17-26-inputs.md §1), the drawing's scale where the part is drawn, "
+    "else ¼ of the width, isn't applied yet"
 )
 MIN_CHIMNEY = 9 * 0.0254  # m: a chimney seldom under 9 × 9 in at the base (p.80)
 TAPER_STEPS = 8  # a tapered chimney's friction summed over this many slices

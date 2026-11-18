@@ -41,7 +41,6 @@ what holds the arch).
 
 1. Fig 6-37: does the "140cm" mark the length of the firebox and ash pit?
 2. Fig 6-37: the "25cm" and "40cm" (or "64cm") near the firebox: what do they span?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

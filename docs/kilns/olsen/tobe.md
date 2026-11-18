@@ -37,7 +37,7 @@ No figure exists to compare burners, ports, flues, doors or chimney against.
 
 About 15,600 ft³; 2345 °F; 2,549 kW lost at top temperature (every chamber hot at once). The roof's
 outside Rayleigh number, 1.9 × 10¹¹, is past the convection correlation's checked range (warning
-W1).
+W1). (v1, on the 9 in medium-duty lining before 2026-11-17.)
 
 ## v2 statics (2026-11-10)
 
@@ -65,12 +65,16 @@ The section above is the 9 in medium-duty model as it was. The owner's answer:
 
 The design takes high-duty brick and 13½ in walls and ring, the next standard thickness. Working
 back with v2's row statics (seven chambers hot, μ 0.50):
-- **13½ in ring (the design):** stands hot on C16's 25 psi; it needs 19.5 psi.
-- **The thinnest that stands on 25 psi:** about 9¾ in (9.70 in has no admissible state, 9.84 in
-  has one).
-- **9 in ring:** it would need 30.5 psi. Had its ring been 9 in, its brick carried that hot.
+- **13½ in ring (the design):** stands hot on C16's 25 psi; it needs 19.5 psi (none at 19.50, one
+  at 19.53).
+- **The thinnest that stands on 25 psi:** about 9¾ in on the design's 13½ in walls (9.74 in has
+  no admissible state, 9.77 in has one). The first run, 9.70–9.84 in, was on the old 9½ in walls.
+- **9 in ring:** it would need 30.5 psi (none at 30.50, one at 30.53). Had its ring been 9 in,
+  its brick carried that hot.
 
-The walls barely move it. The dataset records these as `inferred` facts. Cold, the ends' supports
+The walls barely move it. The dataset records the two strengths as `inferred` facts. The ring
+frontier is a geometry, not a property of the brick, so it goes in the assumed ring's reason
+(2026-11-18; `scratch/tobe/worked_back.py`). Cold, the ends' supports
 (the firebox, the earth, the chimney) now give 131 lbf/ft, against 210 with the 9 in ring.
 
 Heat with the thicker lining: it still reaches cone 10, and 40 tons is still no less than v2's

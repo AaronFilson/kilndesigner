@@ -57,3 +57,5 @@ wall.
 1. Fig 4-35: are the bays drawn on both sides of each chamber doors, stoke porches, or both?
 2. Is the round chimney's size given anywhere for this kiln?
 3. The chambers 4–7 bundle count lost at the gutter on p.93: can it be read in your copy?
+   (Answered 2026-11-17: 60 bundles a side over 5 h for each of chambers 4–7; in the dataset and
+   tested.)

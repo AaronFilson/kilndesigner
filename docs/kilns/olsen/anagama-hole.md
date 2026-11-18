@@ -52,7 +52,9 @@ exit flue and spy holes.
 2. Fig 4-5 p.84: is the "2' × 2'" entrance the size of the firebox, its mouth, or both? The model
    uses it for both.
 3. Fig 4-5 p.84: the chimney flue at the back has a width arrow but no number. Is a size given
-   anywhere?
+   anywhere? (Answered 2026-11-17 by Principle 6: a part drawn to scale but not dimensioned is
+   sized from the drawing, so the flue is about 6 in, 4–8 in (`olsen-figure-scaling.md` §1). Not
+   applied yet: the path is still built on Rule 6.)
 
 ## Scaled off the figures (step A, 2026-11-09)
 
@@ -68,3 +70,4 @@ flue runs into the page's gutter, so its far side may be cut. Readings in
 Question from step A:
 
 4. The chimney flue scales about 6 in across (one side in the gutter). Is that its size?
+   (Answered with question 3.)

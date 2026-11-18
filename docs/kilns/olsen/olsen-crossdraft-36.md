@@ -25,8 +25,10 @@ No change in this pass.
 
 ## Open questions for the user
 
-1. Was the dense brick backed with insulation, and how thick were the walls?
-</content>
+1. Was the dense brick backed with insulation, and how thick were the walls? (Answered
+   2026-11-17: the kiln isn't otherwise described. It is Olsen's worked example of a principle, that
+   burners set how fast a well-designed kiln fires, not whether it gets hot. So the 12–15 h becomes
+   a band test over its lining, gas and cone (`11-17-26-inputs.md` §6), not yet built.)
 
 ## Scaled off the figures (step A, 2026-11-09)
 

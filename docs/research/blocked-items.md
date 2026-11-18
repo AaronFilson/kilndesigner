@@ -283,6 +283,19 @@ more realistic temperatures for concrete structures" (Annex note). At 20 °C: 1.
 **(derived)**. Density: the standard's figures use "a density of 2300 kg/m3 for siliceous
 concrete" (Fig. 3.6b) and gives ρ(θ) falling to 0.95 ρ(20 °C) by 400 °C (§3.3.2(3)).
 
+**Specific heat, §3.3.2(1)–(2)** (pp.26–27, Verified, primary [K31]; quoted in full in
+`docs/planning/11-17-26-inputs.md` §15, 2026-11-17). Dry concrete (u = 0 %), siliceous and
+calcareous aggregates:
+- c_p(θ) = 900 J/kg K for 20 °C ≤ θ ≤ 100 °C;
+- 900 + (θ − 100) for 100 °C < θ ≤ 200 °C;
+- 1000 + (θ − 200)/2 for 200 °C < θ ≤ 400 °C;
+- 1100 for 400 °C < θ ≤ 1200 °C.
+
+Where moisture isn't carried explicitly, the curve takes a constant peak between 100 °C and 115 °C,
+falling linearly to 1000 J/kg K at 200 °C. The peak is 900 J/kg K at 0 % moisture, 1470 at 1.5 %
+and 2020 at 3.0 % of the concrete's weight. With the density above and the lower-limit λ, the
+floor's transient has all three properties. Not yet in the library (2026-11-18).
+
 **Long-term temperature limits, ACI 349-97 §A.4**, as quoted in an NRC-filed AREVA calculation
 (Verified as quoted; ACI text not read; nuclear-safety concrete) [K32]: "Temperatures shall not
 exceed 150'F except for local areas, such as around penetrations, which are allowed to reach a

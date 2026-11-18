@@ -51,6 +51,9 @@ matched. The damper and spy-hole gaps are now noted in the file.
    at the foot of the chamber walls (text, p.148)?
 2. Fig 5-71 p.148: how big is the spy hole in the box's wall, and how high is it?
 3. Is the chimney's height given anywhere?
+4. The burner input: the owner's answer (2026-11-17, `docs/planning/11-17-26-inputs.md` §7) is a
+   band from Olsen's Rule 1 by lining, for IFB or dense. This kiln is lined with fibre, which is
+   neither. Which band does it take?
 
 ## Scaled off the figures (step A, 2026-11-09)
 

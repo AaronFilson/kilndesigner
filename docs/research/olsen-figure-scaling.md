@@ -159,16 +159,20 @@ Olsen's general pages (pp.199–206) give no typical side-hole size in the text.
 ## 4. The owner's open questions (handoff §4)
 
 - **Q2, Kitade's second chamber:** no figure draws it. Fig 8-11 draws one chamber.
-- **Q3, separate side air inlets:** on the pages read, the only separate inlets are:
-  - Hollyweird's: the 5 in tube under the second grate (p.116) and the air holes at the front
-    grate level (p.117);
-  - the tube under the grate in Olsen's two-chamber design (p.206);
+- **Q3, separate side air inlets:** on the pages read, the only inlets that feed a later chamber
+  are:
+  - Hollyweird's 5 in tube under the second grate (p.116);
+  - the tube under the grate in Olsen's two-chamber design (p.206).
+
+  The main fireboxes' own air feeds the first stage, not a chamber's (corrected 2026-11-18, which
+  makes the list consistent):
+  - Bidai's Fig 8-7 air opening;
+  - Hollyweird's air holes at the front grate level (p.117);
   - Kitade's two air-draft and ash-pit holes in the front (p.202).
 
-  Bidai's Fig 8-7 air opening belongs to its main firebox, not a chamber. None is drawn or named for
-  Suzuki, Kyoto, Tobe, Kawaii or Hotchkiss. Fujiwara wasn't checked. Olsen's general statement is on
-  p.206 (quoted in §2 above): the main air comes from the front; secondary air from cracks, doors
-  and so on.
+  None is drawn or named for Suzuki, Kyoto, Tobe, Kawaii or Hotchkiss. Fujiwara wasn't checked.
+  Olsen's general statement is on p.206 (quoted in §2 above): the main air comes from the front;
+  secondary air from cracks, doors and so on.
 - **Q4, the fire mouth:**
   - Tamba is open while side stoking and sealed at the end (pp.86–87).
   - Kitade's front is closed so the first chamber doesn't cool too quickly (p.202).

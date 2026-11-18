@@ -108,7 +108,9 @@ def _climbing(n: int, front: str = "the front, to 1000 °C") -> tuple[Phase, ...
 # ⅕ of the chamber's width and seldom under 9 × 9 in at its base (pp.79–80; kiln-reference.md
 # "Chimney size"), its 48 in chamber 9.6–12 in square; p.78 carries the exits from it, and its
 # height is the climbing kiln's band (p.81, p.101): `paths.Inputs.rule6`, C3a's band for the six
-# kilns with nothing sized (C1's question 8), the path's working saying so
+# kilns with nothing sized (C1's question 8), the path's working saying so. The owner's answers
+# (2026-11-17, 11-17-26-inputs.md §1 and §8), two chambers and the chimney ¼ of the width, 12 in,
+# aren't applied yet
 
 PLANS: dict[str, Plan] = {
     # p.93: the firebox stoked 15 h to 1000 °C (the main firebox isn't in the design: the first
@@ -312,8 +314,8 @@ MOUTH = bands.Input(
     "the fire mouth",
     ("open", "shut"),
     "open",
-    "C1's question 3: whether the "
-    "stoker shuts the fire mouth while side stoking isn't printed: its two ends",
+    "the owner (2026-11-17, 11-17-26-inputs.md §2): it varies by kiln, open, partly open or "
+    "closed; its two ends here (partly open, and each kiln's printed state, still to build)",
 )
 LAMBDA = bands.Input(
     "λ",
@@ -334,9 +336,10 @@ TOGETHER = bands.Input(
     "each input's band as above, all at the ends that "
     "shorten the stages or all at those that lengthen them (the largest rows)",
 )
-# Tamba's slope isn't printed (its doc's question 3; C1's question 5): the design lays the tube
-# level (an assumption, the nominal); the book's own tube and climbing kilns print 20 %, "standard
-# for most kilns of this style" (p.108, Mr Bae's), to the anagama drawn at 25° (Fig 4-5, p.84)
+# Tamba's slope isn't printed. The design lays the tube level (an assumption, the nominal). This
+# band, the book's other tubes from 20 % (p.108, Mr Bae's) to the anagama drawn at 25° (Fig 4-5,
+# p.84), predates the answer: the figures scale 8½–14° and the owner takes 14° (2026-11-17,
+# 11-17-26-inputs.md §9), to apply once v2 has a sloped tube
 SLOPE = bands.Input(
     "the tube's slope (°)",
     (11.3, 25.0),
@@ -365,9 +368,10 @@ INPUTS: dict[str, tuple[bands.Input, ...]] = {
 }
 # Held to the book's times, at the stoker's λ 1 (the least air, so the least fuel at that pace). A
 # held run on all the draft's own air (λ from the draft, the band's other end) runs on Suzuki
-# (4.38 t for chambers 1–3, against 3.02 t at λ 1) but failed in IDA 1.6 h into Bidai's dogi ramp
-# (the corrector's convergence): that air enters every residual through the draft's bisection, so
-# any kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a parallel branch coming
+# (4.38 t for chambers 1–3, against 3.02 t at λ 1: run before chambers 4–7 were held, 2026-11-17,
+# when the held run stopped after chamber 3) but failed in IDA 1.6 h into Bidai's dogi ramp (the
+# corrector's convergence): that air enters every residual through the draft's bisection, so any
+# kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a parallel branch coming
 # on) is a jump IDA meets; not traced further, the plan doc's open item. Each held run takes
 # minutes, so the suite runs the nominal alone
 HELD_INPUTS: dict[str, tuple[bands.Input, ...]] = {"suzuki-kyoto": (), "tamba": ()}

@@ -9,7 +9,10 @@
 
 The user asked for the heat and static-forces engine to be rebuilt from Olsen's reference kilns
 (*The Kiln Book*, 4th ed.). Every one of them was built and fired, and many print how much energy
-and time a firing took.
+and time a firing took. (2026-11-18: all but one. `olsen-two-chamber` is Olsen's proposed
+improvement of Kitade's kiln, pp.202 and 206, not a kiln he reports built (the owner,
+2026-11-17). Whether it stays in the set is the owner's question,
+`docs/planning/11-17-26-inputs.md` §8.)
 
 The first pass is in three places:
 - `docs/engine-v2/problem-set.md`;
@@ -140,6 +143,9 @@ is built.
 | H11 Heat input | burners sized (decision 13); elements' power changing with temperature; fuel stoked at the rate the schedule needs, within the air the draft allows | Olsen ch. 8; Kanthal | – |
 | H12 Draft and air | a pressure balance round the gas path: the buoyancy of each hot column less friction and fittings; the air intakes sized from the reference material (decision 9) | Moody 1944; Idelchik (pages to record) | – |
 | H13 Openings | spy holes and flues as surfaces at the room's temperature; the firebox and chimney walls as transient faces of their zones | `radiation-exchange.md` §1.3 | – |
+
+Status since (2026-11-17): H6's correlations are in. v2 uses Bordbar 2014's WSGG, with Dorigon 2013
+as the alternative (`v2/heat/gasrad.py`; `docs/planning/11-17-26-inputs.md` §14).
 
 ## Where v2 lives
 

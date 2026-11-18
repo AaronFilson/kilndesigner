@@ -27,7 +27,6 @@ No change in this pass.
 ## Open questions for the user
 
 None new (the mouth width, 22 or 28 in, was settled as 22).
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

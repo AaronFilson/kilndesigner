@@ -283,10 +283,13 @@ def test_tobe_is_worked_back_from_standing() -> None:
     """Tobe stood, so what its material and size must have been is worked back from it, not
     withheld (the owner, 2026-11-17; ADR 0017, decision 17 as amended). High-duty brick, seven
     chambers hot (μ 0.50), the hot crushing stress at every joint scaled from C16's 25 psi:
-    - at the design's 13½ in ring the row stands on C16's 25 psi; it needs 19.5 psi;
-    - at a 9 in ring it needs 30.5 psi: had its ring been 9 in, its brick carried that hot.
-    (`docs/planning/11-17-26-inputs.md` §12; with 9½ in walls it stands on 25 psi from a ring of
-    about 9¾ in.)"""
+    - at the design's 13½ in ring the row stands on C16's 25 psi; it needs 19.5 psi (none at
+      19.4, one at 19.6);
+    - at a 9 in ring it needs 30.5 psi (30.4, 30.6): had its ring been 9 in, its brick carried
+      that hot.
+    The dataset records both as `inferred`. A finer bisection gives 19.50–19.53 and 30.50–30.53,
+    and on C16's 25 psi a ring of about 9¾ in (9.74–9.77) on the design's walls
+    (`docs/planning/11-17-26-inputs.md` §12; scratch/tobe/worked_back.py)."""
     from dataclasses import replace
 
     def at(p: Problem, psi: float) -> Status:
@@ -296,8 +299,8 @@ def test_tobe_is_worked_back_from_standing() -> None:
     tobe = olsen("tobe")
     built = conditions(row_section(tobe), "hot")
     assert at(built, 25) is Status.OPTIMAL
-    assert at(built, 19) is Status.INFEASIBLE
-    assert at(built, 20) is Status.OPTIMAL
+    assert at(built, 19.4) is Status.INFEASIBLE
+    assert at(built, 19.6) is Status.OPTIMAL
     thin = conditions(row_section(with_ring(tobe, 9.0)), "hot")
-    assert at(thin, 30) is Status.INFEASIBLE
-    assert at(thin, 31) is Status.OPTIMAL
+    assert at(thin, 30.4) is Status.INFEASIBLE
+    assert at(thin, 30.6) is Status.OPTIMAL

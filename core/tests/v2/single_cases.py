@@ -1,7 +1,8 @@
 """Part C3a's single-chamber wood, coal and oil kilns as heat-model runs (`11-10-26.md` §C, "C3a
 as built"): each kiln's own fuel at its bands' ends (`fuel.py`, research A1), its setting
 band (C2's `loads.py`), its own draft path (C1's `path_inputs.py`; the six with nothing on their
-path sized on Olsen's Rule 6, the owner's question 8, open), the fireboxes and the chimney as gas
+path sized on Olsen's Rule 6's band, which the owner's answer of 2026-11-17 replaces, not applied
+yet: `11-17-26-inputs.md` §1), the fireboxes and the chimney as gas
 zones of their own (B2; several fireboxes each burning its share, C3a), and v2's band over the
 inputs no source fixes (`bands.py`'s corner runs).
 

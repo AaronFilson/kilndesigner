@@ -32,7 +32,6 @@ BTU/hr on the stacking alone).
 
 1. Where do the two bottom burners fire: through the floor at its centre, under the setting?
    The model puts them down the floor's centre line, each in the middle of half its depth.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

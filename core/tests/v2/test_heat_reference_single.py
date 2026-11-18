@@ -47,7 +47,8 @@ T1 = (
 OPEN_T1 = {
     "singh-lowfire": "open item: the shards and saggar pieces piled over the open top (pp.155–156) "
     "aren't modelled, so the whole top radiates to the room (a third of the heat), and the "
-    "1760 °F top is assumed (Falcone's): 11-10-26.md, C3a question 2",
+    "1760 °F top is assumed (Falcone's). The owner's answers (2026-11-17, 11-17-26-inputs.md §4), "
+    "a top band of 800–1149 °C and the cover a porous shard layer, aren't applied yet",
 }
 
 
@@ -60,7 +61,8 @@ def test_t1_reaches_its_target_on_its_own_draft(kid: str) -> None:
     """T1: at every corner of v2's band (the setting's least to most, the fuel's least heat to its
     most, a coal kiln's bed 85–200 kg/(m²·h)) the hardest firing reaches the kiln's target; the
     band's working lists the inputs by their swing. Those with nothing on their path sized run on
-    Rule 6 (the owner's question 8), said in their path's working; a coal kiln's draft carries its
+    Rule 6's band (the owner's answer of 2026-11-17 not applied yet, `11-17-26-inputs.md` §1),
+    said in their path's working; a coal kiln's draft carries its
     grates' most at λ 1."""
     b = sc.max_band(kid)
     print(f"T1 {kid}: {sc.describe(b)}")
@@ -132,16 +134,17 @@ def test_t2_the_stage_times_stand() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies under v2's band "
-    "at cone 2 (2,370 kg to never, the load swinging it most); at the old 1760 °F it was 0.3 % "
-    "under 1,820 kg. The setting's weight and the top (earthenware, rarely above cone 2) aren't "
-    "printed; 11-17-26-inputs.md §5",
+    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies 24 % under v2's "
+    "band at cone 2 (2,370 kg to never, the load swinging it most); at the old 1760 °F it was "
+    "1.1 % under 1,820 kg. The setting's weight isn't printed, and whether cone 2 (earthenware, "
+    "rarely above it) is the top or the band's upper end is the owner's; 11-17-26-inputs.md §5",
 )
 def test_t3_bredas_two_tons_lie_in_its_band() -> None:
-    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; short tons, 1814 kg as
-    fired): the setting held to a straight rise to its 1760 °F (assumed) over 10 h takes a fuel
-    inside v2's band (the setting, the wood, λ from the stoker's 1 to all the draft's air, the
-    grey gases, the emissivity class, the setting's passages)."""
+    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; 1800 kg as fired, the
+    metric figure the user read, 2026-11-17): the setting held to a straight rise to its cone 2
+    (assumed, the owner's top) over 10 h takes a fuel inside v2's band (the setting, the wood, λ
+    from the stoker's 1 to all the draft's air, the grey gases, the emissivity class, the
+    setting's passages)."""
     tons = _printed("breda-bottle", "fuel_per_firing", "kg")
     b = sc.kiln_bands("breda-bottle")[sc.FUEL]
     print(f"T3 breda-bottle, {tons:.0f} kg printed: {sc.describe(b)}; {b.swings}")

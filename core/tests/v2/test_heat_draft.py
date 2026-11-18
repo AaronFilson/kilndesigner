@@ -193,7 +193,9 @@ def _design(name: str, change: dict[str, Any] | None = None) -> Kiln:
 def test_the_fast_fires_own_path_and_draft_table() -> None:
     """From the design file: two under-floor fireboxes, the 9 × 7½ in flue, the 14 ft chimney of
     9 × 9 in. The table rises to its most near 600 K and falls as the gas thins, as the probe's
-    did (0.076 → 0.106 → 0.082 kg/s), here a little more for a chimney 4½ in taller."""
+    did (0.076 → 0.106 → 0.082 kg/s). At 1300 °C it draws 0.079 kg/s, on a chimney 4½ in taller
+    than the probe's and Idelchik's fittings at the band's least-air end (0.082 on round-pipe
+    fittings)."""
     path = dr.kiln_path(load_design(OLSEN / "fast-fire.yaml"), grate_bar=0.75 * IN)
     names = [e.name for e in path.elements]
     assert names[0].startswith("ash-pit mouth")

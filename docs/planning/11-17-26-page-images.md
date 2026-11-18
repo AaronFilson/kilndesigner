@@ -68,6 +68,11 @@ Reads outside `/home/bellows/kilndesigner` are blocked. Either copy the images i
 `p085.png`), or record the scaled numbers in a file this repo can read. Don't commit the scans to
 either repo: they are the book's pages.
 
+**Done (2026-11-17):** the pages were read on the Windows clone, whose copy of the scans is its
+git-ignored `docs/research/kiln-reference.pdf`. The scaled numbers are in
+`docs/research/olsen-figure-scaling.md`, committed on `plan-review`, so they reach the other clone
+through git. Nothing needs copying.
+
 ## 4. Questions for the owner, still open
 
 1. **Singh's shard cover (§4):** is a band from a single thin layer to 4 in thick right? How open
@@ -81,7 +86,10 @@ either repo: they are the book's pages.
    Do Suzuki, Kyoto, Tobe, Kawaii, Hotchkiss or Fujiwara have any?
    (Checked 2026-11-17, `olsen-figure-scaling.md` §3, §4.) None is drawn or named for Suzuki,
    Kyoto, Tobe, Kawaii or Hotchkiss; Fujiwara isn't checked yet. Bidai's Fig 8-7 opening is its
-   main firebox's ash-pit air, not a chamber inlet, so it comes off the list above.
+   main firebox's ash-pit air, not a chamber inlet, so it comes off the list above. So do Kitade's
+   two front holes and Hollyweird's front grate-level holes, for the same reason: each is a main
+   firebox's own air (2026-11-18). The chamber inlets left are Hollyweird's 5 in tube under the
+   second grate (p.116) and the tube under the two-chamber design's second grate (p.206).
 4. **The fire mouth, by kiln (§2):** which kilns are fired with the mouth open, and which are
    covered for slow cooling? Without an answer, v2 reports each kiln in all three states.
    (Checked 2026-11-17, two kilns answered by the book.) **Tamba** is open while side stoking:
@@ -110,8 +118,12 @@ All recorded in [11-17-26-inputs.md](11-17-26-inputs.md):
 - The 36 ft³ cross-draft: an example of a principle.
 - Kähler and Blakebrough: Rule 1 bands.
 - Kitade: 2 chambers, the chimney by Principle 6.
-- Olsen's two-chamber design: unbuilt, out of the reference set.
-- Tamba: one tube, its arches making semi-chambers; the slope from Figs 4-7 and 4-17.
+- Olsen's two-chamber design: unbuilt, his proposed improvement of Kitade's kiln. Whether it leaves
+  the reference set is still the owner's question (inputs §8). This line first said "out of the
+  reference set", but no answer is recorded (corrected 2026-11-18).
+- Tamba: the slope from Figs 4-7 and 4-17, then the owner's 14° and 16 in side holes. Whether it is
+  one tube, its arches making semi-chambers, is still to confirm (inputs §9). This line first gave
+  it as answered (corrected 2026-11-18).
 - Suzuki's chambers 4–7: 60 bundles a side over 5 h.
 - The lower-bound rule: yes.
 - IFB emissivity: keep the extrapolation.

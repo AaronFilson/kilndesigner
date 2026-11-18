@@ -4,9 +4,10 @@
   side by side (`chamber._plan`), each with its own faces, and the fuel and its air split among
   them by their grates' areas (`kiln.fire_shares`; `zone.Balance.released`), the chamber taking
   their products together; a staged firing's stream passes through them as air, shared the same;
-- **Olsen's Rule 6 seeding p.78** (`paths.Inputs.rule6`; C1's question 8, open): where nothing on
-  a gas path is sized, the chimney's side ⅕ to ¼ of the chamber's width and at least 9 in, a band,
-  every path on it saying so.
+- **Olsen's Rule 6 seeding p.78** (`paths.Inputs.rule6`; C1's question 8, answered 2026-11-17
+  and not applied yet, `11-17-26-inputs.md` §1): where nothing on a gas path is sized, the
+  chimney's side ⅕ to ¼ of the chamber's width and at least 9 in, a band, every path on it saying
+  so.
 """
 
 from __future__ import annotations
@@ -248,14 +249,14 @@ def test_rule_6_seeds_p78_where_nothing_on_the_path_is_sized() -> None:
     """La Borne (p.110): two chimneys, nothing sized, so C1 refuses its path. Asked for, Rule 6
     (pp.79–80) sizes the whole chimney section from the 11 ft (132 in) width, its side 26.4 in at
     the band's least-air end and 33 in at its most, the two chimneys sharing it; and every path on
-    it says so, with the owner's question it rests on."""
+    it says so, naming the owner's answer (2026-11-17) that is to replace it."""
     k = loads.design("la-borne")
     with pytest.raises(dr.NotModelledError, match=r"p\.78"):
         dr.kiln_path(k, inputs=pi.inputs("la-borne"))
     path = dr.kiln_path(k, inputs=pi.inputs("la-borne", rule6=True))
     note = path.steps[0].note or ""
     assert "Rule 6" in note
-    assert "question 8" in note
+    assert "11-17-26-inputs.md §1" in note
     least = _named(path, "chimney")
     assert least.branches == 2
     assert least.area == pytest.approx((132 / 5 * IN) ** 2 / 2)

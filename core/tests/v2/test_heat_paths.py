@@ -2,7 +2,7 @@
 
 The new elements and path forms against closed forms and Idelchik's own figures; each kiln
 family's built path against one written out by hand from its design file; each family's draft
-against a Bernoulli estimate through its narrowest flue; and every one of the 53 reference kilns
+against a Bernoulli estimate over its main flues; and every one of the 53 reference kilns
 built on its dataset inputs (`path_inputs.py`), or refused naming what is missing.
 """
 
@@ -277,7 +277,7 @@ def test_each_familys_draft_against_a_bernoulli_estimate() -> None:
     the room's air; no friction, no Reynolds factor), from the book's sizes: a groundhog with a
     chimney (Meaders-Cheever, p.112), a climbing row (Kawaii, p.97), a downdraft through its floor
     (Singh, Fig 5-10), an updraft with no chimney (Miravet, Fig 6-19). Friction and Idelchik's
-    finer coefficients take 0–20 % off."""
+    finer coefficients take up to 20 % off; v2 may lie up to 5 % over the estimate."""
     from kilndesigner.run_parts import run_layout
 
     hole = 45 * IN**2

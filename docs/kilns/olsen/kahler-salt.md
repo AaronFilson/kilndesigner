@@ -37,6 +37,10 @@ frame L4×4×¼ with ½ in rods.
 2. Fig 5-18: are the three spy and draw holes about 13, 25 and 37 in above the floor?
 3. Fig 5-18 "40½"": what does it measure?
 
+v2 heat doesn't fire this kiln yet: the book prints no burner input. The owner's answer
+(2026-11-17, `docs/planning/11-17-26-inputs.md` §7) is a band from Olsen's Rule 1 by lining, the
+chamber volume times 7,000–10,000 BTU/ft³/hr for IFB. The band isn't in the engine yet.
+
 ## Scaled off the figures (step A, 2026-11-09)
 
 Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).

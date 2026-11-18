@@ -31,7 +31,6 @@ Fig 4-46's doorway is square-headed in the photo; since step A the model gives i
 1. How many 7 × 10 in flues are there in each chamber wall (Fig 4-48)? Scaled 5 (or 6), below.
 2. Fig 4-46: is the second chamber's doorway square-headed (a lintel) or arched? A closer look
    (step A) reads a slab lintel; entered flat.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

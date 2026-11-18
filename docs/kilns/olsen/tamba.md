@@ -63,8 +63,16 @@ width assumed before step A).
    the middle and 24 × 12 the last? Scaled, the labels read as the holes' own sizes in one wall:
    the two outer holes 20 in high and the two inner 24 in, all 12 in wide. Modelled as four
    12 × 22 in (the same area). Is that the reading?
-3. Is the tube's slope given anywhere for the Tamba kilns?
+3. Is the tube's slope given anywhere for the Tamba kilns? (Answered 2026-11-17: Figs 4-17 and
+   4-7 scale 8½–14°, and the owner's estimate for the series is 14°. It waits on a sloped tube in
+   the engine.)
 4. Fig 4-12 scales the tube 73–84½ in wide (78 in used, up from the 5 ft assumed) and 35–40½ in
    to the crown, below the faint 3½' of Fig 4-16 that is kept. Is the chamber wider than the
    firebox's 5 ft, and is 3½' its height?
-5. How many side stoke holes to a chamber (one a side is modelled, 7 in round, 32 in up)?
+5. How many side stoke holes to a chamber (one a side is modelled, 7 in round, 32 in up)? (The
+   size is answered, 2026-11-17: 16 in, the owner's estimate for the series, not yet in the design.
+   The count is still open.)
+6. Is Tamba one tube cut into segments, its arches making semi-chambers, or a row of chambers?
+   (`11-17-26-inputs.md` §9; to confirm.)
+7. The fire mouth: the book has it open while side stoking (pp.86–87), but the slow test corner
+   still shuts it. That is to correct, not a question.

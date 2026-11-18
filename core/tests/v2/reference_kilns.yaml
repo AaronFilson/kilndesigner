@@ -1,8 +1,11 @@
 # The reference kilns: what Frederick L. Olsen, The Kiln Book, 4th ed., prints about each kiln it
 # describes, for engine v2's heat and statics validation (docs/adr/0017-engine-v2.md).
-# Every kiln was built and fired. Read from the page-cited notes (docs/research/olsen-kilns.md,
-# kiln-reference.md), the kilns' docs (docs/kilns/olsen/) and design files (examples/olsen/),
-# 2026-11-09; a few pages were checked on the scan, as each fact's note says.
+# Every kiln was built and fired but one: olsen-two-chamber is Olsen's proposed improvement of
+# Kitade's kiln (pp.202, 206), not a kiln he reports built (the owner, 2026-11-17; whether it stays
+# in the set is the owner's question, docs/planning/11-17-26-inputs.md §8). Read from the
+# page-cited notes (docs/research/olsen-kilns.md, kiln-reference.md), the kilns' docs
+# (docs/kilns/olsen/) and design files (examples/olsen/), 2026-11-09; a few pages were checked on
+# the scan, as each fact's note says.
 #
 # kilns: the 53 kilns with a design file. extras: kilns and worked examples with no design file
 # (no chamber size printed, or a part only) that print a heat figure or a structural fact.
@@ -11793,7 +11796,6 @@ kilns:
         page: p.93
         figure: Fig 4-35
     gaps:
-      - bundle count per side for chambers 4–7 (lost at the gutter in the scan)
       - bundles for the firebox's 15 h
       - a bundle's weight, the wood's species and moisture
       - walls, arch shape and thickness, slope, the step between chambers
@@ -12263,46 +12265,46 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
       - what: setting
-        value: [4146, 27881]
+        value: [4150, 27898]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.393 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.393 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4153, 27915]
+        value: [4161, 27949]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.590 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.590 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4153, 27915]
+        value: [4161, 27949]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.590 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.590 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4153, 27915]
+        value: [4161, 27949]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.590 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.590 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4153, 27915]
+        value: [4161, 27949]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.590 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.590 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4153, 27915]
+        value: [4161, 27949]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.459 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.459 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.590 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.590 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [4146, 27881]
+        value: [4150, 27898]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.327 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.327 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 63.393 m³; 1–12 layers of shelves over 17.713 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 63.393 m³ as v2 traces it; the envelope''s plan 17.713 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
@@ -12400,17 +12402,10 @@ kilns:
         unit: inch
         status: assumed
         reason: not printed. Not 9 in (the owner, 2026-11-17), "the brick could have been much
-          thicker given the size and that it was pre-industrial"; the next standard thickness
-      - what: ring_thickness
-        value: 9.84
-        unit: inch
-        bound: '>='
-        status: inferred
-        condition: the ring on which v2 finds the row standing hot on C16's 25 psi alone (high-duty
-          brick, 9½ in walls, seven chambers, μ 0.50)
-        reason: it stood (the owner, 2026-11-17; ADR 0017, decision 17 as amended); bisection, no
-          admissible state at 9.70 in, one at 9.84 in. A thinner ring needs its brick stronger hot
-          than C16 shows (scratch/tobe/frontier.py)
+          thicker given the size and that it was pre-industrial"; the next standard thickness. On
+          C16's 25 psi alone v2 finds the row standing hot from a ring of about 9¾ in (the design's
+          13½ in walls of high-duty brick, seven chambers, μ 0.50; bisection, no admissible state
+          at 9.74 in, one at 9.77 in; scratch/tobe/worked_back.py, 2026-11-18)
       - what: hot_strength
         value: 19.5
         unit: psi
@@ -12419,17 +12414,20 @@ kilns:
         condition: at the design's 13½ in ring and walls of high-duty brick, seven chambers hot (μ
           0.50)
         reason: it stood (the owner, 2026-11-17; ADR 0017, decision 17 as amended); the least hot
-          crushing stress at every joint at which v2 finds an admissible state, under C16's 25 psi
-          (test_statics_row.py::test_tobe_is_worked_back_from_standing)
+          crushing stress at every joint at which v2 finds an admissible state, under C16's 25 psi.
+          Bisection, none at 19.50 psi, one at 19.53 (scratch/tobe/worked_back.py, 2026-11-18;
+          test_statics_row.py::test_tobe_is_worked_back_from_standing pins 19.4–19.6)
       - what: hot_strength
         value: 30.5
         unit: psi
         bound: '>='
         status: inferred
-        condition: had the ring been 9 in (the thin end), high-duty brick, seven chambers hot
+        condition: had the ring been 9 in (the thin end), the design's 13½ in walls of high-duty
+          brick, seven chambers hot (μ 0.50)
         reason: it stood; the least hot crushing stress at which v2 finds the row standing with a 9
-          in ring, above C16's 25 psi, so a 9 in ring means its brick carried at least this hot
-          (test_statics_row.py::test_tobe_is_worked_back_from_standing)
+          in ring, above C16's 25 psi, so a 9 in ring means its brick carried at least this hot.
+          Bisection, none at 30.50 psi, one at 30.53 (scratch/tobe/worked_back.py, 2026-11-18;
+          test_statics_row.py::test_tobe_is_worked_back_from_standing pins 30.4–30.6)
     service:
       - what: condition
         value: destroyed in July 1963; the largest chamber kiln

@@ -71,8 +71,8 @@ def test_what_holds_the_reference_kilns(results: dict[str, KilnStatics]) -> None
 def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
     """The rows of chambers: Olsen's three-chamber kiln's frame must give about 19 lbf/ft at each
     end cold; tobe's 10 ft arches, 13½ in rings (the owner, 2026-11-17), need about 131 lbf/ft at
-    each end from what holds the row (the firebox, the earth, the chimney); Bidai's and Fujiwara's
-    end walls carry their arches alone."""
+    the front cold from what holds the row (the firebox, the earth, the chimney; the front alone is
+    pinned); Bidai's and Fujiwara's end walls carry their arches alone."""
     lbft = 4.4482216152605 / 0.3048
     three = results["olsen-three-chamber"].numbers
     assert three["least on the frame at the front, cold"] / lbft == pytest.approx(18.9, abs=0.5)

@@ -31,7 +31,6 @@ widest, but where along the 27 ft the widest stands isn't printed, so the mean-w
 ## Open questions for the user
 
 1. Fig 4-78: how far from the bag wall is the plan at its widest, 12 ft (for `chamber.widths`)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

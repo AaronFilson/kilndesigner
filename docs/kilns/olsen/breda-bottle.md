@@ -48,7 +48,8 @@ Notes: `docs/research/olsen-kilns.md`, `breda-bottle`.
 
 ## Results from the build
 
-- Chamber 1,600 ft³ (printed by the engine as 1.6e+03); 1760 °F (assumed); heat loss 170 kW.
+- Chamber 1,600 ft³ (printed by the engine as 1.6e+03); 1760 °F (assumed); heat loss 170 kW. (v1,
+  built before the top became cone 2, the owner's, 2026-11-17.)
 - Warning W1: a 24 in round wall isn't a whole number of 9 in and 4½ in rings, so its bricks are
   missing from the count and the price ($0 priced). This warning was there before; the engine
   suggests 22½ or 27 in.

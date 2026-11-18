@@ -32,7 +32,6 @@ draft 0.18 in. w.c. at 1000 °F flue gas.
 ## Open questions for the user
 
 1. Is there a damper size on Fig 5-4 (the 20" connection's height)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

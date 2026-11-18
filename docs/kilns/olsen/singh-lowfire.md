@@ -22,6 +22,11 @@ long and 16½ in wide (scaled), 30 in from the floor down to the pit floor, six 
 flues; 9 in medium-duty firebrick walls and floor (assumed); top temperature 1760 °F (assumed,
 Falcone's, p.160).
 
+The owner's answer (2026-11-17, `docs/planning/11-17-26-inputs.md` §4) is not applied yet:
+- **the top:** a band below 2100 °F, 800–1149 °C;
+- **the cover:** a porous layer of shards the gas leaves through, its thickness and openness a
+  band. v2 needs a sourced porous-layer method first.
+
 ## Scaling (step A, 2026-11-09)
 
 Fig 6-12 (p.156, PDF 143) prints the 5' diameter on the plan and the 5' setting on the section.

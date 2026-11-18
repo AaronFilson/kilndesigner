@@ -38,7 +38,6 @@ walls; each ring's foot against the taller wall behind it is a springer coursed 
 
 1. Figs 4-31, 4-32: how far along the span does a reduction chamber's peak stand, and the two
    radii (for `roof.peak_at`)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

@@ -11,7 +11,8 @@ figure:
 λ is the operator's setting, 1.0–1.15: no gas kiln here has a draft path yet (part C1). The
 electric kilns are in `test_heat_elements.py`. Kähler's salt kiln and Blakebrough's fibre kiln
 print no burner input (their burners refused, `test_heat_burner_inputs.py`): their models build
-(`test_heat_shapes.py`), their firings wait on an input. Nothing is fitted.
+(`test_heat_shapes.py`), their firings wait on the band the owner gave on 2026-11-17, Olsen's
+Rule 1 by lining (`11-17-26-inputs.md` §7), not built yet. Nothing is fitted.
 """
 
 from __future__ import annotations

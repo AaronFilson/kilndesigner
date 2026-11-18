@@ -27,7 +27,7 @@ Cone 11.
 |---|---|---|---|
 | Front firebox | 36 in, dug-out ash pit as the walkway (Fig 4-110, p.117) | 55 × 36 in, grate, on the ground | matches |
 | Inlet flue, stoke hole | one 15 × 18 in, one 9 × 13½ in, in the door bricking, with air holes at grate level (p.117) | as printed | matches; the air holes aren't modelled |
-| Second firebox | 15 in grate between the chambers, side door (Fig 4-110 "DOOR") | a front firebox 15 × 55 in | differs: no firebox between chambers, and no side stoke door |
+| Second firebox | 15 in grate between the chambers, side door (Fig 4-110 "DOOR") with a 9 × 13½ in stoke hole (p.117, the owner, 2026-11-17) | a front firebox 15 × 55 in, its stoke hole 9 × 13½ in | differs: no firebox between chambers. The engine takes the stoke hole as a fully open intake, against the owner's rule that stoke holes are covered after stoking (to fix, 2026-11-18 review) |
 | Between the chambers | a 13 in wall; three large exit flues across the second grate (p.116) | the 13 in wall as printed (`lining.between`, 2026-11-10; it was 9 in) with 4 flue holes, 4½ × 9 in (the engine's Kyoto rule) | the wall matches; the flue count and size can't be set |
 | Secondary air | a 5 in clay tube with a shutter, under the second grate (p.116) | none | not expressible |
 | Steps | 12, 18 and 6 in (Fig 4-110) | the engine's chamber step | differs |

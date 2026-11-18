@@ -93,15 +93,17 @@ def test_suzuki_the_cone_falls_along_the_kiln() -> None:
     assert np.all(np.diff(peaks) <= 1e-3)
 
 
-def test_suzuki_burns_its_bundles_in_chambers_1_to_3() -> None:
-    """T3, p.93: about 75 bundles a side for each of chambers 1–3 over their 7 h, 450 in all
-    (derived), at a bundle's stated band (the dataset's `fuel_unit_mass`: packed as a cord is
-    stacked, an assumption): no less than v2 needs held to the printed stage times at the stoker's
-    λ 1, the least air (the book fires them in reduction, λ under 1: more wood for the heat), even
-    at the light end of a bundle's band."""
+def test_suzuki_burns_its_bundles_in_chambers_1_to_7() -> None:
+    """T3, p.93: about 75 bundles a side for each of chambers 1–3 over their 7 h and 60 a side for
+    each of 4–7 over their 5 h, 930 in all (derived; the firebox's 15 h not included), at a
+    bundle's stated band (the dataset's `fuel_unit_mass`: packed as a cord is stacked, an
+    assumption): no less than v2 needs held to the printed stage times at the stoker's λ 1, the
+    least air (the book fires 1–3 in reduction, λ under 1: more wood for the heat), even at the
+    light end of a bundle's band. The held run's side fuel is all seven chambers' since 4–7 were
+    held to their 5 h (2026-11-17), so the printed total is chambers 1–7's, not 1–3's 450."""
     lo, _ = rc.bundle("suzuki-kyoto")
     b = rc.held_band("suzuki-kyoto")[rc.SIDE_FUEL]
-    assert b.low <= 450 * lo / 1e3
+    assert b.low <= 930 * lo / 1e3
 
 
 @pytest.mark.parametrize("chamber", range(3))
@@ -180,8 +182,10 @@ def test_fujiwara_fires_in_seven_days() -> None:
 
 
 def test_fujiwaras_side_holes_need_the_fire_mouth_open() -> None:
-    """C1's question 3: with the fire mouth shut the 5 in takiguchi alone can't bring the chambers
-    to their cones (the band's other end), so the book's 12 h matches the fire mouth open."""
+    """With the fire mouth shut the 5 in takiguchi alone can't bring the chambers to their cones
+    (the band's other end), so v2 matches the book's 12 h only with the mouth open. That is v2's
+    result: the book doesn't say which state Fujiwara fires in, so each state is reported (the
+    owner, 2026-11-17; `docs/planning/11-17-26-inputs.md` §2)."""
     shut = rc.run("fujiwara-bizen", rc.Corner(front_open=False))
     assert shut is not None
     assert shut.times[1:] == (None, None)
