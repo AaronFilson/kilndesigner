@@ -8761,6 +8761,9 @@ kilns:
       - 'research A2: the firebox mouth and its air intakes'
     notes:
       - the two flues hidden behind the post are placed at ±5 in in the design (kiln doc question)
+      - checked against p.112 on the page image, 2026-11-18 (the kiln-by-kiln check); the design is
+        unchanged. Fig 4-89 draws the chimney end only; the firebox mouth isn't shown, so v2's path
+        leaves its intake out and its air is an upper bound (a gap)
 
   meaders-david:
     name: David Meaders's groundhog
@@ -8977,6 +8980,11 @@ kilns:
       - 'research A2: the firebox mouth and its air intakes'
     notes:
       - a row of unlabelled openings is drawn along the foot of the front arch (air holes?)
+      - 'checked against p.115 on the page image, 2026-11-18 (the kiln-by-kiln check); the design is
+        unchanged. The row at the front arch''s foot is five or six outlined openings, each about a
+        ninth of the arch''s 60 in span, so 5–7 in wide, their heights 3½–10 in by the sketch''s two
+        scales (drawn about 2½ times as tall as wide); what they are isn''t said. v2''s path leaves
+        the firebox''s intake out for want of a size, so its air is an upper bound (a gap)'
 
   miravet:
     name: Miravet medieval kiln (old and new), Catalonia, Spain
@@ -9157,6 +9165,12 @@ kilns:
         status: printed
         page: p.158
         figure: Fig 6-19
+      - what: damper
+        value: during the initial firing the two flues at the front of the dome, closest to the
+          firebox, are closed
+        status: printed
+        page: p.159
+        note: read on the page image, 2026-11-18; the design has all five flues open
       - what: primary_air
         value: 486
         unit: inch**2
@@ -9205,6 +9219,8 @@ kilns:
       - dome thickness
       - wood per firing
       - ware load beyond "plumb full"
+      - the two front corner flues closed in the initial firing (p.159); the design can't vary its
+        flues over the firing
   moveros-umbrella:
     name: Moveros umbrella kiln, Spain
     design: examples/olsen/moveros-umbrella.yaml

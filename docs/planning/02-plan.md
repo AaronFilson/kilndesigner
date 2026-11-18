@@ -488,6 +488,14 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - **La Borne:** Fig 4-78 draws the firebox front's stoke opening above the grate and an air
        opening into the ash pit, but their numbers are too faded to read. The design gives the
        firebox no grate and no mouth, so its path takes its whole open end.
+     - **The Meaders groundhogs:**
+       - Neither book figure sizes the firebox mouth, so v2's path takes the air as an upper
+         bound.
+       - David's Fig 4-105 draws five or six openings at the front arch's foot, about 5–7 in wide,
+         their heights loose by the sketch's two scales.
+     - **Miravet:** "the two flues at the front of the dome, closest to the firebox, are closed"
+       in the initial firing (p.159). A design's flues can't change over a firing, the same need
+       as the fire mouth's states (item §2 above).
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
