@@ -74,7 +74,7 @@ Data classes in the index:
 | `kanayama-bizen` | Commercial Bizen chamber kilns; Kanayama Pottery | 99, 105–106 | wood and charcoal | climbing | chambers in series | not given | none |
 | `chappell-domura` | John Chappell's Domura tandem kiln (two-chamber kiln and salt kiln) | 33, 126, 243 | wood | cross-draft | two chambers in series, plus one salt chamber | 2 × 40 cu ft and 50 cu ft | full |
 | `olsen-chamber-p23` | Olsen's chamber kiln (ring arch) | 23, 47 | not given | chamber | not given | not given | none |
-| `olsen-two-chamber` | Olsen's two-chamber wood kiln, side-stoked | 202–203, 206 | wood | not stated | two chambers in series | first chamber 55" × 48" × 8' | partial |
+| `olsen-two-chamber` | Olsen's two-chamber wood kiln, side-stoked | 202–203, 206 | wood | not stated | two chambers in series | first chamber 55" × 48" × 8' | partial (Olsen's unbuilt proposal: a design, not a reference kiln, 2026-11-17) |
 | `olsen-three-chamber` | Olsen's three-chamber climbing kiln | 224 | gas (LP (?)) | climbing | three chambers in series | 3 × 120 cu ft | partial |
 | `kitade-tojilo` | Kitade Tojilo chamber kiln, Kutani | 202–203 | wood | chamber (climbing) | chambers in series, arched | chamber 4' × 5' × 8' | partial |
 | `blakebrough-sturt` | Les Blakebrough's kiln, Sturt Pottery, Mittagong | 205, 208 | wood and oil drip | chamber | chambers in series, arched | first chamber 6' × 45" × 6' | partial |
@@ -879,6 +879,9 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 ### `olsen-two-chamber`: Olsen's two-chamber wood kiln, side-stoked
 
 - Pages: p.202 (text, photos Figs 8-8 to 8-10); p.203 (captions); p.206 (text, Fig 8-17).
+- Status: Olsen's proposed improvement of Kitade's built kiln (`kitade-tojilo`), not a kiln the
+  book says was built; a design (`examples/olsen-two-chamber.yaml`), not one of the reference kilns
+  (the owner, 2026-11-17).
 - Fuel: wood. Draft: not stated. Cone and time: not given.
 - First chamber: 55" wide, 48" tall, 8' long (Fig 8-17). The roof shape, and whether 48" is to the
   springline or crown, aren't given. 147 ft³ as a box (derived).

@@ -22,7 +22,7 @@ FROM_EXAMPLE = {
     "gas-updraft": "olsen/updraft-test-1.yaml",
     "gas-chambers": "olsen/olsen-three-chamber.yaml",
     "wood-fast-fire": "olsen/fast-fire.yaml",
-    "wood-two-chamber": "olsen/olsen-two-chamber.yaml",
+    "wood-two-chamber": "olsen-two-chamber.yaml",
     "anagama": "olsen/anagama-hole.yaml",
     "climbing": "olsen/kyoto-climbing.yaml",
     "tunnel": "olsen/tamba.yaml",

@@ -246,17 +246,20 @@ references used. The plans print the working, so a builder can check it.
     by the owner, 2026-11-17) is the one added. The other three are the open items: the 36 ft³
     cross-draft, Singh's low-fire kiln and Breda's wood;
   - N1–N6 all fail;
-  - the reference set is the 52 built kilns. Olsen's two-chamber design was never built and is
-    kept as a design (the owner, 2026-11-18). 51 of the 52 stand hot, every one v2 models
-    (Blakebrough's fibre isn't modelled), and the design stands too, reported, not required. Tobe
-    has stood hot since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
+  - **52 reference kilns, not 53 (the owner, 2026-11-17, again 2026-11-18):** Olsen's two-chamber
+    kiln (pp.202, 206) is his unbuilt proposal, so it left the set. It stays as a design,
+    `examples/olsen-two-chamber.yaml` and the `wood-two-chamber` template, for the model's
+    behaviour tests (its facts in `core/tests/v2/design_kilns.yaml`);
+  - 51 of the 52 stand hot, every one v2 models (Blakebrough's fibre isn't modelled). Tobe has
+    stood hot since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
     `11-17-26-inputs.md` §12). The lower-bound rule's "not given" stays for designs no one has
     built;
   - the suite pins 39 kilns reaching their cone at every corner of their band (14 gas and
     electric, Kähler and Blakebrough on Rule 1's band since 2026-11-18; 25 single chambers), and
-    all 12 rows somewhere in theirs (the 11 built and the two-chamber design). That 7 of the rows
-    reach it at every corner comes from runs outside the suite before 2026-11-11, Tobe's on its
-    old lining. 2 kilns are open items.
+    all 11 rows somewhere in theirs. That 7 of the rows reach it at every corner comes from runs
+    outside the suite before 2026-11-11, Tobe's on its old lining. 2 kilns are open items.
+    (Counted before the full suite was stopped, 2026-11-18: the tests wait until the concepts are
+    fixed.)
 - **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
   found what stands in the way:
   1. v2 can't run a design file on its own. The setting, the draft-path inputs and the fuel data
@@ -433,7 +436,7 @@ engine would take in rules the owner has overturned.
   the page; the views, cutaway and named parts; a design started from a kind of kiln and edited
   with choices; and castables you mix, with the refusal outside the checked range.
 - Since 28 October: Olsen's *The Kiln Book* is the ground truth (ADR 0014,
-  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` and all build
+  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` (52 since 2026-11-17: his unbuilt two-chamber design moved to `examples/`) and all build
   with no error. Gas sizing follows his rules (Rule 1, the 1:1 flue, Rule 5 chimneys, natural
   gas, altitude, no 60 ft³ limit), fireboxes for wood, coal and oil are in (`fire.py`), round,
   sloped and chambered kilns compute, and floors on the ground lose heat to the soil. Every check
@@ -686,7 +689,7 @@ client is ready, since the CLI can produce the client's plans before the app exi
     cutting allowance.
   - **Since ADR 0017 (2026-11-09)** these notebooks and v1's tests no longer count as evidence
     for heat and statics. v2's bar is decision 17: the book's printed figures inside v2's bands,
-    N1–N6 failing in the numbers, all 53 reference kilns standing. Its tests are in
+    N1–N6 failing in the numbers, all 52 reference kilns standing (53 until 2026-11-17). Its tests are in
     `core/tests/v2/`. Notebooks for v2's solvers are still to do.
 - **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
   + lost; a longer element at the same voltage never draws more power; brick counts cover the

@@ -22,6 +22,7 @@ from kilndesigner.units import Q_, si, ureg
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 DATA = HERE / "reference_kilns.yaml"
+DESIGNS = HERE / "design_kilns.yaml"
 
 type Fact = dict[str, Any]
 
@@ -102,6 +103,13 @@ GIVEN = ("printed", "derived")  # what the book gives, directly or by arithmetic
 def load(path: Path = DATA) -> dict[str, Any]:
     """The dataset, as YAML gives it."""
     return cast(dict[str, Any], yaml.safe_load(path.read_text(encoding="utf-8")))
+
+
+def with_designs() -> dict[str, Any]:
+    """The reference kilns and the designs kept only for the model's behaviour tests
+    (``design_kilns.yaml``: Olsen's unbuilt two-chamber design), for the helpers that read a
+    kiln's facts; nothing validated reads the designs."""
+    return {**load()["kilns"], **load(DESIGNS)["kilns"]}
 
 
 def facts(kiln: dict[str, Any], group: str, what: str, *statuses: str) -> list[Fact]:

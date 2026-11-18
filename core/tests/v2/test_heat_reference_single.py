@@ -36,7 +36,9 @@ pytestmark = [pytest.mark.slow, pytest.mark.geometry]
 # Printed: the oil drip's cone 10 (p.208), Fireworks' cone 10+ (p.181), Singh's coal kiln's cone 10
 # (p.133), Anderson's cone 10 (p.142), Kato's 2372 °F (p.131), Falcone's usual 1760 °F (p.160),
 # La Borne's 1300 °C by the firebox (p.111). Assumed, each with its reason in the dataset: the
-# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed)
+# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed);
+# Breda's a band, the owner's estimate for earthenware, cone 01 to cone 2, 2046–2088 °F
+# (2026-11-18), an input of its band like the load, so every corner reaches cone 2 too
 T1 = (
     "anagama-hole", "blakebrough-sturt", "breda-bottle", "chappell-domura", "church-skaelskor",
     "conrad-teardrop", "ellington-new-hog", "falcone-pompeii", "fast-fire-anderson",
@@ -144,7 +146,9 @@ def test_t3_bredas_two_tons_lie_in_its_band() -> None:
     metric figure the user read, 2026-11-17): the setting held to a straight rise to its top over
     10 h, the owner's estimate cone 01 to cone 2 (2026-11-18, a band input), takes a fuel inside
     v2's band (the setting, the wood, the top, λ from the stoker's 1 to all the draft's air, the
-    grey gases, the emissivity class, the setting's passages)."""
+    grey gases, the emissivity class, the setting's passages). A band from 1760 °F, tried on
+    2026-11-17 (1.1 % under 1,820 kg), is withdrawn: 1760 °F isn't realistic for earthenware (the
+    owner, 2026-11-18)."""
     tons = _printed("breda-bottle", "fuel_per_firing", "kg")
     b = sc.kiln_bands("breda-bottle")[sc.FUEL]
     print(f"T3 breda-bottle, {tons:.0f} kg printed: {sc.describe(b)}; {b.swings}")

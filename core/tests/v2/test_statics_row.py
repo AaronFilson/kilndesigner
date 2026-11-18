@@ -145,7 +145,8 @@ def test_a_level_row_on_its_frame() -> None:
     """Olsen's two-chamber kiln, level, its printed 9 in wall between the chambers (Fig 8-17):
     each arch along the draft springs from the end wall and the common wall, held by the frame at
     the ends; symmetric, the two ends take the same."""
-    rs = row_section(olsen("olsen-two-chamber"))
+    # Olsen's unbuilt design, in examples/ rather than examples/olsen/ (2026-11-17)
+    rs = row_section(load_design(ROOT / "examples" / "olsen-two-chamber.yaml"))
     assert rs.support == "frame"
     assert rs.seated == ()
     assert rs.voussoirs == (50, 50)

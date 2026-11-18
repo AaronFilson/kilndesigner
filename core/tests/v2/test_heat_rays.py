@@ -21,6 +21,9 @@ from kilndesigner.v2.heat import rays
 
 ROOT = Path(__file__).resolve().parents[3]
 OLSEN = ROOT / "examples" / "olsen"
+# Olsen's two-chamber design (pp.202, 206), unbuilt, so not a reference kiln: kept in examples/
+# as a two-chamber row for the model's behaviour (the owner, 2026-11-17)
+TWO_CHAMBER = ROOT / "examples" / "olsen-two-chamber.yaml"
 IN = 0.0254
 N = 100_000
 
@@ -199,7 +202,7 @@ def test_what_the_chamber_still_refuses() -> None:
     with pytest.raises(ch.NotModelledError, match="bent run"):
         ch.cavity(bent)
     with pytest.raises(ch.NotModelledError, match="chambers in a row are zones"):
-        ch.cavity(load_design(OLSEN / "olsen-two-chamber.yaml"), segments=2)
+        ch.cavity(load_design(TWO_CHAMBER), segments=2)
     with pytest.raises(ch.NotModelledError, match="one segment or more"):
         ch.cavity(load_design(OLSEN / "anagama-hole.yaml"), segments=0)
 
@@ -306,7 +309,7 @@ def test_chambers_in_a_row_are_gas_zones() -> None:
     wall between them; that wall's two faces and the holes' sides built in it; each zone's
     volume from its own chords within 1 %; Hottel's rows; each chamber's floor sees its own gas
     more than the other's."""
-    c = ch.chamber(load_design(OLSEN / "olsen-two-chamber.yaml"))
+    c = ch.chamber(load_design(TWO_CHAMBER))
     assert [g.name for g in c.gas] == ["chamber 1", "chamber 2"]
     names = {z.name for z in c.zones}
     assert {"back 1", "front 2", "flues 1", "flues 2", "front 1", "back 2"} <= names
@@ -451,7 +454,7 @@ def test_what_the_path_leaves_out() -> None:
     no firebox zone of its own."""
     from kilndesigner.model import Kiln
 
-    fires = ch._fires(load_design(OLSEN / "olsen-two-chamber.yaml"))  # pyright: ignore[reportPrivateUsage]
+    fires = ch._fires(load_design(TWO_CHAMBER))  # pyright: ignore[reportPrivateUsage]
     assert [f.side for f in fires] == ["front"]
     lay = ch._layout(load_design(OLSEN / "fast-fire.yaml"), _run("fast-fire"), 1)  # pyright: ignore[reportPrivateUsage]
     for change in ({"draft.chimney": None}, {"draft.type": "up"}, {"draft.flue_wall": "left"}):

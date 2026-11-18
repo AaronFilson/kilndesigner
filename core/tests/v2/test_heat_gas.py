@@ -172,8 +172,9 @@ FUEL_KILNS = sorted(
 
 
 def test_every_fuel_kiln_has_its_own_fuel() -> None:
-    """The 38 kilns that burn wood, coal or oil (the dataset, research A1)."""
-    assert len(FUEL_KILNS) == 38
+    """The 37 kilns that burn wood, coal or oil (the dataset, research A1; 38 with Olsen's
+    unbuilt two-chamber design, out of the set since 2026-11-17)."""
+    assert len(FUEL_KILNS) == 37
     kinds = {f.kind for kid in FUEL_KILNS for f in own.own_fuels(kid)}
     assert kinds == {"wood", "coal", "oil"}
     assert [f.kind for f in own.own_fuels("blakebrough-sturt")] == ["wood", "oil"]

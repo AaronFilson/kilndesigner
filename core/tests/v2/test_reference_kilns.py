@@ -26,6 +26,16 @@ def test_every_fact_has_its_source_and_status(data: dict[str, Any]) -> None:
     assert ref.problems(data) == []
 
 
+def test_the_designs_kept_for_behaviour_tests_are_not_references(data: dict[str, Any]) -> None:
+    """Olsen's two-chamber kiln is his unbuilt design (pp.202, 206; the owner, 2026-11-17): its
+    facts are checked as the references' are, but it isn't one of them."""
+    designs = ref.load(ref.DESIGNS)
+    assert ref.problems(designs) == []
+    assert set(designs["kilns"]) == {"olsen-two-chamber"}
+    assert not set(designs["kilns"]) & set(data["kilns"])
+    assert len(data["kilns"]) == 52
+
+
 def test_a_fact_without_its_source_is_caught() -> None:
     def kiln(*heat: dict[str, Any]) -> dict[str, Any]:
         return {

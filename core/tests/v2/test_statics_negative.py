@@ -61,7 +61,8 @@ def test_n1_no_reference_arch_is_below_its_least_thickness() -> None:
     assert ratios[worst] == pytest.approx(1.88, abs=0.01)
     assert ratios["kato-coal across"] == pytest.approx(1.93, abs=0.02)
     assert all(r > 1.0 for r in ratios.values())
-    assert len(ratios) == 42  # 39 kilns' rings, one of each size
+    # 38 kilns' rings, one of each size (42 with Olsen's unbuilt two-chamber design, out 2026-11-17)
+    assert len(ratios) == 41
 
 
 def test_n1_the_semicircles_least() -> None:

@@ -1,15 +1,18 @@
 # Olsen's two-chamber wood kiln, side-stoked (`olsen-two-chamber`)
 
 Two chambers in a row, each with its own firebox; the first stoked from the side. Design file:
-`examples/olsen/olsen-two-chamber.yaml`.
+`examples/olsen-two-chamber.yaml` (and the `wood-two-chamber` template).
 
-**A design, not a built kiln (the owner, 2026-11-17 and 2026-11-18).** This is Olsen's proposed
-improvement of Kitade's built two-chamber kiln (`kitade-tojilo`, p.202): "The page 202 kiln is a
-two chamber as built. The Olsen suggestions are not built." It is out of the set of reference
-kilns that must stand, kept as a design: this example and the wood-two-chamber template
-(`docs/planning/11-17-26-inputs.md` §8). Its statics verdict is reported, not required.
+**Status: Olsen's unbuilt proposal, not a reference kiln (the owner, 2026-11-17).** On pp.202 and
+206 Olsen describes how he would improve Kitade's kiln (`kitade-tojilo`, Fig 8-11, which was
+built); the book doesn't say this design was built and fired. ADR 0017 decision 17 takes as
+references only kilns that stood and worked, so it left the reference set (53 → 52): its facts
+moved from `core/tests/v2/reference_kilns.yaml` to `core/tests/v2/design_kilns.yaml`, where the
+model's behaviour tests (a two-chamber row, its stages, the wall between) still read them, and
+nothing validated depends on it (`docs/planning/11-17-26-inputs.md` §8). The owner, again on
+2026-11-18: "The page 202 kiln is a two chamber as built. The Olsen suggestions are not built."
 
-p.202, read again on the page image (2026-11-18), splits:
+p.202, read again on the page image (2026-11-18), splits (`design_kilns.yaml`):
 - **Kitade's, as built:** the side-stoke firebox 18 in below the first chamber's floor with a
   fast-fire metal grate 9 in tall, the chamber's width and depth (Figs 8-9, 8-10). The design takes
   it for its first firebox.

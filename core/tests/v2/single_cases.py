@@ -309,7 +309,7 @@ def as_fired(m: ZoneModel, dry: float) -> float:
 def _held(
     kid: str, key: tuple[Hashable, ...], lam: str, top: float
 ) -> tuple[float | None, float | None, float | None]:
-    """The printed firing at a corner, to its top (K): its fuel as fired (kg), its air over the
+    """The printed firing at a corner, to ``top`` (K): its fuel as fired (kg), its air over the
     draft's most and its last fuel rate (kg/h as fired); Nones where the corner can't follow it
     (no consistent state, the gas past its tables, or IDA's budget spent)."""
     m = variant(kid, dict(zip(KEYS, key, strict=True)))

@@ -10,8 +10,8 @@
 # Assumed: the temperature isn't given. The owner's estimate (2026-11-17, 2026-11-18) is
 # earthenware's normal range, cone 01 to cone 2: 1119–1142 °C (2046–2088 °F) by Orton's
 # self-supporting cones at 60 °C/h, the slower of the table's rates, as a 10 h wood firing ends
-# (cones.yaml). The design takes the estimate's top, cone 2; v2's tests carry the range. The
-# brick isn't named:
+# (cones.yaml). The design takes the estimate's top, cone 2; v2's tests carry the range
+# (core/tests/v2/single_cases.py). The brick isn't named:
 # refractory brick, which Böttger brought to the bottle kiln (p.166); medium-duty
 # firebrick (Olsen's intermediate duty, p.18). The 7 ft is taken to the springline. The dome's
 # rise isn't printed: 3 in per foot, the top of Olsen's 2½–3 in/ft for domes (p.51), 45 in. It is

@@ -4,9 +4,7 @@ Where v2 can't yet model one, what is missing is said, and the set is pinned her
 drop out of the model unnoticed. None is fitted: the kilns only check the model. A kiln's own
 unknown, such as the hot strength of a historic kiln's brick, is worked back from it having stood
 (decision 17 as amended, the owner, 2026-11-17): Tobe stands, its working in test_statics_row.py.
-
-Olsen's two-chamber design was never built (`NOT_BUILT`): it is checked as any design is, its
-verdict reported, outside the set that must stand."""
+Olsen's two-chamber design, never built, is out of the set (`examples/olsen-two-chamber.yaml`)."""
 
 from pathlib import Path
 
@@ -22,10 +20,6 @@ NOT_MODELLED = {
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }
-# Design files of kilns no one built: not reference kilns, so not held to standing. Olsen's
-# two-chamber kiln is his proposed improvement of Kitade's (pp.202, 206); the kiln on p.202 is
-# Kitade's, built, and Olsen's suggestions are not (the owner, 2026-11-17 and 2026-11-18)
-NOT_BUILT = {"olsen-two-chamber"}
 
 
 @pytest.fixture(scope="module")
@@ -36,16 +30,11 @@ def results() -> dict[str, KilnStatics]:
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) -> None:
-    assert len(results) == 53
-    built = {k: r for k, r in results.items() if k not in NOT_BUILT}
-    assert len(built) == 52
-    falls = {k: r.stands for k, r in built.items() if r.all_stand is False}
+    assert len(results) == 52  # Olsen's unbuilt two-chamber design left the set (2026-11-17)
+    falls = {k: r.stands for k, r in results.items() if r.all_stand is False}
     assert falls == {}, f"a reference kiln can't stand in v2: a model fault to find ({falls})"
-    standing = {k for k, r in built.items() if r.all_stand}
+    standing = {k for k, r in results.items() if r.all_stand}
     assert len(standing) == 52 - len(NOT_MODELLED)
-    for kid in NOT_BUILT:  # a design: its verdict reported, whatever it is
-        print(f"{kid}, a design no one built: {results[kid].stands}")
-        assert results[kid].stands["cold"] is not None
     for kid, words in NOT_MODELLED.items():
         r = results[kid]
         assert r.all_stand is None
@@ -95,7 +84,7 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
         n = results[kid].numbers
         assert n["least on the buttress at the front, cold"] == pytest.approx(0.0, abs=1e-6)
     rows = {k for k, r in results.items() if r.kind == "arches along the draft"}
-    assert len(rows) == 10
+    assert len(rows) == 9  # 10 with Olsen's unbuilt two-chamber design, out since 2026-11-17
 
 
 @pytest.mark.slow
