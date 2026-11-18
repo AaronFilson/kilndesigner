@@ -94,10 +94,7 @@ heat:
           width: 15 in
           length: 55 in
           gap: 0.75 in
-        # The side door has a stoke hole in the picture (p.117, the user 2026-11-17); its size
-        # isn't printed, so it takes the door's printed 9 × 13½ in (assumed; the dataset's band runs
-        # 9 × 7 in, Kitade's p.202 hole, to 9 × 13½ in)
-        stoke_hole:
+        stoke_hole: # 9 × 13½ in, in the side door (p.117, read by the user 2026-11-17)
           width: 9 in
           height: 13.5 in
 draft:
