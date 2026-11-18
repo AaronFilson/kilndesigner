@@ -76,7 +76,7 @@ SOURCED: tuple[SourcedFiring, ...] = (
         fuel="wood",
         time="the firebox about 36 h, to about 1000 °C at the first stoke holes; then side "
         "stoking, 14 (?) to 18 h",
-        used="about 200 bundles of kindling, 15 × 15 × 30 in, side stoking",
+        used="about 200 bundles of kindling, 15 in across and 30 in long, side stoking",
         reference=f"{OLSEN}, pp.86–87",
     ),
     SourcedFiring(

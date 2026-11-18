@@ -100,7 +100,7 @@ def test_a_crossing_grows_as_its_plan_and_vaults() -> None:
 
 
 def test_hollyweirds_domes_are_traced() -> None:
-    """Hollyweird's two chambers, each under its own sail dome (12.6 in rise): traced as built,
+    """Hollyweird's two chambers, each under its own sail dome (14 in rise): traced as built,
     not flat at the springline as massing's brick-only domes left them; each dome's area the
     sphere's over its chamber's plan (`shape.SailDome`) within 0.5 %."""
     k = loads.design("hollyweird")

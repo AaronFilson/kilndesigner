@@ -478,10 +478,11 @@ def bundle_kg(volume_m3: float, pine: bool) -> tuple[float, float]:
 
 
 # Suzuki's bundle, "15 in (38 cm) in diameter and 18 in (46 cm) long" (p.93): π/4 × 15² × 18 in³;
-# Tamba's, 15 × 15 × 30 in (pp.86–87)
+# Tamba's, "15 x 30in" (p.87), round, 15 in across and 30 in long (the owner, 2026-11-18; first
+# read square from the metric's "38 x 38 x 76cm"): π/4 × 15² × 30 in³
 BUNDLES = {
     "suzuki-kyoto": (math.pi / 4 * (15 * IN) ** 2 * 18 * IN, True),
-    "tamba": (15 * IN * 15 * IN * 30 * IN, False),
+    "tamba": (math.pi / 4 * (15 * IN) ** 2 * 30 * IN, False),
 }
 
 

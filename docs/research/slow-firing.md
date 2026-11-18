@@ -15,7 +15,7 @@ image" were read on the scan on 2026-10-31, the rest come from `olsen-kilns.md` 
 | Bizen design aims | — | "maximum efficiency of wood consumption over a seven-day firing period with minimum stoking and draft"; "minimum loss of heat during gradual temperature increase" | — | Bizen clays "bloat, blister, crack and sag if fired too rapidly"; losses about 50 % with the artist's clay, 20 % with commercial clay | Olsen p.99; checked on the page image |
 | Bizen walls | — | — | — | 10–13 in, tightly built, no vapour holes, no expansion joints: the long, slow firing and cooling take the movement | Olsen p.100 |
 | La Borne tunnel kilns, 1766–2825 ft³ | wood | 2½–3 days' preheating, up to four days of *petit feu*, about one day of *grand feu*: about 7–8 days (derived) | not given | Light salting near the end | Olsen pp.110–111 |
-| Tamba tube kilns, 120–150 ft | wood | Firebox about 36 h, to about 1000 °C at the first stoke holes; side stoking 14 (?) to 18 h | about 200 bundles (15 × 15 × 30 in) | | Olsen pp.86–87 |
+| Tamba tube kilns, 120–150 ft | wood | Firebox about 36 h, to about 1000 °C at the first stoke holes; side stoking 14 (?) to 18 h | about 200 bundles (15 in across, 30 in long) | | Olsen pp.86–87 |
 | Suzuki cooperative climbing kiln, Kyoto | wood bundles | About 56 h to cone 8–9; the firebox 15 h to 1000 °C | about 75 bundles a side, chambers 1–3 | | Olsen p.93 |
 | Olsen's Hollyweird tube | wood | A "normal" firing 60 h; at cone 11-plus 35–40 h (front), 10–15 h (back) | not given | | Olsen p.117 |
 | Mr Kato's coal downdraft, about 250 ft³ | coal | Over 50 h to 2372 °F; cooled three days or more | not given | Slow because of "the very thick walls and only two fireboxes" | Olsen p.131 |

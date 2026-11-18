@@ -10,9 +10,9 @@ figure:
 
 λ is the operator's setting, 1.0–1.15: no gas kiln here has a draft path yet (part C1). The
 electric kilns are in `test_heat_elements.py`. Kähler's salt kiln and Blakebrough's fibre kiln
-print no burner input (their burners refused, `test_heat_burner_inputs.py`): their models build
-(`test_heat_shapes.py`), their firings wait on the band the owner gave on 2026-11-17, Olsen's
-Rule 1 by lining (`11-17-26-inputs.md` §7), not built yet. Nothing is fitted.
+print no burner input (their burners refused, `test_heat_burner_inputs.py`): they fire on the
+owner's band (2026-11-17, `11-17-26-inputs.md` §7), Olsen's Rule 1 by lining
+(`gas_cases.RULE_1`; fibre as IFB, pp.39 and 71). Nothing is fitted.
 """
 
 from __future__ import annotations
@@ -55,6 +55,27 @@ def test_t1_reaches_its_cone_on_its_burners(kid: str) -> None:
     swing = {name: hi - lo for name, lo, hi in b.swings}
     assert swing["the load"] > 0  # a heavier setting is slower
     assert swing["λ"] > 0  # more air carries more heat away
+
+
+@pytest.mark.parametrize("kid", gc.RULE_1_KILNS)
+def test_t1_reaches_its_cone_on_rule_1s_band(kid: str) -> None:
+    """T1 for the gas kilns that print no burner input (the owner, 2026-11-17, `11-17-26-inputs.md`
+    §7): the input a band from Olsen's Rule 1, the chamber's volume × 7,000–10,000 BTU/ft³/hr for
+    an IFB hot face (pp.226–228; Kähler's JM 28) and for fibre as IFB (Blakebrough's blanket:
+    "negligible fuel savings compared to IFB kilns" in 6–12 h firings, p.71; "little advantage"
+    at 2200 °F, p.39). At the band's most the kiln reaches its cone at every corner of its band
+    (the setting's least to most, λ 1.0–1.15); at its least the time is reported. Neither kiln
+    prints a time, so none is tested."""
+    lo, hi, how = gc.rule_1(kid)
+    most, least = gc.band(kid, hi), gc.band(kid, lo)
+    print(
+        f"T1 {kid} on Rule 1 ({how}): {lo:,.0f}–{hi:,.0f} BTU/hr; at the most "
+        f"{most.low:.2f}–{most.high:.2f} h, at the least {least.low:.2f}–{least.high:.2f} h"
+    )
+    assert ("fibre as IFB" in how) == (kid == "blakebrough-tasmania")
+    assert math.isfinite(most.high), f"{kid}: not reached at a corner at Rule 1's most, {most}"
+    assert 0 < most.low <= most.nominal <= most.high
+    assert most.low <= least.low  # the same fastest corner, on more input
 
 
 def test_t2_the_kit_24_fires_in_eight_hours() -> None:

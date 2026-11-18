@@ -1,14 +1,16 @@
 # The reference kilns: what Frederick L. Olsen, The Kiln Book, 4th ed., prints about each kiln it
 # describes, for engine v2's heat and statics validation (docs/adr/0017-engine-v2.md).
 # Every kiln was built and fired but one: olsen-two-chamber is Olsen's proposed improvement of
-# Kitade's kiln (pp.202, 206), not a kiln he reports built (the owner, 2026-11-17; whether it stays
-# in the set is the owner's question, docs/planning/11-17-26-inputs.md §8). Read from the
+# Kitade's kiln (pp.202, 206), never built. The kiln on p.202 is Kitade's, built with two chambers;
+# Olsen's suggestions are not built (the owner, 2026-11-17 and 2026-11-18), so the design is out of
+# the reference set, kept as a design (its example and template; inputs §8). Read from the
 # page-cited notes (docs/research/olsen-kilns.md, kiln-reference.md), the kilns' docs
 # (docs/kilns/olsen/) and design files (examples/olsen/), 2026-11-09; a few pages were checked on
 # the scan, as each fact's note says.
 #
-# kilns: the 53 kilns with a design file. extras: kilns and worked examples with no design file
-# (no chamber size printed, or a part only) that print a heat figure or a structural fact.
+# kilns: the 53 design files, 52 kilns built and fired and Olsen's unbuilt two-chamber design.
+# extras: kilns and worked examples with no design file (no chamber size printed, or a part only)
+# that print a heat figure or a structural fact.
 #
 # Each kiln: name, design, doc, fuel, draft, then lists of facts in six groups (heat, chamber,
 # lining, flow, structure, service), gaps (what the book doesn't give that a heat or statics check
@@ -1774,11 +1776,12 @@ kilns:
         status: printed
         page: p.166
       - what: top_temperature
-        value: 2088
+        value: [2046, 2088]
         unit: degF
         status: assumed
-        reason: not given; earthenware is rarely above cone 2 (the user, 2026-11-17), so cone 2, 1142 °C
-          by Orton's self-supporting cone at 60 °C/h (cones.yaml)
+        reason: not given; the owner's estimate (2026-11-17, 2026-11-18), earthenware's normal range
+          cone 01 to cone 2, cone 2 its top, 1119–1142 °C by Orton's self-supporting cones at 60 °C/h
+          (cones.yaml). The design file takes cone 2; the tests carry the range
       - what: fuel_species
         value: chestnut
         status: printed
@@ -5133,16 +5136,16 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
       - what: setting
-        value: [279, 1547]
+        value: [218, 1312]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.816 m³; 1–4 layers of shelves over 2.582 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.816 m³ as v2 traces it; the envelope''s plan 2.582 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.134 m³; 1–6 layers of shelves over 1.543 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.134 m³ as v2 traces it; the envelope''s plan 1.543 m²)'
         condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [421, 2345]
+        value: [581, 3601]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.709 m³; 1–4 layers of shelves over 4.006 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.709 m³ as v2 traces it; the envelope''s plan 4.006 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 8.197 m³; 1–6 layers of shelves over 4.563 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 8.197 m³ as v2 traces it; the envelope''s plan 4.563 m²)'
         condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
@@ -5173,20 +5176,41 @@ kilns:
         reason: the plan's printed lengths from the firebox to the chimney, 36 (firebox) + 55 (first
           ware platform) + 13 (wall) + 15 (second grate) + 55 (second ware platform) + 9 (grate) + 
           66 (back ware platform)
-        note: checked on the page image, 2026-11-09; the steps of 12, 18 and 6 in are rises, not 
+        note: checked on the page image, 2026-11-09; the steps of 12, 18 and 6 in are rises, not
           lengths
+      - what: length
+        value: [104, 145]
+        unit: inch
+        status: scaled
+        page: p.116
+        figure: Figs 4-108, 4-110
+        spread: the split at the side door's front end (Fig 4-108's junction), on the plan's printed
+          lengths, ±2 in
+        condition: Fig 4-108's 8 ft (the firebox, the first platform and the 13 in wall) and 12 ft
+          (the second grate and platform, the 9 in grate and the back platform)
+        note: olsen-figure-scaling.md §7.6; the design enters the front chamber 55 in (its platform)
+          and the back 145 in, the engine laying the 36 in firebox in front
       - what: width
-        value: 55
+        value: 61
         unit: inch
-        status: assumed
-        reason: not printed; from Olsen's two-chamber kiln (olsen-two-chamber, Fig 8-17), which 
-          shares this kiln's 8 ft chamber, ¾ in grate bars and 5 in air tube and may be the same 
-          kiln
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: 59–63½ in against the drawn shelves' printed 12 in across (4.99 px/in, taken);
+          72½–76½ in at the printed lengths' scale along the kiln (4.16 px/in), as the plan isn't
+          drawn to one scale
+        condition: both chambers, inside, the same within 3 % in plan
+        note: olsen-figure-scaling.md §7.2 (2026-11-18); the back platform tapers from 111 in behind
+          the wall to 39–46½ in at its end and a 26–31 in throat (not expressible in a row). The 55
+          in once taken from the unbuilt design's Fig 8-17 is out (the owner, 2026-11-18)
       - what: crown_height
-        value: 48
+        value: 61
         unit: inch
         status: assumed
-        reason: to the top of the dome, from Olsen's two-chamber kiln (Fig 8-17)
+        reason: no figure scales a height (olsen-figure-scaling.md §7.5); Olsen's Principle 1 on his
+          own kiln, the height equal to the width, the dome counted in it (p.74–75), in both
+          chambers. Fig 4-108 draws the front dome taller and rounder than the back, by an amount
+          it doesn't scale
     lining:
       - what: wall
         value: hard firebrick for the walls, the flue construction and the firebox; insulating brick
@@ -5263,14 +5287,15 @@ kilns:
         status: printed
         page: p.116
       - what: between_flues
-        value: three gaps 11–13 in wide each, between piers 10½–11½ in
+        value: three gaps about 12–14 in wide each, between piers about 10–11 in
         status: scaled
-        page: p.116
-        figure: Fig 4-110
-        spread: 7.1–7.8 px/in, from the 55 in and the printed 12 × 24 in shelves
-        note: their height isn't drawn; not entered in the design; step A took the 55 in as the 
-          chamber's width, but on the page it labels the platforms' length (checked 2026-11-09), so 
-          the scale is open to question
+        page: p.116, p.117
+        figure: Figs 4-110, 4-114
+        spread: 11½–15 in (piers 9–12) against the drawn shelves' printed 12 in across, 4.99 px/in;
+          the photo of the wall (Fig 4-114) gives about 12 in (11–13), piers 7–8 in, on its brick
+          courses
+        note: rescaled 2026-11-18 (olsen-figure-scaling.md §7.3); step A had taken the 55 in as the
+          width. Their height isn't drawn; not entered in the design
       - what: passive_air
         value: secondary air for the second firebox through a 5 in (12.5 cm) extruded clay tube with
           graduated holes under the grate, a shutter or plug at its outer end, through the ash-pit 
@@ -5314,13 +5339,15 @@ kilns:
         page: p.116
         note: the "three large exit flues" from the front chamber (C1)
       - what: between_flue_width
-        value: [11, 13]
+        value: [12, 14]
         unit: inch
         status: scaled
         page: p.116
         figure: Fig 4-110
-        spread: 7.1–7.8 px/in, from the 55 in and the printed 12 × 24 in shelves
-        note: the scaled gaps above, as numbers; their height isn't drawn (C1)
+        spread: 11½–15 in against the drawn shelves' printed 12 in across (4.99 px/in); Fig 4-114's
+          brick courses give about 12 in (11–13)
+        note: rescaled 2026-11-18 (olsen-figure-scaling.md §7.3), the 11–13 in of step A having
+          taken 55 in as the width; their height isn't drawn (C1)
     structure:
       - what: dome_type
         value: two cast dome-shaped ceilings over a Bizen-style front chamber and a tube-style 
@@ -5333,20 +5360,23 @@ kilns:
         status: assumed
         reason: a 6 in thickness is best for most castings (p.59)
       - what: dome_rise
-        value: 12.6
+        value: 14
         unit: inch
         status: assumed
-        reason: 2¾ in per foot of the 55 in span, the middle of Olsen's 2½–3 in/ft for domes (p.51)
+        reason: 2¾ in per foot of the 61 in span, the middle of Olsen's 2½–3 in/ft for domes (p.51)
       - what: span
-        value: 55
+        value: 61
         unit: inch
-        status: assumed
-        reason: the assumed chamber width
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: 59–63½ in (the width fact)
+        note: the scaled chamber width
       - what: springline_height
-        value: 35.4
+        value: 47
         unit: inch
         status: assumed
-        reason: the assumed 48 in to the top of the dome less the 12.6 in rise
+        reason: the assumed 61 in to the top of the dome (Principle 1) less the 14 in rise
       - what: buttress
         value: the domes' walls buttressed
         status: assumed
@@ -5394,7 +5424,9 @@ kilns:
         status: printed
         page: p.117
     gaps:
-      - the chambers' widths and heights
+      - the chambers' heights (the width scaled, olsen-figure-scaling.md §7)
+      - the side walls' thickness (the plan draws them 14–19½ in, perhaps the buttressing; 9 in
+        assumed)
       - dome thickness and rise
       - slope
       - firebox depths
@@ -5403,17 +5435,18 @@ kilns:
       - wood per firing
       - ware load
     notes:
-      - Fig 4-110's two 55 in labels are the ware platforms' lengths along the kiln (checked on the 
-        page image p.116, 2026-11-09), as olsen-kilns.md reads them; the design file takes 55 in as 
-        the chambers' width (from olsen-two-chamber) and step A scaled the plan from a 55 in chamber
-        width
-      - the design file's header says the plan runs 249 in from the first ware platform to the 
-        chimney; the printed lengths make 249 in from the firebox's front (213 in from the first 
-        platform)
-      - Fig 4-108's 12 ft and 8 ft don't say which chamber is which; the plan's segments make the 
-        firebox-end chamber about 91 in and the other about 158 in
+      - Fig 4-110's two 55 in labels are the ware platforms' lengths along the kiln (checked on the
+        page image p.116, 2026-11-09), as olsen-kilns.md reads them. The width once taken from
+        olsen-two-chamber is out; the plan scales 61 in (2026-11-18, olsen-figure-scaling.md §7)
+      - the printed lengths make 249 in from the firebox's front to the back platform's end, partway
+        down the taper; the plan draws 31–36 in more of neck to the chimney box, about 25 ft in all
+      - Fig 4-108's split falls at the side door, the wall's back face; 104 in in front of it (the 8
+        ft) and 145 in behind (the 12 ft); the notes first read 91 and 158 in
+      - the chimney box isn't drawn to its "15 X 24" label (16–19 × 41–50 in); the label sits in the
+        throat, which scales 15–17½ × 26–31 in
       - the caption list and the figure labels swap Figs 4-109 and 4-110
-      - possibly the same kiln as olsen-two-chamber and olsen-anagama-p26; the book doesn't say
+      - not olsen-two-chamber, a design never built; its two chambers differ and are described on
+        its own pages (the owner, 2026-11-18). Possibly olsen-anagama-p26; the book doesn't say
 
   hotchkiss-raw-clay:
     name: Hotchkiss six-chamber raw-clay climbing kiln, 1971
@@ -10279,8 +10312,8 @@ kilns:
       - what: cone
         value: "11"
         status: assumed
-        reason: as Olsen's Hollyweird tube, held at cone 11-plus (p.117), which shares this kiln's 8
-          ft chamber, 55 in dimension, ¾ in grate bars and 5 in air tube and may be the same kiln
+        reason: as Olsen's own wood kiln, the Hollyweird tube, held at cone 11-plus (p.117); a
+          design, so no cone of its own
       - what: fuel_species
         value: wood, kind not printed
         status: assumed
@@ -10401,6 +10434,16 @@ kilns:
           cools slowly
         status: printed
         page: p.202
+        condition: Kitade's firebox as p.202 describes it (Figs 8-9, 8-10), which the design takes
+          for its first
+      - what: firebox
+        value: Olsen's changes to Kitade's firebox, never built ("If it was a kiln I had built");
+          more, smaller-width air holes spread evenly across the chamber, the grate bars spaced to
+          the minimum, and grate-level mouse holes to open if needed
+        status: printed
+        page: p.202
+        note: read on the page image, 2026-11-18; not in the design file (its air holes and mouse
+          holes aren't sized)
       - what: ash_pit
         value: 15
         unit: inch
@@ -10514,10 +10557,14 @@ kilns:
         status: assumed
         reason: as the walls, 9 in of K-26
     service:
-      - what: builder
-        value: Olsen
+      - what: built
+        value: never built; Olsen's proposed improvement of Kitade's kiln, his changes to its
+          firebox (p.202) and his own second-chamber firebox (p.206, Fig 8-17)
         status: printed
-        page: p.202
+        page: p.202, p.206
+        quote: If it was a kiln I had built
+        note: the owner, 2026-11-17 and 2026-11-18; out of the reference set, kept as a design (its
+          example and template)
     gaps:
       - the draft (not stated)
       - the second chamber's size
@@ -10526,8 +10573,8 @@ kilns:
       - the first firebox's height above its grate (so its 18 in drop can be entered)
       - cone, firing time and fuel per firing
     notes:
-      - it may be the Hollyweird tube (pp.116–117) or the chamber kiln whose ring arch opened almost
-        ½ in (olsen-chamber-p23, p.47); the book doesn't say
+      - a design, not a kiln built; not the Hollyweird tube, whose two chambers differ and are
+        described on its own pages (pp.116–117; the owner, 2026-11-18)
       - the draft isn't stated (p.202); the design file takes cross-draft
 
   phoenix-nh:
@@ -11851,8 +11898,10 @@ kilns:
         status: printed
         page: pp.86–87
         condition: the side stoking
-        note: bundles of kindling 15 × 15 × 30 in (38 × 38 × 76 cm); the firebox stage's wood isn't 
-          printed
+        note: bundles "15 x 30in" of split kindling and small pieces of wood (p.87; the metric
+          prints "38 x 38 x 76cm"), round, 15 in across and 30 in long, mostly kindling and at
+          times stoked whole (the owner, 2026-11-18; first read square from the metric); the
+          firebox stage's wood isn't printed
       - what: fuel_kind
         value: wood, side-stoked with split kindling; today most of the kilns fire the firebox with 
           an oil burner and blower
@@ -11953,10 +12002,10 @@ kilns:
         reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 9.034 m³; no shelves (pp.85–86) (the chamber zone''s 9.034 m³ as v2 traces it; the envelope''s plan 6.129 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
       - what: fuel_unit_mass
-        value: [28.6, 58.1]
+        value: [22.5, 45.7]
         unit: kg
         status: assumed
-        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, 15 × 15 × 30 in = 0.111 m³ (pp.86–87), packed as a cord is stacked, any species'' oven-dry cord of 2,070–4,200 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]; the wood isn''t named): an assumption, the owner''s question (11-10-26.md, C3b)'
+        reason: 'no source weighs a bundle (kiln-fuelwood-by-region.md §3): the printed bundle''s gross volume, round, 15 in across and 30 in long, π/4 × 15² × 30 in³ = 0.0869 m³ (p.87; the owner, 2026-11-18), packed as a cord is stacked, any species'' oven-dry cord of 2,070–4,200 lb over 128 ft³ (USU Extension, Wood Heating, Table 1; wood-fuel.md [W4]; the wood isn''t named): an assumption, the owner''s question (11-10-26.md, C3b)'
         condition: a bundle, oven-dry (research C3b)
     chamber:
       - what: length
@@ -11984,7 +12033,8 @@ kilns:
       - what: chamber_count
         value: 7
         status: assumed
-        reason: the middle of the printed 6–8 door segments, each taken as a chamber
+        reason: the middle of the printed 6–8 door segments, each a zone of the one tube (Tamba has
+          no closed chambers; the shape fact below)
       - what: width
         value: 78
         unit: inch
@@ -12011,11 +12061,21 @@ kilns:
         spread: ±3 in
         note: below the faint 3½ ft of Fig 4-16 by more than the spread; the design keeps 3½ ft
       - what: shape
-        value: a climbing tube built half above ground, its vault stepping up in segments along the 
+        value: a climbing tube built half above ground, its vault stepping up in segments along the
           slope; the slope isn't printed
         status: drawing
         page: p.87
         figure: Fig 4-16
+      - what: shape
+        value: one tube, half buried, with no closed chambers; it narrows at the flue wall before
+          each door, whose arched openings support the vault, the "restriction at the chamber exit"
+          (p.86), and narrows in plan into the end chamber (Fig 4-19)
+        status: printed
+        page: p.85, p.86, p.88
+        figure: Figs 4-11, 4-12, 4-19
+        note: the owner, 2026-11-18 (the classic Tamba kilns are tubes, half buried, with no closed
+          chambers, their shape changing where the tube narrows at its arched supports); the design
+          takes it as one vault (roof.tube) cut by the flue walls (draft.between)
     lining:
       - what: wall
         value: walls, arch and floor of K-26 insulating brick
@@ -12076,6 +12136,12 @@ kilns:
         figure: Fig 4-16
         spread: ±½ in, from the printed 3½' and 6'
         note: how many to a chamber isn't drawn; the design puts one in each side of each chamber
+      - what: stoke_hole
+        value: 16 in round, one in each side of each segment, centres 32 in up
+        status: assumed
+        reason: the owner's estimate for the Tamba series (2026-11-17, 2026-11-18), in place of the
+          drawn 7 in, which can't pass the 15 in bundles; a hole is covered after each stoking, so
+          its size doesn't set the air (inputs §3)
       - what: exit_flue
         value: the end chamber, for bisque only, has open chimney holes and no stack
         status: printed
@@ -13831,7 +13897,7 @@ extras:
         note: its ring arch opened almost ½ in (1.3 cm) in firing; a steel tie might have helped
     notes:
       - no design file - shelf size and arch movement only (olsen-kilns.md §13)
-      - it may be olsen-two-chamber; the book doesn't say
+      - not olsen-two-chamber, which was never built (the owner, 2026-11-18)
       - the only movement of a built arch the book records; a mild negative case for the statics (an
         arch that opened but stood)
   olsen-fiber-p62:

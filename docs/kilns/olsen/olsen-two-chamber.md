@@ -3,11 +3,19 @@
 Two chambers in a row, each with its own firebox; the first stoked from the side. Design file:
 `examples/olsen/olsen-two-chamber.yaml`.
 
-**Not a built kiln (the owner, 2026-11-17).** This is Olsen's proposed improvement of Kitade's
-built two-chamber kiln (`kitade-tojilo`, p.202). Whether it stays in the set of reference kilns
-that must stand as built is the owner's question (`docs/planning/11-17-26-inputs.md` §8). p.202
-describes Kitade's kiln with Olsen's improvements set in it, so the facts below cited to p.202
-are still to sort between the two kilns.
+**A design, not a built kiln (the owner, 2026-11-17 and 2026-11-18).** This is Olsen's proposed
+improvement of Kitade's built two-chamber kiln (`kitade-tojilo`, p.202): "The page 202 kiln is a
+two chamber as built. The Olsen suggestions are not built." It is out of the set of reference
+kilns that must stand, kept as a design: this example and the wood-two-chamber template
+(`docs/planning/11-17-26-inputs.md` §8). Its statics verdict is reported, not required.
+
+p.202, read again on the page image (2026-11-18), splits:
+- **Kitade's, as built:** the side-stoke firebox 18 in below the first chamber's floor with a
+  fast-fire metal grate 9 in tall, the chamber's width and depth (Figs 8-9, 8-10). The design takes
+  it for its first firebox.
+- **Olsen's, never built:** "If it was a kiln I had built, I would add more smaller-width air
+  holes", the grate bars spaced to the minimum, and grate-level mouse holes.
+- **Olsen's own second-chamber firebox** (p.206, Fig 8-17).
 
 ## Sources
 
@@ -35,10 +43,9 @@ No change in this pass.
 
 ## Open questions for the user
 
-1. Is this the Hollyweird tube (pp.116–117)? They share the 8 ft chamber, 55 in, ¾ in bars and
-   the 5 in air tube. (2026-11-17: this design was never built as drawn. Was Hollyweird built to
-   it? Hollyweird's assumed width and crown lean on the two being one kiln.)
-2. Does this design leave the reference set, or stay in as Olsen's own (inputs §8)?
+1. ~~Is this the Hollyweird tube?~~ No (the owner, 2026-11-18). Hollyweird has two chambers of its
+   own, not the same as each other, described on its own pages (pp.116–117; inputs §8a).
+2. ~~Does this design leave the reference set?~~ Yes: it was never built (inputs §8).
 
 ## Scaled off the figures (step A, 2026-11-09)
 

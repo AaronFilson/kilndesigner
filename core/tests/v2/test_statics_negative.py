@@ -100,10 +100,12 @@ def test_n2_through_the_pipeline() -> None:
 def test_n2_restated_a_domes_least_falls_with_its_springing() -> None:
     """N2's criterion, the hemisphere's least t/R (Heyman 0.042; v2 0.0428; Lau's no-hoop 0.069),
     taken for any dome, would condemn the Calimpong teardrop's cast dome (5½ in on a 212 in sphere,
-    t/R 0.026) and Hollyweird's (6 in on 128 in, 0.046, under Lau's 0.069). Restated: the limit is
-    the hemisphere's. A spherical dome's least t/R falls with its springing angle (v2: with hoop
-    forces 0.0003 at singh-coal's 59.5°, under 0.0002 at Breda's 53.1°; as lunes 0.040 and 0.037),
-    and the sail domes' strips stand down to a few hundredths of an inch."""
+    t/R 0.026) and Hollyweird's back dome (6 in on a 228 in sphere over its 61 × 145 in chamber,
+    0.026, under Lau's 0.069; its front dome, over 61 × 55 in, is 0.085, since the chambers came
+    from Hollyweird's own figures, 2026-11-18). Restated: the limit is the hemisphere's. A
+    spherical dome's least t/R falls with its springing angle (v2: with hoop forces 0.0003 at
+    singh-coal's 59.5°, under 0.0002 at Breda's 53.1°; as lunes 0.040 and 0.037), and the sail
+    domes' strips stand down to a few hundredths of an inch."""
     assert dome_least(1.0, math.pi / 2, 2000.0, 0.6, True, rings=40) == pytest.approx(
         0.0428, abs=5e-4
     )
@@ -121,9 +123,9 @@ def test_n2_restated_a_domes_least_falls_with_its_springing() -> None:
         r = (a * a + h * h) / (2 * h)
         assert t / (r + t / 2) == pytest.approx(built, abs=1e-3)
         assert t / (r + t / 2) > 2 * lunes
-    for name, ratio in (("conrad-teardrop", 0.026), ("hollyweird", 0.046)):
+    for name, which, ratio in (("conrad-teardrop", 0, 0.026), ("hollyweird", 1, 0.026)):
         kiln = olsen(name)
-        shell = sail.shells(kiln)[0]
+        shell = sail.shells(kiln)[which]
         t = shell.thickness
         assert t / (shell.radius + t / 2) == pytest.approx(ratio, abs=1e-3)
         assert t / (shell.radius + t / 2) < 0.069

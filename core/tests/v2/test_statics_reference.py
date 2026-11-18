@@ -3,7 +3,10 @@ the book all stood and worked for their builders, so every one v2 models must st
 Where v2 can't yet model one, what is missing is said, and the set is pinned here so a kiln can't
 drop out of the model unnoticed. None is fitted: the kilns only check the model. A kiln's own
 unknown, such as the hot strength of a historic kiln's brick, is worked back from it having stood
-(decision 17 as amended, the owner, 2026-11-17): Tobe stands, its working in test_statics_row.py."""
+(decision 17 as amended, the owner, 2026-11-17): Tobe stands, its working in test_statics_row.py.
+
+Olsen's two-chamber design was never built (`NOT_BUILT`): it is checked as any design is, its
+verdict reported, outside the set that must stand."""
 
 from pathlib import Path
 
@@ -19,6 +22,10 @@ NOT_MODELLED = {
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }
+# Design files of kilns no one built: not reference kilns, so not held to standing. Olsen's
+# two-chamber kiln is his proposed improvement of Kitade's (pp.202, 206); the kiln on p.202 is
+# Kitade's, built, and Olsen's suggestions are not (the owner, 2026-11-17 and 2026-11-18)
+NOT_BUILT = {"olsen-two-chamber"}
 
 
 @pytest.fixture(scope="module")
@@ -30,10 +37,15 @@ def results() -> dict[str, KilnStatics]:
 @pytest.mark.geometry
 def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) -> None:
     assert len(results) == 53
-    falls = {k: r.stands for k, r in results.items() if r.all_stand is False}
+    built = {k: r for k, r in results.items() if k not in NOT_BUILT}
+    assert len(built) == 52
+    falls = {k: r.stands for k, r in built.items() if r.all_stand is False}
     assert falls == {}, f"a reference kiln can't stand in v2: a model fault to find ({falls})"
-    standing = {k for k, r in results.items() if r.all_stand}
-    assert len(standing) == 53 - len(NOT_MODELLED)
+    standing = {k for k, r in built.items() if r.all_stand}
+    assert len(standing) == 52 - len(NOT_MODELLED)
+    for kid in NOT_BUILT:  # a design: its verdict reported, whatever it is
+        print(f"{kid}, a design no one built: {results[kid].stands}")
+        assert results[kid].stands["cold"] is not None
     for kid, words in NOT_MODELLED.items():
         r = results[kid]
         assert r.all_stand is None
@@ -91,9 +103,10 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
 def test_what_holds_the_sail_domes(results: dict[str, KilnStatics]) -> None:
     """The domes over square, oblong and curved plans, sliced: the most any strip needs of the
     walls' buttress, hot: Miravet's dense-brick dome about 100 lbf/ft, Calimpong's and
-    Hollyweird's flat cast domes 165 and 144 lbf/ft."""
+    Hollyweird's flat cast domes 165 and 182 lbf/ft (Hollyweird's on its own figures since
+    2026-11-18, 61 in wide; 144 on the 55 in borrowed before)."""
     lbft = 4.4482216152605 / 0.3048
-    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 143.6}
+    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 182.0}
     for kid, hot in want.items():
         r = results[kid]
         assert r.kind == "sail dome"

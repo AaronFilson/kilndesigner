@@ -483,14 +483,14 @@ def test_p78_carries_the_inlets_to_the_exit_and_the_chimney() -> None:
 
 def test_the_height_band_by_rule_5_and_fig_5_2() -> None:
     """Hollyweird's chimney (15 × 24 in, p.116), its height not printed: twice the downward pull
-    (35.4 + 12.6 in, p.130) to Rule 5, 3 × that + ⅓ × the horizontal pull (the two chambers, the
-    wall between, the flue wall and the 9 in run, p.80)."""
+    (47 + 14 in, its springline and dome rise, p.130) to Rule 5, 3 × that + ⅓ × the horizontal pull
+    (the two chambers, the wall between, the flue wall and the 9 in run, p.80)."""
     from kilndesigner.run_parts import run_layout
 
     k = load_design(OLSEN / "hollyweird.yaml")
     built = dr.kiln_path(k, inputs=pi.inputs("hollyweird"))
     run = run_layout(k)
-    down = (35.4 + 12.6) * IN
+    down = (47 + 14) * IN
     wall = sum(x.thickness.to("m").magnitude for x in k.lining.for_face("back"))
     across = run.length * 1e-3 + wall + 9 * IN
     col = next(e for e in built.elements if e.name == "chimney" and e.kind == "column")

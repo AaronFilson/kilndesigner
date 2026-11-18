@@ -246,14 +246,17 @@ references used. The plans print the working, so a builder can check it.
     by the owner, 2026-11-17) is the one added. The other three are the open items: the 36 ft³
     cross-draft, Singh's low-fire kiln and Breda's wood;
   - N1–N6 all fail;
-  - 52 kilns stand hot, all v2 models (Blakebrough's fibre isn't modelled). Tobe has stood hot
-    since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
+  - the reference set is the 52 built kilns. Olsen's two-chamber design was never built and is
+    kept as a design (the owner, 2026-11-18). 51 of the 52 stand hot, every one v2 models
+    (Blakebrough's fibre isn't modelled), and the design stands too, reported, not required. Tobe
+    has stood hot since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
     `11-17-26-inputs.md` §12). The lower-bound rule's "not given" stays for designs no one has
     built;
-  - the suite pins 37 kilns reaching their cone at every corner of their band (12 gas and
-    electric, 25 single chambers), and all 12 rows somewhere in theirs. That 7 of the rows reach
-    it at every corner comes from runs outside the suite before 2026-11-11, Tobe's on its old
-    lining. 2 kilns are open items and 2 print no burner input. (This was "44 + 5" before.)
+  - the suite pins 39 kilns reaching their cone at every corner of their band (14 gas and
+    electric, Kähler and Blakebrough on Rule 1's band since 2026-11-18; 25 single chambers), and
+    all 12 rows somewhere in theirs (the 11 built and the two-chamber design). That 7 of the rows
+    reach it at every corner comes from runs outside the suite before 2026-11-11, Tobe's on its
+    old lining. 2 kilns are open items.
 - **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
   found what stands in the way:
   1. v2 can't run a design file on its own. The setting, the draft-path inputs and the fuel data
@@ -299,32 +302,51 @@ engine would take in rules the owner has overturned.
        Today Hollyweird's back stage draws through its side door.
      - The intakes the dataset derives from stoke holes are reworked: Kitade, Hollyweird's front,
        Ellington and the two-chamber design. Singh's coal kiln's is printed open only in hours 1–3.
+       The book gives the air its own openings (read 2026-11-18, inputs §3):
+       - Ellington's three 13½ × 9 in air holes under its stoke holes (Fig 4-97), 364½ in²;
+       - Kitade's two 12 × 18 in air-draft and ash-pit holes (Fig 8-11), 432 in².
+       Still to read: Hollyweird's door bricking (p.117), the fast-fire's mouths and the
+       two-chamber design's tube.
+     - **The draft counts no flow backwards** (`draft.py`). An opening above the neutral plane, the
+       height where the kiln's pressure meets the room's (hydrostatics, `fittings-and-kiln-
+       convection.md`), is credited no air, and the hot gas it would push out isn't modelled. The
+       book prints that outflow: Tamba is stoked until "flame is coming out of two or three stoke
+       holes further on" (p.87). It bears on what an open stoke hole does while it is open (the
+       owner's inrush, §3), and on reduction's back pressure. Asked about by the owner, 2026-11-18.
    - **The fire mouth (§2):**
      - a design setting per stage: open, an open fraction, or closed;
      - the book's state as a dataset fact where it is printed (Tamba open, Kitade closed), and
        every state reported elsewhere;
      - the open mouth's cooling of the first chamber modelled;
      - Tamba's slow corner stops shutting its mouth.
-   - **Kitade (§8):** a second chamber, its stage, the 12 in chimney and the mouth closed; then
-     rerun T1.
+   - **Kitade (§8):** a second chamber, the first one's size (assumed, the book draws one), its
+     stage, the 12 in chimney and the mouth closed; then rerun T1.
    - **Tamba (§9):**
-     - 16 in side holes in the design, the dataset and the `tunnel` template together;
-     - the 14° slope waits on a sloped tube, engine work not listed before.
+     - ~~16 in side holes in the design, the dataset and the `tunnel` template together~~
+       (done 2026-11-18, with the round bundle, 15 × 30 in);
+     - the 14° slope waits on a sloped tube, engine work not listed before;
+     - the earth against the half-buried tube's walls: v2's heat model takes only a floor to the
+       soil (`ground.py`), so the walls lose to the room. New engine work, for Tamba and the
+       anagama in the hole.
    - **Singh (§4):** the top as a band from 800 to 1149 °C, in the dataset, the design and its
-     test. The porous shard cover needs a sourced packed-bed method first.
+     test. The porous shard cover needs a sourced packed-bed method first. The bands now carry a
+     top band as an input (`single_cases.TOP`, Breda's).
    - **The 36 ft³ cross-draft (§6):** the band test over its lining, gas and cone.
-   - **Kähler and Blakebrough (§7):** the Rule 1 burner bands, so both are fired.
-   - **The two-chamber design (§8):** read p.202 again to sort its facts from Kitade's.
+   - ~~**Kähler and Blakebrough (§7):** the Rule 1 burner bands~~ (done 2026-11-18: fibre as IFB
+     by pp.39 and 71; both reach cone 10 at the band's most).
+   - ~~**The two-chamber design (§8):** read p.202 again~~ (done 2026-11-18: out of the reference
+     set, its p.202 facts split from Kitade's).
+   - ~~**Breda (§5):** the top as cone 01–2~~ (done 2026-11-18, the owner's estimate). T1 and T2
+     pass at both ends; T3 stays open, 1,800 kg 21 % under v2's least (2,290 kg) with the top
+     moving it only 3 %. To trace: the setting's light end (it still assumes a shelf layer for
+     pots set off the floor), the slats' moisture, the domed floor taken flat.
+   - **Hollyweird (§8a):** its two chambers from its own figures, not the unbuilt design's
+     (`olsen-figure-scaling.md` §7). The design's `chamber.sizes` takes each chamber's height and
+     rise; its width is one for the row, and the back's taper to the chimney isn't expressible.
    - **Then rerun the bar:** the full suite, and the rows' band corners outside it (Tobe's on its
      new lining among them). Then restate "Where things stand".
-   - **Waiting on the owner** (the review's §5):
-     - the two-chamber design's place in the set;
-     - Breda's top;
-     - Blakebrough's band;
-     - Falcone's and the Kannofen's chimneys;
-     - Kitade's second chamber;
-     - Tamba as one tube;
-     - front stoke holes as intakes.
+   - **Waiting on the owner:** nothing. Front stoke holes were read in the book instead (the
+     review's §5, question 9).
 2. **Fold the test-side engine knowledge into the engine** (module review items 1, 3 and 6).
    Nothing new needs to be sourced for it.
    - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and

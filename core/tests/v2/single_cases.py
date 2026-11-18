@@ -14,6 +14,8 @@ inputs no source fixes (`bands.py`'s corner runs).
   draft draws through the open intakes (decision 9, B4 step 4);
 - the coal bed, for the coal kilns: 85–200 kg/(m²·h) as fired (`grates-and-fuel-beds.md`: Norsker,
   Gebhardt's Table 29), the most the grates burn;
+- the top, where the book prints none and the dataset carries the owner's range: Breda's cone 01
+  to cone 2 (`TOP`);
 - for a printed fuel or log (the energy balance), the rest B4 carried for the fast-fire's log: the
   emissivity class, the grey gases and the setting's passages. A time's band leaves them at their
   nominal, as C2's did: on the fast-fire they swung its max fire less than the load and the wood
@@ -136,6 +138,32 @@ def target(kid: str) -> float:
     return gas_cases.cone(kid)
 
 
+# A top the book doesn't print, carried as a band (decision 4): the dataset's [low, high]
+# `top_temperature`, its high the design's target. Breda's is the owner's estimate for
+# earthenware, cone 01 to cone 2 (2026-11-18, `11-17-26-inputs.md` §5)
+TOP = bands.Input("the top", ("least", "most"), "most",
+                  "the dataset's top_temperature band: the owner's estimate where the book "
+                  "prints no top")  # fmt: skip
+
+
+@cache
+def top_band(kid: str) -> tuple[float, float] | None:
+    """The kiln's top as a band (K) where the dataset carries a [low, high] `top_temperature`, its
+    high the design's target; None where the design's target is all there is."""
+    import reference as ref
+
+    for f in ref.facts(loads._kilns()[kid], "heat", "top_temperature"):  # pyright: ignore[reportPrivateUsage]
+        if ref.numeric(f) and isinstance(f["value"], list):
+            return ref.span(f, "K")
+    return None
+
+
+def target_at(kid: str, s: Mapping[str, Hashable]) -> float:
+    """A corner's target (K): the top band's least where the corner sets it, else the design's."""
+    band = top_band(kid)
+    return band[0] if band is not None and s.get(TOP.name) == "least" else target(kid)
+
+
 def grate_area(kid: str) -> float:
     """The grates' whole area (m²), as `kiln._bed` takes it."""
     fire = loads.design(kid).heat.fire
@@ -193,6 +221,8 @@ def inputs(kid: str, fuel_results: bool = False) -> tuple[bands.Input, ...]:
         out.append(FUEL_IN)
     if coal(kid):
         out.append(BED)
+    if top_band(kid) is not None:
+        out.append(TOP)
     if fuel_results:
         out += [LAMBDA, *((WSGG,) if two_wsgg(kid) else ()), EMISSIVITY, GAP]
     return tuple(out)
@@ -259,8 +289,9 @@ def max_fire(kid: str, s: Mapping[str, Hashable], to: float | None = None) -> fl
     """Hours to the kiln's target (or ``to``, K) at its hardest firing at a corner (None: not in
     the case's hours), its chamber in the case's segments (the front's setting the one that
     reaches it); λ doesn't touch it."""
-    f = _maxfire(kid, corner(kid, s), CASES[kid].segments, to)
-    hit = f.reached(target(kid) if to is None else to)
+    top = target_at(kid, s) if to is None else to
+    f = _maxfire(kid, corner(kid, s), CASES[kid].segments, top)
+    hit = f.reached(top)
     return None if hit is None else hit / HOUR
 
 
@@ -276,15 +307,15 @@ def as_fired(m: ZoneModel, dry: float) -> float:
 
 @cache
 def _held(
-    kid: str, key: tuple[Hashable, ...], lam: str
+    kid: str, key: tuple[Hashable, ...], lam: str, top: float
 ) -> tuple[float | None, float | None, float | None]:
-    """The printed firing at a corner: its fuel as fired (kg), its air over the draft's most and
-    its last fuel rate (kg/h as fired); Nones where the corner can't follow it (no consistent
-    state, the gas past its tables, or IDA's budget spent)."""
+    """The printed firing at a corner, to its top (K): its fuel as fired (kg), its air over the
+    draft's most and its last fuel rate (kg/h as fired); Nones where the corner can't follow it
+    (no consistent state, the gas past its tables, or IDA's budget spent)."""
     m = variant(kid, dict(zip(KEYS, key, strict=True)))
     c = CASES[kid]
     assert c.firing is not None
-    points = ((0.0, m.t_room), (c.firing * HOUR, target(kid)))
+    points = ((0.0, m.t_room), (c.firing * HOUR, top))
     mode = fi.Schedule("setting", points, air=lam)  # pyright: ignore[reportArgumentType]
     try:
         f = fi.fire(m, mode, c.firing * HOUR, sample=c.sample, max_steps=5_000)
@@ -305,10 +336,10 @@ def run(kid: str, s: Mapping[str, Hashable]) -> dict[str, float | None]:
     time), and where a printed firing has a fuel figure, its fuel, its air and its last rate."""
     out: dict[str, float | None] = {MAX: max_fire(kid, s)}
     if kid in FUEL_AT_MAX:
-        f = _maxfire(kid, corner(kid, s), CASES[kid].segments)
+        f = _maxfire(kid, corner(kid, s), CASES[kid].segments, target_at(kid, s))
         out[MAX_FUEL] = as_fired(variant(kid, s), f.fuel_kg)
     if CASES[kid].firing is not None and "λ" in s:
-        fuel, air, rate = _held(kid, corner(kid, s), str(s["λ"]))
+        fuel, air, rate = _held(kid, corner(kid, s), str(s["λ"]), target_at(kid, s))
         out |= {FUEL: fuel, AIR: air} | ({RATE: rate} if coal(kid) else {})
     return out
 

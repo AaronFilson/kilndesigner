@@ -10,8 +10,8 @@
 The user asked for the heat and static-forces engine to be rebuilt from Olsen's reference kilns
 (*The Kiln Book*, 4th ed.). Every one of them was built and fired, and many print how much energy
 and time a firing took. (2026-11-18: all but one. `olsen-two-chamber` is Olsen's proposed
-improvement of Kitade's kiln, pp.202 and 206, not a kiln he reports built (the owner,
-2026-11-17). Whether it stays in the set is the owner's question,
+improvement of Kitade's kiln, pp.202 and 206, never built (the owner, 2026-11-17 and
+2026-11-18). It is out of the reference set and kept as a design; the 52 built kilns are the set,
 `docs/planning/11-17-26-inputs.md` §8.)
 
 The first pass is in three places:

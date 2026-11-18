@@ -208,18 +208,21 @@ def test_chambers_of_different_sizes_take_their_own_volume() -> None:
     assert "each chamber" in plan.title
 
 
+HOLLY_DOME = "  type: dome\n  rise: 14 in # 2¾ in per foot of the 61 in span (p.51)\n"
+
+
 def test_chambers_of_different_sizes_on_the_level_under_domes() -> None:
     holly = parse_design(_text("hollyweird"))
     shape = chamber_shape(holly)
-    assert si(holly.chamber.length, "ft") == pytest.approx(20)
+    assert si(holly.chamber.length, "in") == pytest.approx(55 + 145)
     assert {f.face for f in shape.faces()} == {"left", "right", "back", "front", "floor", "roof"}
     roof = next(f for f in shape.faces() if f.face == "roof")
     assert roof.area_at(0.1) > roof.inside_area
     massing = cells(holly, run_of(holly))
-    assert [round(c.length / 25.4) for c in massing if c.kind == "box"] == [96, 144]
-    flat = parse_design(_edit("hollyweird", ("  type: dome\n  rise: 12.6 in\n  buttressed: true\n",
+    assert [round(c.length / 25.4) for c in massing if c.kind == "box"] == [55, 145]
+    flat = parse_design(_edit("hollyweird", (f"{HOLLY_DOME}  buttressed: true\n",
                                               "  type: flat\n")))  # fmt: skip
-    assert chamber_shape(flat).volume == pytest.approx(55 * 240 * 35.4 * 0.0254**3)
+    assert chamber_shape(flat).volume == pytest.approx(61 * 200 * 47 * 0.0254**3)
 
 
 def test_chambers_of_different_sizes_are_refused_outside_their_range() -> None:
@@ -239,12 +242,12 @@ def test_chambers_of_different_sizes_are_refused_outside_their_range() -> None:
         parse_design(_edit("bidai", ("    - depth: 42 in\n", "    - depth: 0 in\n")))
     with pytest.raises(ValidationError, match="less than half its diagonal"):
         parse_design(
-            _edit("hollyweird", ("    - depth: 8 ft\n", "    - depth: 8 ft\n      rise: 99 in\n"))
+            _edit("hollyweird", ("    - depth: 55 in\n", "    - depth: 55 in\n      rise: 99 in\n"))
         )
     for bad in ("height: -1 in", "rise: -1 in"):
         with pytest.raises(ValidationError, match="more than 0"):
             parse_design(
-                _edit("hollyweird", ("    - depth: 8 ft\n", f"    - depth: 8 ft\n      {bad}\n"))
+                _edit("hollyweird", ("    - depth: 55 in\n", f"    - depth: 55 in\n      {bad}\n"))
             )
 
 
@@ -436,7 +439,7 @@ def test_widths_refused(match: str, change: list[tuple[str, str]]) -> None:
 
 
 def test_sizes_under_a_catenary_or_with_elements_are_refused() -> None:
-    catenary = _edit("hollyweird", ("  type: dome\n  rise: 12.6 in\n", "  type: catenary_arch\n"))
+    catenary = _edit("hollyweird", (HOLLY_DOME, "  type: catenary_arch\n"))
     with pytest.raises(ValidationError, match="catenary"):
         parse_design(catenary)
     kit = (OLSEN.parent / "electric-front-loader.yaml").read_text(encoding="utf-8")
@@ -461,9 +464,7 @@ def test_shell_leaves_other_kilns_alone() -> None:
     assert shell_not_drawn(kyoto) is None
     assert widths_of(kyoto, "in") == [(0, 63), (41.33, 63)]
     flat_sized = parse_design(
-        _edit(
-            "hollyweird", ("  type: dome\n  rise: 12.6 in\n  buttressed: true\n", "  type: flat\n")
-        )
+        _edit("hollyweird", (f"{HOLLY_DOME}  buttressed: true\n", "  type: flat\n"))
     )
     assert sizes_of(flat_sized, "in")[0][2] == 0
 

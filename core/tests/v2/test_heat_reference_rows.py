@@ -158,7 +158,7 @@ def test_tamba_fires_inside_50_to_54_h() -> None:
 
 
 def test_tamba_burns_its_bundles_side_stoking() -> None:
-    """T3, pp.86–87: about 200 bundles (15 × 15 × 30 in) side stoking, at a bundle's stated band
+    """T3, pp.86–87: about 200 bundles (15 in across, 30 in long) side stoking, at a bundle's band
     (the dataset's): no less than v2 needs held to the book's 36 h preheat and its 14–18 h of side
     stoking (16 h, shared evenly among the seven chambers) at the stoker's λ 1, even at the light
     end of a bundle's band."""

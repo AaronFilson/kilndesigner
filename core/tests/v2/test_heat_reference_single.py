@@ -134,17 +134,17 @@ def test_t2_the_stage_times_stand() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies 24 % under v2's "
-    "band at cone 2 (2,370 kg to never, the load swinging it most); at the old 1760 °F it was "
-    "1.1 % under 1,820 kg. The setting's weight isn't printed, and whether cone 2 (earthenware, "
-    "rarely above it) is the top or the band's upper end is the owner's; 11-17-26-inputs.md §5",
+    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies 21 % under v2's "
+    "band at the owner's top, cone 01 to cone 2 (2,290 kg to never; the load swings it most, the "
+    "top about 3 %). The setting's weight isn't printed. v2 needs more wood than the kiln burned: "
+    "a finding to trace in the model or the setting's band, not the top; 11-17-26-inputs.md §5",
 )
 def test_t3_bredas_two_tons_lie_in_its_band() -> None:
     """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; 1800 kg as fired, the
-    metric figure the user read, 2026-11-17): the setting held to a straight rise to its cone 2
-    (assumed, the owner's top) over 10 h takes a fuel inside v2's band (the setting, the wood, λ
-    from the stoker's 1 to all the draft's air, the grey gases, the emissivity class, the
-    setting's passages)."""
+    metric figure the user read, 2026-11-17): the setting held to a straight rise to its top over
+    10 h, the owner's estimate cone 01 to cone 2 (2026-11-18, a band input), takes a fuel inside
+    v2's band (the setting, the wood, the top, λ from the stoker's 1 to all the draft's air, the
+    grey gases, the emissivity class, the setting's passages)."""
     tons = _printed("breda-bottle", "fuel_per_firing", "kg")
     b = sc.kiln_bands("breda-bottle")[sc.FUEL]
     print(f"T3 breda-bottle, {tons:.0f} kg printed: {sc.describe(b)}; {b.swings}")

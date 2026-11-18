@@ -97,10 +97,13 @@ through git. Nothing needs copying.
    (pp.86–87). **Kitade** is closed: "Care must be taken, however, that the first chamber does not
    cool too quickly. Closing the front is very important." (p.202). The rest are still yours.
 5. **New: Tamba's side holes against the bundle rule (§3).** Tamba's side holes scale about 7 in
-   (Figs 4-7, 4-16), and its 200 bundles are 15 × 15 × 30 in "of split kindling and small pieces"
+   (Figs 4-7, 4-16), and its 200 bundles are "15 x 30in" "of split kindling and small pieces"
    (p.87). A whole bundle can't pass, so the 16 in rule for bundle-stoked holes doesn't fit Tamba.
    Is Tamba stoked with the kindling from the bundles, so that its least hole is set by the
-   kindling (the fuel its stoking passes, as §3's rule says)?
+   kindling (the fuel its stoking passes, as §3's rule says)? **Answered (the owner, 2026-11-17
+   and 2026-11-18):** the holes are 16 in, the owner's estimate. The bundles are round, 15 in
+   across and 30 in long, mostly kindling, at times stoked whole (inputs §9). This item first gave
+   them as 15 × 15 × 30 in, from the metric.
    **Answered (the owner, 2026-11-17):** Tamba is a whole series of kilns without firm numbers on
    their differences. Take a slope of 14° and side holes of 16 in, estimates close enough for
    modeling (inputs §9).
@@ -114,16 +117,20 @@ All recorded in [11-17-26-inputs.md](11-17-26-inputs.md):
 - Hollyweird's side door: 9 × 13½ in.
 - Kitade's p.202 hole: 9 × 7 in.
 - Singh: the top is under 2100 °F; the cover is porous shards.
-- Breda: the setting is a band, about 10 h, 1800 kg of wood, the top up to cone 2.
+- Breda: the setting is a band, about 10 h, 1800 kg of wood, the top the owner's estimate, cone 01
+  to cone 2 (2026-11-18).
 - The 36 ft³ cross-draft: an example of a principle.
-- Kähler and Blakebrough: Rule 1 bands.
+- Kähler and Blakebrough: Rule 1 bands; fibre takes IFB's, by the book (pp.39, 71).
 - Kitade: 2 chambers, the chimney by Principle 6.
-- Olsen's two-chamber design: unbuilt, his proposed improvement of Kitade's kiln. Whether it leaves
-  the reference set is still the owner's question (inputs §8). This line first said "out of the
-  reference set", but no answer is recorded (corrected 2026-11-18).
-- Tamba: the slope from Figs 4-7 and 4-17, then the owner's 14° and 16 in side holes. Whether it is
-  one tube, its arches making semi-chambers, is still to confirm (inputs §9). This line first gave
-  it as answered (corrected 2026-11-18).
+- Olsen's two-chamber design: unbuilt, his proposed improvement of Kitade's kiln: out of the
+  reference set. The review of 2026-11-18 wrongly "corrected" this line to an open question; the
+  owner confirmed it the same day (inputs §8).
+- Hollyweird: its two chambers differ and are described on its own pages, not taken from the
+  two-chamber design (the owner, 2026-11-18; inputs §8a).
+- Tamba: the slope from Figs 4-7 and 4-17, then the owner's 14° and 16 in side holes. One
+  half-buried tube with no closed chambers, narrowing at its arched supports, as this line first
+  said. The review of 2026-11-18 wrongly reopened it, and the owner confirmed it (inputs §9). Its
+  bundles are round, 15 in across and 30 in long.
 - Suzuki's chambers 4–7: 60 bundles a side over 5 h.
 - The lower-bound rule: yes.
 - IFB emissivity: keep the extrapolation.

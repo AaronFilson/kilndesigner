@@ -51,9 +51,19 @@ matched. The damper and spy-hole gaps are now noted in the file.
    at the foot of the chamber walls (text, p.148)?
 2. Fig 5-71 p.148: how big is the spy hole in the box's wall, and how high is it?
 3. Is the chimney's height given anywhere?
-4. The burner input: the owner's answer (2026-11-17, `docs/planning/11-17-26-inputs.md` §7) is a
-   band from Olsen's Rule 1 by lining, for IFB or dense. This kiln is lined with fibre, which is
-   neither. Which band does it take?
+4. ~~The burner input for a fibre lining?~~ Answered from the book (2026-11-18,
+   `docs/planning/11-17-26-inputs.md` §7). Fibre takes Rule 1's IFB class, 7,000–10,000
+   BTU/ft³/hr: Olsen finds "negligible fuel savings compared to IFB kilns" in 6–12 h firings
+   (p.71), and "little advantage" over insulating brick at 2200 °F (p.39, Table 1-12).
+
+## v2 heat (2026-11-18)
+
+Fired on Rule 1's band for fibre as IFB: 68.2 ft³ × 7,000–10,000 BTU/ft³/hr, 478,000–683,000
+BTU/hr (the owner's band, inputs §7; the four injectors only place it). Cone 10 comes in 0.8–3.6 h
+at the band's most across the setting's and λ's band, and in 1.2–5.2 h at its least
+(`test_heat_gas_electric.py::test_t1_reaches_its_cone_on_rule_1s_band`). The book prints no time,
+so none is tested. The fibre's low storage shows: Table 1-12's fibre wall stores under a quarter of
+the IFB wall's heat.
 
 ## Scaled off the figures (step A, 2026-11-09)
 

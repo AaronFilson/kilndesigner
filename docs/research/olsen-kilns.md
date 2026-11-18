@@ -980,8 +980,9 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   "20 x 12"" and "24 x 12"", middle and last chamber, which is which uncertain (Fig 4-12).
 - Firing (pp.86–87): firebox stoked about 36 hours, bringing the first three or four stoke holes to
   about 1832 °F (1000 °C); then side stoking, leaving a 9 in himichi fire channel every second or
-  third stoke hole; 14 to 18 hours (read by the user, 2026-10-31) and about 200 bundles (15 × 15 × 30 in / 38 × 38 × 76 cm) of
-  kindling; at the end the flues plugged and the firebox sealed. The front is unloaded within half a
+  third stoke hole; 14 to 18 hours (read by the user, 2026-10-31) and about 200 bundles ("15 x
+  30in", the metric "38 x 38 x 76cm": round, 15 in across and 30 in long, the owner, 2026-11-18)
+  of split kindling and small pieces of wood; at the end the flues plugged and the firebox sealed. The front is unloaded within half a
   day (pp.87–88).
 - End chamber: bisque only, with "chimney open holes" (Figs 4-18, 4-19).
 - Doors: arched, bricked up for firing; "supporting wall in front of all doors" (Fig 4-15; its sizes
