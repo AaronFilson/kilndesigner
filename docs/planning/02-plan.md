@@ -349,6 +349,15 @@ engine would take in rules the owner has overturned.
      review's §5, question 9).
 2. **Fold the test-side engine knowledge into the engine** (module review items 1, 3 and 6).
    Nothing new needs to be sourced for it.
+   - **Follow-up: two-way flow at openings** (the owner, 2026-11-18, `11-17-26-inputs.md` §3).
+     "The fire will suck in as the stoke changes … Mostly the kiln will suck in air when in
+     oxidation and vent flame in reduction, but these values change too." v2's draft counts
+     inflow only. Each opening needs both directions:
+     - air in below the neutral plane, gas out above it, the plane moving with the damper, the
+       stoking and the atmosphere;
+     - the book's flame from the stoke holes further on (p.87).
+     Sources to find first: the two-way flow through an opening in a hot enclosure (compartment-
+     fire research, `grates-and-fuel-beds.md` [G10]–[G11], the neutral plane's height).
    - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and
      `CONTINUOUS_FRACTION` to a leaf module, and add the import-linter contract for v2.
    - ADR 0017's list of the v1 modules v2 may use is out of date. The amendment is the owner's.
