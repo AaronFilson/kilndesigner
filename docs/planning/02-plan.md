@@ -385,20 +385,62 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      Hollyweird's care. Read its text and figures on the page images, and compare them with its
      design and its dataset entry. Then check v2 models it as the book describes it. A kiln that
      doesn't match a template or a design is future work, noted here, not a fault to force.
-     Each kiln's doc carries its findings. So far:
-     - ~~Hollyweird~~ (above).
-     - ~~The Kyoto type~~ (2026-11-18). Fig 4-28's "4.5–6' wide" is the span along the draft, as
-       Olsen uses "wide" for chambers. The design read it as the width across. It now stands
-       63 in along the draft and 168 in across (Suzuki's 14 ft, assumed), under a semicircle along
-       the draft. Future work:
-       - the main firebox, unsized for the type, so v2's path is refused;
-       - a row's pointed arch along the draft, springing near the floor, and the reduction
-         chambers' offset peak;
-       - the doors in a side wall;
-       - **one firebox in each chamber, in the schema.** v1 makes the himae troughs only when
-         they don't fit side by side across the front. The Kyoto type, Suzuki, Tobe and Hotchkiss
-         all fit, so v1 lays them out in front of the kiln. v2's path takes them as troughs only
-         through the test-side `path_inputs.ONE_PER_CHAMBER`.
+     **Measure, not decide** (the owner, 2026-11-18):
+     - Each measurement goes into the dataset with its status and spread.
+     - Each gap is listed in the kiln's doc and below: where the design differs from the book,
+       where the engine can't express it, and where the book shows nothing.
+     - The designs and the engine aren't changed during the check.
+     - An engine limit is never a fact about the kiln.
+     The design changes made on 2026-11-18 before this was said were taken back. Their
+     measurements stay in the dataset.
+
+     The gaps so far, for a later round:
+     - ~~Hollyweird~~ (above; the owner's answers set its design).
+     - **The Kyoto type:**
+       - The design takes Fig 4-28's 4½–6 ft across the kiln and Bidai's 41⅓ in along the draft.
+         The book's range reads along the draft, and its length across isn't printed.
+       - The main firebox is unsized, so v2's path is refused.
+       - The book's arch is pointed and springs near the floor, with the reduction chambers' peak
+         set back.
+       - The doors are in a side wall.
+     - **One firebox in each chamber, in the schema** (the Kyoto type, Suzuki, Tobe, Hotchkiss).
+       v1 makes the himae troughs only when they don't fit side by side across the front. Where
+       they fit, v1 lays them out in front of the kiln, and v2's path takes them as troughs only
+       through the test-side `path_inputs.ONE_PER_CHAMBER`.
+     - **Suzuki and Tobe:**
+       - No main firebox in the designs: Suzuki's is drawn but unsized, and Tobe's isn't mentioned.
+         Both paths are refused.
+       - Where a design gives both a main firebox and a himae in each chamber, chamber 1's himae
+         should burn the main firebox's gas. Today the path would refuse it, and v1 would lay the
+         himae from chamber 2.
+     - **Bidai, Kawaii:**
+       - The designs have no air opening. The book's (Fig 8-7, 12–14 × 14 in) is in the dataset.
+       - Kawaii's dogi has no height in the design, against the printed 5 ft.
+     - **Bae's gilgama:** the design gives no firebox mouth. Its scaled size (Fig 4-69, about
+       16 × 15 in) is in the dataset.
+     - **Blakebrough's Sturt kiln:**
+       - By p.205 the inlet flues bring the channel's air supply under the wood; the design takes
+         them as the channel's flues into the chamber.
+       - The channel's printed 12 in is its whole height; the design takes 12 in above the grate,
+         and the engine adds a 12 in ash pit.
+       - The outlet flues aren't shown in the book.
+     - **Blakebrough's Tasmanian kiln:** the fibre's thickness isn't printed. p.69's "12in. ...
+       compressed to 8in." is the stack's height under the press, which the design had taken for
+       it. Fig 5-71 scales the walls' ends 7–9 in, which agrees with the design's 8 in. The lower
+       15 in of IFB (taken as fibre) and the moving box (taken as a car) were already listed.
+     - **Bowen Mountain, Breda:** no new gap.
+     - **Chappell's salt kiln:** its firebox's opening isn't drawn or sized, so v2's path leaves
+       the intake out and the air is an upper bound.
+     - **The Church kiln** (and Fireworks, the same firebox):
+       - Fig 7-3 draws each ash pit and walkway 14 in wide and 18 in deep. The design alone takes
+         the ash-pit mouth as the firebox's width, 36 and 24 in. The dataset's 504 in² is the
+         book's.
+       - Fig 7-4's three adjustable air levels (below the grate, at the grate, at the stoke hole)
+         aren't sized, and the design has none.
+     - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
+       firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
+       Kawaii, the multi-directional kilns), the design can't say it except through the
+       firebox's `air`.
    - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
      owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
      lining among them). Then restate "Where things stand".
@@ -412,7 +454,9 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      inflow only. Each opening needs both directions:
      - air in below the neutral plane, gas out above it, the plane moving with the damper, the
        stoking and the atmosphere;
-     - the book's flame from the stoke holes further on (p.87).
+     - the book's flame from the stoke holes further on (p.87);
+     - Breda's flames out of the chimney cone holes, stoked again when they "suck back in"
+       (p.168, Fig 6-53).
      Sources to find first: the two-way flow through an opening in a hot enclosure (compartment-
      fire research, `grates-and-fuel-beds.md` [G10]–[G11], the neutral plane's height).
    - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and

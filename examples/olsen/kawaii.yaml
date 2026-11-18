@@ -77,22 +77,10 @@ heat:
         position: front
         width: 84 in # not printed: the chamber it feeds
         length: 46 in # the Bidai kiln's (Fig 4-36)
-        # The dogi "5ft (152cm) tall" (p.97), from the ash pit's floor to the crown as the Bidai
-        # firebox's 40 in of upright wall and its arch (Fig 8-7), less the 14 in ash pit: the space
-        # above the grate (2026-11-18; with none given it was drawn as tall as its 84 in width)
-        height: 46 in
         grate:
           width: 14 in # the Bidai kiln's grate zone (Fig 8-7)
           length: 21 in # bars 18–24 in long (p.97)
         ash_pit: 14 in # the Bidai kiln's (Fig 8-7)
-        # The air's own way in: the Bidai firebox's, "duplicated in constructing the Kawaii kiln"
-        # (p.200), its entrance AIR below STOKING, 12–14 in wide over the 14 in ash pit (Fig 8-7);
-        # the middle, 13 in. Its stoking opening and the dogi's two side stoke holes (p.97) are
-        # covered after each stoking, so they aren't entered
-        air:
-          width: 13 in
-          height: 14 in
-        air_at: below
         # The flues from the firebox into chamber 1 through its front wall, which carries the
         # chamber's arch: 7 × 10 in, "inlet and exit alike" (p.97); as many as in each wall between
         # the chambers, 5 (scaled: Fig 4-48, p.97, as draft.between below)

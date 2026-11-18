@@ -465,8 +465,8 @@ kilns:
           2⅝–2¾ in a course at 55 ± 5 px and 9⅛–9¼ in a brick at 150–170 px, so 16–23 px/in at
           zoom 4; the mouth 300–315 px wide near its base, 287 px from its head to the coals
           (scratch/kiln-check/bae/measure.py, 2026-11-18)
-        note: the firebox's only way in for the fuel and the air, "NO GRATES" (Fig 4-67); the
-          design takes 16 × 15 in
+        note: the firebox's only way in for the fuel and the air, "NO GRATES" (Fig 4-67); not in
+          the design (a gap, 02-plan.md)
       - what: primary_air
         value: [147, 288]
         unit: inch**2
@@ -475,8 +475,9 @@ kilns:
         figure: Fig 4-69
         reason: the scaled mouth, a rectangle under a half-circle on its width, from 13.3 × 12.5 in
           to 18.6 × 17.5 in (about 212 in² at 16 × 15 in)
-        condition: no grate; the firebox's mouth takes the fuel and all the air (research A2). Before
-          2026-11-18 none was given, and the path took the firebox's whole open end, 48 × 48 in
+        condition: no grate; the firebox's mouth takes the fuel and all the air (research A2)
+        note: v2's path takes it from here; the design alone gives no mouth, so its path takes the
+          firebox's whole open end, 48 × 48 in (a gap, 02-plan.md)
     structure:
       - what: roof_type
         value: one continuous shell over an elongated oval or teardrop plan, the walls curving
@@ -920,7 +921,8 @@ kilns:
         reading: uncertain
         condition: the air opening into the ash pit, below the stoking opening (research A2); the
           stoking opening's height isn't legible
-        note: the design gives it as the firebox's `air`, 13 × 14 in below the grate (2026-11-18)
+        note: v2's path takes it from here; the design alone gives no air opening, so its path takes
+          the ash pit's mouth across the firebox's 73 in width, 1,022 in² (a gap, 02-plan.md)
       - what: exit_flue_height
         value: 12
         unit: inch
@@ -1208,6 +1210,18 @@ kilns:
         value: along the right side wall, stoked from the side
         status: assumed
         reason: the drawing's side, seen from the front (drawing, ?)
+      - what: firebox
+        value: >-
+          the grate holds the wood above the air [suppl]y at the inlet flues; the coals raked down
+          through the stoke hole lest they [block] it; in stoking, a few pieces drop inside the door,
+          then the long stoking, working back to the door
+        status: printed
+        page: p.205
+        reading: uncertain
+        note: read on the page image at zoom 3.2–7, 2026-11-18; the gutter clips the bracketed
+          words ("-ly" or "-y" shows of the first). By it the inlet flues bring the channel's air
+          under the wood. The design takes them as the channel's flues into the chamber, its air
+          through an ash-pit mouth the book doesn't show (a gap, 02-plan.md)
       - what: inlet_flue
         value: 9 × 4½ in; about six slots drawn along the channel
         status: printed
@@ -1263,12 +1277,18 @@ kilns:
     gaps:
       - number of chambers and a main firebox
       - wall and arch thickness, arch shape
-      - exit flues and chimney
+      - exit flues and chimney (not shown; the design's back wall is its own)
       - cone, firing time, wood and oil per firing
       - what holds the catenary's feet (the design's frame.catenary warning)
-      - 'research A2: the side stoke hole''s width and the channel firebox''s air intakes'
+      - 'research A2: the side stoke hole''s width'
+      - 'the inlet flues'' role: p.205 has them bring the channel''s air supply under the wood; the
+        design takes them as the channel''s flues into the chamber'
+      - 'the channel''s printed 12 in is drawn as its whole height; the design takes 12 in above the
+        grate, with the engine''s 12 in ash pit under it'
     notes:
       - not the Tasmanian fibre kiln (blakebrough-tasmania)
+      - checked against p.205 on the page images, 2026-11-18 (the kiln-by-kiln check), its text at
+        zoom 3.2–7 and Fig 8-15 at zoom 4; the design is unchanged by it
       - the text's "width of the 6ft chamber" and the drawing's 45 in across the front disagree on 
         which side is 6 ft; the design file follows the drawing
       - the left-hand labels of Fig 8-15 are cut off in the scan ("…FLUES 4½", "…GRATE BARS")
@@ -1362,13 +1382,28 @@ kilns:
         page: p.148
         figure: Fig 5-75
       - what: wall
-        value: folded blanket, each 12 in compressed to 8 in by a hydraulic ram on a full-wall 
+        value: folded blanket, each 12 in compressed to 8 in by a hydraulic ram on a full-wall
           board; stainless rods tacked to the frame at 12 in intervals
         status: printed
         page: p.69
         reading: uncertain
-        condition: a large folded-fibre kiln at the Tasmanian School of Art with Blakebrough, 
+        condition: a large folded-fibre kiln at the Tasmanian School of Art with Blakebrough,
           probably this one
+        note: read again on the page image, 2026-11-18, "When a predetermined height is reached, in
+          this case 12in. (30.5cm), the fiber is compressed to 8in. (20cm), or by one third", the
+          press applying "downward pressure", "until the height of the wall was reached"; so the
+          12 in to 8 in is the stacked blanket's height as the wall goes up, not its thickness
+      - what: wall_thickness
+        value: [7, 9]
+        unit: inch
+        status: scaled
+        page: p.148
+        figure: Fig 5-71
+        spread: the box's open end seen from the left; the left wall's end 112–114 px and the
+          roof's 125–172 px at zoom 5, against the opening's 860–910 px taken as the printed
+          "approximately 52in." inside height (16.8 px/in); ±15 % for the oblique view
+          (scratch/kiln-check/tasmania/measure.py, 2026-11-18)
+        note: the fibre's thickness isn't printed; this scaling agrees with the design's 8 in
       - what: wall
         value: 8 in of Cerachem blanket, 8 pcf, walls and roof
         status: assumed
@@ -1378,7 +1413,8 @@ kilns:
         value: 8
         unit: inch
         status: assumed
-        reason: the p.69 kiln's compressed blanket
+        reason: the design's, taken from the p.69 kiln's compressed blanket, which is the stack's
+          height, not the thickness (read again 2026-11-18); Fig 5-71 scales the walls' ends 7–9 in
       - what: floor
         value: 4½ in of K-26
         status: assumed
@@ -1464,13 +1500,15 @@ kilns:
     gaps:
       - burner rating, gas and pressure
       - chimney height
-      - fibre thicknesses and grades
+      - fibre grades, and the thickness (not printed; scaled 7–9 in on Fig 5-71)
       - frame sizes
       - cone and firing time
       - ware load
     notes:
-      - the design file takes the moving box as a car with the hearth riding on it, the reverse of 
+      - the design file takes the moving box as a car with the hearth riding on it, the reverse of
         the real kiln, and the bottom 15 in of IFB as fibre
+      - checked against pp.148–149 and p.69 on the page images, 2026-11-18 (the kiln-by-kiln
+        check); the design is unchanged by it
 
   bowen-mountain:
     name: Bowen Mountain salt kiln, Col Levy's studio, Australia
@@ -1766,9 +1804,12 @@ kilns:
       - salt per firing for this kiln
       - ware and setting
     notes:
-      - the inlet flues were first read as three; four on the page image (2026-10-31), so eight 
+      - the inlet flues were first read as three; four on the page image (2026-10-31), so eight
         burners
       - the span is the 5 ft length (as built), not the 3 ft width the notes first derived
+      - checked against pp.126–128 on the page images, 2026-11-18 (the kiln-by-kiln check), Fig
+        4-153's gas detail at zoom 6 ("4½" X 7" FLUES", the user's misprint reading stands); no
+        new finding, the design unchanged
   breda-bottle:
     name: Breda bottle kiln, Segra Pottery, Breda, Spain
     design: examples/olsen/breda-bottle.yaml
@@ -2045,6 +2086,11 @@ kilns:
       - band size
       - wood moisture
       - 'research A2: whether the 2 × 3½ ft ash pit (Fig 6-50) is its mouth; the stoke opening''s size'
+    notes:
+      - checked against pp.166–168 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. "The ash pit collects the coals and ashes, and preheats the air"
+        (p.168), and Fig 6-50 draws steps down into it, so the air comes in by the ash pit; its
+        mouth isn't sized apart from the pit's 2 × 3½ ft
   chappell-domura:
     name: John Chappell's Domura tandem kiln, its salt chamber
     design: examples/olsen/chappell-domura.yaml
@@ -2332,8 +2378,11 @@ kilns:
       - the printed volumes disagree with the drawing (40 ft³ printed against about 57 ft³ drawn; 50
         against 45); Flagged in the notes
       - p.126 dates the kiln 1962; p.243 dates the salt firing with Olsen 1963
-      - the design file models the salt chamber alone; the chimney draws both kilns, so it is large 
+      - the design file models the salt chamber alone; the chimney draws both kilns, so it is large
         for the salt kiln (the design's fire.grate warning)
+      - checked against p.126 (Figs 4-148 to 4-150) on the page images, 2026-11-18 (the
+        kiln-by-kiln check); the design is unchanged. The salt firebox's opening isn't drawn or
+        sized, so v2's path leaves its intake out and takes the air as an upper bound (a gap)
 
   church-skaelskor:
     name: Church multi-directional kiln, Skælskør (Guldagergaard), 1998
@@ -2504,6 +2553,17 @@ kilns:
         figure: Fig 7-3
         reason: two ash pits and walkways 14 in wide × 18 in deep, the type's drawing
         condition: below the grates, fully open (research A2)
+        note: v2's path takes it from here; the design alone takes each ash pit's mouth as its
+          firebox's width, 36 and 24 in, by the 18 in, 2.6 and 1.7 times the drawn 14 in (a gap,
+          2026-11-18)
+      - what: passive_air
+        value: air at three adjustable levels, below the grate, at the grate and at the stoke hole,
+          built into the bricked-up door
+        status: printed
+        page: p.180
+        figure: Fig 7-4
+        note: the multi-directional kilns' firebox (pp.179–180), this kiln's too; none is sized, and
+          the design has none (a gap, 2026-11-18)
       - what: chimney_width
         value: 13.5
         unit: inch
@@ -2571,8 +2631,10 @@ kilns:
       - firing time
       - wood per firing
     notes:
-      - the design's crowns (60 and 63 in) are the user's heights, above p.183's 3½–4½ ft to the 
+      - the design's crowns (60 and 63 in) are the user's heights, above p.183's 3½–4½ ft to the
         vertex
+      - checked against pp.178–183 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged, its gaps the ash pits' mouths and Fig 7-4's three air levels (above)
 
   conrad-teardrop:
     name: Conrad Calimpong's teardrop kiln
@@ -7049,14 +7111,6 @@ kilns:
         status: assumed
         reason: the book says it is the Bidai kiln's firebox (p.200) but doesn't size it here; 21 in
           is the middle of the printed 18–24 in
-      - what: firebox_height
-        value: 46
-        unit: inch
-        status: assumed
-        reason: the printed 5 ft (p.97) from the ash pit's floor to the crown, as the Bidai firebox's
-          40 in of upright wall and its arch over (Fig 8-7, p.201), less the 14 in ash pit; the
-          space above the grate, as the engine takes a firebox's height (2026-11-18). The design
-          gave none before, so v1 drew it as tall as its 84 in width
       - what: primary_air
         value: [168, 196]
         unit: inch**2
@@ -7066,9 +7120,9 @@ kilns:
         reason: the Bidai firebox, "duplicated in constructing the Kawaii kiln" (p.200), its
           entrance's AIR opening 12–14 in wide over the 14 in ash pit (Fig 8-7), as bidai's
         condition: the air opening into the ash pit, below the stoking opening (research A2)
-        note: the design gives it as the firebox's `air`, 13 × 14 in below the grate (2026-11-18).
-          Before, the path took the design's ash-pit mouth, the firebox's 84 in width by the 14 in
-          pit, 1,176 in²
+        note: v2's path takes it from here; the design alone gives no air opening, so its path takes
+          the ash pit's mouth, the firebox's 84 in width by the 14 in pit, 1,176 in² (a gap,
+          02-plan.md)
     structure:
       - what: arch_material
         value: tatami-mat bricks in the arches and the firebox
@@ -7628,64 +7682,64 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
       - what: setting
-        value: [835, 4951]
+        value: [208, 1220]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.436 m³; 1–7 layers of shelves over 4.570 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.436 m³ as v2 traces it; the envelope''s plan 4.570 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 0.921 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 0.921 m²)'
         condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 8: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [848, 5128]
+        value: [213, 1293]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 9: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [843, 5107]
+        value: [211, 1284]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.436 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.436 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
         condition: 'chamber 10: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: height
@@ -7701,13 +7755,13 @@ kilns:
         status: printed
         page: p.91
         figure: Fig 4-28
-        note: printed "wide", the chamber's span along the draft, front wall to back wall. The
-          figure is drawn along the draft, the inlet flues in one wall and the outlets in the
-          other; Fig 4-31 draws the Kyoto chamber "narrower" than others (p.91), 4 ft against 6 ft,
-          its arch's span; and every Kyoto chamber the book sizes is 3–4½ ft along the draft and 6–14
-          ft across (Bidai, Kawaii, Suzuki). The word alone doesn't decide it, Tobe's "10ft wide"
-          (p.90) being along the draft and Kawaii's "7ft wide" (p.97) across.
-          Read as the width across until 2026-11-18
+        note: printed "wide"; read as the chamber's span along the draft, front wall to back wall
+          (2026-11-18). The figure is drawn along the draft, the inlet flues in one wall and the
+          outlets in the other; Fig 4-31 draws the Kyoto chamber "narrower" than others (p.91), 4 ft
+          against 6 ft, its arch's span; and every Kyoto chamber the book sizes is 3–4½ ft along the
+          draft and 6–14 ft across (Bidai, Kawaii, Suzuki). The word alone doesn't decide it, Tobe's
+          "10ft wide" (p.90) being along the draft and Kawaii's "7ft wide" (p.97) across. The design
+          takes the range as the width across (a gap, 02-plan.md)
       - what: depth
         value: 4
         unit: foot
@@ -7719,29 +7773,29 @@ kilns:
           INSIDE" over its third chamber
         note: Fig 4-27's vertical dimension at the wall between chambers 2 and 3, and a label at its
           left end, are too faded in the scan to read (2026-11-18)
-      - what: depth
+      - what: width
         value: 63
         unit: inch
         status: assumed
-        reason: the middle of the printed 4½–6 ft along the draft (Fig 4-28)
-      - what: width
-        value: 168
-        unit: inch
-        status: assumed
-        reason: the length across isn't printed for the type; the Suzuki kiln's chambers, 14 ft (p.93),
-          a Kyoto chamber kiln. The floor's five stoking zones, short, medium and long tosses from
-          both sides at once (p.92, Fig 4-33), need a long chamber. 63 in until 2026-11-18, Fig
-          4-28's range misread as the width
+        reason: the design's, the middle of the printed 4½–6 ft (Fig 4-28) taken across the kiln;
+          the range reads along the draft (the depth facts above), and the type's length across
+          isn't printed (a gap)
       - what: crown_height
         value: 78
         unit: inch
         status: assumed
         reason: the middle of the printed 6–7 ft (Fig 4-28)
-      - what: springline_height
-        value: 46.5
+      - what: depth
+        value: 41.33
         unit: inch
         status: assumed
-        reason: 78 in to the crown less the assumed 31½ in rise
+        reason: the design's, the mean of the Bidai kiln's chambers (Fig 4-36, p.94), where the book
+          gives the type's span along the draft as 4½–6 ft (Fig 4-28, a gap)
+      - what: springline_height
+        value: 57.3
+        unit: inch
+        status: assumed
+        reason: 78 in to the crown less the assumed 20.7 in rise
       - what: chamber_count
         value: 10
         status: assumed
@@ -7802,10 +7856,10 @@ kilns:
         status: printed
         page: p.96
       - what: between_flues
-        value: twelve 5 × 9 in flues a wall
+        value: five 5 × 9 in flues a wall
         status: assumed
-        reason: the count isn't printed; as many 5 in flues as fit across the assumed 168 in, 9 in
-          apart (Olsen's rule, p.96); five across 63 in before 2026-11-18
+        reason: the count isn't printed; as many 5 in flues as fit across the assumed 63 in, 9 in
+          apart (Olsen's rule, p.96)
       - what: stoke_hole
         value: three stoke holes to a chamber, its sizes not printed; the takaguchi low in the
           himae, for the firebox and the upper half's setting; the aizashiguchi at the floor,
@@ -7846,16 +7900,16 @@ kilns:
         note: ratios measured off the figure in step A (±2 %); it prints no dimension; not entered 
           in the design file (the back half turns past a quarter circle)
       - what: span
-        value: 63
+        value: 41.33
         unit: inch
         status: assumed
-        reason: each arch spans its chamber along the draft (p.95, p.97), the middle of Fig 4-28's
-          4½–6 ft; 41⅓ in, the Bidai kiln's mean, before 2026-11-18
+        reason: each arch spans its chamber along the draft (p.95, p.97); the depth is the Bidai
+          kiln's mean
       - what: rise
-        value: 31.5
+        value: 20.7
         unit: inch
         status: assumed
-        reason: 6 in per foot of the 63 in span, the top of the 4–6 in/ft Olsen uses on chamber
+        reason: 6 in per foot of the 41⅓ in span, the top of the 4–6 in/ft Olsen uses on chamber
           kilns (p.296), a semicircle; the book draws the arch taller and pointed, from near the
           floor (Figs 4-28, 4-31)
       - what: ring_thickness
@@ -7894,10 +7948,12 @@ kilns:
       - 'research A2: the stoke holes'' sizes (takaguchi, aizashiguchi, mempo ana) and the main
         firebox''s intakes'
       - Fig 4-27's faded dimension and label (the scan)
+      - 'the design''s axes: it takes Fig 4-28''s 4½–6 ft across the kiln and the Bidai kiln''s 41⅓
+        in along the draft; the book''s range reads along the draft'
     notes:
       - a type, not one kiln; the design file draws one from the book's ranges
       - checked against pp.89–94, p.96 and p.205 on the page images, 2026-11-18 (the kiln-by-kiln
-        check)
+        check); the design is unchanged by it, its gaps listed in the kiln's doc and 02-plan.md
 
   la-borne:
     name: La Borne tunnel kiln

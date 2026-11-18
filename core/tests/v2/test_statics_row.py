@@ -214,9 +214,8 @@ def test_a_walls_layers_are_tied_by_header_courses() -> None:
 
 @pytest.mark.geometry
 def test_an_arch_a_hair_past_a_semicircle_lies_level_on_its_walls() -> None:
-    """A semicircle's radial feet lie level on its walls' tops, or dip into them a hair past one
-    (Kyoto's 20.7 in rise on a 41⅓ in span, 0.1° past, before 2026-11-18; its 31½ in on 63 in
-    now); laid level on them, the feet bear and the row stands."""
+    """Kyoto's 20.7 in rise on a 41⅓ in span turns 0.1° past a semicircle, so its radial feet dip
+    0.4 mm into the walls' tops; laid level on them, the feet bear and the row stands."""
     rs = row_section(cut_to(olsen("kyoto-climbing"), 2))
     sec = rs.section
     first = next(i for i, b in enumerate(sec.bodies) if b.name == "chamber 1 voussoir 1")

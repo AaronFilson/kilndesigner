@@ -84,11 +84,7 @@ def test_a_semicircular_arch() -> None:
 
 @pytest.mark.parametrize("name", ["kyoto-climbing"])
 def test_kilns_with_arches_over_a_semicircle(name: str) -> None:
-    """An arch rising past a semicircle: the Kyoto type's, raised from its semicircle, 31½ in on
-    its 63 in span since 2026-11-18, to 32 in (it was 20.7 in on 41⅓ in, 0.1° past)."""
     kiln = load_design(EXAMPLES / "olsen" / f"{name}.yaml")
-    roof = kiln.roof.model_copy(update={"rise": kiln.roof.rise * 32 / 31.5})  # type: ignore[union-attr]
-    kiln = kiln.model_copy(update={"roof": roof})
     shape = chamber_shape(kiln)
     assert shape.arch is not None
     assert shape.arch.half_angle > math.pi / 2

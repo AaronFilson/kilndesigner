@@ -112,13 +112,6 @@ heat:
         stoke_hole: # (drawing) mouth 9 in wide (Fig 4-36); stoking opening 14 in (Fig 8-7)
           width: 9 in
           height: 14 in
-        # The air's own way in (2026-11-18): Fig 8-7's side view labels the entrance AIR below and
-        # STOKING above, the ash pit 14 in high, and its plan draws the entrance 12–14 in wide; so
-        # the ash pit's mouth is 13 in (the middle) × 14 in, not the firebox's whole width
-        air:
-          width: 13 in
-          height: 14 in
-        air_at: below
         grate:
           width: 14 in # the grate zone, six fireclay bars (Fig 8-7)
           length: 21 in # Kawaii's bars, 18–24 in (p.97)

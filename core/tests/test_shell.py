@@ -366,7 +366,7 @@ def _peaked(share: str, ring: str = "9 in # as the Bidai kiln's arch") -> str:
         "kyoto-climbing",
         ("  buttressed: true #", f"  peak_at: {share}\n  buttressed: true #"),
         ("9 in # as the Bidai kiln's arch", ring),
-        ("  rise: 31.5 in", "  rise: 15 in"),
+        ("  rise: 20.7 in", "  rise: 15 in"),
     )
 
 
@@ -378,7 +378,7 @@ def test_an_offset_peak_arch_is_held_by_masonry_by_its_line_of_thrust() -> None:
     assert "line of thrust" in steps[0].value
     assert "two radii" in (not_drawn(kiln) or "")
     shape = chamber_shape(kiln)
-    level = chamber_shape(parse_design(_edit("kyoto-climbing", ("rise: 31.5 in", "rise: 15 in"))))
+    level = chamber_shape(parse_design(_edit("kyoto-climbing", ("rise: 20.7 in", "rise: 15 in"))))
     assert shape.volume == pytest.approx(level.volume, rel=0.02)
     assert shape.volume != level.volume
     thin = parse_design(_peaked("55 percent", "2 in"))
@@ -463,7 +463,7 @@ def test_shell_leaves_other_kilns_alone() -> None:
     kyoto = parse_design(_text("kyoto-climbing"))
     assert shell_frame(kyoto) is None
     assert shell_not_drawn(kyoto) is None
-    assert widths_of(kyoto, "in") == [(0, 168), (63, 168)]
+    assert widths_of(kyoto, "in") == [(0, 63), (41.33, 63)]
     flat_sized = parse_design(
         _edit("hollyweird", (f"{HOLLY_DOME}  buttressed: true\n", "  type: flat\n"))
     )

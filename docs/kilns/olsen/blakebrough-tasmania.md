@@ -56,6 +56,26 @@ matched. The damper and spy-hole gaps are now noted in the file.
    BTU/ft³/hr: Olsen finds "negligible fuel savings compared to IFB kilns" in 6–12 h firings
    (p.71), and "little advantage" over insulating brick at 2200 °F (p.39, Table 1-12).
 
+## Checked against the book (2026-11-18)
+
+Read again on the page images, pp.148–149 and p.69. The design is unchanged, and the dataset
+matches the pages:
+- 42 × 54 × about 52 in inside;
+- four venturi compound injectors;
+- two 4½ × 6 in ports in the back wall, with opposing ones;
+- eight floor exits;
+- two 4½ × 6 in flue channels into a 9 × 6 in chimney flue and a 9 × 9 in chimney;
+- the first 15 in of IFB.
+
+Two corrections to the record, both in the dataset:
+- **p.69's "12in. ... compressed to 8in."** is the stacked blanket's height under the press's
+  "downward pressure", repeated "until the height of the wall was reached". It isn't the wall's
+  thickness, which the design's 8 in had been taken from.
+- **The fibre's thickness** isn't printed. Fig 5-71 looks into the box's open end from the left.
+  On the opening, taken as the printed "approximately 52in." inside height, the walls' ends scale
+  7–9 in (±15 % for the oblique view; `scratch/kiln-check/tasmania/measure.py`). That agrees with
+  the design's 8 in.
+
 ## v2 heat (2026-11-18)
 
 Fired on Rule 1's band for fibre as IFB: 68.2 ft³ × 7,000–10,000 BTU/ft³/hr, 478,000–683,000

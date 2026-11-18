@@ -3,64 +3,44 @@
 # the early 1960s (p.89–90). A type, not one kiln: this file draws one of them from the book's
 # ranges.
 #
-# From the book: "Kyoto climbing kiln dimensions: 6–7' tall, 4.5–6' wide" (Fig 4-28). The "wide"
-# is the chamber's span along the draft, front wall to back wall:
-# - Fig 4-28 is drawn along the draft, the inlet flues in one wall and the outlets in the other;
-# - Fig 4-31 draws the Kyoto chamber "narrower" than other climbing kilns' (p.91), 4 ft against
-#   6 ft, its arch's span, and the Kyomizu kiln's section marks "4' INSIDE" (Fig 4-27);
-# - every Kyoto chamber the book sizes is 3–4½ ft along the draft and 6–14 ft across: Bidai
-#   36–46 × 73 in (Fig 4-36), Kawaii 4 × 7 ft (p.97), Suzuki 4½ × 14 ft (p.93).
-# The word alone doesn't decide it: Tobe's "25ft long by 10ft tall by 10ft wide" (p.90) uses
-# "wide" along the draft, Kawaii's "7ft wide, 4ft deep" (p.97) across. In each chamber a firebox (himae), a 9 in trough along the front wall behind a row of
-# empty saggars, stoked through the takaguchi stoke holes from both sides at once (p.92–93, Figs
-# 4-33, 4-34); arches peaked toward the back in reduction chambers (p.91–92); a chimney at the top
-# end (Fig 4-27, unsized); climbing kilns, so the floor is on the ground (p.89–94).
-# Assumed (rechecked 2026-11-18, docs/kilns/olsen/kyoto-climbing.md):
-# - 5¼ ft (63 in) along the draft and 6½ ft (78 in) to the crown, the middle of each range;
-# - 14 ft (168 in) across, the Suzuki kiln's chambers (p.93): the type's length across isn't
-#   printed, and the floor's five stoking zones, short, medium and long tosses from both sides
-#   (p.92, Fig 4-33), need a long chamber;
-# - the arch rises 31½ in: Olsen uses 4–6 in per foot of span on chamber kilns (p.296), and 6 in/ft
-#   on the 63 in span along the draft, nearest the Kyoto kilns' tall arches, is a semicircle. So
-#   the springline is at 46½ in. The book draws the arch taller and pointed, springing near the
-#   floor (Figs 4-28, 4-31), which a row can't take yet;
-# - ten chambers, as the Kyomizu kiln Olsen fired for 2½ years (kyomizu, Figs 4-23, 4-27);
-# - the slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36);
-# - walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), and a 9 in arch, as the
-#   Bidai kiln. The bricks are local firebrick with thick fireclay joints and no stated grade
-#   (bidai, p.94–95): medium-duty firebrick (Olsen's intermediate duty, p.18); the floor as the
-#   walls (engine default);
-# - cone 10, the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93).
-# No chimney is sized, so the engine sizes it, the exit flue too. The arches are held by masonry
-# (buttressed): each chamber's arch spans along the draft and throws its thrust onto the common
-# wall and on to the chimney, the front braced (p.95, p.97).
+# From the book: "Kyoto climbing kiln dimensions: 6–7' tall, 4.5–6' wide" (Fig 4-28); in each
+# chamber a firebox (himae), a 9 in trough along the front wall behind a row of empty saggars,
+# stoked from both sides (p.92, Fig 4-34); arches peaked toward the back in reduction chambers
+# (p.91–92); climbing kilns, so the floor is on the ground (p.89–94).
+# Assumed: 5¼ ft (63 in) wide and 6½ ft (78 in) to the crown, the middle of each range. The depth
+# isn't given: the mean of the Bidai kiln's chambers, 41⅓ in (bidai, Fig 4-36). The arch rises
+# 20.7 in: Olsen uses 4–6 in per foot of span on chamber kilns (p.296), and 6 in/ft on the 41⅓ in
+# span along the draft, nearest the Kyoto kilns' tall arches, is a semicircle. So the springline
+# is at 57.3 in. Ten chambers, as the Kyomizu kiln Olsen fired for 2½ years (kyomizu, Fig 4-27).
+# The slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36). Walls 9½ in, inside Olsen's 9–10 in for
+# climbing kilns (p.99–100), and a 9 in arch, as the Bidai kiln. The bricks are local firebrick
+# with thick fireclay joints and no stated grade (bidai, p.94–95): medium-duty
+# firebrick (Olsen's intermediate duty, p.18); the floor as the walls (engine default). Cone 10, the hottest
+# chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93). No chimney is given, so the
+# engine sizes it, the exit flue too. The arches are held by masonry (buttressed): each chamber's
+# arch spans along the draft and throws its thrust onto the common wall and on to the chimney, the
+# front braced (p.95, p.97).
 # The flues between chambers, about 9 × 5 in out and 9 × 4½ to 9 × 6 in in, 9 in apart (Fig 4-28):
-# twelve a wall (draft.between, below).
-# Not modelled:
-# - the main firebox (dogi) at the foot of the kiln (Fig 4-22, a photo), which the book doesn't
-#   size for the type, so v2's draft path has no way in for the first chamber's air and refuses;
-# - the stoke holes (takaguchi, aizashiguchi, mempo ana; Fig 4-34), not sized, and covered after
-#   each stoking;
-# - the doors, in a side wall (Figs 4-27, 4-33): a sprung arch here springs from the side walls,
-#   so the door is put in the front wall.
-# v1 lays the engine's arch across the width with the same springline and crown; v2's statics
-# take it along the draft. Held by masonry, it gets no steel. The floor's loss into dry soil is
-# worked out at steady state.
+# five a wall (draft.between, below). Not modelled: the main firebox (dogi), which the book
+# doesn't size. The engine's arch spans the width, so it is laid across the 63 in with the same
+# springline and crown; held by
+# masonry, it gets no steel. The doors are in a side wall; a sprung arch here springs from the
+# side walls, so the door is put in the front wall. The floor's loss into dry soil is worked out at steady state.
 schema: 1
 name: Kyoto-style climbing kiln (type)
 units: us
 firing:
   cone: "10" # not given for the type: the Suzuki kiln's hottest chambers (p.93)
 chamber:
-  width: 168 in # across the kiln: not printed for the type; the Suzuki kiln's 14 ft (p.93)
-  depth: 63 in # along the draft: 4½–6 ft (Fig 4-28), the middle
-  height: 46.5 in # to the springline: 78 in to the crown (6–7 ft, Fig 4-28), less the rise
+  width: 63 in # 4½–6 ft (Fig 4-28)
+  depth: 41.33 in # the Bidai kiln's mean
+  height: 57.3 in # to the springline: 78 in to the crown, less the rise
   chambers: 10 # as the Kyomizu kiln
   slope: 18.4 degree # the Bidai kiln's 3 to 1
   on_ground: true # climbing kilns (p.89–94)
 roof:
   type: sprung_arch
-  rise: 31.5 in # 6 in per foot of the 63 in span along the draft (p.296), a semicircle
+  rise: 20.7 in # 6 in per foot of the 41⅓ in span (p.296)
   buttressed: true # the common walls take each chamber's thrust (p.95, p.97)
   # (scaled: Fig 4-32, p.92, ratios only, no printed dimension, ±2 %) the reduction chamber's
   # inner peak stands 56–60 % (58 %) along the span from the front wall; rise 0.68 of the span;
@@ -85,7 +65,7 @@ heat:
       - count: 10 # one himae in each chamber
         position: front
         width: 9 in # the trough (p.92)
-        length: 168 in # across the chamber
+        length: 63 in # across the chamber
 draft:
   type: cross
   flue_wall: back
@@ -93,11 +73,11 @@ draft:
     # Step A, 2026-11-09. Fig 4-28 prints the outlet flues "approx. 9 × 5", 9 in apart, and the
     # inlets 9 × 6 to 9 × 4½. (scaled: Fig 4-28, p.91, from the printed 15" floor to outlet,
     # ±1 in) the flues are drawn 11 and 9½ in tall and 5½ in wide, so 9 is the height and 5 the
-    # width across the kiln. The count is not printed: 12 is as many 5 in flues as fit across the
-    # 168 in with 9 in between them (Olsen's rule, p.96, read the same way) (derived; 5 across the
-    # 63 in before 2026-11-18). The outlet's foot is drawn 15 in up the back wall, the inlet's on
-    # the next floor: the engine lays one passage at the higher chamber's floor.
-    count: 12
+    # width across the kiln. The count is not printed: 5 is as many 5 in flues as fit across the
+    # 63 in with 9 in between them (Olsen's rule, p.96, read the same way) (derived). The outlet's
+    # foot is drawn 15 in up the back wall, the inlet's on the next floor: the engine lays one
+    # passage at the higher chamber's floor.
+    count: 5
     port:
       width: 5 in
       height: 9 in

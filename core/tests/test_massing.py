@@ -98,10 +98,7 @@ def test_too_tight_a_bend_is_refused() -> None:
 
 
 def test_chambers_in_a_row_have_arches_along_the_draft_and_troughs_for_their_fireboxes() -> None:
-    # Ten 9 in fireboxes that don't fit side by side across the front are troughs, one to a
-    # chamber: the Kyoto type at its old 63 in across (168 in since 2026-11-18, where they fit and
-    # v1 lays them at the front; v2's path takes them as troughs, `path_inputs.ONE_PER_CHAMBER`)
-    kiln = parse_design(KYOTO.replace("  width: 168 in", "  width: 63 in"))
+    kiln = parse_design(KYOTO)
     inside = cells(kiln, run_of(kiln))
     boxes = [c for c in inside if c.kind == "box"]
     pits = [c for c in inside if c.kind == "pit"]

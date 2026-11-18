@@ -63,6 +63,41 @@ wide and 45 in deep. The chamber is 6 ft to the crown.
    Are there flues on the left side too?
 5. Fig 8-15 p.205: how high up the front is the spy hole, and how big is it?
 
+## Checked against the book (2026-11-18)
+
+Read again on the page image of p.205: the text at zoom 3.2–7 and Fig 8-15 at zoom 4. Nothing in
+the design changes. The measurements and readings are in the dataset.
+
+**What p.205 says** (the gutter clips the bracketed words):
+
+> The firebox channel runs the entire width of the 6ft chamber. Grate bars or long soaps are
+> wedged along the kiln wall [and] floor, on 9in. (23cm) centers. The grate holds the wood above
+> the air [suppl]y at the inlet flues. As the wood burns, the ashes drop to the bottom [of the]
+> channel. ... a long iron poker with a hooked end must be [inser]ted through the stoke hole to
+> rake down the coals; otherwise, they can [block] the stoke hole and retard the firing. In
+> stoking the chamber, a few [pieces] always drop inside the door. Then the long stoking –
+> working back [to the] door – is done.
+
+**What Fig 8-15 draws:**
+- an arch 6 ft tall over a 45 in span, running 6 ft back;
+- the channel, "FIREBOX: 12" tall, 9" wide, 6' deep", at the bottom along the right side, its
+  slots, the "INLET FLUES 9" × 4½"", on its outer face;
+- "STOKE HOLE SIDE" on the right wall's inner face above the channel;
+- a 12 × 19 in kiln shelf;
+- a round hole near the crown;
+- "…FLUES 4½"" and "…GRATE BARS" cut off at the left;
+- no outlet flues and no chimney.
+
+**Gaps, for the plan** (02-plan.md, item 1):
+1. **The inlet flues' role.** By p.205 the inlet flues bring the channel's air under the wood.
+   The design takes them as the channel's flues into the chamber. Its air then comes through an
+   ash-pit mouth the book doesn't show.
+2. **The channel's height.** Fig 8-15 draws the printed 12 in as the whole channel. The design
+   takes 12 in above the grate, and the engine adds a 12 in ash pit under it.
+3. **The outlet flues.** The book shows none, so where the gas leaves isn't measured. The
+   design's back wall is its own choice. (The engine takes no flue through a catenary's legs.
+   That is a limit of the engine, not of the kiln.)
+
 ## Scaled off the figures (step A, 2026-11-09)
 
 Fig 8-15 (p.205) is a perspective sketch. Its printed arrows don't reach what they name: the 6'

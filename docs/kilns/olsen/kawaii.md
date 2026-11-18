@@ -14,7 +14,7 @@ Olsen, *The Kiln Book*, 4th ed.: pp.96–97 (text; Figs 4-44 to 4-48, photos), p
 | Chambers | four, 7 ft wide × 4 ft deep × 5'8" tall | four, 84 × 48 in, 24 in arch rise | matches |
 | Step | 12–15 in between chambers | 11.6° slope: a 13½ in step over a chamber and the 18 in wall between (re-derived 2026-11-10, when the wall between chambers became Olsen's common wall) | matches |
 | Wall between chambers | not printed | 18 in: Olsen's common wall, 4½ in thicker than the others and never narrower than the two 9 in arches' feet on it (p.46), the engine's default | assumed |
-| Firebox (dogi) | 5 ft tall, bars 18–24 in, two extra side stoke holes; the Bidai firebox duplicated (p.200) | Bidai's firebox, 21 in bars, 46 in above the grate; its air the Bidai entrance's 13 × 14 in AIR opening below the grate (Fig 8-7) | assumed from Bidai; the side stoke holes are covered after each stoking, so not entered |
+| Firebox (dogi) | 5 ft tall, bars 18–24 in, two extra side stoke holes | Bidai's firebox, 21 in bars | assumed from Bidai; side stoke holes expressible now (`stoke_holes`), not given: their size isn't printed |
 | Flues | inlet and exit 7 × 10 in, last exit 9 × 10 in, count not printed (Figs 4-47, 4-48) | five 7 × 10 in a wall, five 9 × 10 in out of chamber 4; since 2026-11-10 five 7 × 10 in inlets from the firebox through chamber 1's front wall, which carries its arch (before, the firebox's whole mouth was cut through that wall) | sizes printed; counts scaled (step A, below) |
 | Doors | one per chamber in a side wall, a stoke hole bricked into each (Fig 4-46) | 20 × 44 in flat-headed, each chamber, right wall | size from Bidai; head from Fig 4-46 (step A); a door stoke hole expressible now (`stoke_holes` at the door's place), not given: its size isn't printed |
 | Bracing | on the dogi and front chamber | buttressed, no steel | partly |
@@ -24,28 +24,35 @@ Fig 4-46's doorway is square-headed in the photo; since step A the model gives i
 
 ## Key results
 
-587 ft³; heat loss 274 kW; grate 294 in²; engine chimney 9.8 ft (v1, before 2026-11-18).
+587 ft³; heat loss 274 kW; grate 294 in²; engine chimney 9.8 ft (v1).
 
 ## Checked against the book (2026-11-18)
 
-Read again on the page images, pp.96–97 and pp.200–201. The dataset matches them. Two changes:
-- **The dogi's height.** The design gave none, so v1 drew it as tall as its 84 in width. The
-  printed 5 ft fits the Bidai firebox, measured from the ash pit's floor to the crown: 40 in of
-  upright wall, then its arch (Fig 8-7). Less the 14 in ash pit, that is 46 in above the grate.
-- **The dogi's air.** The path took the design's ash-pit mouth, the firebox's 84 in width by the
-  14 in pit, 1,176 in². The firebox is Bidai's, "duplicated in constructing the Kawaii kiln"
-  (p.200). Its entrance has an AIR opening 12–14 in wide over the 14 in ash pit (Fig 8-7). So the
-  design gives the firebox's `air` as 13 × 14 in below the grate, and the dataset as
-  `primary_air`, [168, 196] in².
+Read again on the page images, pp.96–97 and pp.200–201. The dataset matches them, and the design
+is unchanged.
 
-The wording: "7ft wide, 4ft deep" (p.97) uses "wide" across the kiln, by the floor plan "almost
-exactly" Bidai's. Tobe's passage and Fig 4-28 use "wide" along the draft, the arch's span. The
-design reads Kawaii's as the plan requires: 84 in across, 48 in along.
+**Measured and read:**
+- The dogi is "5ft (152cm) tall" (p.97).
+- Its firebox is Bidai's, "duplicated in constructing the Kawaii kiln" (p.200). Bidai's entrance
+  has an "AIR" opening 12–14 in wide over the 14 in ash pit, under "STOKING" (Fig 8-7). The
+  dataset carries it as `primary_air`, [168, 196] in², and v2's draft path takes it from there.
+- "7ft wide, 4ft deep" (p.97) uses "wide" across the kiln and "deep" along the draft, by the floor
+  plan "almost exactly" Bidai's (73 in across, 36–46 in along). Tobe's passage and Fig 4-28 use
+  "wide" along the draft. The design reads Kawaii's as its plan requires: 84 in across, 48 in
+  along.
 
-v2:
-- The draft path builds on the book's intake.
-- Each chamber's stage builds with the front open. With the front shut each is refused: no side
-  air inlet is printed, and the door stoke holes are covered after each stoking.
+**Gaps** (for the plan):
+1. **The dogi's height.** The design gives none, so v1 draws it as tall as its 84 in width,
+   against the printed 5 ft. Measured from the ash pit's floor to the crown, as Bidai's 40 in of
+   upright wall and its arch, 5 ft would leave about 46 in above the grate. That is a reading, not
+   printed.
+2. **The dogi's air.** The design has no air opening. Its path alone takes the ash pit's mouth,
+   the firebox's 84 in width by the 14 in pit, 1,176 in².
+
+v2 on the dataset's inputs:
+- The path builds.
+- Each stage builds with the front open. With the front shut each is refused, as no side air inlet
+  is printed and the door stoke holes are covered after each stoking.
 - The arches stand cold and hot.
 
 ## Open questions for the user
