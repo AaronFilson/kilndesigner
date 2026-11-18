@@ -36,6 +36,20 @@ single coefficients above; any Kast-O-Lite / Mizzou reversible expansion (still 
 `flat-roofs.md`); castable drying shrinkage; a silica brick's allowance from a maker (only a kiln
 brick vendor's 10–12 mm/m, Excerpt, not recorded as data).
 
+**2026-11-17, HarbisonWalker's *Handbook of Refractory Practice* (2005)** (`hwi-handbook.md`
+§2.4, §3.1) closes three of these:
+- **Curves by class** to 2800 °F (Figs 3.3, 3.4): fireclay, silica, 60–99 % alumina, SiC, zircon and
+  others; high-duty and superduty fireclay about 0.7 % at 2400 °F. IFB isn't drawn.
+- **A maker's allowance by class** (UR-4): fireclay 3/32 in/ft (the engine's figure, a fourth
+  source), 60–85 % alumina 3/32, 90 % 1/8, silica and corundum 5/32 (1.30 cm/m).
+- **Castable first-heat shrinkage**: 0.2–1.5 % permanent to 2600 °F, plastics 0.2–0.6 % (PR-7);
+  "Fireclay castables do not normally require an expansion allowance" (UR-5).
+- Joints (UR-4): fireclay walls of 15 ft or more take vertical joints staggered 4–6 ft apart; tunnel
+  kilns 10–15 ft (hot) to 15–20 ft (cool); silica walls 10–16 ft. Under air-setting mortar the
+  joints line up course to course. "Brick required to move with respect to each other as the
+  refractory expands should not be laid with air-setting mortar."
+Still not found: a Kast-O-Lite or Mizzou reversible expansion, and an IFB curve.
+
 ### 1.2 How an arch moves as it heats
 
 | # | Fact | Status | Source |
@@ -89,7 +103,7 @@ Findings for the engine:
 | Allowable bearing stress / FoS for refractory | **Not found.** The nearest published limits are the load tests: fireclay subsidence 0.5–3.0 % under 172 kPa (25 psi) at 1350–1450 °C [M1] Table 4; IFB 0.2 % at 1200 °C under 0.069 MPa (10 psi) for K26 and JM26 (Lynn sheet, Excerpt [M10]) |
 | IFB hot MOR (C583) and creep (C832) | **Not found.** Morgan's sheets give cold MOR (JM26 about 1.5 MPa, K26 0.9 MPa, Excerpt [M10]) |
 | Rampant-arch thrust, catenary at a step, hot corbels, door in a vault | **Not found** this round |
-| Trinks Vol. I, Gilchrist, Norton, Routschka, HWI *Modern Refractory Practice* / 2005 Handbook | No open full text reached (HWI 2005 Handbook at masonryheaterassociation.org returns 404; Scribd copies not readable). *Modern Refractory Practice* 3rd ed. 1950 is catalogued "Also issued online" at Texas A&M, link not followed |
+| Trinks Vol. I, Gilchrist, Norton, Routschka, HWI *Modern Refractory Practice* / 2005 Handbook | No open full text reached (HWI 2005 Handbook at masonryheaterassociation.org returns 404; Scribd copies not readable). *Modern Refractory Practice* 3rd ed. 1950 is catalogued "Also issued online" at Texas A&M, link not followed. **2026-11-17:** the 2005 Handbook is reached (the owner's copy) and read in full, `hwi-handbook.md`: no allowable, no hot cohesion, no IFB hot MOR or creep |
 
 ## 4. Proposed engine work (not done)
 

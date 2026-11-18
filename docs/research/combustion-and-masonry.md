@@ -561,6 +561,19 @@ Note: cone 10 is about 2,345 °F. Kast-O-Lite 26 LI is rated to 2,600 °F, which
   - Tip temperature limits: SS304 about 800 °C, SS310 1,100 °C, Inconel 601 1,200 °C.
 - Thermal Ceramics' "Suggested Anchor Spacing" table: **NOT FOUND** (only the table of contents was visible).
 - Ceramic anchor spacing: **NOT FOUND**.
+- **2026-11-17, a maker's rules:** HarbisonWalker, *Handbook of Refractory Practice* (2005), IR-64,
+  IR-65 and IR-69, checked on the page images (`hwi-handbook.md` §4.5):
+  - Metal wire anchors where service doesn't exceed 2000 °F, "0.8 times the thickness of the
+    lining", rounded up to the ½ in.
+  - Centres: walls 6/9/12 in for linings of 2–4/4–6/6–13½ in; roofs 6/9/12 for 2–4/4–7/7–9 in.
+  - Metal limits: carbon steel 1000 °F, 304 1600, 309 1650, 310 1700.
+  - Ceramic anchors "where temperatures in the furnace will routinely exceed 2000°F", about the
+    lining's length, at 12 in in roofs and arches and 15–24 in in walls.
+  This closes the ceramic spacing above. The vendor post's ⅔ height and tip limits are unsourced
+  beside it.
+- **The owner (2026-11-17):** most castable used in kiln linings doesn't need anchors, and whether a
+  lining does depends on the specific material. The engine adds no anchor requirement; the rules
+  above are reference only.
 - Stainless needles as reinforcement: John Britt used Rib-Tec 400 1 in. needles at about 4 lb per 100 lb of castable [S59].
 
 ### 6.4 Formwork and cast arches

@@ -703,6 +703,18 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   reversible expansion and drying shrinkage, a measured arch rise, rampant-arch thrust, the
   catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
   Refractory Practice* not reached online.
+- *2026-11-17:* HWI's 2005 Handbook reached (the owner's copy) and read in full:
+  `docs/research/hwi-handbook.md`.
+  - Closed: castable first-heat shrinkage as a band (0.2–1.5 %), expansion allowances by class,
+    and a primary dry-out schedule. It also prints the rounding rule of Olsen's ring tables, which
+    are HW's own.
+  - Anchors: HWI's industrial anchor rules are recorded as reference only. **The owner
+    (2026-11-17):** most castable used in kiln linings doesn't need anchors, and it depends on the
+    specific material, so the engine adds no anchor requirement.
+  - Still open: hot cohesion, an allowable or FoS, IFB hot MOR and creep, a castable's reversible
+    expansion by product, and a measured arch rise.
+  - Eleven proposals for the engine wait on the owner (`hwi-handbook.md` §8; number 10, anchors,
+    is withdrawn).
 
 ## Follow-up research: hot emissivities and gas radiation (2026-11-09)
 

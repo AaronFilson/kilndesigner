@@ -332,7 +332,8 @@ This is why trapped water is dangerous: if a dense castable's pores hold liquid 
 | Mizzou, via High Temp Tools FAQ [S41] | Air cure 16–24 h above 60 °F, kept damp or covered; best at 90–110 °F. Then, for one layer ≤ 9 in thick: ambient → 250 °F at 75 °F/h, hold 30 min per inch; 250 → 500 °F at 75 °F/h, hold 30 min per inch; 500 → 1000 °F at 75 °F/h, hold 30 min per inch; 1000 °F → use at 75 °F/h. | Verified (secondary) |
 | AGC Ceramics (Japan) | 50 °C/h from room temperature to 200 °C, then a hold sized by thickness, "10 mm thickness corresponds to 1 hour" | Excerpt (PDF 404) [S56] |
 | General guidance | first hold for cement-bonded refractory between 220 and 400 °F; later holds remove chemically bound water; ramps of 25–50 °F/h with holds at 220 °F and 600–1000 °F | Excerpt (secondary) [S56] |
-| HWI, Allied, Plibrico primary sheets | NOT FOUND (PDFs not readable or not found) | |
+| HWI, *Handbook of Refractory Practice* (2005), UR-14 (read 2026-11-17, `hwi-handbook.md` §3.3) | "Initial firing rates typically raise the temperature at about 50 °F (28 °C) per hour. For high strength, high purity cement binders, the rate is 30 °F (17 °C) per hour. Normally, holds are incorporated at 250 °F (121 °C), 500 °F (260 °C) and 1000 °F (538 °C). … use one hour per inch of thickness for dense linings." Temperatures are of the gas, thermocouples ½ in off the face; hold while it steams. No thickness cap stated | Read (primary, the maker) |
+| Allied, Plibrico primary sheets | NOT FOUND (PDFs not readable or not found) | |
 
 ---
 
@@ -543,7 +544,7 @@ as one source. Values the engine uses come first (`castable.py`, `data/ingredien
 |---|---|---|
 | Kyanite density 3.61 (`ingredients.yaml` kyanite) | 2 (webmineral, KMC) | No handbook read. |
 | Fired kyanite 3.03 (`fired_density`) | 1, KMC [S2] (derived) | Only KMC computes it. |
-| Quartz inversion size, 0.45 % linear (`QUARTZ_INVERSION`) | [S23] 0.45 % linear, [S25] ~0.4 % volume, [S26] 1–2 %, [S75] **4 % volume** | **Disagree.** 0.45 % linear ≈ 1.35 % volume, which is not the 0.4 % volume in [S25]. [S75] (refractories lecture) says 4 % volume over 200–575 °C. No primary handbook read. The engine's 0.45 % linear is from Wikipedia only. |
+| Quartz inversion size, 0.45 % linear (`QUARTZ_INVERSION`) | [S23] 0.45 % linear, [S25] ~0.4 % volume, [S26] 1–2 %, [S75] **4 % volume** | **Disagree.** 0.45 % linear ≈ 1.35 % volume, which is not the 0.4 % volume in [S25]. [S75] (refractories lecture) says 4 % volume over 200–575 °C. No primary handbook read. The engine's 0.45 % linear is from Wikipedia only. **2026-11-17, a primary handbook:** HWI (2005) PR-18: "an abrupt volume increase of approximately 0.9 percent" at 1063 °F (573 °C), and "the total reversible expansion which occurs between 600 °F (316 °C) and 1100 °F (593 °C) is about 3.2 percent"; cristobalite 2.8 % in volume at 220–267 °C (`hwi-handbook.md` §2.8). The engine uses only the temperature. |
 | Mulcoa 70 density 2.88 (`ingredients.yaml` mulcoa-70 `density`) | 1, Digitalfire [S31]; [S58] SDS "2–3"; [S79] chemistry only | **Basis mismatch.** 2.88 is a *packed grain bulk density* with 3.5 % apparent porosity, but the yaml uses it as true (particle) density. The skeletal density would be ≈ 2.88/(1 − 0.035) ≈ 2.98 **(derived)**, and mullite itself is 3.05–3.16 [S3] [S2]. No Imerys TDS found. Chemistry agrees: 68.8/26.8 % [S31] vs 68.9/26.7 % [S79]. |
 | Molochite SG 2.70, 55 % mullite | 1 sheet [S32]; Digitalfire "95 %+" [S22b] | Conflict unchanged. |
 | Greenstripe SG 2.65, LOI 10.3 % | SDS [S60]; LOI 10.3 [S28] vs 10.4 [S61] | 2 sources, agree within 0.1 %. PCE/shrinkage still NOT FOUND. |
@@ -551,7 +552,7 @@ as one source. Values the engine uses come first (`castable.py`, `data/ingredien
 | Secar 71 SG 2.94 | 1 sheet [S63] | No Imerys TDS reachable. |
 | Dextrin 1.45, starch 1.5, cellulose 1.5 | 1–2 each [S13] [S13b] [S14] [S12] | No third found. |
 | Heat of combustion, starch 4.16 / cellulose 4.15 kcal/g (`HHV_*`) | [S51] (a review of ~100 values), [S52] 16.31 kJ/g cellulose, [S80] NBS 1950 bomb calorimetry (values not read), [S81] potato starch calorimetry (values not read) | Effectively 2 read. [S51] 17.4 kJ/g vs [S52] 16.31 kJ/g: **6 % apart**. A teaching page's 14.2 kJ/g [S82] uses glucose's enthalpy for cellulose and is not a measurement; ignore. |
-| Mizzou dry-out 75 °F/h, ½ h per inch, ≤ 9 in (`DRYOUT_*`) | [S41] only for Mizzou; AGC [S56] 50 °C/h, 1 h per 10 mm; an unnamed maker sheet [S83] 50 °C/h per 25 mm | **Disagree.** AGC's hold is 1 h per 10 mm ≈ 2.5 h per inch, five times the Mizzou ½ h per inch the engine uses. No HWI, Allied or Plibrico primary schedule found. |
+| Mizzou dry-out 75 °F/h, ½ h per inch, ≤ 9 in (`DRYOUT_*`) | [S41] only for Mizzou; AGC [S56] 50 °C/h, 1 h per 10 mm; an unnamed maker sheet [S83] 50 °C/h per 25 mm | **Disagree.** AGC's hold is 1 h per 10 mm ≈ 2.5 h per inch, five times the Mizzou ½ h per inch the engine uses. No HWI, Allied or Plibrico primary schedule found. **2026-11-17:** HWI's own Handbook (2005, UR-14) gives 50 °F/h and 1 h per inch for dense linings at the same three holds, slower than the engine's (`hwi-handbook.md` §3.3, proposal 1). |
 | Mizzou water 9.0 % hand cast (8.6 % vibrated), ≤ 11 % | HWI 12/12 sheet [H18 in `door-headers.md`]; [S41] | Reconciled 29 Oct 2026 (review M15): HWI's sheet replaces the derived 9.5 %. |
 | Mizzou Castable Plus 142 / 140 lb/ft³ | HWI 12/12 sheet [H18]; distributor [S42] 2.27 g/cm³ (142 lb/ft³) | Agree. |
 | CAC hydrate densities, water ratios | excerpts [S38] only | |

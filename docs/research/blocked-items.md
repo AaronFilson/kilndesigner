@@ -84,6 +84,7 @@ membrane result already sourced in `domes-over-doors.md` §D1.
 | HarbisonWalker *Modern Refractory Practice* (1950; 4th ed. 1961) | on the Internet Archive (`modernrefractory00harb`, `modernrefractory0000harb`) but "access-restricted" (borrow only); not read. Whether it holds dome tables is unconfirmed | NOT FOUND (not read) | [K12] |
 | Full-text search of the Archive for "dome brick" Harbison | 36 hits: hot-blast stove dome brick (steel works), none a kiln dome table | NOT FOUND | [K12] |
 | A.P. Green dome brick | the scanned A.P. Green pages in `brick-shapes.md` have none | NOT FOUND | `brick-shapes.md` |
+| HarbisonWalker *Handbook of Refractory Practice* (2005), IR-8, IR-9 (read 2026-11-17) | only electric-arc-furnace roof brick: a two-shape, triple-taper arch-key-wedge pair for spherical radii 6 ft 6 in to 22 ft 4 in (9 in roofs), dimensions not printed; the maker counts the rings from the roof's drawing | NOT FOUND (no kiln-size table) | `hwi-handbook.md` §4.3 |
 
 Conical (tatami) bricks sized by the builder remain the only sourced route (`conical.py`).
 Next: borrow the 1961 *Modern Refractory Practice* from the Archive and check its index.

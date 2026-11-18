@@ -162,6 +162,19 @@ aggregates mitigate the loss. No temperature limit for cinder block was found. *
 hollow-block course as the platform, which the heat-loss model cannot represent today (it takes a
 solid disk on dry soil, the safe side for the top face).
 
+- **A furnace maker's figure (2026-11-17).** HarbisonWalker, *Handbook of Refractory Practice*
+  (2005), UR-19 (`hwi-handbook.md` §3.5), Read:
+  - "Under normal conditions, Portland cement concrete has been safely used for furnace
+    foundations up to 700 °F (371 °C). When the temperature reaches 900 °F (483 °C), dehydration
+    of the cement reaches a point where the concrete retains little mechanical strength."
+  - Silica aggregate expands enough by 1000 °F to stress the concrete, and limestone calcines. Above
+    700 °F a castable refractory, or calcined fireclay aggregate up to 1 in.
+  - Ventilation: the furnace "on plates, girders or low brick piers, so that air circulates under the
+    vessel", or "cross flues … in the top of the concrete foundation", or "pipes, 3 inches in diameter
+    or larger, … embedded in the foundation".
+  This is furnace practice, not ACI 349's long-term 150 °F (C5), and it sources the vented option as
+  a practice. It gives no way to compute the heat the air carries off.
+
 ### C9. Conductivity and density of block (Partial)
 
 - Conductivity rises with density (Masonry Advisory Council, *Lightweight CMU Advantages* [C13],
