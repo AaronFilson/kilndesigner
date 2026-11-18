@@ -5,7 +5,9 @@ pages (PDF metadata: PageMaker 7.0, made 2004-03-10, revised 2005-01-06). The ow
 `docs/research/da86e4bd09a66be00c11a67957ff8e5a.pdf` (git-ignored), from
 https://dl.icdst.org/pdfs/files/da86e4bd09a66be00c11a67957ff8e5a.pdf. Read in full on 2026-11-17:
 the text layer of every page extracted with PyMuPDF, and every table and figure cited here checked
-on the page image (rendered at 110–300 dpi) where the extracted columns could be out of order.
+on the page image (rendered at 110–300 dpi) where the extracted columns could be out of order. A
+second pass (2026-11-17/18, §9) read what a text layer loses: the graphs, drawings, photographs,
+sidebars and the ring and arch tables, into four notes of their own.
 
 The book is "© 2005 … All Rights Reserved", and its disclaimer says it "is for general
 educational use only. It does not contain recommendations for any particular refractory for any
@@ -56,20 +58,22 @@ anchors, and Section 8 (A) the appendix. Section 9 (L) is product and applicatio
 | 5 | Whether a wall's cooler part may carry the load (Tobe hot's "heat-to-statics bridge") | "The wall should be bonded so that loads will be transferred to the cooler part of the wall when the inner, hotter portion loses its ability to carry them. Walls must be designed to carry structural loads at high temperatures." (UR-19) | A maker's statement of the principle the bridge rests on; no numbers. The owner (2026-11-17): the hot statics' uniform temperature through the brick "is just bad modeling" |
 | 6 | The rise of a fireclay arch (`11-17-26-inputs.md` §11 says "the passage gives no fireclay figure") | "Typically, stable fireclay arches rise from 1½ to three inches per foot of span. High temperatures and soaking heat call for higher values." (UR-24, Verified on the image) | **Correction:** the passage does give one. The engine already has it (`steel.yaml` `rise_per_foot.dense_firebrick`, from the guide) |
 | 7 | A silica brick's expansion allowance from a maker (`refractory-movement-and-mortar.md` §1.1, Not found) | 5/32 in per ft (1.30 cm/m) in high-temperature service. Silica walls take vertical expansion joints bottom to top, 10–16 ft apart (UR-4) | **Closed** |
-| 8 | Expansion curves to 1300 °C+ by class (same §1.1) | Figs 3.3, 3.4 (PR-7), "approximate", to 2800 °F: fireclay, semi-silica, silica, 60–99 % alumina, SiC, zircon, chrome, magnesite, forsterite | **Closed** as curves (§2.4) |
-| 9 | Castable drying and first-heat shrinkage (same §1.1; `02-plan.md` sixth round) | Cement-bonded castables shrink at 400–600 °F (the cement decomposes) and above 1800–2000 °F (sintering). The permanent shrinkage after a first heat to 2600 °F is "commonly … on the order of 0.2 % to 1.5 %" (PR-7, Fig 3.5). Plastics 0.2–0.6 % (Fig 3.6). "Fireclay castables do not normally require an expansion allowance" (UR-5) | **Closed** as a band (not per product) |
-| 10 | The engine's 3/32 in/ft fireclay growth | 3/32 in per ft for superduty, high-duty and low-duty fireclay (UR-4). Fig 3.4's fireclay line reaches about 0.7 % at 2400 °F, read off the figure (3/32 in/ft is 0.78 %) | A fourth source, beside Olsen p.51, the IFB sheets and Brosnan |
+| 8 | Expansion curves to 1300 °C+ by class (same §1.1) | Figs 3.3, 3.4 (PR-7), "approximate", to 2800 °F: fireclay, semi-silica, silica, 60–99 % alumina, SiC, zircon, chrome, magnesite, forsterite. Digitised every 200 °F in the second pass (§9.1) | **Closed** as curves (§2.4, §9.1). Not for IFB |
+| 9 | Castable drying and first-heat shrinkage (same §1.1; `02-plan.md` sixth round) | Cement-bonded castables shrink at 400–600 °F (the cement decomposes) and above 1800–2000 °F (sintering). The permanent shrinkage after a first heat to 2600 °F is "commonly … on the order of 0.2 % to 1.5 %" (PR-7). Fig 3.5 (PR-8), digitised: −0.40 % fireclay, −0.60 % low-cement fireclay, −1.10 % 90 % alumina castable; Fig 3.6's plastics −0.15 to −0.33 % against the text's 0.2–0.6 % (§9.1). "Fireclay castables do not normally require an expansion allowance" (UR-5) | **Closed** as a band and three class curves (not per product) |
+| 10 | The engine's 3/32 in/ft fireclay growth | 3/32 in per ft for superduty, high-duty and low-duty fireclay (UR-4). Fig 3.4's fireclay line ends at about 2380 °F at 0.76 % and reads 0.75 % at cone 10 (second pass, vector path, ±0.01 %; first read here as "about 0.7 % at 2400 °F"). 3/32 in/ft is 0.78 % | A fourth source, beside Olsen p.51, the IFB sheets and Brosnan; 3–5 % above the curve at cone 10 (§9.1) |
 | 11 | A primary dry-out schedule from HWI (`castables.md` §8.2 and §13: "No HWI, Allied or Plibrico primary schedule found") | About 50 °F/h (30 °F/h for high-purity cement binders), holds at 250, 500 and 1000 °F, "one hour per inch of thickness for dense linings". Temperatures are of the gas, ½ in off the face; hold while it steams (UR-14) | **Found.** Slower than the engine's (§3.3) |
 | 12 | How near its rating an IFB may run (`movement.py` `ifb_notes`: "no source says how near") | "Typically a 150 to 200 °F safety factor is used in selecting the appropriate brick" (BP-7) | **Found**, as a selection margin |
 | 13 | A furnace-builder's temperature for concrete foundations (`concrete-foundations.md` C8: no kiln guide gives one) | Portland cement concrete "safely used for furnace foundations up to 700 °F"; at 900 °F "the concrete retains little mechanical strength"; above 700 °F a castable, or calcined fireclay aggregate. Ventilate under the furnace (UR-19) | **Found** (§3.5) |
 | 14 | Wall height for a thickness (Olsen p.41, Giles c.1940; `kiln-reference.md`, `door-headers.md`) | 4½ in to 3 ft; 9 in 3–8 ft; 13½ in 8–12 ft; 18 in higher. Thicker when the unsupported length exceeds 1½ × the height; cylindrical walls with backing may be thinner (UR-21) | A third source, with two qualifiers the others lack |
 | 15 | The quartz inversion's size (`castables.md` §13: "Disagree … No primary handbook read") | An abrupt volume increase of about 0.9 % at 1063 °F (573 °C), and about 3.2 % in all between 600 and 1100 °F. Cristobalite: 2.8 % in volume at 428–513 °F heating, 480–392 °F cooling (PR-18) | A primary source (§2.8) |
 | 16 | Specific heat of any refractory (`materials.yaml` IFB entries are "excerpt") | Only the glossary's definition (A-20) | **Not found** |
-| 17 | IFB emissivity above 1077 °C (`11-17-26-inputs.md` §13) | Only Emisshield's sales claim that at high temperature "refractories will only have an emissivity value of 0.2 to 0.5" (L, PDF p.240): unmeasured, from a coating seller | **Not adopted**; the extrapolation stands |
-| 18 | How Olsen's ring tables round a count (`rings.py`: "derived from the tables, not stated by them") | Olsen's Tables A-4 and A-5 are HW's ring tables (IR-26, IR-29). HW: "Fractional parts equal to or greater than one tenth of a brick were counted as an entire brick" (IR-25) | **Stated** by the tables' maker; the engine's rule is the same (§4.4) |
+| 17 | IFB emissivity above 1077 °C (`11-17-26-inputs.md` §13) | Only Emisshield's sales claim that at high temperature "refractories will only have an emissivity value of 0.2 to 0.5" (L, PDF p.240): unmeasured, from a coating seller. The bulletin's only graph (PDF 241) is of metals, with no refractory curve (§9.4) | **Not adopted**; the extrapolation stands |
+| 18 | How Olsen's ring tables round a count (`rings.py`: "derived from the tables, not stated by them") | Olsen's Tables A-4 and A-5 are HW's ring tables (IR-26, IR-29). HW: "Fractional parts equal to or greater than one tenth of a brick were counted as an entire brick" (IR-25). `rings.ring` gives HW's total in all 485 rows of five ring tables to 12 ft (second pass, §9.3) | **Stated** by the tables' maker; the engine's rule is the same (§4.4, §9.3) |
 | 19 | Anchors for castable linings (`combustion-and-masonry.md` §6.3: a vendor's post only; ceramic anchor spacing Not found) | Metal anchors where service doesn't exceed 2000 °F, length 0.8 × the lining, spacing by place and thickness. Metal limits: carbon steel 1000 °F, 304 1600, 309 1650, 310 1700. Ceramic anchors above 2000 °F, at 12 in in roofs and arches (IR-64, IR-65, IR-69) | **Found, as reference only.** The owner: most kiln castables need no anchors, and it depends on the material, so no requirement (§4.5) |
 | 20 | Kast-O-Lite 26 LI: k ("excerpt" in the library) and strength (`refractory-bearing.md` §B2: Not found) | The 2003 version's k graph agrees with the library within 0.11 Btu·in/(ft²·h·°F); CCS 3,000 psi at 220 °F (bulletin HW139, 3/03) | **Corroborated** and found, for the earlier version (§5.2) |
 | 21 | Fibre blanket k between makers (`electric-and-thermal.md` §4.3: Morgan and CNBM disagree at high temperature) | INSWOOL 8 lb runs about 10 % under Kaowool above 1000 °F (bulletin HW 99R, 01/04) | A third maker, nearer Morgan (§5.4) |
+| 22 | A circle-brick table for a 4½ in round wall (`rings.py` and `kiln-reference.md`: Olsen's appendix has none; `blocked-items.md` §4) | IR-6 lists nine high-alumina circle brick, 24-33-3 to 120-129-3, 12 to 45 a ring. IR-30 tables the rings from 2'0" to 10'0" by the inch, 3 in brick only (second pass) | **Found** (§9.2, §9.3), beside HW's 1906 table (`blocked-items.md` §18) and A.P. Green's (`brick-shapes.md` p.117). Dome-brick tables stay not found |
+| 23 | Fireclay growth below 2400 °F (`movement.py`: "No source read gives the curve below 2400 °F") | Fig 3.4's line: 0.33 % at 1000 °F, 0.59 % at 1800 °F, 0.71 % at 2200 °F, 0.75 % at cone 10 (second pass) | **Found** (§9.1) |
 
 ---
 
@@ -156,7 +160,8 @@ anchors, and Section 8 (A) the appendix. Section 9 (L) is product and applicatio
   inches per foot, 0–2800 °F. They are "mean values" of the brands in each class (PR-7). Read
   off the 300 dpi image, about ±0.03 %:
   - **High-duty and superduty fireclay**: nearly straight, about **0.7 % at 2400 °F**, where the
-    line ends. 3/32 in/ft is 0.78 % (Derived).
+    line ends. 3/32 in/ft is 0.78 % (Derived). *Second pass (§9.1): this reading was low. On the
+    vector path the line ends at about 2380 °F at 0.76 % and reads 0.75 % at cone 10, ±0.01 %.*
   - Semi-silica fireclay: about 0.6 % by 1200 °F, then about 0.8 % at 2500 °F.
   - Zircon: about 0.65 % at 2600 °F. Chrome: about 1.4 % at 2700 °F.
   - Superduty silica: most of its 1.3 % comes below about 800 °F, then flat. Silica brick
@@ -167,7 +172,7 @@ anchors, and Section 8 (A) the appendix. Section 9 (L) is product and applicatio
   order of 0.2 % to 1.5 %." Plastics (Fig 3.6): linear to about 1900 °F, then contract;
   "Permanent shrinkages of 0.2 % to 0.6 % are common after initial heating to 2600 °F" (PR-7).
   Read; the figures' curves (fireclay, low-cement fireclay and 90 % alumina castables) were not
-  digitised.
+  digitised. *Second pass (§9.1): Figs 3.5 and 3.6 are on PR-8 (PDF 40), and are now digitised.*
 
 ### 2.5 Thermal conductivity (PR-9–PR-11)
 
@@ -486,7 +491,8 @@ statements below are Read, and checked against what §4 records:
   No misprint found.
 - Rings (UR-29): Formulas 1-a to 4-c for two-brick rings (straight and radial, or two radials).
   Formula 3-a reads "N_e c_e + N_f C_f = πD_g", with a lower-case c on brick E where the outside
-  chord C_e is meant (Verified on the image).
+  chord C_e is meant (Verified on the image). *Second pass (§9.2): formula 2-b is misprinted too,
+  and the engine's ring is formula set 2.*
 - Arch combination tables (IR-52): "no allowance was made for mortar or expansion joints or for
   size deviations", and "Fractional parts equal to or greater than one tenth of a brick were
   counted as an entire brick", so the counts "may be slightly in excess". Read.
@@ -576,7 +582,8 @@ Read:
   count from the roof's drawing. UR-21: "Combinations of these shapes taper in two dimensions to
   turn domes." A kiln dome's radius is mostly smaller than 6½ ft, and there is no table, so
   `blocked-items.md` §4 (dome and circle brick tables) stays **Not found**. `conical.py`'s
-  builder-sized bricks remain the sourced route.
+  builder-sized bricks remain the sourced route. *Second pass (§9.2, §9.3): that holds for dome
+  brick only. Circle brick is in the handbook (IR-6's nine sizes, IR-30's ring table).*
 
 ### 4.4 Ring and arch tables (IR-25–IR-62)
 
@@ -585,7 +592,9 @@ Read:
   to 2'3": 19; 18 + 3; 17 + 5; … 31 + 15. IR-29's 3 in table (PDF p.153) holds Olsen's A-5
   (p.304). Its No.3 column runs 29, 28, 26, 25, 24, 23, 22, 21, 20, 19 … from 1'6", and starts
   lower, with No.4 arch brick. This confirms the five A-5 cells (1'11"–2'3") that are faint in the
-  scan of Olsen. Read; the columns were traced through the text layer's order.
+  scan of Olsen. Read; the columns were traced through the text layer's order. *Second pass
+  (§9.3), on the images: A-4 equals IR-26 in all 52 rows, and A-5 equals IR-29 in 65 of 66 (not at
+  5'10").*
 - **The rounding rule is printed.** "Fractional parts equal to or greater than one tenth of a brick
   were counted as an entire brick. … The number of brick required for a ring, as given in the
   tables, may be slightly in excess of the number actually required." Also: "no allowance was made
@@ -594,7 +603,8 @@ Read:
   calls "derived from the tables, not stated by them". It is stated, by the tables' maker, and the
   engine's rule is the same.
 - The arch tables (IR-52–IR-62: 4½–18 in arches at 1.608 and 2.302 in/ft and others) are the
-  guide's, which `kiln-hardware.md` §4.4 read for studio spans. Not re-transcribed.
+  guide's, which `kiln-hardware.md` §4.4 read for studio spans. Not re-transcribed. *Second pass
+  (§9.3): IR-53 to IR-58 transcribed to 12 ft.*
 
 ### 4.5 Anchors (IR-63–IR-82; PDF pp.186–205)
 
@@ -749,7 +759,8 @@ PLUS and others) are in the catalogue; none is in the library.
 - **Rules**, Read:
   - "there is no curing or dry out time when using INSWOOL ceramic fiber blankets" (PDF p.248).
   - INSWOOL is unaffected by most chemicals; "The exceptions are phosphoric acid, hydrofluoric
-    acid and strong alkalies" (MP-22).
+    acid and strong alkalies" (MP-22). *Second pass (§9.4): the blanket bulletin of 01/04 names
+    only the two acids (PDF 248).*
   - Modules: "DO NOT use for linings in contact with molten metal, abrasive, alkali laden, and high
     positive pressure conditions" (MP-23).
   - Module layout: parquet "For applications of 2000 °F and less"; soldier course "2000 °F to
@@ -776,13 +787,19 @@ PLUS and others) are in the catalogue; none is in the library.
 - Hot crushing strength or hot MOR of any fireclay brick or IFB; creep (C832) of any fireclay
   brick or IFB; any IFB load test (10 psi or otherwise).
 - Specific heat (or mean specific heat) of any refractory; emissivity data for any refractory
-  (only the Emisshield claim, §1 row 17).
+  (only the Emisshield claim, §1 row 17; Emisshield's graph is of metals only, §9.4).
 - A measured rise or movement of a heated arch; any cone temperature table (only PCE by class).
 - Thermal conductivity of any brick product, dense or insulating (only Table 3.5's class means), of
   HWI's IFB (G-series, GREENLITE) including Example 1's "2300 °F IFB", of GREENLITE castables or
   of Mizzou.
 - The water to mix, or the weight to place a ft³, of any KAST-O-LITE or GREENLITE; reversible
-  expansion of any castable product.
+  expansion of any castable product (Fig 3.5's three curves are unnamed class mixes, §9.1).
+- In Section 9, any k, hot-MOR, expansion, creep or temperature-profile curve for fireclay brick,
+  IFB, dense castable or fibre besides PDF 280's KAST-O-LITE k (second pass, §9.4).
+- A dome-brick table for a kiln-size dome (only the electric-furnace roof shapes, IR-8, IR-9). Any
+  arch table for 2½ in series brick, and any 2½ in key or circle-brick ring table (§9.3).
+- A glass fraction or viscosity of fireclay brick at temperature, and any brick-life figure under
+  alkali, lime or iron attack (§9.1).
 
 ---
 
@@ -792,10 +809,10 @@ PLUS and others) are in the catalogue; none is in the library.
 |---|---|---|---|
 | A check on the surface model | Example 1's state: 402 °F, 70 °F, ε 0.9 gives Q_r 741, Q_nc 361 Btu/(ft²·h) | Read; the engine is within 2 % in total | A test of `thermal/surface.py` (proposal 4) |
 | A check on brick counts | Straights per ft² by thickness (UR-21) | Verified | A test (proposal 4) |
-| Fireclay growth to cone 10 | 3/32 in/ft (UR-4); about 0.7 % at 2400 °F (Fig 3.4) | Verified | A fourth source for `frame.py`'s and `movement.py`'s 3/32 |
+| Fireclay growth to cone 10 | 3/32 in/ft (UR-4). Fig 3.4: 0.75 % at cone 10, 0.76 % at the line's end (about 2380 °F), and the curve below it (§9.1) | Verified (vector path) | A fourth source for `frame.py`'s and `movement.py`'s 3/32; proposal 16 |
 | KX-99 k(T) | The superduty class, Table 3.5: within 2.5 % of the library's excerpt to 2000 °F; 11.4 at 2200 °F, 12.8 at 2600 °F | Verified (class mean) | Corroboration; extending KX-99's points with class data is proposal 5 |
 | Expansion allowance by class | UR-4's table; joint spacing; air-set joints aligned | Verified / Read | `refractory-movement-and-mortar.md` |
-| Castable first-heat shrinkage | 0.2–1.5 % to 2600 °F; fireclay castables no allowance | Read | `castables.md` |
+| Castable first-heat shrinkage | 0.2–1.5 % to 2600 °F; Fig 3.5: −0.40 % fireclay, −0.60 % low-cement fireclay, −1.10 % 90 % alumina (§9.1); fireclay castables no allowance | Read; Verified (vector path) | `castables.md`; proposal 16 |
 | Castable dry-out | 50 °F/h, holds at 250/500/1000 °F, 1 h per inch for dense linings | Read | Proposal 1 |
 | IFB rating margin | 150–200 °F | Read | Proposal 2 |
 | Concrete foundation | 700 °F safe, 900 °F little strength; vented foundations | Read | Proposal 3 |
@@ -804,7 +821,14 @@ PLUS and others) are in the catalogue; none is in the library.
 | Quartz inversion | 0.9 % by volume at 573 °C; 3.2 % over 316–593 °C | Read | Proposal 7 |
 | Anchors for a castable lining | Length, spacing, metal limits, the 2000 °F line for ceramic anchors | Verified | Reference only; no requirement (the owner, 2026-11-17) |
 | Kast-O-Lite 26 LI k and CCS | The 2003 version: within 0.11 of the library's k; CCS 3,000 psi | Verified | Proposal 12 |
-| Fibre and alkali | Modules not for "alkali laden" linings; strong alkalies excepted from INSWOOL's resistance | Read | Proposal 11 |
+| Fibre and alkali | Modules not for "alkali laden" linings; strong alkalies excepted from INSWOOL's resistance (MP-22); the 01/04 blanket bulletin names only the two acids (§9.4) | Read | Proposal 11 |
+| Ring counts as tests | `rings.ring`'s totals equal HW's in all 485 ring rows; splits within one brick; the straight region by UR-29's formula 1-a | Derived (§9.3) | Proposals 13, 15 |
+| Arch course counts | IR-53 to IR-58, 538 rows to 12 ft; 20 misprinted rise or radius cells, no count | Verified (§9.3) | Proposal 13 |
+| A 4½ in circle-brick ring | IR-30, 97 rows; N = π(D + 9)/9 by the 0.1 rule; IR-6's thin end 9 × ID/OD | Verified, Derived (§9.2, §9.3) | Proposal 14 |
+| Growth of a 60–90 % alumina hot face | 0.84–1.00 % at cone 10 (Fig 3.3), above UR-4's 3/32 | Verified (vector path) | Proposal 16 |
+| Geometry tests | A-2's circular segment and A-3's spherical cap; misprints in A-3 and A-6 | Derived (§9.1) | Proposal 17 |
+| Skewback notes | UR-24's six drawings: the line of thrust through the steel's corner; one built-up construction "to be avoided"; headers under the skew | Verified (§9.2) | Proposal 19 |
+| Board for a kiln's hot face | Only INSBOARD 2600 and 3000 are ticked for "Hot Face Linings for Ceramic Kilns" (HW 102, 09/03) | Verified (§9.4) | Information |
 
 ## 8. Proposals for the owner (nothing here is built)
 
@@ -832,7 +856,8 @@ PLUS and others) are in the catalogue; none is in the library.
 7. **Quartz inversion.** Cite HWI PR-18 in `castable.py`'s comment in place of Wikipedia, and
    record its size as 0.9 % by volume, abrupt.
 8. **Ring rounding.** `rings.py`'s docstring: its 0.1-brick rule is stated by HW (IR-25), whose
-   tables Olsen's A-4 and A-5 reprint. A comment change; no number moves.
+   tables Olsen's A-4 and A-5 reprint. A comment change; no number moves. (Second pass: the rule
+   gives HW's total in all 485 rows; proposals 13, 15 and 18.)
 9. **A brick kiln's first firing.** The engine advises a first firing only for castables
    (`castable.py`, `masonry.py`). A mortared brick kiln could get an information note from UR-27:
    dry out at no more than 250 °F for 24 h or longer, and stay under 400–600 °F until the steaming
@@ -842,9 +867,237 @@ PLUS and others) are in the catalogue; none is in the library.
     requirement; HWI's rules stay in §4.5 as reference.
 11. **Fibre in salt and soda kilns.** A design with `salt_ports` and fibre on a hot face could get an
     information note citing MP-22 and MP-23 (strong alkalies excepted; modules not for "alkali laden"
-    linings). It flags a material fault, not a firing choice.
+    linings). It flags a material fault, not a firing choice. The 01/04 blanket bulletin names only
+    hydrofluoric and phosphoric acid (§9.4), so the note cites the 2005 text, not the bulletin.
 12. **Kast-O-Lite 26 LI Plus.** Keep its k "excerpt" (the graph is the 2003 version's), but name the
     agreeing HWI graph in its source line.
+13. **Ring and arch tests from HW's tables** (`hwi-ring-arch-tables.yaml`; eleven tests are listed in
+    `hwi-ring-arch-tables.md` §4). The main ones:
+    - `rings.ring`'s total against every HW ring row: 485 rows, all equal today.
+    - The splits within one brick.
+    - IR-30's totals by π(D + 9)/9.
+    - Every arch row's rise and radius against the circle geometry, with the 20 misprinted cells
+      marked.
+
+    They sit beside the Olsen tests, which use HW's own tables reprinted.
+14. **A circle-brick ring for 4½ in round walls.**
+    - The brick named d-(d+9)-3: 9 in on the outside face, a thin end of 9d/(d+9).
+    - Its count π(D + 9)/9 by the 0.1 rule, and neighbouring sizes mixed by the ring algebra.
+    - Tested on IR-30 (and on A.P. Green p.117's totals).
+    - HW lists the shape in high alumina only, and whether a fireclay circle brick is sold is not
+      stated. A fourth choice beside the builder's mortar, cut and featheredge rings: the owner's call.
+15. **`rings.py`'s straight region.**
+    - Hold the tapered count at UR-29's formula 1-a, 2πL/(T − t), by the 0.1 rule, and let the
+      straights make up the total. That is HW's rule (76, 113 and 227 tapered brick).
+    - It reproduces every straight-region row of IR-26 and IR-29, where the engine is one brick off
+      today.
+    - A one-brick change; no total moves.
+16. **Growth below cone 10, and other classes.**
+    - Fig 3.4's fireclay curve could scale `movement.py`'s and `frame.py`'s 3/32 in/ft for a cooler
+      firing (cone 6 reads 0.71–0.72 %, 8 % under), or 3/32 stays as the cautious figure.
+    - If a 60–70 % alumina hot face is ever modelled, Fig 3.3 gives 0.84–0.86 % at cone 10.
+    - Where a cast part has no measured shrinkage, Fig 3.5's permanent change (0.4, 0.6 and 1.1 %
+      for the three classes) could be shown as context, labelled as one unnamed mix per class.
+17. **Geometry tests from the Appendix.** A-2's circular segment for `geometry.segment_area`,
+    `shape.segment_area` and `conical.segment_radius`; A-3's spherical cap for
+    `round_masonry.cap_volume`. Copy neither A-3's stray cylinder line nor A-6's third frustum
+    volume: both lack a ⅓.
+18. **`rings.py`'s docstring.** Cite UR-29: the engine is formula set 2 (two tapers sharing the
+    outside chord), whose printed 2-b is wrong twice; and set 1 in the straight region if proposal
+    15 is taken.
+19. **Skewback notes.** UR-24's drawings give `frame.py`'s skew notes a picture:
+    - the line of thrust through, or slightly above, the corner of the supporting steel;
+    - headers, not stretchers, under the skew;
+    - the one built-up construction "to be avoided", whose thrust passes below its angle.
+
+    Words only; no number.
+
+---
+
+## 9. Second pass: graphs, drawings and sidebars (2026-11-17/18)
+
+Four readers took what a text layer loses, each into its own note. The coordinator then checked the
+numbers that matter most to the engine on fresh renders (110–400 dpi). The key graphs it re-read with
+its own script from the PDF's vector paths (§9.5). Section 3's graphs, the Appendix's figures and most
+bulletin graphs are vector drawings, so their curves were read from the drawn coordinates, not by eye.
+
+| Note | What it covers |
+|---|---|
+| `hwi-figures-properties.md` | Figs 3.1–3.7, the phase diagrams (PR-13–PR-27), Table 3.1, the Appendix (A-1–A-12) |
+| `hwi-figures-using.md` | The drawings, photographs and boxes of UR-1–UR-29; the shapes of IR-1–IR-10 |
+| `hwi-ring-arch-tables.md` and `.yaml` | IR-25–IR-62: 646 ring rows and 538 arch rows to 12 ft, against Olsen, `rings.py` and A.P. Green |
+| `hwi-figures-literature.md` | Section 9's bulletins and Sections 5–6: graphs, zone diagrams, tick matrices, sidebars |
+
+### 9.1 Properties and the Appendix (`hwi-figures-properties.md`)
+
+- **Fireclay growth** (Fig 3.4, PR-7, PDF 39; Verified, vector path).
+  - The high-duty and superduty line ends at about 2380 °F at 0.76 ± 0.01 %. It reads 0.75 % at
+    cone 10, 0.71 % at 2200 °F, 0.59 % at 1800 °F and 0.33 % at 1000 °F.
+  - 3/32 in/ft (0.78 %) is the line's end within about 0.02 % and 3–5 % above it at cone 10. The
+    mean coefficient over 70–2345 °F is about 6.0 × 10⁻⁶ /K, Brosnan's figure (Derived).
+  - The first pass's "about 0.7 % at 2400 °F" was low (§1 row 10, §2.4).
+  - This answers `movement.py`'s "No source read gives the curve below 2400 °F" (§1 row 23).
+- **Other classes** (Fig 3.3).
+  - 60–70 % alumina grows 0.84–0.86 % at cone 10 and about 1.0 % at its end (about 2690 °F); 80–90 %
+    alumina 0.99–1.00 % at cone 10.
+  - UR-4's table gives 3/32 in/ft for the 60, 70 and 85 % classes (1/8 for 90 %). At cone 10 HWI's
+    own 60–70 % curve runs 8–10 % above 3/32, and its 80–90 % curve about 27 % above, near 1/8
+    (1.04 %) (Derived).
+  - Silica, SiC, magnesite and corundum agree with UR-4.
+- **First heat of castables** (Fig 3.5, PR-8, PDF 40). Heat-and-cool loops.
+  - The permanent change after cooling is −0.40 % for the fireclay castable, −0.60 % for the
+    low-cement fireclay and −1.10 % for the 90 % alumina (Verified, vector path, ±0.02 %).
+  - The fireclay castable grows to +0.50 % near 2000 °F and gives some back while still heating.
+  - No dip is drawn at 400–600 °F, only a slower rise.
+  - Plastics (Fig 3.6) end −0.15 to −0.33 %, under the text's "0.2 % to 0.6 %".
+- **Creep** (Fig 3.7, PR-10), 25 psi at 2600 °F, subsidence over hours 20–50: 60 % low-alkali 0.46 %,
+  70 % 0.84 %, 85 % 1.69 %, 50 % 1.91 %. No fireclay curve, and nothing at 10 psi.
+- **Alumina–silica** (Fig 1, PR-15).
+  - The printed eutectic is 5.5 % Al₂O₃ at 2903 °F (1595 °C). The liquidus is 1788–1801 °C at
+    40–44 % Al₂O₃ and 1818–1843 °C at 50–70 % (graph, ±8 °C).
+  - At cones 9–11 a pure 42 % or 60 % mix is solid, 300–335 °C under the first liquid. A commercial
+    brick's first liquid is 985 °C with a little potash (PR-17), so at cone 10 it holds a viscous
+    glass. The book gives no glass fraction.
+  - Fig 3 (PR-19): each 1 % of K₂O or Na₂O cuts silica's melting point by about 52 or 75 °F, with
+    eutectics at 1358 and 1460 °F. It is the one figure bearing on wood-ash, salt and soda kilns,
+    and it gives no brick-life figure.
+  - Table 3.1 (PR-3): superduty fireclay is 41.9 % Al₂O₃ with 1.2 % alkalies.
+- **The Appendix.**
+  - A-2's circular segment and A-3's spherical cap equal `geometry.segment_area`,
+    `shape.segment_area`, `conical.segment_radius` and `round_masonry.cap_volume` (Derived):
+    hand-checkable tests (proposal 17).
+  - Misprints:
+    - A-3's cylinder carries a stray sphere-segment volume without its ⅓, and A-6's third
+      frustum volume lacks its ⅓ (Verified).
+    - A-1's trapezium and two polygon rows (Verified, agent).
+    - A-7's 7/64, A-11's short ton (0.9078), and A-12's 1550 °C printed as 2922 °F (Read).
+  - Use 5/9 for °F to °C, not the printed .556.
+
+### 9.2 Drawings of Using Refractories and the shapes (`hwi-figures-using.md`)
+
+- **Ring formulas** (UR-29, PDF 89).
+  - The page assigns the sets: 1 is a straight with a radial brick; 2 is two radials with equal
+    outside chords, `rings.py`'s case; 3–4 are two radials whose chords both differ.
+  - Besides 3-a's lower-case c_e, formula 2-b is misprinted twice. It prints
+    (πD_g − N_f c_f)/(c_e − c_f); it is (πd_g − N_t c_f)/(c_e − c_f) (Verified at 400 dpi; Derived).
+  - `rings.py` has the right form.
+- **Arch constants** (UR-25, PDF 85). The ninth column is headed "F" but holds P = Q tan ½θ, as
+  `kiln-hardware.md` §4.3 already has it. The note under the table gives column 5 the formula of
+  column 2; column 5 is (πθ/360°)·cosec ½θ (Verified).
+- **Skewbacks** (UR-24, PDF 84). Six drawings; no span or dimension is printed (Verified; the line
+  positions estimated by eye).
+  - The two constructions captioned "recommened" (sic) draw the line of thrust through the steel's
+    corner: a special skew on a steel angle, and built-up standard skews held by an angle.
+  - The one "to be avoided" draws it through the brickwork below the angle: built-up skews standing
+    on the wall, the angle high on the stack.
+  - The "occasionaly used" special skew on special shapes sends the line into the wall's top
+    courses.
+  - Headers are labelled under the skew.
+- **Wall bonds** (UR-20). Eight walls, by caption (Verified). The engine models no bond.
+  - 9 in: alternate header and stretcher courses.
+  - 13½ in, four ways: alternate; three headers to one stretcher; three stretchers to one header;
+    five headers to one stretcher with the backup untied.
+  - 18 in twice, and 22½ in.
+  - No IFB is drawn.
+- **Castable joints** (UR-5). A joint is slanted through a lining of 5 in or less and stepped through
+  a thicker one. A double lining's backup joints are offset from the hot layer's. No filler and no
+  dimension is drawn.
+- **Circle brick** (IR-6, PDF 130). Nine high-alumina sizes, 24-33-3 to 120-129-3, 12 to 45 a ring,
+  for a 4½ in lining of 3 in brick. In all nine rows the count is π·OD/9 by IR-25's 0.1 rule, and the
+  printed "chord" is the thin end, 9 × ID/OD (Derived, coordinator).
+- UR-23: a castable sprung arch has a cast skew shoulder in the same buckstay and tie-rod frame as a
+  brick arch.
+
+### 9.3 Ring and arch tables (`hwi-ring-arch-tables.md`, `.yaml`)
+
+- **Totals.** `rings.ring` gives HW's total in all 485 rows of IR-26, IR-27/28, IR-29, IR-34–36 and
+  the 9 × 4½ × 3 keys, to 12 ft (Derived; re-run by the coordinator).
+  - The 2½ in wedge, the 3 in arch below 18 in and the 3 in wedge need `rings.py`'s A.P. Green
+    extras (`apg=True`: the No. 1-X wedge, No. 4 arch and 3 in No. 1 wedge). These shapes are HW's
+    own too.
+  - The splits differ by one brick in 12–29 rows per table.
+- **The straight region is UR-29's formula 1-a.** HW holds the tapered count at 2πL/(T − t), counted
+  by the 0.1 rule, and the straights make up the total. That gives 76 No. 1 arch in IR-26 (75.40),
+  113 in IR-29 (113.10) and 227 No. 1-X wedges in IR-27/28 (226.19).
+  - It reproduces every straight-region row. `rings.py` is one brick off there (Derived,
+    coordinator).
+  - No simple rule reproduces every two-taper split.
+- **Circle brick** (IR-30, PDF 154). 97 rows, 2'0"–10'0" by the inch, 3 in brick only.
+  - N = π(D + 9)/9 by the 0.1 rule gives every total (97 of 97). The split between neighbouring sizes
+    follows the ring algebra within one brick.
+  - A.P. Green's p.117 has the same total at all 17 shared diameters and a different split at the 8
+    half-foot rows.
+- **Olsen.**
+  - A-4 equals IR-26 in all 52 rows.
+  - A-5 equals IR-29 in 65 of 66 rows. At 5'10", HW and `rings.py` have 31 + 52 and Olsen, as
+    transcribed, 30 + 53: a row to check on Olsen's page.
+  - A-6 equals IR-27 except where HW finishes the ring with No. 1-X wedges. HW confirms the three A-6
+    cells at 2'3"–2'5" that are misplaced in Olsen.
+  - A-7 equals HW in all 49 rows.
+- **Arches.** Tables exist for 4½ and 9 in arches of 3 in brick at 1½, 1.608, 2 and 2.302 in/ft
+  (IR-53–IR-58), for 12–18 in arches at 1.608 only, and for no arch of 2½ in brick.
+  - `kiln-hardware.md` §4.4's eight rows equal them.
+  - 20 rise or radius cells are misprinted, 19 of them in IR-56 (Verified); no count is.
+  - An arch-course model with the ring algebra gives every total it can handle (535 of 538).
+- A.P. Green rounds up only from a larger fraction. Its total is one lower than HW's in 21 ring rows
+  (fractions 0.11–0.19) and in 23 arch rows.
+
+### 9.4 Product literature (`hwi-figures-literature.md`)
+
+- **No curves.** Section 9 has no k, hot-MOR, expansion, creep or temperature-profile curve for
+  fireclay brick, IFB, dense castable or fibre beyond PDF 280's and the tables the first pass read.
+  Sections 5–6 have no figure, box or caution (Not found).
+- **Emisshield** (HW 150, 5/04, PDF 241). Its only graph is of metals.
+  - Cold-rolled steel: 0.82 at 0 °F, 0.77 at 250 °F, 0.72 at 500 °F, 0.48 at 1000 °F and 0.18 at
+    1500 °F. M-1-coated steel: 0.81–0.91 (Verified, vector path, ±0.02; the coordinator's re-reading
+    agrees within 0.01).
+  - There is no refractory curve: the "0.2–0.5" is a seller's text for above 3000 °F. Not adopted.
+  - The engine's 0.6 for rolled steel sheet (`heatloss.py`, from `electric-and-thermal.md`) is under
+    this vendor curve at shell temperatures. Recorded, not adopted.
+- **INSBOARD** (HW 102, 09/03, PDF 252). "Hot Face Linings for Ceramic Kilns" is ticked for the 2600
+  and 3000 grades only. Boards are 36 × 48 in, ¼–2 in thick (Verified).
+- **A layered lining** (HW170, 11/02, PDF 322). A sulfur-recovery reactor's combustion chamber pairs
+  a dense hot face with a back-up of IFB (G-28 LI, G-3000 LI) or of insulating castable: KAST-O-LITE
+  26 LI G for 2000–2400 °F service, 30 LI G above. The two back-ups are alternatives; no thickness is
+  printed (Verified, coordinator).
+- **Alkali and CO** (HW 89R, 4/04, Verified).
+  - KX-99 and KX-99-BF have "excellent resistance to attack by alkalies and carbon monoxide", and
+    CLIPPER DP "very good resistance to thermal shock and alkali attack".
+  - KAST-O-LITE 23 LI and 26 LI are low in iron against reducing conditions (HW139).
+  - The INSWOOL blanket bulletin (HW 99R, 01/04) names only hydrofluoric and phosphoric acid among its
+    exceptions; MP-22 adds strong alkalies.
+- A coarse-aggregate low-cement castable (HW 192, 12/03) gives 24 prism-spall cycles and 3,180 psi
+  hot MOR at 2000 °F with no wire fibre. Both fall as wire is added. Not a pottery castable.
+
+### 9.5 What the coordinator checked
+
+On fresh renders, or the vector paths read with its own scripts (`scratch/hwi-deep/coord/`,
+git-ignored), against each reader's note:
+
+| Note | Checked |
+|---|---|
+| Properties | Figs 3.3 and 3.4 re-digitised (agree within 0.02 %); Fig 3.5's three permanent changes; the printed eutectic and the 985 °C sentence; the cone temperatures in `cones.yaml`; A-6's frustum and A-12's 1550 °C row |
+| Drawings | UR-29's 2-b and 3-a at 400 dpi; UR-25's ninth column and note; UR-24's six drawings at 300 dpi; UR-20's eight captions; IR-6's nine rows |
+| Ring and arch tables | `rings.ring` re-run on all 485 rows; the IR-30 model; IR-29 at 5'10", IR-56's misprinted cells, IR-26 at 2'11" and 7'8", and IR-30 at 2'6" and 3'11" on the images |
+| Literature | The Emisshield curves re-digitised (within 0.01); the wire-fibre bar chart; the INSBOARD and superduty tick matrices; the SRU table |
+
+What the check changed in the readers' notes, each marked "coordinator" where it was made:
+- **Properties.** A note of the calibration spread on Figs 3.3–3.4.
+- **Drawings.**
+  - Which case each UR-29 formula set is for.
+  - Drawing 6's channel.
+  - The UR-19 comparison, which is not a conflict.
+  - IR-6's chord and counts, derived.
+- **Ring and arch tables.** The straight-region rule.
+- **Literature.**
+  - The SRU table, whose cells were misplaced and read as three layers.
+  - The full INSBOARD matrix.
+  - The source of the engine's 0.6 shell emissivity.
+  - The alkali exception the 2004 blanket bulletin drops.
+
+In this note, the second pass changed §1 rows 8–10, 17 and 18, and added rows 22–23. It also added
+the italic pointers in §2.4, §3.6, §4.3, §4.4 and §5.4, extended §6 and §7, amended proposals 8 and
+11, and added proposals 13–19.
 
 ## Sources
 
@@ -856,3 +1109,7 @@ PLUS and others) are in the catalogue; none is in the library.
 - [B7] HWI, *KX-99* Product Data 6/12 (`refractory-bearing.md`).
 - Working scripts (git-ignored, not sources): `scratch/hwi/extract.py`, `render.py`,
   `surface_check.py`, `example1_wall.py`, `hmax_check.py`.
+- The second pass's notes (§9): `hwi-figures-properties.md`, `hwi-figures-using.md`,
+  `hwi-ring-arch-tables.md` with `hwi-ring-arch-tables.yaml`, and `hwi-figures-literature.md`. The
+  coordinator's check scripts (git-ignored): `scratch/hwi-deep/coord/vec.py`, `rot241.py`,
+  `ringcheck.py`, `splitrules.py`.
