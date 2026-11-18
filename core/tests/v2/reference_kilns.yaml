@@ -2564,6 +2564,17 @@ kilns:
         figure: Fig 7-4
         note: the multi-directional kilns' firebox (pp.179–180), this kiln's too; none is sized, and
           the design has none (a gap, 2026-11-18)
+      - what: exit_flue
+        value: seven openings between eight piers across the groundhog end, into the box behind;
+          about 7–9 in wide with the fire zone taken as 7 ft across, or 5–6 in with it taken as the
+          figure's 7 ft diagonal; their height isn't drawn
+        status: drawing
+        page: p.178
+        figure: Fig 7-2
+        spread: the gaps 40–51 px at zoom 6, against the hatched fire zone's 490 ± 20 px; a type
+          sketch drawn for both kilns (scratch/kiln-check/church/fig7_2.py, 2026-11-18)
+        note: Fig 7-9 draws three openings in the groundhog's back wall for this kiln; the design
+          enters neither
       - what: chimney_width
         value: 13.5
         unit: inch
@@ -4391,6 +4402,18 @@ kilns:
         reason: two ash pits 14 in wide × 18 in deep, the type's drawing; the door's adjustable air (Fig
           7-4) isn't sized
         condition: below the grates, fully open (research A2)
+      - what: exit_flue
+        value: seven openings between eight piers across the groundhog end, into the box behind;
+          about 9–11½ in wide (piers 5–6 in) with the fire zone taken as 9 ft across, or 6–8 in
+          (piers 3½–4½ in) with it taken as the figure's 9 ft diagonal; their height isn't drawn
+        status: drawing
+        page: p.178
+        figure: Fig 7-2
+        spread: the gaps 40–51 px and piers 22–28 px at zoom 6, against the hatched fire zone's
+          490 ± 20 px; a type sketch drawn for both kilns (scratch/kiln-check/church/fig7_2.py,
+          2026-11-18)
+        note: finishes olsen-figure-scaling.md §1's count for Principle 6 (the owner, 2026-11-17);
+          with no height drawn the openings give no area, so the path stays on Rule 6's chimney
     structure:
       - what: roof_type
         value: two tubes crossing at right angles, their vaults meeting in a groin over the fire 
@@ -4451,6 +4474,10 @@ kilns:
       - the design's crowns (60 and 72 in) are the user's starting heights, above p.183's 3½–4½ ft 
         to the vertex
       - the design models one flue wall and one chimney; the book's two chimneys aren't expressible
+      - checked against pp.178–181 and p.183 on the page images, 2026-11-18 (the kiln-by-kiln
+        check); the design is unchanged. Fig 7-2's openings measured (exit_flue, drawing), their
+        height not drawn, so the path stays on Rule 6's chimney; Fig 7-3's ash pits and Fig 7-4's
+        air levels as for the Church kiln (gaps)
 
   fujiwara-bizen:
     name: Kei Fujiwara's Bizen kiln, Imbe, Okayama
