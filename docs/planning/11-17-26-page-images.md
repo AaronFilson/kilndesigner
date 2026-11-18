@@ -4,6 +4,24 @@ A handoff for a session in another local repo. The owner thinks that repo's `scr
 scans of Olsen's *The Kiln Book* (4th ed.), but isn't sure which folder. The details behind each
 item are in [11-17-26-inputs.md](11-17-26-inputs.md); the section numbers below are that file's.
 
+**Status, 2026-11-17 (the Windows clone, `C:/Users/bellows/gh/kilndesigner`).** The scans aren't in
+`scratch/`. They are this clone's `docs/research/kiln-reference.pdf` (and
+`Scanned_20261025-1022.pdf`), git-ignored, so the Linux clone never had them; every page listed
+below is in them.
+- Read and scaled: `docs/research/olsen-figure-scaling.md` (with a book page → PDF index map). The
+  inputs file's §1, §2, §3 and §9 now point to it.
+- **Measured:** the anagama-hole flue (about 6 in, 4–8). Tamba's slope (8½–14° between Figs 4-17
+  and 4-7, both drawn angles), its side holes (about 7 in) and its flue-wall openings (outer 20 × 12,
+  inner 24 × 12 in).
+- **Not shown or not scalable:**
+  - Kitade (no chimney and one chamber drawn);
+  - Falcone and the Kannofen (no chimney; photos, or "NOT TO SCALE");
+  - La Borne's chimneys (photo only);
+  - the side holes of Suzuki, Kyoto, Kawaii and Hotchkiss (Tobe has no figure).
+- **Still to measure:** Fireworks Fig 7-2's seven openings, La Borne's back door, Hollyweird's side
+  door, the Kannofen's Figs 6-37 and 6-38, Fujiwara's side holes, Tamba Fig 4-10's section, and
+  Hotchkiss p.57.
+
 ## 1. Find the page images
 
 Look for scans of the pages below. The folder that has them is the one this work needs.
@@ -55,14 +73,29 @@ either repo: they are the book's pages.
 1. **Singh's shard cover (§4):** is a band from a single thin layer to 4 in thick right? How open
    is it, roughly? No source gives either.
 2. **Kitade's second chamber (§8):** the book draws only the first. May the second be taken as
-   the same size and slope?
+   the same size and slope? (Checked 2026-11-17: no figure on pp.199–206 draws a second chamber.)
 3. **Separate side air inlets (§3):** the known ones are:
    - Bidai's air and stoke opening (Fig 8-7);
    - Hollyweird's air holes at grate level;
    - the two openings at the base of Kitade's firebox.
    Do Suzuki, Kyoto, Tobe, Kawaii, Hotchkiss or Fujiwara have any?
+   (Checked 2026-11-17, `olsen-figure-scaling.md` §3, §4.) None is drawn or named for Suzuki,
+   Kyoto, Tobe, Kawaii or Hotchkiss; Fujiwara isn't checked yet. Bidai's Fig 8-7 opening is its
+   main firebox's ash-pit air, not a chamber inlet, so it comes off the list above.
 4. **The fire mouth, by kiln (§2):** which kilns are fired with the mouth open, and which are
    covered for slow cooling? Without an answer, v2 reports each kiln in all three states.
+   (Checked 2026-11-17, two kilns answered by the book.) **Tamba** is open while side stoking:
+   "The air for combustion is coming through the firebox", sealed only when the firing is finished
+   (pp.86–87). **Kitade** is closed: "Care must be taken, however, that the first chamber does not
+   cool too quickly. Closing the front is very important." (p.202). The rest are still yours.
+5. **New: Tamba's side holes against the bundle rule (§3).** Tamba's side holes scale about 7 in
+   (Figs 4-7, 4-16), and its 200 bundles are 15 × 15 × 30 in "of split kindling and small pieces"
+   (p.87). A whole bundle can't pass, so the 16 in rule for bundle-stoked holes doesn't fit Tamba.
+   Is Tamba stoked with the kindling from the bundles, so that its least hole is set by the
+   kindling (the fuel its stoking passes, as §3's rule says)?
+   **Answered (the owner, 2026-11-17):** Tamba is a whole series of kilns without firm numbers on
+   their differences. Take a slope of 14° and side holes of 16 in, estimates close enough for
+   modeling (inputs §9).
 
 ## Answered today (for reference)
 
