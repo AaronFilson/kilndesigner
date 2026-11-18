@@ -398,7 +398,8 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - ~~Hollyweird~~ (above; the owner's answers set its design).
      - **The Kyoto type:**
        - The design takes Fig 4-28's 4½–6 ft across the kiln and Bidai's 41⅓ in along the draft.
-         The book's range reads along the draft, and its length across isn't printed.
+         The book's range reads along the draft, as does Fig 4-27's 4–5 ft inside the Kyomizu
+         kiln's third chamber, and its length across isn't printed.
        - The main firebox is unsized, so v2's path is refused.
        - The book's arch is pointed and springs near the floor, with the reduction chambers' peak
          set back.

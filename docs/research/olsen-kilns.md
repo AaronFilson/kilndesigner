@@ -64,7 +64,7 @@ Data classes in the index:
 | **Chamber and climbing kilns** | | | | | | | |
 | `hotchkiss-raw-clay` | Six-chamber raw-clay kiln (Richard Hotchkiss and a workshop group), 1971 | 33, 54–57 | not named (wood (?)) | climbing | chambers in series, arched | average chamber 5 × 5 × 6 ft | partial |
 | `kyoto-climbing` | Kyoto-style climbing chamber kilns (type) | 89–94, 205 | wood | climbing (cross-draft chambers) | chambers in series, pointed arch | 6–7 ft tall, 4.5–6 ft wide | partial |
-| `kyomizu` | Kyomizu climbing kiln, Kyoto | 89–91 | wood | climbing | chambers in series (10) | not given | none |
+| `kyomizu` | Kyomizu climbing kiln, Kyoto | 89–91 | wood | climbing | chambers in series (10) | chamber 4–5 ft inside along the draft, 6–7 ft tall (Fig 4-27); nothing across | none |
 | `tobe` | Tobe Village kiln, Shikoku | 90, 92 | wood | climbing | seven chambers in series | 15,000 ft³; largest chamber 25 × 10 × 10 ft | partial |
 | `onda-koishibara` | Onda and Koishibara kilns, Kyushu | 92 | wood | climbing | chambers in series | not given | none |
 | `suzuki-kyoto` | Suzuki cooperative kiln, Kyoto | 93 | wood | climbing | seven chambers in series | chamber "(4.3 x 2 x 1.4m)" | partial |
@@ -670,10 +670,12 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 ### `kyomizu`: Kyomizu climbing kiln, Kyoto
 
 - Pages: pp.89–91 (captions, Figs 4-23, 4-25 to 4-27, 4-29, 4-30).
-- Olsen fired it every month for 2½ years (Fig 4-23), its 5th chamber in 1962 (Fig 4-26). Fig 4-27:
-  chambers numbered 1 to 10 (a break between 4 and 10), "4' INSIDE" (?) over chamber 3. The second
-  chamber was for reduction only (Fig 4-30). Wood; climbing.
-- **Not given:** any reliable dimension.
+- Olsen fired it every month for 2½ years (Fig 4-23), its 5th chamber in 1962 (Fig 4-26). Fig 4-27
+  (p.91), the kiln's cross-section: chambers numbered 1 to 10 (a break between 4 and 10), "INSIDE
+  4-5'" over chamber 3 and "+ INSIDE 6-7'" at the wall between chambers 2 and 3. Both are faded in
+  the scan, where the first was read "4' INSIDE" (?); the owner read them in the book, 2026-11-18.
+  The second chamber was for reduction only (Fig 4-30). Wood; climbing.
+- **Not given:** any other dimension, the chambers' length across the kiln among them.
 
 ### `tobe`: Tobe Village kiln, Shikoku
 
@@ -1987,7 +1989,8 @@ The 33 kilns marked **none**: the book doesn't fix the chamber's size.
 - `finch-fast-fire`: layout described, no dimension.
 - `salzer-phoenix`: layout described, no dimension.
 - `olsen-first-kiln`: no dimensions printed (the revised design is `bowen-mountain`).
-- `kyomizu`: chamber count and one uncertain label, "4' INSIDE" (?).
+- `kyomizu`: chamber count, and its chamber 4–5 ft inside along the draft and 6–7 ft tall
+  (Fig 4-27, read by the owner, 2026-11-18); nothing across the kiln.
 - `onda-koishibara`: a proportion only (width about equal to height).
 - `kanayama-bizen`: firing practice only.
 - `olsen-chamber-p23`: shelf size and arch movement only.

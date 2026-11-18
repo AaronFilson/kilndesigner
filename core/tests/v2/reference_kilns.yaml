@@ -8072,22 +8072,33 @@ kilns:
         value: 4
         unit: foot
         status: printed
-        page: pp.91–92
-        figure: Figs 4-27, 4-31
+        page: p.91
+        figure: Fig 4-31
         condition: Fig 4-31's Kyoto chamber, 6 ft tall, a pointed arch from near the floor, against
-          other climbing kilns' 6 ft along the draft by 6 ft tall; Fig 4-27's Kyomizu kiln, "4'
-          INSIDE" over its third chamber
-        note: a label at Fig 4-27's left end is too faded in the scan to read (2026-11-18)
+          other climbing kilns' 6 ft along the draft by 6 ft tall
+      - what: depth
+        value: [4, 5]
+        unit: foot
+        status: printed
+        page: p.91
+        figure: Fig 4-27
+        quote: "INSIDE 4-5'"
+        condition: the Kyomizu kiln's third chamber, the horizontal dimension over it in the kiln's
+          cross-section (the caption), so along the draft
+        note: faded in the scan, where it had been read "4' INSIDE"; read by the owner from the book,
+          2026-11-18
       - what: height
         value: [6, 7]
         unit: foot
         status: printed
         page: p.91
         figure: Fig 4-27
+        quote: "+ INSIDE 6-7'"
         condition: the Kyomizu kiln's chamber, the vertical dimension at the wall between chambers 2
           and 3
-        note: faded in the scan; read by the user from the book, 2026-11-18, as 6'–7', which matches
-          Fig 4-28's "6–7' tall"
+        note: faded in the scan; read by the owner from the book, 2026-11-18, matching Fig 4-28's
+          "6–7' tall". The figure prints nothing else but its number, "Fig. 4-27", at the bottom
+          left, so the faded marks at its left end hold no other size
       - what: width
         value: 63
         unit: inch
@@ -8105,7 +8116,8 @@ kilns:
         unit: inch
         status: assumed
         reason: the design's, the mean of the Bidai kiln's chambers (Fig 4-36, p.94), where the book
-          gives the type's span along the draft as 4½–6 ft (Fig 4-28, a gap)
+          gives the type's span along the draft as 4½–6 ft (Fig 4-28, a gap) and the Kyomizu kiln's
+          as 4–5 ft inside (Fig 4-27)
       - what: springline_height
         value: 57.3
         unit: inch
@@ -8262,10 +8274,9 @@ kilns:
       - cone, firing time and fuel per firing (the Suzuki kiln's are its own)
       - 'research A2: the stoke holes'' sizes (takaguchi, aizashiguchi, mempo ana) and the main
         firebox''s intakes'
-      - the label at Fig 4-27's left end, faded in the scan (its vertical dimension, 6'–7', read by
-        the user, 2026-11-18)
       - 'the design''s axes: it takes Fig 4-28''s 4½–6 ft across the kiln and the Bidai kiln''s 41⅓
-        in along the draft; the book''s range reads along the draft'
+        in along the draft; the book''s range reads along the draft, as does Fig 4-27''s 4–5 ft
+        inside the Kyomizu kiln''s third chamber'
     notes:
       - a type, not one kiln; the design file draws one from the book's ranges
       - checked against pp.89–94, p.96 and p.205 on the page images, 2026-11-18 (the kiln-by-kiln
@@ -14187,15 +14198,27 @@ extras:
         figure: Fig 4-27
         reading: uncertain
         note: chambers numbered 1 to 10 with a break between 4 and 10
-      - what: width
-        value: 4
+      - what: depth
+        value: [4, 5]
         unit: foot
         status: printed
-        page: pp.89–91
+        page: p.91
         figure: Fig 4-27
-        condition: chamber 3
-        reading: uncertain
-        note: a label "4' INSIDE" (?) over chamber 3
+        quote: "INSIDE 4-5'"
+        condition: chamber 3, the horizontal dimension over it in the kiln's cross-section (the
+          caption), so along the draft
+        note: faded in the scan, where it had been read "4' INSIDE" (?) and entered as a width; read
+          by the owner from the book, 2026-11-18
+      - what: height
+        value: [6, 7]
+        unit: foot
+        status: printed
+        page: p.91
+        figure: Fig 4-27
+        quote: "+ INSIDE 6-7'"
+        condition: the vertical dimension at the wall between chambers 2 and 3
+        note: faded in the scan; read by the owner from the book, 2026-11-18, matching Fig 4-28's
+          "6–7' tall" for the Kyoto type
     service:
       - what: use
         value: Olsen fired it every month for 2½ years, and its fifth chamber in 1962
@@ -14208,7 +14231,8 @@ extras:
         status: printed
         page: p.90
     notes:
-      - no design file - the book gives no reliable dimension (olsen-kilns.md §13)
+      - no design file - the book prints the chamber count and Fig 4-27's two inside dimensions,
+        along the draft and tall, but not the chambers' length across the kiln (olsen-kilns.md §13)
       - the kyoto-climbing design file takes its ten chambers from Fig 4-27
 
   leach-chamber:
