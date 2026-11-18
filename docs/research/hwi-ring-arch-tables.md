@@ -14,6 +14,18 @@ cell on the image. **Verified** below means that: the image agrees with the extr
 every flagged row and on the rows listed here. I did not re-key every cell by eye. **Read** is the text
 layer only, **Derived** is our arithmetic. The book and its images are not in the repo.
 
+**Checked by the coordinator (2026-11-18).**
+- Own script (`scratch/hwi-deep/coord/ringcheck.py`) on this YAML and `rings.ring`. Every row's counts
+  sum to its total. The totals are equal in all 485 rows and the splits as in §3.2, row for row.
+- The IR-30 total model fits 97 of 97 rows.
+- On fresh renders:
+  - IR-29 at 5'10" (31 + 52 = 83, against Olsen's transcribed 30 + 53);
+  - IR-56's 1'11" radius (printed 2'11") and its 2'6" and 2'7" rises (printed 3 1/32 and 3 5/32);
+  - IR-26 at 2'11" (20 + 36) and 7'8" (76 + 51 straights);
+  - IR-30 at 2'6" (6 + 8) and 3'11" (2 + 18).
+
+  All as recorded here. The coordinator's additions are marked "coordinator" in §3.2.
+
 Rounding, quoted (IR-25, PDF 149; repeated at IR-52, PDF 175): "In calculating the tables, no allowance
 was made for mortar or expansion joints or for size deviations of the brick. Fractional parts equal to or
 greater than one tenth of a brick were counted as an entire brick." The tables "may lay up to diameters
@@ -188,6 +200,22 @@ engine 75 + 1. I tested nine rules for the split (round the gentler or the tight
 half-up, down or up; or solve from the whole total); none reproduces every row. Rounding the tighter count fits more rows in the wedge
 and key tables (96 of 117, 95 of 109, 56 of 65 against the engine's 89, 80, 49) but fits IR-26 worse (37 of 46
 taper rows against 41). The straight region differs systematically (point 5 above).
+
+**The straight region is UR-29's formula 1-a with IR-25's rounding (Derived, coordinator,
+`scratch/hwi-deep/coord/splitrules.py`).**
+- With a straight and one taper, HW's tapered count is N_f = 2πL/(T − t), counted by the 0.1 rule,
+  and the straights make up the total (formulas 1-a to 1-c, `hwi-figures-using.md` §3.5). It is the
+  same at every larger diameter:
+  - IR-26: 2π × 4½/(2½ − 2⅛) = 75.40 → 76 No. 1 arch;
+  - IR-29: 2π × 4½/(3 − 2¾) = 113.10 → 113;
+  - IR-27/28: 2π × 9/(2½ − 2¼) = 226.19 → 227 No. 1-X.
+- This rule reproduces every straight-region row of IR-26 and IR-29, where the engine's split is one
+  brick off.
+- In the two-taper rows, the 0.1 rule applied to the gentler count fits more rows than the engine's
+  rounding to nearest: IR-27/28 93 of 117 (engine 89), IR-29 83 of 101 (75), IR-34–36 92 of 109
+  (80), keys 54 of 65 (49). But in IR-26's taper rows it misses 11 against the engine's 5 (with
+  the straight-region rule, IR-26 is 82 of 93 against the engine's 81). So no simple rule gives
+  every split; any of them is within one brick.
 
 ### 3.3 The circle-brick table (IR-30) and what a method would be
 
