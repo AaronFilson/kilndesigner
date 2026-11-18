@@ -441,6 +441,12 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        - Fig 4-147's ash-pit air supply scales about 17 × 13 in, 216 in², against the design's
          468 in² (the firebox's 39 in by the 12 in pit). The measurement is in the dataset.
        - A framed opening high in the front is unidentified.
+     - **Ellington's new hog:** Fig 4-99 shows the dug-out firebox's "vertical air channels" in
+       its front wall, which the plan draws as the three 13½ × 9 in "inlet flues" (Fig 4-95). So
+       they bring the air down into the firebox. The design takes them as flues from the firebox
+       into the chamber, closing the firebox's mouth into the chamber, which the book draws open.
+     - **The electric car kiln:** no new gap. The floor elements, if p.245's clipped word is
+       "and", were already listed.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the

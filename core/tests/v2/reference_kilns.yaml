@@ -3085,8 +3085,11 @@ kilns:
       - cone and firing time
       - ware load
     notes:
-      - no heat figure is printed for this kiln; it can be compared only for the engine's own power 
+      - no heat figure is printed for this kiln; it can be compared only for the engine's own power
         rule
+      - checked against pp.244–245 on the page images, 2026-11-18 (the kiln-by-kiln check), p.245's
+        first line brought up at zoom 4, "with elements located in the sides, [...] floor.", the
+        word before "floor" clipped; no new finding, the design unchanged
 
   ellington-new-hog:
     name: Kim Ellington's new hog
@@ -3254,6 +3257,18 @@ kilns:
         page: p.114
         figure: Fig 4-95
         quote: (3) INLET FLUE 13.5 X 9
+      - what: inlet_flue
+        value: vertical air channels between brick piers in the dug-out firebox's front wall, down
+          into the firebox; the plan draws the three inlet flues as notches in that wall
+        status: drawing
+        page: p.114
+        figure: Figs 4-95, 4-99
+        quote: Looking from the ware platform into the dug-out firebox, with its vertical air
+          channels
+        note: read on the page image, 2026-11-18. So the three 13½ × 9 in "inlet flues" bring the
+          air from the front's air holes (Fig 4-97) down into the firebox; the design takes them as
+          flues from the firebox into the chamber, the firebox's mouth into the chamber otherwise
+          closed (a gap, 02-plan.md)
       - what: stoke_hole
         value: front stoke holes 13½ in wide × 16 in high beside the central door, each over an air 
           hole of the same width and 9 in high
@@ -3351,8 +3366,12 @@ kilns:
     notes:
       - Fig 4-96's 29 in at the chimney end is more than a circular arch from the floor rises on 4 
         ft (24 in); the design's arch gives about 17 in there
-      - the kiln doc's table still gives the narrow end's crown as 15.4 in (from the old 38½ in 
+      - the kiln doc's table still gives the narrow end's crown as 15.4 in (from the old 38½ in
         rise); the design file's header says about 17 in, which matches the scaled 43 in rise
+      - checked against pp.114–115 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. Fig 4-99's vertical air channels read as the plan's three 13½ × 9 in
+        inlet flues (above), the air's way down into the firebox, where the design takes them as
+        flues into the chamber
 
   falcone-pompeii:
     name: Falcone Pompeii updraft, Fornace Falcone, near Montecorvino Rovella, Italy
