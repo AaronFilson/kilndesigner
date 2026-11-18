@@ -10394,6 +10394,12 @@ kilns:
         status: printed
         page: p.202
         condition: the first firebox
+      - what: stoke_hole
+        value: 9 × 7 in
+        status: printed
+        page: p.202
+        condition: the first firebox
+        note: read by the user, 2026-11-17; width × height taken in the order printed
       - what: firebox
         value: the second chamber's firebox 14 in wide, its ash pit sunk under the inlet flue with 
           the grate bisecting the flue
