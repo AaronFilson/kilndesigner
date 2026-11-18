@@ -1,0 +1,1486 @@
+# HarbisonWalker, Handbook of Refractory Practice (2005) [HW05], ring and arch combination tables
+# (IR-25 to IR-62, PDF pages 149-185). The data for future tests; the reading and the comparisons are in
+# hwi-ring-arch-tables.md.
+#
+# Transcribed 2026-11-17. Method: the page's text layer was rebuilt by word position (PyMuPDF), because its
+# reading order is unreliable on these pages, then checked: every row's counts sum to its printed total, every
+# table's rows run in order, every arch row's rise and inside radius were checked against the circle geometry
+# (UR-28 formulas), and every page was looked at as a rendered image (half-page crops at 125-200 dpi);
+# the flagged rows were read cell by cell on the image. The book and its page images are not in the repo.
+#
+# Each ring and arch table is cut at a 12 ft diameter or span; where the page runs on, 'printed_range' says so.
+# 'counts' list only the shapes printed with a number: a column printed as a dash is left out.
+# 'status' marks: Verified = read on the image; Read = text layer only; Derived = our arithmetic.
+source: "HarbisonWalker, Handbook of Refractory Practice (2005) [HW05]"
+transcribed: "2026-11-17"
+rounding: "fractional parts of 0.1 brick or more counted as a whole brick (IR-25 and IR-52, PDF 149 and 175); no allowance for mortar, joints or size deviations"
+
+rings:
+  - id: ir26-lining-4.5in-arch-brick-2.5in
+    label: "IR-26"
+    pdf_page: 150
+    title: "4-1/2 in Lining - 2-1/2 in Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 2-1/2 or 13-1/2 x 4-1/2 x 2-1/2 Inch"
+    lining_in: 4.5
+    printed_range: "0'6\" to 15'0\" (PDF 150); transcribed to 12'0\""
+    note: "Olsen's Table A-4 (The Kiln Book p.303) is this table, row for row from 0'6\" to 7'0\" (52 of 52 rows equal)."
+    shapes:
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (2-1/2 - 1)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (2-1/2 - 1-3/4)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (2-1/2 - 2-1/8)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 2-1/2"}
+    rows_transcribed: 93
+    rows:
+      - {inside: "0'6\"", inside_in: 6, counts: {"No. 3 arch": 19}, total: 19}
+      - {inside: "0'7\"", inside_in: 7, counts: {"No. 3 arch": 18, "No. 2 arch": 3}, total: 21}
+      - {inside: "0'8\"", inside_in: 8, counts: {"No. 3 arch": 17, "No. 2 arch": 5}, total: 22}
+      - {inside: "0'9\"", inside_in: 9, counts: {"No. 3 arch": 15, "No. 2 arch": 8}, total: 23}
+      - {inside: "0'10\"", inside_in: 10, counts: {"No. 3 arch": 14, "No. 2 arch": 10}, total: 24}
+      - {inside: "0'11\"", inside_in: 11, counts: {"No. 3 arch": 13, "No. 2 arch": 13}, total: 26}
+      - {inside: "1'0\"", inside_in: 12, counts: {"No. 3 arch": 12, "No. 2 arch": 15}, total: 27}
+      - {inside: "1'1\"", inside_in: 13, counts: {"No. 3 arch": 10, "No. 2 arch": 18}, total: 28}
+      - {inside: "1'2\"", inside_in: 14, counts: {"No. 3 arch": 9, "No. 2 arch": 20}, total: 29}
+      - {inside: "1'3\"", inside_in: 15, counts: {"No. 3 arch": 8, "No. 2 arch": 23}, total: 31}
+      - {inside: "1'4\"", inside_in: 16, counts: {"No. 3 arch": 7, "No. 2 arch": 25}, total: 32}
+      - {inside: "1'5\"", inside_in: 17, counts: {"No. 3 arch": 5, "No. 2 arch": 28}, total: 33}
+      - {inside: "1'6\"", inside_in: 18, counts: {"No. 3 arch": 4, "No. 2 arch": 30}, total: 34}
+      - {inside: "1'7\"", inside_in: 19, counts: {"No. 3 arch": 3, "No. 2 arch": 33}, total: 36}
+      - {inside: "1'8\"", inside_in: 20, counts: {"No. 3 arch": 2, "No. 2 arch": 35}, total: 37}
+      - {inside: "1'9\"", inside_in: 21, counts: {"No. 2 arch": 38}, total: 38}
+      - {inside: "1'10\"", inside_in: 22, counts: {"No. 2 arch": 36, "No. 1 arch": 3}, total: 39}
+      - {inside: "1'11\"", inside_in: 23, counts: {"No. 2 arch": 36, "No. 1 arch": 5}, total: 41}
+      - {inside: "2'0\"", inside_in: 24, counts: {"No. 2 arch": 34, "No. 1 arch": 8}, total: 42}
+      - {inside: "2'1\"", inside_in: 25, counts: {"No. 2 arch": 33, "No. 1 arch": 10}, total: 43}
+      - {inside: "2'2\"", inside_in: 26, counts: {"No. 2 arch": 31, "No. 1 arch": 13}, total: 44}
+      - {inside: "2'3\"", inside_in: 27, counts: {"No. 2 arch": 31, "No. 1 arch": 15}, total: 46}
+      - {inside: "2'4\"", inside_in: 28, counts: {"No. 2 arch": 29, "No. 1 arch": 18}, total: 47}
+      - {inside: "2'5\"", inside_in: 29, counts: {"No. 2 arch": 28, "No. 1 arch": 20}, total: 48}
+      - {inside: "2'6\"", inside_in: 30, counts: {"No. 2 arch": 26, "No. 1 arch": 23}, total: 49}
+      - {inside: "2'7\"", inside_in: 31, counts: {"No. 2 arch": 26, "No. 1 arch": 25}, total: 51}
+      - {inside: "2'8\"", inside_in: 32, counts: {"No. 2 arch": 24, "No. 1 arch": 28}, total: 52}
+      - {inside: "2'9\"", inside_in: 33, counts: {"No. 2 arch": 23, "No. 1 arch": 30}, total: 53}
+      - {inside: "2'10\"", inside_in: 34, counts: {"No. 2 arch": 21, "No. 1 arch": 33}, total: 54}
+      - {inside: "2'11\"", inside_in: 35, counts: {"No. 2 arch": 20, "No. 1 arch": 36}, total: 56}
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 2 arch": 19, "No. 1 arch": 38}, total: 57}
+      - {inside: "3'1\"", inside_in: 37, counts: {"No. 2 arch": 18, "No. 1 arch": 40}, total: 58}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 2 arch": 16, "No. 1 arch": 43}, total: 59}
+      - {inside: "3'3\"", inside_in: 39, counts: {"No. 2 arch": 15, "No. 1 arch": 46}, total: 61}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 2 arch": 14, "No. 1 arch": 48}, total: 62}
+      - {inside: "3'5\"", inside_in: 41, counts: {"No. 2 arch": 13, "No. 1 arch": 50}, total: 63}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 2 arch": 11, "No. 1 arch": 53}, total: 64}
+      - {inside: "3'7\"", inside_in: 43, counts: {"No. 2 arch": 10, "No. 1 arch": 56}, total: 66}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 2 arch": 9, "No. 1 arch": 58}, total: 67}
+      - {inside: "3'9\"", inside_in: 45, counts: {"No. 2 arch": 8, "No. 1 arch": 60}, total: 68}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 2 arch": 7, "No. 1 arch": 63}, total: 70}
+      - {inside: "3'11\"", inside_in: 47, counts: {"No. 2 arch": 5, "No. 1 arch": 66}, total: 71}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 2 arch": 4, "No. 1 arch": 68}, total: 72}
+      - {inside: "4'1\"", inside_in: 49, counts: {"No. 2 arch": 3, "No. 1 arch": 70}, total: 73}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 2 arch": 2, "No. 1 arch": 73}, total: 75}
+      - {inside: "4'3\"", inside_in: 51, counts: {"No. 1 arch": 76}, total: 76}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 1 arch": 76, "Straight": 1}, total: 77}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 1 arch": 76, "Straight": 4}, total: 80}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 1 arch": 76, "Straight": 6}, total: 82}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 1 arch": 76, "Straight": 9}, total: 85}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 1 arch": 76, "Straight": 11}, total: 87}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 1 arch": 76, "Straight": 14}, total: 90}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 1 arch": 76, "Straight": 16}, total: 92}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 1 arch": 76, "Straight": 19}, total: 95}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 1 arch": 76, "Straight": 21}, total: 97}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 1 arch": 76, "Straight": 24}, total: 100}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 1 arch": 76, "Straight": 26}, total: 102}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 1 arch": 76, "Straight": 29}, total: 105}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 1 arch": 76, "Straight": 31}, total: 107}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 1 arch": 76, "Straight": 34}, total: 110}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 1 arch": 76, "Straight": 36}, total: 112}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 1 arch": 76, "Straight": 39}, total: 115}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 1 arch": 76, "Straight": 41}, total: 117}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 1 arch": 76, "Straight": 44}, total: 120}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 1 arch": 76, "Straight": 46}, total: 122}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 1 arch": 76, "Straight": 49}, total: 125}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 1 arch": 76, "Straight": 51}, total: 127}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 1 arch": 76, "Straight": 54}, total: 130}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 1 arch": 76, "Straight": 56}, total: 132}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 1 arch": 76, "Straight": 59}, total: 135}
+      - {inside: "8'4\"", inside_in: 100, counts: {"No. 1 arch": 76, "Straight": 61}, total: 137}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 1 arch": 76, "Straight": 64}, total: 140}
+      - {inside: "8'8\"", inside_in: 104, counts: {"No. 1 arch": 76, "Straight": 66}, total: 142}
+      - {inside: "8'10\"", inside_in: 106, counts: {"No. 1 arch": 76, "Straight": 69}, total: 145}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 1 arch": 76, "Straight": 71}, total: 147}
+      - {inside: "9'2\"", inside_in: 110, counts: {"No. 1 arch": 76, "Straight": 74}, total: 150}
+      - {inside: "9'4\"", inside_in: 112, counts: {"No. 1 arch": 76, "Straight": 76}, total: 152}
+      - {inside: "9'6\"", inside_in: 114, counts: {"No. 1 arch": 76, "Straight": 79}, total: 155}
+      - {inside: "9'8\"", inside_in: 116, counts: {"No. 1 arch": 76, "Straight": 81}, total: 157}
+      - {inside: "9'10\"", inside_in: 118, counts: {"No. 1 arch": 76, "Straight": 84}, total: 160}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 1 arch": 76, "Straight": 87}, total: 163}
+      - {inside: "10'2\"", inside_in: 122, counts: {"No. 1 arch": 76, "Straight": 89}, total: 165}
+      - {inside: "10'4\"", inside_in: 124, counts: {"No. 1 arch": 76, "Straight": 92}, total: 168}
+      - {inside: "10'6\"", inside_in: 126, counts: {"No. 1 arch": 76, "Straight": 94}, total: 170}
+      - {inside: "10'8\"", inside_in: 128, counts: {"No. 1 arch": 76, "Straight": 97}, total: 173}
+      - {inside: "10'10\"", inside_in: 130, counts: {"No. 1 arch": 76, "Straight": 99}, total: 175}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 1 arch": 76, "Straight": 102}, total: 178}
+      - {inside: "11'2\"", inside_in: 134, counts: {"No. 1 arch": 76, "Straight": 104}, total: 180}
+      - {inside: "11'4\"", inside_in: 136, counts: {"No. 1 arch": 76, "Straight": 107}, total: 183}
+      - {inside: "11'6\"", inside_in: 138, counts: {"No. 1 arch": 76, "Straight": 109}, total: 185}
+      - {inside: "11'8\"", inside_in: 140, counts: {"No. 1 arch": 76, "Straight": 112}, total: 188}
+      - {inside: "11'10\"", inside_in: 142, counts: {"No. 1 arch": 76, "Straight": 114}, total: 190}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 1 arch": 76, "Straight": 117}, total: 193}
+    status: Verified
+  - id: ir27-28-lining-9in-wedge-brick-2.5in
+    label: "IR-27, IR-28"
+    pdf_page: "151-152"
+    title: "9 in Lining - 2-1/2 in Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 2-1/2, 9 x 6-3/4 x 2-1/2 or 9 x 9 x 2-1/2 Inch"
+    lining_in: 9.0
+    printed_range: "2'3\" to 45'0\" (PDF 151-152); transcribed to 12'0\""
+    note: "No. 1-X wedge is in the table (rings.py has it only as an A.P. Green extra, apg=True). Left block 2'3\"-6'10\" (PDF 151), right 7'0\"-11'5\" (PDF 151), then PDF 152 left from 11'6\"."
+    shapes:
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (2-1/2 - 1-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (2-1/2 - 1-7/8)"}
+      - {name: "No. 1-X wedge", size: "9 x 4-1/2 x (2-1/2 - 2-1/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 2-1/2"}
+    rows_transcribed: 117
+    rows:
+      - {inside: "2'3\"", inside_in: 27, counts: {"No. 2 wedge": 57}, total: 57}
+      - {inside: "2'4\"", inside_in: 28, counts: {"No. 2 wedge": 55, "No. 1 wedge": 3}, total: 58}
+      - {inside: "2'5\"", inside_in: 29, counts: {"No. 2 wedge": 52, "No. 1 wedge": 7}, total: 59}
+      - {inside: "2'6\"", inside_in: 30, counts: {"No. 2 wedge": 51, "No. 1 wedge": 10}, total: 61}
+      - {inside: "2'7\"", inside_in: 31, counts: {"No. 2 wedge": 48, "No. 1 wedge": 14}, total: 62}
+      - {inside: "2'8\"", inside_in: 32, counts: {"No. 2 wedge": 46, "No. 1 wedge": 17}, total: 63}
+      - {inside: "2'9\"", inside_in: 33, counts: {"No. 2 wedge": 44, "No. 1 wedge": 20}, total: 64}
+      - {inside: "2'10\"", inside_in: 34, counts: {"No. 2 wedge": 42, "No. 1 wedge": 24}, total: 66}
+      - {inside: "2'11\"", inside_in: 35, counts: {"No. 2 wedge": 40, "No. 1 wedge": 27}, total: 67}
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 2 wedge": 38, "No. 1 wedge": 30}, total: 68}
+      - {inside: "3'1\"", inside_in: 37, counts: {"No. 2 wedge": 36, "No. 1 wedge": 34}, total: 70}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 2 wedge": 34, "No. 1 wedge": 37}, total: 71}
+      - {inside: "3'3\"", inside_in: 39, counts: {"No. 2 wedge": 32, "No. 1 wedge": 40}, total: 72}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 2 wedge": 29, "No. 1 wedge": 44}, total: 73}
+      - {inside: "3'5\"", inside_in: 41, counts: {"No. 2 wedge": 28, "No. 1 wedge": 47}, total: 75}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 2 wedge": 25, "No. 1 wedge": 51}, total: 76}
+      - {inside: "3'7\"", inside_in: 43, counts: {"No. 2 wedge": 23, "No. 1 wedge": 54}, total: 77}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 2 wedge": 21, "No. 1 wedge": 57}, total: 78}
+      - {inside: "3'9\"", inside_in: 45, counts: {"No. 2 wedge": 19, "No. 1 wedge": 61}, total: 80}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 2 wedge": 17, "No. 1 wedge": 64}, total: 81}
+      - {inside: "3'11\"", inside_in: 47, counts: {"No. 2 wedge": 15, "No. 1 wedge": 67}, total: 82}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 2 wedge": 13, "No. 1 wedge": 70}, total: 83}
+      - {inside: "4'1\"", inside_in: 49, counts: {"No. 2 wedge": 11, "No. 1 wedge": 74}, total: 85}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 2 wedge": 9, "No. 1 wedge": 77}, total: 86}
+      - {inside: "4'3\"", inside_in: 51, counts: {"No. 2 wedge": 6, "No. 1 wedge": 81}, total: 87}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 2 wedge": 4, "No. 1 wedge": 84}, total: 88}
+      - {inside: "4'5\"", inside_in: 53, counts: {"No. 2 wedge": 2, "No. 1 wedge": 88}, total: 90}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 1 wedge": 91}, total: 91}
+      - {inside: "4'7\"", inside_in: 55, counts: {"No. 1 wedge": 90, "No. 1-X wedge": 2}, total: 92}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 1 wedge": 89, "No. 1-X wedge": 4}, total: 93}
+      - {inside: "4'9\"", inside_in: 57, counts: {"No. 1 wedge": 88, "No. 1-X wedge": 7}, total: 95}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 1 wedge": 87, "No. 1-X wedge": 9}, total: 96}
+      - {inside: "4'11\"", inside_in: 59, counts: {"No. 1 wedge": 86, "No. 1-X wedge": 11}, total: 97}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 1 wedge": 85, "No. 1-X wedge": 13}, total: 98}
+      - {inside: "5'1\"", inside_in: 61, counts: {"No. 1 wedge": 85, "No. 1-X wedge": 15}, total: 100}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 1 wedge": 84, "No. 1-X wedge": 17}, total: 101}
+      - {inside: "5'3\"", inside_in: 63, counts: {"No. 1 wedge": 83, "No. 1-X wedge": 19}, total: 102}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 1 wedge": 82, "No. 1-X wedge": 21}, total: 103}
+      - {inside: "5'5\"", inside_in: 65, counts: {"No. 1 wedge": 82, "No. 1-X wedge": 23}, total: 105}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 1 wedge": 81, "No. 1-X wedge": 25}, total: 106}
+      - {inside: "5'7\"", inside_in: 67, counts: {"No. 1 wedge": 80, "No. 1-X wedge": 27}, total: 107}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 1 wedge": 79, "No. 1-X wedge": 29}, total: 108}
+      - {inside: "5'9\"", inside_in: 69, counts: {"No. 1 wedge": 78, "No. 1-X wedge": 32}, total: 110}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 1 wedge": 77, "No. 1-X wedge": 34}, total: 111}
+      - {inside: "5'11\"", inside_in: 71, counts: {"No. 1 wedge": 76, "No. 1-X wedge": 36}, total: 112}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 1 wedge": 75, "No. 1-X wedge": 38}, total: 113}
+      - {inside: "6'1\"", inside_in: 73, counts: {"No. 1 wedge": 75, "No. 1-X wedge": 40}, total: 115}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 1 wedge": 74, "No. 1-X wedge": 42}, total: 116}
+      - {inside: "6'3\"", inside_in: 75, counts: {"No. 1 wedge": 73, "No. 1-X wedge": 44}, total: 117}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 1 wedge": 72, "No. 1-X wedge": 47}, total: 119}
+      - {inside: "6'5\"", inside_in: 77, counts: {"No. 1 wedge": 72, "No. 1-X wedge": 48}, total: 120}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 1 wedge": 71, "No. 1-X wedge": 50}, total: 121}
+      - {inside: "6'7\"", inside_in: 79, counts: {"No. 1 wedge": 70, "No. 1-X wedge": 52}, total: 122}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 1 wedge": 69, "No. 1-X wedge": 55}, total: 124}
+      - {inside: "6'9\"", inside_in: 81, counts: {"No. 1 wedge": 68, "No. 1-X wedge": 57}, total: 125}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 1 wedge": 67, "No. 1-X wedge": 59}, total: 126}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 1 wedge": 66, "No. 1-X wedge": 63}, total: 129}
+      - {inside: "7'1\"", inside_in: 85, counts: {"No. 1 wedge": 65, "No. 1-X wedge": 65}, total: 130}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 1 wedge": 64, "No. 1-X wedge": 67}, total: 131}
+      - {inside: "7'3\"", inside_in: 87, counts: {"No. 1 wedge": 63, "No. 1-X wedge": 69}, total: 132}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 1 wedge": 62, "No. 1-X wedge": 72}, total: 134}
+      - {inside: "7'5\"", inside_in: 89, counts: {"No. 1 wedge": 61, "No. 1-X wedge": 74}, total: 135}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 1 wedge": 60, "No. 1-X wedge": 76}, total: 136}
+      - {inside: "7'7\"", inside_in: 91, counts: {"No. 1 wedge": 59, "No. 1-X wedge": 78}, total: 137}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 1 wedge": 59, "No. 1-X wedge": 80}, total: 139}
+      - {inside: "7'9\"", inside_in: 93, counts: {"No. 1 wedge": 58, "No. 1-X wedge": 82}, total: 140}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 1 wedge": 57, "No. 1-X wedge": 84}, total: 141}
+      - {inside: "7'11\"", inside_in: 95, counts: {"No. 1 wedge": 56, "No. 1-X wedge": 86}, total: 142}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 1 wedge": 56, "No. 1-X wedge": 88}, total: 144}
+      - {inside: "8'1\"", inside_in: 97, counts: {"No. 1 wedge": 55, "No. 1-X wedge": 90}, total: 145}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 1 wedge": 54, "No. 1-X wedge": 92}, total: 146}
+      - {inside: "8'3\"", inside_in: 99, counts: {"No. 1 wedge": 53, "No. 1-X wedge": 94}, total: 147}
+      - {inside: "8'4\"", inside_in: 100, counts: {"No. 1 wedge": 52, "No. 1-X wedge": 97}, total: 149}
+      - {inside: "8'5\"", inside_in: 101, counts: {"No. 1 wedge": 51, "No. 1-X wedge": 99}, total: 150}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 1 wedge": 50, "No. 1-X wedge": 101}, total: 151}
+      - {inside: "8'7\"", inside_in: 103, counts: {"No. 1 wedge": 49, "No. 1-X wedge": 103}, total: 152}
+      - {inside: "8'8\"", inside_in: 104, counts: {"No. 1 wedge": 49, "No. 1-X wedge": 105}, total: 154}
+      - {inside: "8'9\"", inside_in: 105, counts: {"No. 1 wedge": 48, "No. 1-X wedge": 107}, total: 155}
+      - {inside: "8'10\"", inside_in: 106, counts: {"No. 1 wedge": 47, "No. 1-X wedge": 109}, total: 156}
+      - {inside: "8'11\"", inside_in: 107, counts: {"No. 1 wedge": 46, "No. 1-X wedge": 111}, total: 157}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 1 wedge": 46, "No. 1-X wedge": 113}, total: 159}
+      - {inside: "9'1\"", inside_in: 109, counts: {"No. 1 wedge": 45, "No. 1-X wedge": 115}, total: 160}
+      - {inside: "9'2\"", inside_in: 110, counts: {"No. 1 wedge": 44, "No. 1-X wedge": 117}, total: 161}
+      - {inside: "9'3\"", inside_in: 111, counts: {"No. 1 wedge": 43, "No. 1-X wedge": 120}, total: 163}
+      - {inside: "9'4\"", inside_in: 112, counts: {"No. 1 wedge": 42, "No. 1-X wedge": 122}, total: 164}
+      - {inside: "9'5\"", inside_in: 113, counts: {"No. 1 wedge": 41, "No. 1-X wedge": 124}, total: 165}
+      - {inside: "9'6\"", inside_in: 114, counts: {"No. 1 wedge": 40, "No. 1-X wedge": 126}, total: 166}
+      - {inside: "9'7\"", inside_in: 115, counts: {"No. 1 wedge": 40, "No. 1-X wedge": 128}, total: 168}
+      - {inside: "9'8\"", inside_in: 116, counts: {"No. 1 wedge": 39, "No. 1-X wedge": 130}, total: 169}
+      - {inside: "9'9\"", inside_in: 117, counts: {"No. 1 wedge": 38, "No. 1-X wedge": 132}, total: 170}
+      - {inside: "9'10\"", inside_in: 118, counts: {"No. 1 wedge": 37, "No. 1-X wedge": 134}, total: 171}
+      - {inside: "9'11\"", inside_in: 119, counts: {"No. 1 wedge": 36, "No. 1-X wedge": 137}, total: 173}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 1 wedge": 35, "No. 1-X wedge": 139}, total: 174}
+      - {inside: "10'1\"", inside_in: 121, counts: {"No. 1 wedge": 35, "No. 1-X wedge": 140}, total: 175}
+      - {inside: "10'2\"", inside_in: 122, counts: {"No. 1 wedge": 34, "No. 1-X wedge": 142}, total: 176}
+      - {inside: "10'3\"", inside_in: 123, counts: {"No. 1 wedge": 33, "No. 1-X wedge": 145}, total: 178}
+      - {inside: "10'4\"", inside_in: 124, counts: {"No. 1 wedge": 32, "No. 1-X wedge": 147}, total: 179}
+      - {inside: "10'5\"", inside_in: 125, counts: {"No. 1 wedge": 31, "No. 1-X wedge": 149}, total: 180}
+      - {inside: "10'6\"", inside_in: 126, counts: {"No. 1 wedge": 30, "No. 1-X wedge": 151}, total: 181}
+      - {inside: "10'7\"", inside_in: 127, counts: {"No. 1 wedge": 30, "No. 1-X wedge": 153}, total: 183}
+      - {inside: "10'8\"", inside_in: 128, counts: {"No. 1 wedge": 29, "No. 1-X wedge": 155}, total: 184}
+      - {inside: "10'9\"", inside_in: 129, counts: {"No. 1 wedge": 28, "No. 1-X wedge": 157}, total: 185}
+      - {inside: "10'10\"", inside_in: 130, counts: {"No. 1 wedge": 27, "No. 1-X wedge": 159}, total: 186}
+      - {inside: "10'11\"", inside_in: 131, counts: {"No. 1 wedge": 26, "No. 1-X wedge": 162}, total: 188}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 1 wedge": 25, "No. 1-X wedge": 164}, total: 189}
+      - {inside: "11'1\"", inside_in: 133, counts: {"No. 1 wedge": 24, "No. 1-X wedge": 166}, total: 190}
+      - {inside: "11'2\"", inside_in: 134, counts: {"No. 1 wedge": 23, "No. 1-X wedge": 168}, total: 191}
+      - {inside: "11'3\"", inside_in: 135, counts: {"No. 1 wedge": 23, "No. 1-X wedge": 170}, total: 193}
+      - {inside: "11'4\"", inside_in: 136, counts: {"No. 1 wedge": 22, "No. 1-X wedge": 172}, total: 194}
+      - {inside: "11'5\"", inside_in: 137, counts: {"No. 1 wedge": 21, "No. 1-X wedge": 174}, total: 195}
+      - {inside: "11'6\"", inside_in: 138, counts: {"No. 1 wedge": 20, "No. 1-X wedge": 176}, total: 196}
+      - {inside: "11'7\"", inside_in: 139, counts: {"No. 1 wedge": 20, "No. 1-X wedge": 178}, total: 198}
+      - {inside: "11'8\"", inside_in: 140, counts: {"No. 1 wedge": 19, "No. 1-X wedge": 180}, total: 199}
+      - {inside: "11'9\"", inside_in: 141, counts: {"No. 1 wedge": 18, "No. 1-X wedge": 182}, total: 200}
+      - {inside: "11'10\"", inside_in: 142, counts: {"No. 1 wedge": 17, "No. 1-X wedge": 184}, total: 201}
+      - {inside: "11'11\"", inside_in: 143, counts: {"No. 1 wedge": 16, "No. 1-X wedge": 187}, total: 203}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 1 wedge": 15, "No. 1-X wedge": 189}, total: 204}
+    status: Verified
+  - id: ir29-lining-4.5in-arch-brick-3in
+    label: "IR-29"
+    pdf_page: 153
+    title: "4-1/2 in Lining - 3 in Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 3 or 13-1/2 x 4-1/2 x 3 Inch"
+    lining_in: 4.5
+    printed_range: "0'4-1/2\" to 15'0\" or more (PDF 153); transcribed to 12'0\""
+    note: "Starts with the No. 4 arch (thin end 1 in) at 0'4-1/2\"; steps 1 in to 8'3\", then 3, 6 and 12 in. Olsen's A-5 is this table's No. 3, No. 2 and No. 1 columns from 1'6\" (65 of 66 rows equal)."
+    shapes:
+      - {name: "No. 4 arch", size: "9 x 4-1/2 x (3 - 1)"}
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 101
+    rows:
+      - {inside: "0'4 1/2\"", inside_in: 4.5, counts: {"No. 4 arch": 15}, total: 15}
+      - {inside: "0'5\"", inside_in: 5, counts: {"No. 4 arch": 14, "No. 3 arch": 1}, total: 15}
+      - {inside: "0'6\"", inside_in: 6, counts: {"No. 4 arch": 13, "No. 3 arch": 3}, total: 16}
+      - {inside: "0'7\"", inside_in: 7, counts: {"No. 4 arch": 12, "No. 3 arch": 5}, total: 17}
+      - {inside: "0'8\"", inside_in: 8, counts: {"No. 4 arch": 11, "No. 3 arch": 7}, total: 18}
+      - {inside: "0'9\"", inside_in: 9, counts: {"No. 4 arch": 10, "No. 3 arch": 9}, total: 19}
+      - {inside: "0'10\"", inside_in: 10, counts: {"No. 4 arch": 8, "No. 3 arch": 12}, total: 20}
+      - {inside: "0'11\"", inside_in: 11, counts: {"No. 4 arch": 7, "No. 3 arch": 14}, total: 21}
+      - {inside: "1'0\"", inside_in: 12, counts: {"No. 4 arch": 6, "No. 3 arch": 16}, total: 22}
+      - {inside: "1'1\"", inside_in: 13, counts: {"No. 4 arch": 5, "No. 3 arch": 18}, total: 23}
+      - {inside: "1'2\"", inside_in: 14, counts: {"No. 4 arch": 4, "No. 3 arch": 20}, total: 24}
+      - {inside: "1'3\"", inside_in: 15, counts: {"No. 4 arch": 4, "No. 3 arch": 22}, total: 26}
+      - {inside: "1'4\"", inside_in: 16, counts: {"No. 4 arch": 3, "No. 3 arch": 24}, total: 27}
+      - {inside: "1'5\"", inside_in: 17, counts: {"No. 4 arch": 1, "No. 3 arch": 27}, total: 28}
+      - {inside: "1'6\"", inside_in: 18, counts: {"No. 3 arch": 29}, total: 29}
+      - {inside: "1'7\"", inside_in: 19, counts: {"No. 3 arch": 28, "No. 2 arch": 2}, total: 30}
+      - {inside: "1'8\"", inside_in: 20, counts: {"No. 3 arch": 26, "No. 2 arch": 5}, total: 31}
+      - {inside: "1'9\"", inside_in: 21, counts: {"No. 3 arch": 25, "No. 2 arch": 7}, total: 32}
+      - {inside: "1'10\"", inside_in: 22, counts: {"No. 3 arch": 24, "No. 2 arch": 9}, total: 33}
+      - {inside: "1'11\"", inside_in: 23, counts: {"No. 3 arch": 23, "No. 2 arch": 11}, total: 34}
+      - {inside: "2'0\"", inside_in: 24, counts: {"No. 3 arch": 22, "No. 2 arch": 13}, total: 35}
+      - {inside: "2'1\"", inside_in: 25, counts: {"No. 3 arch": 21, "No. 2 arch": 15}, total: 36}
+      - {inside: "2'2\"", inside_in: 26, counts: {"No. 3 arch": 20, "No. 2 arch": 17}, total: 37}
+      - {inside: "2'3\"", inside_in: 27, counts: {"No. 3 arch": 19, "No. 2 arch": 19}, total: 38}
+      - {inside: "2'4\"", inside_in: 28, counts: {"No. 3 arch": 18, "No. 2 arch": 21}, total: 39}
+      - {inside: "2'5\"", inside_in: 29, counts: {"No. 3 arch": 17, "No. 2 arch": 23}, total: 40}
+      - {inside: "2'6\"", inside_in: 30, counts: {"No. 3 arch": 16, "No. 2 arch": 25}, total: 41}
+      - {inside: "2'7\"", inside_in: 31, counts: {"No. 3 arch": 15, "No. 2 arch": 27}, total: 42}
+      - {inside: "2'8\"", inside_in: 32, counts: {"No. 3 arch": 14, "No. 2 arch": 29}, total: 43}
+      - {inside: "2'9\"", inside_in: 33, counts: {"No. 3 arch": 13, "No. 2 arch": 31}, total: 44}
+      - {inside: "2'10\"", inside_in: 34, counts: {"No. 3 arch": 12, "No. 2 arch": 33}, total: 45}
+      - {inside: "2'11\"", inside_in: 35, counts: {"No. 3 arch": 10, "No. 2 arch": 36}, total: 46}
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 3 arch": 10, "No. 2 arch": 38}, total: 48}
+      - {inside: "3'1\"", inside_in: 37, counts: {"No. 3 arch": 9, "No. 2 arch": 40}, total: 49}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 3 arch": 8, "No. 2 arch": 42}, total: 50}
+      - {inside: "3'3\"", inside_in: 39, counts: {"No. 3 arch": 7, "No. 2 arch": 44}, total: 51}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 3 arch": 6, "No. 2 arch": 46}, total: 52}
+      - {inside: "3'5\"", inside_in: 41, counts: {"No. 3 arch": 5, "No. 2 arch": 48}, total: 53}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 3 arch": 3, "No. 2 arch": 51}, total: 54}
+      - {inside: "3'7\"", inside_in: 43, counts: {"No. 3 arch": 2, "No. 2 arch": 53}, total: 55}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 3 arch": 1, "No. 2 arch": 55}, total: 56}
+      - {inside: "3'9\"", inside_in: 45, counts: {"No. 2 arch": 57}, total: 57}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 2 arch": 56, "No. 1 arch": 2}, total: 58}
+      - {inside: "3'11\"", inside_in: 47, counts: {"No. 2 arch": 55, "No. 1 arch": 4}, total: 59}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 2 arch": 54, "No. 1 arch": 6}, total: 60}
+      - {inside: "4'1\"", inside_in: 49, counts: {"No. 2 arch": 52, "No. 1 arch": 9}, total: 61}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 2 arch": 51, "No. 1 arch": 11}, total: 62}
+      - {inside: "4'3\"", inside_in: 51, counts: {"No. 2 arch": 50, "No. 1 arch": 13}, total: 63}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 2 arch": 49, "No. 1 arch": 15}, total: 64}
+      - {inside: "4'5\"", inside_in: 53, counts: {"No. 2 arch": 48, "No. 1 arch": 17}, total: 65}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 2 arch": 47, "No. 1 arch": 19}, total: 66}
+      - {inside: "4'7\"", inside_in: 55, counts: {"No. 2 arch": 46, "No. 1 arch": 21}, total: 67}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 2 arch": 45, "No. 1 arch": 23}, total: 68}
+      - {inside: "4'9\"", inside_in: 57, counts: {"No. 2 arch": 44, "No. 1 arch": 26}, total: 70}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 2 arch": 43, "No. 1 arch": 28}, total: 71}
+      - {inside: "4'11\"", inside_in: 59, counts: {"No. 2 arch": 42, "No. 1 arch": 30}, total: 72}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 2 arch": 41, "No. 1 arch": 32}, total: 73}
+      - {inside: "5'1\"", inside_in: 61, counts: {"No. 2 arch": 40, "No. 1 arch": 34}, total: 74}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 2 arch": 39, "No. 1 arch": 36}, total: 75}
+      - {inside: "5'3\"", inside_in: 63, counts: {"No. 2 arch": 38, "No. 1 arch": 38}, total: 76}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 2 arch": 37, "No. 1 arch": 40}, total: 77}
+      - {inside: "5'5\"", inside_in: 65, counts: {"No. 2 arch": 36, "No. 1 arch": 42}, total: 78}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 2 arch": 35, "No. 1 arch": 44}, total: 79}
+      - {inside: "5'7\"", inside_in: 67, counts: {"No. 2 arch": 34, "No. 1 arch": 46}, total: 80}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 2 arch": 33, "No. 1 arch": 48}, total: 81}
+      - {inside: "5'9\"", inside_in: 69, counts: {"No. 2 arch": 32, "No. 1 arch": 50}, total: 82}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 2 arch": 31, "No. 1 arch": 52}, total: 83}
+      - {inside: "5'11\"", inside_in: 71, counts: {"No. 2 arch": 29, "No. 1 arch": 55}, total: 84}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 2 arch": 28, "No. 1 arch": 57}, total: 85}
+      - {inside: "6'1\"", inside_in: 73, counts: {"No. 2 arch": 27, "No. 1 arch": 59}, total: 86}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 2 arch": 26, "No. 1 arch": 61}, total: 87}
+      - {inside: "6'3\"", inside_in: 75, counts: {"No. 2 arch": 25, "No. 1 arch": 63}, total: 88}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 2 arch": 24, "No. 1 arch": 65}, total: 89}
+      - {inside: "6'5\"", inside_in: 77, counts: {"No. 2 arch": 23, "No. 1 arch": 67}, total: 90}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 2 arch": 22, "No. 1 arch": 70}, total: 92}
+      - {inside: "6'7\"", inside_in: 79, counts: {"No. 2 arch": 21, "No. 1 arch": 72}, total: 93}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 2 arch": 20, "No. 1 arch": 74}, total: 94}
+      - {inside: "6'9\"", inside_in: 81, counts: {"No. 2 arch": 19, "No. 1 arch": 76}, total: 95}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 2 arch": 18, "No. 1 arch": 78}, total: 96}
+      - {inside: "6'11\"", inside_in: 83, counts: {"No. 2 arch": 17, "No. 1 arch": 80}, total: 97}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 2 arch": 16, "No. 1 arch": 82}, total: 98}
+      - {inside: "7'1\"", inside_in: 85, counts: {"No. 2 arch": 15, "No. 1 arch": 84}, total: 99}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 2 arch": 14, "No. 1 arch": 86}, total: 100}
+      - {inside: "7'3\"", inside_in: 87, counts: {"No. 2 arch": 13, "No. 1 arch": 88}, total: 101}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 2 arch": 12, "No. 1 arch": 90}, total: 102}
+      - {inside: "7'5\"", inside_in: 89, counts: {"No. 2 arch": 11, "No. 1 arch": 92}, total: 103}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 2 arch": 10, "No. 1 arch": 94}, total: 104}
+      - {inside: "7'7\"", inside_in: 91, counts: {"No. 2 arch": 9, "No. 1 arch": 96}, total: 105}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 2 arch": 7, "No. 1 arch": 99}, total: 106}
+      - {inside: "7'9\"", inside_in: 93, counts: {"No. 2 arch": 6, "No. 1 arch": 101}, total: 107}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 2 arch": 5, "No. 1 arch": 103}, total: 108}
+      - {inside: "7'11\"", inside_in: 95, counts: {"No. 2 arch": 4, "No. 1 arch": 105}, total: 109}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 2 arch": 3, "No. 1 arch": 107}, total: 110}
+      - {inside: "8'1\"", inside_in: 97, counts: {"No. 2 arch": 2, "No. 1 arch": 109}, total: 111}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 2 arch": 1, "No. 1 arch": 111}, total: 112}
+      - {inside: "8'3\"", inside_in: 99, counts: {"No. 1 arch": 113}, total: 113}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 1 arch": 113, "Straight": 4}, total: 117}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 1 arch": 113, "Straight": 10}, total: 123}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 1 arch": 113, "Straight": 22}, total: 135}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 1 arch": 113, "Straight": 35}, total: 148}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 1 arch": 113, "Straight": 48}, total: 161}
+    status: Verified
+  - id: ir30-lining-4.5in-circle-brick-3in
+    label: "IR-30"
+    pdf_page: 154
+    title: "4-1/2 in Lining - 3 in Circle Brick"
+    heading_sizes: "9 x 4-1/2 x 3 Inch"
+    lining_in: 4.5
+    printed_range: "2'0\" to 10'0\" in 1 in steps (PDF 154); all transcribed"
+    note: "Circle brick: the name gives the inside and outside circle of the ring it makes (inside diameter, outside diameter, thickness in inches). Two neighbouring sizes share a ring between standard diameters. Olsen's appendix has no such table. A.P. Green p.117 has one (6 in steps)."
+    shapes:
+      - {name: "24-33-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "36-45-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "48-57-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "60-69-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "72-81-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "84-93-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "96-105-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "108-117-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+      - {name: "120-129-3 Circle", size: "9 x 4-1/2 x 3 circle brick, named inside diameter - outside diameter - thickness, in"}
+    rows_transcribed: 97
+    rows:
+      - {inside: "2'0\"", inside_in: 24, counts: {"24-33-3 Circle": 12}, total: 12}
+      - {inside: "2'1\"", inside_in: 25, counts: {"24-33-3 Circle": 11, "36-45-3 Circle": 1}, total: 12}
+      - {inside: "2'2\"", inside_in: 26, counts: {"24-33-3 Circle": 10, "36-45-3 Circle": 3}, total: 13}
+      - {inside: "2'3\"", inside_in: 27, counts: {"24-33-3 Circle": 9, "36-45-3 Circle": 4}, total: 13}
+      - {inside: "2'4\"", inside_in: 28, counts: {"24-33-3 Circle": 8, "36-45-3 Circle": 5}, total: 13}
+      - {inside: "2'5\"", inside_in: 29, counts: {"24-33-3 Circle": 7, "36-45-3 Circle": 7}, total: 14}
+      - {inside: "2'6\"", inside_in: 30, counts: {"24-33-3 Circle": 6, "36-45-3 Circle": 8}, total: 14}
+      - {inside: "2'7\"", inside_in: 31, counts: {"24-33-3 Circle": 5, "36-45-3 Circle": 9}, total: 14}
+      - {inside: "2'8\"", inside_in: 32, counts: {"24-33-3 Circle": 4, "36-45-3 Circle": 11}, total: 15}
+      - {inside: "2'9\"", inside_in: 33, counts: {"24-33-3 Circle": 3, "36-45-3 Circle": 12}, total: 15}
+      - {inside: "2'10\"", inside_in: 34, counts: {"24-33-3 Circle": 2, "36-45-3 Circle": 13}, total: 15}
+      - {inside: "2'11\"", inside_in: 35, counts: {"24-33-3 Circle": 1, "36-45-3 Circle": 15}, total: 16}
+      - {inside: "3'0\"", inside_in: 36, counts: {"36-45-3 Circle": 16}, total: 16}
+      - {inside: "3'1\"", inside_in: 37, counts: {"36-45-3 Circle": 14, "48-57-3 Circle": 2}, total: 16}
+      - {inside: "3'2\"", inside_in: 38, counts: {"36-45-3 Circle": 13, "48-57-3 Circle": 4}, total: 17}
+      - {inside: "3'3\"", inside_in: 39, counts: {"36-45-3 Circle": 12, "48-57-3 Circle": 5}, total: 17}
+      - {inside: "3'4\"", inside_in: 40, counts: {"36-45-3 Circle": 11, "48-57-3 Circle": 7}, total: 18}
+      - {inside: "3'5\"", inside_in: 41, counts: {"36-45-3 Circle": 9, "48-57-3 Circle": 9}, total: 18}
+      - {inside: "3'6\"", inside_in: 42, counts: {"36-45-3 Circle": 8, "48-57-3 Circle": 10}, total: 18}
+      - {inside: "3'7\"", inside_in: 43, counts: {"36-45-3 Circle": 7, "48-57-3 Circle": 12}, total: 19}
+      - {inside: "3'8\"", inside_in: 44, counts: {"36-45-3 Circle": 5, "48-57-3 Circle": 14}, total: 19}
+      - {inside: "3'9\"", inside_in: 45, counts: {"36-45-3 Circle": 4, "48-57-3 Circle": 15}, total: 19}
+      - {inside: "3'10\"", inside_in: 46, counts: {"36-45-3 Circle": 3, "48-57-3 Circle": 17}, total: 20}
+      - {inside: "3'11\"", inside_in: 47, counts: {"36-45-3 Circle": 2, "48-57-3 Circle": 18}, total: 20}
+      - {inside: "4'0\"", inside_in: 48, counts: {"48-57-3 Circle": 20}, total: 20}
+      - {inside: "4'1\"", inside_in: 49, counts: {"48-57-3 Circle": 19, "60-69-3 Circle": 2}, total: 21}
+      - {inside: "4'2\"", inside_in: 50, counts: {"48-57-3 Circle": 17, "60-69-3 Circle": 4}, total: 21}
+      - {inside: "4'3\"", inside_in: 51, counts: {"48-57-3 Circle": 15, "60-69-3 Circle": 6}, total: 21}
+      - {inside: "4'4\"", inside_in: 52, counts: {"48-57-3 Circle": 14, "60-69-3 Circle": 8}, total: 22}
+      - {inside: "4'5\"", inside_in: 53, counts: {"48-57-3 Circle": 12, "60-69-3 Circle": 10}, total: 22}
+      - {inside: "4'6\"", inside_in: 54, counts: {"48-57-3 Circle": 10, "60-69-3 Circle": 12}, total: 22}
+      - {inside: "4'7\"", inside_in: 55, counts: {"48-57-3 Circle": 9, "60-69-3 Circle": 14}, total: 23}
+      - {inside: "4'8\"", inside_in: 56, counts: {"48-57-3 Circle": 7, "60-69-3 Circle": 16}, total: 23}
+      - {inside: "4'9\"", inside_in: 57, counts: {"48-57-3 Circle": 5, "60-69-3 Circle": 18}, total: 23}
+      - {inside: "4'10\"", inside_in: 58, counts: {"48-57-3 Circle": 4, "60-69-3 Circle": 20}, total: 24}
+      - {inside: "4'11\"", inside_in: 59, counts: {"48-57-3 Circle": 2, "60-69-3 Circle": 22}, total: 24}
+      - {inside: "5'0\"", inside_in: 60, counts: {"60-69-3 Circle": 24}, total: 24}
+      - {inside: "5'1\"", inside_in: 61, counts: {"60-69-3 Circle": 22, "72-81-3 Circle": 3}, total: 25}
+      - {inside: "5'2\"", inside_in: 62, counts: {"60-69-3 Circle": 20, "72-81-3 Circle": 5}, total: 25}
+      - {inside: "5'3\"", inside_in: 63, counts: {"60-69-3 Circle": 18, "72-81-3 Circle": 8}, total: 26}
+      - {inside: "5'4\"", inside_in: 64, counts: {"60-69-3 Circle": 16, "72-81-3 Circle": 10}, total: 26}
+      - {inside: "5'5\"", inside_in: 65, counts: {"60-69-3 Circle": 14, "72-81-3 Circle": 12}, total: 26}
+      - {inside: "5'6\"", inside_in: 66, counts: {"60-69-3 Circle": 12, "72-81-3 Circle": 15}, total: 27}
+      - {inside: "5'7\"", inside_in: 67, counts: {"60-69-3 Circle": 10, "72-81-3 Circle": 17}, total: 27}
+      - {inside: "5'8\"", inside_in: 68, counts: {"60-69-3 Circle": 8, "72-81-3 Circle": 19}, total: 27}
+      - {inside: "5'9\"", inside_in: 69, counts: {"60-69-3 Circle": 6, "72-81-3 Circle": 22}, total: 28}
+      - {inside: "5'10\"", inside_in: 70, counts: {"60-69-3 Circle": 4, "72-81-3 Circle": 24}, total: 28}
+      - {inside: "5'11\"", inside_in: 71, counts: {"60-69-3 Circle": 2, "72-81-3 Circle": 26}, total: 28}
+      - {inside: "6'0\"", inside_in: 72, counts: {"72-81-3 Circle": 29}, total: 29}
+      - {inside: "6'1\"", inside_in: 73, counts: {"72-81-3 Circle": 26, "84-93-3 Circle": 3}, total: 29}
+      - {inside: "6'2\"", inside_in: 74, counts: {"72-81-3 Circle": 24, "84-93-3 Circle": 5}, total: 29}
+      - {inside: "6'3\"", inside_in: 75, counts: {"72-81-3 Circle": 22, "84-93-3 Circle": 8}, total: 30}
+      - {inside: "6'4\"", inside_in: 76, counts: {"72-81-3 Circle": 19, "84-93-3 Circle": 11}, total: 30}
+      - {inside: "6'5\"", inside_in: 77, counts: {"72-81-3 Circle": 16, "84-93-3 Circle": 14}, total: 30}
+      - {inside: "6'6\"", inside_in: 78, counts: {"72-81-3 Circle": 14, "84-93-3 Circle": 17}, total: 31}
+      - {inside: "6'7\"", inside_in: 79, counts: {"72-81-3 Circle": 12, "84-93-3 Circle": 19}, total: 31}
+      - {inside: "6'8\"", inside_in: 80, counts: {"72-81-3 Circle": 9, "84-93-3 Circle": 22}, total: 31}
+      - {inside: "6'9\"", inside_in: 81, counts: {"72-81-3 Circle": 7, "84-93-3 Circle": 25}, total: 32}
+      - {inside: "6'10\"", inside_in: 82, counts: {"72-81-3 Circle": 5, "84-93-3 Circle": 27}, total: 32}
+      - {inside: "6'11\"", inside_in: 83, counts: {"72-81-3 Circle": 3, "84-93-3 Circle": 30}, total: 33}
+      - {inside: "7'0\"", inside_in: 84, counts: {"84-93-3 Circle": 33}, total: 33}
+      - {inside: "7'1\"", inside_in: 85, counts: {"84-93-3 Circle": 30, "96-105-3 Circle": 3}, total: 33}
+      - {inside: "7'2\"", inside_in: 86, counts: {"84-93-3 Circle": 27, "96-105-3 Circle": 7}, total: 34}
+      - {inside: "7'3\"", inside_in: 87, counts: {"84-93-3 Circle": 25, "96-105-3 Circle": 9}, total: 34}
+      - {inside: "7'4\"", inside_in: 88, counts: {"84-93-3 Circle": 22, "96-105-3 Circle": 12}, total: 34}
+      - {inside: "7'5\"", inside_in: 89, counts: {"84-93-3 Circle": 19, "96-105-3 Circle": 16}, total: 35}
+      - {inside: "7'6\"", inside_in: 90, counts: {"84-93-3 Circle": 16, "96-105-3 Circle": 19}, total: 35}
+      - {inside: "7'7\"", inside_in: 91, counts: {"84-93-3 Circle": 14, "96-105-3 Circle": 21}, total: 35}
+      - {inside: "7'8\"", inside_in: 92, counts: {"84-93-3 Circle": 11, "96-105-3 Circle": 25}, total: 36}
+      - {inside: "7'9\"", inside_in: 93, counts: {"84-93-3 Circle": 8, "96-105-3 Circle": 28}, total: 36}
+      - {inside: "7'10\"", inside_in: 94, counts: {"84-93-3 Circle": 5, "96-105-3 Circle": 31}, total: 36}
+      - {inside: "7'11\"", inside_in: 95, counts: {"84-93-3 Circle": 3, "96-105-3 Circle": 34}, total: 37}
+      - {inside: "8'0\"", inside_in: 96, counts: {"96-105-3 Circle": 37}, total: 37}
+      - {inside: "8'1\"", inside_in: 97, counts: {"96-105-3 Circle": 34, "108-117-3 Circle": 3}, total: 37}
+      - {inside: "8'2\"", inside_in: 98, counts: {"96-105-3 Circle": 31, "108-117-3 Circle": 7}, total: 38}
+      - {inside: "8'3\"", inside_in: 99, counts: {"96-105-3 Circle": 28, "108-117-3 Circle": 10}, total: 38}
+      - {inside: "8'4\"", inside_in: 100, counts: {"96-105-3 Circle": 24, "108-117-3 Circle": 14}, total: 38}
+      - {inside: "8'5\"", inside_in: 101, counts: {"96-105-3 Circle": 22, "108-117-3 Circle": 17}, total: 39}
+      - {inside: "8'6\"", inside_in: 102, counts: {"96-105-3 Circle": 18, "108-117-3 Circle": 21}, total: 39}
+      - {inside: "8'7\"", inside_in: 103, counts: {"96-105-3 Circle": 15, "108-117-3 Circle": 24}, total: 39}
+      - {inside: "8'8\"", inside_in: 104, counts: {"96-105-3 Circle": 12, "108-117-3 Circle": 28}, total: 40}
+      - {inside: "8'9\"", inside_in: 105, counts: {"96-105-3 Circle": 9, "108-117-3 Circle": 31}, total: 40}
+      - {inside: "8'10\"", inside_in: 106, counts: {"96-105-3 Circle": 7, "108-117-3 Circle": 34}, total: 41}
+      - {inside: "8'11\"", inside_in: 107, counts: {"96-105-3 Circle": 3, "108-117-3 Circle": 38}, total: 41}
+      - {inside: "9'0\"", inside_in: 108, counts: {"108-117-3 Circle": 41}, total: 41}
+      - {inside: "9'1\"", inside_in: 109, counts: {"108-117-3 Circle": 38, "120-129-3 Circle": 4}, total: 42}
+      - {inside: "9'2\"", inside_in: 110, counts: {"108-117-3 Circle": 34, "120-129-3 Circle": 8}, total: 42}
+      - {inside: "9'3\"", inside_in: 111, counts: {"108-117-3 Circle": 31, "120-129-3 Circle": 11}, total: 42}
+      - {inside: "9'4\"", inside_in: 112, counts: {"108-117-3 Circle": 28, "120-129-3 Circle": 15}, total: 43}
+      - {inside: "9'5\"", inside_in: 113, counts: {"108-117-3 Circle": 24, "120-129-3 Circle": 19}, total: 43}
+      - {inside: "9'6\"", inside_in: 114, counts: {"108-117-3 Circle": 20, "120-129-3 Circle": 23}, total: 43}
+      - {inside: "9'7\"", inside_in: 115, counts: {"108-117-3 Circle": 17, "120-129-3 Circle": 27}, total: 44}
+      - {inside: "9'8\"", inside_in: 116, counts: {"108-117-3 Circle": 14, "120-129-3 Circle": 30}, total: 44}
+      - {inside: "9'9\"", inside_in: 117, counts: {"108-117-3 Circle": 10, "120-129-3 Circle": 34}, total: 44}
+      - {inside: "9'10\"", inside_in: 118, counts: {"108-117-3 Circle": 7, "120-129-3 Circle": 38}, total: 45}
+      - {inside: "9'11\"", inside_in: 119, counts: {"108-117-3 Circle": 4, "120-129-3 Circle": 41}, total: 45}
+      - {inside: "10'0\"", inside_in: 120, counts: {"120-129-3 Circle": 45}, total: 45}
+    status: Verified
+  - id: ir34-36-lining-9in-wedge-brick-3in
+    label: "IR-34 to IR-36"
+    pdf_page: "158-160"
+    title: "9 in Lining - 3 in Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 3, 9 x 6-3/4 x 3 or 9 x 9 x 3 Inch"
+    lining_in: 9.0
+    printed_range: "3'0\" to 36'6\" (PDF 158-160); transcribed to 12'0\""
+    note: "Begins on PDF 158 (right half, 3'0\"), continues PDF 159 and 160. The No. 1 wedge (3-2-3/4) column is in the table; rings.py has it only as an A.P. Green extra."
+    shapes:
+      - {name: "No. 3 wedge", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 109
+    rows:
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 3 wedge": 57}, total: 57}
+      - {inside: "3'1\"", inside_in: 37, counts: {"No. 3 wedge": 56, "No. 2 wedge": 2}, total: 58}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 3 wedge": 55, "No. 2 wedge": 4}, total: 59}
+      - {inside: "3'3\"", inside_in: 39, counts: {"No. 3 wedge": 54, "No. 2 wedge": 6}, total: 60}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 3 wedge": 52, "No. 2 wedge": 9}, total: 61}
+      - {inside: "3'5\"", inside_in: 41, counts: {"No. 3 wedge": 51, "No. 2 wedge": 11}, total: 62}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 3 wedge": 50, "No. 2 wedge": 13}, total: 63}
+      - {inside: "3'7\"", inside_in: 43, counts: {"No. 3 wedge": 49, "No. 2 wedge": 15}, total: 64}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 3 wedge": 48, "No. 2 wedge": 17}, total: 65}
+      - {inside: "3'9\"", inside_in: 45, counts: {"No. 3 wedge": 47, "No. 2 wedge": 19}, total: 66}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 3 wedge": 46, "No. 2 wedge": 21}, total: 67}
+      - {inside: "3'11\"", inside_in: 47, counts: {"No. 3 wedge": 45, "No. 2 wedge": 23}, total: 68}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 3 wedge": 44, "No. 2 wedge": 26}, total: 70}
+      - {inside: "4'1\"", inside_in: 49, counts: {"No. 3 wedge": 43, "No. 2 wedge": 28}, total: 71}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 3 wedge": 42, "No. 2 wedge": 30}, total: 72}
+      - {inside: "4'3\"", inside_in: 51, counts: {"No. 3 wedge": 41, "No. 2 wedge": 32}, total: 73}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 3 wedge": 40, "No. 2 wedge": 34}, total: 74}
+      - {inside: "4'5\"", inside_in: 53, counts: {"No. 3 wedge": 39, "No. 2 wedge": 36}, total: 75}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 3 wedge": 38, "No. 2 wedge": 38}, total: 76}
+      - {inside: "4'7\"", inside_in: 55, counts: {"No. 3 wedge": 37, "No. 2 wedge": 40}, total: 77}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 3 wedge": 36, "No. 2 wedge": 42}, total: 78}
+      - {inside: "4'9\"", inside_in: 57, counts: {"No. 3 wedge": 35, "No. 2 wedge": 44}, total: 79}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 3 wedge": 34, "No. 2 wedge": 46}, total: 80}
+      - {inside: "4'11\"", inside_in: 59, counts: {"No. 3 wedge": 33, "No. 2 wedge": 48}, total: 81}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 3 wedge": 32, "No. 2 wedge": 50}, total: 82}
+      - {inside: "5'1\"", inside_in: 61, counts: {"No. 3 wedge": 31, "No. 2 wedge": 52}, total: 83}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 3 wedge": 29, "No. 2 wedge": 55}, total: 84}
+      - {inside: "5'3\"", inside_in: 63, counts: {"No. 3 wedge": 28, "No. 2 wedge": 57}, total: 85}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 3 wedge": 27, "No. 2 wedge": 59}, total: 86}
+      - {inside: "5'5\"", inside_in: 65, counts: {"No. 3 wedge": 26, "No. 2 wedge": 61}, total: 87}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 3 wedge": 25, "No. 2 wedge": 63}, total: 88}
+      - {inside: "5'7\"", inside_in: 67, counts: {"No. 3 wedge": 24, "No. 2 wedge": 65}, total: 89}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 3 wedge": 23, "No. 2 wedge": 67}, total: 90}
+      - {inside: "5'9\"", inside_in: 69, counts: {"No. 3 wedge": 22, "No. 2 wedge": 70}, total: 92}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 3 wedge": 21, "No. 2 wedge": 72}, total: 93}
+      - {inside: "5'11\"", inside_in: 71, counts: {"No. 3 wedge": 20, "No. 2 wedge": 74}, total: 94}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 3 wedge": 19, "No. 2 wedge": 76}, total: 95}
+      - {inside: "6'1\"", inside_in: 73, counts: {"No. 3 wedge": 18, "No. 2 wedge": 78}, total: 96}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 3 wedge": 17, "No. 2 wedge": 80}, total: 97}
+      - {inside: "6'3\"", inside_in: 75, counts: {"No. 3 wedge": 16, "No. 2 wedge": 82}, total: 98}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 3 wedge": 15, "No. 2 wedge": 84}, total: 99}
+      - {inside: "6'5\"", inside_in: 77, counts: {"No. 3 wedge": 14, "No. 2 wedge": 86}, total: 100}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 3 wedge": 13, "No. 2 wedge": 88}, total: 101}
+      - {inside: "6'7\"", inside_in: 79, counts: {"No. 3 wedge": 12, "No. 2 wedge": 90}, total: 102}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 3 wedge": 11, "No. 2 wedge": 92}, total: 103}
+      - {inside: "6'9\"", inside_in: 81, counts: {"No. 3 wedge": 10, "No. 2 wedge": 94}, total: 104}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 3 wedge": 9, "No. 2 wedge": 96}, total: 105}
+      - {inside: "6'11\"", inside_in: 83, counts: {"No. 3 wedge": 7, "No. 2 wedge": 99}, total: 106}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 3 wedge": 6, "No. 2 wedge": 101}, total: 107}
+      - {inside: "7'1\"", inside_in: 85, counts: {"No. 3 wedge": 5, "No. 2 wedge": 103}, total: 108}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 3 wedge": 4, "No. 2 wedge": 105}, total: 109}
+      - {inside: "7'3\"", inside_in: 87, counts: {"No. 3 wedge": 3, "No. 2 wedge": 107}, total: 110}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 3 wedge": 2, "No. 2 wedge": 109}, total: 111}
+      - {inside: "7'5\"", inside_in: 89, counts: {"No. 3 wedge": 1, "No. 2 wedge": 111}, total: 112}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 2 wedge": 113}, total: 113}
+      - {inside: "7'7\"", inside_in: 91, counts: {"No. 2 wedge": 112, "No. 1 wedge": 3}, total: 115}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 2 wedge": 111, "No. 1 wedge": 5}, total: 116}
+      - {inside: "7'9\"", inside_in: 93, counts: {"No. 2 wedge": 110, "No. 1 wedge": 7}, total: 117}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 2 wedge": 109, "No. 1 wedge": 9}, total: 118}
+      - {inside: "7'11\"", inside_in: 95, counts: {"No. 2 wedge": 108, "No. 1 wedge": 11}, total: 119}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 2 wedge": 107, "No. 1 wedge": 13}, total: 120}
+      - {inside: "8'1\"", inside_in: 97, counts: {"No. 2 wedge": 106, "No. 1 wedge": 15}, total: 121}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 2 wedge": 105, "No. 1 wedge": 17}, total: 122}
+      - {inside: "8'3\"", inside_in: 99, counts: {"No. 2 wedge": 104, "No. 1 wedge": 19}, total: 123}
+      - {inside: "8'4\"", inside_in: 100, counts: {"No. 2 wedge": 103, "No. 1 wedge": 21}, total: 124}
+      - {inside: "8'5\"", inside_in: 101, counts: {"No. 2 wedge": 102, "No. 1 wedge": 23}, total: 125}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 2 wedge": 101, "No. 1 wedge": 25}, total: 126}
+      - {inside: "8'7\"", inside_in: 103, counts: {"No. 2 wedge": 100, "No. 1 wedge": 27}, total: 127}
+      - {inside: "8'8\"", inside_in: 104, counts: {"No. 2 wedge": 99, "No. 1 wedge": 29}, total: 128}
+      - {inside: "8'9\"", inside_in: 105, counts: {"No. 2 wedge": 97, "No. 1 wedge": 32}, total: 129}
+      - {inside: "8'10\"", inside_in: 106, counts: {"No. 2 wedge": 96, "No. 1 wedge": 34}, total: 130}
+      - {inside: "8'11\"", inside_in: 107, counts: {"No. 2 wedge": 95, "No. 1 wedge": 36}, total: 131}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 2 wedge": 94, "No. 1 wedge": 38}, total: 132}
+      - {inside: "9'1\"", inside_in: 109, counts: {"No. 2 wedge": 93, "No. 1 wedge": 40}, total: 133}
+      - {inside: "9'2\"", inside_in: 110, counts: {"No. 2 wedge": 92, "No. 1 wedge": 42}, total: 134}
+      - {inside: "9'3\"", inside_in: 111, counts: {"No. 2 wedge": 91, "No. 1 wedge": 44}, total: 135}
+      - {inside: "9'4\"", inside_in: 112, counts: {"No. 2 wedge": 90, "No. 1 wedge": 47}, total: 137}
+      - {inside: "9'5\"", inside_in: 113, counts: {"No. 2 wedge": 89, "No. 1 wedge": 49}, total: 138}
+      - {inside: "9'6\"", inside_in: 114, counts: {"No. 2 wedge": 88, "No. 1 wedge": 51}, total: 139}
+      - {inside: "9'7\"", inside_in: 115, counts: {"No. 2 wedge": 87, "No. 1 wedge": 53}, total: 140}
+      - {inside: "9'8\"", inside_in: 116, counts: {"No. 2 wedge": 86, "No. 1 wedge": 55}, total: 141}
+      - {inside: "9'9\"", inside_in: 117, counts: {"No. 2 wedge": 85, "No. 1 wedge": 57}, total: 142}
+      - {inside: "9'10\"", inside_in: 118, counts: {"No. 2 wedge": 84, "No. 1 wedge": 59}, total: 143}
+      - {inside: "9'11\"", inside_in: 119, counts: {"No. 2 wedge": 83, "No. 1 wedge": 61}, total: 144}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 2 wedge": 82, "No. 1 wedge": 63}, total: 145}
+      - {inside: "10'1\"", inside_in: 121, counts: {"No. 2 wedge": 81, "No. 1 wedge": 65}, total: 146}
+      - {inside: "10'2\"", inside_in: 122, counts: {"No. 2 wedge": 80, "No. 1 wedge": 67}, total: 147}
+      - {inside: "10'3\"", inside_in: 123, counts: {"No. 2 wedge": 79, "No. 1 wedge": 69}, total: 148}
+      - {inside: "10'4\"", inside_in: 124, counts: {"No. 2 wedge": 78, "No. 1 wedge": 71}, total: 149}
+      - {inside: "10'5\"", inside_in: 125, counts: {"No. 2 wedge": 77, "No. 1 wedge": 73}, total: 150}
+      - {inside: "10'6\"", inside_in: 126, counts: {"No. 2 wedge": 76, "No. 1 wedge": 75}, total: 151}
+      - {inside: "10'7\"", inside_in: 127, counts: {"No. 2 wedge": 74, "No. 1 wedge": 78}, total: 152}
+      - {inside: "10'8\"", inside_in: 128, counts: {"No. 2 wedge": 73, "No. 1 wedge": 80}, total: 153}
+      - {inside: "10'9\"", inside_in: 129, counts: {"No. 2 wedge": 72, "No. 1 wedge": 82}, total: 154}
+      - {inside: "10'10\"", inside_in: 130, counts: {"No. 2 wedge": 71, "No. 1 wedge": 84}, total: 155}
+      - {inside: "10'11\"", inside_in: 131, counts: {"No. 2 wedge": 70, "No. 1 wedge": 86}, total: 156}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 2 wedge": 69, "No. 1 wedge": 88}, total: 157}
+      - {inside: "11'1\"", inside_in: 133, counts: {"No. 2 wedge": 69, "No. 1 wedge": 90}, total: 159}
+      - {inside: "11'2\"", inside_in: 134, counts: {"No. 2 wedge": 67, "No. 1 wedge": 93}, total: 160}
+      - {inside: "11'3\"", inside_in: 135, counts: {"No. 2 wedge": 66, "No. 1 wedge": 95}, total: 161}
+      - {inside: "11'4\"", inside_in: 136, counts: {"No. 2 wedge": 65, "No. 1 wedge": 97}, total: 162}
+      - {inside: "11'5\"", inside_in: 137, counts: {"No. 2 wedge": 64, "No. 1 wedge": 99}, total: 163}
+      - {inside: "11'6\"", inside_in: 138, counts: {"No. 2 wedge": 63, "No. 1 wedge": 101}, total: 164}
+      - {inside: "11'7\"", inside_in: 139, counts: {"No. 2 wedge": 62, "No. 1 wedge": 103}, total: 165}
+      - {inside: "11'8\"", inside_in: 140, counts: {"No. 2 wedge": 61, "No. 1 wedge": 105}, total: 166}
+      - {inside: "11'9\"", inside_in: 141, counts: {"No. 2 wedge": 60, "No. 1 wedge": 107}, total: 167}
+      - {inside: "11'10\"", inside_in: 142, counts: {"No. 2 wedge": 59, "No. 1 wedge": 109}, total: 168}
+      - {inside: "11'11\"", inside_in: 143, counts: {"No. 2 wedge": 58, "No. 1 wedge": 111}, total: 169}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 2 wedge": 57, "No. 1 wedge": 113}, total: 170}
+    status: Verified
+  - id: ir36-37-lining-9in-key-brick-3in-9x4.5x3
+    label: "IR-36, IR-37"
+    pdf_page: "160-161"
+    title: "9 in Lining - 3 in Key Brick, 9 x 4-1/2 x 3"
+    heading_sizes: "9 x 4-1/2 x 3 Inch"
+    lining_in: 9.0
+    printed_range: "1'6\" to 35'0\" (PDF 160-161); transcribed to 12'0\""
+    note: "Begins PDF 160 (right half, 1'6\", 2 in steps), continues PDF 161 (left half from 10'6\")."
+    shapes:
+      - {name: "No. 4 key", size: "9 x (4-1/2 - 2-1/4) x 3"}
+      - {name: "No. 3 key", size: "9 x (4-1/2 - 3) x 3"}
+      - {name: "No. 2 key", size: "9 x (4-1/2 - 3-1/2) x 3"}
+      - {name: "No. 1 key", size: "9 x (4-1/2 - 4) x 3"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 65
+    rows:
+      - {inside: "1'6\"", inside_in: 18, counts: {"No. 4 key": 26}, total: 26}
+      - {inside: "1'8\"", inside_in: 20, counts: {"No. 4 key": 23, "No. 3 key": 4}, total: 27}
+      - {inside: "1'10\"", inside_in: 22, counts: {"No. 4 key": 20, "No. 3 key": 8}, total: 28}
+      - {inside: "2'0\"", inside_in: 24, counts: {"No. 4 key": 17, "No. 3 key": 13}, total: 30}
+      - {inside: "2'2\"", inside_in: 26, counts: {"No. 4 key": 14, "No. 3 key": 17}, total: 31}
+      - {inside: "2'4\"", inside_in: 28, counts: {"No. 4 key": 12, "No. 3 key": 21}, total: 33}
+      - {inside: "2'6\"", inside_in: 30, counts: {"No. 4 key": 9, "No. 3 key": 25}, total: 34}
+      - {inside: "2'8\"", inside_in: 32, counts: {"No. 4 key": 6, "No. 3 key": 29}, total: 35}
+      - {inside: "2'10\"", inside_in: 34, counts: {"No. 4 key": 3, "No. 3 key": 34}, total: 37}
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 3 key": 38}, total: 38}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 3 key": 35, "No. 2 key": 4}, total: 39}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 3 key": 32, "No. 2 key": 9}, total: 41}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 3 key": 29, "No. 2 key": 13}, total: 42}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 3 key": 27, "No. 2 key": 17}, total: 44}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 3 key": 24, "No. 2 key": 21}, total: 45}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 3 key": 21, "No. 2 key": 25}, total: 46}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 3 key": 18, "No. 2 key": 30}, total: 48}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 3 key": 15, "No. 2 key": 34}, total: 49}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 3 key": 13, "No. 2 key": 38}, total: 51}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 3 key": 10, "No. 2 key": 42}, total: 52}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 3 key": 7, "No. 2 key": 46}, total: 53}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 3 key": 4, "No. 2 key": 51}, total: 55}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 3 key": 1, "No. 2 key": 55}, total: 56}
+      - {inside: "5'3\"", inside_in: 63, counts: {"No. 2 key": 57}, total: 57}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 2 key": 56, "No. 1 key": 2}, total: 58}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 2 key": 55, "No. 1 key": 4}, total: 59}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 2 key": 53, "No. 1 key": 7}, total: 60}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 2 key": 52, "No. 1 key": 10}, total: 62}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 2 key": 50, "No. 1 key": 13}, total: 63}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 2 key": 49, "No. 1 key": 16}, total: 65}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 2 key": 48, "No. 1 key": 18}, total: 66}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 2 key": 46, "No. 1 key": 21}, total: 67}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 2 key": 45, "No. 1 key": 24}, total: 69}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 2 key": 43, "No. 1 key": 27}, total: 70}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 2 key": 42, "No. 1 key": 30}, total: 72}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 2 key": 41, "No. 1 key": 32}, total: 73}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 2 key": 39, "No. 1 key": 35}, total: 74}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 2 key": 38, "No. 1 key": 38}, total: 76}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 2 key": 36, "No. 1 key": 41}, total: 77}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 2 key": 35, "No. 1 key": 44}, total: 79}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 2 key": 34, "No. 1 key": 46}, total: 80}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 2 key": 32, "No. 1 key": 49}, total: 81}
+      - {inside: "8'4\"", inside_in: 100, counts: {"No. 2 key": 31, "No. 1 key": 52}, total: 83}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 2 key": 29, "No. 1 key": 55}, total: 84}
+      - {inside: "8'8\"", inside_in: 104, counts: {"No. 2 key": 28, "No. 1 key": 58}, total: 86}
+      - {inside: "8'10\"", inside_in: 106, counts: {"No. 2 key": 27, "No. 1 key": 60}, total: 87}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 2 key": 25, "No. 1 key": 63}, total: 88}
+      - {inside: "9'2\"", inside_in: 110, counts: {"No. 2 key": 24, "No. 1 key": 66}, total: 90}
+      - {inside: "9'4\"", inside_in: 112, counts: {"No. 2 key": 22, "No. 1 key": 69}, total: 91}
+      - {inside: "9'6\"", inside_in: 114, counts: {"No. 2 key": 21, "No. 1 key": 72}, total: 93}
+      - {inside: "9'8\"", inside_in: 116, counts: {"No. 2 key": 20, "No. 1 key": 74}, total: 94}
+      - {inside: "9'10\"", inside_in: 118, counts: {"No. 2 key": 18, "No. 1 key": 77}, total: 95}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 2 key": 17, "No. 1 key": 80}, total: 97}
+      - {inside: "10'2\"", inside_in: 122, counts: {"No. 2 key": 15, "No. 1 key": 83}, total: 98}
+      - {inside: "10'4\"", inside_in: 124, counts: {"No. 2 key": 14, "No. 1 key": 86}, total: 100}
+      - {inside: "10'6\"", inside_in: 126, counts: {"No. 2 key": 13, "No. 1 key": 88}, total: 101}
+      - {inside: "10'8\"", inside_in: 128, counts: {"No. 2 key": 11, "No. 1 key": 91}, total: 102}
+      - {inside: "10'10\"", inside_in: 130, counts: {"No. 2 key": 10, "No. 1 key": 94}, total: 104}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 2 key": 9, "No. 1 key": 96}, total: 105}
+      - {inside: "11'2\"", inside_in: 134, counts: {"No. 2 key": 7, "No. 1 key": 100}, total: 107}
+      - {inside: "11'4\"", inside_in: 136, counts: {"No. 2 key": 6, "No. 1 key": 102}, total: 108}
+      - {inside: "11'6\"", inside_in: 138, counts: {"No. 2 key": 4, "No. 1 key": 105}, total: 109}
+      - {inside: "11'8\"", inside_in: 140, counts: {"No. 2 key": 3, "No. 1 key": 108}, total: 111}
+      - {inside: "11'10\"", inside_in: 142, counts: {"No. 2 key": 2, "No. 1 key": 110}, total: 112}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 1 key": 113}, total: 113}
+    status: Verified
+  - id: ir37-38-lining-9in-key-brick-3in-9x6x3
+    label: "IR-37, IR-38"
+    pdf_page: "161-162"
+    title: "9 in Lining - 3 in Key Brick, 9 x 6 x 3"
+    heading_sizes: "9 x 6 x 3 Inch"
+    lining_in: 9.0
+    printed_range: "1'6\" to 41'0\" (PDF 161-162); transcribed to 12'0\""
+    note: "Begins PDF 161 (right half, 1'6\", 2 in steps), continues PDF 162 (left half from 10'0\"). Page note: below 6 ft the 9 x 6 in No. 3 key has a very sharp taper; the 9 x 4-1/2 in key combinations give a better fit."
+    shapes:
+      - {name: "No. 3 key", size: "9 x (6 - 3) x 3"}
+      - {name: "No. 2 key", size: "9 x (6 - 4-13/16) x 3"}
+      - {name: "No. 1 key", size: "9 x (6 - 5-3/8) x 3"}
+      - {name: "Straight", size: "9 x 6 x 3"}
+    rows_transcribed: 64
+    rows:
+      - {inside: "1'6\"", inside_in: 18, counts: {"No. 3 key": 19}, total: 19}
+      - {inside: "1'8\"", inside_in: 20, counts: {"No. 3 key": 18, "No. 2 key": 2}, total: 20}
+      - {inside: "1'10\"", inside_in: 22, counts: {"No. 3 key": 18, "No. 2 key": 3}, total: 21}
+      - {inside: "2'0\"", inside_in: 24, counts: {"No. 3 key": 17, "No. 2 key": 5}, total: 22}
+      - {inside: "2'2\"", inside_in: 26, counts: {"No. 3 key": 16, "No. 2 key": 7}, total: 23}
+      - {inside: "2'4\"", inside_in: 28, counts: {"No. 3 key": 15, "No. 2 key": 9}, total: 24}
+      - {inside: "2'6\"", inside_in: 30, counts: {"No. 3 key": 15, "No. 2 key": 11}, total: 26}
+      - {inside: "2'8\"", inside_in: 32, counts: {"No. 3 key": 14, "No. 2 key": 13}, total: 27}
+      - {inside: "2'10\"", inside_in: 34, counts: {"No. 3 key": 14, "No. 2 key": 14}, total: 28}
+      - {inside: "3'0\"", inside_in: 36, counts: {"No. 3 key": 13, "No. 2 key": 16}, total: 29}
+      - {inside: "3'2\"", inside_in: 38, counts: {"No. 3 key": 12, "No. 2 key": 18}, total: 30}
+      - {inside: "3'4\"", inside_in: 40, counts: {"No. 3 key": 12, "No. 2 key": 19}, total: 31}
+      - {inside: "3'6\"", inside_in: 42, counts: {"No. 3 key": 11, "No. 2 key": 21}, total: 32}
+      - {inside: "3'8\"", inside_in: 44, counts: {"No. 3 key": 10, "No. 2 key": 23}, total: 33}
+      - {inside: "3'10\"", inside_in: 46, counts: {"No. 3 key": 9, "No. 2 key": 25}, total: 34}
+      - {inside: "4'0\"", inside_in: 48, counts: {"No. 3 key": 9, "No. 2 key": 26}, total: 35}
+      - {inside: "4'2\"", inside_in: 50, counts: {"No. 3 key": 8, "No. 2 key": 28}, total: 36}
+      - {inside: "4'4\"", inside_in: 52, counts: {"No. 3 key": 7, "No. 2 key": 30}, total: 37}
+      - {inside: "4'6\"", inside_in: 54, counts: {"No. 3 key": 7, "No. 2 key": 31}, total: 38}
+      - {inside: "4'8\"", inside_in: 56, counts: {"No. 3 key": 6, "No. 2 key": 33}, total: 39}
+      - {inside: "4'10\"", inside_in: 58, counts: {"No. 3 key": 5, "No. 2 key": 35}, total: 40}
+      - {inside: "5'0\"", inside_in: 60, counts: {"No. 3 key": 5, "No. 2 key": 36}, total: 41}
+      - {inside: "5'2\"", inside_in: 62, counts: {"No. 3 key": 4, "No. 2 key": 38}, total: 42}
+      - {inside: "5'4\"", inside_in: 64, counts: {"No. 3 key": 3, "No. 2 key": 40}, total: 43}
+      - {inside: "5'6\"", inside_in: 66, counts: {"No. 3 key": 2, "No. 2 key": 42}, total: 44}
+      - {inside: "5'8\"", inside_in: 68, counts: {"No. 3 key": 2, "No. 2 key": 43}, total: 45}
+      - {inside: "5'10\"", inside_in: 70, counts: {"No. 3 key": 1, "No. 2 key": 45}, total: 46}
+      - {inside: "6'0\"", inside_in: 72, counts: {"No. 2 key": 48}, total: 48}
+      - {inside: "6'2\"", inside_in: 74, counts: {"No. 2 key": 47, "No. 1 key": 2}, total: 49}
+      - {inside: "6'4\"", inside_in: 76, counts: {"No. 2 key": 46, "No. 1 key": 4}, total: 50}
+      - {inside: "6'6\"", inside_in: 78, counts: {"No. 2 key": 45, "No. 1 key": 6}, total: 51}
+      - {inside: "6'8\"", inside_in: 80, counts: {"No. 2 key": 44, "No. 1 key": 8}, total: 52}
+      - {inside: "6'10\"", inside_in: 82, counts: {"No. 2 key": 43, "No. 1 key": 10}, total: 53}
+      - {inside: "7'0\"", inside_in: 84, counts: {"No. 2 key": 41, "No. 1 key": 13}, total: 54}
+      - {inside: "7'2\"", inside_in: 86, counts: {"No. 2 key": 40, "No. 1 key": 15}, total: 55}
+      - {inside: "7'4\"", inside_in: 88, counts: {"No. 2 key": 39, "No. 1 key": 17}, total: 56}
+      - {inside: "7'6\"", inside_in: 90, counts: {"No. 2 key": 38, "No. 1 key": 19}, total: 57}
+      - {inside: "7'8\"", inside_in: 92, counts: {"No. 2 key": 37, "No. 1 key": 21}, total: 58}
+      - {inside: "7'10\"", inside_in: 94, counts: {"No. 2 key": 36, "No. 1 key": 23}, total: 59}
+      - {inside: "8'0\"", inside_in: 96, counts: {"No. 2 key": 34, "No. 1 key": 26}, total: 60}
+      - {inside: "8'2\"", inside_in: 98, counts: {"No. 2 key": 33, "No. 1 key": 28}, total: 61}
+      - {inside: "8'4\"", inside_in: 100, counts: {"No. 2 key": 32, "No. 1 key": 30}, total: 62}
+      - {inside: "8'6\"", inside_in: 102, counts: {"No. 2 key": 31, "No. 1 key": 32}, total: 63}
+      - {inside: "8'8\"", inside_in: 104, counts: {"No. 2 key": 30, "No. 1 key": 34}, total: 64}
+      - {inside: "8'10\"", inside_in: 106, counts: {"No. 2 key": 28, "No. 1 key": 37}, total: 65}
+      - {inside: "9'0\"", inside_in: 108, counts: {"No. 2 key": 27, "No. 1 key": 39}, total: 66}
+      - {inside: "9'2\"", inside_in: 110, counts: {"No. 2 key": 26, "No. 1 key": 41}, total: 67}
+      - {inside: "9'4\"", inside_in: 112, counts: {"No. 2 key": 25, "No. 1 key": 43}, total: 68}
+      - {inside: "9'6\"", inside_in: 114, counts: {"No. 2 key": 24, "No. 1 key": 46}, total: 70}
+      - {inside: "9'8\"", inside_in: 116, counts: {"No. 2 key": 23, "No. 1 key": 48}, total: 71}
+      - {inside: "9'10\"", inside_in: 118, counts: {"No. 2 key": 22, "No. 1 key": 50}, total: 72}
+      - {inside: "10'0\"", inside_in: 120, counts: {"No. 2 key": 21, "No. 1 key": 52}, total: 73}
+      - {inside: "10'2\"", inside_in: 122, counts: {"No. 2 key": 19, "No. 1 key": 55}, total: 74}
+      - {inside: "10'4\"", inside_in: 124, counts: {"No. 2 key": 18, "No. 1 key": 57}, total: 75}
+      - {inside: "10'6\"", inside_in: 126, counts: {"No. 2 key": 17, "No. 1 key": 59}, total: 76}
+      - {inside: "10'8\"", inside_in: 128, counts: {"No. 2 key": 16, "No. 1 key": 61}, total: 77}
+      - {inside: "10'10\"", inside_in: 130, counts: {"No. 2 key": 15, "No. 1 key": 63}, total: 78}
+      - {inside: "11'0\"", inside_in: 132, counts: {"No. 2 key": 13, "No. 1 key": 66}, total: 79}
+      - {inside: "11'2\"", inside_in: 134, counts: {"No. 2 key": 12, "No. 1 key": 68}, total: 80}
+      - {inside: "11'4\"", inside_in: 136, counts: {"No. 2 key": 11, "No. 1 key": 70}, total: 81}
+      - {inside: "11'6\"", inside_in: 138, counts: {"No. 2 key": 10, "No. 1 key": 72}, total: 82}
+      - {inside: "11'8\"", inside_in: 140, counts: {"No. 2 key": 9, "No. 1 key": 74}, total: 83}
+      - {inside: "11'10\"", inside_in: 142, counts: {"No. 2 key": 8, "No. 1 key": 76}, total: 84}
+      - {inside: "12'0\"", inside_in: 144, counts: {"No. 2 key": 6, "No. 1 key": 79}, total: 85}
+    status: Verified
+
+arches:
+  - id: arch-4.5in-arch-brick-3in-rise-2.0
+    label: "IR-53"
+    pdf_page: 176
+    where_on_page: "left half"
+    title: "4-1/2 Inch Arch Thickness - 3 Inch Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 3 or 13-1/2 x 4-1/2 x 3 Inch"
+    rise_heading: "2 Inch Rise Per Foot of Span (74 degrees central angle by the UR-28 formulas, not printed)"
+    rise_in_per_ft: 2.0
+    arch_thickness_in: 4.5
+    printed_range: "1'0\" to 6'6\" (all transcribed)"
+    shapes:
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 41
+    rows:
+      - {span: "1'0\"", span_in: 12, rise: "2 in", rise_in: 2.0000, inside_radius: "10 in", inside_radius_in: 10.0000, counts: {"No. 3 arch": 6, "No. 2 arch": 1}, total: 7}
+      - {span: "1'1\"", span_in: 13, rise: "2 5/32 in", rise_in: 2.1562, inside_radius: "10 27/32 in", inside_radius_in: 10.8438, counts: {"No. 3 arch": 5, "No. 2 arch": 2}, total: 7}
+      - {span: "1'2\"", span_in: 14, rise: "2 11/32 in", rise_in: 2.3438, inside_radius: "11 21/32 in", inside_radius_in: 11.6562, counts: {"No. 3 arch": 5, "No. 2 arch": 2}, total: 7}
+      - {span: "1'3\"", span_in: 15, rise: "2 1/2 in", rise_in: 2.5000, inside_radius: "1 ft 0 1/2 in", inside_radius_in: 12.5000, counts: {"No. 3 arch": 5, "No. 2 arch": 3}, total: 8}
+      - {span: "1'4\"", span_in: 16, rise: "2 21/32 in", rise_in: 2.6562, inside_radius: "1 ft 1 11/32 in", inside_radius_in: 13.3438, counts: {"No. 3 arch": 4, "No. 2 arch": 4}, total: 8}
+      - {span: "1'5\"", span_in: 17, rise: "2 27/32 in", rise_in: 2.8438, inside_radius: "1 ft 2 5/32 in", inside_radius_in: 14.1562, counts: {"No. 3 arch": 4, "No. 2 arch": 4}, total: 8}
+      - {span: "1'6\"", span_in: 18, rise: "3 in", rise_in: 3.0000, inside_radius: "1 ft 3 in", inside_radius_in: 15.0000, counts: {"No. 3 arch": 4, "No. 2 arch": 5}, total: 9}
+      - {span: "1'7\"", span_in: 19, rise: "3 5/32 in", rise_in: 3.1562, inside_radius: "1 ft 3 27/32 in", inside_radius_in: 15.8438, counts: {"No. 3 arch": 3, "No. 2 arch": 6}, total: 9}
+      - {span: "1'8\"", span_in: 20, rise: "3 11/32 in", rise_in: 3.3438, inside_radius: "1 ft 4 21/32 in", inside_radius_in: 16.6562, counts: {"No. 3 arch": 2, "No. 2 arch": 7}, total: 9}
+      - {span: "1'9\"", span_in: 21, rise: "3 1/2 in", rise_in: 3.5000, inside_radius: "1 ft 5 1/2 in", inside_radius_in: 17.5000, counts: {"No. 3 arch": 2, "No. 2 arch": 8}, total: 10}
+      - {span: "1'10\"", span_in: 22, rise: "3 21/32 in", rise_in: 3.6562, inside_radius: "1 ft 6 11/32 in", inside_radius_in: 18.3438, counts: {"No. 3 arch": 2, "No. 2 arch": 8}, total: 10}
+      - {span: "1'11\"", span_in: 23, rise: "3 27/32 in", rise_in: 3.8438, inside_radius: "1 ft 7 5/32 in", inside_radius_in: 19.1562, counts: {"No. 3 arch": 2, "No. 2 arch": 9}, total: 11}
+      - {span: "2'0\"", span_in: 24, rise: "4 in", rise_in: 4.0000, inside_radius: "1 ft 8 in", inside_radius_in: 20.0000, counts: {"No. 3 arch": 1, "No. 2 arch": 10}, total: 11}
+      - {span: "2'1\"", span_in: 25, rise: "4 5/32 in", rise_in: 4.1562, inside_radius: "1 ft 8 27/32 in", inside_radius_in: 20.8438, counts: {"No. 3 arch": 1, "No. 2 arch": 10}, total: 11}
+      - {span: "2'2\"", span_in: 26, rise: "4 11/32 in", rise_in: 4.3438, inside_radius: "1 ft 9 21/32 in", inside_radius_in: 21.6562, counts: {"No. 3 arch": 1, "No. 2 arch": 11}, total: 12}
+      - {span: "2'3\"", span_in: 27, rise: "4 1/2 in", rise_in: 4.5000, inside_radius: "1 ft 10 1/2 in", inside_radius_in: 22.5000, counts: {"No. 2 arch": 12}, total: 12}
+      - {span: "2'4\"", span_in: 28, rise: "4 21/32 in", rise_in: 4.6562, inside_radius: "1 ft 11 11/32 in", inside_radius_in: 23.3438, counts: {"No. 2 arch": 11, "No. 1 arch": 1}, total: 12}
+      - {span: "2'5\"", span_in: 29, rise: "4 27/32 in", rise_in: 4.8438, inside_radius: "2 ft 0 5/32 in", inside_radius_in: 24.1562, counts: {"No. 2 arch": 11, "No. 1 arch": 2}, total: 13}
+      - {span: "2'6\"", span_in: 30, rise: "5 in", rise_in: 5.0000, inside_radius: "2 ft 1 in", inside_radius_in: 25.0000, counts: {"No. 2 arch": 11, "No. 1 arch": 2}, total: 13}
+      - {span: "2'7\"", span_in: 31, rise: "5 5/32 in", rise_in: 5.1562, inside_radius: "2 ft 1 27/32 in", inside_radius_in: 25.8438, counts: {"No. 2 arch": 10, "No. 1 arch": 3}, total: 13}
+      - {span: "2'8\"", span_in: 32, rise: "5 11/32 in", rise_in: 5.3438, inside_radius: "2 ft 2 21/32 in", inside_radius_in: 26.6562, counts: {"No. 2 arch": 10, "No. 1 arch": 4}, total: 14}
+      - {span: "2'9\"", span_in: 33, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "2 ft 3 1/2 in", inside_radius_in: 27.5000, counts: {"No. 2 arch": 10, "No. 1 arch": 4}, total: 14}
+      - {span: "2'10\"", span_in: 34, rise: "5 21/32 in", rise_in: 5.6562, inside_radius: "2 ft 4 11/32 in", inside_radius_in: 28.3438, counts: {"No. 2 arch": 9, "No. 1 arch": 5}, total: 14}
+      - {span: "2'11\"", span_in: 35, rise: "5 27/32 in", rise_in: 5.8438, inside_radius: "2 ft 5 5/32 in", inside_radius_in: 29.1562, counts: {"No. 2 arch": 9, "No. 1 arch": 6}, total: 15}
+      - {span: "3'0\"", span_in: 36, rise: "6 in", rise_in: 6.0000, inside_radius: "2 ft 6 in", inside_radius_in: 30.0000, counts: {"No. 2 arch": 8, "No. 1 arch": 7}, total: 15}
+      - {span: "3'2\"", span_in: 38, rise: "6 11/32 in", rise_in: 6.3438, inside_radius: "2 ft 7 21/32 in", inside_radius_in: 31.6562, counts: {"No. 2 arch": 8, "No. 1 arch": 8}, total: 16}
+      - {span: "3'4\"", span_in: 40, rise: "6 21/32 in", rise_in: 6.6562, inside_radius: "2 ft 9 11/32 in", inside_radius_in: 33.3438, counts: {"No. 2 arch": 7, "No. 1 arch": 10}, total: 17}
+      - {span: "3'6\"", span_in: 42, rise: "7 in", rise_in: 7.0000, inside_radius: "2 ft 11 in", inside_radius_in: 35.0000, counts: {"No. 2 arch": 6, "No. 1 arch": 11}, total: 17}
+      - {span: "3'8\"", span_in: 44, rise: "7 11/32 in", rise_in: 7.3438, inside_radius: "3 ft 021/32 in", inside_radius_in: 36.6562, counts: {"No. 2 arch": 6, "No. 1 arch": 12}, total: 18}
+      - {span: "3'10\"", span_in: 46, rise: "7 21/32 in", rise_in: 7.6562, inside_radius: "3 ft 2 11/32 in", inside_radius_in: 38.3438, counts: {"No. 2 arch": 5, "No. 1 arch": 14}, total: 19}
+      - {span: "4'0\"", span_in: 48, rise: "8 in", rise_in: 8.0000, inside_radius: "3 ft 4 in", inside_radius_in: 40.0000, counts: {"No. 2 arch": 4, "No. 1 arch": 15}, total: 19}
+      - {span: "4'2\"", span_in: 50, rise: "8 11/32 in", rise_in: 8.3438, inside_radius: "3 ft 5 21/32 in", inside_radius_in: 41.6562, counts: {"No. 2 arch": 3, "No. 1 arch": 17}, total: 20}
+      - {span: "4'4\"", span_in: 52, rise: "8 21/32 in", rise_in: 8.6562, inside_radius: "3 ft 7 11/32 in", inside_radius_in: 43.3438, counts: {"No. 2 arch": 3, "No. 1 arch": 18}, total: 21}
+      - {span: "4'6\"", span_in: 54, rise: "9 in", rise_in: 9.0000, inside_radius: "3 ft 9 in", inside_radius_in: 45.0000, counts: {"No. 2 arch": 2, "No. 1 arch": 20}, total: 22}
+      - {span: "4'8\"", span_in: 56, rise: "9 11/32 in", rise_in: 9.3438, inside_radius: "3 ft 10 21/32 in", inside_radius_in: 46.6562, counts: {"No. 2 arch": 1, "No. 1 arch": 21}, total: 22}
+      - {span: "4'10\"", span_in: 58, rise: "9 21/32 in", rise_in: 9.6562, inside_radius: "4 ft 011/32 in", inside_radius_in: 48.3438, counts: {"No. 2 arch": 1, "No. 1 arch": 22}, total: 23}
+      - {span: "4'11\"", span_in: 59, rise: "9 27/32 in", rise_in: 9.8438, inside_radius: "4 ft 1 5/32 in", inside_radius_in: 49.1562, counts: {"No. 1 arch": 23}, total: 23}
+      - {span: "5'0\"", span_in: 60, rise: "10 in", rise_in: 10.0000, inside_radius: "4 ft 2 in", inside_radius_in: 50.0000, counts: {"No. 1 arch": 23, "Straight": 1}, total: 24}
+      - {span: "5'6\"", span_in: 66, rise: "11 in", rise_in: 11.0000, inside_radius: "4 ft 7 in", inside_radius_in: 55.0000, counts: {"No. 1 arch": 23, "Straight": 3}, total: 26}
+      - {span: "6'0\"", span_in: 72, rise: "1 ft 0 in", rise_in: 12.0000, inside_radius: "5 ft 0 in", inside_radius_in: 60.0000, counts: {"No. 1 arch": 23, "Straight": 5}, total: 28}
+      - {span: "6'6\"", span_in: 78, rise: "1 ft 1 in", rise_in: 13.0000, inside_radius: "5 ft 5 in", inside_radius_in: 65.0000, counts: {"No. 1 arch": 23, "Straight": 7}, total: 30}
+    status: Verified
+  - id: arch-4.5in-arch-brick-3in-rise-1.608
+    label: "IR-53"
+    pdf_page: 176
+    where_on_page: "right half"
+    title: "4-1/2 Inch Arch Thickness - 3 Inch Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 3 or 13-1/2 x 4-1/2 x 3 Inch"
+    rise_heading: "1.608 Inch (1 19/32 Inch) Rise Per Foot of Span (60 degrees central angle)"
+    rise_in_per_ft: 1.608
+    arch_thickness_in: 4.5
+    printed_range: "1'0\" to 6'6\" (all transcribed)"
+    shapes:
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 45
+    rows:
+      - {span: "1'0\"", span_in: 12, rise: "1 19/32 in", rise_in: 1.5938, inside_radius: "1 ft 0 in", inside_radius_in: 12.0000, counts: {"No. 3 arch": 4, "No. 2 arch": 2}, total: 6}
+      - {span: "1'1\"", span_in: 13, rise: "1 3/4 in", rise_in: 1.7500, inside_radius: "1 ft 1 in", inside_radius_in: 13.0000, counts: {"No. 3 arch": 4, "No. 2 arch": 3}, total: 7}
+      - {span: "1'2\"", span_in: 14, rise: "1 7/8 in", rise_in: 1.8750, inside_radius: "1 ft 2 in", inside_radius_in: 14.0000, counts: {"No. 3 arch": 3, "No. 2 arch": 4}, total: 7}
+      - {span: "1'3\"", span_in: 15, rise: "2 in", rise_in: 2.0000, inside_radius: "1 ft 3 in", inside_radius_in: 15.0000, counts: {"No. 3 arch": 3, "No. 2 arch": 4}, total: 7}
+      - {span: "1'4\"", span_in: 16, rise: "2 5/32 in", rise_in: 2.1562, inside_radius: "1 ft 4 in", inside_radius_in: 16.0000, counts: {"No. 3 arch": 3, "No. 2 arch": 5}, total: 8}
+      - {span: "1'5\"", span_in: 17, rise: "2 9/32 in", rise_in: 2.2812, inside_radius: "1 ft 5 in", inside_radius_in: 17.0000, counts: {"No. 3 arch": 2, "No. 2 arch": 6}, total: 8}
+      - {span: "1'6\"", span_in: 18, rise: "2 13/32 in", rise_in: 2.4062, inside_radius: "1 ft 6 in", inside_radius_in: 18.0000, counts: {"No. 3 arch": 2, "No. 2 arch": 6}, total: 8}
+      - {span: "1'7\"", span_in: 19, rise: "2 17/32 in", rise_in: 2.5312, inside_radius: "1 ft 7 in", inside_radius_in: 19.0000, counts: {"No. 3 arch": 2, "No. 2 arch": 7}, total: 9}
+      - {span: "1'8\"", span_in: 20, rise: "2 11/16 in", rise_in: 2.6875, inside_radius: "1 ft 8 in", inside_radius_in: 20.0000, counts: {"No. 3 arch": 1, "No. 2 arch": 8}, total: 9}
+      - {span: "1'9\"", span_in: 21, rise: "2 13/16 in", rise_in: 2.8125, inside_radius: "1 ft 9 in", inside_radius_in: 21.0000, counts: {"No. 3 arch": 1, "No. 2 arch": 8}, total: 9}
+      - {span: "1'10\"", span_in: 22, rise: "2 15/16 in", rise_in: 2.9375, inside_radius: "1 ft 10 in", inside_radius_in: 22.0000, counts: {"No. 3 arch": 1, "No. 2 arch": 9}, total: 10}
+      - {span: "1'11\"", span_in: 23, rise: "3 3/32 in", rise_in: 3.0938, inside_radius: "1 ft 11 in", inside_radius_in: 23.0000, counts: {"No. 2 arch": 9, "No. 1 arch": 1}, total: 10}
+      - {span: "2'0\"", span_in: 24, rise: "3 7/32 in", rise_in: 3.2188, inside_radius: "2 ft 0 in", inside_radius_in: 24.0000, counts: {"No. 2 arch": 9, "No. 1 arch": 1}, total: 10}
+      - {span: "2'1\"", span_in: 25, rise: "3 11/32 in", rise_in: 3.3438, inside_radius: "2 ft 1 in", inside_radius_in: 25.0000, counts: {"No. 2 arch": 9, "No. 1 arch": 2}, total: 11}
+      - {span: "2'2\"", span_in: 26, rise: "3 15/32 in", rise_in: 3.4688, inside_radius: "2 ft 2 in", inside_radius_in: 26.0000, counts: {"No. 2 arch": 8, "No. 1 arch": 3}, total: 11}
+      - {span: "2'3\"", span_in: 27, rise: "3 5/8 in", rise_in: 3.6250, inside_radius: "2 ft 3 in", inside_radius_in: 27.0000, counts: {"No. 2 arch": 8, "No. 1 arch": 3}, total: 11}
+      - {span: "2'4\"", span_in: 28, rise: "3 3/4 in", rise_in: 3.7500, inside_radius: "2 ft 4 in", inside_radius_in: 28.0000, counts: {"No. 2 arch": 8, "No. 1 arch": 4}, total: 12}
+      - {span: "2'5\"", span_in: 29, rise: "3 7/8 in", rise_in: 3.8750, inside_radius: "2 ft 5 in", inside_radius_in: 29.0000, counts: {"No. 2 arch": 7, "No. 1 arch": 5}, total: 12}
+      - {span: "2'6\"", span_in: 30, rise: "4 1/32 in", rise_in: 4.0312, inside_radius: "2 ft 6 in", inside_radius_in: 30.0000, counts: {"No. 2 arch": 7, "No. 1 arch": 5}, total: 12}
+      - {span: "2'7\"", span_in: 31, rise: "4 5/32 in", rise_in: 4.1562, inside_radius: "2 ft 7 in", inside_radius_in: 31.0000, counts: {"No. 2 arch": 7, "No. 1 arch": 6}, total: 13}
+      - {span: "2'8\"", span_in: 32, rise: "4 9/32 in", rise_in: 4.2812, inside_radius: "2 ft 8 in", inside_radius_in: 32.0000, counts: {"No. 2 arch": 6, "No. 1 arch": 7}, total: 13}
+      - {span: "2'9\"", span_in: 33, rise: "4 7/16 in", rise_in: 4.4375, inside_radius: "2 ft 9 in", inside_radius_in: 33.0000, counts: {"No. 2 arch": 6, "No. 1 arch": 7}, total: 13}
+      - {span: "2'10\"", span_in: 34, rise: "4 9/16 in", rise_in: 4.5625, inside_radius: "2 ft 10 in", inside_radius_in: 34.0000, counts: {"No. 2 arch": 6, "No. 1 arch": 8}, total: 14}
+      - {span: "2'11\"", span_in: 35, rise: "4 11/16 in", rise_in: 4.6875, inside_radius: "2 ft 11 in", inside_radius_in: 35.0000, counts: {"No. 2 arch": 5, "No. 1 arch": 9}, total: 14}
+      - {span: "3'0\"", span_in: 36, rise: "4 13/16 in", rise_in: 4.8125, inside_radius: "3 ft 0 in", inside_radius_in: 36.0000, counts: {"No. 2 arch": 5, "No. 1 arch": 10}, total: 15}
+      - {span: "3'1\"", span_in: 37, rise: "4 31/32 in", rise_in: 4.9688, inside_radius: "3 ft 1 in", inside_radius_in: 37.0000, counts: {"No. 2 arch": 5, "No. 1 arch": 10}, total: 15}
+      - {span: "3'2\"", span_in: 38, rise: "5 3/32 in", rise_in: 5.0938, inside_radius: "3 ft 2 in", inside_radius_in: 38.0000, counts: {"No. 2 arch": 4, "No. 1 arch": 11}, total: 15}
+      - {span: "3'3\"", span_in: 39, rise: "5 7/32 in", rise_in: 5.2188, inside_radius: "3 ft 3 in", inside_radius_in: 39.0000, counts: {"No. 2 arch": 4, "No. 1 arch": 12}, total: 16}
+      - {span: "3'4\"", span_in: 40, rise: "5 11/32 in", rise_in: 5.3438, inside_radius: "3 ft 4 in", inside_radius_in: 40.0000, counts: {"No. 2 arch": 4, "No. 1 arch": 12}, total: 16}
+      - {span: "3'5\"", span_in: 41, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "3 ft 5 in", inside_radius_in: 41.0000, counts: {"No. 2 arch": 3, "No. 1 arch": 13}, total: 16}
+      - {span: "3'6\"", span_in: 42, rise: "5 5/8 in", rise_in: 5.6250, inside_radius: "3 ft 6 in", inside_radius_in: 42.0000, counts: {"No. 2 arch": 3, "No. 1 arch": 14}, total: 17}
+      - {span: "3'7\"", span_in: 43, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "3 ft 7 in", inside_radius_in: 43.0000, counts: {"No. 2 arch": 2, "No. 1 arch": 15}, total: 17}
+      - {span: "3'8\"", span_in: 44, rise: "5 29/32 in", rise_in: 5.9062, inside_radius: "3 ft 8 in", inside_radius_in: 44.0000, counts: {"No. 2 arch": 2, "No. 1 arch": 15}, total: 17}
+      - {span: "3'9\"", span_in: 45, rise: "6 1/32 in", rise_in: 6.0312, inside_radius: "3 ft 9 in", inside_radius_in: 45.0000, counts: {"No. 2 arch": 2, "No. 1 arch": 16}, total: 18}
+      - {span: "3'10\"", span_in: 46, rise: "6 5/32 in", rise_in: 6.1562, inside_radius: "3 ft 10 in", inside_radius_in: 46.0000, counts: {"No. 2 arch": 1, "No. 1 arch": 17}, total: 18}
+      - {span: "3'11\"", span_in: 47, rise: "6 9/32 in", rise_in: 6.2812, inside_radius: "3 ft 11 in", inside_radius_in: 47.0000, counts: {"No. 2 arch": 1, "No. 1 arch": 17}, total: 18}
+      - {span: "4'0\"", span_in: 48, rise: "6 7/16 in", rise_in: 6.4375, inside_radius: "4 ft 0 in", inside_radius_in: 48.0000, counts: {"No. 2 arch": 1, "No. 1 arch": 18}, total: 19}
+      - {span: "4'1\"", span_in: 49, rise: "6 9/16 in", rise_in: 6.5625, inside_radius: "4 ft 1 in", inside_radius_in: 49.0000, counts: {"No. 1 arch": 19}, total: 19}
+      - {span: "4'2\"", span_in: 50, rise: "6 11/16 in", rise_in: 6.6875, inside_radius: "4 ft 2 in", inside_radius_in: 50.0000, counts: {"No. 1 arch": 19}, total: 19}
+      - {span: "4'3\"", span_in: 51, rise: "6 27/32 in", rise_in: 6.8438, inside_radius: "4 ft 3 in", inside_radius_in: 51.0000, counts: {"No. 1 arch": 19, "Straight": 1}, total: 20}
+      - {span: "4'6\"", span_in: 54, rise: "7 1/4 in", rise_in: 7.2500, inside_radius: "4 ft 6 in", inside_radius_in: 54.0000, counts: {"No. 1 arch": 19, "Straight": 2}, total: 21}
+      - {span: "5'0\"", span_in: 60, rise: "8 1/32 in", rise_in: 8.0312, inside_radius: "5 ft 0 in", inside_radius_in: 60.0000, counts: {"No. 1 arch": 19, "Straight": 4}, total: 23}
+      - {span: "5'6\"", span_in: 66, rise: "8 27/32 in", rise_in: 8.8438, inside_radius: "5 ft 6 in", inside_radius_in: 66.0000, counts: {"No. 1 arch": 19, "Straight": 6}, total: 25}
+      - {span: "6'0\"", span_in: 72, rise: "9 21/32 in", rise_in: 9.6562, inside_radius: "6 ft 0 in", inside_radius_in: 72.0000, counts: {"No. 1 arch": 19, "Straight": 8}, total: 27}
+      - {span: "6'6\"", span_in: 78, rise: "10 7/16 in", rise_in: 10.4375, inside_radius: "6 ft 6 in", inside_radius_in: 78.0000, counts: {"No. 1 arch": 19, "Straight": 10}, total: 29}
+    status: Verified
+  - id: arch-4.5in-arch-brick-3in-rise-1.5
+    label: "IR-54"
+    pdf_page: 177
+    where_on_page: "left half"
+    title: "4-1/2 Inch Arch Thickness - 3 Inch Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 3 or 13-1/2 x 4-1/2 x 3 Inch"
+    rise_heading: "1-1/2 Inch Rise Per Foot of Span"
+    rise_in_per_ft: 1.5
+    arch_thickness_in: 4.5
+    printed_range: "1'0\" to 6'6\" (all transcribed)"
+    shapes:
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 46
+    rows:
+      - {span: "1'0\"", span_in: 12, rise: "1 1/2 in", rise_in: 1.5000, inside_radius: "1 ft 0 3/4 in", inside_radius_in: 12.7500, counts: {"No. 3 arch": 3, "No. 2 arch": 3}, total: 6}
+      - {span: "1'1\"", span_in: 13, rise: "1 5/8 in", rise_in: 1.6250, inside_radius: "1 ft 1 13/16 in", inside_radius_in: 13.8125, counts: {"No. 3 arch": 3, "No. 2 arch": 3}, total: 6}
+      - {span: "1'2\"", span_in: 14, rise: "1 3/4 in", rise_in: 1.7500, inside_radius: "1 ft 2 7/8 in", inside_radius_in: 14.8750, counts: {"No. 3 arch": 3, "No. 2 arch": 4}, total: 7}
+      - {span: "1'3\"", span_in: 15, rise: "1 7/8 in", rise_in: 1.8750, inside_radius: "1 ft 3 15/16 in", inside_radius_in: 15.9375, counts: {"No. 3 arch": 2, "No. 2 arch": 5}, total: 7}
+      - {span: "1'4\"", span_in: 16, rise: "2 in", rise_in: 2.0000, inside_radius: "1 ft 5 in", inside_radius_in: 17.0000, counts: {"No. 3 arch": 2, "No. 2 arch": 5}, total: 7}
+      - {span: "1'5\"", span_in: 17, rise: "2 1/8 in", rise_in: 2.1250, inside_radius: "1 ft 6 1/16 in", inside_radius_in: 18.0625, counts: {"No. 3 arch": 2, "No. 2 arch": 6}, total: 8}
+      - {span: "1'6\"", span_in: 18, rise: "2 1/4 in", rise_in: 2.2500, inside_radius: "1 ft 7 1/8 in", inside_radius_in: 19.1250, counts: {"No. 3 arch": 1, "No. 2 arch": 7}, total: 8}
+      - {span: "1'7\"", span_in: 19, rise: "2 3/8 in", rise_in: 2.3750, inside_radius: "1 ft 8 3/16 in", inside_radius_in: 20.1875, counts: {"No. 3 arch": 1, "No. 2 arch": 7}, total: 8}
+      - {span: "1'8\"", span_in: 20, rise: "2 1/2 in", rise_in: 2.5000, inside_radius: "1 ft 9 1/4 in", inside_radius_in: 21.2500, counts: {"No. 3 arch": 1, "No. 2 arch": 8}, total: 9}
+      - {span: "1'9\"", span_in: 21, rise: "2 5/8 in", rise_in: 2.6250, inside_radius: "1 ft 10 5/16 in", inside_radius_in: 22.3125, counts: {"No. 2 arch": 9}, total: 9}
+      - {span: "1'10\"", span_in: 22, rise: "2 3/4 in", rise_in: 2.7500, inside_radius: "1 ft 11 3/8 in", inside_radius_in: 23.3750, counts: {"No. 2 arch": 9, "No. 1 arch": 1}, total: 10}
+      - {span: "1'11\"", span_in: 23, rise: "2 7/8 in", rise_in: 2.8750, inside_radius: "2 ft 0 7/16 in", inside_radius_in: 24.4375, counts: {"No. 2 arch": 8, "No. 1 arch": 2}, total: 10}
+      - {span: "2'0\"", span_in: 24, rise: "3 in", rise_in: 3.0000, inside_radius: "2 ft 1 1/2 in", inside_radius_in: 25.5000, counts: {"No. 2 arch": 8, "No. 1 arch": 2}, total: 10}
+      - {span: "2'1\"", span_in: 25, rise: "3 1/8 in", rise_in: 3.1250, inside_radius: "2 ft 2 9/16 in", inside_radius_in: 26.5625, counts: {"No. 2 arch": 8, "No. 1 arch": 3}, total: 11}
+      - {span: "2'2\"", span_in: 26, rise: "3 1/4 in", rise_in: 3.2500, inside_radius: "2 ft 3 5/8 in", inside_radius_in: 27.6250, counts: {"No. 2 arch": 7, "No. 1 arch": 4}, total: 11}
+      - {span: "2'3\"", span_in: 27, rise: "3 3/8 in", rise_in: 3.3750, inside_radius: "2 ft 4 11/16 in", inside_radius_in: 28.6875, counts: {"No. 2 arch": 7, "No. 1 arch": 4}, total: 11}
+      - {span: "2'4\"", span_in: 28, rise: "3 1/2 in", rise_in: 3.5000, inside_radius: "2 ft 5 3/4 in", inside_radius_in: 29.7500, counts: {"No. 2 arch": 7, "No. 1 arch": 5}, total: 12}
+      - {span: "2'5\"", span_in: 29, rise: "3 5/8 in", rise_in: 3.6250, inside_radius: "2 ft 6 3/16 in", inside_radius_in: 30.1875, counts: {"No. 2 arch": 6, "No. 1 arch": 6}, total: 12, printed_misprint: true}  # MISPRINT as printed: inside radius printed 2 ft 6 3/16 in, geometry 30.812 in
+      - {span: "2'6\"", span_in: 30, rise: "3 3/4 in", rise_in: 3.7500, inside_radius: "2 ft 7 7/8 in", inside_radius_in: 31.8750, counts: {"No. 2 arch": 6, "No. 1 arch": 6}, total: 12}
+      - {span: "2'7\"", span_in: 31, rise: "3 7/8 in", rise_in: 3.8750, inside_radius: "2 ft 8 15/16 in", inside_radius_in: 32.9375, counts: {"No. 2 arch": 6, "No. 1 arch": 7}, total: 13}
+      - {span: "2'8\"", span_in: 32, rise: "4 in", rise_in: 4.0000, inside_radius: "2 ft 10 in", inside_radius_in: 34.0000, counts: {"No. 2 arch": 5, "No. 1 arch": 8}, total: 13}
+      - {span: "2'9\"", span_in: 33, rise: "4 1/8 in", rise_in: 4.1250, inside_radius: "2 ft 11 1/16 in", inside_radius_in: 35.0625, counts: {"No. 2 arch": 5, "No. 1 arch": 8}, total: 13}
+      - {span: "2'10\"", span_in: 34, rise: "4 1/4 in", rise_in: 4.2500, inside_radius: "3 ft 0 1/8 in", inside_radius_in: 36.1250, counts: {"No. 2 arch": 5, "No. 1 arch": 9}, total: 14}
+      - {span: "2'11\"", span_in: 35, rise: "4 3/8 in", rise_in: 4.3750, inside_radius: "3 ft 1 3/16 in", inside_radius_in: 37.1875, counts: {"No. 2 arch": 4, "No. 1 arch": 10}, total: 14}
+      - {span: "3'0\"", span_in: 36, rise: "4 1/2 in", rise_in: 4.5000, inside_radius: "3 ft 2 1/4 in", inside_radius_in: 38.2500, counts: {"No. 2 arch": 4, "No. 1 arch": 10}, total: 14}
+      - {span: "3'1\"", span_in: 37, rise: "4 5/8 in", rise_in: 4.6250, inside_radius: "3 ft 3 5/16 in", inside_radius_in: 39.3125, counts: {"No. 2 arch": 4, "No. 1 arch": 11}, total: 15}
+      - {span: "3'2\"", span_in: 38, rise: "4 3/4 in", rise_in: 4.7500, inside_radius: "3 ft 4 3/8 in", inside_radius_in: 40.3750, counts: {"No. 2 arch": 3, "No. 1 arch": 12}, total: 15}
+      - {span: "3'3\"", span_in: 39, rise: "4 7/8 in", rise_in: 4.8750, inside_radius: "3 ft 5 7/16 in", inside_radius_in: 41.4375, counts: {"No. 2 arch": 3, "No. 1 arch": 12}, total: 15}
+      - {span: "3'4\"", span_in: 40, rise: "5 in", rise_in: 5.0000, inside_radius: "3 ft 6 1/2 in", inside_radius_in: 42.5000, counts: {"No. 2 arch": 3, "No. 1 arch": 13}, total: 16}
+      - {span: "3'5\"", span_in: 41, rise: "5 1/8 in", rise_in: 5.1250, inside_radius: "3 ft 7 9/16 in", inside_radius_in: 43.5625, counts: {"No. 2 arch": 2, "No. 1 arch": 14}, total: 16}
+      - {span: "3'6\"", span_in: 42, rise: "5 1/4 in", rise_in: 5.2500, inside_radius: "3 ft 8 5/8 in", inside_radius_in: 44.6250, counts: {"No. 2 arch": 2, "No. 1 arch": 14}, total: 16}
+      - {span: "3'7\"", span_in: 43, rise: "5 3/8 in", rise_in: 5.3750, inside_radius: "3 ft 9 11/16 in", inside_radius_in: 45.6875, counts: {"No. 2 arch": 2, "No. 1 arch": 15}, total: 17}
+      - {span: "3'8\"", span_in: 44, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "3 ft 10 3/4 in", inside_radius_in: 46.7500, counts: {"No. 2 arch": 1, "No. 1 arch": 16}, total: 17}
+      - {span: "3'9\"", span_in: 45, rise: "5 5/8 in", rise_in: 5.6250, inside_radius: "3 ft 11 13/16 in", inside_radius_in: 47.8125, counts: {"No. 1 arch": 17}, total: 17}
+      - {span: "3'10\"", span_in: 46, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "4 ft 0 7/8 in", inside_radius_in: 48.8750, counts: {"No. 1 arch": 18}, total: 18}
+      - {span: "3'11\"", span_in: 47, rise: "5 7/8 in", rise_in: 5.8750, inside_radius: "4 ft 1 15/16 in", inside_radius_in: 49.9375, counts: {"No. 1 arch": 18}, total: 18}
+      - {span: "4'0\"", span_in: 48, rise: "6 in", rise_in: 6.0000, inside_radius: "4 ft 3 in", inside_radius_in: 51.0000, counts: {"No. 1 arch": 18, "Straight": 1}, total: 19}
+      - {span: "4'3\"", span_in: 51, rise: "6 3/8 in", rise_in: 6.3750, inside_radius: "4 ft 6 3/16 in", inside_radius_in: 54.1875, counts: {"No. 1 arch": 18, "Straight": 2}, total: 20}
+      - {span: "4'6\"", span_in: 54, rise: "6 3/4 in", rise_in: 6.7500, inside_radius: "4 ft 9 3/8 in", inside_radius_in: 57.3750, counts: {"No. 1 arch": 18, "Straight": 3}, total: 21}
+      - {span: "4'9\"", span_in: 57, rise: "7 1/8 in", rise_in: 7.1250, inside_radius: "5 ft 0 9/16 in", inside_radius_in: 60.5625, counts: {"No. 1 arch": 18, "Straight": 4}, total: 22}
+      - {span: "5'0\"", span_in: 60, rise: "7 1/2 in", rise_in: 7.5000, inside_radius: "5 ft 3 3/4 in", inside_radius_in: 63.7500, counts: {"No. 1 arch": 18, "Straight": 5}, total: 23}
+      - {span: "5'3\"", span_in: 63, rise: "7 7/8 in", rise_in: 7.8750, inside_radius: "5 ft 6 15/16 in", inside_radius_in: 66.9375, counts: {"No. 1 arch": 18, "Straight": 6}, total: 24}
+      - {span: "5'6\"", span_in: 66, rise: "8 1/4 in", rise_in: 8.2500, inside_radius: "5 ft 10 1/8 in", inside_radius_in: 70.1250, counts: {"No. 1 arch": 18, "Straight": 7}, total: 25}
+      - {span: "5'9\"", span_in: 69, rise: "8 5/8 in", rise_in: 8.6250, inside_radius: "6 ft 1 5/16 in", inside_radius_in: 73.3125, counts: {"No. 1 arch": 18, "Straight": 8}, total: 26}
+      - {span: "6'0\"", span_in: 72, rise: "9 in", rise_in: 9.0000, inside_radius: "6 ft 4 1/2 in", inside_radius_in: 76.5000, counts: {"No. 1 arch": 18, "Straight": 9}, total: 27}
+      - {span: "6'6\"", span_in: 78, rise: "9 3/4 in", rise_in: 9.7500, inside_radius: "6 ft 10 7/8 in", inside_radius_in: 82.8750, counts: {"No. 1 arch": 18, "Straight": 11}, total: 29}
+    status: Verified
+  - id: arch-4.5in-arch-brick-3in-rise-2.302
+    label: "IR-54"
+    pdf_page: 177
+    where_on_page: "right half"
+    title: "4-1/2 Inch Arch Thickness - 3 Inch Arch Brick"
+    heading_sizes: "9 x 4-1/2 x 3 or 13-1/2 x 4-1/2 x 3 Inch"
+    rise_heading: "2.302 Inch (2 5/16 Inch) Rise Per Foot of Span"
+    rise_in_per_ft: 2.302
+    arch_thickness_in: 4.5
+    printed_range: "1'0\" to 6'6\" (all transcribed)"
+    shapes:
+      - {name: "No. 3 arch", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 arch", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 arch", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 40
+    rows:
+      - {span: "1'0\"", span_in: 12, rise: "2 5/16 in", rise_in: 2.3125, inside_radius: "8 31/32 in", inside_radius_in: 8.9688, counts: {"No. 3 arch": 7}, total: 7}
+      - {span: "1'1\"", span_in: 13, rise: "2 1/2 in", rise_in: 2.5000, inside_radius: "9 23/32 in", inside_radius_in: 9.7188, counts: {"No. 3 arch": 6, "No. 2 arch": 1}, total: 7}
+      - {span: "1'2\"", span_in: 14, rise: "2 11/16 in", rise_in: 2.6875, inside_radius: "10 15/32 in", inside_radius_in: 10.4688, counts: {"No. 3 arch": 6, "No. 2 arch": 2}, total: 8}
+      - {span: "1'3\"", span_in: 15, rise: "2 7/8 in", rise_in: 2.8750, inside_radius: "11 7/32 in", inside_radius_in: 11.2188, counts: {"No. 3 arch": 6, "No. 2 arch": 2}, total: 8}
+      - {span: "1'4\"", span_in: 16, rise: "3 1/16 in", rise_in: 3.0625, inside_radius: "11 31/32 in", inside_radius_in: 11.9688, counts: {"No. 3 arch": 5, "No. 2 arch": 3}, total: 8}
+      - {span: "1'5\"", span_in: 17, rise: "3 1/4 in", rise_in: 3.2500, inside_radius: "1 ft 023/32 in", inside_radius_in: 12.7188, counts: {"No. 3 arch": 5, "No. 2 arch": 4}, total: 9}
+      - {span: "1'6\"", span_in: 18, rise: "3 15/32 in", rise_in: 3.4688, inside_radius: "1 ft 1 15/32 in", inside_radius_in: 13.4688, counts: {"No. 3 arch": 5, "No. 2 arch": 4}, total: 9}
+      - {span: "1'7\"", span_in: 19, rise: "3 21/32 in", rise_in: 3.6562, inside_radius: "1 ft 2 3/16 in", inside_radius_in: 14.1875, counts: {"No. 3 arch": 4, "No. 2 arch": 6}, total: 10}
+      - {span: "1'8\"", span_in: 20, rise: "3 27/32 in", rise_in: 3.8438, inside_radius: "1 ft 2 15/16 in", inside_radius_in: 14.9375, counts: {"No. 3 arch": 4, "No. 2 arch": 6}, total: 10}
+      - {span: "1'9\"", span_in: 21, rise: "4 1/32 in", rise_in: 4.0312, inside_radius: "1 ft 3 11/16 in", inside_radius_in: 15.6875, counts: {"No. 3 arch": 3, "No. 2 arch": 7}, total: 10}
+      - {span: "1'10\"", span_in: 22, rise: "4 7/32 in", rise_in: 4.2188, inside_radius: "1 ft 4 7/16 in", inside_radius_in: 16.4375, counts: {"No. 3 arch": 3, "No. 2 arch": 8}, total: 11}
+      - {span: "1'11\"", span_in: 23, rise: "4 13/32 in", rise_in: 4.4062, inside_radius: "1 ft 5 3/16 in", inside_radius_in: 17.1875, counts: {"No. 3 arch": 3, "No. 2 arch": 8}, total: 11}
+      - {span: "2'0\"", span_in: 24, rise: "4 19/32 in", rise_in: 4.5938, inside_radius: "1 ft 5 15/16 in", inside_radius_in: 17.9375, counts: {"No. 3 arch": 2, "No. 2 arch": 9}, total: 11}
+      - {span: "2'1\"", span_in: 25, rise: "4 25/32 in", rise_in: 4.7812, inside_radius: "1 ft 6 11/16 in", inside_radius_in: 18.6875, counts: {"No. 3 arch": 2, "No. 2 arch": 10}, total: 12}
+      - {span: "2'2\"", span_in: 26, rise: "5 in", rise_in: 5.0000, inside_radius: "1 ft 7 7/16 in", inside_radius_in: 19.4375, counts: {"No. 3 arch": 2, "No. 2 arch": 10}, total: 12}
+      - {span: "2'3\"", span_in: 27, rise: "5 3/16 in", rise_in: 5.1875, inside_radius: "1 ft 8 3/16 in", inside_radius_in: 20.1875, counts: {"No. 3 arch": 1, "No. 2 arch": 11}, total: 12}
+      - {span: "2'4\"", span_in: 28, rise: "5 3/8 in", rise_in: 5.3750, inside_radius: "1 ft 8 15/16 in", inside_radius_in: 20.9375, counts: {"No. 3 arch": 1, "No. 2 arch": 12}, total: 13}
+      - {span: "2'6\"", span_in: 30, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "1 ft 10 7/16 in", inside_radius_in: 22.4375, counts: {"No. 2 arch": 14}, total: 14}
+      - {span: "2'8\"", span_in: 32, rise: "6 1/8 in", rise_in: 6.1250, inside_radius: "1 ft 11 29/32 in", inside_radius_in: 23.9062, counts: {"No. 2 arch": 13, "No. 1 arch": 1}, total: 14}
+      - {span: "2'10\"", span_in: 34, rise: "6 17/32 in", rise_in: 6.5312, inside_radius: "2 ft 1 13/32 in", inside_radius_in: 25.4062, counts: {"No. 2 arch": 12, "No. 1 arch": 3}, total: 15}
+      - {span: "3'0\"", span_in: 36, rise: "6 29/32 in", rise_in: 6.9062, inside_radius: "2 ft 2 29/32 in", inside_radius_in: 26.9062, counts: {"No. 2 arch": 11, "No. 1 arch": 5}, total: 16}
+      - {span: "3'2\"", span_in: 38, rise: "7 9/32 in", rise_in: 7.2812, inside_radius: "2 ft 4 13/32 in", inside_radius_in: 28.4062, counts: {"No. 2 arch": 10, "No. 1 arch": 6}, total: 16}
+      - {span: "3'4\"", span_in: 40, rise: "7 11/16 in", rise_in: 7.6875, inside_radius: "2 ft 5 29/32 in", inside_radius_in: 29.9062, counts: {"No. 2 arch": 10, "No. 1 arch": 7}, total: 17}
+      - {span: "3'6\"", span_in: 42, rise: "8 1/16 in", rise_in: 8.0625, inside_radius: "2 ft 7 13/32 in", inside_radius_in: 31.4062, counts: {"No. 2 arch": 9, "No. 1 arch": 9}, total: 18}
+      - {span: "3'8\"", span_in: 44, rise: "8 7/16 in", rise_in: 8.4375, inside_radius: "2 ft 8 7/8 in", inside_radius_in: 32.8750, counts: {"No. 2 arch": 8, "No. 1 arch": 11}, total: 19}
+      - {span: "3'10\"", span_in: 46, rise: "8 13/16 in", rise_in: 8.8125, inside_radius: "2 ft 10 3/8 in", inside_radius_in: 34.3750, counts: {"No. 2 arch": 7, "No. 1 arch": 12}, total: 19}
+      - {span: "4'0\"", span_in: 48, rise: "9 7/32 in", rise_in: 9.2188, inside_radius: "2 ft 11 7/8 in", inside_radius_in: 35.8750, counts: {"No. 2 arch": 7, "No. 1 arch": 13}, total: 20}
+      - {span: "4'2\"", span_in: 50, rise: "9 19/32 in", rise_in: 9.5938, inside_radius: "3 ft 1 3/8 in", inside_radius_in: 37.3750, counts: {"No. 2 arch": 6, "No. 1 arch": 15}, total: 21}
+      - {span: "4'4\"", span_in: 52, rise: "9 31/32 in", rise_in: 9.9688, inside_radius: "3 ft 2 7/8 in", inside_radius_in: 38.8750, counts: {"No. 2 arch": 6, "No. 1 arch": 16}, total: 22}
+      - {span: "4'6\"", span_in: 54, rise: "10 3/8 in", rise_in: 10.3750, inside_radius: "3 ft 4 3/8 in", inside_radius_in: 40.3750, counts: {"No. 2 arch": 5, "No. 1 arch": 17}, total: 22}
+      - {span: "4'8\"", span_in: 56, rise: "10 3/4 in", rise_in: 10.7500, inside_radius: "3 ft 5 27/32 in", inside_radius_in: 41.8438, counts: {"No. 2 arch": 4, "No. 1 arch": 19}, total: 23}
+      - {span: "4'10\"", span_in: 58, rise: "11 1/8 in", rise_in: 11.1250, inside_radius: "3 ft 7 11/32 in", inside_radius_in: 43.3438, counts: {"No. 2 arch": 3, "No. 1 arch": 21}, total: 24}
+      - {span: "5'0\"", span_in: 60, rise: "11 1/2 in", rise_in: 11.5000, inside_radius: "3 ft 8 27/32 in", inside_radius_in: 44.8438, counts: {"No. 2 arch": 3, "No. 1 arch": 22}, total: 25}
+      - {span: "5'2\"", span_in: 62, rise: "11 29/32 in", rise_in: 11.9062, inside_radius: "3 ft 10 11/32 in", inside_radius_in: 46.3438, counts: {"No. 2 arch": 2, "No. 1 arch": 23}, total: 25}
+      - {span: "5'4\"", span_in: 64, rise: "1 ft 0 9/32 in", rise_in: 12.2812, inside_radius: "3 ft 11 27/32 in", inside_radius_in: 47.8438, counts: {"No. 2 arch": 1, "No. 1 arch": 25}, total: 26}
+      - {span: "5'6\"", span_in: 66, rise: "1 ft 021/32 in", rise_in: 12.6562, inside_radius: "4 ft 1 11/32 in", inside_radius_in: 49.3438, counts: {"No. 1 arch": 27}, total: 27}
+      - {span: "5'8\"", span_in: 68, rise: "1 ft 1 1/16 in", rise_in: 13.0625, inside_radius: "4 ft 2 13/16 in", inside_radius_in: 50.8125, counts: {"No. 1 arch": 27}, total: 27}
+      - {span: "5'10\"", span_in: 70, rise: "1 ft 1 7/16 in", rise_in: 13.4375, inside_radius: "4 ft 4 5/16 in", inside_radius_in: 52.3125, counts: {"No. 1 arch": 27, "Straight": 1}, total: 28}
+      - {span: "6'0\"", span_in: 72, rise: "1 ft 1 13/16 in", rise_in: 13.8125, inside_radius: "4 ft 5 13/16 in", inside_radius_in: 53.8125, counts: {"No. 1 arch": 27, "Straight": 2}, total: 29}
+      - {span: "6'6\"", span_in: 78, rise: "1 ft 2 31/32 in", rise_in: 14.9688, inside_radius: "4 ft 10 5/16 in", inside_radius_in: 58.3125, counts: {"No. 1 arch": 27, "Straight": 4}, total: 31}
+    status: Verified
+  - id: arch-9in-wedge-brick-3in-rise-1.5
+    label: "IR-55"
+    pdf_page: 178
+    where_on_page: "both halves"
+    title: "9 Inch Arch Thickness - 3 Inch Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 3, 9 x 6-3/4 x 3 or 9 x 9 x 3 Inch"
+    rise_heading: "1-1/2 Inch Rise Per Foot of Span"
+    rise_in_per_ft: 1.5
+    arch_thickness_in: 9.0
+    printed_range: "1'6\" to 15'0\"; transcribed to 12'0\""
+    shapes:
+      - {name: "No. 3 wedge", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 87
+    rows:
+      - {span: "1'6\"", span_in: 18, rise: "2 1/4 in", rise_in: 2.2500, inside_radius: "1 ft 7 1/8 in", inside_radius_in: 19.1250, counts: {"No. 3 wedge": 9, "No. 2 wedge": 1}, total: 10}
+      - {span: "1'7\"", span_in: 19, rise: "2 3/8 in", rise_in: 2.3750, inside_radius: "1 ft 8 3/16 in", inside_radius_in: 20.1875, counts: {"No. 3 wedge": 8, "No. 2 wedge": 2}, total: 10}
+      - {span: "1'8\"", span_in: 20, rise: "2 1/2 in", rise_in: 2.5000, inside_radius: "1 ft 9 1/4 in", inside_radius_in: 21.2500, counts: {"No. 3 wedge": 8, "No. 2 wedge": 2}, total: 10}
+      - {span: "1'9\"", span_in: 21, rise: "2 5/8 in", rise_in: 2.6250, inside_radius: "1 ft 10 5/16 in", inside_radius_in: 22.3125, counts: {"No. 3 wedge": 8, "No. 2 wedge": 3}, total: 11}
+      - {span: "1'10\"", span_in: 22, rise: "2 3/4 in", rise_in: 2.7500, inside_radius: "1 ft 11 3/8 in", inside_radius_in: 23.3750, counts: {"No. 3 wedge": 7, "No. 2 wedge": 4}, total: 11}
+      - {span: "1'11\"", span_in: 23, rise: "2 7/8 in", rise_in: 2.8750, inside_radius: "2 ft 0 7/16 in", inside_radius_in: 24.4375, counts: {"No. 3 wedge": 7, "No. 2 wedge": 4}, total: 11}
+      - {span: "2'0\"", span_in: 24, rise: "3 in", rise_in: 3.0000, inside_radius: "2 ft 1 1/2 in", inside_radius_in: 25.5000, counts: {"No. 3 wedge": 7, "No. 2 wedge": 5}, total: 12}
+      - {span: "2'1\"", span_in: 25, rise: "3 1/8 in", rise_in: 3.1250, inside_radius: "2 ft 2 9/16 in", inside_radius_in: 26.5625, counts: {"No. 3 wedge": 6, "No. 2 wedge": 6}, total: 12}
+      - {span: "2'2\"", span_in: 26, rise: "3 1/4 in", rise_in: 3.2500, inside_radius: "2 ft 3 5/8 in", inside_radius_in: 27.6250, counts: {"No. 3 wedge": 6, "No. 2 wedge": 6}, total: 12}
+      - {span: "2'3\"", span_in: 27, rise: "3 3/8 in", rise_in: 3.3750, inside_radius: "2 ft 4 11/16 in", inside_radius_in: 28.6875, counts: {"No. 3 wedge": 6, "No. 2 wedge": 7}, total: 13}
+      - {span: "2'4\"", span_in: 28, rise: "3 1/2 in", rise_in: 3.5000, inside_radius: "2 ft 5 3/4 in", inside_radius_in: 29.7500, counts: {"No. 3 wedge": 5, "No. 2 wedge": 8}, total: 13}
+      - {span: "2'5\"", span_in: 29, rise: "3 5/8 in", rise_in: 3.6250, inside_radius: "2 ft 6 13/16 in", inside_radius_in: 30.8125, counts: {"No. 3 wedge": 5, "No. 2 wedge": 8}, total: 13}
+      - {span: "2'6\"", span_in: 30, rise: "3 3/4 in", rise_in: 3.7500, inside_radius: "2 ft 7 7/8 in", inside_radius_in: 31.8750, counts: {"No. 3 wedge": 5, "No. 2 wedge": 9}, total: 14}
+      - {span: "2'7\"", span_in: 31, rise: "3 7/8 in", rise_in: 3.8750, inside_radius: "2 ft 8 15/16 in", inside_radius_in: 32.9375, counts: {"No. 3 wedge": 4, "No. 2 wedge": 10}, total: 14}
+      - {span: "2'8\"", span_in: 32, rise: "4 in", rise_in: 4.0000, inside_radius: "2 ft 10 in", inside_radius_in: 34.0000, counts: {"No. 3 wedge": 4, "No. 2 wedge": 10}, total: 14}
+      - {span: "2'9\"", span_in: 33, rise: "4 1/8 in", rise_in: 4.1250, inside_radius: "2 ft 11 1/16 in", inside_radius_in: 35.0625, counts: {"No. 3 wedge": 4, "No. 2 wedge": 11}, total: 15}
+      - {span: "2'10\"", span_in: 34, rise: "4 1/4 in", rise_in: 4.2500, inside_radius: "3 ft 0 1/8 in", inside_radius_in: 36.1250, counts: {"No. 3 wedge": 3, "No. 2 wedge": 12}, total: 15}
+      - {span: "2'11\"", span_in: 35, rise: "4 3/8 in", rise_in: 4.3750, inside_radius: "3 ft 1 3/16 in", inside_radius_in: 37.1875, counts: {"No. 3 wedge": 3, "No. 2 wedge": 12}, total: 15}
+      - {span: "3'0\"", span_in: 36, rise: "4 1/2 in", rise_in: 4.5000, inside_radius: "3 ft 2 1/4 in", inside_radius_in: 38.2500, counts: {"No. 3 wedge": 3, "No. 2 wedge": 13}, total: 16}
+      - {span: "3'1\"", span_in: 37, rise: "4 5/8 in", rise_in: 4.6250, inside_radius: "3 ft 3 5/16 in", inside_radius_in: 39.3125, counts: {"No. 3 wedge": 2, "No. 2 wedge": 14}, total: 16}
+      - {span: "3'2\"", span_in: 38, rise: "4 3/4 in", rise_in: 4.7500, inside_radius: "3 ft 4 3/8 in", inside_radius_in: 40.3750, counts: {"No. 3 wedge": 2, "No. 2 wedge": 15}, total: 17}
+      - {span: "3'3\"", span_in: 39, rise: "4 7/8 in", rise_in: 4.8750, inside_radius: "3 ft 5 7/16 in", inside_radius_in: 41.4375, counts: {"No. 3 wedge": 1, "No. 2 wedge": 16}, total: 17}
+      - {span: "3'4\"", span_in: 40, rise: "5 in", rise_in: 5.0000, inside_radius: "3 ft 6 1/2 in", inside_radius_in: 42.5000, counts: {"No. 3 wedge": 1, "No. 2 wedge": 16}, total: 17}
+      - {span: "3'5\"", span_in: 41, rise: "5 1/8 in", rise_in: 5.1250, inside_radius: "3 ft 7 9/16 in", inside_radius_in: 43.5625, counts: {"No. 3 wedge": 1, "No. 2 wedge": 17}, total: 18}
+      - {span: "3'6\"", span_in: 42, rise: "5 1/4 in", rise_in: 5.2500, inside_radius: "3 ft 8 5/8 in", inside_radius_in: 44.6250, counts: {"No. 2 wedge": 18}, total: 18}
+      - {span: "3'7\"", span_in: 43, rise: "5 3/8 in", rise_in: 5.3750, inside_radius: "3 ft 9 11/16 in", inside_radius_in: 45.6875, counts: {"No. 2 wedge": 18}, total: 18}
+      - {span: "3'8\"", span_in: 44, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "3 ft 10 3/4 in", inside_radius_in: 46.7500, counts: {"No. 2 wedge": 17, "No. 1 wedge": 2}, total: 19}
+      - {span: "3'9\"", span_in: 45, rise: "5 5/8 in", rise_in: 5.6250, inside_radius: "3 ft 11 13/16 in", inside_radius_in: 47.8125, counts: {"No. 2 wedge": 17, "No. 1 wedge": 2}, total: 19}
+      - {span: "3'10\"", span_in: 46, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "4 ft 0 7/8 in", inside_radius_in: 48.8750, counts: {"No. 2 wedge": 16, "No. 1 wedge": 3}, total: 19}
+      - {span: "3'11\"", span_in: 47, rise: "5 7/8 in", rise_in: 5.8750, inside_radius: "4 ft 1 15/16 in", inside_radius_in: 49.9375, counts: {"No. 2 wedge": 16, "No. 1 wedge": 4}, total: 20}
+      - {span: "4'0\"", span_in: 48, rise: "6 in", rise_in: 6.0000, inside_radius: "4 ft 3 in", inside_radius_in: 51.0000, counts: {"No. 2 wedge": 16, "No. 1 wedge": 4}, total: 20}
+      - {span: "4'1\"", span_in: 49, rise: "6 1/8 in", rise_in: 6.1250, inside_radius: "4 ft 4 1/16 in", inside_radius_in: 52.0625, counts: {"No. 2 wedge": 15, "No. 1 wedge": 5}, total: 20}
+      - {span: "4'2\"", span_in: 50, rise: "6 1/4 in", rise_in: 6.2500, inside_radius: "4 ft 5 1/8 in", inside_radius_in: 53.1250, counts: {"No. 2 wedge": 15, "No. 1 wedge": 6}, total: 21}
+      - {span: "4'3\"", span_in: 51, rise: "6 3/8 in", rise_in: 6.3750, inside_radius: "4 ft 6 3/16 in", inside_radius_in: 54.1875, counts: {"No. 2 wedge": 15, "No. 1 wedge": 6}, total: 21}
+      - {span: "4'4\"", span_in: 52, rise: "6 1/2 in", rise_in: 6.5000, inside_radius: "4 ft 7 1/4 in", inside_radius_in: 55.2500, counts: {"No. 2 wedge": 14, "No. 1 wedge": 7}, total: 21}
+      - {span: "4'5\"", span_in: 53, rise: "6 5/8 in", rise_in: 6.6250, inside_radius: "4 ft 8 5/16 in", inside_radius_in: 56.3125, counts: {"No. 2 wedge": 14, "No. 1 wedge": 8}, total: 22}
+      - {span: "4'6\"", span_in: 54, rise: "6 3/4 in", rise_in: 6.7500, inside_radius: "4 ft 9 3/8 in", inside_radius_in: 57.3750, counts: {"No. 2 wedge": 14, "No. 1 wedge": 8}, total: 22}
+      - {span: "4'7\"", span_in: 55, rise: "6 7/8 in", rise_in: 6.8750, inside_radius: "4 ft 10 7/16 in", inside_radius_in: 58.4375, counts: {"No. 2 wedge": 13, "No. 1 wedge": 9}, total: 22}
+      - {span: "4'8\"", span_in: 56, rise: "7 in", rise_in: 7.0000, inside_radius: "4 ft 11 1/2 in", inside_radius_in: 59.5000, counts: {"No. 2 wedge": 13, "No. 1 wedge": 10}, total: 23}
+      - {span: "4'9\"", span_in: 57, rise: "7 1/8 in", rise_in: 7.1250, inside_radius: "5 ft 0 9/16 in", inside_radius_in: 60.5625, counts: {"No. 2 wedge": 13, "No. 1 wedge": 10}, total: 23}
+      - {span: "4'10\"", span_in: 58, rise: "7 1/4 in", rise_in: 7.2500, inside_radius: "5 ft 1 5/8 in", inside_radius_in: 61.6250, counts: {"No. 2 wedge": 12, "No. 1 wedge": 11}, total: 23}
+      - {span: "4'11\"", span_in: 59, rise: "7 3/8 in", rise_in: 7.3750, inside_radius: "5 ft 2 11/16 in", inside_radius_in: 62.6875, counts: {"No. 2 wedge": 12, "No. 1 wedge": 12}, total: 24}
+      - {span: "5'0\"", span_in: 60, rise: "7 1/2 in", rise_in: 7.5000, inside_radius: "5 ft 3 3/4 in", inside_radius_in: 63.7500, counts: {"No. 2 wedge": 12, "No. 1 wedge": 12}, total: 24}
+      - {span: "5'1\"", span_in: 61, rise: "7 5/8 in", rise_in: 7.6250, inside_radius: "5 ft 4 13/16 in", inside_radius_in: 64.8125, counts: {"No. 2 wedge": 12, "No. 1 wedge": 13}, total: 25}
+      - {span: "5'2\"", span_in: 62, rise: "7 3/4 in", rise_in: 7.7500, inside_radius: "5 ft 5 7/8 in", inside_radius_in: 65.8750, counts: {"No. 2 wedge": 11, "No. 1 wedge": 14}, total: 25}
+      - {span: "5'3\"", span_in: 63, rise: "7 7/8 in", rise_in: 7.8750, inside_radius: "5 ft 6 15/16 in", inside_radius_in: 66.9375, counts: {"No. 2 wedge": 11, "No. 1 wedge": 14}, total: 25}
+      - {span: "5'4\"", span_in: 64, rise: "8 in", rise_in: 8.0000, inside_radius: "5 ft 8 in", inside_radius_in: 68.0000, counts: {"No. 2 wedge": 11, "No. 1 wedge": 15}, total: 26}
+      - {span: "5'5\"", span_in: 65, rise: "8 1/8 in", rise_in: 8.1250, inside_radius: "5 ft 9 1/16 in", inside_radius_in: 69.0625, counts: {"No. 2 wedge": 10, "No. 1 wedge": 16}, total: 26}
+      - {span: "5'6\"", span_in: 66, rise: "8 1/4 in", rise_in: 8.2500, inside_radius: "5 ft 10 1/8 in", inside_radius_in: 70.1250, counts: {"No. 2 wedge": 10, "No. 1 wedge": 16}, total: 26}
+      - {span: "5'7\"", span_in: 67, rise: "8 3/8 in", rise_in: 8.3750, inside_radius: "5 ft 11 3/16 in", inside_radius_in: 71.1875, counts: {"No. 2 wedge": 9, "No. 1 wedge": 18}, total: 27}
+      - {span: "5'8\"", span_in: 68, rise: "8 1/2 in", rise_in: 8.5000, inside_radius: "6 ft 0 1/4 in", inside_radius_in: 72.2500, counts: {"No. 2 wedge": 9, "No. 1 wedge": 18}, total: 27}
+      - {span: "5'9\"", span_in: 69, rise: "8 5/8 in", rise_in: 8.6250, inside_radius: "6 ft 1 5/16 in", inside_radius_in: 73.3125, counts: {"No. 2 wedge": 8, "No. 1 wedge": 19}, total: 27}
+      - {span: "5'10\"", span_in: 70, rise: "8 3/4 in", rise_in: 8.7500, inside_radius: "6 ft 2 3/8 in", inside_radius_in: 74.3750, counts: {"No. 2 wedge": 8, "No. 1 wedge": 20}, total: 28}
+      - {span: "5'11\"", span_in: 71, rise: "8 7/8 in", rise_in: 8.8750, inside_radius: "6 ft 3 7/16 in", inside_radius_in: 75.4375, counts: {"No. 2 wedge": 8, "No. 1 wedge": 20}, total: 28}
+      - {span: "6'0\"", span_in: 72, rise: "9 in", rise_in: 9.0000, inside_radius: "6 ft 4 1/2 in", inside_radius_in: 76.5000, counts: {"No. 2 wedge": 7, "No. 1 wedge": 21}, total: 28}
+      - {span: "6'1\"", span_in: 73, rise: "9 1/8 in", rise_in: 9.1250, inside_radius: "6 ft 5 9/16 in", inside_radius_in: 77.5625, counts: {"No. 2 wedge": 7, "No. 1 wedge": 22}, total: 29}
+      - {span: "6'2\"", span_in: 74, rise: "9 1/4 in", rise_in: 9.2500, inside_radius: "6 ft 6 5/8 in", inside_radius_in: 78.6250, counts: {"No. 2 wedge": 7, "No. 1 wedge": 22}, total: 29}
+      - {span: "6'3\"", span_in: 75, rise: "9 3/8 in", rise_in: 9.3750, inside_radius: "6 ft 7 11/16 in", inside_radius_in: 79.6875, counts: {"No. 2 wedge": 6, "No. 1 wedge": 23}, total: 29}
+      - {span: "6'4\"", span_in: 76, rise: "9 1/2 in", rise_in: 9.5000, inside_radius: "6 ft 8 3/4 in", inside_radius_in: 80.7500, counts: {"No. 2 wedge": 6, "No. 1 wedge": 24}, total: 30}
+      - {span: "6'5\"", span_in: 77, rise: "9 5/8 in", rise_in: 9.6250, inside_radius: "6 ft 9 13/16 in", inside_radius_in: 81.8125, counts: {"No. 2 wedge": 6, "No. 1 wedge": 24}, total: 30}
+      - {span: "6'6\"", span_in: 78, rise: "9 3/4 in", rise_in: 9.7500, inside_radius: "6 ft 10 7/8 in", inside_radius_in: 82.8750, counts: {"No. 2 wedge": 5, "No. 1 wedge": 25}, total: 30}
+      - {span: "6'7\"", span_in: 79, rise: "9 7/8 in", rise_in: 9.8750, inside_radius: "6 ft 11 15/16 in", inside_radius_in: 83.9375, counts: {"No. 2 wedge": 5, "No. 1 wedge": 26}, total: 31}
+      - {span: "6'8\"", span_in: 80, rise: "10 in", rise_in: 10.0000, inside_radius: "7 ft 1 in", inside_radius_in: 85.0000, counts: {"No. 2 wedge": 5, "No. 1 wedge": 26}, total: 31}
+      - {span: "6'9\"", span_in: 81, rise: "10 1/8 in", rise_in: 10.1250, inside_radius: "7 ft 2 1/16 in", inside_radius_in: 86.0625, counts: {"No. 2 wedge": 4, "No. 1 wedge": 27}, total: 31}
+      - {span: "6'10\"", span_in: 82, rise: "10 1/4 in", rise_in: 10.2500, inside_radius: "7 ft 3 1/8 in", inside_radius_in: 87.1250, counts: {"No. 2 wedge": 4, "No. 1 wedge": 28}, total: 32}
+      - {span: "6'11\"", span_in: 83, rise: "10 3/8 in", rise_in: 10.3750, inside_radius: "7 ft 4 3/16 in", inside_radius_in: 88.1875, counts: {"No. 2 wedge": 4, "No. 1 wedge": 28}, total: 32}
+      - {span: "7'0\"", span_in: 84, rise: "10 1/2 in", rise_in: 10.5000, inside_radius: "7 ft 5 1/4 in", inside_radius_in: 89.2500, counts: {"No. 2 wedge": 3, "No. 1 wedge": 29}, total: 32}
+      - {span: "7'1\"", span_in: 85, rise: "10 5/8 in", rise_in: 10.6250, inside_radius: "7 ft 6 5/16 in", inside_radius_in: 90.3125, counts: {"No. 2 wedge": 3, "No. 1 wedge": 30}, total: 33}
+      - {span: "7'2\"", span_in: 86, rise: "10 3/4 in", rise_in: 10.7500, inside_radius: "7 ft 7 3/8 in", inside_radius_in: 91.3750, counts: {"No. 2 wedge": 3, "No. 1 wedge": 30}, total: 33}
+      - {span: "7'3\"", span_in: 87, rise: "10 7/8 in", rise_in: 10.8750, inside_radius: "7 ft 8 7/16 in", inside_radius_in: 92.4375, counts: {"No. 2 wedge": 3, "No. 1 wedge": 31}, total: 34}
+      - {span: "7'4\"", span_in: 88, rise: "11 in", rise_in: 11.0000, inside_radius: "7 ft 9 1/2 in", inside_radius_in: 93.5000, counts: {"No. 2 wedge": 2, "No. 1 wedge": 32}, total: 34}
+      - {span: "7'5\"", span_in: 89, rise: "11 1/8 in", rise_in: 11.1250, inside_radius: "7 ft 10 9/16 in", inside_radius_in: 94.5625, counts: {"No. 2 wedge": 2, "No. 1 wedge": 32}, total: 34}
+      - {span: "7'6\"", span_in: 90, rise: "11 1/4 in", rise_in: 11.2500, inside_radius: "7 ft 11 5/8 in", inside_radius_in: 95.6250, counts: {"No. 2 wedge": 2, "No. 1 wedge": 33}, total: 35}
+      - {span: "7'7\"", span_in: 91, rise: "11 3/8 in", rise_in: 11.3750, inside_radius: "8 ft 011/16 in", inside_radius_in: 96.6875, counts: {"No. 2 wedge": 1, "No. 1 wedge": 34}, total: 35}
+      - {span: "7'8\"", span_in: 92, rise: "11 1/2 in", rise_in: 11.5000, inside_radius: "8 ft 1 3/4 in", inside_radius_in: 97.7500, counts: {"No. 2 wedge": 1, "No. 1 wedge": 34}, total: 35}
+      - {span: "7'9\"", span_in: 93, rise: "11 5/8 in", rise_in: 11.6250, inside_radius: "8 ft 2 13/16 in", inside_radius_in: 98.8125, counts: {"No. 1 wedge": 36}, total: 36}
+      - {span: "7'10\"", span_in: 94, rise: "11 3/4 in", rise_in: 11.7500, inside_radius: "8 ft 3 7/8 in", inside_radius_in: 99.8750, counts: {"No. 1 wedge": 36}, total: 36}
+      - {span: "7'11\"", span_in: 95, rise: "11 7/8 in", rise_in: 11.8750, inside_radius: "8 ft 4 15/16 in", inside_radius_in: 100.9375, counts: {"No. 1 wedge": 36}, total: 36}
+      - {span: "8'0\"", span_in: 96, rise: "1 ft 0 in", rise_in: 12.0000, inside_radius: "8 ft 6 in", inside_radius_in: 102.0000, counts: {"No. 1 wedge": 36, "Straight": 1}, total: 37}
+      - {span: "8'6\"", span_in: 102, rise: "1 ft 0 3/4 in", rise_in: 12.7500, inside_radius: "9 ft 0 3/8 in", inside_radius_in: 108.3750, counts: {"No. 1 wedge": 36, "Straight": 3}, total: 39}
+      - {span: "9'0\"", span_in: 108, rise: "1 ft 1 1/2 in", rise_in: 13.5000, inside_radius: "9 ft 6 3/4 in", inside_radius_in: 114.7500, counts: {"No. 1 wedge": 36, "Straight": 5}, total: 41}
+      - {span: "9'6\"", span_in: 114, rise: "1 ft 2 1/4 in", rise_in: 14.2500, inside_radius: "10 ft 1 1/8 in", inside_radius_in: 121.1250, counts: {"No. 1 wedge": 36, "Straight": 7}, total: 43}
+      - {span: "10'0\"", span_in: 120, rise: "1 ft 3 in", rise_in: 15.0000, inside_radius: "10 ft 7 1/2 in", inside_radius_in: 127.5000, counts: {"No. 1 wedge": 36, "Straight": 9}, total: 45}
+      - {span: "10'6\"", span_in: 126, rise: "1 ft 3 3/4 in", rise_in: 15.7500, inside_radius: "11 ft 1 7/8 in", inside_radius_in: 133.8750, counts: {"No. 1 wedge": 36, "Straight": 11}, total: 47}
+      - {span: "11'0\"", span_in: 132, rise: "1 ft 4 1/2 in", rise_in: 16.5000, inside_radius: "11 ft 8 1/4 in", inside_radius_in: 140.2500, counts: {"No. 1 wedge": 36, "Straight": 13}, total: 49}
+      - {span: "11'6\"", span_in: 138, rise: "1 ft 5 1/4 in", rise_in: 17.2500, inside_radius: "12 ft 2 5/8 in", inside_radius_in: 146.6250, counts: {"No. 1 wedge": 36, "Straight": 15}, total: 51}
+      - {span: "12'0\"", span_in: 144, rise: "1 ft 6 in", rise_in: 18.0000, inside_radius: "12 ft 9 in", inside_radius_in: 153.0000, counts: {"No. 1 wedge": 36, "Straight": 17}, total: 53}
+    status: Verified
+  - id: arch-9in-wedge-brick-3in-rise-1.608
+    label: "IR-56"
+    pdf_page: 179
+    where_on_page: "both halves"
+    title: "9 Inch Arch Thickness - 3 Inch Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 3, 9 x 6-3/4 x 3 or 9 x 9 x 3 Inch"
+    rise_heading: "1.608 Inch (1 19/32 Inch) Rise Per Foot of Span (60 degrees center angle)"
+    rise_in_per_ft: 1.608
+    arch_thickness_in: 9.0
+    printed_range: "1'6\" to 15'0\"; transcribed to 12'0\""
+    shapes:
+      - {name: "No. 3 wedge", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 90
+    rows:
+      - {span: "1'6\"", span_in: 18, rise: "2 13/32 in", rise_in: 2.4062, inside_radius: "1 ft 6 in", inside_radius_in: 18.0000, counts: {"No. 3 wedge": 10}, total: 10}
+      - {span: "1'7\"", span_in: 19, rise: "2 17/32 in", rise_in: 2.5312, inside_radius: "1 ft 7 in", inside_radius_in: 19.0000, counts: {"No. 3 wedge": 9, "No. 2 wedge": 1}, total: 10}
+      - {span: "1'8\"", span_in: 20, rise: "2 11/16 in", rise_in: 2.6875, inside_radius: "1 ft 8 in", inside_radius_in: 20.0000, counts: {"No. 3 wedge": 9, "No. 2 wedge": 2}, total: 11}
+      - {span: "1'9\"", span_in: 21, rise: "2 13/16 in", rise_in: 2.8125, inside_radius: "1 ft 9 in", inside_radius_in: 21.0000, counts: {"No. 3 wedge": 9, "No. 2 wedge": 2}, total: 11}
+      - {span: "1'10\"", span_in: 22, rise: "2 15/16 in", rise_in: 2.9375, inside_radius: "1 ft 10 in", inside_radius_in: 22.0000, counts: {"No. 3 wedge": 8, "No. 2 wedge": 3}, total: 11}
+      - {span: "1'11\"", span_in: 23, rise: "3 3/32 in", rise_in: 3.0938, inside_radius: "2 ft 11 in", inside_radius_in: 35.0000, counts: {"No. 3 wedge": 8, "No. 2 wedge": 4}, total: 12, printed_misprint: true}  # MISPRINT as printed: inside radius printed 2 ft 11 in, geometry 22.996 in
+      - {span: "2'0\"", span_in: 24, rise: "3 7/32 in", rise_in: 3.2188, inside_radius: "2 ft 0 in", inside_radius_in: 24.0000, counts: {"No. 3 wedge": 8, "No. 2 wedge": 4}, total: 12}
+      - {span: "2'1\"", span_in: 25, rise: "3 11/32 in", rise_in: 3.3438, inside_radius: "2 ft 1 in", inside_radius_in: 25.0000, counts: {"No. 3 wedge": 7, "No. 2 wedge": 5}, total: 12}
+      - {span: "2'2\"", span_in: 26, rise: "3 15/32 in", rise_in: 3.4688, inside_radius: "2 ft 2 in", inside_radius_in: 26.0000, counts: {"No. 3 wedge": 7, "No. 2 wedge": 6}, total: 13}
+      - {span: "2'3\"", span_in: 27, rise: "3 5/8 in", rise_in: 3.6250, inside_radius: "2 ft 3 in", inside_radius_in: 27.0000, counts: {"No. 3 wedge": 7, "No. 2 wedge": 6}, total: 13}
+      - {span: "2'4\"", span_in: 28, rise: "3 3/4 in", rise_in: 3.7500, inside_radius: "2 ft 4 in", inside_radius_in: 28.0000, counts: {"No. 3 wedge": 6, "No. 2 wedge": 7}, total: 13}
+      - {span: "2'5\"", span_in: 29, rise: "3 7/8 in", rise_in: 3.8750, inside_radius: "2 ft 5 in", inside_radius_in: 29.0000, counts: {"No. 3 wedge": 6, "No. 2 wedge": 8}, total: 14}
+      - {span: "2'6\"", span_in: 30, rise: "3 1/32 in", rise_in: 3.0312, inside_radius: "2 ft 6 in", inside_radius_in: 30.0000, counts: {"No. 3 wedge": 5, "No. 2 wedge": 9}, total: 14, printed_misprint: true}  # MISPRINT as printed: rise printed 3 1/32 in, geometry 4.020 in
+      - {span: "2'7\"", span_in: 31, rise: "3 5/32 in", rise_in: 3.1562, inside_radius: "2 ft 7 in", inside_radius_in: 31.0000, counts: {"No. 3 wedge": 5, "No. 2 wedge": 9}, total: 14, printed_misprint: true}  # MISPRINT as printed: rise printed 3 5/32 in, geometry 4.154 in
+      - {span: "2'8\"", span_in: 32, rise: "4 9/32 in", rise_in: 4.2812, inside_radius: "2 ft 8 in", inside_radius_in: 32.0000, counts: {"No. 3 wedge": 5, "No. 2 wedge": 10}, total: 15}
+      - {span: "2'9\"", span_in: 33, rise: "4 7/16 in", rise_in: 4.4375, inside_radius: "2 ft 9 in", inside_radius_in: 33.0000, counts: {"No. 3 wedge": 4, "No. 2 wedge": 11}, total: 15}
+      - {span: "2'10\"", span_in: 34, rise: "4 9/16 in", rise_in: 4.5625, inside_radius: "3 ft 10 in", inside_radius_in: 46.0000, counts: {"No. 3 wedge": 4, "No. 2 wedge": 11}, total: 15, printed_misprint: true}  # MISPRINT as printed: inside radius printed 3 ft 10 in, geometry 33.994 in
+      - {span: "2'11\"", span_in: 35, rise: "4 11/16 in", rise_in: 4.6875, inside_radius: "3 ft 11 in", inside_radius_in: 47.0000, counts: {"No. 3 wedge": 4, "No. 2 wedge": 12}, total: 16, printed_misprint: true}  # MISPRINT as printed: inside radius printed 3 ft 11 in, geometry 34.994 in
+      - {span: "3'0\"", span_in: 36, rise: "4 13/16 in", rise_in: 4.8125, inside_radius: "3 ft 0 in", inside_radius_in: 36.0000, counts: {"No. 3 wedge": 3, "No. 2 wedge": 13}, total: 16}
+      - {span: "3'1\"", span_in: 37, rise: "4 31/32 in", rise_in: 4.9688, inside_radius: "3 ft 1 in", inside_radius_in: 37.0000, counts: {"No. 3 wedge": 3, "No. 2 wedge": 13}, total: 16}
+      - {span: "3'2\"", span_in: 38, rise: "5 3/32 in", rise_in: 5.0938, inside_radius: "3 ft 2 in", inside_radius_in: 38.0000, counts: {"No. 3 wedge": 3, "No. 2 wedge": 14}, total: 17}
+      - {span: "3'3\"", span_in: 39, rise: "5 7/32 in", rise_in: 5.2188, inside_radius: "3 ft 3 in", inside_radius_in: 39.0000, counts: {"No. 3 wedge": 2, "No. 2 wedge": 15}, total: 17}
+      - {span: "3'4\"", span_in: 40, rise: "5 11/32 in", rise_in: 5.3438, inside_radius: "3 ft 4 in", inside_radius_in: 40.0000, counts: {"No. 3 wedge": 2, "No. 2 wedge": 16}, total: 18}
+      - {span: "3'5\"", span_in: 41, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "3 ft 5 in", inside_radius_in: 41.0000, counts: {"No. 3 wedge": 2, "No. 2 wedge": 16}, total: 18}
+      - {span: "3'6\"", span_in: 42, rise: "5 5/8 in", rise_in: 5.6250, inside_radius: "3 ft 6 in", inside_radius_in: 42.0000, counts: {"No. 3 wedge": 1, "No. 2 wedge": 17}, total: 18}
+      - {span: "3'7\"", span_in: 43, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "3 ft 7 in", inside_radius_in: 43.0000, counts: {"No. 3 wedge": 1, "No. 2 wedge": 18}, total: 19}
+      - {span: "3'8\"", span_in: 44, rise: "5 29/32 in", rise_in: 5.9062, inside_radius: "3 ft 8 in", inside_radius_in: 44.0000, counts: {"No. 3 wedge": 1, "No. 2 wedge": 18}, total: 19}
+      - {span: "3'9\"", span_in: 45, rise: "6 1/8 in", rise_in: 6.1250, inside_radius: "3 ft 9 in", inside_radius_in: 45.0000, counts: {"No. 2 wedge": 19}, total: 19, printed_misprint: true}  # MISPRINT as printed: rise printed 6 1/8 in, geometry 6.030 in
+      - {span: "3'10\"", span_in: 46, rise: "6 5/32 in", rise_in: 6.1562, inside_radius: "4 ft 10 in", inside_radius_in: 58.0000, counts: {"No. 2 wedge": 19, "No. 1 wedge": 1}, total: 20, printed_misprint: true}  # MISPRINT as printed: inside radius printed 4 ft 10 in, geometry 45.992 in
+      - {span: "3'11\"", span_in: 47, rise: "6 9/32 in", rise_in: 6.2812, inside_radius: "3 ft 11 in", inside_radius_in: 47.0000, counts: {"No. 2 wedge": 18, "No. 1 wedge": 2}, total: 20}
+      - {span: "4'0\"", span_in: 48, rise: "6 7/16 in", rise_in: 6.4375, inside_radius: "4 ft 0 in", inside_radius_in: 48.0000, counts: {"No. 2 wedge": 18, "No. 1 wedge": 2}, total: 20}
+      - {span: "4'1\"", span_in: 49, rise: "6 9/16 in", rise_in: 6.5625, inside_radius: "4 ft 1 in", inside_radius_in: 49.0000, counts: {"No. 2 wedge": 18, "No. 1 wedge": 3}, total: 21}
+      - {span: "4'2\"", span_in: 50, rise: "6 11/16 in", rise_in: 6.6875, inside_radius: "4 ft 2 in", inside_radius_in: 50.0000, counts: {"No. 2 wedge": 17, "No. 1 wedge": 4}, total: 21}
+      - {span: "4'3\"", span_in: 51, rise: "6 27/32 in", rise_in: 6.8438, inside_radius: "4 ft 3 in", inside_radius_in: 51.0000, counts: {"No. 2 wedge": 17, "No. 1 wedge": 4}, total: 21}
+      - {span: "4'4\"", span_in: 52, rise: "6 31/32 in", rise_in: 6.9688, inside_radius: "4 ft 4 in", inside_radius_in: 52.0000, counts: {"No. 2 wedge": 17, "No. 1 wedge": 5}, total: 22}
+      - {span: "4'5\"", span_in: 53, rise: "7 3/32 in", rise_in: 7.0938, inside_radius: "4 ft 5 in", inside_radius_in: 53.0000, counts: {"No. 2 wedge": 16, "No. 1 wedge": 6}, total: 22}
+      - {span: "4'6\"", span_in: 54, rise: "7 1/4 in", rise_in: 7.2500, inside_radius: "4 ft 6 in", inside_radius_in: 54.0000, counts: {"No. 2 wedge": 16, "No. 1 wedge": 6}, total: 22}
+      - {span: "4'7\"", span_in: 55, rise: "7 3/8 in", rise_in: 7.3750, inside_radius: "4 ft 7 in", inside_radius_in: 55.0000, counts: {"No. 2 wedge": 16, "No. 1 wedge": 7}, total: 23}
+      - {span: "4'8\"", span_in: 56, rise: "7 1/2 in", rise_in: 7.5000, inside_radius: "4 ft 8 in", inside_radius_in: 56.0000, counts: {"No. 2 wedge": 15, "No. 1 wedge": 8}, total: 23}
+      - {span: "4'9\"", span_in: 57, rise: "7 5/8 in", rise_in: 7.6250, inside_radius: "5 ft 9 in", inside_radius_in: 69.0000, counts: {"No. 2 wedge": 15, "No. 1 wedge": 8}, total: 23, printed_misprint: true}  # MISPRINT as printed: inside radius printed 5 ft 9 in, geometry 56.991 in
+      - {span: "4'10\"", span_in: 58, rise: "7 25/32 in", rise_in: 7.7812, inside_radius: "5 ft 10 in", inside_radius_in: 70.0000, counts: {"No. 2 wedge": 15, "No. 1 wedge": 9}, total: 24, printed_misprint: true}  # MISPRINT as printed: inside radius printed 5 ft 10 in, geometry 57.990 in
+      - {span: "4'11\"", span_in: 59, rise: "7 29/32 in", rise_in: 7.9062, inside_radius: "5 ft 11 in", inside_radius_in: 71.0000, counts: {"No. 2 wedge": 14, "No. 1 wedge": 10}, total: 24, printed_misprint: true}  # MISPRINT as printed: inside radius printed 5 ft 11 in, geometry 58.990 in
+      - {span: "5'0\"", span_in: 60, rise: "8 1/32 in", rise_in: 8.0312, inside_radius: "5 ft 0 in", inside_radius_in: 60.0000, counts: {"No. 2 wedge": 14, "No. 1 wedge": 10}, total: 24}
+      - {span: "5'1\"", span_in: 61, rise: "8 3/16 in", rise_in: 8.1875, inside_radius: "5 ft 1 in", inside_radius_in: 61.0000, counts: {"No. 2 wedge": 14, "No. 1 wedge": 11}, total: 25}
+      - {span: "5'2\"", span_in: 62, rise: "8 5/16 in", rise_in: 8.3125, inside_radius: "5 ft 2 in", inside_radius_in: 62.0000, counts: {"No. 2 wedge": 13, "No. 1 wedge": 12}, total: 25}
+      - {span: "5'3\"", span_in: 63, rise: "8 7/16 in", rise_in: 8.4375, inside_radius: "5 ft 3 in", inside_radius_in: 63.0000, counts: {"No. 2 wedge": 13, "No. 1 wedge": 13}, total: 26}
+      - {span: "5'4\"", span_in: 64, rise: "8 9/16 in", rise_in: 8.5625, inside_radius: "5 ft 4 in", inside_radius_in: 64.0000, counts: {"No. 2 wedge": 12, "No. 1 wedge": 14}, total: 26}
+      - {span: "5'5\"", span_in: 65, rise: "8 23/32 in", rise_in: 8.7188, inside_radius: "5 ft 5 in", inside_radius_in: 65.0000, counts: {"No. 2 wedge": 12, "No. 1 wedge": 14}, total: 26}
+      - {span: "5'6\"", span_in: 66, rise: "8 27/32 in", rise_in: 8.8438, inside_radius: "5 ft 6 in", inside_radius_in: 66.0000, counts: {"No. 2 wedge": 12, "No. 1 wedge": 15}, total: 27}
+      - {span: "5'7\"", span_in: 67, rise: "8 31/32 in", rise_in: 8.9688, inside_radius: "5 ft 7 in", inside_radius_in: 67.0000, counts: {"No. 2 wedge": 11, "No. 1 wedge": 16}, total: 27}
+      - {span: "5'8\"", span_in: 68, rise: "9 1/8 in", rise_in: 9.1250, inside_radius: "6 ft 8 in", inside_radius_in: 80.0000, counts: {"No. 2 wedge": 11, "No. 1 wedge": 16}, total: 27, printed_misprint: true}  # MISPRINT as printed: inside radius printed 6 ft 8 in, geometry 67.989 in
+      - {span: "5'9\"", span_in: 69, rise: "9 1/4 in", rise_in: 9.2500, inside_radius: "6 ft 9 in", inside_radius_in: 81.0000, counts: {"No. 2 wedge": 11, "No. 1 wedge": 17}, total: 28, printed_misprint: true}  # MISPRINT as printed: inside radius printed 6 ft 9 in, geometry 68.989 in
+      - {span: "5'10\"", span_in: 70, rise: "9 3/8 in", rise_in: 9.3750, inside_radius: "6 ft 10 in", inside_radius_in: 82.0000, counts: {"No. 2 wedge": 10, "No. 1 wedge": 18}, total: 28, printed_misprint: true}  # MISPRINT as printed: inside radius printed 6 ft 10 in, geometry 69.989 in
+      - {span: "5'11\"", span_in: 71, rise: "9 1/2 in", rise_in: 9.5000, inside_radius: "6 ft 11 in", inside_radius_in: 83.0000, counts: {"No. 2 wedge": 10, "No. 1 wedge": 18}, total: 28, printed_misprint: true}  # MISPRINT as printed: inside radius printed 6 ft 11 in, geometry 70.988 in
+      - {span: "6'0\"", span_in: 72, rise: "9 21/32 in", rise_in: 9.6562, inside_radius: "6 ft 0 in", inside_radius_in: 72.0000, counts: {"No. 2 wedge": 10, "No. 1 wedge": 19}, total: 29}
+      - {span: "6'1\"", span_in: 73, rise: "9 25/32 in", rise_in: 9.7812, inside_radius: "6 ft 1 in", inside_radius_in: 73.0000, counts: {"No. 2 wedge": 9, "No. 1 wedge": 20}, total: 29}
+      - {span: "6'2\"", span_in: 74, rise: "9 29/32 in", rise_in: 9.9062, inside_radius: "6 ft 2 in", inside_radius_in: 74.0000, counts: {"No. 2 wedge": 9, "No. 1 wedge": 20}, total: 29}
+      - {span: "6'3\"", span_in: 75, rise: "10 1/16 in", rise_in: 10.0625, inside_radius: "6 ft 3 in", inside_radius_in: 75.0000, counts: {"No. 2 wedge": 9, "No. 1 wedge": 21}, total: 30}
+      - {span: "6'4\"", span_in: 76, rise: "10 3/16 in", rise_in: 10.1875, inside_radius: "6 ft 4 in", inside_radius_in: 76.0000, counts: {"No. 2 wedge": 8, "No. 1 wedge": 22}, total: 30}
+      - {span: "6'5\"", span_in: 77, rise: "10 5/16 in", rise_in: 10.3125, inside_radius: "6 ft 5 in", inside_radius_in: 77.0000, counts: {"No. 2 wedge": 8, "No. 1 wedge": 22}, total: 30}
+      - {span: "6'6\"", span_in: 78, rise: "10 7/16 in", rise_in: 10.4375, inside_radius: "6 ft 6 in", inside_radius_in: 78.0000, counts: {"No. 2 wedge": 8, "No. 1 wedge": 23}, total: 31}
+      - {span: "6'7\"", span_in: 79, rise: "10 19/32 in", rise_in: 10.5938, inside_radius: "6 ft 7 in", inside_radius_in: 79.0000, counts: {"No. 2 wedge": 7, "No. 1 wedge": 24}, total: 31}
+      - {span: "6'8\"", span_in: 80, rise: "10 23/32 in", rise_in: 10.7188, inside_radius: "7 ft 8 in", inside_radius_in: 92.0000, counts: {"No. 2 wedge": 7, "No. 1 wedge": 24}, total: 31, printed_misprint: true}  # MISPRINT as printed: inside radius printed 7 ft 8 in, geometry 79.987 in
+      - {span: "6'9\"", span_in: 81, rise: "10 27/32 in", rise_in: 10.8438, inside_radius: "7 ft 9 in", inside_radius_in: 93.0000, counts: {"No. 2 wedge": 7, "No. 1 wedge": 25}, total: 32, printed_misprint: true}  # MISPRINT as printed: inside radius printed 7 ft 9 in, geometry 80.987 in
+      - {span: "6'10\"", span_in: 82, rise: "11 in", rise_in: 11.0000, inside_radius: "7 ft 10 in", inside_radius_in: 94.0000, counts: {"No. 2 wedge": 6, "No. 1 wedge": 26}, total: 32, printed_misprint: true}  # MISPRINT as printed: inside radius printed 7 ft 10 in, geometry 81.987 in
+      - {span: "6'11\"", span_in: 83, rise: "11 1/8 in", rise_in: 11.1250, inside_radius: "7 ft 11 in", inside_radius_in: 95.0000, counts: {"No. 2 wedge": 6, "No. 1 wedge": 27}, total: 33, printed_misprint: true}  # MISPRINT as printed: inside radius printed 7 ft 11 in, geometry 82.986 in
+      - {span: "7'0\"", span_in: 84, rise: "11 1/4 in", rise_in: 11.2500, inside_radius: "7 ft 0 in", inside_radius_in: 84.0000, counts: {"No. 2 wedge": 6, "No. 1 wedge": 27}, total: 33}
+      - {span: "7'1\"", span_in: 85, rise: "11 3/8 in", rise_in: 11.3750, inside_radius: "7 ft 1 in", inside_radius_in: 85.0000, counts: {"No. 2 wedge": 5, "No. 1 wedge": 28}, total: 33}
+      - {span: "7'2\"", span_in: 86, rise: "11 17/32 in", rise_in: 11.5312, inside_radius: "7 ft 2 in", inside_radius_in: 86.0000, counts: {"No. 2 wedge": 5, "No. 1 wedge": 29}, total: 34}
+      - {span: "7'3\"", span_in: 87, rise: "11 21/32 in", rise_in: 11.6562, inside_radius: "7 ft 3 in", inside_radius_in: 87.0000, counts: {"No. 2 wedge": 4, "No. 1 wedge": 30}, total: 34}
+      - {span: "7'4\"", span_in: 88, rise: "11 25/32 in", rise_in: 11.7812, inside_radius: "7 ft 4 in", inside_radius_in: 88.0000, counts: {"No. 2 wedge": 4, "No. 1 wedge": 30}, total: 34}
+      - {span: "7'5\"", span_in: 89, rise: "11 15/16 in", rise_in: 11.9375, inside_radius: "7 ft 5 in", inside_radius_in: 89.0000, counts: {"No. 2 wedge": 4, "No. 1 wedge": 31}, total: 35}
+      - {span: "7'6\"", span_in: 90, rise: "1 ft 0 1/16 in", rise_in: 12.0625, inside_radius: "7 ft 6 in", inside_radius_in: 90.0000, counts: {"No. 2 wedge": 3, "No. 1 wedge": 32}, total: 35}
+      - {span: "7'7\"", span_in: 91, rise: "1 ft 0 3/16 in", rise_in: 12.1875, inside_radius: "7 ft 7 in", inside_radius_in: 91.0000, counts: {"No. 2 wedge": 3, "No. 1 wedge": 32}, total: 35}
+      - {span: "7'8\"", span_in: 92, rise: "1 ft 0 5/16 in", rise_in: 12.3125, inside_radius: "7 ft 8 in", inside_radius_in: 92.0000, counts: {"No. 2 wedge": 3, "No. 1 wedge": 33}, total: 36}
+      - {span: "7'9\"", span_in: 93, rise: "1 ft 0 15/32 in", rise_in: 12.4688, inside_radius: "7 ft 9 in", inside_radius_in: 93.0000, counts: {"No. 2 wedge": 2, "No. 1 wedge": 34}, total: 36}
+      - {span: "7'10\"", span_in: 94, rise: "1 ft 0 19/32 in", rise_in: 12.5938, inside_radius: "7 ft 10 in", inside_radius_in: 94.0000, counts: {"No. 2 wedge": 2, "No. 1 wedge": 34}, total: 36}
+      - {span: "7'11\"", span_in: 95, rise: "1 ft 0 23/32 in", rise_in: 12.7188, inside_radius: "7 ft 11 in", inside_radius_in: 95.0000, counts: {"No. 2 wedge": 2, "No. 1 wedge": 35}, total: 37}
+      - {span: "8'0\"", span_in: 96, rise: "1 ft 0 7/8 in", rise_in: 12.8750, inside_radius: "8 ft 0 in", inside_radius_in: 96.0000, counts: {"No. 2 wedge": 1, "No. 1 wedge": 36}, total: 37}
+      - {span: "8'1\"", span_in: 97, rise: "1 ft 1 in", rise_in: 13.0000, inside_radius: "8 ft 1 in", inside_radius_in: 97.0000, counts: {"No. 2 wedge": 1, "No. 1 wedge": 36}, total: 37}
+      - {span: "8'2\"", span_in: 98, rise: "1 ft 1 1/8 in", rise_in: 13.1250, inside_radius: "8 ft 2 in", inside_radius_in: 98.0000, counts: {"No. 2 wedge": 1, "No. 1 wedge": 37}, total: 38}
+      - {span: "8'3\"", span_in: 99, rise: "1 ft 1 1/4 in", rise_in: 13.2500, inside_radius: "8 ft 3 in", inside_radius_in: 99.0000, counts: {"No. 1 wedge": 38}, total: 38}
+      - {span: "8'6\"", span_in: 102, rise: "1 ft 1 21/32 in", rise_in: 13.6562, inside_radius: "8 ft 6 in", inside_radius_in: 102.0000, counts: {"No. 1 wedge": 38, "Straight": 1}, total: 39}
+      - {span: "9'0\"", span_in: 108, rise: "1 ft 2 15/32 in", rise_in: 14.4688, inside_radius: "9 ft 0 in", inside_radius_in: 108.0000, counts: {"No. 1 wedge": 38, "Straight": 3}, total: 41}
+      - {span: "9'6\"", span_in: 114, rise: "1 ft 3 9/16 in", rise_in: 15.5625, inside_radius: "9 ft 6 in", inside_radius_in: 114.0000, counts: {"No. 1 wedge": 38, "Straight": 5}, total: 43, printed_misprint: true}  # MISPRINT as printed: rise printed 1 ft 3 9/16 in, geometry 15.276 in
+      - {span: "10'0\"", span_in: 120, rise: "1 ft 4 1/16 in", rise_in: 16.0625, inside_radius: "10 ft 0 in", inside_radius_in: 120.0000, counts: {"No. 1 wedge": 38, "Straight": 7}, total: 45}
+      - {span: "10'6\"", span_in: 126, rise: "1 ft 4 7/8 in", rise_in: 16.8750, inside_radius: "10 ft 6 in", inside_radius_in: 126.0000, counts: {"No. 1 wedge": 38, "Straight": 10}, total: 48}
+      - {span: "11'0\"", span_in: 132, rise: "1 ft 5 11/16 in", rise_in: 17.6875, inside_radius: "11 ft 0 in", inside_radius_in: 132.0000, counts: {"No. 1 wedge": 38, "Straight": 12}, total: 50}
+      - {span: "11'6\"", span_in: 138, rise: "1 ft 6 1/2 in", rise_in: 18.5000, inside_radius: "11 ft 6 in", inside_radius_in: 138.0000, counts: {"No. 1 wedge": 38, "Straight": 14}, total: 52}
+      - {span: "12'0\"", span_in: 144, rise: "1 ft 7 9/32 in", rise_in: 19.2812, inside_radius: "12 ft 0 in", inside_radius_in: 144.0000, counts: {"No. 1 wedge": 38, "Straight": 16}, total: 54}
+    status: Verified
+  - id: arch-9in-wedge-brick-3in-rise-2.0
+    label: "IR-57"
+    pdf_page: 180
+    where_on_page: "both halves"
+    title: "9 Inch Arch Thickness - 3 Inch Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 3, 9 x 6-3/4 x 3 or 9 x 9 x 3 Inch"
+    rise_heading: "2 Inch Rise Per Foot of Span"
+    rise_in_per_ft: 2.0
+    arch_thickness_in: 9.0
+    printed_range: "1'10\" to 15'0\"; transcribed to 12'0\""
+    shapes:
+      - {name: "No. 3 wedge", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 96
+    rows:
+      - {span: "1'10\"", span_in: 22, rise: "3 21/32 in", rise_in: 3.6562, inside_radius: "1 ft 6 11/32 in", inside_radius_in: 18.3438, counts: {"No. 3 wedge": 12}, total: 12}
+      - {span: "1'11\"", span_in: 23, rise: "3 27/32 in", rise_in: 3.8438, inside_radius: "1 ft 7 5/32 in", inside_radius_in: 19.1562, counts: {"No. 3 wedge": 11, "No. 2 wedge": 1}, total: 12}
+      - {span: "2'0\"", span_in: 24, rise: "4 in", rise_in: 4.0000, inside_radius: "1 ft 8 in", inside_radius_in: 20.0000, counts: {"No. 3 wedge": 11, "No. 2 wedge": 2}, total: 13}
+      - {span: "2'1\"", span_in: 25, rise: "4 5/32 in", rise_in: 4.1562, inside_radius: "1 ft 8 27/32 in", inside_radius_in: 20.8438, counts: {"No. 3 wedge": 10, "No. 2 wedge": 3}, total: 13}
+      - {span: "2'2\"", span_in: 26, rise: "4 11/32 in", rise_in: 4.3438, inside_radius: "1 ft 9 21/32 in", inside_radius_in: 21.6562, counts: {"No. 3 wedge": 10, "No. 2 wedge": 4}, total: 14}
+      - {span: "2'3\"", span_in: 27, rise: "4 1/2 in", rise_in: 4.5000, inside_radius: "1 ft 10 1/2 in", inside_radius_in: 22.5000, counts: {"No. 3 wedge": 10, "No. 2 wedge": 4}, total: 14}
+      - {span: "2'4\"", span_in: 28, rise: "4 21/32 in", rise_in: 4.6562, inside_radius: "1 ft 11 11/32 in", inside_radius_in: 23.3438, counts: {"No. 3 wedge": 9, "No. 2 wedge": 5}, total: 14}
+      - {span: "2'5\"", span_in: 29, rise: "4 27/32 in", rise_in: 4.8438, inside_radius: "2 ft 0 5/32 in", inside_radius_in: 24.1562, counts: {"No. 3 wedge": 9, "No. 2 wedge": 6}, total: 15}
+      - {span: "2'6\"", span_in: 30, rise: "5 in", rise_in: 5.0000, inside_radius: "2 ft 1 in", inside_radius_in: 25.0000, counts: {"No. 3 wedge": 9, "No. 2 wedge": 6}, total: 15}
+      - {span: "2'7\"", span_in: 31, rise: "5 5/32 in", rise_in: 5.1562, inside_radius: "2 ft 1 27/32 in", inside_radius_in: 25.8438, counts: {"No. 3 wedge": 8, "No. 2 wedge": 7}, total: 15}
+      - {span: "2'8\"", span_in: 32, rise: "5 11/32 in", rise_in: 5.3438, inside_radius: "2 ft 2 21/32 in", inside_radius_in: 26.6562, counts: {"No. 3 wedge": 8, "No. 2 wedge": 8}, total: 16}
+      - {span: "2'9\"", span_in: 33, rise: "5 1/2 in", rise_in: 5.5000, inside_radius: "2 ft 3 1/2 in", inside_radius_in: 27.5000, counts: {"No. 3 wedge": 8, "No. 2 wedge": 8}, total: 16}
+      - {span: "2'10\"", span_in: 34, rise: "5 21/32 in", rise_in: 5.6562, inside_radius: "2 ft 4 11/32 in", inside_radius_in: 28.3438, counts: {"No. 3 wedge": 7, "No. 2 wedge": 9}, total: 16}
+      - {span: "2'11\"", span_in: 35, rise: "5 27/32 in", rise_in: 5.8438, inside_radius: "2 ft 5 5/32 in", inside_radius_in: 29.1562, counts: {"No. 3 wedge": 7, "No. 2 wedge": 10}, total: 17}
+      - {span: "3'0\"", span_in: 36, rise: "6 in", rise_in: 6.0000, inside_radius: "2 ft 6 in", inside_radius_in: 30.0000, counts: {"No. 3 wedge": 7, "No. 2 wedge": 10}, total: 17}
+      - {span: "3'1\"", span_in: 37, rise: "6 5/32 in", rise_in: 6.1562, inside_radius: "2 ft 6 27/32 in", inside_radius_in: 30.8438, counts: {"No. 3 wedge": 6, "No. 2 wedge": 11}, total: 17}
+      - {span: "3'2\"", span_in: 38, rise: "6 11/32 in", rise_in: 6.3438, inside_radius: "2 ft 7 21/32 in", inside_radius_in: 31.6562, counts: {"No. 3 wedge": 6, "No. 2 wedge": 12}, total: 18}
+      - {span: "3'3\"", span_in: 39, rise: "6 1/2 in", rise_in: 6.5000, inside_radius: "2 ft 8 1/2 in", inside_radius_in: 32.5000, counts: {"No. 3 wedge": 5, "No. 2 wedge": 13}, total: 18}
+      - {span: "3'4\"", span_in: 40, rise: "6 21/32 in", rise_in: 6.6562, inside_radius: "2 ft 9 11/32 in", inside_radius_in: 33.3438, counts: {"No. 3 wedge": 5, "No. 2 wedge": 14}, total: 19}
+      - {span: "3'5\"", span_in: 41, rise: "6 27/32 in", rise_in: 6.8438, inside_radius: "2 ft 10 5/32 in", inside_radius_in: 34.1562, counts: {"No. 3 wedge": 5, "No. 2 wedge": 14}, total: 19}
+      - {span: "3'6\"", span_in: 42, rise: "7 in", rise_in: 7.0000, inside_radius: "2 ft 11 in", inside_radius_in: 35.0000, counts: {"No. 3 wedge": 4, "No. 2 wedge": 15}, total: 19}
+      - {span: "3'7\"", span_in: 43, rise: "7 5/32 in", rise_in: 7.1562, inside_radius: "2 ft 11 27/32 in", inside_radius_in: 35.8438, counts: {"No. 3 wedge": 4, "No. 2 wedge": 16}, total: 20}
+      - {span: "3'8\"", span_in: 44, rise: "7 11/32 in", rise_in: 7.3438, inside_radius: "3 ft 021/32 in", inside_radius_in: 36.6562, counts: {"No. 3 wedge": 4, "No. 2 wedge": 16}, total: 20}
+      - {span: "3'9\"", span_in: 45, rise: "7 1/2 in", rise_in: 7.5000, inside_radius: "3 ft 1 1/2 in", inside_radius_in: 37.5000, counts: {"No. 3 wedge": 3, "No. 2 wedge": 17}, total: 20}
+      - {span: "3'10\"", span_in: 46, rise: "7 21/32 in", rise_in: 7.6562, inside_radius: "3 ft 2 11/32 in", inside_radius_in: 38.3438, counts: {"No. 3 wedge": 3, "No. 2 wedge": 18}, total: 21}
+      - {span: "3'11\"", span_in: 47, rise: "7 27/32 in", rise_in: 7.8438, inside_radius: "3 ft 3 5/32 in", inside_radius_in: 39.1562, counts: {"No. 3 wedge": 3, "No. 2 wedge": 18}, total: 21}
+      - {span: "4'0\"", span_in: 48, rise: "8 in", rise_in: 8.0000, inside_radius: "3 ft 4 in", inside_radius_in: 40.0000, counts: {"No. 3 wedge": 2, "No. 2 wedge": 19}, total: 21}
+      - {span: "4'1\"", span_in: 49, rise: "8 5/32 in", rise_in: 8.1562, inside_radius: "3 ft 4 27/32 in", inside_radius_in: 40.8438, counts: {"No. 3 wedge": 2, "No. 2 wedge": 20}, total: 22}
+      - {span: "4'2\"", span_in: 50, rise: "8 11/32 in", rise_in: 8.3438, inside_radius: "3 ft 5 21/32 in", inside_radius_in: 41.6562, counts: {"No. 3 wedge": 2, "No. 2 wedge": 20}, total: 22}
+      - {span: "4'3\"", span_in: 51, rise: "8 1/2 in", rise_in: 8.5000, inside_radius: "3 ft 6 1/2 in", inside_radius_in: 42.5000, counts: {"No. 3 wedge": 1, "No. 2 wedge": 21}, total: 22}
+      - {span: "4'4\"", span_in: 52, rise: "8 21/32 in", rise_in: 8.6562, inside_radius: "3 ft 7 11/32 in", inside_radius_in: 43.3438, counts: {"No. 3 wedge": 1, "No. 2 wedge": 22}, total: 23}
+      - {span: "4'5\"", span_in: 53, rise: "8 27/32 in", rise_in: 8.8438, inside_radius: "3 ft 8 5/32 in", inside_radius_in: 44.1562, counts: {"No. 3 wedge": 1, "No. 2 wedge": 22}, total: 23}
+      - {span: "4'6\"", span_in: 54, rise: "9 in", rise_in: 9.0000, inside_radius: "3 ft 9 in", inside_radius_in: 45.0000, counts: {"No. 2 wedge": 24}, total: 24}
+      - {span: "4'7\"", span_in: 55, rise: "9 5/32 in", rise_in: 9.1562, inside_radius: "3 ft 9 27/32 in", inside_radius_in: 45.8438, counts: {"No. 2 wedge": 23, "No. 1 wedge": 1}, total: 24}
+      - {span: "4'8\"", span_in: 56, rise: "9 11/32 in", rise_in: 9.3438, inside_radius: "3 ft 10 21/32 in", inside_radius_in: 46.6562, counts: {"No. 2 wedge": 23, "No. 1 wedge": 1}, total: 24}
+      - {span: "4'9\"", span_in: 57, rise: "9 1/2 in", rise_in: 9.5000, inside_radius: "3 ft 11 1/2 in", inside_radius_in: 47.5000, counts: {"No. 2 wedge": 22, "No. 1 wedge": 3}, total: 25}
+      - {span: "4'10\"", span_in: 58, rise: "9 21/32 in", rise_in: 9.6562, inside_radius: "4 ft 011/32 in", inside_radius_in: 48.3438, counts: {"No. 2 wedge": 22, "No. 1 wedge": 3}, total: 25}
+      - {span: "4'11\"", span_in: 59, rise: "9 27/32 in", rise_in: 9.8438, inside_radius: "4 ft 1 5/32 in", inside_radius_in: 49.1562, counts: {"No. 2 wedge": 21, "No. 1 wedge": 4}, total: 25}
+      - {span: "5'0\"", span_in: 60, rise: "10 in", rise_in: 10.0000, inside_radius: "4 ft 2 in", inside_radius_in: 50.0000, counts: {"No. 2 wedge": 21, "No. 1 wedge": 5}, total: 26}
+      - {span: "5'1\"", span_in: 61, rise: "10 5/32 in", rise_in: 10.1562, inside_radius: "4 ft 2 27/32 in", inside_radius_in: 50.8438, counts: {"No. 2 wedge": 21, "No. 1 wedge": 5}, total: 26}
+      - {span: "5'2\"", span_in: 62, rise: "10 11/32 in", rise_in: 10.3438, inside_radius: "4 ft 3 21/32 in", inside_radius_in: 51.6562, counts: {"No. 2 wedge": 20, "No. 1 wedge": 6}, total: 26}
+      - {span: "5'3\"", span_in: 63, rise: "10 1/2 in", rise_in: 10.5000, inside_radius: "4 ft 4 1/2 in", inside_radius_in: 52.5000, counts: {"No. 2 wedge": 20, "No. 1 wedge": 7}, total: 27}
+      - {span: "5'4\"", span_in: 64, rise: "10 21/32 in", rise_in: 10.6562, inside_radius: "4 ft 5 11/32 in", inside_radius_in: 53.3438, counts: {"No. 2 wedge": 20, "No. 1 wedge": 7}, total: 27}
+      - {span: "5'5\"", span_in: 65, rise: "10 27/32 in", rise_in: 10.8438, inside_radius: "4 ft 6 5/32 in", inside_radius_in: 54.1562, counts: {"No. 2 wedge": 19, "No. 1 wedge": 8}, total: 27}
+      - {span: "5'6\"", span_in: 66, rise: "11 in", rise_in: 11.0000, inside_radius: "4 ft 7 in", inside_radius_in: 55.0000, counts: {"No. 2 wedge": 19, "No. 1 wedge": 9}, total: 28}
+      - {span: "5'7\"", span_in: 67, rise: "11 5/32 in", rise_in: 11.1562, inside_radius: "4 ft 7 27/32 in", inside_radius_in: 55.8438, counts: {"No. 2 wedge": 19, "No. 1 wedge": 9}, total: 28}
+      - {span: "5'8\"", span_in: 68, rise: "11 11/32 in", rise_in: 11.3438, inside_radius: "4 ft 8 21/32 in", inside_radius_in: 56.6562, counts: {"No. 2 wedge": 19, "No. 1 wedge": 10}, total: 29}
+      - {span: "5'9\"", span_in: 69, rise: "11 1/2 in", rise_in: 11.5000, inside_radius: "4 ft 9 1/2 in", inside_radius_in: 57.5000, counts: {"No. 2 wedge": 18, "No. 1 wedge": 11}, total: 29}
+      - {span: "5'10\"", span_in: 70, rise: "11 21/32 in", rise_in: 11.6562, inside_radius: "4 ft 10 11/32 in", inside_radius_in: 58.3438, counts: {"No. 2 wedge": 18, "No. 1 wedge": 11}, total: 29}
+      - {span: "5'11\"", span_in: 71, rise: "11 27/32 in", rise_in: 11.8438, inside_radius: "4 ft 11 5/32 in", inside_radius_in: 59.1562, counts: {"No. 2 wedge": 17, "No. 1 wedge": 13}, total: 30}
+      - {span: "6'0\"", span_in: 72, rise: "1 ft 0 in", rise_in: 12.0000, inside_radius: "5 ft 0 in", inside_radius_in: 60.0000, counts: {"No. 2 wedge": 17, "No. 1 wedge": 13}, total: 30}
+      - {span: "6'1\"", span_in: 73, rise: "1 ft 0 5/32 in", rise_in: 12.1562, inside_radius: "5 ft 027/32 in", inside_radius_in: 60.8438, counts: {"No. 2 wedge": 16, "No. 1 wedge": 14}, total: 30}
+      - {span: "6'2\"", span_in: 74, rise: "1 ft 011/32 in", rise_in: 12.3438, inside_radius: "5 ft 1 21/32 in", inside_radius_in: 61.6562, counts: {"No. 2 wedge": 16, "No. 1 wedge": 15}, total: 31}
+      - {span: "6'3\"", span_in: 75, rise: "1 ft 0 1/2 in", rise_in: 12.5000, inside_radius: "5 ft 2 1/2 in", inside_radius_in: 62.5000, counts: {"No. 2 wedge": 16, "No. 1 wedge": 15}, total: 31}
+      - {span: "6'4\"", span_in: 76, rise: "1 ft 021/32 in", rise_in: 12.6562, inside_radius: "5 ft 3 11/32 in", inside_radius_in: 63.3438, counts: {"No. 2 wedge": 15, "No. 1 wedge": 16}, total: 31}
+      - {span: "6'5\"", span_in: 77, rise: "1 ft 027/32 in", rise_in: 12.8438, inside_radius: "5 ft 4 5/32 in", inside_radius_in: 64.1562, counts: {"No. 2 wedge": 15, "No. 1 wedge": 17}, total: 32}
+      - {span: "6'6\"", span_in: 78, rise: "1 ft 1 in", rise_in: 13.0000, inside_radius: "5 ft 5 in", inside_radius_in: 65.0000, counts: {"No. 2 wedge": 15, "No. 1 wedge": 17}, total: 32}
+      - {span: "6'7\"", span_in: 79, rise: "1 ft 1 5/32 in", rise_in: 13.1562, inside_radius: "5 ft 5 27/32 in", inside_radius_in: 65.8438, counts: {"No. 2 wedge": 15, "No. 1 wedge": 18}, total: 33}
+      - {span: "6'8\"", span_in: 80, rise: "1 ft 1 11/32 in", rise_in: 13.3438, inside_radius: "5 ft 6 21/32 in", inside_radius_in: 66.6562, counts: {"No. 2 wedge": 14, "No. 1 wedge": 19}, total: 33}
+      - {span: "6'9\"", span_in: 81, rise: "1 ft 1 1/2 in", rise_in: 13.5000, inside_radius: "5 ft 7 1/2 in", inside_radius_in: 67.5000, counts: {"No. 2 wedge": 14, "No. 1 wedge": 19}, total: 33}
+      - {span: "6'10\"", span_in: 82, rise: "1 ft 1 21/32 in", rise_in: 13.6562, inside_radius: "5 ft 8 11/32 in", inside_radius_in: 68.3438, counts: {"No. 2 wedge": 14, "No. 1 wedge": 20}, total: 34}
+      - {span: "6'11\"", span_in: 83, rise: "1 ft 1 27/32 in", rise_in: 13.8438, inside_radius: "5 ft 9 5/32 in", inside_radius_in: 69.1562, counts: {"No. 2 wedge": 13, "No. 1 wedge": 21}, total: 34}
+      - {span: "7'0\"", span_in: 84, rise: "1 ft 2 in", rise_in: 14.0000, inside_radius: "5 ft 10 in", inside_radius_in: 70.0000, counts: {"No. 2 wedge": 13, "No. 1 wedge": 21}, total: 34}
+      - {span: "7'1\"", span_in: 85, rise: "1 ft 2 5/32 in", rise_in: 14.1562, inside_radius: "5 ft 10 27/32 in", inside_radius_in: 70.8438, counts: {"No. 2 wedge": 12, "No. 1 wedge": 23}, total: 35}
+      - {span: "7'2\"", span_in: 86, rise: "1 ft 2 11/32 in", rise_in: 14.3438, inside_radius: "5 ft 11 21/32 in", inside_radius_in: 71.6562, counts: {"No. 2 wedge": 12, "No. 1 wedge": 23}, total: 35}
+      - {span: "7'3\"", span_in: 87, rise: "1 ft 2 1/2 in", rise_in: 14.5000, inside_radius: "6 ft 0 1/2 in", inside_radius_in: 72.5000, counts: {"No. 2 wedge": 11, "No. 1 wedge": 24}, total: 35}
+      - {span: "7'4\"", span_in: 88, rise: "1 ft 2 21/32 in", rise_in: 14.6562, inside_radius: "6 ft 1 11/32 in", inside_radius_in: 73.3438, counts: {"No. 2 wedge": 11, "No. 1 wedge": 25}, total: 36}
+      - {span: "7'5\"", span_in: 89, rise: "1 ft 2 27/32 in", rise_in: 14.8438, inside_radius: "6 ft 2 5/32 in", inside_radius_in: 74.1562, counts: {"No. 2 wedge": 11, "No. 1 wedge": 25}, total: 36}
+      - {span: "7'6\"", span_in: 90, rise: "1 ft 3 in", rise_in: 15.0000, inside_radius: "6 ft 3 in", inside_radius_in: 75.0000, counts: {"No. 2 wedge": 10, "No. 1 wedge": 26}, total: 36}
+      - {span: "7'7\"", span_in: 91, rise: "1 ft 3 5/32 in", rise_in: 15.1562, inside_radius: "6 ft 3 27/32 in", inside_radius_in: 75.8438, counts: {"No. 2 wedge": 10, "No. 1 wedge": 27}, total: 37}
+      - {span: "7'8\"", span_in: 92, rise: "1 ft 3 11/32 in", rise_in: 15.3438, inside_radius: "6 ft 4 21/32 in", inside_radius_in: 76.6562, counts: {"No. 2 wedge": 10, "No. 1 wedge": 27}, total: 37}
+      - {span: "7'9\"", span_in: 93, rise: "1 ft 3 1/2 in", rise_in: 15.5000, inside_radius: "6 ft 5 1/2 in", inside_radius_in: 77.5000, counts: {"No. 2 wedge": 10, "No. 1 wedge": 28}, total: 38}
+      - {span: "7'10\"", span_in: 94, rise: "1 ft 3 21/32 in", rise_in: 15.6562, inside_radius: "6 ft 6 11/32 in", inside_radius_in: 78.3438, counts: {"No. 2 wedge": 9, "No. 1 wedge": 29}, total: 38}
+      - {span: "7'11\"", span_in: 95, rise: "1 ft 3 27/32 in", rise_in: 15.8438, inside_radius: "6 ft 7 5/32 in", inside_radius_in: 79.1562, counts: {"No. 2 wedge": 9, "No. 1 wedge": 29}, total: 38}
+      - {span: "8'0\"", span_in: 96, rise: "1 ft 4 in", rise_in: 16.0000, inside_radius: "6 ft 8 in", inside_radius_in: 80.0000, counts: {"No. 2 wedge": 9, "No. 1 wedge": 30}, total: 39}
+      - {span: "8'1\"", span_in: 97, rise: "1 ft 4 5/32 in", rise_in: 16.1562, inside_radius: "6 ft 8 27/32 in", inside_radius_in: 80.8438, counts: {"No. 2 wedge": 8, "No. 1 wedge": 31}, total: 39}
+      - {span: "8'2\"", span_in: 98, rise: "1 ft 4 11/32 in", rise_in: 16.3438, inside_radius: "6 ft 9 21/32 in", inside_radius_in: 81.6562, counts: {"No. 2 wedge": 8, "No. 1 wedge": 31}, total: 39}
+      - {span: "8'3\"", span_in: 99, rise: "1 ft 4 1/2 in", rise_in: 16.5000, inside_radius: "6 ft 10 1/2 in", inside_radius_in: 82.5000, counts: {"No. 2 wedge": 7, "No. 1 wedge": 33}, total: 40}
+      - {span: "8'4\"", span_in: 100, rise: "1 ft 4 21/32 in", rise_in: 16.6562, inside_radius: "6 ft 11 11/32 in", inside_radius_in: 83.3438, counts: {"No. 2 wedge": 7, "No. 1 wedge": 33}, total: 40}
+      - {span: "8'5\"", span_in: 101, rise: "1 ft 4 27/32 in", rise_in: 16.8438, inside_radius: "7 ft 0 5/32 in", inside_radius_in: 84.1562, counts: {"No. 2 wedge": 6, "No. 1 wedge": 34}, total: 40}
+      - {span: "8'6\"", span_in: 102, rise: "1 ft 5 in", rise_in: 17.0000, inside_radius: "7 ft 1 in", inside_radius_in: 85.0000, counts: {"No. 2 wedge": 6, "No. 1 wedge": 35}, total: 41}
+      - {span: "8'7\"", span_in: 103, rise: "1 ft 5 5/32 in", rise_in: 17.1562, inside_radius: "7 ft 1 27/32 in", inside_radius_in: 85.8438, counts: {"No. 2 wedge": 6, "No. 1 wedge": 35}, total: 41}
+      - {span: "8'8\"", span_in: 104, rise: "1 ft 5 11/32 in", rise_in: 17.3438, inside_radius: "7 ft 2 21/32 in", inside_radius_in: 86.6562, counts: {"No. 2 wedge": 5, "No. 1 wedge": 36}, total: 41}
+      - {span: "8'9\"", span_in: 105, rise: "1 ft 5 1/2 in", rise_in: 17.5000, inside_radius: "7 ft 3 1/2 in", inside_radius_in: 87.5000, counts: {"No. 2 wedge": 5, "No. 1 wedge": 37}, total: 42}
+      - {span: "8'10\"", span_in: 106, rise: "1 ft 5 21/32 in", rise_in: 17.6562, inside_radius: "7 ft 4 11/32 in", inside_radius_in: 88.3438, counts: {"No. 2 wedge": 5, "No. 1 wedge": 37}, total: 42}
+      - {span: "8'11\"", span_in: 107, rise: "1 ft 5 27/32 in", rise_in: 17.8438, inside_radius: "7 ft 5 5/32 in", inside_radius_in: 89.1562, counts: {"No. 2 wedge": 5, "No. 1 wedge": 38}, total: 43}
+      - {span: "9'0\"", span_in: 108, rise: "1 ft 6 in", rise_in: 18.0000, inside_radius: "7 ft 6 in", inside_radius_in: 90.0000, counts: {"No. 2 wedge": 4, "No. 1 wedge": 39}, total: 43}
+      - {span: "9'2\"", span_in: 110, rise: "1 ft 6 11/32 in", rise_in: 18.3438, inside_radius: "7 ft 7 21/32 in", inside_radius_in: 91.6562, counts: {"No. 2 wedge": 4, "No. 1 wedge": 40}, total: 44}
+      - {span: "9'4\"", span_in: 112, rise: "1 ft 6 21/32 in", rise_in: 18.6562, inside_radius: "7 ft 9 11/32 in", inside_radius_in: 93.3438, counts: {"No. 2 wedge": 3, "No. 1 wedge": 41}, total: 44}
+      - {span: "9'6\"", span_in: 114, rise: "1 ft 7 in", rise_in: 19.0000, inside_radius: "7 ft 11 in", inside_radius_in: 95.0000, counts: {"No. 2 wedge": 2, "No. 1 wedge": 43}, total: 45}
+      - {span: "9'8\"", span_in: 116, rise: "1 ft 7 11/32 in", rise_in: 19.3438, inside_radius: "8 ft 021/32 in", inside_radius_in: 96.6562, counts: {"No. 2 wedge": 1, "No. 1 wedge": 45}, total: 46}
+      - {span: "9'10\"", span_in: 118, rise: "1 ft 7 21/32 in", rise_in: 19.6562, inside_radius: "8 ft 2 11/32 in", inside_radius_in: 98.3438, counts: {"No. 1 wedge": 46}, total: 46}
+      - {span: "10'0\"", span_in: 120, rise: "1 ft 8 in", rise_in: 20.0000, inside_radius: "8 ft 4 in", inside_radius_in: 100.0000, counts: {"No. 1 wedge": 47}, total: 47}
+      - {span: "10'6\"", span_in: 126, rise: "1 ft 9 in", rise_in: 21.0000, inside_radius: "8 ft 9 in", inside_radius_in: 105.0000, counts: {"No. 1 wedge": 47, "Straight": 2}, total: 49}
+      - {span: "11'0\"", span_in: 132, rise: "1 ft 10 in", rise_in: 22.0000, inside_radius: "9 ft 2 in", inside_radius_in: 110.0000, counts: {"No. 1 wedge": 47, "Straight": 4}, total: 51}
+      - {span: "12'0\"", span_in: 144, rise: "2 ft 0 in", rise_in: 24.0000, inside_radius: "10 ft 0 in", inside_radius_in: 120.0000, counts: {"No. 1 wedge": 47, "Straight": 9}, total: 56}
+    status: Verified
+  - id: arch-9in-wedge-brick-3in-rise-2.302
+    label: "IR-58"
+    pdf_page: 181
+    where_on_page: "both halves"
+    title: "9 Inch Arch Thickness - 3 Inch Wedge Brick"
+    heading_sizes: "9 x 4-1/2 x 3, 9 x 6-3/4 x 3 or 9 x 9 x 3 Inch"
+    rise_heading: "2.302 Inch (2 5/16 Inch) Rise Per Foot of Span"
+    rise_in_per_ft: 2.302
+    arch_thickness_in: 9.0
+    printed_range: "2'0\" to 15'0\"; transcribed to 12'0\""
+    shapes:
+      - {name: "No. 3 wedge", size: "9 x 4-1/2 x (3 - 2)"}
+      - {name: "No. 2 wedge", size: "9 x 4-1/2 x (3 - 2-1/2)"}
+      - {name: "No. 1 wedge", size: "9 x 4-1/2 x (3 - 2-3/4)"}
+      - {name: "Straight", size: "9 x 4-1/2 x 3"}
+    rows_transcribed: 93
+    rows:
+      - {span: "2'0\"", span_in: 24, rise: "4 19/32 in", rise_in: 4.5938, inside_radius: "1 ft 5 15/16 in", inside_radius_in: 17.9375, counts: {"No. 3 wedge": 14}, total: 14}
+      - {span: "2'1\"", span_in: 25, rise: "4 25/32 in", rise_in: 4.7812, inside_radius: "1 ft 6 11/16 in", inside_radius_in: 18.6875, counts: {"No. 3 wedge": 13, "No. 2 wedge": 1}, total: 14}
+      - {span: "2'2\"", span_in: 26, rise: "5 in", rise_in: 5.0000, inside_radius: "1 ft 7 7/16 in", inside_radius_in: 19.4375, counts: {"No. 3 wedge": 13, "No. 2 wedge": 1}, total: 14}
+      - {span: "2'3\"", span_in: 27, rise: "5 3/16 in", rise_in: 5.1875, inside_radius: "1 ft 8 3/16 in", inside_radius_in: 20.1875, counts: {"No. 3 wedge": 12, "No. 2 wedge": 3}, total: 15}
+      - {span: "2'4\"", span_in: 28, rise: "5 3/8 in", rise_in: 5.3750, inside_radius: "1 ft 8 15/16 in", inside_radius_in: 20.9375, counts: {"No. 3 wedge": 12, "No. 2 wedge": 3}, total: 15}
+      - {span: "2'5\"", span_in: 29, rise: "5 9/16 in", rise_in: 5.5625, inside_radius: "1 ft 9 11/16 in", inside_radius_in: 21.6875, counts: {"No. 3 wedge": 11, "No. 2 wedge": 4}, total: 15}
+      - {span: "2'6\"", span_in: 30, rise: "5 3/4 in", rise_in: 5.7500, inside_radius: "1 ft 10 7/16 in", inside_radius_in: 22.4375, counts: {"No. 3 wedge": 11, "No. 2 wedge": 5}, total: 16}
+      - {span: "2'7\"", span_in: 31, rise: "5 15/16 in", rise_in: 5.9375, inside_radius: "1 ft 11 5/32 in", inside_radius_in: 23.1562, counts: {"No. 3 wedge": 11, "No. 2 wedge": 5}, total: 16}
+      - {span: "2'8\"", span_in: 32, rise: "6 1/8 in", rise_in: 6.1250, inside_radius: "1 ft 11 29/32 in", inside_radius_in: 23.9062, counts: {"No. 3 wedge": 10, "No. 2 wedge": 6}, total: 16}
+      - {span: "2'9\"", span_in: 33, rise: "6 11/32 in", rise_in: 6.3438, inside_radius: "2 ft 021/32 in", inside_radius_in: 24.6562, counts: {"No. 3 wedge": 10, "No. 2 wedge": 7}, total: 17}
+      - {span: "2'10\"", span_in: 34, rise: "6 17/32 in", rise_in: 6.5312, inside_radius: "2 ft 1 13/32 in", inside_radius_in: 25.4062, counts: {"No. 3 wedge": 10, "No. 2 wedge": 7}, total: 17}
+      - {span: "2'11\"", span_in: 35, rise: "6 23/32 in", rise_in: 6.7188, inside_radius: "2 ft 2 5/32 in", inside_radius_in: 26.1562, counts: {"No. 3 wedge": 10, "No. 2 wedge": 8}, total: 18}
+      - {span: "3'0\"", span_in: 36, rise: "6 29/32 in", rise_in: 6.9062, inside_radius: "2 ft 2 29/32 in", inside_radius_in: 26.9062, counts: {"No. 3 wedge": 9, "No. 2 wedge": 9}, total: 18}
+      - {span: "3'1\"", span_in: 37, rise: "7 3/32 in", rise_in: 7.0938, inside_radius: "2 ft 3 21/32 in", inside_radius_in: 27.6562, counts: {"No. 3 wedge": 9, "No. 2 wedge": 9}, total: 18}
+      - {span: "3'2\"", span_in: 38, rise: "7 9/32 in", rise_in: 7.2812, inside_radius: "2 ft 4 13/32 in", inside_radius_in: 28.4062, counts: {"No. 3 wedge": 8, "No. 2 wedge": 11}, total: 19}
+      - {span: "3'3\"", span_in: 39, rise: "7 15/32 in", rise_in: 7.4688, inside_radius: "2 ft 5 5/32 in", inside_radius_in: 29.1562, counts: {"No. 3 wedge": 8, "No. 2 wedge": 11}, total: 19}
+      - {span: "3'4\"", span_in: 40, rise: "7 11/16 in", rise_in: 7.6875, inside_radius: "2 ft 5 29/32 in", inside_radius_in: 29.9062, counts: {"No. 3 wedge": 7, "No. 2 wedge": 12}, total: 19}
+      - {span: "3'5\"", span_in: 41, rise: "7 7/8 in", rise_in: 7.8750, inside_radius: "2 ft 6 21/32 in", inside_radius_in: 30.6562, counts: {"No. 3 wedge": 7, "No. 2 wedge": 13}, total: 20}
+      - {span: "3'6\"", span_in: 42, rise: "8 1/16 in", rise_in: 8.0625, inside_radius: "2 ft 7 13/32 in", inside_radius_in: 31.4062, counts: {"No. 3 wedge": 7, "No. 2 wedge": 13}, total: 20}
+      - {span: "3'7\"", span_in: 43, rise: "8 1/4 in", rise_in: 8.2500, inside_radius: "2 ft 8 1/8 in", inside_radius_in: 32.1250, counts: {"No. 3 wedge": 6, "No. 2 wedge": 14}, total: 20}
+      - {span: "3'8\"", span_in: 44, rise: "8 7/16 in", rise_in: 8.4375, inside_radius: "2 ft 8 7/8 in", inside_radius_in: 32.8750, counts: {"No. 3 wedge": 6, "No. 2 wedge": 15}, total: 21}
+      - {span: "3'9\"", span_in: 45, rise: "8 5/8 in", rise_in: 8.6250, inside_radius: "2 ft 9 5/8 in", inside_radius_in: 33.6250, counts: {"No. 3 wedge": 6, "No. 2 wedge": 15}, total: 21}
+      - {span: "3'10\"", span_in: 46, rise: "8 13/16 in", rise_in: 8.8125, inside_radius: "2 ft 10 3/8 in", inside_radius_in: 34.3750, counts: {"No. 3 wedge": 6, "No. 2 wedge": 16}, total: 22}
+      - {span: "3'11\"", span_in: 47, rise: "9 1/32 in", rise_in: 9.0312, inside_radius: "2 ft 11 1/8 in", inside_radius_in: 35.1250, counts: {"No. 3 wedge": 5, "No. 2 wedge": 17}, total: 22}
+      - {span: "4'0\"", span_in: 48, rise: "9 7/32 in", rise_in: 9.2188, inside_radius: "2 ft 11 7/8 in", inside_radius_in: 35.8750, counts: {"No. 3 wedge": 4, "No. 2 wedge": 18}, total: 22}
+      - {span: "4'1\"", span_in: 49, rise: "9 13/32 in", rise_in: 9.4062, inside_radius: "3 ft 0 5/8 in", inside_radius_in: 36.6250, counts: {"No. 3 wedge": 4, "No. 2 wedge": 19}, total: 23}
+      - {span: "4'2\"", span_in: 50, rise: "9 19/32 in", rise_in: 9.5938, inside_radius: "3 ft 1 3/8 in", inside_radius_in: 37.3750, counts: {"No. 3 wedge": 4, "No. 2 wedge": 19}, total: 23}
+      - {span: "4'3\"", span_in: 51, rise: "9 25/32 in", rise_in: 9.7812, inside_radius: "3 ft 2 1/8 in", inside_radius_in: 38.1250, counts: {"No. 3 wedge": 3, "No. 2 wedge": 20}, total: 23}
+      - {span: "4'4\"", span_in: 52, rise: "9 31/32 in", rise_in: 9.9688, inside_radius: "3 ft 2 7/8 in", inside_radius_in: 38.8750, counts: {"No. 3 wedge": 3, "No. 2 wedge": 21}, total: 24}
+      - {span: "4'5\"", span_in: 53, rise: "10 5/32 in", rise_in: 10.1562, inside_radius: "3 ft 3 5/8 in", inside_radius_in: 39.6250, counts: {"No. 3 wedge": 3, "No. 2 wedge": 21}, total: 24}
+      - {span: "4'6\"", span_in: 54, rise: "10 3/8 in", rise_in: 10.3750, inside_radius: "3 ft 4 3/8 in", inside_radius_in: 40.3750, counts: {"No. 3 wedge": 3, "No. 2 wedge": 22}, total: 25}
+      - {span: "4'7\"", span_in: 55, rise: "10 9/16 in", rise_in: 10.5625, inside_radius: "3 ft 5 3/32 in", inside_radius_in: 41.0938, counts: {"No. 3 wedge": 2, "No. 2 wedge": 23}, total: 25}
+      - {span: "4'8\"", span_in: 56, rise: "10 3/4 in", rise_in: 10.7500, inside_radius: "3 ft 5 27/32 in", inside_radius_in: 41.8438, counts: {"No. 3 wedge": 2, "No. 2 wedge": 23}, total: 25}
+      - {span: "4'9\"", span_in: 57, rise: "10 15/16 in", rise_in: 10.9375, inside_radius: "3 ft 6 19/32 in", inside_radius_in: 42.5938, counts: {"No. 3 wedge": 2, "No. 2 wedge": 24}, total: 26}
+      - {span: "4'10\"", span_in: 58, rise: "11 1/8 in", rise_in: 11.1250, inside_radius: "3 ft 7 11/32 in", inside_radius_in: 43.3438, counts: {"No. 3 wedge": 1, "No. 2 wedge": 25}, total: 26}
+      - {span: "4'11\"", span_in: 59, rise: "11 5/16 in", rise_in: 11.3125, inside_radius: "3 ft 8 3/32 in", inside_radius_in: 44.0938, counts: {"No. 2 wedge": 26}, total: 26}
+      - {span: "5'0\"", span_in: 60, rise: "11 1/2 in", rise_in: 11.5000, inside_radius: "3 ft 8 27/32 in", inside_radius_in: 44.8438, counts: {"No. 2 wedge": 27}, total: 27}
+      - {span: "5'1\"", span_in: 61, rise: "11 23/32 in", rise_in: 11.7188, inside_radius: "3 ft 9 19/32 in", inside_radius_in: 45.5938, counts: {"No. 2 wedge": 26, "No. 1 wedge": 1}, total: 27}
+      - {span: "5'2\"", span_in: 62, rise: "11 29/32 in", rise_in: 11.9062, inside_radius: "3 ft 10 11/32 in", inside_radius_in: 46.3438, counts: {"No. 2 wedge": 26, "No. 1 wedge": 1}, total: 27}
+      - {span: "5'3\"", span_in: 63, rise: "1 ft 0 3/32 in", rise_in: 12.0938, inside_radius: "3 ft 11 3/32 in", inside_radius_in: 47.0938, counts: {"No. 2 wedge": 26, "No. 1 wedge": 2}, total: 28}
+      - {span: "5'4\"", span_in: 64, rise: "1 ft 0 9/32 in", rise_in: 12.2812, inside_radius: "3 ft 11 27/32 in", inside_radius_in: 47.8438, counts: {"No. 2 wedge": 25, "No. 1 wedge": 3}, total: 28}
+      - {span: "5'5\"", span_in: 65, rise: "1 ft 015/32 in", rise_in: 12.4688, inside_radius: "4 ft 019/32 in", inside_radius_in: 48.5938, counts: {"No. 2 wedge": 25, "No. 1 wedge": 4}, total: 29}
+      - {span: "5'6\"", span_in: 66, rise: "1 ft 021/32 in", rise_in: 12.6562, inside_radius: "4 ft 1 11/32 in", inside_radius_in: 49.3438, counts: {"No. 2 wedge": 25, "No. 1 wedge": 4}, total: 29}
+      - {span: "5'7\"", span_in: 67, rise: "1 ft 027/32 in", rise_in: 12.8438, inside_radius: "4 ft 2 1/16 in", inside_radius_in: 50.0625, counts: {"No. 2 wedge": 24, "No. 1 wedge": 5}, total: 29}
+      - {span: "5'8\"", span_in: 68, rise: "1 ft 1 1/16 in", rise_in: 13.0625, inside_radius: "4 ft 2 13/16 in", inside_radius_in: 50.8125, counts: {"No. 2 wedge": 24, "No. 1 wedge": 6}, total: 30}
+      - {span: "5'9\"", span_in: 69, rise: "1 ft 1 1/4 in", rise_in: 13.2500, inside_radius: "4 ft 3 9/16 in", inside_radius_in: 51.5625, counts: {"No. 2 wedge": 23, "No. 1 wedge": 7}, total: 30}
+      - {span: "5'10\"", span_in: 70, rise: "1 ft 1 7/16 in", rise_in: 13.4375, inside_radius: "4 ft 4 5/16 in", inside_radius_in: 52.3125, counts: {"No. 2 wedge": 23, "No. 1 wedge": 7}, total: 30}
+      - {span: "5'11\"", span_in: 71, rise: "1 ft 1 5/8 in", rise_in: 13.6250, inside_radius: "4 ft 5 1/16 in", inside_radius_in: 53.0625, counts: {"No. 2 wedge": 23, "No. 1 wedge": 8}, total: 31}
+      - {span: "6'0\"", span_in: 72, rise: "1 ft 1 13/16 in", rise_in: 13.8125, inside_radius: "4 ft 5 13/16 in", inside_radius_in: 53.8125, counts: {"No. 2 wedge": 22, "No. 1 wedge": 9}, total: 31}
+      - {span: "6'1\"", span_in: 73, rise: "1 ft 2 in", rise_in: 14.0000, inside_radius: "4 ft 6 9/16 in", inside_radius_in: 54.5625, counts: {"No. 2 wedge": 22, "No. 1 wedge": 9}, total: 31}
+      - {span: "6'2\"", span_in: 74, rise: "1 ft 2 3/16 in", rise_in: 14.1875, inside_radius: "4 ft 7 5/16 in", inside_radius_in: 55.3125, counts: {"No. 2 wedge": 22, "No. 1 wedge": 10}, total: 32}
+      - {span: "6'3\"", span_in: 75, rise: "1 ft 2 3/8 in", rise_in: 14.3750, inside_radius: "4 ft 8 1/16 in", inside_radius_in: 56.0625, counts: {"No. 2 wedge": 21, "No. 1 wedge": 11}, total: 32}
+      - {span: "6'4\"", span_in: 76, rise: "1 ft 2 19/32 in", rise_in: 14.5938, inside_radius: "4 ft 8 13/16 in", inside_radius_in: 56.8125, counts: {"No. 2 wedge": 21, "No. 1 wedge": 12}, total: 33}
+      - {span: "6'5\"", span_in: 77, rise: "1 ft 2 25/32 in", rise_in: 14.7812, inside_radius: "4 ft 9 9/16 in", inside_radius_in: 57.5625, counts: {"No. 2 wedge": 20, "No. 1 wedge": 13}, total: 33}
+      - {span: "6'6\"", span_in: 78, rise: "1 ft 2 31/32 in", rise_in: 14.9688, inside_radius: "4 ft 10 5/16 in", inside_radius_in: 58.3125, counts: {"No. 2 wedge": 20, "No. 1 wedge": 13}, total: 33}
+      - {span: "6'7\"", span_in: 79, rise: "1 ft 3 5/32 in", rise_in: 15.1562, inside_radius: "4 ft 11 1/32 in", inside_radius_in: 59.0312, counts: {"No. 2 wedge": 20, "No. 1 wedge": 14}, total: 34}
+      - {span: "6'8\"", span_in: 80, rise: "1 ft 3 11/32 in", rise_in: 15.3438, inside_radius: "4 ft 11 25/32 in", inside_radius_in: 59.7812, counts: {"No. 2 wedge": 19, "No. 1 wedge": 15}, total: 34}
+      - {span: "6'9\"", span_in: 81, rise: "1 ft 3 17/32 in", rise_in: 15.5312, inside_radius: "5 ft 017/32 in", inside_radius_in: 60.5312, counts: {"No. 2 wedge": 19, "No. 1 wedge": 15}, total: 34}
+      - {span: "6'10\"", span_in: 82, rise: "1 ft 3 23/32 in", rise_in: 15.7188, inside_radius: "5 ft 1 9/32 in", inside_radius_in: 61.2812, counts: {"No. 2 wedge": 19, "No. 1 wedge": 16}, total: 35}
+      - {span: "6'11\"", span_in: 83, rise: "1 ft 3 15/16 in", rise_in: 15.9375, inside_radius: "5 ft 2 1/32 in", inside_radius_in: 62.0312, counts: {"No. 2 wedge": 18, "No. 1 wedge": 17}, total: 35}
+      - {span: "7'0\"", span_in: 84, rise: "1 ft 4 1/8 in", rise_in: 16.1250, inside_radius: "5 ft 2 25/32 in", inside_radius_in: 62.7812, counts: {"No. 2 wedge": 18, "No. 1 wedge": 17}, total: 35}
+      - {span: "7'1\"", span_in: 85, rise: "1 ft 4 5/16 in", rise_in: 16.3125, inside_radius: "5 ft 3 17/32 in", inside_radius_in: 63.5312, counts: {"No. 2 wedge": 18, "No. 1 wedge": 18}, total: 36}
+      - {span: "7'2\"", span_in: 86, rise: "1 ft 4 1/2 in", rise_in: 16.5000, inside_radius: "5 ft 4 9/32 in", inside_radius_in: 64.2812, counts: {"No. 2 wedge": 17, "No. 1 wedge": 19}, total: 36}
+      - {span: "7'3\"", span_in: 87, rise: "1 ft 4 11/16 in", rise_in: 16.6875, inside_radius: "5 ft 5 1/32 in", inside_radius_in: 65.0312, counts: {"No. 2 wedge": 17, "No. 1 wedge": 20}, total: 37}
+      - {span: "7'4\"", span_in: 88, rise: "1 ft 4 7/8 in", rise_in: 16.8750, inside_radius: "5 ft 5 25/32 in", inside_radius_in: 65.7812, counts: {"No. 2 wedge": 16, "No. 1 wedge": 21}, total: 37}
+      - {span: "7'5\"", span_in: 89, rise: "1 ft 5 1/16 in", rise_in: 17.0625, inside_radius: "5 ft 6 17/32 in", inside_radius_in: 66.5312, counts: {"No. 2 wedge": 16, "No. 1 wedge": 21}, total: 37}
+      - {span: "7'6\"", span_in: 90, rise: "1 ft 5 9/32 in", rise_in: 17.2812, inside_radius: "5 ft 7 9/32 in", inside_radius_in: 67.2812, counts: {"No. 2 wedge": 16, "No. 1 wedge": 22}, total: 38}
+      - {span: "7'7\"", span_in: 91, rise: "1 ft 5 15/32 in", rise_in: 17.4688, inside_radius: "5 ft 8 1/32 in", inside_radius_in: 68.0312, counts: {"No. 2 wedge": 15, "No. 1 wedge": 23}, total: 38}
+      - {span: "7'8\"", span_in: 92, rise: "1 ft 5 21/32 in", rise_in: 17.6562, inside_radius: "5 ft 8 3/4 in", inside_radius_in: 68.7500, counts: {"No. 2 wedge": 15, "No. 1 wedge": 23}, total: 38}
+      - {span: "7'9\"", span_in: 93, rise: "1 ft 5 27/32 in", rise_in: 17.8438, inside_radius: "5 ft 9 1/2 in", inside_radius_in: 69.5000, counts: {"No. 2 wedge": 15, "No. 1 wedge": 24}, total: 39}
+      - {span: "7'10\"", span_in: 94, rise: "1 ft 6 1/32 in", rise_in: 18.0312, inside_radius: "5 ft 10 1/4 in", inside_radius_in: 70.2500, counts: {"No. 2 wedge": 14, "No. 1 wedge": 25}, total: 39}
+      - {span: "7'11\"", span_in: 95, rise: "1 ft 6 7/32 in", rise_in: 18.2188, inside_radius: "5 ft 11 in", inside_radius_in: 71.0000, counts: {"No. 2 wedge": 14, "No. 1 wedge": 25}, total: 39}
+      - {span: "8'0\"", span_in: 96, rise: "1 ft 6 13/32 in", rise_in: 18.4062, inside_radius: "5 ft 11 3/4 in", inside_radius_in: 71.7500, counts: {"No. 2 wedge": 14, "No. 1 wedge": 26}, total: 40}
+      - {span: "8'2\"", span_in: 98, rise: "1 ft 6 13/16 in", rise_in: 18.8125, inside_radius: "6 ft 1 1/4 in", inside_radius_in: 73.2500, counts: {"No. 2 wedge": 13, "No. 1 wedge": 28}, total: 41}
+      - {span: "8'4\"", span_in: 100, rise: "1 ft 7 3/16 in", rise_in: 19.1875, inside_radius: "6 ft 2 3/4 in", inside_radius_in: 74.7500, counts: {"No. 2 wedge": 12, "No. 1 wedge": 29}, total: 41}
+      - {span: "8'6\"", span_in: 102, rise: "1 ft 7 9/16 in", rise_in: 19.5625, inside_radius: "6 ft 4 1/4 in", inside_radius_in: 76.2500, counts: {"No. 2 wedge": 11, "No. 1 wedge": 31}, total: 42}
+      - {span: "8'8\"", span_in: 104, rise: "1 ft 7 31/32 in", rise_in: 19.9688, inside_radius: "6 ft 5 23/32 in", inside_radius_in: 77.7188, counts: {"No. 2 wedge": 11, "No. 1 wedge": 32}, total: 43}
+      - {span: "8'10\"", span_in: 106, rise: "1 ft 8 11/32 in", rise_in: 20.3438, inside_radius: "6 ft 7 7/32 in", inside_radius_in: 79.2188, counts: {"No. 2 wedge": 10, "No. 1 wedge": 34}, total: 44}
+      - {span: "9'0\"", span_in: 108, rise: "1 ft 8 23/32 in", rise_in: 20.7188, inside_radius: "6 ft 8 23/32 in", inside_radius_in: 80.7188, counts: {"No. 2 wedge": 9, "No. 1 wedge": 35}, total: 44}
+      - {span: "9'2\"", span_in: 110, rise: "1 ft 9 3/32 in", rise_in: 21.0938, inside_radius: "6 ft 10 7/32 in", inside_radius_in: 82.2188, counts: {"No. 2 wedge": 8, "No. 1 wedge": 37}, total: 45}
+      - {span: "9'4\"", span_in: 112, rise: "1 ft 9 1/2 in", rise_in: 21.5000, inside_radius: "6 ft 11 23/32 in", inside_radius_in: 83.7188, counts: {"No. 2 wedge": 8, "No. 1 wedge": 38}, total: 46}
+      - {span: "9'6\"", span_in: 114, rise: "1 ft 9 7/8 in", rise_in: 21.8750, inside_radius: "7 ft 1 7/32 in", inside_radius_in: 85.2188, counts: {"No. 2 wedge": 7, "No. 1 wedge": 39}, total: 46}
+      - {span: "9'8\"", span_in: 116, rise: "1 ft 10 1/4 in", rise_in: 22.2500, inside_radius: "7 ft 2 11/16 in", inside_radius_in: 86.6875, counts: {"No. 2 wedge": 6, "No. 1 wedge": 41}, total: 47}
+      - {span: "9'10\"", span_in: 118, rise: "1 ft 10 5/8 in", rise_in: 22.6250, inside_radius: "7 ft 4 3/16 in", inside_radius_in: 88.1875, counts: {"No. 2 wedge": 6, "No. 1 wedge": 42}, total: 48}
+      - {span: "10'0\"", span_in: 120, rise: "1 ft 11 1/32 in", rise_in: 23.0312, inside_radius: "7 ft 5 11/16 in", inside_radius_in: 89.6875, counts: {"No. 2 wedge": 5, "No. 1 wedge": 44}, total: 49}
+      - {span: "10'2\"", span_in: 122, rise: "1 ft 11 13/32 in", rise_in: 23.4062, inside_radius: "7 ft 7 3/16 in", inside_radius_in: 91.1875, counts: {"No. 2 wedge": 4, "No. 1 wedge": 45}, total: 49}
+      - {span: "10'4\"", span_in: 124, rise: "1 ft 11 25/32 in", rise_in: 23.7812, inside_radius: "7 ft 8 11/16 in", inside_radius_in: 92.6875, counts: {"No. 2 wedge": 3, "No. 1 wedge": 47}, total: 50}
+      - {span: "10'6\"", span_in: 126, rise: "2 ft 0 3/16 in", rise_in: 24.1875, inside_radius: "7 ft 10 3/16 in", inside_radius_in: 94.1875, counts: {"No. 2 wedge": 3, "No. 1 wedge": 48}, total: 51}
+      - {span: "10'8\"", span_in: 128, rise: "2 ft 0 9/16 in", rise_in: 24.5625, inside_radius: "7 ft 11 21/32 in", inside_radius_in: 95.6562, counts: {"No. 2 wedge": 2, "No. 1 wedge": 50}, total: 52}
+      - {span: "10'10\"", span_in: 130, rise: "2 ft 015/16 in", rise_in: 24.9375, inside_radius: "8 ft 1 5/32 in", inside_radius_in: 97.1562, counts: {"No. 2 wedge": 1, "No. 1 wedge": 51}, total: 52}
+      - {span: "11'0\"", span_in: 132, rise: "2 ft 1 5/16 in", rise_in: 25.3125, inside_radius: "8 ft 2 21/32 in", inside_radius_in: 98.6562, counts: {"No. 1 wedge": 53}, total: 53}
+      - {span: "11'6\"", span_in: 138, rise: "2 ft 2 15/32 in", rise_in: 26.4688, inside_radius: "8 ft 7 5/32 in", inside_radius_in: 103.1562, counts: {"No. 1 wedge": 53, "Straight": 2}, total: 55}
+      - {span: "12'0\"", span_in: 144, rise: "2 ft 3 5/8 in", rise_in: 27.6250, inside_radius: "8 ft 11 5/8 in", inside_radius_in: 107.6250, counts: {"No. 1 wedge": 53, "Straight": 4}, total: 57}
+    status: Verified
+
+# Tables read for title and shape names only, not transcribed (PDF page, label):
+not_transcribed:
+  - {label: "IR-31", pdf_page: 155, title: "6 Inch Lining - 3 Inch Arch Brick, 12 x 6 x 3 or 13-1/2 x 6 x 3 Inch"}
+  - {label: "IR-32", pdf_page: 156, title: "6 Inch Lining - Rotary Kiln or Cupola Blocks, 9 x 6 x 4 Inch"}
+  - {label: "IR-33", pdf_page: 157, title: "6 Inch Lining - Rotary Kiln or Cupola Blocks, 9 x 6 x 4 Inch, continued"}
+  - {label: "IR-34 left half", pdf_page: 158, title: "6 Inch Lining - Rotary Kiln Blocks, 9 x 6 x 4 Inch, Arch Type - Two Shape System (KW-3, KW-2, KW-1, KW-1X)"}
+  - {label: "IR-39, IR-40", pdf_page: "163-164", title: "9 Inch Lining - Rotary Kiln Blocks, 9 x 9 x 4 Inch, continued"}
+  - {label: "IR-41 left half", pdf_page: 165, title: "9 Inch Lining - Rotary Kiln Blocks, 9 x 6 x 4 Inch, Wedge Type - Two Shape System"}
+  - {label: "IR-41 right half, IR-42, IR-43 left half", pdf_page: "165-167", title: "12 Inch Lining - 3 Inch Wedge Brick, 12 x 4-1/2 x 3, 12 x 6 x 3 or 12 x 9 x 3 Inch"}
+  - {label: "IR-43 right half, IR-44 left half", pdf_page: "167-168", title: "12 Inch Lining - 3 Inch Key Brick, 12 x 6 x 3 Inch"}
+  - {label: "IR-44 right half to IR-46 left half", pdf_page: "168-170", title: "13-1/2 Inch Lining - 3 Inch Wedge Brick, 13-1/2 x 4-1/2 x 3, 13-1/2 x 6 x 3 or 13-1/2 x 9 x 3 Inch"}
+  - {label: "IR-46 right half, IR-47 left half", pdf_page: "170-171", title: "13-1/2 Inch Lining - 3 Inch Key Brick, 13-1/2 x 6 x 3 Inch"}
+  - {label: "IR-47 right half to IR-49 left half", pdf_page: "171-173", title: "15 Inch Lining - 3 Inch Wedge Brick, 15 x 6 x 3 or 15 x 9 x 3 Inch"}
+  - {label: "IR-49 right half, IR-50", pdf_page: "173-174", title: "18 Inch Lining - 3 Inch Wedge Brick, 18 x 6 x 3 or 18 x 9 x 3 Inch"}
+  - {label: "IR-59", pdf_page: 182, title: "12 Inch Arch Thickness - 3 Inch Wedge Brick, 12 x 4-1/2 x 3, 12 x 6 x 3 or 12 x 9 x 3 Inch, 1.608 in/ft"}
+  - {label: "IR-60", pdf_page: 183, title: "13-1/2 Inch Arch Thickness - 3 Inch Wedge Brick, 13-1/2 x 4-1/2 x 3, 13-1/2 x 6 x 3 or 13-1/2 x 9 x 3 Inch, 1.608 in/ft"}
+  - {label: "IR-61", pdf_page: 184, title: "15 Inch Arch Thickness - 3 Inch Wedge Brick, 15 x 6 x 3 or 15 x 9 x 3 Inch, 1.608 in/ft"}
+  - {label: "IR-62", pdf_page: 185, title: "18 Inch Arch Thickness - 3 Inch Wedge Brick, 18 x 6 x 3 or 18 x 9 x 3 Inch, 1.608 in/ft"}
