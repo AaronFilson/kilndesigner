@@ -384,6 +384,20 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      Hollyweird's care. Read its text and figures on the page images, and compare them with its
      design and its dataset entry. Then check v2 models it as the book describes it. A kiln that
      doesn't match a template or a design is future work, noted here, not a fault to force.
+     Each kiln's doc carries its findings. So far:
+     - ~~Hollyweird~~ (above).
+     - ~~The Kyoto type~~ (2026-11-18). Fig 4-28's "4.5–6' wide" is the span along the draft, as
+       Olsen uses "wide" for chambers. The design read it as the width across. It now stands
+       63 in along the draft and 168 in across (Suzuki's 14 ft, assumed), under a semicircle along
+       the draft. Future work:
+       - the main firebox, unsized for the type, so v2's path is refused;
+       - a row's pointed arch along the draft, springing near the floor, and the reduction
+         chambers' offset peak;
+       - the doors in a side wall;
+       - **one firebox in each chamber, in the schema.** v1 makes the himae troughs only when
+         they don't fit side by side across the front. The Kyoto type, Suzuki, Tobe and Hotchkiss
+         all fit, so v1 lays them out in front of the kiln. v2's path takes them as troughs only
+         through the test-side `path_inputs.ONE_PER_CHAMBER`.
    - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
      owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
      lining among them). Then restate "Where things stand".

@@ -7555,64 +7555,64 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Table 2, coniferous wood (interquartile)'
         condition: dry basis (research A1)
       - what: setting
-        value: [208, 1220]
+        value: [835, 4951]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 0.921 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 0.921 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.436 m³; 1–7 layers of shelves over 4.570 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.436 m³ as v2 traces it; the envelope''s plan 4.570 m²)'
         condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 3: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 4: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 5: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 6: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 7: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 8: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [213, 1293]
+        value: [848, 5128]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.205 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.205 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.515 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.515 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 9: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [211, 1284]
+        value: [843, 5107]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.172 m³; 1–8 layers of shelves over 1.070 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.172 m³ as v2 traces it; the envelope''s plan 1.070 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 12.436 m³; 1–7 layers of shelves over 4.985 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 12.436 m³ as v2 traces it; the envelope''s plan 4.985 m²)'
         condition: 'chamber 10: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: height
@@ -7622,44 +7622,56 @@ kilns:
         page: p.91
         figure: Fig 4-28
         quote: "Kyoto climbing kiln dimensions: 6–7' tall, 4.5–6' wide"
-      - what: width
+      - what: depth
         value: [4.5, 6]
         unit: foot
         status: printed
         page: p.91
         figure: Fig 4-28
-      - what: width
+        note: printed "wide", the chamber's span along the draft, front wall to back wall. The
+          figure is drawn along the draft, the inlet flues in one wall and the outlets in the
+          other, and Olsen calls a chamber's length across the kiln its "long" (Tobe's 25 ft long
+          by 10 ft tall by 10 ft wide, its width "almost equal to the height", p.90, p.92; Suzuki's
+          14 × 6½ × 4½ ft, p.93). Read as the width across until 2026-11-18
+      - what: depth
         value: 4
         unit: foot
         status: printed
         page: pp.91–92
-        figure: Fig 4-31
-        condition: Fig 4-31's Kyoto chamber, 6 ft tall, pointed arch, against other climbing kilns 
-          at 6 ft wide by 6 ft tall
-      - what: width
+        figure: Figs 4-27, 4-31
+        condition: Fig 4-31's Kyoto chamber, 6 ft tall, a pointed arch from near the floor, against
+          other climbing kilns' 6 ft along the draft by 6 ft tall; Fig 4-27's Kyomizu kiln, "4'
+          INSIDE" over its third chamber
+        note: Fig 4-27's vertical dimension at the wall between chambers 2 and 3, and a label at its
+          left end, are too faded in the scan to read (2026-11-18)
+      - what: depth
         value: 63
         unit: inch
         status: assumed
-        reason: the middle of the printed 4½–6 ft (Fig 4-28)
+        reason: the middle of the printed 4½–6 ft along the draft (Fig 4-28)
+      - what: width
+        value: 168
+        unit: inch
+        status: assumed
+        reason: the length across isn't printed for the type; the Suzuki kiln's chambers, 14 ft (p.93),
+          a Kyoto chamber kiln. The floor's five stoking zones, short, medium and long tosses from
+          both sides at once (p.92, Fig 4-33), need a long chamber. 63 in until 2026-11-18, Fig
+          4-28's range misread as the width
       - what: crown_height
         value: 78
         unit: inch
         status: assumed
         reason: the middle of the printed 6–7 ft (Fig 4-28)
-      - what: depth
-        value: 41.33
-        unit: inch
-        status: assumed
-        reason: not given for the type; the mean of the Bidai kiln's chambers (Fig 4-36, p.94)
       - what: springline_height
-        value: 57.3
+        value: 46.5
         unit: inch
         status: assumed
-        reason: 78 in to the crown less the assumed 20.7 in rise
+        reason: 78 in to the crown less the assumed 31½ in rise
       - what: chamber_count
         value: 10
         status: assumed
-        reason: as the Kyomizu kiln Olsen fired for 2½ years (Fig 4-27)
+        reason: as the Kyomizu kiln Olsen fired for 2½ years (Figs 4-23, 4-27); Fig 4-27 numbers its
+          chambers to 10
       - what: slope
         value: 18.4
         unit: degree
@@ -7691,12 +7703,15 @@ kilns:
         page: p.92
         figure: Fig 4-34
       - what: between_flues
-        value: outlet about 9 × 5 in, 9 in apart; inlet 9 × 6 to 9 × 4½ in; a mark 18 in inside the 
-          chamber at the outlet flue, meaning unclear
+        value: outlet about 9 × 5 in, 9 in apart; inlet 9 × 6 to 9 × 4½ in; a mark 15 in inside the
+          chamber beside the outlet flue's foot
         status: printed
         page: p.91
         figure: Fig 4-28
         quote: approx. 9 x 5" spaced 9" apart
+        note: the mark read again at zoom 14 on 2026-11-18 as 15 in, its second digit open at the
+          top like the figure's other 5s (it had also been read 18); step A took it as the height
+          from the floor to the outlet's foot
       - what: between_flues
         value: outlets drawn 11 in tall and 5½ in wide, inlets 9½ in tall, so 9 in is the height and
           5 in the width across
@@ -7712,10 +7727,33 @@ kilns:
         status: printed
         page: p.96
       - what: between_flues
-        value: five 5 × 9 in flues a wall
+        value: twelve 5 × 9 in flues a wall
         status: assumed
-        reason: the count isn't printed; as many 5 in flues as fit across the assumed 63 in, 9 in 
-          apart (Olsen's rule, p.96)
+        reason: the count isn't printed; as many 5 in flues as fit across the assumed 168 in, 9 in
+          apart (Olsen's rule, p.96); five across 63 in before 2026-11-18
+      - what: stoke_hole
+        value: three stoke holes to a chamber, its sizes not printed; the takaguchi low in the
+          himae, for the firebox and the upper half's setting; the aizashiguchi at the floor,
+          between the saggar settings, for the lower half; the mempo ana high at the back
+        status: printed
+        page: pp.92–93
+        figure: Fig 4-34
+        note: covered after each stoking (the owner, 2026-11-18), so not air intakes; not in the
+          design
+      - what: firebox
+        value: the climbing chamber kiln's firebox at its foot, photographed but not sized
+        status: printed
+        page: p.89
+        figure: Fig 4-22
+        condition: the main firebox (dogi)
+        note: the Suzuki kiln's is stoked 15 hours to 1832 °F before the side stoking begins (p.93);
+          not in the design, so v2's draft path has no way in for chamber 1's air and refuses
+      - what: chimney_count
+        value: 1
+        status: drawing
+        page: p.91
+        figure: Fig 4-27
+        note: a chimney at the top end, past the last chamber, unsized
     structure:
       - what: roof_type
         value: pointed arch (Kyoto chamber); reduction chambers a double-radius arch, its peak set 
@@ -7733,17 +7771,18 @@ kilns:
         note: ratios measured off the figure in step A (±2 %); it prints no dimension; not entered 
           in the design file (the back half turns past a quarter circle)
       - what: span
-        value: 41.33
+        value: 63
         unit: inch
         status: assumed
-        reason: each arch spans its chamber along the draft (p.95, p.97); the depth is the Bidai 
-          kiln's mean
+        reason: each arch spans its chamber along the draft (p.95, p.97), the middle of Fig 4-28's
+          4½–6 ft; 41⅓ in, the Bidai kiln's mean, before 2026-11-18
       - what: rise
-        value: 20.7
+        value: 31.5
         unit: inch
         status: assumed
-        reason: 6 in per foot of the 41⅓ in span, the top of the 4–6 in/ft Olsen uses on chamber 
-          kilns (p.296), a semicircle
+        reason: 6 in per foot of the 63 in span, the top of the 4–6 in/ft Olsen uses on chamber
+          kilns (p.296), a semicircle; the book draws the arch taller and pointed, from near the
+          floor (Figs 4-28, 4-31)
       - what: ring_thickness
         value: 9
         unit: inch
@@ -7769,17 +7808,21 @@ kilns:
         page: p.90
         note: checked on the page image, 2026-11-09
     gaps:
-      - chamber depth, count and the step between chambers
+      - the chambers' length across the kiln, their count and the step between them
       - slope
       - wall and arch thickness
-      - arch span and rise (the arch shape is drawn, not dimensioned)
+      - the arch's springing and its pointed shape (drawn, not dimensioned)
       - main firebox (dogi) size
-      - chimney
+      - chimney size
       - flue count per wall
       - cone, firing time and fuel per firing (the Suzuki kiln's are its own)
-      - 'research A2: the stoke holes'' (takaguchi) and the main firebox''s intakes'
+      - 'research A2: the stoke holes'' sizes (takaguchi, aizashiguchi, mempo ana) and the main
+        firebox''s intakes'
+      - Fig 4-27's faded dimension and label (the scan)
     notes:
       - a type, not one kiln; the design file draws one from the book's ranges
+      - checked against pp.89–94, p.96 and p.205 on the page images, 2026-11-18 (the kiln-by-kiln
+        check)
 
   la-borne:
     name: La Borne tunnel kiln

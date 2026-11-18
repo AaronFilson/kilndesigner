@@ -32,8 +32,10 @@ GIVEN = ("printed", "derived", "scaled", "drawing")
 WITH_ASSUMED = (*GIVEN, "assumed")
 # The book draws each chamber's own firebox (a himae or a stoking channel along its front wall);
 # their design files lay as many fireboxes side by side at the first chamber's front (the owner's
-# question 3, `11-10-26.md` §B, B4–B6): the path takes the book's
-ONE_PER_CHAMBER = frozenset({"suzuki-kyoto", "tobe", "hotchkiss-raw-clay"})
+# question 3, `11-10-26.md` §B, B4–B6): the path takes the book's. The Kyoto type's himae, one in
+# each chamber (p.92, Fig 4-34), joined them on 2026-11-18, when its chambers became 14 ft across
+# and ten 9 in fireboxes would otherwise fit side by side at its front
+ONE_PER_CHAMBER = frozenset({"suzuki-kyoto", "tobe", "hotchkiss-raw-clay", "kyoto-climbing"})
 # The six kilns with nothing on their gas path sized (C1's refused six): their paths are built only
 # on Olsen's Rule 6 seeding p.78 (`paths.Inputs.rule6`), asked for by the tests that run them,
 # `inputs(kid, rule6=True)`, and every result on it says so. The owner answered on 2026-11-17
