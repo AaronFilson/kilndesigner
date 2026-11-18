@@ -280,6 +280,9 @@ references used. The plans print the working, so a builder can check it.
    (decision 3).
 7. The owner's answers ([11-17-26-inputs.md](11-17-26-inputs.md)) settle the open items as they
    come in.
+   - Principle 6 is answered (§1). The six unsized chimneys get scaled from Olsen's drawings,
+     which the owner thinks are in another local repo's `scratch/`. Ask for its path first,
+     then copy the pages into `scratch/olsen-pages/`.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
