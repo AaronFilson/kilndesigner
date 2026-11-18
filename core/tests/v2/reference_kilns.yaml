@@ -3528,6 +3528,38 @@ kilns:
         page: p.161
         figure: Fig 6-32
         note: their size isn't printed
+      - what: exit_flue
+        value: each about 2½–3 times the long side of the vault's visible brick faces across; about
+          12 in square if those faces are 4½ in header ends, about 25 in if 9 in bed faces
+        status: drawing
+        page: p.161
+        figure: Fig 6-32
+        spread: the nearest hole about 330 px a side at zoom 8, the faces about 100–130 px; which
+          face of the brick shows isn't seen, so a factor of 2 (2026-11-18)
+        note: not scalable to better than that; the path stays on Rule 6's chimney
+      - what: stoke_hole
+        value: the stoking port, arched, its visible dark opening about 16–28 in wide and 10½–18 in
+          tall above a bricked panel, a slab across its right part
+        status: scaled
+        page: p.161
+        figure: Fig 6-34
+        spread: 239 × 155 px at zoom 5; the wall courses 25 px (the right-hand wall) to 34–38 px
+          (the front's jambs), each taken as a 2.6–2.9 in course (the bricks' size isn't printed;
+          firebrick or Italian brick), so 8.6–14.6 px/in; people stand in front of it
+          (scratch/kiln-check/falcone/measure.py, jambs.py, 2026-11-18)
+        note: covered after each stoking (the owner, 2026-11-18)
+      - what: primary_air
+        value: [82, 237]
+        unit: inch**2
+        status: derived
+        page: p.161
+        figure: Fig 6-34
+        reason: the under-air supply, a dark opening below the bricked panel, 140 × 125 px at zoom 5
+          on 8.6–14.6 px/in, about 12 × 11 in at the middle (as the stoking port, above)
+        condition: the firebox chamber's "under air supply" (Fig 6-34's caption), with no grate
+          (Fig 6-35); the kiln's air, its stoking port being covered after each stoking (research A2)
+        note: the design gives no opening, so its path alone takes the firebox chamber's whole open
+          end, 118 × 71 in, 8,378 in² (a gap, 2026-11-18)
     structure:
       - what: roof_type
         value: barrel vault
@@ -3571,12 +3603,14 @@ kilns:
     gaps:
       - wall thickness
       - vault rise and thickness
-      - exit-flue and stoking-port sizes
+      - exit-flue sizes (not scalable to better than a factor of 2 on Fig 6-32)
+      - the stoking port's and under-air supply's sizes (scaled only, ±25 %)
       - firing schedule; wood species and moisture
-      - 'research A2: the stoking port''s and its under-air supply''s sizes'
     notes:
-      - the printed 848 ft³ is the box to 79 in; the design file adds the vault above it (about 
+      - the printed 848 ft³ is the box to 79 in; the design file adds the vault above it (about
         1,010 ft³)
+      - checked against pp.160–161 on the page images, 2026-11-18 (the kiln-by-kiln check), Figs
+        6-32 and 6-34 scaled on their bricks; the design is unchanged
   fast-fire:
     name: Olsen fast-fire wood kiln
     design: examples/olsen/fast-fire.yaml

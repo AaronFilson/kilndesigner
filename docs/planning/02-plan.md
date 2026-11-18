@@ -447,6 +447,12 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        into the chamber, closing the firebox's mouth into the chamber, which the book draws open.
      - **The electric car kiln:** no new gap. The floor elements, if p.245's clipped word is
        "and", were already listed.
+     - **Falcone's Pompeii updraft:**
+       - Fig 6-34's under-air supply scales about 12 × 11 in ([82, 237] in², ±25 %, on the
+         bricks' courses). The design gives no opening, so its path alone takes the firebox
+         chamber's whole open end, 118 × 71 in.
+       - The nine exit holes (Fig 6-32) don't scale to better than a factor of 2 (about 12 or
+         25 in square, as the vault's brick faces are ends or beds), so the path stays on Rule 6.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
