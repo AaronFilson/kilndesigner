@@ -8,7 +8,10 @@
 # way the Kyoto chambers lie (wide across, short along the draft; bidai, kawaii), and 10 ft to the
 # crown. The arch rises 5 ft, a semicircle on the 10 ft span along the draft: Olsen uses 4–6 in
 # per foot on chamber kilns of 4–8 ft span (p.296), and 6 in/ft on 10 ft is a semicircle. So the
-# springline is at 5 ft, and seven chambers come to about 14,800 ft³, near the printed 15,000 ft³.
+# springline is at 5 ft, and v2 traces the seven chambers at 15,710 ft³, 4.7 % over the printed
+# 15,000 ft³: the other six are a little smaller than the largest (2026-11-18; 14,800 was written
+# here before, wrongly). The book's order, long × tall × wide, puts the 25 ft across the kiln and
+# the 10 ft along the draft, the width "almost equal to the height" (p.92).
 # The book names no brick and no thickness. The owner (2026-11-17): take the brick as high duty.
 # Tobe was built in Japan in the 1800s or before, perhaps of tatami-rolled fireclay brick, and
 # nothing specific is known of it, so high-duty firebrick stands in for it. Not 9 in thick: "the
@@ -26,7 +29,9 @@
 # thrust onto the common wall and on to the chimney, the front braced (p.95, p.97); the book shows
 # no steel frame on them.
 # Not modelled: the other six chambers' own sizes, the main firebox and the steps between
-# chambers. The engine's arch spans the width, so it is laid across the 25 ft with the same
+# chambers. The book doesn't mention a main firebox for this kiln; without one v2's draft path has
+# no way in for chamber 1's air, the himae's stoke holes being covered after each stoking, and
+# refuses (2026-11-18). The engine's arch spans the width, so it is laid across the 25 ft with the same
 # springline and crown; held by masonry, it gets no steel. The floor's loss into dry soil is
 # worked out at steady state.
 schema: 1

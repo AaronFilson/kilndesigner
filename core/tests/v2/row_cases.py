@@ -113,6 +113,11 @@ def _climbing(n: int, front: str = "the front, to 1000 °C") -> tuple[Phase, ...
 # aren't applied yet
 
 PLANS: dict[str, Plan] = {
+    # Suzuki, Tobe, the Kyoto type and Hotchkiss have no main firebox in their designs (the book
+    # sizes none), and their first stage was chamber 1's own trough standing in for it, its air
+    # through the side stoke holes. Since stoke holes are covered after each stoking (the owner,
+    # 2026-11-18) the path refuses that trough, so these plans can't run until the main firebox is
+    # entered (the kiln-by-kiln check, 02-plan.md item 1)
     # p.93: the firebox stoked 15 h to 1000 °C (the main firebox isn't in the design: the first
     # chamber's own trough takes it), then each chamber's sides: 7 h each for 1–3 (reduction), 5 h
     # each for 4–7 (oxidation); the cones 10, 10, 8–9 (9 taken, the hotter, as the design), 8–9, …,

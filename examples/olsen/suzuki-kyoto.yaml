@@ -4,8 +4,10 @@
 #
 # From the book: seven chambers climbing the ground (p.93), so the floor is on the ground; each
 # "14 x 6 1/2 x 4 1/2 ft (4.3 x 2 x 1.4m)" (p.93; the feet, lost in the gutter in the scan, read
-# by the user), 4.3 m across, 2 m tall and 1.4 m deep, as the Kyoto chambers lie; cone 10 in chambers 1 and 2, the hottest
-# (Fig 4-35); the firebox stoked 15 hours to 1000 °C, then each chamber from its sides (p.93).
+# by the user), 4.3 m across, 2 m tall and 1.4 m deep, as the Kyoto chambers lie: the book's order
+# is long × tall × wide (Tobe's "25ft long by 10ft tall by 10ft wide", p.90), a chamber's width
+# its span along the draft (p.92); cone 10 in chambers 1 and 2, the hottest (Fig 4-35); the
+# firebox stoked 15 hours to 1000 °C, then each chamber from its sides (p.93).
 # Assumed: the 2 m is to the crown. The arch rises 0.7 m: Olsen uses 4–6 in per foot of span on
 # chamber kilns of 4–8 ft (p.296), and the top of that range on the 1.4 m span is nearest the
 # tall pointed arches of the Kyoto kilns (Bidai's rise 21–27 in on 36–46 in, Fig 4-36). So the
@@ -18,11 +20,13 @@
 # (kyoto-climbing, p.92, Fig 4-34). No chimney is given, so the engine sizes it. The arches are
 # held by masonry (buttressed): each chamber's arch spans front to back and throws its thrust onto
 # the common wall and on to the chimney, the front braced (p.95, p.97).
-# Not modelled: the main firebox, stoked for the first 15 hours. The engine's arch spans the
-# width, so it is laid across the 4.3 m with the same springline and crown; held by masonry, it
-# gets no steel. The doors are in the side walls; a sprung arch here springs from the side
-# walls, so the door is put in the front wall. The floor's loss into dry soil is worked out at
-# steady state.
+# Not modelled: the main firebox, stoked for the first 15 hours. Fig 4-35 draws it half-round
+# below chamber 1, about 13 ft across and 3–8 ft deep on a plan that isn't to scale, with no height
+# and no mouth, so it isn't entered; without it v2's draft path has no way in for chamber 1's air
+# and refuses (rechecked 2026-11-18). The engine's arch spans the width, so v1 lays it across the
+# 4.3 m with the same springline and crown; held by masonry, it gets no steel. The doors are in
+# the side walls; a sprung arch here springs from the side walls, so the door is put in the front
+# wall. The floor's loss into dry soil is worked out at steady state.
 # The chambers' cones (firing.chamber_cones): 1 and 2 to cone 10, the rest to cone 8–9 (p.93),
 # 9 taken, the hotter; chamber 7 bisque, "Δ1" (Fig 4-35). The heat loss takes each chamber at its
 # own cone; the lining is checked at the hottest, cone 10.

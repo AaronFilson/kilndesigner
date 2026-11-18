@@ -29,9 +29,9 @@ are left as they were.
 | Feature | Book | Scaled | Model | |
 |---|---|---|---|---|
 | Chambers | seven in series (p.93, Fig 4-35) | — | seven | matches |
-| Chamber size | "14 x 6 1/2 x 4 1/2 ft (4.3 x 2 x 1.4m)" (p.93) | — | 4.3 m × 1.4 m, 2 m to the crown | matches (reading of which is which is the note's) |
+| Chamber size | "14 x 6 1/2 x 4 1/2 ft (4.3 x 2 x 1.4m)" (p.93) | — | 4.3 m across × 1.4 m along the draft, 2 m to the crown | matches: the book's order is long × tall × wide, as Tobe's "25ft long by 10ft tall by 10ft wide" (p.90) |
 | Chamber proportion | drawn wide across, short along the draft (Fig 4-35) | — | the same | matches |
-| Main firebox | half-round, below chamber 1 ("KILN", Fig 4-35); stoked 15 h to 1000 °C | — | none | not expressible alongside the himae |
+| Main firebox | half-round, below chamber 1 ("KILN", Fig 4-35); stoked 15 h to 1000 °C | drawn about 13 ft across and 3–8 ft deep on a plan 1.6 times out between its directions; no height, no mouth (2026-11-18) | none | not entered: too little drawn. v2's path is refused for it |
 | Side stoking | each chamber from both sides (p.93) | — | himae trough per chamber | matches in kind |
 | Doors and stoke porches | a bay on both sides of each chamber (Fig 4-35) | — | one bricked door in the front wall | differs; `loading.opening.each_chamber` exists but no size is printed |
 | Chimney | round, at the top of the kiln (Fig 4-35) | — | engine-sized | not sized in the book |
@@ -51,6 +51,26 @@ arches' feet on it, p.46; the engine's default), so the run is longer and each f
 Along the row every chamber stands cold and hot, the ends' supports giving 0–1 lbf/ft cold and
 about 35 hot; each ring's foot against the taller wall behind it is a springer coursed into that
 wall.
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images: p.93 and the Kyoto section around it (pp.89–94), Fig 4-35 at
+zoom 4. The dataset's facts match the page (the 56 h, the firebox's 15 h, the bundles, the hours
+and the cones). Added: the reading of the chamber's dimensions by Tobe's printed order, and the
+main firebox as drawn.
+
+v2:
+- **Draft path: refused.** The design has no main firebox, and chamber 1's himae has no way in
+  for its air, its stoke holes being covered after each stoking. Before the stoke-hole change the
+  first chamber's trough stood in for the main firebox, its air through its side stoke holes.
+- **Statics:** stands cold and hot. The least the end buttresses must give is 0 and 1.2 lbf/ft
+  cold, 33.5 and 38.1 hot.
+- **Cavity:** 396–399 ft³ a chamber (11.2–11.3 m³), the printed box 425 ft³ (12.0 m³).
+
+Future work: the main firebox, once it can be sized. When a design gives both the main firebox and
+a himae in each chamber, chamber 1's himae should burn the firebox's gas, as later chambers burn
+the gas from the chambers before them. Today v2's path would refuse it for want of its own inlet,
+and v1 would lay the himae from chamber 2 on.
 
 ## Open questions for the user
 

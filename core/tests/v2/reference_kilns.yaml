@@ -11575,8 +11575,9 @@ kilns:
         status: printed
         page: p.93
         quote: 14 x 6 1/2 x 4 1/2 ft (4.3 x 2 x 1.4m)
-        note: 4.3 m; across the kiln, by the Kyoto proportions (the notes' reading of which is 
-          which); the feet were read by the user, 2026-10-29
+        note: 4.3 m, across the kiln; the feet were read by the user, 2026-10-29. The book's order
+          is long × tall × wide, as Tobe's "25ft long by 10ft tall by 10ft wide" (p.90), a chamber's
+          width being its span along the draft, "almost equal to the height" in Tobe's (p.92)
       - what: height
         value: 6.5
         unit: foot
@@ -11623,11 +11624,16 @@ kilns:
         reason: as the Bidai kiln's arch (Fig 4-36)
     flow:
       - what: firebox
-        value: a half-round main firebox below chamber 1, marked KILN, stoked 15 h before the 
+        value: a half-round main firebox below chamber 1, marked KILN, stoked 15 h before the
           chambers
         status: drawing
         page: p.93
         figure: Fig 4-35
+        note: drawn about 13 ft across and 3–8 ft deep, with steps up at both its sides and the wood
+          stacked in front; no height and no mouth are drawn. The plan isn't to scale, its
+          chambers 600 × 118 px at zoom 4 for the printed 14 × 4½ ft (1.6 times out between its
+          directions). Not in the design, so v2's draft path has no way in for chamber 1's air
+          and refuses (2026-11-18)
       - what: firebox
         value: a 9 in trough firebox (himae) along each chamber's front wall, 4.3 m long
         status: assumed
@@ -11682,6 +11688,8 @@ kilns:
       - the stage times add up to the printed total, 15 + 3 × 7 + 4 × 5 = 56 h (derived)
       - a bundle's gross volume is π × 7.5² × 18 in³ = 1.84 ft³ (derived); no weight is printed
       - Fig 4-35 is this kiln's site plan (p.93), not the Bidai kiln's (Fig 4-36, p.94)
+      - checked against p.93 and the Kyoto section (pp.89–94) on the page images, 2026-11-18 (the
+        kiln-by-kiln check)
 
   tamba:
     name: Tamba tube kiln, Tachikui
@@ -12338,10 +12346,11 @@ kilns:
         15,000, so the others are smaller, 2,143 ft³ on average (derived)
       - by the chamber reading, 40 tons on the 2,500 ft³ chamber is 32 lb of wood per ft³ of 
         chamber; by the whole-kiln reading, 5.3 lb/ft³ (derived, short tons)
-      - the design file's header says seven chambers come to about 14,800 ft³; its doc's build gives
-        about 15,600 ft³, which a 5 ft box under a 5 ft-radius semicircle × 25 ft × 7 reproduces 
-        (15,620 ft³, derived); the header's figure looks wrong
+      - a 5 ft box under a 5 ft-radius semicircle × 25 ft × 7 is 15,620 ft³ (derived); v2 traces
+        15,710 ft³. The design's header said 14,800 ft³ until 2026-11-18, wrongly
       - there is no figure of this kiln (p.90, p.92 are text only)
+      - checked against p.90 and p.92 on the page images, 2026-11-18 (the kiln-by-kiln check); no
+        main firebox is mentioned, and without one v2's draft path refuses
 
   updraft-test-1:
     name: Updraft test kiln 1, 2 × 3 × 5 ft stacking

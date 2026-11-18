@@ -82,6 +82,24 @@ max fire. The hot statics still takes all the masonry at C16's temperature. The 
 model fault ("the temp does not go around all sides of the brick"); the fix is the bridge from the
 heat model's wall temperatures (`docs/planning/02-plan.md`).
 
+## Checked against the book (2026-11-18)
+
+Read again on the page images, p.90 and p.92. The dataset matches them:
+- seven chambers, 15,000 ft³;
+- the largest 25 ft long by 10 ft tall by 10 ft wide, with 40 tons of wood (the whole kiln);
+- destroyed in July 1963;
+- on Shikoku, its width almost its height, so more oxidizing.
+
+The book's order, long × tall × wide, puts the 25 ft across the kiln and the 10 ft along the
+draft, as the design has them.
+
+v2:
+- **Cavity:** 2,239–2,246 ft³ a chamber, 15,710 ft³ in all, 4.7 % over the printed total. The
+  design's header had said 14,800 ft³, wrongly.
+- **Draft path: refused.** The book doesn't mention a main firebox, and the himae's stoke holes are
+  covered after each stoking, so chamber 1 has no way in for its air. Future work, with Suzuki's
+  and the Kyoto type's.
+
 ## Open questions for the user
 
 1. Does "required 40 tons of wood to fire" (p.90) mean the largest chamber or the whole kiln?
