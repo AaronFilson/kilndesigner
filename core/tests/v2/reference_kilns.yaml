@@ -5060,11 +5060,16 @@ kilns:
         reason: from the Gulgong racer, Olsen's wood cross-draft after the groundhog (gulgong-racer,
           p.119)
       - what: evenness
-        value: a groundhog runs hot along the crown and cool along the bottom of the back wall, 
-          where its refractories fail
+        value: a groundhog's flame runs at right angles to its arch, hot along the crown, which
+          leaves cool areas along the bottom of the back side wall and refractory failure at the
+          back wall
         status: printed
         page: p.75
         figure: Fig 3-6
+        note: checked against p.75 on the second scan's page image, 2026-11-18 (the kiln-by-kiln
+          check), docs/research/Scanned_20261025-1022.pdf, PDF index 3. The earlier wording put the
+          refractory failure in the cool areas; the book puts the cool areas along the bottom of the
+          back side wall and the failure at the back wall. Fig 3-6 prints no dimension
       - what: evenness
         value: fires evenly with good control unless it is too long and lacks side stoke holes; hard
           to reduce, with the large air supply built into the firebox and no dampers in a large 
@@ -5776,6 +5781,9 @@ kilns:
       - the caption list and the figure labels swap Figs 4-109 and 4-110
       - not olsen-two-chamber, a design never built; its two chambers differ and are described on
         its own pages (the owner, 2026-11-18). Possibly olsen-anagama-p26; the book doesn't say
+      - rescanned on the page images, pp.116–117, 2026-11-18, each figure scaled on its own bricks
+        (olsen-figure-scaling.md §8); the owner's answers set its design (11-17-26-inputs.md §8a).
+        The kiln-by-kiln check took its care from this rescan
 
   hotchkiss-raw-clay:
     name: Hotchkiss six-chamber raw-clay climbing kiln, 1971
@@ -9242,6 +9250,10 @@ kilns:
       - ware load beyond "plumb full"
       - the two front corner flues closed in the initial firing (p.159); the design can't vary its
         flues over the firing
+    notes:
+      - checked against pp.157–160 on the page images, 2026-11-18 (the kiln-by-kiln check); it
+        matches and the design is unchanged; the two front corner flues closed in the initial
+        firing (p.159) were added then
   moveros-umbrella:
     name: Moveros umbrella kiln, Spain
     design: examples/olsen/moveros-umbrella.yaml
@@ -10913,8 +10925,8 @@ kilns:
       - the engine fires the three chambers together at the top temperature as one long chamber; a 
         climbing kiln fires them in turn, so a time or fuel comparison needs a chamber-by-chamber 
         model
-      - checked against p.224 (PDF index 208) on the page image, 2026-11-18 (the kiln-by-
-        kiln check); no new finding, the design unchanged (the chambers' size, the only
+      - checked against p.224 (PDF index 208) on the page image, 2026-11-18 (the kiln-by-kiln
+        check); no new finding, the design unchanged (the chambers' size, the only
         other thing a design needs, isn't printed)
 
   phoenix-nh:
@@ -11108,8 +11120,8 @@ kilns:
       - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - Studio Potter Vol. 7, No. 2 would hold the sizes the book leaves out
-      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-
-        kiln check); no new finding, the design unchanged (only the volume and Fig 5-67's
+      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-kiln
+        check); no new finding, the design unchanged (only the volume and Fig 5-67's
         layout are printed)
   phoenix-wright:
     name: George Wright's Phoenix-style kiln, Portland, Oregon
@@ -11287,8 +11299,8 @@ kilns:
       - >-
         the design file says this kiln "gave the type its name"; olsen-kilns.md says the name Phoenix
         comes from the New Hampshire variation (phoenix-nh)
-      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-
-        kiln check); no new finding, the design unchanged (only the volume and Fig 5-67's
+      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-kiln
+        check); no new finding, the design unchanged (only the volume and Fig 5-67's
         layout are printed)
   singh-coal:
     name: Singh's round coal downdraft, Delhi Blue Pottery, New Delhi

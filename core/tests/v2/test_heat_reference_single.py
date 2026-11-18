@@ -248,9 +248,9 @@ def test_t5_la_bornes_tunnel_falls_front_to_back() -> None:
 
 
 def test_t5_the_groundhogs_back_fires_cooler() -> None:
-    """T5: a groundhog runs hot along the crown and cool along the bottom of the back wall (p.75,
-    Fig 3-6): its chamber in two segments, the back's setting cooler than the front's when the
-    front's reaches cone 10 (top to bottom needs zones stacked up the chamber: not built)."""
+    """T5: a groundhog runs hot along the crown and cool along the bottom of the back side wall
+    (p.75, Fig 3-6): its chamber in two segments, the back's setting cooler than the front's when
+    the front's reaches cone 10 (top to bottom needs zones stacked up the chamber: not built)."""
     f = sc.evenness("groundhog-basic", 2)
     print(
         f"T5 groundhog-basic at {f.times[-1] / HOUR:.2f} h: settings "
