@@ -472,7 +472,10 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        stoking and the atmosphere;
      - the book's flame from the stoke holes further on (p.87);
      - Breda's flames out of the chimney cone holes, stoked again when they "suck back in"
-       (p.168, Fig 6-53).
+       (p.168, Fig 6-53);
+     - the fast-fire's top spyhole, its flame watched until it "sucks back into the kiln", time to
+       stoke (pp.142–143); the Anderson Ranch kiln's "reducing flames coming out of the door blow
+       hole" at 1250 °F (Table 5-2).
      Sources to find first: the two-way flow through an opening in a hot enclosure (compartment-
      fire research, `grates-and-fuel-beds.md` [G10]–[G11], the neutral plane's height).
    - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and

@@ -3683,6 +3683,14 @@ kilns:
         status: printed
         page: pp.142–143
         note: critical (choking) temperatures about 1100 °F (590 °C) and 1994 °F (1090 °C) (p.143)
+      - what: fuel_rate
+        value: a spyhole kept open at all times, preferably at the top; the flame that emerges from
+          it watched, and the chimney smoke; when the flame sucks back into the kiln and the chimney
+          has cleared, it is time to stoke
+        status: printed
+        page: pp.142–143
+        note: read on the page images, 2026-11-18; gas out of an opening high in the kiln, then air
+          drawn back in, the two-way flow at an opening the plan's next part is to model
       - what: hold_time
         value: 0.5
         unit: hour
@@ -4054,6 +4062,8 @@ kilns:
       - the grate is printed 6–7 in up (p.199) but its legs 7–8 in tall (Fig 5-39, p.204)
       - the family runs 12–45 ft³ (p.139) and can be enlarged to 12–120 ft³ (p.142); those are other
         kilns
+      - checked against pp.139–143 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged; the top spyhole's flame added (fuel_rate), for two-way flow
   fast-fire-anderson:
     name: Fast-fire wood kiln, Anderson Ranch, Aspen, Colorado, 1977
     design: examples/olsen/fast-fire-anderson.yaml
@@ -4297,8 +4307,16 @@ kilns:
       - ware and shelf load
       - wood weight, species and moisture
     notes:
-      - kiln-reference.md §12 gives Table 5-2's damper steps as "the first firing at one workshop"; 
+      - kiln-reference.md §12 gives Table 5-2's damper steps as "the first firing at one workshop";
         olsen-kilns.md names this kiln
+      - 'Table 5-2 also logs, at 6.00 pm and 1250 °F, "reducing flames coming out of the door blow
+        hole", the door''s open top-centre hole (p.141): gas out of an opening, for the plan''s
+        two-way flow; the fire was lit under the grate, an hour later on it; the back firebox
+        started at 7.30 pm, near 1400 °F, where p.142''s text says about 1100 °F; "a warm, clear
+        evening"'
+      - checked against pp.141–142 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged
+
   fireworks-edmonton:
     name: Fireworks multi-directional kiln, Edmonton, 1998
     design: examples/olsen/fireworks-edmonton.yaml
