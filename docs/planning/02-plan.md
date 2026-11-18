@@ -453,6 +453,15 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
          chamber's whole open end, 118 × 71 in.
        - The nine exit holes (Fig 6-32) don't scale to better than a factor of 2 (about 12 or
          25 in square, as the vault's brick faces are ends or beds), so the path stays on Rule 6.
+     - **Fujiwara's Bizen kiln:**
+       - The dataset's intake was the dogi's loading hole, "3½ × 2ft ... when open" (p.102),
+         1,008 in². For the firing that hole is bricked up as the dogi door. Fig 4-55's front
+         elevation draws a fire hole in it with an air duct under it, and p.103 fires 2½ days
+         "stoking the fire-mouth air duct", then 4 days "from the fire hole".
+       - The dataset now takes the air duct as drawn, 75–189 in². That is a drawing scale: the
+         widths are firm on the dogi's 10 ft, the heights loose by 2×.
+       - The design's stoke hole is still the loading hole (a gap).
+       - With the smaller intake, the staged chamber is under suction at its side holes' height.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the

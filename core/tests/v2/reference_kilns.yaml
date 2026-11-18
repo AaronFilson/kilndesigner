@@ -4952,13 +4952,34 @@ kilns:
         page: p.101
         figure: Fig 4-55
         spread: ±1 in on the heights, ±3 in along the wall
+      - what: stoke_hole
+        value: the dogi door's fire hole, a square drawn about 10½ in wide and 6–12 in tall, with
+          an opening under it at the floor about 10½ in wide and 8–16½ in tall
+        status: drawing
+        page: p.101
+        figure: Fig 4-55
+        spread: the front elevation's widths on the dogi's printed 10 ft and the door's 3½ ft
+          (1,088 and 380 px at zoom 5, both 9.05 px/in); its heights between the dogi's 9 ft crown
+          (6.4 px/in) and the fire-mouth hole's 2 ft (13.3 px/in), the sketch's verticals not
+          agreeing (scratch/kiln-check/fujiwara/front.py, 2026-11-18)
+        note: p.103's firing, 2½ days "stoking the fire-mouth air duct" (a fire half in the duct and
+          half out, Fig 4-59), then 4 days "stoking the fire mouth from the fire hole"; so the
+          opening under the fire hole is the air duct. The fire hole is covered after each stoking
+          (the owner, 2026-11-18)
       - what: primary_air
-        value: 1008
+        value: [75, 189]
         unit: inch**2
         status: derived
-        page: p.102
-        reason: the fire-mouth hole 3½ × 2 ft when open
-        condition: no grate; the fire mouth admits the fuel and the air (research A2)
+        page: p.101, p.103
+        figure: Fig 4-55
+        reason: the fire-mouth air duct as Fig 4-55's front elevation draws it, 9½–11½ in wide by
+          8–16½ in tall (the stoke_hole fact above)
+        condition: no grate; the dogi's air through its air duct, the fire hole covered after each
+          stoking (research A2; the owner, 2026-11-18)
+        note: 1,008 in² until 2026-11-18, the fire-mouth hole "3½ × 2ft (107 × 61cm), when open"
+          (p.102); that is the hole the dogi is loaded through, bricked up for the firing as the
+          dogi door with the fire hole and the air duct in it (Fig 4-55). The design still takes
+          the 42 × 24 in loading hole as the firebox's mouth (a gap)
     structure:
       - what: roof_type
         value: sprung arches along the draft, one per chamber, semicircular, held by masonry
@@ -5020,8 +5041,11 @@ kilns:
     notes:
       - the model's kedo is 10 ft wide, as the dogi; the book calls it narrower, so its loss and 
         volume are likely overstated
-      - the design file lays the dogi as the firebox and leaves out the ware it holds and its own 
+      - the design file lays the dogi as the firebox and leaves out the ware it holds and its own
         walls and roof
+      - checked against pp.100–104 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. The dogi's intake corrected from the loading hole to the air duct
+        (primary_air, above); the design's stoke hole is still the 42 × 24 in loading hole (a gap)
 
   groundhog-basic:
     name: Groundhog, Olsen's basic dimensions (type)

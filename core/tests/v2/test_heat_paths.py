@@ -404,10 +404,11 @@ def test_a_row_fired_in_stages_takes_its_air_from_its_own_inlets() -> None:
     """Fujiwara's kedo stoked from its side: its takiguchi is covered after each stoking (the
     owner, 2026-11-18), so the stage's air is the gas from the chamber before it, and with the
     front closed it has no way in and is refused. Left open as an air inlet (a variant, not the
-    design), the hole is a branch beside the front's path, joined in that chamber. With the
-    3½ × 2 ft fire mouth wide open the chamber is hardly under suction, the 10 in round entry into
-    the chimney (p.101) the path's narrowest, so the hole, 10 in up, stands at the neutral plane
-    and draws nothing; the front closed, the hole alone draws the chimney's air."""
+    design), the hole is a branch beside the front's path, joined in that chamber. The dogi
+    draws through its air duct, about 10½ × 11½ in (Fig 4-55, the dataset's since 2026-11-18;
+    before, the 3½ × 2 ft loading hole wide open left the chamber hardly under suction and the
+    hole drawing nothing), so the chamber is under suction at the hole's 10 in and it draws a
+    share; the front closed, the hole alone draws the chimney's air, less than both together."""
     k = load_design(OLSEN / "fujiwara-bizen.yaml")
     built = dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=1))
     assert not any(e.kind == "parallel" for e in built.elements)
@@ -423,8 +424,8 @@ def test_a_row_fired_in_stages_takes_its_air_from_its_own_inlets() -> None:
     assert side[0].area == pytest.approx(math.pi * (2.5 * IN) ** 2)
     d = dr.draw(staged, _hot(staged), WOOD)
     front, hole = d.shares[0][1]
-    assert front == pytest.approx(d.air)
-    assert hole == 0.0
+    assert front + hole == pytest.approx(d.air)
+    assert 0 < hole < front
     alone = dr.kiln_path(v, inputs=pi.inputs("fujiwara-bizen", stage=1, front_open=False))
     assert alone.zones[0] == "chamber 2"
     assert "the front's intakes closed for the stage" in (alone.steps[0].note or "")
