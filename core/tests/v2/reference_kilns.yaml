@@ -7188,6 +7188,10 @@ kilns:
         entry reads "over 50 hours" (the user's reading)
       - the floor area disagrees with itself (30 ft² on p.207 against 45.5 ft² from the plan)
       - Olsen's proposed redesign (Fig 5-5) is not this kiln
+      - 'checked against pp.131–132 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. "dampening the air supply when firing will equalize inlet and exit
+        flues" (p.132): the air is throttled, its openings unsized, so v2''s path takes the
+        design''s ash-pit mouths, 30 × 27 in each (a gap)'
   kawaii:
     name: Takichi Kawaii's climbing kiln, outside Kyoto, 1984
     design: examples/olsen/kawaii.yaml
@@ -7637,6 +7641,11 @@ kilns:
       - temperature and firing time
       - wood per firing
       - 'research A2: the firebox mouth and the ash pit''s intake'
+    notes:
+      - 'checked against p.165 on the page image, 2026-11-18 (the kiln-by-kiln check); the design is
+        unchanged. "IRON GRATE OPENING 15" X 19"" labels the firebox''s front, where the grate shows
+        through the opening, so it may be the firebox''s mouth with the grate in it rather than the
+        grate alone; the design takes it as the grate (a gap)'
   kitade-tojilo:
     name: Kitade Tojilo chamber kiln, Kutani
     design: examples/olsen/kitade-tojilo.yaml
@@ -7884,6 +7893,10 @@ kilns:
       - Fig 8-11 is matched to this kiln by its content (the notes); the firebox may run along the 8
         ft side (step A), while the design file runs it across the 4 ft width
       - the stoke hole is drawn 4 × 5½ in against its printed 9 × 7 in
+      - checked against p.202 on the page image, 2026-11-18 (the kiln-by-kiln check); the design is
+        unchanged, its gaps the owner's answers already in the plan (inputs §8, the second chamber
+        and its side firebox 18 in below the first chamber's floor, the 12 in chimney, the front
+        closed)
 
   kyoto-climbing:
     name: Kyoto-style climbing chamber kiln (type)
@@ -8479,11 +8492,20 @@ kilns:
         page: p.110
         figure: Fig 4-80
       - what: bag_wall
-        value: greenware bricks in a checkerboard, the gaps acting as inlet flues, leant away from 
+        value: greenware bricks in a checkerboard, the gaps acting as inlet flues, leant away from
           the flame and rebuilt after each firing; about 2 ft between the grate and the bag wall for
           preheated air and raking
         status: printed
         page: p.110
+      - what: stoke_hole
+        value: the firebox front with two openings, a stoke opening above the grate and an air
+          opening into the ash pit below it, each with a height arrow
+        status: drawing
+        page: p.109
+        figure: Fig 4-78
+        note: read on the page image at zoom 7, 2026-11-18; the labels read "STO[KE]" and "AIR",
+          their numbers and the ash pit's ("15–20"?) too faded to read. The design gives the
+          firebox no grate and no mouth, so its path takes the firebox's whole open end (a gap)
       - what: exit_flue
         value: the back entrance, bricked up as a lattice with a draw or spy hole at the top, is the
           exit flue
@@ -8539,6 +8561,9 @@ kilns:
       - the design's 11 × 27 ft box with a 7 ft springline and a 33 in rise gives 2650 ft³, inside 
         the printed 1766–2825 ft³
       - the widest station scales about 13 ft from the bag wall; the design keeps the mean-width box
+      - checked against pp.109–110 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. Fig 4-78's entrance door's height arrow and the firebox front's
+        dimensions are too faded in the scan to read at zoom 7
 
   meaders-cheever:
     name: Cheever Meaders's groundhog, Mossy Creek, Georgia

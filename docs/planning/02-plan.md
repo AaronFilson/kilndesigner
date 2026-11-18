@@ -480,6 +480,14 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        - None is sized: the figure is "NOT TO SCALE" and the photo's brick format isn't printed.
        - The design's fireboxes have no grate and no mouth, so its path takes each firebox's whole
          open end.
+     - **Kato:** no new gap. Its air is "dampened" (p.132), its openings unsized, so v2's path
+       takes the design's ash-pit mouths.
+     - **Kenzan:** Fig 6-47's "IRON GRATE OPENING 15" × 19"" may be the firebox's mouth with the
+       grate seen through it, not the grate alone, as the design takes it.
+     - **Kitade:** no new gap beyond the owner's answers already in this item (inputs §8).
+     - **La Borne:** Fig 4-78 draws the firebox front's stoke opening above the grate and an air
+       opening into the ash pit, but their numbers are too faded to read. The design gives the
+       firebox no grate and no mouth, so its path takes its whole open end.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
