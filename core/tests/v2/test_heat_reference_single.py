@@ -36,7 +36,9 @@ pytestmark = [pytest.mark.slow, pytest.mark.geometry]
 # Printed: the oil drip's cone 10 (p.208), Fireworks' cone 10+ (p.181), Singh's coal kiln's cone 10
 # (p.133), Anderson's cone 10 (p.142), Kato's 2372 °F (p.131), Falcone's usual 1760 °F (p.160),
 # La Borne's 1300 °C by the firebox (p.111). Assumed, each with its reason in the dataset: the
-# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed)
+# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed);
+# Breda's a band, 1760 °F to cone 2's 2088 °F (earthenware, rarely above cone 2: the owner,
+# 2026-11-17), an input of its band like the load, so every corner reaches the band's hot end too
 T1 = (
     "anagama-hole", "blakebrough-sturt", "breda-bottle", "chappell-domura", "church-skaelskor",
     "conrad-teardrop", "ellington-new-hog", "falcone-pompeii", "fast-fire-anderson",
@@ -132,14 +134,16 @@ def test_t2_the_stage_times_stand() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies under v2's band "
-    "at cone 2 (2,370 kg to never, the load swinging it most); at the old 1760 °F it was 0.3 % "
-    "under 1,820 kg. The setting's weight and the top (earthenware, rarely above cone 2) aren't "
-    "printed; 11-17-26-inputs.md §5",
+    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies 1.1 % under v2's "
+    "band over the top's band, 1760 °F to cone 2 (1,820 kg to never, 3,400 kg nominal at 1924 °F; "
+    "the load swings it most, 2,420–4,440 kg, the top 2,970–3,900 kg). The least is the light "
+    "load, the most-heat wood and 1760 °F: the setting's weight isn't printed; "
+    "11-17-26-inputs.md §5",
 )
 def test_t3_bredas_two_tons_lie_in_its_band() -> None:
-    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; short tons, 1814 kg as
-    fired): the setting held to a straight rise to its 1760 °F (assumed) over 10 h takes a fuel
+    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; 1800 kg as fired, the
+    metric read): the setting held to a straight rise to its top, a band from 1760 °F to cone 2's
+    2088 °F (assumed: earthenware, rarely above cone 2), over 10 h takes a fuel
     inside v2's band (the setting, the wood, λ from the stoker's 1 to all the draft's air, the
     grey gases, the emissivity class, the setting's passages)."""
     tons = _printed("breda-bottle", "fuel_per_firing", "kg")

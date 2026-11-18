@@ -7,8 +7,11 @@
 # (Fig 6-50), with 9 in walls (Fig 6-53); the firebox 3 ft from the grate to the floor dome, the
 # ash pit under the grate 2 ft wide and 3½ ft deep (Fig 6-50); grate bars 1 in apart, running 8 ft
 # into the firebox (Fig 6-51); wood, chestnut slats 3 ft long (p.166).
-# Assumed: the temperature isn't given: 1760 °F, the usual top of Falcone's wood updraft, the
-# only low-fire updraft whose temperature the book prints (p.160). The brick isn't named:
+# Assumed: the temperature isn't given. Earthenware is rarely fired above cone 2 (the user,
+# 2026-11-17), so the top is a band from the old 1760 °F (960 °C, Falcone's usual, p.160) up to
+# cone 2: 1142 °C (2088 °F), Orton's self-supporting cone at 60 °C/h, the slower of the table's
+# rates, as a 10 h wood firing ends (cones.yaml). The file holds the band's hot end, cone 2; the
+# validation runs the whole band (core/tests/v2/single_cases.py). The brick isn't named:
 # refractory brick, which Böttger brought to the bottle kiln (p.166); medium-duty
 # firebrick (Olsen's intermediate duty, p.18). The 7 ft is taken to the springline. The dome's
 # rise isn't printed: 3 in per foot, the top of Olsen's 2½–3 in/ft for domes (p.51), 45 in. It is
@@ -32,7 +35,7 @@ schema: 1
 name: Breda bottle kiln, Segra Pottery
 units: us
 firing:
-  top_temperature: 1760 degF
+  top_temperature: 2088 degF # cone 2, the band's hot end (the user, 2026-11-17)
 chamber:
   shape: round
   width: 180 in

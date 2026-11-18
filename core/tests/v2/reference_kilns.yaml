@@ -1768,11 +1768,12 @@ kilns:
         status: printed
         page: p.166
       - what: top_temperature
-        value: 2088
+        value: [1760, 2088]
         unit: degF
         status: assumed
-        reason: not given; earthenware is rarely above cone 2 (the user, 2026-11-17), so cone 2, 1142 °C
-          by Orton's self-supporting cone at 60 °C/h (cones.yaml)
+        reason: earthenware, rarely above cone 2 (the user, 2026-11-17); not printed. From the old 1760 °F
+          (960 °C, Falcone's usual, p.160) up to cone 2, 1142 °C (2088 °F) by Orton's self-supporting
+          cone at 60 °C/h (cones.yaml)
       - what: fuel_species
         value: chestnut
         status: printed
