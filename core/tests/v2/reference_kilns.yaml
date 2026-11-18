@@ -455,9 +455,31 @@ kilns:
         status: drawing
         page: p.107
         figure: Fig 4-69
+      - what: stoke_hole
+        value: the mouth about 16 in wide (13–19 in) and at least 15 in tall (12½–17½ in) above the
+          coals, round-headed, its sill hidden
+        status: scaled
+        page: p.107
+        figure: Fig 4-69
+        spread: the front's brick courses, taken as standard 9 × 4½ × 2½ in (the book doesn't say),
+          2⅝–2¾ in a course at 55 ± 5 px and 9⅛–9¼ in a brick at 150–170 px, so 16–23 px/in at
+          zoom 4; the mouth 300–315 px wide near its base, 287 px from its head to the coals
+          (scratch/kiln-check/bae/measure.py, 2026-11-18)
+        note: the firebox's only way in for the fuel and the air, "NO GRATES" (Fig 4-67); the
+          design takes 16 × 15 in
+      - what: primary_air
+        value: [147, 288]
+        unit: inch**2
+        status: derived
+        page: p.107
+        figure: Fig 4-69
+        reason: the scaled mouth, a rectangle under a half-circle on its width, from 13.3 × 12.5 in
+          to 18.6 × 17.5 in (about 212 in² at 16 × 15 in)
+        condition: no grate; the firebox's mouth takes the fuel and all the air (research A2). Before
+          2026-11-18 none was given, and the path took the firebox's whole open end, 48 × 48 in
     structure:
       - what: roof_type
-        value: one continuous shell over an elongated oval or teardrop plan, the walls curving 
+        value: one continuous shell over an elongated oval or teardrop plan, the walls curving
           straight into it with no visible springing line
         status: drawing
         page: p.107
@@ -508,11 +530,14 @@ kilns:
       - cone or temperature
       - firing time
       - wood per firing
-      - the firebox door's size
-      - 'research A2: the firebox mouth''s size (the only air intake; no grate)'
+      - the firebox door's size (scaled from Fig 4-69 on bricks taken as standard, 2026-11-18)
     notes:
-      - the slope is printed both as 20 % (text, p.108) and 20° (Fig 4-67); the design uses 20 % 
+      - the slope is printed both as 20 % (text, p.108) and 20° (Fig 4-67); the design uses 20 %
         (11.3°)
+      - Fig 4-67's faded labels, read on the page image at zoom 5 (2026-11-18), in part in the
+        gutter, "[TAL]LEST POINT", "[COMBU]STION AREA", "NO GRATES", "[...] built at 20° + —
+        criss[-cross]ing wood in stoking", "[OXI]DATION FIRING – Reduced cooling"
+      - checked against pp.107–108 on the page images, 2026-11-18 (the kiln-by-kiln check)
       - 4 ft of combustion area and 6 ft of chamber make 10 ft against the printed 16 ft base (kiln 
         doc question 1)
       - the design's chimney height is measured from the floor at the firing end, so its top is 

@@ -60,6 +60,14 @@ heat:
         width: 4 ft # the chamber's width
         length: 4 ft # "4'" combustion area (Fig 4-67, drawing, ?)
         step: 18 in # floor step (p.108; "18"" on Fig 4-67)
+        # The firebox's mouth, its only way in for the fuel and the air ("NO GRATES", Fig 4-67), its
+        # size not printed: (scaled: Fig 4-69, p.107, the front square on, against its brick courses
+        # taken as standard 9 × 4½ × 2½ in, 16–23 px/in at zoom 4; 2026-11-18) round-headed, about
+        # 16 in wide (13–19) and at least 15 in tall above the coals (12½–17½), its sill hidden.
+        # Entered as a 16 × 15 in opening; with none the path took the firebox's whole open end
+        stoke_hole:
+          width: 16 in
+          height: 15 in
 draft:
   type: cross
   flue_wall: back
