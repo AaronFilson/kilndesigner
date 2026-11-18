@@ -876,6 +876,7 @@ kilns:
         reading: uncertain
         condition: the air opening into the ash pit, below the stoking opening (research A2); the
           stoking opening's height isn't legible
+        note: the design gives it as the firebox's `air`, 13 × 14 in below the grate (2026-11-18)
       - what: exit_flue_height
         value: 12
         unit: inch
@@ -999,9 +1000,11 @@ kilns:
         it unresolved
       - kiln-reference.md cites the "3 TO 1" slope as Fig 4-36, p.95; the notes, the doc and the 
         Olsen test put Fig 4-36 on p.94
-      - the kyoto-climbing, tobe, suzuki-kyoto, kawaii, fujiwara-bizen and kitade-tojilo design 
-        files take "a 9 in arch, as the Bidai kiln" as 9 in of firebrick, while this design file 
+      - the kyoto-climbing, tobe, suzuki-kyoto, kawaii, fujiwara-bizen and kitade-tojilo design
+        files take "a 9 in arch, as the Bidai kiln" as 9 in of firebrick, while this design file
         reads the same 9 in as 6 in of tatami brick under a 3 in overcoat
+      - checked against pp.94–95 and pp.200–201 on the page images, 2026-11-18 (the kiln-by-kiln
+        check)
 
   blakebrough-sturt:
     name: Les Blakebrough's chamber kiln, Sturt Pottery, Mittagong
