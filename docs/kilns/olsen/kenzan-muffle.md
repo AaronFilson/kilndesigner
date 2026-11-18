@@ -30,7 +30,6 @@ Olsen, *The Kiln Book*, 4th ed.: p.165 (text; Fig 6-47).
 
 1. Fig 6-47: is the firebox under the kiln, or a box built against its foot?
 2. Is the kiln's top open, or covered round the muffle?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

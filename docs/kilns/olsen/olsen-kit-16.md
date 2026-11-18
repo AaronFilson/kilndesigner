@@ -29,7 +29,6 @@ alone).
 ## Open questions for the user
 
 1. How many burners did the Kinzies' kit have (the photo, Fig 6-59, doesn't show them)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

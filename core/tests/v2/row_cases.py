@@ -108,9 +108,16 @@ def _climbing(n: int, front: str = "the front, to 1000 °C") -> tuple[Phase, ...
 # ⅕ of the chamber's width and seldom under 9 × 9 in at its base (pp.79–80; kiln-reference.md
 # "Chimney size"), its 48 in chamber 9.6–12 in square; p.78 carries the exits from it, and its
 # height is the climbing kiln's band (p.81, p.101): `paths.Inputs.rule6`, C3a's band for the six
-# kilns with nothing sized (C1's question 8), the path's working saying so
+# kilns with nothing sized (C1's question 8), the path's working saying so. The owner's answers
+# (2026-11-17, 11-17-26-inputs.md §1 and §8), two chambers and the chimney ¼ of the width, 12 in,
+# aren't applied yet
 
 PLANS: dict[str, Plan] = {
+    # Suzuki, Tobe, the Kyoto type and Hotchkiss have no main firebox in their designs (the book
+    # sizes none), and their first stage was chamber 1's own trough standing in for it, its air
+    # through the side stoke holes. Since stoke holes are covered after each stoking (the owner,
+    # 2026-11-18) the path refuses that trough, so these plans can't run until the main firebox is
+    # entered (the kiln-by-kiln check, 02-plan.md item 1)
     # p.93: the firebox stoked 15 h to 1000 °C (the main firebox isn't in the design: the first
     # chamber's own trough takes it), then each chamber's sides: 7 h each for 1–3 (reduction), 5 h
     # each for 4–7 (oxidation); the cones 10, 10, 8–9 (9 taken, the hotter, as the design), 8–9, …,
@@ -118,7 +125,8 @@ PLANS: dict[str, Plan] = {
     "suzuki-kyoto": Plan("suzuki-kyoto", (
         Phase("the firebox, to 1000 °C", 0, RED, side=False, book=15.0, held=15.0),
         *(Phase(f"chamber {k + 1}", k, book=7.0, held=7.0) for k in range(3)),
-        *(Phase(f"chamber {k + 1}", k, book=5.0) for k in range(3, 7)),
+        # held to their 5 h since the owner read 60 bundles a side for them (2026-11-17)
+        *(Phase(f"chamber {k + 1}", k, book=5.0, held=5.0) for k in range(3, 7)),
     ), zoned=False, rate=(1, 2, 3)),
     # pp.86–87: the dogi alone about 36 h, bringing the first three or four stoke holes (chamber 1
     # of seven, its holes 1½ ft apart, Fig 4-7) to about 1000 °C, then 14–18 h of side stoking;
@@ -147,12 +155,6 @@ PLANS: dict[str, Plan] = {
     "tobe": Plan("tobe", _climbing(7, "chamber 1's trough, to 1000 °C"), zoned=False),
     "kyoto-climbing": Plan("kyoto-climbing", _climbing(10, "chamber 1's trough, to 1000 °C"),
                            zoned=False),
-    # The dataset's intake is the second firebox's stoke hole (its condition, research A2), which
-    # the second chamber's stage doesn't reach (its side holes, not sized, are its air); the front
-    # firebox takes its own, the design's ash-pit mouth, not half the second's shared by count
-    "olsen-two-chamber": Plan("olsen-two-chamber", (
-        Phase("chamber 1", 0, side=False), Phase("chamber 2", 1),
-    ), inputs={"intake": (None, None)}),
     "bidai": Plan("bidai", _climbing(3)),
     "kawaii": Plan("kawaii", _climbing(4)),
     "hotchkiss-raw-clay": Plan("hotchkiss-raw-clay", _climbing(6, "chamber 1's trough, to 1000 °C"),
@@ -278,10 +280,12 @@ NOMINAL = Corner()
 
 @cache
 def run(kid: str, c: Corner = NOMINAL, held: bool = False) -> se.Staged | None:
-    """A staged firing at a corner; None where it can't be fired (no consistent state)."""
+    """A staged firing at a corner; None where it can't be fired: no consistent state, or a stage
+    with no way in for its air (the front shut, its stoke holes covered after each stoking, the
+    owner, 2026-11-18, and no air inlet of its own)."""
     try:
         return se.fire_stages(variant(kid, c.load, c.wood), stages(kid, c, held), SAMPLE, RTOL)
-    except fi.FiringError:
+    except fi.FiringError, dr.NotModelledError:
         return None
 
 
@@ -311,8 +315,8 @@ MOUTH = bands.Input(
     "the fire mouth",
     ("open", "shut"),
     "open",
-    "C1's question 3: whether the "
-    "stoker shuts the fire mouth while side stoking isn't printed: its two ends",
+    "the owner (2026-11-17, 11-17-26-inputs.md §2): it varies by kiln, open, partly open or "
+    "closed; its two ends here (partly open, and each kiln's printed state, still to build)",
 )
 LAMBDA = bands.Input(
     "λ",
@@ -333,9 +337,10 @@ TOGETHER = bands.Input(
     "each input's band as above, all at the ends that "
     "shorten the stages or all at those that lengthen them (the largest rows)",
 )
-# Tamba's slope isn't printed (its doc's question 3; C1's question 5): the design lays the tube
-# level (an assumption, the nominal); the book's own tube and climbing kilns print 20 %, "standard
-# for most kilns of this style" (p.108, Mr Bae's), to the anagama drawn at 25° (Fig 4-5, p.84)
+# Tamba's slope isn't printed. The design lays the tube level (an assumption, the nominal). This
+# band, the book's other tubes from 20 % (p.108, Mr Bae's) to the anagama drawn at 25° (Fig 4-5,
+# p.84), predates the answer: the figures scale 8½–14° and the owner takes 14° (2026-11-17,
+# 11-17-26-inputs.md §9), to apply once v2 has a sloped tube
 SLOPE = bands.Input(
     "the tube's slope (°)",
     (11.3, 25.0),
@@ -345,7 +350,6 @@ SLOPE = bands.Input(
 INPUTS: dict[str, tuple[bands.Input, ...]] = {
     "fujiwara-bizen": (LOAD, WOOD, DRAFT, MOUTH),
     "hollyweird": (LOAD, WOOD, DRAFT, MOUTH),
-    "olsen-two-chamber": (LOAD, WOOD, DRAFT, MOUTH),
     "kitade-tojilo": (LOAD, WOOD, DRAFT),
     "bae-gilgama": (LOAD, WOOD, DRAFT),
     "suzuki-kyoto": (TOGETHER,),
@@ -364,9 +368,10 @@ INPUTS: dict[str, tuple[bands.Input, ...]] = {
 }
 # Held to the book's times, at the stoker's λ 1 (the least air, so the least fuel at that pace). A
 # held run on all the draft's own air (λ from the draft, the band's other end) runs on Suzuki
-# (4.38 t for chambers 1–3, against 3.02 t at λ 1) but failed in IDA 1.6 h into Bidai's dogi ramp
-# (the corrector's convergence): that air enters every residual through the draft's bisection, so
-# any kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a parallel branch coming
+# (4.38 t for chambers 1–3, against 3.02 t at λ 1: run before chambers 4–7 were held, 2026-11-17,
+# when the held run stopped after chamber 3) but failed in IDA 1.6 h into Bidai's dogi ramp (the
+# corrector's convergence): that air enters every residual through the draft's bisection, so any
+# kink in the path's losses (`draft.darcy`'s laminar–turbulent switch, a parallel branch coming
 # on) is a jump IDA meets; not traced further, the plan doc's open item. Each held run takes
 # minutes, so the suite runs the nominal alone
 HELD_INPUTS: dict[str, tuple[bands.Input, ...]] = {"suzuki-kyoto": (), "tamba": ()}
@@ -473,10 +478,11 @@ def bundle_kg(volume_m3: float, pine: bool) -> tuple[float, float]:
 
 
 # Suzuki's bundle, "15 in (38 cm) in diameter and 18 in (46 cm) long" (p.93): π/4 × 15² × 18 in³;
-# Tamba's, 15 × 15 × 30 in (pp.86–87)
+# Tamba's, "15 x 30in" (p.87), round, 15 in across and 30 in long (the owner, 2026-11-18; first
+# read square from the metric's "38 x 38 x 76cm"): π/4 × 15² × 30 in³
 BUNDLES = {
     "suzuki-kyoto": (math.pi / 4 * (15 * IN) ** 2 * 18 * IN, True),
-    "tamba": (15 * IN * 15 * IN * 30 * IN, False),
+    "tamba": (math.pi / 4 * (15 * IN) ** 2 * 30 * IN, False),
 }
 
 

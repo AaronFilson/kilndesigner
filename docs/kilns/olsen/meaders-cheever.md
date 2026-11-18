@@ -27,7 +27,6 @@ No change in this pass.
 ## Open questions for the user
 
 None new.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

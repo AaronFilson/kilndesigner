@@ -93,15 +93,17 @@ def test_suzuki_the_cone_falls_along_the_kiln() -> None:
     assert np.all(np.diff(peaks) <= 1e-3)
 
 
-def test_suzuki_burns_its_bundles_in_chambers_1_to_3() -> None:
-    """T3, p.93: about 75 bundles a side for each of chambers 1–3 over their 7 h, 450 in all
-    (derived), at a bundle's stated band (the dataset's `fuel_unit_mass`: packed as a cord is
-    stacked, an assumption): no less than v2 needs held to the printed stage times at the stoker's
-    λ 1, the least air (the book fires them in reduction, λ under 1: more wood for the heat), even
-    at the light end of a bundle's band."""
+def test_suzuki_burns_its_bundles_in_chambers_1_to_7() -> None:
+    """T3, p.93: about 75 bundles a side for each of chambers 1–3 over their 7 h and 60 a side for
+    each of 4–7 over their 5 h, 930 in all (derived; the firebox's 15 h not included), at a
+    bundle's stated band (the dataset's `fuel_unit_mass`: packed as a cord is stacked, an
+    assumption): no less than v2 needs held to the printed stage times at the stoker's λ 1, the
+    least air (the book fires 1–3 in reduction, λ under 1: more wood for the heat), even at the
+    light end of a bundle's band. The held run's side fuel is all seven chambers' since 4–7 were
+    held to their 5 h (2026-11-17), so the printed total is chambers 1–7's, not 1–3's 450."""
     lo, _ = rc.bundle("suzuki-kyoto")
     b = rc.held_band("suzuki-kyoto")[rc.SIDE_FUEL]
-    assert b.low <= 450 * lo / 1e3
+    assert b.low <= 930 * lo / 1e3
 
 
 @pytest.mark.parametrize("chamber", range(3))
@@ -113,6 +115,18 @@ def test_suzuki_burns_75_bundles_a_side_in_each_of_chambers_1_to_3(chamber: int)
     s = rc.run("suzuki-kyoto", rc.NOMINAL, True)
     assert s is not None
     assert s.fuel[1 + chamber] <= 150 * lo
+
+
+@pytest.mark.parametrize("chamber", range(3, 7))
+def test_suzuki_burns_60_bundles_a_side_in_each_of_chambers_4_to_7(chamber: int) -> None:
+    """T3, p.93: about 60 bundles per side over 5 h of stoking for each oxidation chamber (lost at
+    the gutter in the scan; read by the user on the page, 2026-11-17): 120 bundles each, no less
+    than v2's held run burns in that chamber's 5 h at the stoker's λ 1, even at the light end of a
+    bundle's band."""
+    lo, _ = rc.bundle("suzuki-kyoto")
+    s = rc.run("suzuki-kyoto", rc.NOMINAL, True)
+    assert s is not None
+    assert s.fuel[1 + chamber] <= 120 * lo
 
 
 def test_suzukis_stoking_rate_reduces() -> None:
@@ -144,7 +158,7 @@ def test_tamba_fires_inside_50_to_54_h() -> None:
 
 
 def test_tamba_burns_its_bundles_side_stoking() -> None:
-    """T3, pp.86–87: about 200 bundles (15 × 15 × 30 in) side stoking, at a bundle's stated band
+    """T3, pp.86–87: about 200 bundles (15 in across, 30 in long) side stoking, at a bundle's band
     (the dataset's): no less than v2 needs held to the book's 36 h preheat and its 14–18 h of side
     stoking (16 h, shared evenly among the seven chambers) at the stoker's λ 1, even at the light
     end of a bundle's band."""
@@ -168,8 +182,10 @@ def test_fujiwara_fires_in_seven_days() -> None:
 
 
 def test_fujiwaras_side_holes_need_the_fire_mouth_open() -> None:
-    """C1's question 3: with the fire mouth shut the 5 in takiguchi alone can't bring the chambers
-    to their cones (the band's other end), so the book's 12 h matches the fire mouth open."""
+    """With the fire mouth shut the 5 in takiguchi alone can't bring the chambers to their cones
+    (the band's other end), so v2 matches the book's 12 h only with the mouth open. That is v2's
+    result: the book doesn't say which state Fujiwara fires in, so each state is reported (the
+    owner, 2026-11-17; `docs/planning/11-17-26-inputs.md` §2)."""
     shut = rc.run("fujiwara-bizen", rc.Corner(front_open=False))
     assert shut is not None
     assert shut.times[1:] == (None, None)

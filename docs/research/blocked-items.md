@@ -84,6 +84,7 @@ membrane result already sourced in `domes-over-doors.md` §D1.
 | HarbisonWalker *Modern Refractory Practice* (1950; 4th ed. 1961) | on the Internet Archive (`modernrefractory00harb`, `modernrefractory0000harb`) but "access-restricted" (borrow only); not read. Whether it holds dome tables is unconfirmed | NOT FOUND (not read) | [K12] |
 | Full-text search of the Archive for "dome brick" Harbison | 36 hits: hot-blast stove dome brick (steel works), none a kiln dome table | NOT FOUND | [K12] |
 | A.P. Green dome brick | the scanned A.P. Green pages in `brick-shapes.md` have none | NOT FOUND | `brick-shapes.md` |
+| HarbisonWalker *Handbook of Refractory Practice* (2005), IR-8, IR-9 (read 2026-11-17) | only electric-arc-furnace roof brick: a two-shape, triple-taper arch-key-wedge pair for spherical radii 6 ft 6 in to 22 ft 4 in (9 in roofs), dimensions not printed; the maker counts the rings from the roof's drawing | NOT FOUND (no kiln-size table) | `hwi-handbook.md` §4.3 |
 
 Conical (tatami) bricks sized by the builder remain the only sourced route (`conical.py`).
 Next: borrow the 1961 *Modern Refractory Practice* from the Archive and check its index.
@@ -281,6 +282,19 @@ of thermal conductivity may be set by the National annex within the range"; the 
 more realistic temperatures for concrete structures" (Annex note). At 20 °C: 1.95 and 1.33 W/m K
 **(derived)**. Density: the standard's figures use "a density of 2300 kg/m3 for siliceous
 concrete" (Fig. 3.6b) and gives ρ(θ) falling to 0.95 ρ(20 °C) by 400 °C (§3.3.2(3)).
+
+**Specific heat, §3.3.2(1)–(2)** (pp.26–27, Verified, primary [K31]; quoted in full in
+`docs/planning/11-17-26-inputs.md` §15, 2026-11-17). Dry concrete (u = 0 %), siliceous and
+calcareous aggregates:
+- c_p(θ) = 900 J/kg K for 20 °C ≤ θ ≤ 100 °C;
+- 900 + (θ − 100) for 100 °C < θ ≤ 200 °C;
+- 1000 + (θ − 200)/2 for 200 °C < θ ≤ 400 °C;
+- 1100 for 400 °C < θ ≤ 1200 °C.
+
+Where moisture isn't carried explicitly, the curve takes a constant peak between 100 °C and 115 °C,
+falling linearly to 1000 J/kg K at 200 °C. The peak is 900 J/kg K at 0 % moisture, 1470 at 1.5 %
+and 2020 at 3.0 % of the concrete's weight. With the density above and the lower-limit λ, the
+floor's transient has all three properties. Not yet in the library (2026-11-18).
 
 **Long-term temperature limits, ACI 349-97 §A.4**, as quoted in an NRC-filed AREVA calculation
 (Verified as quoted; ACI text not read; nuclear-safety concrete) [K32]: "Temperatures shall not

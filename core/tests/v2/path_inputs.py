@@ -35,10 +35,13 @@ WITH_ASSUMED = (*GIVEN, "assumed")
 # question 3, `11-10-26.md` §B, B4–B6): the path takes the book's
 ONE_PER_CHAMBER = frozenset({"suzuki-kyoto", "tobe", "hotchkiss-raw-clay"})
 # The six kilns with nothing on their gas path sized (C1's refused six): their paths are built only
-# on Olsen's Rule 6 seeding p.78 (`paths.Inputs.rule6`, the owner's question 8, C1, open), asked
-# for by the tests that run them, `inputs(kid, rule6=True)`, and every result on it says so
-RULE_6 = frozenset({"anagama-hole", "falcone-pompeii", "fireworks-edmonton", "kannofen",
-                    "kitade-tojilo", "la-borne"})  # fmt: skip
+# on Olsen's Rule 6 seeding p.78 (`paths.Inputs.rule6`), asked for by the tests that run them,
+# `inputs(kid, rule6=True)`, and every result on it says so. The owner answered on 2026-11-17
+# (11-17-26-inputs.md §1), applied 2026-11-18: the drawing's scale where the part is drawn, else
+# ¼ of the width (`paths.rule6`). The anagama in the hole left the set then: its flue is drawn,
+# 4–8 in, its depth not, so ¼ of the width (the dataset's chimney_width and chimney_depth)
+RULE_6 = frozenset({"falcone-pompeii", "fireworks-edmonton", "kannofen", "kitade-tojilo",
+                    "la-borne"})  # fmt: skip
 
 
 def _kiln(kid: str) -> dict[str, Any]:

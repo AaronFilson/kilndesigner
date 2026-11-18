@@ -9,12 +9,15 @@
 
 The user asked for the heat and static-forces engine to be rebuilt from Olsen's reference kilns
 (*The Kiln Book*, 4th ed.). Every one of them was built and fired, and many print how much energy
-and time a firing took.
+and time a firing took. (2026-11-18: all but one. `olsen-two-chamber` is Olsen's proposed
+improvement of Kitade's kiln, pp.202 and 206, never built (the owner, 2026-11-17 and
+2026-11-18). It is out of the reference set and kept as a design; the 52 built kilns are the set,
+`docs/planning/11-17-26-inputs.md` §8.)
 
 The first pass is in three places:
 - `docs/engine-v2/problem-set.md`;
 - `core/tests/v2/reference_kilns.yaml`: what the book prints about each of the 53 kilns, with its
-  page and status;
+  page and status (52 since 2026-11-17, decision 17);
 - `docs/research/engine-v2-negative-cases.md`.
 
 It found:
@@ -106,7 +109,22 @@ The user, on v1's warnings and errors: "these have been so wrong for the whole t
       inputs;
     - every must-fail case, N1–N6 (`docs/research/engine-v2-negative-cases.md` §6), fails in the
       numbers;
-    - all 53 kilns as built stand.
+    - all 52 reference kilns as built stand. (53 until 2026-11-17: the owner took out Olsen's
+      two-chamber kiln, pp.202, 206, his proposed improvement of Kitade's, which the book doesn't
+      say was built. It stays as a design, `examples/olsen-two-chamber.yaml`;
+      `docs/planning/11-17-26-inputs.md` §8.)
+
+    **Amended (the owner, 2026-11-17): a reference kiln's own unknowns are worked back from it
+    standing.** "The reference kiln is truth. Whatever it was made of, it took the temp and the
+    pressure, so work backwards to find the properties." Where a kiln's verdict turns on a
+    property of its own material that no source can give (a historic kiln's hot crushing
+    strength), the kiln having stood gives it:
+    - the least value at which v2 finds the kiln standing, recorded as **inferred**, with the
+      geometry it holds for;
+    - not a withheld verdict, and no search for a printed value.
+    Decision 4 still holds for the engine: its physics and its sourced data aren't fitted to the
+    reference kilns. Only that kiln's own unknown property is inferred, and only from it standing.
+    Tobe's hot strength is the first case (`docs/planning/11-17-26-inputs.md` §12).
 
 ## The heat model's starting design
 
@@ -129,6 +147,9 @@ is built.
 | H12 Draft and air | a pressure balance round the gas path: the buoyancy of each hot column less friction and fittings; the air intakes sized from the reference material (decision 9) | Moody 1944; Idelchik (pages to record) | – |
 | H13 Openings | spy holes and flues as surfaces at the room's temperature; the firebox and chimney walls as transient faces of their zones | `radiation-exchange.md` §1.3 | – |
 
+Status since (2026-11-17): H6's correlations are in. v2 uses Bordbar 2014's WSGG, with Dorigon 2013
+as the alternative (`v2/heat/gasrad.py`; `docs/planning/11-17-26-inputs.md` §14).
+
 ## Where v2 lives
 
 **Placement.**
@@ -138,6 +159,24 @@ is built.
   `thermal.*`.
 - When v2 works as a whole, the CLI, API, web and MCP server switch to it, and v1's heat and
   statics modules are removed.
+
+**Amended 2026-11-18 (the owner, on the module review's item 3).**
+- **v1's heat and physics are discarded.** In the owner's words: "discard all of v1 as it relates
+  to heat and physics". That covers the steady loss, the flue-loss combustion, the simulation, the
+  target and slow-firing physics, and v1's statics.
+- **Everything else is reworked around v2:** plans, masonry, castables, the bill, hardware, the
+  frame, movement, foundations and the surfaces. "This is part of the work to make the new
+  engine, things will not be fully put together until it is done."
+- **v2 may also use v1's layout modules**, which the plans and masonry keep anyway: massing,
+  firebox_parts, run_parts, crossing, groin, openings, geometry, form, outline, common_wall and
+  numeric ("Listing modules is fine").
+- **v1's sizing may stay meanwhile** (burner and chimney sizing, the parts' layout rules), but it
+  is never trusted over v2's measurements. "Sizing is probably ok, but again is not to be trusted
+  over the new measurements."
+- **What matters now** is the reference kilns measured and v2 started well, with the tools the
+  rest of the system needs. Tests come second until then ("Tests are not important, the only thing
+  that matters right now is getting the reference kilns measured and the v2 engine on a good start,
+  with the right tools to make the rest of the system work").
 
 **Engine rules that still hold:**
 - the engine stays pure (ADR 0002);

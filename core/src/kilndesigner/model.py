@@ -1439,6 +1439,26 @@ class Firebox(Spec):
     )
     inlets: int = Field(default=1, ge=1, description="How many inlet flues each firebox has")
     stoke_hole: Port | None = None
+    air: Port | None = Field(
+        default=None,
+        description=(
+            "Each of its own air inlets, left open while it fires, in its mouth wall or door: "
+            "the air holes under or beside the stoke hole, which is covered after each stoking "
+            "(the owner, 2026-11-18). Ellington's three 13½ × 9 in under its stoke holes (Olsen "
+            "Fig 4-97), Kitade's two 12 × 18 in air-draft and ash-pit holes (Fig 8-11), "
+            "Hollyweird's 15 × 18 in inlet in its door (p.117). Left out: a grate's ash pit open "
+            "at its mouth, or a floor-fired firebox's mouth (its stoke hole) taking the fuel and "
+            "the air"
+        ),
+    )
+    airs: int = Field(default=1, ge=1, description="How many air inlets each firebox has")
+    air_at: Literal["below", "above"] = Field(
+        default="below",
+        description=(
+            "Where the air inlets let the air in: 'below' the grate, into the ash pit (in place of "
+            "the pit's open mouth), or 'above' it, over the fire"
+        ),
+    )
     roof: Literal["flat", "corbel", "roman", "sloped"] = Field(
         default="flat",
         description=(
@@ -1564,6 +1584,13 @@ class Firebox(Spec):
             )
         if self.inlets_at == "spread" and self.inlet is None:
             raise ValueError("inlets spread over the floor need their size: give the inlet")
+        if self.air is None and (self.airs != 1 or self.air_at != "below"):
+            raise ValueError("airs and air_at are the air inlets': give the air")
+        if self.air is not None and self.air_at == "below" and self.grate is None:
+            raise ValueError(
+                "air below the grate needs a grate; a floor-fired firebox's air is 'above', over "
+                "its floor"
+            )
         if self.sill is not None:
             if self.stoke_hole is None:
                 raise ValueError("a sill is the stoke hole's: give the stoke_hole")
@@ -2155,7 +2182,20 @@ class Kiln(Spec):
         description=(
             "Stoke holes into the chambers themselves, beside any firebox's: in a tube's side or "
             "vault, a side wall of each chamber in a row, or bricked into a door, as the "
-            "side-stoked climbing and tube kilns have them (Olsen Figs 4-7, 4-10, 4-46, 4-96)"
+            "side-stoked climbing and tube kilns have them (Olsen Figs 4-7, 4-10, 4-46, 4-96). "
+            "They are covered after each stoking, so they aren't air inlets (the owner, "
+            "2026-11-18)"
+        ),
+    )
+    air_inlets: list[PlacedHole] | None = Field(
+        default=None,
+        min_length=1,
+        description=(
+            "Air inlets into the chambers themselves, left open while firing: a side-stoked "
+            "chamber's air intake under its stoke hole (Olsen Fig 8-10: the stoke hole above the "
+            "air intake and fire-pit access), an air hole in a door's bricking, a tube under a "
+            "second grate (Hollyweird's 5 in, p.116). A chamber with none takes its air from the "
+            "chambers before it"
         ),
     )
     openings: Openings | None = Field(

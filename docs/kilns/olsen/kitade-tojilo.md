@@ -17,7 +17,7 @@ Figs 8-8, 8-9), p.203.
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Chamber | 4' wide, 5' tall, 8' deep, arched; slope 33 % | one chamber, 48 × 96 in, 24 in rise, 18.3° | matches; the other chambers not counted in the book |
+| Chamber | 4' wide, 5' tall, 8' deep, arched; slope 33 % | one chamber, 48 × 96 in, 24 in rise, 18.3° | the owner (2026-11-17): two chambers. The second, taken as the first's size, is still to add with its stage (`11-17-26-inputs.md` §8) |
 | Firebox | 15" wide, the chamber's width long; ash pit 24" | 15 × 48 in, ash pit 24 in, height 18 in | matches |
 | Firebox roof | slopes 30° up to the chamber | flat | not given: `roof: sloped` slopes along a firebox's run from its mouth to the chamber, but this side-stoked firebox is modelled running 4 ft out from the front wall, so its 30° over the 15 in toward the chamber runs across the model's width |
 | Grate | fireclay bars at 6" | gap 6 in | matches |
@@ -34,7 +34,13 @@ Figs 8-8, 8-9), p.203.
 
 1. Fig 8-11: how many 9 × 12 in flue inlets cross into the chamber?
 2. Fig 8-11: the "2½"" from the end wall to the first air hole scales to about 20 in: which is it?
-</content>
+3. The second chamber (the owner: there were two) isn't drawn. May it be taken as the first's size
+   and slope?
+
+To apply, from the owner's answers of 2026-11-17 (inputs §1, §2, §8):
+- the chimney at Principle 6's large side, ¼ of the 48 in width, 12 in square (today a ⅕–¼ band);
+- the fire mouth closed, as p.202 prints ("Closing the front is very important");
+- the stoke hole no longer an intake (63 in² today).
 
 ## Scaled off the figures (step A, 2026-11-09)
 

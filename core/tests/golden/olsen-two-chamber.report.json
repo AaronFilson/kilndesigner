@@ -1,0 +1,2170 @@
+{
+  "bom": {
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+        "reference": null
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "No price found for: Morgan Thermal Ceramics K-26 insulating firebrick, steel.",
+        "reference": null
+      }
+    ],
+    "lines": [
+      {
+        "buy": "—",
+        "cost": null,
+        "item": "Morgan Thermal Ceramics K-26 insulating firebrick",
+        "needed": "6802 bricks (5700 whole, 778 cut into 922 pieces; 6478 in the kiln plus 5 % for breakage)",
+        "priced_as": null,
+        "source": null,
+        "unit_price": null
+      },
+      {
+        "buy": "938 bricks",
+        "cost": 5112.1,
+        "item": "Chimney and flue duct: hard firebrick",
+        "needed": "938 straights (with 5 % for cuts and breakage)",
+        "priced_as": "Super-duty hard firebrick, 9 × 4½ × 2½ in, Sheffield Pottery",
+        "source": "combustion-and-masonry.md §9 [S70]",
+        "unit_price": "$5.45"
+      },
+      {
+        "buy": "46 ft",
+        "cost": null,
+        "item": "Grate bars: ¾ in round steel bar",
+        "needed": "41.2 ft (Firebox 1, grate, 9 bars of ¾ in round steel, 55 in long, ¾ in apart (Olsen p.199–200: rods ¾–1 in))",
+        "priced_as": null,
+        "source": "Olsen, The Kiln Book, 4th ed., p.199–200 (grate bars ¾–1 in rods)",
+        "unit_price": null
+      }
+    ],
+    "prices_checked": "2026-10-21",
+    "total": 5112.1
+  },
+  "castables": [],
+  "chamber_volume": "251 ft³",
+  "electric": null,
+  "engine_version": "0.1.0",
+  "findings": [
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft",
+            "meaning": "the arch's thrust, cold",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "frame.vault-end-wall: the three-hinged arch's cold H_c and its load N",
+            "symbol": "H_c",
+            "text": null,
+            "unit": "force_pound / foot",
+            "value": 2146.821281954835
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft",
+            "meaning": "the arch's load on the springing",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "frame.vault-end-wall: the three-hinged arch's cold H_c and its load N",
+            "symbol": "N",
+            "text": null,
+            "unit": "force_pound / foot",
+            "value": 2206.7458131091475
+          },
+          {
+            "expr": "H_c/N",
+            "formula": "H_c/N",
+            "label": "",
+            "meaning": "the friction the springing's bed joint needs",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "the resultant's angle to the joint's normal: tan⁻¹(H_c/N)",
+            "symbol": "μ_need",
+            "text": null,
+            "unit": "",
+            "value": 0.972844842030137
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "friction of a hot dry joint",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+            "symbol": "μ",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "wall layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "e_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "γ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 6442.969050000003
+          },
+          {
+            "expr": "γ_1*e_1",
+            "formula": "γ_1·e_1",
+            "label": "lbf/ft²",
+            "meaning": "the wall's weight per foot of its width, per unit of height",
+            "offset": 0.0,
+            "scale": 0.02088543423315013,
+            "source": null,
+            "symbol": "g",
+            "text": null,
+            "unit": "lbf/ft**2",
+            "value": 1472.8627248300008
+          },
+          {
+            "expr": "max((H_c/μ - N)/g, 0*e_1)",
+            "formula": "max((H_c/μ − N)/g, 0·e_1)",
+            "label": "in",
+            "meaning": "how far down from the springing friction alone can't hold the wall",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "H_c = μ(N + g·z) solved for z",
+            "symbol": "z_s",
+            "text": null,
+            "unit": "in",
+            "value": 1.4168983406389035
+          }
+        ],
+        "id": "frame.end-wall-slide",
+        "label": "W1",
+        "lever": null,
+        "reference": "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed 2006: sliding governs where the normal force is small); physics review part 2, finding 3. Mortar's cohesion is left out: none is sourced hot; Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "μ_need",
+            "level": "warning",
+            "margin": "μ_need = 0.9728, 194.6 % of μ = 0.5",
+            "op": "<=",
+            "right": "μ"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "warning",
+        "title": "Each end wall doesn't slide at the arch's springing"
+      },
+      "level": "warning",
+      "message": "Each end wall, standing on its own, needs friction 0.97 at the arch's springing to hold its cold thrust, more than a hot dry joint's 0.5: friction alone can't hold the wall's top 55.8 in, down from the springing. Mortar's bond, masonry over the skewback or bracing at the springing would carry it, but none is counted here: brace the springing, or raise the arch (a higher rise pushes less).",
+      "reference": "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed 2006: sliding governs where the normal force is small); physics review part 2, finding 3. Mortar's cohesion is left out: none is sourced hot; Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The floor is built on the ground: its loss is worked out as a disk on dry soil at steady state. Early in a firing cold ground takes more, about twice as much at 12 hours, and wet ground more again.",
+      "reference": "Incropera Table 4.1 case 10, a disk on a semi-infinite medium, S = 2D; dry soil k from Lienhard Table A.2; thermal-properties.md §8 [T39] [T40]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Morgan Thermal Ceramics K-26 insulating firebrick runs down to 199 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+      "reference": "castables.md §6.3, Morgan K series data sheet, 1 January 2025 [S49] [S50]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Wood use per firing isn't worked out for this kiln: docs/research has no heating value for wood, nor how much of it a firebox turns into heat in the kiln, so its cords can't be found from the heat it needs. To compare, Olsen's fast-fire kiln, 12–16 ft³ of insulating brick, reaches cone 10 in 3½ h on less than a quarter of a cord (p.139, p.143); a 40 ft³ hard-brick kiln takes 12 to 14 h (p.143).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.139 and p.143: a 12–16 ft³ fast-fire wood kiln of 2300 °F insulating brick reaches cone 10 in 3½ h on 'less than a quarter of a cord of wood for a 3½ to 4-hour firing'; a 40 ft³ kiln of hard brick averages 12 to 14 hours"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Each chamber's arch spans its depth, along the draft, so its thrust falls on the walls before and behind it, not on the side walls. The walls between chambers take the arches either side, which push against each other (Olsen p.94–95); the front and back walls each take one arch's thrust, 1,102 lb hot across the kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is sized; or hold the ends with masonry (roof.buttressed).",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.94–95 (the arches throw their thrust onto the common wall), p.97 (bracing a chamber kiln's firebox and front chamber 'is a must')"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "span, inside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber's width",
+            "symbol": "S",
+            "text": null,
+            "unit": "inch",
+            "value": 2.4383999999999997
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "rise",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the roof's rise",
+            "symbol": "h",
+            "text": null,
+            "unit": "inch",
+            "value": 0.58166
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "t_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "ρ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 6442.969050000003
+          },
+          {
+            "expr": "t_1",
+            "formula": "t_1",
+            "label": "in",
+            "meaning": "the ring: its layers' thickness",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "T",
+            "text": null,
+            "unit": "in",
+            "value": 0.2286
+          },
+          {
+            "expr": "2*atan(2*h/S)",
+            "formula": "2·atan(2·h/S)",
+            "label": "°",
+            "meaning": "half the arch's angle",
+            "offset": 0.0,
+            "scale": 57.29577951308232,
+            "source": "a circular segment: tan(φ/2) = 2h/S",
+            "symbol": "φ",
+            "text": null,
+            "unit": "degree",
+            "value": 0.8902935529326652
+          },
+          {
+            "expr": "S/(2*sin(φ))",
+            "formula": "S/(2·sin(φ))",
+            "label": "in",
+            "meaning": "inside radius",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "r",
+            "text": null,
+            "unit": "in",
+            "value": 1.568594192139738
+          },
+          {
+            "expr": "ρ_1*t_1*2*φ*(r + t_1/2)",
+            "formula": "ρ_1·t_1·2·φ·(r + t_1/2)",
+            "label": "lbf/ft",
+            "meaning": "layer 1's weight per foot of arch",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "density × thickness × the arc at mid-layer",
+            "symbol": "w_1",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 4413.491626218295
+          },
+          {
+            "expr": "w_1",
+            "formula": "w_1",
+            "label": "lbf/ft",
+            "meaning": "the arch's weight per foot",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+            "symbol": "W",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 4413.491626218295
+          },
+          {
+            "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+            "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+            "label": "lbf/ft",
+            "meaning": "thrust, cold",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": "three-hinged circular arch: moments about a springing",
+            "symbol": "H_c",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 2146.821281954835
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "end wall layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design",
+            "symbol": "e_1",
+            "text": null,
+            "unit": "inch",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "lbf/ft³",
+            "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+            "offset": 0.0,
+            "scale": 0.006365880354264158,
+            "source": "the material's data sheet",
+            "symbol": "γ_1",
+            "text": null,
+            "unit": "force_pound / foot ** 3",
+            "value": 6442.969050000003
+          },
+          {
+            "expr": "e_1",
+            "formula": "e_1",
+            "label": "in",
+            "meaning": "the end wall's thickness",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "e",
+            "text": null,
+            "unit": "in",
+            "value": 0.2286
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the springline over the floor",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design: the chamber's height",
+            "symbol": "h_s",
+            "text": null,
+            "unit": "inch",
+            "value": 0.63754
+          },
+          {
+            "expr": "(γ_1*e_1)*h_s",
+            "formula": "γ_1·e_1·h_s",
+            "label": "lbf/ft",
+            "meaning": "the end wall's weight under the springline, per foot",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": null,
+            "symbol": "G",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 939.0089015881188
+          },
+          {
+            "expr": "W/2",
+            "formula": "W/2",
+            "label": "lbf/ft",
+            "meaning": "half the arch's weight, on the springing",
+            "offset": 0.0,
+            "scale": 0.06852176585679173,
+            "source": null,
+            "symbol": "N",
+            "text": null,
+            "unit": "lbf/ft",
+            "value": 2206.7458131091475
+          },
+          {
+            "expr": "(r + T/2)*sin(φ) - S/2",
+            "formula": "(r + T/2)·sin(φ) − S/2",
+            "label": "in",
+            "meaning": "where the line of thrust crosses the springing, in from the wall's inside face",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the ring's middle at the skewback",
+            "symbol": "x_p",
+            "text": null,
+            "unit": "in",
+            "value": 0.08884041563988254
+          },
+          {
+            "expr": "h_s + T/2*cos(φ)",
+            "formula": "h_s + T/2·cos(φ)",
+            "label": "in",
+            "meaning": "its height over the floor",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "y_p",
+            "text": null,
+            "unit": "in",
+            "value": 0.7094557183718061
+          },
+          {
+            "expr": "(N*x_p + G*e/2 + H_c*y_p)/(N + G)",
+            "formula": "(N·x_p + G·e/2 + H_c·y_p)/(N + G)",
+            "label": "in",
+            "meaning": "where the resultant meets the wall's base, in from its inside face",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "moments about the base's inside edge: the thrust carries it outward",
+            "symbol": "x_R",
+            "text": null,
+            "unit": "in",
+            "value": 0.5806083859531393
+          },
+          {
+            "expr": "2*e/3",
+            "formula": "2·e/3",
+            "label": "in",
+            "meaning": "the far edge of the base's middle third",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress",
+            "symbol": "x_3",
+            "text": null,
+            "unit": "in",
+            "value": 0.1524
+          }
+        ],
+        "id": "frame.vault-end-wall",
+        "label": null,
+        "lever": null,
+        "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress",
+        "requirements": [
+          {
+            "holds": false,
+            "left": "x_R",
+            "level": "error",
+            "margin": "x_R = 22.86 in, 254 % of e = 9 in",
+            "op": "<=",
+            "right": "e"
+          },
+          {
+            "holds": false,
+            "left": "x_R",
+            "level": "warning",
+            "margin": "x_R = 22.86 in, 381 % of x_3 = 6 in",
+            "op": "<=",
+            "right": "x_3"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "error",
+        "title": "The end wall alone holds the arch's thrust, cold"
+      },
+      "level": "info",
+      "message": "Each end wall, standing on its own, can't hold the arch's cold thrust: the resultant would meet its base 22.9 in in from the inside, past the wall. The bracing at the springing carries it, so it is needed, not optional: Olsen braces a chamber kiln's front, and Bowen Mountain's drawing shows it. No source sizes that bracing, so it isn't sized here.",
+      "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress; Olsen, The Kiln Book, 4th ed., p.97: bracing a chamber kiln's firebox and front chamber 'is a must'; Fig 4-153 draws Bowen Mountain's 'BRACING' on the front wall at the springing"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the run, outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design's outside sizes",
+            "symbol": "L",
+            "text": null,
+            "unit": "in",
+            "value": 1.8541999999999998
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in/ft",
+            "meaning": "growth per foot, to 2400 °F",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "g",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.0078125
+          },
+          {
+            "expr": "L*g",
+            "formula": "L·g",
+            "label": "in",
+            "meaning": "the run's growth, hot",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "ΔL",
+            "text": null,
+            "unit": "in",
+            "value": 0.014485937499999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the share to leave open",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": "f*ΔL",
+            "formula": "f·ΔL",
+            "label": "in",
+            "meaning": "the allowance to leave open",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "a",
+            "text": null,
+            "unit": "in",
+            "value": 0.007242968749999999
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's firing",
+            "symbol": "T",
+            "text": null,
+            "unit": "degF",
+            "value": 1567.15
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the temperature the growth is to",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "T_g",
+            "text": null,
+            "unit": "degF",
+            "value": 1588.7055555555557
+          }
+        ],
+        "id": "movement.across",
+        "label": null,
+        "lever": null,
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "T",
+            "level": "warning",
+            "margin": "T = 2,361 °F, 38.8 °F under T_g = 2,400 °F",
+            "op": "<=",
+            "right": "T_g"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "pass",
+        "title": "Expansion allowance, the front and back walls"
+      },
+      "level": "info",
+      "message": "The front and back walls, 73.0 in outside, grow about 0.57 in hot (3/32 in per foot, to 2400 °F): leave about 0.29 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). Free-standing, as this kiln is, Olsen's chamber kilns have no expansion joints: the walls act as one unit (p.52). No joint in the masonry over an arch or near its springing (BIA).",
+      "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]"
+    },
+    {
+      "check": {
+        "cells": [
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in",
+            "meaning": "the run, outside",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": "the design's outside sizes",
+            "symbol": "L",
+            "text": null,
+            "unit": "in",
+            "value": 5.334
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "in/ft",
+            "meaning": "growth per foot, to 2400 °F",
+            "offset": 0.0,
+            "scale": 12.0,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "g",
+            "text": null,
+            "unit": "in/ft",
+            "value": 0.0078125
+          },
+          {
+            "expr": "L*g",
+            "formula": "L·g",
+            "label": "in",
+            "meaning": "the run's growth, hot",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "ΔL",
+            "text": null,
+            "unit": "in",
+            "value": 0.041671875
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "",
+            "meaning": "the share to leave open",
+            "offset": 0.0,
+            "scale": 1.0,
+            "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+            "symbol": "f",
+            "text": null,
+            "unit": "",
+            "value": 0.5
+          },
+          {
+            "expr": "f*ΔL",
+            "formula": "f·ΔL",
+            "label": "in",
+            "meaning": "the allowance to leave open",
+            "offset": 0.0,
+            "scale": 39.37007874015748,
+            "source": null,
+            "symbol": "a",
+            "text": null,
+            "unit": "in",
+            "value": 0.0208359375
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the kiln's top temperature",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "the design's firing",
+            "symbol": "T",
+            "text": null,
+            "unit": "degF",
+            "value": 1567.15
+          },
+          {
+            "expr": null,
+            "formula": null,
+            "label": "°F",
+            "meaning": "the temperature the growth is to",
+            "offset": -459.67,
+            "scale": 1.8000000000000114,
+            "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+            "symbol": "T_g",
+            "text": null,
+            "unit": "degF",
+            "value": 1588.7055555555557
+          }
+        ],
+        "id": "movement.along",
+        "label": null,
+        "lever": null,
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "requirements": [
+          {
+            "holds": true,
+            "left": "T",
+            "level": "warning",
+            "margin": "T = 2,361 °F, 38.8 °F under T_g = 2,400 °F",
+            "op": "<=",
+            "right": "T_g"
+          }
+        ],
+        "rule": null,
+        "rule_holds": true,
+        "rule_level": "error",
+        "solve": null,
+        "status": "pass",
+        "title": "Expansion allowance, the side walls"
+      },
+      "level": "info",
+      "message": "The side walls, 210.0 in outside, grow about 1.64 in hot (3/32 in per foot, to 2400 °F): leave about 0.82 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). Free-standing, as this kiln is, Olsen's chamber kilns have no expansion joints: the walls act as one unit (p.52). No joint in the masonry over an arch or near its springing (BIA).",
+      "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The front wall is the door: bricked up, dry, for each firing. Lay the inner and outer courses together, staggered, with a header course two-thirds of the way up.",
+      "reference": "kiln-hardware.md §6.1 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Damper: a kiln shelf in a slot 21 in wide and one course high, about a foot above the top of the flue. Brace the chimney with angle at its corners and tie it to the kiln frame.",
+      "reference": "kiln-hardware.md §3.2–3.3 [S4]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Three spy holes, 2¼ × 2½ in (a quarter brick), in the door: about 8 in above the floor (a course above any burner ports there), midway and near the top, a few inches off centre so they miss the shelf posts. Cone packs in the top and bottom, draw rings in the middle.",
+      "reference": "kiln-hardware.md §2 [S4] [S13]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Arch bricks: Roof of chamber 1, layer 1 from the inside: about 761 bricks by volume, cut to the curve; Left wall of chamber 1, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Right wall of chamber 1, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Front wall of chamber 1, the skewback and fill on top: about 23 bricks by volume, cut to the arch's angle; Back wall of chamber 1, the skewback and fill on top: about 6 bricks by volume, cut to the arch's angle; Roof of chamber 2, layer 1 from the inside: about 761 bricks by volume, cut to the curve; Left wall of chamber 2, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Right wall of chamber 2, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Front wall of chamber 2, the skewback and fill on top: about 6 bricks by volume, cut to the arch's angle; Back wall of chamber 2, the skewback and fill on top: about 23 bricks by volume, cut to the arch's angle.",
+      "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 39° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The end walls take the arches' thrust; no steel for them is sized (the frame's findings).",
+      "reference": "kiln-hardware.md §5.2 [S20]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. The side walls run through, past the end walls and the walls between chambers, which fit between them.",
+      "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Fireboxes are built of the kiln's own layers, the walls' round their sides and over their roofs, the floor's under them, unless the design gives one its own lining (firebox.lining, where the book builds it of other brick). Against a wall, the grate sits its step below the chamber floor, so smouldering coals fall into the front stacking (p.188), and the inlet flues are cut at the floor's level in the wall between; below the kiln's floor the firebox has walls of its own. Stoke holes are cut with their foot at the grate (p.188), and ash pits are left open at the mouth (p.188). The roofs are drawn of the walls' layers laid flat: span a flat one with an arch, bricks or kiln shelves as Olsen does (p.145), or give it a corbel roof. Firebox 1, against the front wall, drawn 14 in tall, as wide as it is, as its height isn't given, drawn with its grate level with the chamber floor, as no step is given; Firebox 2, a trough sunk in chamber 2's floor along its front, drawn 14 in tall, as wide as it is, as its height isn't given.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.92, p.141, p.145, p.188"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Firebox 1: 14 in above the grate and an ash pit 15 in below it (52% of its height below the grate), the grate 0 in below the chamber floor. How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 251 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Firebox 2: 14 in above the grate and an ash pit 15 in below it (52% of its height below the grate). How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 251 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+      "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "The 2 chambers stand in a row, each wall between them 9 in thick, as the design gives it (lining.between). Each chamber's arch spans along the draft, over its depth, and throws its thrust onto the walls before and behind it, as in Olsen's climbing kilns (p.94–95). Where an arch meets its neighbour over the wall they share, it is cut there and counted by volume. Each wall between chambers has 4 flue holes 4½ in wide and 9 in tall at the higher chamber's floor, 9 in apart: Olsen's standard 4½ × 9 in flues for the Kyoto climbing kilns, \"at 9 in\" read as a 9 in separator (p.96, p.45); the book doesn't say which way the 4½ in runs, so it is taken across. They are cut from the brick count. Lay them on a header course with the header over each one laid so it can be knocked out if the flue proves too small, and size them against your firing: Olsen errs on flues too large (p.45).",
+      "reference": "run_parts.py; Olsen, The Kiln Book, 4th ed., p.94–95; kiln-reference.md, Tube and climbing chamber kilns, p.45, p.96"
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "Prices were checked on 2026-10-21 and will change. Steel is listed by length, with 10 % extra, but not priced. Hardware, electrical parts (relays, controller, wiring), gas fittings and shipping are not included.",
+      "reference": null
+    },
+    {
+      "check": null,
+      "level": "info",
+      "message": "No price found for: Morgan Thermal Ceramics K-26 insulating firebrick, steel.",
+      "reference": null
+    }
+  ],
+  "fire": {
+    "chimney_area_in2": 243.0,
+    "chimney_height": "18.2 ft (218 in) above the chamber floor",
+    "chimney_height_in": 218.5,
+    "chimney_range": "8.0–18.2 ft",
+    "draft": [
+      "0.167 in. w.c. (42 Pa) with flue gas at 1000 °F",
+      "0.213 in. w.c. (53 Pa) with flue gas at top"
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Wood use per firing isn't worked out for this kiln: docs/research has no heating value for wood, nor how much of it a firebox turns into heat in the kiln, so its cords can't be found from the heat it needs. To compare, Olsen's fast-fire kiln, 12–16 ft³ of insulating brick, reaches cone 10 in 3½ h on less than a quarter of a cord (p.139, p.143); a 40 ft³ hard-brick kiln takes 12 to 14 h (p.143).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.139 and p.143: a 12–16 ft³ fast-fire wood kiln of 2300 °F insulating brick reaches cone 10 in 3½ h on 'less than a quarter of a cord of wood for a 3½ to 4-hour firing'; a 40 ft³ kiln of hard brick averages 12 to 14 hours"
+      }
+    ],
+    "fireboxes": [
+      "1 × 14 × 55 in at the front wall, a 14 × 55 in grate",
+      "1 × 14 × 55 in at the front wall, a 14 × 55 in grate"
+    ],
+    "flue_area": "182 in²",
+    "flue_area_in2": 182.25,
+    "fuel": "wood",
+    "full_fire_btu_hr": 0.0,
+    "grate_area": "1,540 in²",
+    "grate_area_in2": 1540.0,
+    "inlet_area_in2": null,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "floor, all fireboxes": "1,540 in²",
+          "grate, all fireboxes": "1,540 in²"
+        },
+        "name": "Fireboxes",
+        "note": null,
+        "reference": null,
+        "value": "1 × 14 × 55 in at the front wall, a 14 × 55 in grate; 1 × 14 × 55 in at the front wall, a 14 × 55 in grate"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "how": "13.5 × 18 in: the grate ÷ 7"
+        },
+        "name": "Chimney's section at the base",
+        "note": null,
+        "reference": "Olsen, The Kiln Book, 4th ed., p.76: wood grate 10 × the chimney's section at its base; p.77: he now uses about 7 : 1, and groundhogs run about 4 : 1",
+        "value": "243 in²"
+      },
+      {
+        "formula": "least 2 × downward pull (p.130, Fig. 5-2); most 3 × downward pull + ⅓ × horizontal pull (Rule 5, p.80)",
+        "inputs": {
+          "downward pull": "48.0 in",
+          "horizontal pull": "223.5 in",
+          "range": "8.0–18.2 ft"
+        },
+        "name": "Chimney height",
+        "note": "Build it to be tuned: add or take off brick, and damper it. 'If the chimney seems too tall, it probably is' (p.80). The height is measured from the chamber floor. Sources disagree on horizontal pull: Olsen and Ward add ⅓ ft of chimney per foot, Rhodes 2 ft (kiln-hardware.md, conflict on horizontal pull); Olsen's is used, as ADR 0014 takes his built kilns as the reference.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.80 (Principle 5): 3 ft of chimney per ft of downward pull plus 1 ft per 3 ft of horizontal pull, inside the kiln; p.130 (Fig. 5-2): the early Far-East proportions, a chimney twice the chamber's height (4 m on a 2 m cube), are the least and Rule 5 the most",
+        "value": "18.2 ft (218 in) above the chamber floor"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "70 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.167 in. w.c. (42 Pa) with flue gas at 1000 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "air pressure": "101.3 kPa",
+          "outside air": "70 °F"
+        },
+        "name": "Draft at the chimney's base",
+        "note": null,
+        "reference": "Stack effect, ΔP = 0.0342·a·h·(1/To − 1/Ti); combustion-and-masonry.md §4.2 [S42]",
+        "value": "0.213 in. w.c. (53 Pa) with flue gas at top"
+      }
+    ]
+  },
+  "frame": {
+    "angle": null,
+    "angle_leg_in": 0.0,
+    "angle_t_in": 0.0,
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Each chamber's arch spans its depth, along the draft, so its thrust falls on the walls before and behind it, not on the side walls. The walls between chambers take the arches either side, which push against each other (Olsen p.94–95); the front and back walls each take one arch's thrust, 1,102 lb hot across the kiln's width. Brace them: Olsen calls bracing a chamber kiln's firebox and front chamber 'a must' (p.97). No source here sizes that bracing, so no steel frame is sized; or hold the ends with masonry (roof.buttressed).",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.94–95 (the arches throw their thrust onto the common wall), p.97 (bracing a chamber kiln's firebox and front chamber 'is a must')"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "span, inside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber's width",
+              "symbol": "S",
+              "text": null,
+              "unit": "inch",
+              "value": 2.4383999999999997
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "rise",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the roof's rise",
+              "symbol": "h",
+              "text": null,
+              "unit": "inch",
+              "value": 0.58166
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "t_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "ρ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 6442.969050000003
+            },
+            {
+              "expr": "t_1",
+              "formula": "t_1",
+              "label": "in",
+              "meaning": "the ring: its layers' thickness",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "T",
+              "text": null,
+              "unit": "in",
+              "value": 0.2286
+            },
+            {
+              "expr": "2*atan(2*h/S)",
+              "formula": "2·atan(2·h/S)",
+              "label": "°",
+              "meaning": "half the arch's angle",
+              "offset": 0.0,
+              "scale": 57.29577951308232,
+              "source": "a circular segment: tan(φ/2) = 2h/S",
+              "symbol": "φ",
+              "text": null,
+              "unit": "degree",
+              "value": 0.8902935529326652
+            },
+            {
+              "expr": "S/(2*sin(φ))",
+              "formula": "S/(2·sin(φ))",
+              "label": "in",
+              "meaning": "inside radius",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "r",
+              "text": null,
+              "unit": "in",
+              "value": 1.568594192139738
+            },
+            {
+              "expr": "ρ_1*t_1*2*φ*(r + t_1/2)",
+              "formula": "ρ_1·t_1·2·φ·(r + t_1/2)",
+              "label": "lbf/ft",
+              "meaning": "layer 1's weight per foot of arch",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "density × thickness × the arc at mid-layer",
+              "symbol": "w_1",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 4413.491626218295
+            },
+            {
+              "expr": "w_1",
+              "formula": "w_1",
+              "label": "lbf/ft",
+              "meaning": "the arch's weight per foot",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "HarbisonWalker's W, exact form; kiln-hardware.md §4.6 [S20]",
+              "symbol": "W",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 4413.491626218295
+            },
+            {
+              "expr": "W*(sin(φ) - (1 - cos(φ))/φ)/(2*(1 - cos(φ)))",
+              "formula": "W·(sin(φ) − (1 − cos(φ))/φ)/(2·(1 − cos(φ)))",
+              "label": "lbf/ft",
+              "meaning": "thrust, cold",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "three-hinged circular arch: moments about a springing",
+              "symbol": "H_c",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 2146.821281954835
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "end wall layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "e_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "γ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 6442.969050000003
+            },
+            {
+              "expr": "e_1",
+              "formula": "e_1",
+              "label": "in",
+              "meaning": "the end wall's thickness",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "e",
+              "text": null,
+              "unit": "in",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the springline over the floor",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design: the chamber's height",
+              "symbol": "h_s",
+              "text": null,
+              "unit": "inch",
+              "value": 0.63754
+            },
+            {
+              "expr": "(γ_1*e_1)*h_s",
+              "formula": "γ_1·e_1·h_s",
+              "label": "lbf/ft",
+              "meaning": "the end wall's weight under the springline, per foot",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": null,
+              "symbol": "G",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 939.0089015881188
+            },
+            {
+              "expr": "W/2",
+              "formula": "W/2",
+              "label": "lbf/ft",
+              "meaning": "half the arch's weight, on the springing",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": null,
+              "symbol": "N",
+              "text": null,
+              "unit": "lbf/ft",
+              "value": 2206.7458131091475
+            },
+            {
+              "expr": "(r + T/2)*sin(φ) - S/2",
+              "formula": "(r + T/2)·sin(φ) − S/2",
+              "label": "in",
+              "meaning": "where the line of thrust crosses the springing, in from the wall's inside face",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the ring's middle at the skewback",
+              "symbol": "x_p",
+              "text": null,
+              "unit": "in",
+              "value": 0.08884041563988254
+            },
+            {
+              "expr": "h_s + T/2*cos(φ)",
+              "formula": "h_s + T/2·cos(φ)",
+              "label": "in",
+              "meaning": "its height over the floor",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "y_p",
+              "text": null,
+              "unit": "in",
+              "value": 0.7094557183718061
+            },
+            {
+              "expr": "(N*x_p + G*e/2 + H_c*y_p)/(N + G)",
+              "formula": "(N·x_p + G·e/2 + H_c·y_p)/(N + G)",
+              "label": "in",
+              "meaning": "where the resultant meets the wall's base, in from its inside face",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "moments about the base's inside edge: the thrust carries it outward",
+              "symbol": "x_R",
+              "text": null,
+              "unit": "in",
+              "value": 0.5806083859531393
+            },
+            {
+              "expr": "2*e/3",
+              "formula": "2·e/3",
+              "label": "in",
+              "meaning": "the far edge of the base's middle third",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress",
+              "symbol": "x_3",
+              "text": null,
+              "unit": "in",
+              "value": 0.1524
+            }
+          ],
+          "id": "frame.vault-end-wall",
+          "label": null,
+          "lever": null,
+          "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "x_R",
+              "level": "error",
+              "margin": "x_R = 22.86 in, 254 % of e = 9 in",
+              "op": "<=",
+              "right": "e"
+            },
+            {
+              "holds": false,
+              "left": "x_R",
+              "level": "warning",
+              "margin": "x_R = 22.86 in, 381 % of x_3 = 6 in",
+              "op": "<=",
+              "right": "x_3"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "error",
+          "title": "The end wall alone holds the arch's thrust, cold"
+        },
+        "level": "info",
+        "message": "Each end wall, standing on its own, can't hold the arch's cold thrust: the resultant would meet its base 22.9 in in from the inside, past the wall. The bracing at the springing carries it, so it is needed, not optional: Olsen braces a chamber kiln's front, and Bowen Mountain's drawing shows it. No source sizes that bracing, so it isn't sized here.",
+        "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress; Olsen, The Kiln Book, 4th ed., p.97: bracing a chamber kiln's firebox and front chamber 'is a must'; Fig 4-153 draws Bowen Mountain's 'BRACING' on the front wall at the springing"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft",
+              "meaning": "the arch's thrust, cold",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "frame.vault-end-wall: the three-hinged arch's cold H_c and its load N",
+              "symbol": "H_c",
+              "text": null,
+              "unit": "force_pound / foot",
+              "value": 2146.821281954835
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft",
+              "meaning": "the arch's load on the springing",
+              "offset": 0.0,
+              "scale": 0.06852176585679173,
+              "source": "frame.vault-end-wall: the three-hinged arch's cold H_c and its load N",
+              "symbol": "N",
+              "text": null,
+              "unit": "force_pound / foot",
+              "value": 2206.7458131091475
+            },
+            {
+              "expr": "H_c/N",
+              "formula": "H_c/N",
+              "label": "",
+              "meaning": "the friction the springing's bed joint needs",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "the resultant's angle to the joint's normal: tan⁻¹(H_c/N)",
+              "symbol": "μ_need",
+              "text": null,
+              "unit": "",
+              "value": 0.972844842030137
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "friction of a hot dry joint",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+              "symbol": "μ",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "wall layer 1, Morgan Thermal Ceramics K-26 insulating firebrick",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design",
+              "symbol": "e_1",
+              "text": null,
+              "unit": "inch",
+              "value": 0.2286
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "lbf/ft³",
+              "meaning": "Morgan Thermal Ceramics K-26 insulating firebrick, weight per cubic foot",
+              "offset": 0.0,
+              "scale": 0.006365880354264158,
+              "source": "the material's data sheet",
+              "symbol": "γ_1",
+              "text": null,
+              "unit": "force_pound / foot ** 3",
+              "value": 6442.969050000003
+            },
+            {
+              "expr": "γ_1*e_1",
+              "formula": "γ_1·e_1",
+              "label": "lbf/ft²",
+              "meaning": "the wall's weight per foot of its width, per unit of height",
+              "offset": 0.0,
+              "scale": 0.02088543423315013,
+              "source": null,
+              "symbol": "g",
+              "text": null,
+              "unit": "lbf/ft**2",
+              "value": 1472.8627248300008
+            },
+            {
+              "expr": "max((H_c/μ - N)/g, 0*e_1)",
+              "formula": "max((H_c/μ − N)/g, 0·e_1)",
+              "label": "in",
+              "meaning": "how far down from the springing friction alone can't hold the wall",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "H_c = μ(N + g·z) solved for z",
+              "symbol": "z_s",
+              "text": null,
+              "unit": "in",
+              "value": 1.4168983406389035
+            }
+          ],
+          "id": "frame.end-wall-slide",
+          "label": null,
+          "lever": null,
+          "reference": "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed 2006: sliding governs where the normal force is small); physics review part 2, finding 3. Mortar's cohesion is left out: none is sourced hot; Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+          "requirements": [
+            {
+              "holds": false,
+              "left": "μ_need",
+              "level": "warning",
+              "margin": "μ_need = 0.9728, 194.6 % of μ = 0.5",
+              "op": "<=",
+              "right": "μ"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "warning",
+          "title": "Each end wall doesn't slide at the arch's springing"
+        },
+        "level": "warning",
+        "message": "Each end wall, standing on its own, needs friction 0.97 at the arch's springing to hold its cold thrust, more than a hot dry joint's 0.5: friction alone can't hold the wall's top 55.8 in, down from the springing. Mortar's bond, masonry over the skewback or bracing at the springing would carry it, but none is counted here: brace the springing, or raise the arch (a higher rise pushes less).",
+        "reference": "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed 2006: sliding governs where the normal force is small); physics review part 2, finding 3. Mortar's cohesion is left out: none is sourced hot; Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the run, outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design's outside sizes",
+              "symbol": "L",
+              "text": null,
+              "unit": "in",
+              "value": 1.8541999999999998
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in/ft",
+              "meaning": "growth per foot, to 2400 °F",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "g",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.0078125
+            },
+            {
+              "expr": "L*g",
+              "formula": "L·g",
+              "label": "in",
+              "meaning": "the run's growth, hot",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "ΔL",
+              "text": null,
+              "unit": "in",
+              "value": 0.014485937499999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the share to leave open",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": "f*ΔL",
+              "formula": "f·ΔL",
+              "label": "in",
+              "meaning": "the allowance to leave open",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "a",
+              "text": null,
+              "unit": "in",
+              "value": 0.007242968749999999
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the kiln's top temperature",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design's firing",
+              "symbol": "T",
+              "text": null,
+              "unit": "degF",
+              "value": 1567.15
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the temperature the growth is to",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "T_g",
+              "text": null,
+              "unit": "degF",
+              "value": 1588.7055555555557
+            }
+          ],
+          "id": "movement.across",
+          "label": null,
+          "lever": null,
+          "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "T",
+              "level": "warning",
+              "margin": "T = 2,361 °F, 38.8 °F under T_g = 2,400 °F",
+              "op": "<=",
+              "right": "T_g"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "pass",
+          "title": "Expansion allowance, the front and back walls"
+        },
+        "level": "info",
+        "message": "The front and back walls, 73.0 in outside, grow about 0.57 in hot (3/32 in per foot, to 2400 °F): leave about 0.29 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). Free-standing, as this kiln is, Olsen's chamber kilns have no expansion joints: the walls act as one unit (p.52). No joint in the masonry over an arch or near its springing (BIA).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]"
+      },
+      {
+        "check": {
+          "cells": [
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in",
+              "meaning": "the run, outside",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": "the design's outside sizes",
+              "symbol": "L",
+              "text": null,
+              "unit": "in",
+              "value": 5.334
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "in/ft",
+              "meaning": "growth per foot, to 2400 °F",
+              "offset": 0.0,
+              "scale": 12.0,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "g",
+              "text": null,
+              "unit": "in/ft",
+              "value": 0.0078125
+            },
+            {
+              "expr": "L*g",
+              "formula": "L·g",
+              "label": "in",
+              "meaning": "the run's growth, hot",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "ΔL",
+              "text": null,
+              "unit": "in",
+              "value": 0.041671875
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "",
+              "meaning": "the share to leave open",
+              "offset": 0.0,
+              "scale": 1.0,
+              "source": "Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+              "symbol": "f",
+              "text": null,
+              "unit": "",
+              "value": 0.5
+            },
+            {
+              "expr": "f*ΔL",
+              "formula": "f·ΔL",
+              "label": "in",
+              "meaning": "the allowance to leave open",
+              "offset": 0.0,
+              "scale": 39.37007874015748,
+              "source": null,
+              "symbol": "a",
+              "text": null,
+              "unit": "in",
+              "value": 0.0208359375
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the kiln's top temperature",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "the design's firing",
+              "symbol": "T",
+              "text": null,
+              "unit": "degF",
+              "value": 1567.15
+            },
+            {
+              "expr": null,
+              "formula": null,
+              "label": "°F",
+              "meaning": "the temperature the growth is to",
+              "offset": -459.67,
+              "scale": 1.8000000000000114,
+              "source": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]",
+              "symbol": "T_g",
+              "text": null,
+              "unit": "degF",
+              "value": 1588.7055555555557
+            }
+          ],
+          "id": "movement.along",
+          "label": null,
+          "lever": null,
+          "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+          "requirements": [
+            {
+              "holds": true,
+              "left": "T",
+              "level": "warning",
+              "margin": "T = 2,361 °F, 38.8 °F under T_g = 2,400 °F",
+              "op": "<=",
+              "right": "T_g"
+            }
+          ],
+          "rule": null,
+          "rule_holds": true,
+          "rule_level": "error",
+          "solve": null,
+          "status": "pass",
+          "title": "Expansion allowance, the side walls"
+        },
+        "level": "info",
+        "message": "The side walls, 210.0 in outside, grow about 1.64 in hot (3/32 in per foot, to 2400 °F): leave about 0.82 in of it open, half the growth, the joints taking the rest (Bhatia; Olsen's 1/16 in per foot in a frame). Free-standing, as this kiln is, Olsen's chamber kilns have no expansion joints: the walls act as one unit (p.52). No joint in the masonry over an arch or near its springing (BIA).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]"
+      }
+    ],
+    "kind": "no frame",
+    "members": [],
+    "posts": 2,
+    "rod": null,
+    "rod_d_in": 0.0,
+    "thrust": "240 lb per foot of arch, hot (147 cold): 1,102 lb on each end wall",
+    "working": [
+      {
+        "formula": "H = W·(sin θ − (1 − cos θ)/θ) / (2(1 − cos θ)) per foot, hot, × the kiln's width; the arch spans one chamber's depth",
+        "inputs": {
+          "rise": "22.9 in",
+          "span": "96 in",
+          "width": "55 in"
+        },
+        "name": "Thrust on each end wall",
+        "note": null,
+        "reference": "statics with hinges at the arch faces (Heyman, maximum thrust); arch-thrust-theory.md [A1–A3], checked against HarbisonWalker's heated-arch table, kiln-hardware.md §4.3 [S20]; HarbisonWalker's largest printed heated-arch factor, used where its method gives no finite hot thrust (the ring too thick for its rise): the frame's give limits it instead, as in Olsen's light bolted frames (4th ed. p.139); arch-thrust-theory.md §8; Olsen, The Kiln Book, 4th ed., p.94–95 (the arches throw their thrust onto the common wall), p.97 (bracing a chamber kiln's firebox and front chamber 'is a must')",
+        "value": "240 lb per foot of arch, hot (147 cold): 1,102 lb on each end wall"
+      },
+      {
+        "formula": "z(y) = h + ρ − R + √(R² − (y − S/2)²), R = (S²/4 + ρ²)/2ρ",
+        "inputs": {
+          "rise ρ": "22.9 in",
+          "span S, the chamber's depth": "96 in",
+          "springline h": "25.1 in"
+        },
+        "name": "The chamber's section along its depth",
+        "note": "The arch spans front to back, so the section across the width is a rectangle as tall as the arch at that station; the side walls are filled up to it.",
+        "reference": "Olsen, The Kiln Book, 4th ed., Fig 4-153 (Bowen Mountain), p.94–95 (climbing kilns)",
+        "value": "25.1 in at 0 in, 36.4 in at 12 in, 43.1 in at 24 in, 46.8 in at 36 in, 48.0 in at 48 in, 46.8 in at 60 in, 43.1 in at 72 in, 36.4 in at 84 in, 25.1 in at 96 in"
+      },
+      {
+        "formula": "k = T/(r + T/2) ÷ η(φ) ≥ 2; x_R = (N·x_p + G·e/2 + H_c·y_p)/(N + G) ≤ e, N = W/2, G the wall under the springline",
+        "inputs": {},
+        "name": "The arch along the depth: Heyman's statics",
+        "note": "Geometry and loads alone, so no range of T/S limits it. The end wall is taken standing on its own, the fill over the skewback left out: the steadier case is spare. The hot thrust, the arch pressed between braced walls, is the frame's.",
+        "reference": "Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; Couplet–Heyman minimum thickness, Rizzi et al. 2010; domes-over-doors.md §D3 [D5]; Heyman's safe theorem: masonry stands if a line of thrust in equilibrium with its loads lies within it, the line found need not be the actual one; domes-over-doors.md §D3, arch-thrust-theory.md §2; the resultant in the base's middle third: no tension at the joint (domes-over-doors.md §D3 [D7]; door-headers.md §D3.2, BIA TN 31A); a statics criterion, not an allowable stress",
+        "value": "a 9 in ring over 96 in, 11.0 times the thinnest that stands (half-angle 51.0°); on each end wall the cold thrust carries the resultant 22.9 in into its 9 in base (middle third to 6.0 in)"
+      },
+      {
+        "formula": "μ_need = H_c / N ≤ μ; z* = max(0, (H_c/μ − N) / Σγe)",
+        "inputs": {
+          "H_c": "147 lb/ft",
+          "N": "151 lb/ft",
+          "μ": "0.5"
+        },
+        "name": "Sliding at the springing, each end wall",
+        "note": "The joint is hot in firing, so the friction is dense refractory's least hot value, 0.50 (Oliveira et al. 2021), not BIA's cold 0.60. It was measured on one dense alumina-spinel brick, 20–900 °C; none is measured hot for Morgan Thermal Ceramics K-26 insulating firebrick, so the tested brick's value is taken, unconfirmed for this material.",
+        "reference": "Coulomb friction at a dry bed joint (BIA TN 31A: stable if the resultant's angle to the joint's normal is under the angle of friction; door-headers.md §D3.3), checked apart from the safe theorem, which assumes no sliding (Heyman; Huerta 2001; Gilbert, Casapulla & Ahmed 2006: sliding governs where the normal force is small); physics review part 2, finding 3. Mortar's cohesion is left out: none is sourced hot; Oliveira, Rodrigues, Pereira, Lourenço and Marschall (2021) §6.3: dry joints of a dense alumina-spinel brick, friction angles 30.9° at 20 °C and 26.5°, 27.0°, 27.9° at 300, 600 and 900 °C (μ = tan: 0.60; 0.50, 0.51, 0.53), the least hot value taken, as the joint's temperature isn't worked out; mortar-and-brick-strength.md S1 [R1]",
+        "value": "μ_need = 0.97; friction alone can't hold the top 55.8 in"
+      },
+      {
+        "formula": "ΔL = L × 3/32 in per ft (to 2400 °F); a = ½ ΔL",
+        "inputs": {
+          "L, outside": "73.0 in",
+          "top temperature": "2361 °F"
+        },
+        "name": "Expansion allowance, the front and back walls",
+        "note": "The growth is to 2400 °F; no source read gives it below, so it isn't scaled down to a cooler firing (the safe side).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "value": "grows 0.570 in hot; leave 0.285 in open"
+      },
+      {
+        "formula": "ΔL = L × 3/32 in per ft (to 2400 °F); a = ½ ΔL",
+        "inputs": {
+          "L, outside": "210.0 in",
+          "top temperature": "2361 °F"
+        },
+        "name": "Expansion allowance, the side walls",
+        "note": "The growth is to 2400 °F; no source read gives it below, so it isn't scaled down to a cooler firing (the safe side).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]",
+        "value": "grows 1.641 in hot; leave 0.820 in open"
+      },
+      {
+        "formula": "ΔS = S × 3/32 in per ft (to 2400 °F); a = ½ ΔS",
+        "inputs": {
+          "S, the span": "96 in"
+        },
+        "name": "Expansion allowance, the arch's span",
+        "note": "No expansion joint in the masonry over the arch or near its springing (BIA). How far the arch rises as it grows in a held span isn't worked out: no published method or measurement was found (refractory-movement-and-mortar.md §1.2).",
+        "reference": "Brosnan, 'Alumina-Silica Brick', in Schacht (ed.), Refractories Handbook: fireclay brick grows 3/32 in per ft heated to 2400 °F, the allowance most makers recommend; Olsen, The Kiln Book, 4th ed., p.51 (1/16–3/32 in per ft); refractory-movement-and-mortar.md §1.1 [M1]; Bhatia, Overview of Refractory Materials, PDHonline M158, p.29: 'just one half of the theoretical expansion is sufficient', the joints taking the rest; Olsen p.52, 1/16 in per ft in a steel frame; refractory-movement-and-mortar.md §1.1 [M2]; BIA Technical Note 31: 'Vertical expansion joints should not be placed in the masonry directly above a structural arch' or 'in close proximity to the springing'; door-headers.md D3.1 [H2]",
+        "value": "grows 0.750 in hot; 0.375 in of it for the frame to give"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "hot face of": "floor, left, right, front, back, roof"
+        },
+        "name": "IFB near its rating: Morgan Thermal Ceramics K-26 insulating firebrick",
+        "note": "Long service near its rating can shrink IFB enough to open its joints; no source says how near, so the margin is shown, not judged.",
+        "reference": "Brosnan, 'Alumina-Silica Brick': IFB 'for long-term exposures near the rated service temperature, shrinkage may occur sufficiently to allow joint opening', so use a higher duty rating than the process temperature alone needs; refractory-movement-and-mortar.md §1.1 [M1]; rating: castables.md §6.3, Morgan K series data sheet, 1 January 2025 [S49] [S50]",
+        "value": "rated 2606 °F; the kiln fires to 2361 °F, 245 °F below"
+      }
+    ]
+  },
+  "gas": null,
+  "heat_loss": {
+    "ambient": "70 °F",
+    "faces": [
+      {
+        "face": "left",
+        "heat_loss": "8147 W",
+        "inside_area": "54.72 ft²",
+        "layers": [
+          {
+            "cold_side": "218.9 °F",
+            "cold_side_k": 377.00426210706036,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1499999999269,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "84.11 ft²",
+        "surface_temperature": "218.9 °F"
+      },
+      {
+        "face": "right",
+        "heat_loss": "8147 W",
+        "inside_area": "54.72 ft²",
+        "layers": [
+          {
+            "cold_side": "218.9 °F",
+            "cold_side_k": 377.00426210706036,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1499999999269,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "84.11 ft²",
+        "surface_temperature": "218.9 °F"
+      },
+      {
+        "face": "back",
+        "heat_loss": "1752 W",
+        "inside_area": "9.587 ft²",
+        "layers": [
+          {
+            "cold_side": "199 °F",
+            "cold_side_k": 365.9386200285601,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1500000000258,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "21.85 ft²",
+        "surface_temperature": "199 °F"
+      },
+      {
+        "face": "front",
+        "heat_loss": "1752 W",
+        "inside_area": "9.587 ft²",
+        "layers": [
+          {
+            "cold_side": "199 °F",
+            "cold_side_k": 365.9386200285601,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1500000000258,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "21.85 ft²",
+        "surface_temperature": "199 °F"
+      },
+      {
+        "face": "floor",
+        "heat_loss": "5312 W",
+        "inside_area": "73.33 ft²",
+        "layers": [
+          {
+            "cold_side": "1417 °F",
+            "cold_side_k": 1042.777991332718,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1500000000008,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "106.5 ft²",
+        "surface_temperature": "1417 °F"
+      },
+      {
+        "face": "roof",
+        "heat_loss": "1.248e+04 W",
+        "inside_area": "84 ft²",
+        "layers": [
+          {
+            "cold_side": "207.2 °F",
+            "cold_side_k": 370.50498458371425,
+            "hot_side": "2361 °F",
+            "hot_side_k": 1567.1500000000262,
+            "material": "ifb-k26",
+            "thickness": "9 in"
+          }
+        ],
+        "outside_area": "127.7 ft²",
+        "surface_temperature": "207.2 °F"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "The floor is built on the ground: its loss is worked out as a disk on dry soil at steady state. Early in a firing cold ground takes more, about twice as much at 12 hours, and wet ground more again.",
+        "reference": "Incropera Table 4.1 case 10, a disk on a semi-infinite medium, S = 2D; dry soil k from Lienhard Table A.2; thermal-properties.md §8 [T39] [T40]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Morgan Thermal Ceramics K-26 insulating firebrick runs down to 199 °F (data from 500 °F); past its data sheet's points the conductivity is carried on along the nearest pair of points above the data, and held at the first point's value below it (no lower: more heat loss, the safe side).",
+        "reference": "castables.md §6.3, Morgan K series data sheet, 1 January 2025 [S49] [S50]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Heat loss is the steady loss with the kiln held at top temperature. It does not include the heat stored in the walls and ware during the firing.",
+        "reference": null
+      }
+    ],
+    "top_temperature": "2361 °F",
+    "total": "37.59 kW",
+    "total_watts": 37587.14226658963,
+    "working": [
+      {
+        "formula": null,
+        "inputs": {
+          "cone": "11",
+          "final heating rate": "60 °C/h"
+        },
+        "name": "Top temperature",
+        "note": null,
+        "reference": "Orton cone charts; cones.md and electric-and-thermal.md §8",
+        "value": "1294 °C (2361 °F)"
+      },
+      {
+        "formula": null,
+        "inputs": {},
+        "name": "Air around the kiln",
+        "note": null,
+        "reference": null,
+        "value": "70 °F"
+      },
+      {
+        "formula": null,
+        "inputs": {
+          "finish": "oxidised_steel"
+        },
+        "name": "Shell emissivity",
+        "note": null,
+        "reference": "CIBSE Guide C Table C3.7; electric-and-thermal.md §4.7 [S52]",
+        "value": "0.79"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "84.11 ft²",
+          "outside surface": "218.9 °F",
+          "surface coefficient h": "12.6 W/K/m²"
+        },
+        "name": "Heat loss, left",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "8147 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "84.11 ft²",
+          "outside surface": "218.9 °F",
+          "surface coefficient h": "12.6 W/K/m²"
+        },
+        "name": "Heat loss, right",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "8147 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "21.85 ft²",
+          "outside surface": "199 °F",
+          "surface coefficient h": "12.04 W/K/m²"
+        },
+        "name": "Heat loss, back",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1752 W"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "21.85 ft²",
+          "outside surface": "199 °F",
+          "surface coefficient h": "12.04 W/K/m²"
+        },
+        "name": "Heat loss, front",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1752 W"
+      },
+      {
+        "formula": "h = 8k/(πD), D = √(4A/π): a disk on a semi-infinite solid, S = 2D",
+        "inputs": {
+          "D": "139.7 in",
+          "soil k (dry mineral soil)": "1 W/(m·K)"
+        },
+        "name": "Ground under the floor",
+        "note": null,
+        "reference": "Incropera Table 4.1 case 10, a disk on a semi-infinite medium, S = 2D; dry soil k from Lienhard Table A.2; thermal-properties.md §8 [T39] [T40]",
+        "value": "0.7176 W/K/m²"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "106.5 ft²",
+          "outside surface": "1417 °F",
+          "surface coefficient h": "0.7176 W/K/m²"
+        },
+        "name": "Heat loss, floor",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "5312 W"
+      },
+      {
+        "formula": "T_s from Q = A_out·h_g·(T_s − T∞), h_g the ground's (above)",
+        "inputs": {},
+        "name": "The ground's top face under the floor",
+        "note": "Where the floor's outside meets the soil, at steady state in dry soil; the ground far off is taken at the air's temperature. Damp ground, or early in a firing, takes more heat and runs cooler here.",
+        "reference": "Incropera Table 4.1 case 10, a disk on a semi-infinite medium, S = 2D; dry soil k from Lienhard Table A.2; thermal-properties.md §8 [T39] [T40]",
+        "value": "1417 °F"
+      },
+      {
+        "formula": "Q = A_out·h(Ts)·(Ts − T∞); ∫k dT across each layer = Q·∫dx/A(x)",
+        "inputs": {
+          "outside area": "127.7 ft²",
+          "outside surface": "207.2 °F",
+          "surface coefficient h": "13.79 W/K/m²"
+        },
+        "name": "Heat loss, roof",
+        "note": null,
+        "reference": "Layered wall with k(T), iterated surface temperature, as ASTM C680; natural convection by Churchill–Chu and Lloyd–Moran; electric-and-thermal.md §6",
+        "value": "1.248e+04 W"
+      },
+      {
+        "formula": "sum of the six faces",
+        "inputs": {},
+        "name": "Total heat loss at top temperature",
+        "note": "Conduction through the lining only, in steady state: air leaking at the door and spy holes, the flue gases and the heat stored in the walls and ware are not in it. The floor loses heat into the ground.",
+        "reference": null,
+        "value": "37.59 kW (1.28e+05 Btu/h)"
+      }
+    ]
+  },
+  "hybrid": null,
+  "masonry": {
+    "cut_list": [
+      {
+        "count": 10,
+        "cut": "cut to 0.25 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 52,
+        "cut": "cut to 0.5 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 0.5 in long, ripped to 0.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 0.5 in long, ripped to 1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 0.5 in long, ripped to 1.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 10,
+        "cut": "cut to 0.75 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 72,
+        "cut": "cut to 1 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 1 in long, ripped to 0.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 1 in long, ripped to 1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 1 in long, ripped to 2 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 364,
+        "cut": "cut to 2.25 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 3,
+        "cut": "cut to 2.25 in long, ripped to 0.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 7,
+        "cut": "cut to 2.25 in long, ripped to 1.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 10,
+        "cut": "cut to 2.5 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2.5 in long, ripped to 0.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 49,
+        "cut": "cut to 2.75 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 2.75 in long, ripped to 0.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 2.75 in long, ripped to 1.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 10,
+        "cut": "cut to 3 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 3 in long, ripped to 0.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 69,
+        "cut": "cut to 3.25 in long",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 2,
+        "cut": "cut to 3.25 in long, ripped to 0.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 1,
+        "cut": "cut to 3.25 in long, ripped to 1.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 124,
+        "cut": "ripped to 0.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 32,
+        "cut": "ripped to 0.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 47,
+        "cut": "ripped to 1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 7,
+        "cut": "ripped to 1.1 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 21,
+        "cut": "ripped to 1.5 in",
+        "material": "ifb-k26"
+      },
+      {
+        "count": 16,
+        "cut": "ripped to 2 in",
+        "material": "ifb-k26"
+      }
+    ],
+    "findings": [
+      {
+        "check": null,
+        "level": "info",
+        "message": "Arch bricks: Roof of chamber 1, layer 1 from the inside: about 761 bricks by volume, cut to the curve; Left wall of chamber 1, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Right wall of chamber 1, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Front wall of chamber 1, the skewback and fill on top: about 23 bricks by volume, cut to the arch's angle; Back wall of chamber 1, the skewback and fill on top: about 6 bricks by volume, cut to the arch's angle; Roof of chamber 2, layer 1 from the inside: about 761 bricks by volume, cut to the curve; Left wall of chamber 2, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Right wall of chamber 2, layer 1 from the inside, above the springline: about 136 bricks by volume, cut to the curve; Front wall of chamber 2, the skewback and fill on top: about 6 bricks by volume, cut to the arch's angle; Back wall of chamber 2, the skewback and fill on top: about 23 bricks by volume, cut to the arch's angle.",
+        "reference": "Arch and wedge shapes, 9-inch series; electric-and-thermal.md §5 [S54]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The skewbacks and the fill beside the arch are drawn along the arch's radius at the springline and counted by volume. The skewback's face must match the arch: 39° to the horizontal here, 90° less half the arch's central angle (HarbisonWalker's 60° skews suit a 60° arch, its 48° skews one at 2.302 in/ft). The end walls take the arches' thrust; no steel for them is sized (the frame's findings).",
+        "reference": "kiln-hardware.md §5.2 [S20]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Brick counts assume dry joints at the nominal 9 × 4½ × 2½ in size, a ⅛ in saw cut, and 5 % extra for breakage. Each cut piece already takes its own brick in the count. The size is sourced; the saw cut is an assumption no source gives, so adjust it to your saw. The allowance is the masonry estimators' \"at least 5 percent\" (BIA): set allowances.brick in the design from your own experience. The side walls run through, past the end walls and the walls between chambers, which fit between them.",
+        "reference": "9 × 4½ × 2½ in straight; electric-and-thermal.md §5 [S54]; kerf assumed; brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Fireboxes are built of the kiln's own layers, the walls' round their sides and over their roofs, the floor's under them, unless the design gives one its own lining (firebox.lining, where the book builds it of other brick). Against a wall, the grate sits its step below the chamber floor, so smouldering coals fall into the front stacking (p.188), and the inlet flues are cut at the floor's level in the wall between; below the kiln's floor the firebox has walls of its own. Stoke holes are cut with their foot at the grate (p.188), and ash pits are left open at the mouth (p.188). The roofs are drawn of the walls' layers laid flat: span a flat one with an arch, bricks or kiln shelves as Olsen does (p.145), or give it a corbel roof. Firebox 1, against the front wall, drawn 14 in tall, as wide as it is, as its height isn't given, drawn with its grate level with the chamber floor, as no step is given; Firebox 2, a trough sunk in chamber 2's floor along its front, drawn 14 in tall, as wide as it is, as its height isn't given.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.92, p.141, p.145, p.188"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Firebox 1: 14 in above the grate and an ash pit 15 in below it (52% of its height below the grate), the grate 0 in below the chamber floor. How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 251 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "Firebox 2: 14 in above the grate and an ash pit 15 in below it (52% of its height below the grate). How high to set the grate depends on the firing wanted. Olsen sets it at the vertical midpoint (Fig. 8-2, p.199–200; the Breda kiln's equal volumes above and below, p.167); for the most heat his fast-fire kilns put more than half below, for the most air under the coals (p.140, p.204); a grate set too low chokes the coals (p.199). A 9–12 in rise from the grate to the chamber floor drops smouldering coals into the front stacking (p.188), and Fig. 7-3 steps up 12–15 in (p.179). Kilns fired for ash glazing and flashing make the firebox part of the first chamber, so the ash rides up round the pots: a step of 0 in, the default. This kiln is 251 ft³; Olsen's 12–18 in below and above is for 30–100 ft³ kilns (p.199), and the shortest he gives is 12½ in with the grate at 6–7 in, on a 12–16 ft³ fast-fire kiln.",
+        "reference": "Olsen, The Kiln Book, 4th ed., p.199–200 and Fig. 8-2 (the grate at the vertical midpoint; 12–18 in below and above on 30–100 ft³ kilns), p.188 (a 9–12 in rise from the grate to the chamber floor), p.179 (a 12–15 in step up)"
+      },
+      {
+        "check": null,
+        "level": "info",
+        "message": "The 2 chambers stand in a row, each wall between them 9 in thick, as the design gives it (lining.between). Each chamber's arch spans along the draft, over its depth, and throws its thrust onto the walls before and behind it, as in Olsen's climbing kilns (p.94–95). Where an arch meets its neighbour over the wall they share, it is cut there and counted by volume. Each wall between chambers has 4 flue holes 4½ in wide and 9 in tall at the higher chamber's floor, 9 in apart: Olsen's standard 4½ × 9 in flues for the Kyoto climbing kilns, \"at 9 in\" read as a 9 in separator (p.96, p.45); the book doesn't say which way the 4½ in runs, so it is taken across. They are cut from the brick count. Lay them on a header course with the header over each one laid so it can be knocked out if the flue proves too small, and size them against your firing: Olsen errs on flues too large (p.45).",
+        "reference": "run_parts.py; Olsen, The Kiln Book, 4th ed., p.94–95; kiln-reference.md, Tube and climbing chamber kilns, p.45, p.96"
+      }
+    ],
+    "quantities": [
+      {
+        "amount": 6802.0,
+        "detail": "5700 whole, 778 cut into 922 pieces; 6478 in the kiln plus 5 % for breakage",
+        "kind": "insulating_firebrick",
+        "material": "ifb-k26",
+        "name": "Morgan Thermal Ceramics K-26 insulating firebrick",
+        "priced_amount": 6802.0,
+        "unit": "bricks"
+      }
+    ],
+    "working": [
+      {
+        "formula": "buy = ⌈count × (1 + allowance)⌉",
+        "inputs": {
+          "allowance": "5 %"
+        },
+        "name": "Allowance over the count: bricks, whole and cut",
+        "note": "the default; set allowances.brick in the design to change it",
+        "reference": "brick-waste.md §1, BIA Technical Note 10 (2009), p.11 [W1]",
+        "value": "5 %"
+      }
+    ]
+  },
+  "name": "Olsen's two-chamber wood kiln",
+  "target": null
+}

@@ -47,7 +47,8 @@ def input_for(
     tol: float = 0.002,
 ) -> Target:
     """The steady fuel rate that reaches ``temperature`` (K) in ``time`` (s), from ``guess``
-    (kg/s), searched between guess/most and guess·most; ``tol`` the time's relative tolerance."""
+    (kg/s), searched between guess/most and guess·most; ``tol`` the fuel rate's tolerance,
+    relative to the bracket's low end (Brent's ``xtol``), not the time's."""
     seen: dict[float, float] = {}
 
     def miss(f: float) -> float:

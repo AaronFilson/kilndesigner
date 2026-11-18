@@ -31,7 +31,6 @@ and 1.08 million BTU/hr on the stacking alone, arch frame L4×4×¼).
 ## Open questions for the user
 
 1. Are there drawings or a kit sheet for the Olsen 100 (dimensions, burner count)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

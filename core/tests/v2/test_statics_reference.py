@@ -1,7 +1,10 @@
 """v2 statics on every reference kiln (ADR 0017, decision 17; the user, 2026-11-10): the kilns in
 the book all stood and worked for their builders, so every one v2 models must stand, cold and hot.
 Where v2 can't yet model one, what is missing is said, and the set is pinned here so a kiln can't
-drop out of the model unnoticed. None is fitted: the kilns only check the model."""
+drop out of the model unnoticed. None is fitted: the kilns only check the model. A kiln's own
+unknown, such as the hot strength of a historic kiln's brick, is worked back from it having stood
+(decision 17 as amended, the owner, 2026-11-17): Tobe stands, its working in test_statics_row.py.
+Olsen's two-chamber design, never built, is out of the set (`examples/olsen-two-chamber.yaml`)."""
 
 from pathlib import Path
 
@@ -14,10 +17,6 @@ ROOT = Path(__file__).resolve().parents[3]
 OLSEN = ROOT / "examples" / "olsen"
 
 NOT_MODELLED = {
-    # stands cold; hot, no admissible state with dense brick's 25 psi C16 stand-in at every joint
-    # (it needs 29.7 psi), one with compression unlimited: the verdict rests on the brick's hot
-    # strength, of which the stand-in is a lower bound, so it isn't given (11-10-26.md §D2)
-    "tobe": "hot crushing strength",
     # fibre hung in steel
     "blakebrough-tasmania": "fibre",
 }
@@ -31,11 +30,11 @@ def results() -> dict[str, KilnStatics]:
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) -> None:
-    assert len(results) == 53
+    assert len(results) == 52  # Olsen's unbuilt two-chamber design left the set (2026-11-17)
     falls = {k: r.stands for k, r in results.items() if r.all_stand is False}
     assert falls == {}, f"a reference kiln can't stand in v2: a model fault to find ({falls})"
     standing = {k for k, r in results.items() if r.all_stand}
-    assert len(standing) == 53 - len(NOT_MODELLED)
+    assert len(standing) == 52 - len(NOT_MODELLED)
     for kid, words in NOT_MODELLED.items():
         r = results[kid]
         assert r.all_stand is None
@@ -43,7 +42,8 @@ def test_every_reference_kiln_v2_models_stands(results: dict[str, KilnStatics]) 
         assert words in f"{r.kind}: {r.missing}"
         if all(v is None for v in r.stands.values()):
             assert r.steps[0].name == "Not modelled"
-    assert results["tobe"].stands == {"cold": True, "hot": None}
+    # high-duty brick, 13½ in (the owner, 2026-11-17): stands hot on C16's 25 psi (it needs 19.5)
+    assert results["tobe"].stands == {"cold": True, "hot": True}
 
 
 @pytest.mark.slow
@@ -71,19 +71,20 @@ def test_what_holds_the_reference_kilns(results: dict[str, KilnStatics]) -> None
 @pytest.mark.geometry
 def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
     """The rows of chambers: Olsen's three-chamber kiln's frame must give about 19 lbf/ft at each
-    end cold; tobe's 10 ft arches need about 210 lbf/ft at each end from what holds the row (the
-    firebox, the earth, the chimney); Bidai's and Fujiwara's end walls carry their arches alone."""
+    end cold; tobe's 10 ft arches, 13½ in rings (the owner, 2026-11-17), need about 131 lbf/ft at
+    the front cold from what holds the row (the firebox, the earth, the chimney; the front alone is
+    pinned); Bidai's and Fujiwara's end walls carry their arches alone."""
     lbft = 4.4482216152605 / 0.3048
     three = results["olsen-three-chamber"].numbers
     assert three["least on the frame at the front, cold"] / lbft == pytest.approx(18.9, abs=0.5)
     assert three["least on the frame at the back, cold"] / lbft == pytest.approx(18.6, abs=0.5)
     tobe = results["tobe"].numbers
-    assert tobe["least on the buttress at the front, cold"] / lbft == pytest.approx(210.4, abs=1.0)
+    assert tobe["least on the buttress at the front, cold"] / lbft == pytest.approx(131.4, abs=1.0)
     for kid in ("bidai", "fujiwara-bizen"):
         n = results[kid].numbers
         assert n["least on the buttress at the front, cold"] == pytest.approx(0.0, abs=1e-6)
     rows = {k for k, r in results.items() if r.kind == "arches along the draft"}
-    assert len(rows) == 10
+    assert len(rows) == 9  # 10 with Olsen's unbuilt two-chamber design, out since 2026-11-17
 
 
 @pytest.mark.slow
@@ -91,9 +92,10 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
 def test_what_holds_the_sail_domes(results: dict[str, KilnStatics]) -> None:
     """The domes over square, oblong and curved plans, sliced: the most any strip needs of the
     walls' buttress, hot: Miravet's dense-brick dome about 100 lbf/ft, Calimpong's and
-    Hollyweird's flat cast domes 165 and 144 lbf/ft."""
+    Hollyweird's flat cast domes 165 and 91 lbf/ft (Hollyweird's rescanned 2026-11-18: 53 in wide,
+    its springlines 42½ and 35 in; 182 at the interim 61 in, 144 on the 55 in borrowed before)."""
     lbft = 4.4482216152605 / 0.3048
-    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 143.6}
+    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 90.5}
     for kid, hot in want.items():
         r = results[kid]
         assert r.kind == "sail dome"

@@ -154,6 +154,8 @@ kilndesigner/                 uv workspace
     masonry/                  brick coursing, arch bricks, cut list, counts
     plans/                    Typst templates → PDF; DXF sheets
     materials/                the materials library, from manufacturers' data sheets
+    v2/                       engine v2 (ADR 0017): heat/ and statics/; replaces v1's
+                              thermal, combustion and statics checks when it stands in
   cli/                        Typer: build, check, simulate, export
   api/                        FastAPI; OpenAPI contract; SQLAlchemy 2 + Alembic
   worker/                     arq tasks: simulate, build geometry, render plans
@@ -183,7 +185,12 @@ kilndesigner/                 uv workspace
 | [0012](../adr/0012-combustion-with-cantera.md) | Combustion is modelled with Cantera, not a rule of thumb (proposed) |
 | [0013](../adr/0013-checks-as-evaluable-sheets.md) | Every warning and error is a sheet of formulas you can edit (proposed) |
 | [0014](../adr/0014-built-kilns-are-the-reference.md) | Built kilns are the reference: a rule that fails one is the rule's fault (proposed) |
+| [0015](../adr/0015-firing-simulation.md) | The firing is simulated by a 1D finite-volume wall per face (proposed; v1, replaced by 0017's heat model) |
 | [0016](../adr/0016-mcp-server.md) | AI assistants reach the engine through an MCP server that returns the working (proposed) |
+| [0017](../adr/0017-engine-v2.md) | Engine v2: heat and statics rebuilt from first principles, validated on the reference kilns (accepted) |
+
+ADRs 0002–0016 are still marked proposed, though M0–M8 shipped on them. Accepting the ones
+still in force (and marking 0015 superseded by 0017 once v2 stands in) is the owner's call.
 
 ## The engineering, by kiln type
 
@@ -228,6 +235,371 @@ references used. The plans print the working, so a builder can check it.
 - The heat and statics milestones below describe v1. Their results aren't to be relied on until
   v2 is rebuilt.
 - Engine v2 is the focus until it works as a whole: statics first, then heat.
+
+### Where things stand (2026-11-18)
+
+- **Merged to `main`:** M0–M4, M6 and M8 (on v1); engine v2's statics and heat (PR #12).
+  M7 is on hold; M5 and M9 haven't started.
+- **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"; the full
+  suite of 2026-11-18, [the review](../reviews/2026-11-18-review.md) §1):
+  - 49 of 52 printed figures inside the bands. Suzuki's 60 bundles a side for chambers 4–7 (read
+    by the owner, 2026-11-17) is the one added. The other three are the open items: the 36 ft³
+    cross-draft, Singh's low-fire kiln and Breda's wood;
+  - N1–N6 all fail;
+  - **52 reference kilns, not 53 (the owner, 2026-11-17, again 2026-11-18):** Olsen's two-chamber
+    kiln (pp.202, 206) is his unbuilt proposal, so it left the set. It stays as a design,
+    `examples/olsen-two-chamber.yaml` and the `wood-two-chamber` template, for the model's
+    behaviour tests (its facts in `core/tests/v2/design_kilns.yaml`);
+  - 51 of the 52 stand hot, every one v2 models (Blakebrough's fibre isn't modelled). Tobe has
+    stood hot since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
+    `11-17-26-inputs.md` §12). The lower-bound rule's "not given" stays for designs no one has
+    built;
+  - the suite pins 39 kilns reaching their cone at every corner of their band (14 gas and
+    electric, Kähler and Blakebrough on Rule 1's band since 2026-11-18; 25 single chambers), and
+    all 11 rows somewhere in theirs. That 7 of the rows reach it at every corner comes from runs
+    outside the suite before 2026-11-11, Tobe's on its old lining. 2 kilns are open items.
+    (Counted before the full suite was stopped, 2026-11-18: the tests wait until the concepts are
+    fixed.)
+- **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
+  found what stands in the way:
+  1. v2 can't run a design file on its own. The setting, the draft-path inputs and the fuel data
+     are built in `core/tests/v2/` (`loads.py`, `path_inputs.py`, `fuel.py`), and λ is passed in
+     rather than taken from the draft. These move into the engine and the design model.
+  2. There's no front door. v2 returns SI dataclasses; the surfaces read v1's pydantic `Report`.
+     The fix is one `v2.design(kiln) -> V2Report` with units and working.
+  3. v2 imports two v1 heat modules (`gas`, `electric`), and both pull in `heatloss`. Move the
+     constants to leaf modules and add an import-linter contract for v2.
+  4. Castables, the bill, hardware, the frame, movement and foundations read v1's heat output.
+     Split v1's heat modules into sizing (kept) and physics (removed) before removing v1.
+  5. Heat and statics share no hot state. The hot statics takes all the masonry at C16's
+     temperature, which the owner calls "just bad modeling" (2026-11-17): the temperature falls
+     through the brick. A bridge from the heat model's wall temperatures is the fix. Tobe no longer
+     waits on it (worked back, `11-17-26-inputs.md` §12).
+  6. Duplication inside v2: two `kiln_path`, `Band`, `Sourced` and `hydraulic`, and four
+     `NotModelledError`.
+- **The inputs v2 needs** are in [11-17-26-inputs.md](11-17-26-inputs.md), checked against
+  sources outside the book first. Concrete's c_p(θ) is now quoted from EN 1992-1-2 §3.3.2. Singh's
+  top is a band below 2100 °F, 800–1149 °C (the owner). Dense brick's hot strength and IFB
+  emissivity above 1077 °C are still not found; Tobe no longer needs the first, and the owner keeps
+  the second's extrapolation. Most of the answers aren't applied yet (next, item 1).
+
+### Next, in order
+
+Reordered 2026-11-18 ([the review](../reviews/2026-11-18-review.md)). The owner's answers of
+2026-11-17 overturn rules that the test-side code still carries. So they are applied first, and
+v2 is checked against its bar again, before item 2 folds that code into the engine. Otherwise the
+engine would take in rules the owner has overturned.
+
+**The priority (the owner, 2026-11-18):** "the only thing that matters right now is getting the
+reference kilns measured and the v2 engine on a good start, with the right tools to make the rest
+of the system work". Tests come second until then. v1's heat and physics are discarded, and the
+rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
+
+1. **Finish this part: apply the 11-17 answers, then rerun the bar**
+   ([11-17-26-inputs.md](11-17-26-inputs.md); the review's §2 lists each one with its files).
+   Nothing new needs to be sourced except Singh's cover.
+   - **Principle 6 (§1):**
+     - ~~where nothing is drawn, the chimney is ¼ of the chamber's width, not a ⅕–¼ band
+       (`paths.rule6`, `RULE_6_NOTE`)~~ (done 2026-11-18);
+     - ~~a part drawn to scale is sized from the drawing (the anagama in the hole's flue, about
+       6 in)~~ (done 2026-11-18: 4–8 in wide, its undrawn depth ¼ of the width);
+     - Kitade's chimney is 12 in.
+   - **Stoke holes aren't intakes (§3).**
+     - A stage's air is the upstream gas, the printed chamber inlets (Hollyweird's tube, the
+       two-chamber design's tube), and a side-stoked chamber's own air intake under its stoke hole.
+       The owner (2026-11-18): Fig 8-10's side stoke configuration is "a smaller hole, the stoke
+       hole, above the air intake and fire pit access". Kitade's second chamber takes its air that
+       way on both sides, about the front's 432 in².
+     - After the front chamber is done, "some or all of the front air is closed to prevent cooling
+       too fast". So the front's intakes for a later stage are a band from closed to open, with
+       the book's state where it prints one (Tamba's open, p.87; Kitade's closed, p.202).
+     - ~~The design's stoke hole is no longer taken as a fully open intake~~ (done 2026-11-18,
+       inputs §3, "Applied in the engine"). A firebox's own `air` and the kiln's `air_inlets`
+       carry the air. Only a floor-fired firebox's mouth is still its stoke hole. A stage with the
+       front shut and no inlet of its own is refused.
+     - ~~The intakes the dataset derives from stoke holes are reworked~~ (done 2026-11-18).
+       Ellington's 648 in² and Kitade's 63 in² went. Hollyweird's front is its 15 × 18 in air
+       inlet. The two-chamber design's 49 in² went. Singh's coal kiln's stoke holes are a band,
+       open in hours 1–3. The book gives the air its own openings (inputs §3):
+       - Ellington's three 13½ × 9 in air holes under its stoke holes (Fig 4-97), 364½ in²;
+       - Kitade's two 12 × 18 in air-draft and ash-pit holes (Fig 8-11), 432 in².
+     - **Left by the change, for the kiln-by-kiln check:**
+       - Suzuki, Tobe, the Kyoto climbing kiln and Hotchkiss are refused. Their designs stand a
+         trough in for the main firebox, which leaves chamber 1 no way in for its air.
+       - No row's design gives a chamber its own air inlets yet. With the front shut, every staged
+         chamber except Hollyweird's back is refused. Kitade's second chamber takes two 12 × 18 in
+         inlets (`air_inlets`, Fig 8-10) once it is entered.
+     - **The draft counts no flow backwards** (`draft.py`). An opening above the neutral plane, the
+       height where the kiln's pressure meets the room's (hydrostatics, `fittings-and-kiln-
+       convection.md`), is credited no air, and the hot gas it would push out isn't modelled. The
+       book prints that outflow: Tamba is stoked until "flame is coming out of two or three stoke
+       holes further on" (p.87). It bears on what an open stoke hole does while it is open (the
+       owner's inrush, §3), and on reduction's back pressure. Asked about by the owner, 2026-11-18.
+   - **The fire mouth (§2):**
+     - a design setting per stage: open, an open fraction, or closed;
+     - the book's state as a dataset fact where it is printed (Tamba open, Kitade closed), and
+       every state reported elsewhere;
+     - the open mouth's cooling of the first chamber modelled;
+     - Tamba's slow corner stops shutting its mouth.
+   - **Kitade (§8):** a second chamber, the first one's size (assumed, the book draws one), its
+     stage, the 12 in chimney and the mouth closed; then rerun T1.
+   - **Tamba (§9):**
+     - ~~16 in side holes in the design, the dataset and the `tunnel` template together~~
+       (done 2026-11-18, with the round bundle, 15 × 30 in);
+     - the 14° slope waits on a sloped tube, engine work not listed before;
+     - the earth against the half-buried tube's walls: v2's heat model takes only a floor to the
+       soil (`ground.py`), so the walls lose to the room. New engine work, for Tamba and the
+       anagama in the hole.
+   - **Singh (§4):** ~~the top as a band from 800 to 1149 °C~~ (in the dataset and the design,
+     2026-11-18, carried by `single_cases.TOP`). The cover is the owner's estimate (2026-11-18):
+     shards 3 in thick over 80 % of the top, 20 % open as the exhaust. Engine work: an open top
+     that takes a partial lid and its port. To source: a loose shard layer's conductivity and
+     emissivity.
+   - **The 36 ft³ cross-draft (§6):** the band test over its lining and gas, at cone 10 only (the
+     owner, 2026-11-18).
+   - **The fast-fire's mouths** stay open while firing (the owner, 2026-11-18): its intakes above
+     and below the grate stand.
+   - ~~**Kähler and Blakebrough (§7):** the Rule 1 burner bands~~ (done 2026-11-18: fibre as IFB
+     by pp.39 and 71; both reach cone 10 at the band's most).
+   - ~~**The two-chamber design (§8):** read p.202 again~~ (done 2026-11-18: out of the reference
+     set, its p.202 facts split from Kitade's).
+   - ~~**Breda (§5):** the top as cone 01–2~~ (done 2026-11-18, the owner's estimate). T1 and T2
+     pass at both ends; T3 stays open, 1,800 kg 21 % under v2's least (2,290 kg) with the top
+     moving it only 3 %. To trace: the setting's light end (it still assumes a shelf layer for
+     pots set off the floor), the slats' moisture, the domed floor taken flat.
+   - ~~**Hollyweird (§8a):** its two chambers from its own figures~~ (rescanned 2026-11-18,
+     `olsen-figure-scaling.md` §7, §8):
+     - 53 in wide, on Fig 4-113's bricks;
+     - the front's springline 42½ in and the back's 35 in, under 12 in domes;
+     - 18 in side walls, the owner's drawn 14–19 in;
+     - three 12 × 11 in flues between the chambers;
+     - the 15 × 18 in opening the front firebox's air, below the grate, and the 5 in tube the
+       second firebox's.
+     It stands cold and hot (90.5 lbf/ft on the buttress). Left as engine work:
+     - the back chamber's fall and its taper into the chimney: a row whose last chamber narrows
+       and falls, new schema work;
+     - the floors' steps;
+     - the flues' sills, 15½–18 in up;
+     - v1 drawing the front firebox with a roof of its own under the dome.
+   - **The kiln-by-kiln check** (the owner, 2026-11-18): each reference kiln, one at a time, with
+     Hollyweird's care. Read its text and figures on the page images, and compare them with its
+     design and its dataset entry. Then check v2 models it as the book describes it. A kiln that
+     doesn't match a template or a design is future work, noted here, not a fault to force.
+     **Measure, not decide** (the owner, 2026-11-18):
+     - Each measurement goes into the dataset with its status and spread.
+     - Each gap is listed in the kiln's doc and below: where the design differs from the book,
+       where the engine can't express it, and where the book shows nothing.
+     - The designs and the engine aren't changed during the check.
+     - An engine limit is never a fact about the kiln.
+     The design changes made on 2026-11-18 before this was said were taken back. Their
+     measurements stay in the dataset.
+
+     The gaps so far, for a later round:
+     - ~~Hollyweird~~ (above; the owner's answers set its design).
+     - **The Kyoto type:**
+       - The design takes Fig 4-28's 4½–6 ft across the kiln and Bidai's 41⅓ in along the draft.
+         The book's range reads along the draft, as does Fig 4-27's 4–5 ft inside the Kyomizu
+         kiln's third chamber, and its length across isn't printed.
+       - The main firebox is unsized, so v2's path is refused.
+       - The book's arch is pointed and springs near the floor, with the reduction chambers' peak
+         set back.
+       - The doors are in a side wall.
+     - **One firebox in each chamber, in the schema** (the Kyoto type, Suzuki, Tobe, Hotchkiss).
+       v1 makes the himae troughs only when they don't fit side by side across the front. Where
+       they fit, v1 lays them out in front of the kiln, and v2's path takes them as troughs only
+       through the test-side `path_inputs.ONE_PER_CHAMBER`.
+     - **Suzuki and Tobe:**
+       - No main firebox in the designs: Suzuki's is drawn but unsized, and Tobe's isn't mentioned.
+         Both paths are refused.
+       - Where a design gives both a main firebox and a himae in each chamber, chamber 1's himae
+         should burn the main firebox's gas. Today the path would refuse it, and v1 would lay the
+         himae from chamber 2.
+     - **Bidai, Kawaii:**
+       - The designs have no air opening. The book's (Fig 8-7, 12–14 × 14 in) is in the dataset.
+       - Kawaii's dogi has no height in the design, against the printed 5 ft.
+     - **Bae's gilgama:** the design gives no firebox mouth. Its scaled size (Fig 4-69, about
+       16 × 15 in) is in the dataset.
+     - **Blakebrough's Sturt kiln:**
+       - By p.205 the inlet flues bring the channel's air supply under the wood; the design takes
+         them as the channel's flues into the chamber.
+       - The channel's printed 12 in is its whole height; the design takes 12 in above the grate,
+         and the engine adds a 12 in ash pit.
+       - The outlet flues aren't shown in the book.
+     - **Blakebrough's Tasmanian kiln:** the fibre's thickness isn't printed. p.69's "12in. ...
+       compressed to 8in." is the stack's height under the press, which the design had taken for
+       it. Fig 5-71 scales the walls' ends 7–9 in, which agrees with the design's 8 in. The lower
+       15 in of IFB (taken as fibre) and the moving box (taken as a car) were already listed.
+     - **Bowen Mountain, Breda:** no new gap.
+     - **Chappell's salt kiln:** its firebox's opening isn't drawn or sized, so v2's path leaves
+       the intake out and the air is an upper bound.
+     - **The Church kiln** (and Fireworks, the same firebox):
+       - Fig 7-3 draws each ash pit and walkway 14 in wide and 18 in deep. The design alone takes
+         the ash-pit mouth as the firebox's width, 36 and 24 in. The dataset's 504 in² is the
+         book's.
+       - Fig 7-4's three adjustable air levels (below the grate, at the grate, at the stoke hole)
+         aren't sized, and the design has none.
+     - **Conrad's teardrop:**
+       - Fig 4-147's ash-pit air supply scales about 17 × 13 in, 216 in², against the design's
+         468 in² (the firebox's 39 in by the 12 in pit). The measurement is in the dataset.
+       - A framed opening high in the front is unidentified.
+     - **Ellington's new hog:** Fig 4-99 shows the dug-out firebox's "vertical air channels" in
+       its front wall, which the plan draws as the three 13½ × 9 in "inlet flues" (Fig 4-95). So
+       they bring the air down into the firebox. The design takes them as flues from the firebox
+       into the chamber, closing the firebox's mouth into the chamber, which the book draws open.
+     - **The electric car kiln:** no new gap. The floor elements, if p.245's clipped word is
+       "and", were already listed.
+     - **Falcone's Pompeii updraft:**
+       - Fig 6-34's under-air supply scales about 12 × 11 in ([82, 237] in², ±25 %, on the
+         bricks' courses). The design gives no opening, so its path alone takes the firebox
+         chamber's whole open end, 118 × 71 in.
+       - The nine exit holes (Fig 6-32) don't scale to better than a factor of 2 (about 12 or
+         25 in square, as the vault's brick faces are ends or beds), so the path stays on Rule 6.
+     - **Fujiwara's Bizen kiln:**
+       - The dataset's intake was the dogi's loading hole, "3½ × 2ft ... when open" (p.102),
+         1,008 in². For the firing that hole is bricked up as the dogi door. Fig 4-55's front
+         elevation draws a fire hole in it with an air duct under it, and p.103 fires 2½ days
+         "stoking the fire-mouth air duct", then 4 days "from the fire hole".
+       - The dataset now takes the air duct as drawn, 75–189 in². That is a drawing scale: the
+         widths are firm on the dogi's 10 ft, the heights loose by 2×.
+       - The design's stoke hole is still the loading hole (a gap).
+       - With the smaller intake, the staged chamber is under suction at its side holes' height.
+     - **The basic groundhog:** the type's firebox mouth isn't drawn or sized, so v2's path takes
+       the air as an upper bound.
+     - **Hotchkiss** (every figure scaled on the printed block sizes, `olsen-figure-scaling.md`
+       §9):
+       - The slope is 11–16°, where the design takes 22°.
+       - The main firebox is one domed box of commercial firebrick, where the design has six 9 in
+         channels. Its lower front, and so its air path, is hidden in both photos.
+       - There are four flue slots in the measured wall, 300–420 in².
+       - The springline above the floors is still open.
+     - **Kähler:** no new gap. Fig 5-18's 40½ in, read at zoom 5, is the 36 in depth plus the
+       4½ in front wall, which confirms the uncertain 36 in.
+     - **Kaneko:** no new gap.
+     - **The Kannofen:**
+       - Its two fireboxes have grate bars and ash pits, two arched stoking mouths with hinged
+         covers (Fig 6-39), and small openings at the ash pits' foot (Fig 6-37).
+       - None is sized: the figure is "NOT TO SCALE" and the photo's brick format isn't printed.
+       - The design's fireboxes have no grate and no mouth, so its path takes each firebox's whole
+         open end.
+     - **Kato:** no new gap. Its air is "dampened" (p.132), its openings unsized, so v2's path
+       takes the design's ash-pit mouths.
+     - **Kenzan:** Fig 6-47's "IRON GRATE OPENING 15" × 19"" may be the firebox's mouth with the
+       grate seen through it, not the grate alone, as the design takes it.
+     - **Kitade:** no new gap beyond the owner's answers already in this item (inputs §8).
+     - **La Borne:** Fig 4-78 draws the firebox front's stoke opening above the grate and an air
+       opening into the ash pit, but their numbers are too faded to read. The design gives the
+       firebox no grate and no mouth, so its path takes its whole open end.
+     - **The Meaders groundhogs:**
+       - Neither book figure sizes the firebox mouth, so v2's path takes the air as an upper
+         bound.
+       - David's Fig 4-105 draws five or six openings at the front arch's foot, about 5–7 in wide,
+         their heights loose by the sketch's two scales.
+     - **Miravet:** "the two flues at the front of the dome, closest to the firebox, are closed"
+       in the initial firing (p.159). A design's flues can't change over a firing, the same need
+       as the fire mouth's states (item §2 above).
+     - **Moveros:** the firebox mouth is a triangle of two leaning stones, 22 in at the base and
+       27 in tall (Fig 6-3), about 297 in². The design takes a 22 × 27 in rectangle, 594 in². The
+       dataset now carries the triangle.
+     - **Niñodaguia:** its 18 × 27 in mouth is drawn round-headed, 451–486 in² in the dataset.
+       The design takes the rectangle.
+     - **The oil-drip kiln:** Fig 8-20 draws each port flue's air entering at its foot past
+       "DAMPER BRICKS", so the dataset's whole flue face is only the most-air end. The damper
+       bricks' least isn't drawn.
+     - **The 36 ft³ cross-draft, the four kits, the three-chamber kiln, the Phoenix kilns,
+       Singh's two kilns:** no new gap.
+     - **Tamba:** Fig 4-16 draws the dogi's mouth, "STOKING" with "AIR" below it, and "the
+       firebox becomes the air supply" for the side stoking (p.86). The mouth isn't sized, so v2's
+       path takes the dogi's whole open end.
+     - **The four updraft tests:** no new gap. p.74, read on the second scan
+       (`docs/research/Scanned_20261025-1022.pdf`), matches.
+
+     **The check is done** (2026-11-18): every kiln with a design was read against its pages,
+     and an audit of the dataset confirmed each of the 52 carries the check's note. The 41
+     extras, the kilns and worked examples without plans or scale drawings, are skipped (the
+     owner, 2026-11-18). Left for later, if wanted: the 52 facts in the 52 kilns still marked
+     `reading: uncertain`, mostly faint or unclear labels; some only the owner's copy can settle, as it
+     settled Fig 4-27. Across the 52 kilns, the gaps fall into these groups:
+     1. **The fire's way in.** The designs often lack the opening the book draws or measures:
+        - a firebox's air opening narrower than the firebox (Bidai, Kawaii, the
+          multi-directional kilns, Conrad's);
+        - a floor-fired mouth (Bae, Moveros' triangle, Niñodaguia's round head, Fujiwara's air
+          duct);
+        - a main firebox (the Kyoto type, Suzuki, Tobe, Hotchkiss).
+        The dataset carries what the book shows. A design schema field for the ash pit's mouth,
+        and ports that aren't rectangles, would carry it into the designs.
+     2. **Openings that change over a firing:** the fire mouth, flues closed early (Miravet),
+        damper bricks (the oil drip).
+     3. **Two-way flow at openings:** Breda, the fast-fire, Anderson Ranch and Tamba print gas
+        out and air back in.
+     4. **Shapes a design can't take:**
+        - a row's pointed arch along the draft and its offset peak;
+        - a back chamber that falls and tapers (Hollyweird);
+        - the doors in a side wall under an arch;
+        - flues in a catenary's legs (Sturt's, not shown in the book).
+     5. **Readings that move a design's axes or size:**
+        - the Kyoto type's chamber along the draft;
+        - Hotchkiss's slope, 11–16° against 22°;
+        - Sturt's channel and inlet flues.
+     - **The design schema:** a port (a stoke hole, an air inlet) is a rectangle or a circle.
+       The book draws triangular, round-headed and pointed openings (Moveros, Niñodaguia,
+       Hotchkiss, Bae), so their areas can only come in through the dataset.
+     - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
+       firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
+       Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
+       firebox's `air`.
+   - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
+     owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
+     lining among them). Then restate "Where things stand".
+   - **Waiting on the owner:** nothing. Front stoke holes were read in the book instead (the
+     review's §5, question 9).
+2. **Fold the test-side engine knowledge into the engine** (module review items 1, 3 and 6).
+   Nothing new needs to be sourced for it.
+   - **Follow-up: two-way flow at openings** (the owner, 2026-11-18, `11-17-26-inputs.md` §3).
+     "The fire will suck in as the stoke changes … Mostly the kiln will suck in air when in
+     oxidation and vent flame in reduction, but these values change too." v2's draft counts
+     inflow only. Each opening needs both directions:
+     - air in below the neutral plane, gas out above it, the plane moving with the damper, the
+       stoking and the atmosphere;
+     - the book's flame from the stoke holes further on (p.87);
+     - Breda's flames out of the chimney cone holes, stoked again when they "suck back in"
+       (p.168, Fig 6-53);
+     - the fast-fire's top spyhole, its flame watched until it "sucks back into the kiln", time to
+       stoke (pp.142–143); the Anderson Ranch kiln's "reducing flames coming out of the door blow
+       hole" at 1250 °F (Table 5-2).
+     Sources to find first: the two-way flow through an opening in a hot enclosure (compartment-
+     fire research, `grates-and-fuel-beds.md` [G10]–[G11], the neutral plane's height).
+   - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and
+     `CONTINUOUS_FRACTION` to a leaf module, and add the import-linter contract for v2.
+   - ~~ADR 0017's list of the v1 modules v2 may use is out of date.~~ Amended 2026-11-18 (the
+     owner):
+     - v1's heat and physics are discarded;
+     - everything else is reworked around v2;
+     - the layout modules v2 relies on are listed;
+     - v1's sizing may stay, never trusted over v2's measurements.
+3. **The v2 front door and the bridge to statics** (items 2 and 5). This puts the masonry's own
+   temperature through its thickness into the hot statics: the hot face weak, the cooler brick
+   behind it carrying the load (HWI's UR-19 says walls are built for this). It fixes the model
+   fault the owner named.
+4. **Make the suite faster:** a `bands` marker for the corner runs and an on-disk cache of
+   their results. The full `pytest --cov` took 2 h 0 min on 2026-11-18 (about an hour on
+   2026-11-11).
+5. **Stacked zones up a chamber.** These make every top-to-bottom evenness figure testable.
+6. **Reduction (λ < 1) as the fuel band's other end**, and the held runs rerun on all the
+   draft's air.
+7. **Switch the surfaces to v2**, after the split in module review item 4; then design the levels
+   afresh (decision 3).
+8. **Small items** (the review's §4):
+   - concrete's specific heat into the library;
+   - from HWI's second reading (`hwi-handbook.md` §9):
+     - Fig 3.4's fireclay growth curve below 2400 °F for `movement.py`;
+     - the ring-table tests proposed in `hwi-ring-arch-tables.md`;
+     - Olsen's A-5 at 5′10″ checked on his page (HW and `rings.py` give 31 + 52, the
+       transcription 30 + 53).
+   - Done already:
+     - Tobe (§12): worked back from standing (ADR 0017, decision 17 as amended).
+     - Scaling the six unsized chimneys from Olsen's drawings: read on 2026-11-17
+       (`docs/research/olsen-figure-scaling.md`). Fireworks, La Borne's back door and the Kannofen
+       are still to measure.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
@@ -276,7 +648,7 @@ references used. The plans print the working, so a builder can check it.
   the page; the views, cutaway and named parts; a design started from a kind of kiln and edited
   with choices; and castables you mix, with the refusal outside the checked range.
 - Since 28 October: Olsen's *The Kiln Book* is the ground truth (ADR 0014,
-  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` and all build
+  [10-29-26.md](10-29-26.md)). 53 of his kilns are examples in `examples/olsen/` (52 since 2026-11-17: his unbuilt two-chamber design moved to `examples/`) and all build
   with no error. Gas sizing follows his rules (Rule 1, the 1:1 flue, Rule 5 chimneys, natural
   gas, altitude, no 60 ft³ limit), fireboxes for wood, coal and oil are in (`fire.py`), round,
   sloped and chambered kilns compute, and floors on the ground lose heat to the soil. Every check
@@ -294,7 +666,10 @@ references used. The plans print the working, so a builder can check it.
     ground (YAML does); chamber kilns' arches along the draft aren't drawn;
   - Olsen's Table 1-12 wall: the engine's 445 BTU/ft²·h against his 360, recorded, not tested.
 
-### What's next
+### What's next (2026-10-29; superseded)
+
+_Superseded by ADR 0017 (2026-11-09): no more work goes into v1's physics, so items 1–3 below
+stand only as they carry into v2. See "Where things stand" under Milestones._
 
 The plan put M5 (hosted) after M4, but neither first user needs accounts yet, and what they do
 need is still open. In order:
@@ -524,6 +899,10 @@ client is ready, since the CLI can produce the client's plans before the app exi
     example, a published h_r or hot-face-down case with numbers, available heat at kiln flue
     temperatures, a catenary's thrust, a three-phase element design, a BOM waste or curved-brick
     cutting allowance.
+  - **Since ADR 0017 (2026-11-09)** these notebooks and v1's tests no longer count as evidence
+    for heat and statics. v2's bar is decision 17: the book's printed figures inside v2's bands,
+    N1–N6 failing in the numbers, all 52 reference kilns standing (53 until 2026-11-17). Its tests are in
+    `core/tests/v2/`. Notebooks for v2's solvers are still to do.
 - **Invariants with Hypothesis:** thicker insulation never increases heat loss; energy in = stored
   + lost; a longer element at the same voltage never draws more power; brick counts cover the
   wall volume.
@@ -571,9 +950,10 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   open cores heated from above, or a measured kiln floor on such a course), and the block's
   conductivity above. Until then a platform is solid concrete on dry soil, the side that
   over-states the heat reaching the ground and the platform's top.
-- **Concrete's specific heat** (EN 1992-1-2 §3.3.2, not yet recorded): wanted so the firing
-  simulation can carry a platform's own layer; today the simulation's floor goes into dry soil
-  without it.
+- **Concrete's specific heat:** found. EN 1992-1-2 §3.3.2 was quoted on 2026-11-17 in
+  `11-17-26-inputs.md` and is in `blocked-items.md` §20 since 2026-11-18. It is still to add to the
+  library, so the firing simulation can carry a platform's own layer; today the simulation's
+  floor goes into dry soil without it.
 - **How to look:** open-access papers and theses (MIT masonry group, SAHC and ICSA
   proceedings), archive.org and HathiTrust full texts, makers' engineering guides, and
   standards' free excerpts. Record quotes, pages and URLs as the research files do; "not found"
@@ -628,6 +1008,18 @@ ask before relying on them). What's found so far is in `docs/research/blocked-it
   reversible expansion and drying shrinkage, a measured arch rise, rampant-arch thrust, the
   catenary at a step, hot corbels, the door in a vault; HWI's 2005 Handbook and *Modern
   Refractory Practice* not reached online.
+- *2026-11-17:* HWI's 2005 Handbook reached (the owner's copy) and read in full:
+  `docs/research/hwi-handbook.md`.
+  - Closed: castable first-heat shrinkage as a band (0.2–1.5 %), expansion allowances by class,
+    and a primary dry-out schedule. It also prints the rounding rule of Olsen's ring tables, which
+    are HW's own.
+  - Anchors: HWI's industrial anchor rules are recorded as reference only. **The owner
+    (2026-11-17):** most castable used in kiln linings doesn't need anchors, and it depends on the
+    specific material, so the engine adds no anchor requirement.
+  - Still open: hot cohesion, an allowable or FoS, IFB hot MOR and creep, a castable's reversible
+    expansion by product, and a measured arch rise.
+  - Eleven proposals for the engine wait on the owner (`hwi-handbook.md` §8; number 10, anchors,
+    is withdrawn).
 
 ## Follow-up research: hot emissivities and gas radiation (2026-11-09)
 
@@ -661,9 +1053,10 @@ references serve.
   kiln's dense brick reads 0.75–0.79 in one class and 0.55–0.63 in the next.
 - **Fibre above 1127 °C, castables, kiln wash, glazed ware and element wire** at firing
   temperatures.
-- **Gas radiation:** Alberti, Weber and Mancini's CO₂ and H₂O correlations (Combust. Flame 2015,
-  2016) with their spreadsheets, or a weighted-sum-of-grey-gases table; and a soot model for
-  luminous flames (wood, reduction).
+- **Gas radiation: closed for CO₂ and H₂O.** v2 uses published WSGG sets (Bordbar 2014 by
+  default, Dorigon 2013 as the alternative; `core/src/kilndesigner/v2/heat/gasrad.py`), within
+  about ±10 % of Alberti's line-by-line tables. Still open: a soot model for luminous flames
+  (wood, reduction), which ADR 0017 leaves out until sourced.
 
 ## Open questions
 

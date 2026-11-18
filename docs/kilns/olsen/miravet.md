@@ -40,7 +40,6 @@ stands cold and hot on its 36 in walls; the most any strip needs of what holds t
 1. Fig 6-19: is "6'6"" the firebox's inside height, and is "3'" the mouth's sill above the
    firebox floor?
 2. The chamber door's width and height.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

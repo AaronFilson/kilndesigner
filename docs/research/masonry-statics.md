@@ -210,6 +210,16 @@ shown, not checked (`frame_checks.py` ~line 733, `door.py` BEARING_NOTE).
 Next: Trinks Vol. I (1923) pp. 196, 238 (library or HathiTrust search-only); Huerta (2004);
 Heyman (1977) pp. 109–114 directly; Maia Avelino et al. (2021) full text.
 
+2026-11-17: HarbisonWalker's *Handbook of Refractory Practice* (2005), read in full
+(`hwi-handbook.md`), has no allowable or factor of safety either. Two statements bear on walls:
+- "The wall should be bonded so that loads will be transferred to the cooler part of the wall when
+  the inner, hotter portion loses its ability to carry them. Walls must be designed to carry
+  structural loads at high temperatures." (UR-19)
+- "In unsupported straight walls, a 4½-inch thickness will carry heights up to 3 feet; 9 inches
+  … 3 to 8 feet; 13½ inches, 8 to 12 feet; and 18 inches, walls higher than 12 feet." Thicker if
+  the unsupported length is over 1½ × the height; cylindrical walls with backing may be thinner
+  (UR-21). A third source beside Olsen p.41 and Giles (`door-headers.md`).
+
 ## M8. A ring's foot against a taller wall: the springer (tas-de-charge) (2026-11-10)
 
 On a climbing kiln each chamber's arch along the draft ends against the wall behind it, which

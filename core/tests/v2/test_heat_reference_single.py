@@ -36,7 +36,9 @@ pytestmark = [pytest.mark.slow, pytest.mark.geometry]
 # Printed: the oil drip's cone 10 (p.208), Fireworks' cone 10+ (p.181), Singh's coal kiln's cone 10
 # (p.133), Anderson's cone 10 (p.142), Kato's 2372 °F (p.131), Falcone's usual 1760 °F (p.160),
 # La Borne's 1300 °C by the firebox (p.111). Assumed, each with its reason in the dataset: the
-# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed)
+# rest's cones (10) and the low-fire updrafts' 1760 °F (Falcone's, the only low-fire top printed);
+# Breda's a band, the owner's estimate for earthenware, cone 01 to cone 2, 2046–2088 °F
+# (2026-11-18), an input of its band like the load, so every corner reaches cone 2 too
 T1 = (
     "anagama-hole", "blakebrough-sturt", "breda-bottle", "chappell-domura", "church-skaelskor",
     "conrad-teardrop", "ellington-new-hog", "falcone-pompeii", "fast-fire-anderson",
@@ -45,9 +47,10 @@ T1 = (
     "ninodaguia", "olsen-oil-drip", "phoenix-nh", "phoenix-wright", "singh-coal",
 )  # fmt: skip
 OPEN_T1 = {
-    "singh-lowfire": "open item: the shards and saggar pieces piled over the open top (pp.155–156) "
-    "aren't modelled, so the whole top radiates to the room (a third of the heat), and the "
-    "1760 °F top is assumed (Falcone's): 11-10-26.md, C3a question 2",
+    "singh-lowfire": "open item: the shards and saggar pieces piled over the open top (pp.155–156; "
+    "the owner's estimate, 3 in over 80 % of the width, 20 % open as the exhaust, 2026-11-18) "
+    "aren't modelled, so the whole top radiates to the room (a third of the heat). The top is the "
+    "owner's band, 800–1149 °C (11-17-26-inputs.md §4)",
 }
 
 
@@ -59,8 +62,9 @@ OPEN_T1 = {
 def test_t1_reaches_its_target_on_its_own_draft(kid: str) -> None:
     """T1: at every corner of v2's band (the setting's least to most, the fuel's least heat to its
     most, a coal kiln's bed 85–200 kg/(m²·h)) the hardest firing reaches the kiln's target; the
-    band's working lists the inputs by their swing. Those with nothing on their path sized run on
-    Rule 6 (the owner's question 8), said in their path's working; a coal kiln's draft carries its
+    band's working lists the inputs by their swing. Those with nothing on their path sized or drawn
+    to a scale run on Rule 6's large side, ¼ of the width (the owner's answer of 2026-11-17,
+    `11-17-26-inputs.md` §1), said in their path's working; a coal kiln's draft carries its
     grates' most at λ 1."""
     b = sc.max_band(kid)
     print(f"T1 {kid}: {sc.describe(b)}")
@@ -132,16 +136,19 @@ def test_t2_the_stage_times_stand() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the printed 1,814 kg lies 0.3 % under v2's least, 1,820 kg (the lightest "
-    "setting, the driest wood, λ 1, the narrowest passages): the setting's weight, the 1760 °F "
-    "top and the 10 h's shape (its 3 h preheat's end temperature) aren't printed, and the metric "
-    "beside 'some 2 tons' is cut at '18..' kg; 11-10-26.md, C3a question 8",
+    reason="open item: the printed 1,800 kg (the user's reading, 2026-11-17) lies 21 % under v2's "
+    "band at the owner's top, cone 01 to cone 2 (2,290 kg to never; the load swings it most, the "
+    "top about 3 %). The setting's weight isn't printed. v2 needs more wood than the kiln burned: "
+    "a finding to trace in the model or the setting's band, not the top; 11-17-26-inputs.md §5",
 )
 def test_t3_bredas_two_tons_lie_in_its_band() -> None:
-    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; short tons, 1814 kg as
-    fired): the setting held to a straight rise to its 1760 °F (assumed) over 10 h takes a fuel
-    inside v2's band (the setting, the wood, λ from the stoker's 1 to all the draft's air, the
-    grey gases, the emissivity class, the setting's passages)."""
+    """T3: "some 2 tons" of chestnut slats for about 10 hours (pp.166–168; 1800 kg as fired, the
+    metric figure the user read, 2026-11-17): the setting held to a straight rise to its top over
+    10 h, the owner's estimate cone 01 to cone 2 (2026-11-18, a band input), takes a fuel inside
+    v2's band (the setting, the wood, the top, λ from the stoker's 1 to all the draft's air, the
+    grey gases, the emissivity class, the setting's passages). A band from 1760 °F, tried on
+    2026-11-17 (1.1 % under 1,820 kg), is withdrawn: 1760 °F isn't realistic for earthenware (the
+    owner, 2026-11-18)."""
     tons = _printed("breda-bottle", "fuel_per_firing", "kg")
     b = sc.kiln_bands("breda-bottle")[sc.FUEL]
     print(f"T3 breda-bottle, {tons:.0f} kg printed: {sc.describe(b)}; {b.swings}")
@@ -241,9 +248,9 @@ def test_t5_la_bornes_tunnel_falls_front_to_back() -> None:
 
 
 def test_t5_the_groundhogs_back_fires_cooler() -> None:
-    """T5: a groundhog runs hot along the crown and cool along the bottom of the back wall (p.75,
-    Fig 3-6): its chamber in two segments, the back's setting cooler than the front's when the
-    front's reaches cone 10 (top to bottom needs zones stacked up the chamber: not built)."""
+    """T5: a groundhog runs hot along the crown and cool along the bottom of the back side wall
+    (p.75, Fig 3-6): its chamber in two segments, the back's setting cooler than the front's when
+    the front's reaches cone 10 (top to bottom needs zones stacked up the chamber: not built)."""
     f = sc.evenness("groundhog-basic", 2)
     print(
         f"T5 groundhog-basic at {f.times[-1] / HOUR:.2f} h: settings "

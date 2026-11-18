@@ -168,12 +168,12 @@ def test_n5_through_a_reference_kilns_design() -> None:
 
 @pytest.mark.slow
 def test_no_reference_arch_is_near_its_spread() -> None:
-    """Every reference kiln's arch, cold (μ 0.6): the least collapse spread is Tobe's 10 ft
-    semicircle, 4.9 % of its span (2.94 in a side; Eq. 18 for its t/R 0.14: 2.94 in); the IFB
-    arches' 7.6 % and more. As built their supports are held (a frame or masonry); the most an arch
-    moves
-    against them for good is its brick's permanent shrinkage, at most 1.0 % (Morgan K-26 at
-    2552 °F, the 2025 sheet; morgan-k-ifb-sheets.md §6): N5's criterion condemns none."""
+    """Every reference kiln's arch, cold (μ 0.6): the least collapse spread is the 100 ft³ kit's,
+    6.7 % of its span (2.16 in a side), then updraft-test-4's 7.6 % and the 50 ft³ kit's 8.1 %;
+    Tobe's 10 ft semicircle of 13½ in (the owner, 2026-11-17) 15.1 % (9.05 in a side). As built
+    their supports are held (a frame or masonry); the most an arch moves against them for good is
+    its brick's permanent shrinkage, at most 1.0 % (Morgan K-26 at 2552 °F, the 2025 sheet;
+    morgan-k-ifb-sheets.md §6): N5's criterion condemns none."""
     least: dict[str, float] = {}
     for path in sorted((ROOT / "examples" / "olsen").glob("*.yaml")):
         try:
@@ -186,7 +186,8 @@ def test_no_reference_arch_is_near_its_spread() -> None:
             except ValueError:
                 continue  # sliding governs the unmoved ring: not a three-hinge case
     worst = min(least, key=lambda k: least[k])
-    assert worst == "tobe chamber 1"
-    assert least[worst] == pytest.approx(0.0489, abs=5e-4)
+    assert worst == "olsen-kit-100 across"
+    assert least[worst] == pytest.approx(0.0668, abs=5e-4)
+    assert least["tobe chamber 1"] == pytest.approx(0.1509, abs=5e-4)
     assert all(v > 0.01 for v in least.values())
     assert len(least) >= 40

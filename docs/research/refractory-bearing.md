@@ -122,7 +122,7 @@ values "are subject to normal manufacturing variation".
 | (reference only) | Mt. Savage medium-duty dry press | 3,000 to 4,000 | | Snippet | search result, not opened |
 | kast-o-lite-30 | Kast-O-Lite 30 LI Plus (10/19) | 2,700 (220 °F), 2,300 (1,500 °F), 1,300 (2,000 °F), 2,000 (2,500 °F), 1,800 (2,910 °F) | dried or fired at each temperature | Verified (repo) | [B15] via [H17] |
 | mizzou-castable-plus | HWI Mizzou Castable Plus (12/12) | 5,500 (220 °F), 3,500 (1,500 °F), 3,000 (2,000 °F), 4,000 (2,500 °F) | same | Verified (repo) | [B16] via [H18] |
-| kast-o-lite-26 | HWI Kast-O-Lite 26 LI | **NOT FOUND** (no HWI sheet surfaced) | | NOT FOUND | search |
+| kast-o-lite-26 | HWI Kast-O-Lite 26 LI | **NOT FOUND** (no HWI sheet surfaced). 2026-11-17: the pre-Plus version, bulletin HW139 (3/03) in HWI's 2005 Handbook: **3,000** psi, MOR 700, 92 lb/ft³ | at 220 °F | Verified (page image) | `hwi-handbook.md` §5.2 |
 | kaolite-2600-li | Morgan Kaolite 2600 LI Gun | 950 to 1,700 psi (6.55 to 11.72 MPa) dried 24 h at 105 °C; fired values 225 to 900 psi "layout ambiguous" | dried | Snippet; do not use until the PDF is read | [B17] |
 
 Notes
@@ -271,6 +271,29 @@ creep data to read: not reachable here (ResearchGate 403; no NIST copy found).
 
 ---
 
+## B7. HarbisonWalker's *Handbook of Refractory Practice* (2005), read 2026-11-17
+
+The owner's copy, read in full (`hwi-handbook.md` [HW05], §2.2 and §4.1). For this file:
+- **C16** (PR-7, PR-8): two 9 in straights on end under 25 lb/in². For fireclay and high-alumina
+  brick the top temperature is held 1½ h, then the furnace cools to 1830 °F or lower before the
+  load is removed. Normal hold: high-duty 2460 °F, superduty 2640 °F. No other load and nothing on
+  IFB anywhere in the book, so gap 9 stays open.
+- **Table 3.4** (PR-9), 25 lb/in²: superduty 1.0–3.0 % subsidence after 2640 °F; high-duty and
+  low-duty "Withstands load to <2640°F".
+- HWI's superduty brands, bulletin HW 89R (4/04), hot load at 2640 °F: KX-99-BF 0.7 %, KX-99 0.6 %,
+  CLIPPER DP 1.3 %, ALAMO 1.7 %. KX-99 in 2004 printed CCS 8,500 psi and MOR 2,050 psi, against
+  the 6/12 sheet's 5,000 and 1,700 [B7], which the library keeps.
+- **C832** (PR-8): "usually 25 psi" on 1½ × 1½ × 4½ in specimens, held 50 h or more, creep the
+  subsidence from the 20th to the 50th hour. Creep curves for high-alumina brick only (Fig 3.7).
+- Walls (UR-19): "the wall should be bonded so that loads will be transferred to the cooler part
+  of the wall when the inner, hotter portion loses its ability to carry them." A principle with no
+  numbers.
+- **Not in it:** an allowable or working stress, a factor of safety on CCS or the C16 load, a hot
+  crushing strength or hot MOR of any fireclay brick or IFB, IFB creep. The book's only stress
+  limit is the steel binding's 12,000 psi (UR-27), already used.
+
+---
+
 ## What the engine can use
 
 | Need | Usable now | Basis |
@@ -282,7 +305,7 @@ creep data to read: not reachable here (ResearchGate 403; no NIST copy found).
 | Cold CCS, JM23 / 26 / 28 / 30 | 145 / 232 / 304.5 / 333.5 psi | Verified (repo), Morgan 2025 |
 | Cold CCS, Kast-O-Lite 30 LI Plus | 2,700 dried; 2,300 fired 1,500 °F; 1,300 fired 2,000 °F | Verified (repo) |
 | Cold CCS, Mizzou Castable Plus | 5,500 dried; 3,500 at 1,500 °F; 3,000 at 2,000 °F | Verified (repo) |
-| Cold CCS, Kast-O-Lite 26, Kaolite 2600 LI | none | NOT FOUND / Snippet only |
+| Cold CCS, Kast-O-Lite 26, Kaolite 2600 LI | Kast-O-Lite 26 LI (3/03, pre-Plus): 3,000 psi at 220 °F. Kaolite: none | `hwi-handbook.md` §5.2; Kaolite NOT FOUND / Snippet only |
 | Hot C16 test load, dense firebrick | 25 psi (C16 §7.1), applied by the standard, so the sheets' subsidence values (Jet D.P. 1.3 % at 2460 °F; Smithfield 6.8 % at 2640 °F; KX-99 0.6 % at 2640 °F) correspond to 25 psi only if the maker ran C16 as written; KX-99's sheet does not print the load. 2026-11-10 (§B6): Alsey's 2019 sheets, Schedule 3 at 2640 °F: Pilot D.P. 1.3 %, Jet D.P. 1.3 %, Smithfield 6.8 %; NBS 1925, 25 psi printed, 43 brands 0.35–8.6 % at 1,350 °C. v2's stand-in, sourced | [B2], [B7], [B8], [B9], [B23]–[B26] |
 | Hot test load, IFB | 10 psi, 1½ h: K-23 0 / 0.3 %, K-25 0 / 0.1 % at 2000 / 2200 °F; TC-23 0.1 to 0.2 % (2010) or 0 % (2016) at 2000 °F, 0.3 % at 2200 °F (2016); IFB 23 Tile 0 % at 2000 °F | Verified [B11], [B21], [B22]. Labelled ASTM C16 by the maker. The owner reports (2026-11-09) that C16 tests at 10 psi held 90 min at the stated temperature, matching the sheets' 1½ h, which contradicts the 25 psi-only reading of [B2] §7.1 above; [B2] needs re-reading (possibly a separate IFB load or a different edition) |
 | Hot load for K26, JM-series, castables | none | NOT FOUND |
@@ -308,10 +331,12 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
 6. Hot (elevated-temperature) CCS or hot MOR of any product on these sheets.
 7. Bearing on the edge or end of IFB (the lintel case) versus the 4½ by 4½ in. face tested in C133.
 8. HWI Handbook of Refractory Practice, Gilchrist, Chesters, Schacht, Routschka, Caniglia, AISE: no
-   accessible text on allowable loads or skewback stress.
+   accessible text on allowable loads or skewback stress. **2026-11-17:** the HWI Handbook (2005)
+   is read in full (§B7, `hwi-handbook.md`) and has none either. The others are still unread.
 9. C16 load: [B2] was recorded as 25 psi only ("There is no 10 psi load in C16"); the owner says C16
    tests at 10 psi held 90 min at the stated temperature. Re-read C16 (2026-11-09 fetch returned compressed
-   binary) and correct §B1.2 and §B3.
+   binary) and correct §B1.2 and §B3. HWI's 2005 Handbook (§B7) describes C16 with 25 psi only and
+   says nothing of IFB, so it doesn't settle this.
 10. Current-edition ASTM text: C16, C27, C133, C155 above are the 2007/2008 reapproved editions from a
    public mirror; the current editions were not compared.
 11. **To find for engine v2 (2026-11-10): real hot crushing strength and creep of IFB and dense
@@ -326,6 +351,12 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
     **2026-11-10 (§B6):** the dense classes' C16 results at 25 psi found and read (Alsey's 2019
     sheets, NBS 1925): dense brick's 25 psi is now sourced, on IFB's footing, no longer by analogy.
     Hot crushing strength and creep (C832) of the library's classes are still not found.
+    **2026-11-17, the owner: Tobe no longer waits on this.** "YOU DO NOT NEED TO FIND A PRINTED
+    HOT CRUSH STRENGTH FOR A HISTORIC KILN DESTROYED IN 1963." The kiln stood, so its brick's hot
+    strength is inferred: the least value at which v2 finds it standing (ADR 0017, decision 17 as
+    amended; `docs/planning/11-17-26-inputs.md` §12). For new designs the C16 load stays the
+    lower-bound stand-in. A printed hot strength for the library's classes would sharpen their hot
+    verdicts, but no reference kiln waits on one.
 
 ---
 

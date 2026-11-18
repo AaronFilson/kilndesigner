@@ -37,7 +37,7 @@ def test_a_curve_both_ways() -> None:
 
 def test_the_crossdraft_question() -> None:
     """A burner rated near 36,000 BTU/hr at 11 in. w.c. on propane (Ransome B3's 34,200) gives
-    77,500 at 2 psi on its published curve: 2.2 × its low-pressure rating, about what the model
+    77,500 at 2 psi on its published curve: 2.27 × its low-pressure rating, about what the model
     needs from the 36 ft³ cross-draft's six for cone 10 in 15 h (§I); on natural gas the carry
     stops at 11 in. w.c., 1.17 × an 8 in. w.c. rating."""
     b3 = bu.curve("Ransome B3")

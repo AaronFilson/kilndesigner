@@ -52,7 +52,30 @@ exit flue and spy holes.
 2. Fig 4-5 p.84: is the "2' × 2'" entrance the size of the firebox, its mouth, or both? The model
    uses it for both.
 3. Fig 4-5 p.84: the chimney flue at the back has a width arrow but no number. Is a size given
-   anywhere?
+   anywhere? (Answered 2026-11-17 by Principle 6: a part drawn to scale but not dimensioned is
+   sized from the drawing, so the flue is about 6 in, 4–8 in (`olsen-figure-scaling.md` §1).
+   Applied 2026-11-18, below.)
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images, pp.83–84 (Figs 4-1 to 4-5). The dataset and the design match them:
+- the 2 × 2 ft entrance and firebox;
+- the chamber 3½ ft tall, 5¼ ft wide and 9–12 ft long;
+- a slope angle of 25;
+- walls of ground clay bisque;
+- the flue up the back to the hill line.
+
+The firebox has no grate, so its 2 × 2 ft entrance is its mouth, taking the fuel and all the air.
+That stands under the stoke-hole rule: only a floor-fired firebox's mouth is still its stoke hole.
+
+The chimney now follows the owner's Principle 6 answer:
+- **Its width:** the flue's drawn width, 4–8 in (step A's 4½–7 in and §1's 4–8 in joined), as
+  the dataset's `chimney_width`.
+- **Its depth:** not drawn, so ¼ of the 63 in width, 15¾ in, as `chimney_depth`.
+
+v2:
+- The draft path builds on these instead of being refused, or seeded by Rule 6's square.
+- The cavity is 162 ft³, and the section stands cold and hot.
 
 ## Scaled off the figures (step A, 2026-11-09)
 
@@ -68,3 +91,4 @@ flue runs into the page's gutter, so its far side may be cut. Readings in
 Question from step A:
 
 4. The chimney flue scales about 6 in across (one side in the gutter). Is that its size?
+   (Answered with question 3.)

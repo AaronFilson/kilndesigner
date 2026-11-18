@@ -4,8 +4,9 @@
   side by side (`chamber._plan`), each with its own faces, and the fuel and its air split among
   them by their grates' areas (`kiln.fire_shares`; `zone.Balance.released`), the chamber taking
   their products together; a staged firing's stream passes through them as air, shared the same;
-- **Olsen's Rule 6 seeding p.78** (`paths.Inputs.rule6`; C1's question 8, open): where nothing on
-  a gas path is sized, the chimney's side ⅕ to ¼ of the chamber's width and at least 9 in, a band,
+- **Olsen's Rule 6 seeding p.78** (`paths.Inputs.rule6`; C1's question 8, answered 2026-11-17,
+  `11-17-26-inputs.md` §1, applied 2026-11-18): where nothing on a gas path is sized or drawn to
+  a scale, the chimney's side ¼ of the chamber's width, Rule 6's large side, and at least 9 in,
   every path on it saying so.
 """
 
@@ -246,29 +247,32 @@ def _named(path: dr.Path, name: str) -> Element:
 @pytest.mark.geometry
 def test_rule_6_seeds_p78_where_nothing_on_the_path_is_sized() -> None:
     """La Borne (p.110): two chimneys, nothing sized, so C1 refuses its path. Asked for, Rule 6
-    (pp.79–80) sizes the whole chimney section from the 11 ft (132 in) width, its side 26.4 in at
-    the band's least-air end and 33 in at its most, the two chimneys sharing it; and every path on
-    it says so, with the owner's question it rests on."""
+    (pp.79–80) sizes the whole chimney section from the 11 ft (132 in) width, its side 33 in, the
+    large side (the owner's answer, 2026-11-17), the two chimneys sharing it; and every path on it
+    says so, naming that answer."""
     k = loads.design("la-borne")
     with pytest.raises(dr.NotModelledError, match=r"p\.78"):
         dr.kiln_path(k, inputs=pi.inputs("la-borne"))
     path = dr.kiln_path(k, inputs=pi.inputs("la-borne", rule6=True))
     note = path.steps[0].note or ""
     assert "Rule 6" in note
-    assert "question 8" in note
-    least = _named(path, "chimney")
-    assert least.branches == 2
-    assert least.area == pytest.approx((132 / 5 * IN) ** 2 / 2)
-    most = _named(path.most(), "chimney")
-    assert most.area == pytest.approx((132 / 4 * IN) ** 2 / 2)
+    assert "11-17-26-inputs.md §1" in note
+    for end in (path, path.most()):
+        chimney = _named(end, "chimney")
+        assert chimney.branches == 2
+        assert chimney.area == pytest.approx((132 / 4 * IN) ** 2 / 2)
 
 
 @pytest.mark.geometry
 def test_rule_6_is_never_under_nine_inches() -> None:
-    """The Kannofen's 1.05 m (41.3 in) tunnel: a fifth of it is 8.3 in, under the 9 × 9 in a
-    chimney is seldom under (p.80), so the band runs 9–10.3 in; an updraft, its exit flue p.78's of
+    """The Kannofen's 1.05 m (41.3 in) tunnel: a quarter of it is 10.3 in. A kiln under 36 in wide
+    would get the 9 × 9 in a chimney is seldom under (p.80); an updraft, its exit flue p.78's of
     that section."""
     path = dr.kiln_path(loads.design("kannofen"), inputs=pi.inputs("kannofen", rule6=True))
-    assert _named(path, "exit flue, sharp entrance").area == pytest.approx((9 * IN) ** 2)
-    assert _named(path.most(), "exit flue, sharp entrance").area == pytest.approx((1.05 / 4) ** 2)
+    assert _named(path, "exit flue, sharp entrance").area == pytest.approx((1.05 / 4) ** 2)
+    narrow = loads.design("kannofen")
+    narrow = narrow.model_copy(update={"chamber": narrow.chamber.model_copy(
+        update={"width": narrow.chamber.width * 30 / 41.3})})  # fmt: skip
+    small = dr.kiln_path(narrow, inputs=pi.inputs("kannofen", rule6=True))
+    assert _named(small, "exit flue, sharp entrance").area == pytest.approx((9 * IN) ** 2)
     assert {"la-borne", "kannofen"} <= pi.RULE_6

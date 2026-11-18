@@ -62,8 +62,27 @@ a firebox, three cross-draft chambers up a 3 to 1 slope, and a chimney. It is 19
 - Heat loss at top: 164.4 kW (168.1 kW with one mean size). Priced materials: $1,248. The
   masonry holds each arch's thrust: 161, 168 and 150 lb per foot, hot.
 - **W1 warning:** the 6.8 ft chimney is under the 8.8 ft that Olsen's rules give as the least for
-  this kiln. This follows from the drawing. `core/tests/test_olsen_kilns.py`'s `WARNED` doesn't
-  list it yet, so that test fails until the lead adds `fire.chimney` for `bidai`.
+  this kiln. This follows from the drawing, and `core/tests/test_olsen_kilns.py`'s `WARNED`
+  lists it (`fire.chimney`): the kiln was built and fired so.
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images: pp.94–95 (Fig 4-36 and the text) and pp.200–201 (Fig 8-7). The
+dataset matches them, and the design is unchanged.
+
+**Measured:** Fig 8-7's side view labels the firebox's entrance "AIR" below and "STOKING" above,
+the ash pit 14 in high. Its plan draws the entrance 12–14 in wide. The dataset carries the air
+opening as `primary_air`, [168, 196] in², and v2's draft path takes it from there.
+
+**Gap** (for the plan): the design has no air opening. Stoke holes are covered after each stoking,
+so its path alone takes the ash pit's mouth across the firebox's whole 73 in width, 1,022 in²,
+five to six times the book's.
+
+v2 on the dataset's inputs:
+- The path builds.
+- Each chamber's stage builds with the front open. With the front shut each is refused, as no side
+  air inlet is printed; the aizashiguchi is a stoke hole.
+- The arches stand cold and hot.
 
 ## Open questions
 

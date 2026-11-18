@@ -29,7 +29,6 @@ the stacking alone).
 ## Open questions for the user
 
 1. The kiln's inside sizes and burner count, if a kit sheet survives.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

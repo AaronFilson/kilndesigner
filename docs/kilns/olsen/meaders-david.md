@@ -36,7 +36,6 @@ Olsen, *The Kiln Book*, 4th ed.: p.115 (Fig 4-105 diagram, Figs 4-106, 4-107 pho
 
 1. Fig 4-105: are there eight exit flues, and how many inlet flues through the bag wall?
 2. The door's width and height, and the openings along the foot of the front arch: air holes?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

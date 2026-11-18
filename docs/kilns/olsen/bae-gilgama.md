@@ -57,7 +57,34 @@ crowns at 4½ ft. The 18 in floor step (p.108) is now entered as the combustion 
 3. Fig 4-67 p.107: is the "18"" at the front the floor step (p.108) or the mouth's height?
 4. Fig 4-67 p.107: are the two dashed stacks two separate chimneys, each with its own damper, or
    one chimney split into two flues?
-5. How big is the arched firebox door in Fig 4-69?
+5. How big is the arched firebox door in Fig 4-69? (Scaled 2026-11-18, below, on bricks taken as
+   standard; their size isn't printed.)
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images, pp.107–108, with Fig 4-67's faded labels brought up at zoom 5. The
+dataset matches the pages, and the design is unchanged.
+
+**Read:** Fig 4-67's labels, partly in the gutter:
+- "[TAL]LEST POINT";
+- "[COMBU]STION AREA";
+- "NO GRATES";
+- "[...] built at 20° + — criss[-cross]ing wood in stoking";
+- "[OXI]DATION FIRING – Reduced cooling".
+
+**Measured: the firebox's mouth.** With no grate, the mouth is the firebox's only way in for the
+fuel and the air. Fig 4-69 shows the front square on. Its brick courses repeat every 55 ± 5 px at
+zoom 4, and the bricks run 150–170 px long. Taken as standard 9 × 4½ × 2½ in bricks, which the
+book doesn't say, that is 16–23 px/in. On that scale the mouth is round-headed:
+- about 16 in wide (13–19 in);
+- at least 15 in tall above the coals (12½–17½ in), its sill hidden.
+
+The dataset gives it as a scaled `stoke_hole` and as `primary_air`, [147, 288] in²
+(`scratch/kiln-check/bae/measure.py`). v2's draft path takes it from there and builds, and the
+section stands cold and hot.
+
+**Gap** (for the plan): the design gives no mouth, so its path alone takes the firebox's whole
+open end, 48 × 48 in.
 
 ## Scaled off the figures (step A, 2026-11-09)
 

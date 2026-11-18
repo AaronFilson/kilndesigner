@@ -48,13 +48,26 @@ Notes: `docs/research/olsen-kilns.md`, `breda-bottle`.
 
 ## Results from the build
 
-- Chamber 1,600 ft³ (printed by the engine as 1.6e+03); 1760 °F (assumed); heat loss 170 kW.
+- Chamber 1,600 ft³ (printed by the engine as 1.6e+03); 1760 °F (assumed); heat loss 170 kW. (v1,
+  built before the top became cone 2, the owner's, 2026-11-17.)
 - Warning W1: a 24 in round wall isn't a whole number of 9 in and 4½ in rings, so its bricks are
   missing from the count and the price ($0 priced). This warning was there before; the engine
   suggests 22½ or 27 in.
 - The dome pushes 357 lb per foot of wall top, a ring tension of 2,785 lb. A ¼ × 2 in flat band
   holds it.
 - Rule 5 isn't applied to an updraft, so the engine works out no chimney height.
+
+## v2 heat (2026-11-18)
+
+The top isn't printed. The owner's estimate is earthenware's normal range, cone 01 to cone 2
+(1119–1142 °C). 1760 °F isn't realistic for earthenware. The design keeps cone 2, the estimate's
+top, and v2's bands carry the range (`docs/planning/11-17-26-inputs.md` §5):
+- **T1, T2:** max fire reaches the top in 1.87–6.91 h at every corner, inside the printed "about
+  10 hours".
+- **T3, the open item:** held to a straight rise over 10 h, v2's fuel band is 2,290 kg to never.
+  The printed 1,800 kg ("some 2 tons", the metric read by the owner) is 21 % under it. The setting's
+  weight swings it most, and the top barely: cone 01 takes 3,760 kg where cone 2 takes 3,900 at the
+  nominal corner. A finding to trace, not fit.
 
 ## Open questions for the user
 

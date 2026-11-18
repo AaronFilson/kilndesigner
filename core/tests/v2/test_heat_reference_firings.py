@@ -214,8 +214,10 @@ def test_w15_ifb_updraft_fires_easily_in_about_8_h_on_ten_burners() -> None:
 
 @pytest.mark.xfail(
     strict=True,
-    reason="open item: the design file's inputs (lining backing, burners' delivered input, chamber,"
-    " cone) aren't printed; docs/planning/11-09-26.md §I",
+    reason="open item: a worked example of a principle, not a measured kiln (the owner, "
+    "2026-11-17; 11-17-26-inputs.md §6). Its walls, gas, pressure and cone aren't printed, so the "
+    "12–15 h is to become a band test over them, not built yet; on the design file's assumed "
+    "lining v2 takes 34–39 h",
 )
 @pytest.mark.slow
 @pytest.mark.geometry

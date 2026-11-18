@@ -30,7 +30,7 @@ def test_lienhards_example_10_11() -> None:
 @pytest.mark.parametrize("mr", [1.0, 2.0])
 def test_the_two_sets_are_within_their_band(mr: float) -> None:
     """Bordbar 2014 reads 0 to +13 % over Dorigon 2013 at MR 1 and 2, L 0.1–3 m, 600–1600 K
-    (thermal-software.md §6.2): the band v2 carries."""
+    (thermal-software.md §6.2): the band v2 carries. The test allows −1 % to +15 % around it."""
     b, d = gr.bordbar2014(mr), gr.dorigon2013(mr)
     for t in (600.0, 1000.0, 1300.0, 1600.0):
         for length in (0.1, 0.5, 1.0, 3.0):

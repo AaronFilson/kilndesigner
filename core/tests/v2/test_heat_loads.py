@@ -10,7 +10,7 @@ import pytest
 import reference as ref
 
 IN = 0.0254
-KILNS = sorted(ref.load()["kilns"])
+KILNS = sorted(ref.with_designs())
 # Kilns that take each part of the method: printed plans and ware, a round chamber, a crossing, an
 # arch from the floor, domes over chambers in a row, an open top, an arch along the run, the kits
 QUICK = (
@@ -111,7 +111,8 @@ def test_loads_at_the_bands_ends() -> None:
 @pytest.mark.slow
 @pytest.mark.geometry
 def test_every_kilns_bands_are_the_methods() -> None:
-    """All 53 kilns: each chamber zone's band is the method's, each envelope in its chamber."""
+    """All 52 kilns and the behaviour tests' design: each chamber zone's band is the method's,
+    each envelope in its chamber."""
     for kid in KILNS:
         s = loads.setting(kid)
         assert len(s.masses) == len(s.dataset), kid

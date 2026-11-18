@@ -19,8 +19,18 @@ Olsen, *The Kiln Book*, 4th ed.:
 
 A round chamber 5 ft across, set 5 ft high, open-topped; one wood firebox under the floor, 4 ft
 long and 16½ in wide (scaled), 30 in from the floor down to the pit floor, six 4 × 4 in inlet
-flues; 9 in medium-duty firebrick walls and floor (assumed); top temperature 1760 °F (assumed,
-Falcone's, p.160).
+flues; 9 in medium-duty firebrick walls and floor (assumed). The top temperature is the owner's
+band:
+- the design file takes 2100 °F, its top;
+- v2's tests carry 800–1149 °C (1472–2100 °F);
+- it was Falcone's 1760 °F (p.160).
+
+The owner's answers (`docs/planning/11-17-26-inputs.md` §4):
+- **the top** (2026-11-17): a band below 2100 °F, 800–1149 °C. Applied 2026-11-18.
+- **the cover** (2026-11-17 and 2026-11-18): shards of pottery, always porous, holding heat and
+  letting the smoke and flame through. Estimated at 3 in thick over 80 % of the top's width, the
+  other 20 % open as the exhaust. Not modelled yet: the engine's open top takes no cover. To
+  source: a loose shard layer's conductivity and emissivity.
 
 ## Scaling (step A, 2026-11-09)
 
@@ -49,7 +59,8 @@ Readings in `scratch/scale-pz/scale.py`.
 
 ## Results from the build
 
-98.2 ft³; 1760 °F; 39.7 kW lost at top temperature (the open top's loss is not counted). Wood per
+98.2 ft³; 1760 °F; 39.7 kW lost at top temperature (the open top's loss is not counted; built
+before the top became the owner's band below 2100 °F, 2026-11-18). Wood per
 firing isn't worked out (no heating value for wood in `docs/research/`).
 
 ## Open questions for the user

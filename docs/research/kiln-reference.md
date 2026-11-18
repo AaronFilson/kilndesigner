@@ -846,8 +846,8 @@ The user remembers springs from the 1st or 2nd edition.
 - **Principle 2: shape follows the heat** (p.75, Read). The flame should follow the arch, not cross
   it at right angles (Figs 3-5, 3-6). It should meet only two right angles in the chamber, usually
   at the firebox inlet flue and bag wall and at the exit flues; more cause uneven heating, hot
-  spots and refractory failure. A groundhog (Fig. 3-6) runs hot along the crown and cool along the
-  bottom of the back wall, where its refractories fail.
+  spots and refractory failure. A groundhog (Fig. 3-6) runs hot along the crown, which leaves cool
+  areas along the bottom of the back side wall and refractory failure at the back wall.
 - **Transitions** (p.76, Read): if the design runs against the arch's flow, curve or shape the
   transitions from firebox to chamber and from chamber to chimney flue, in insulating castable or
   brickwork. Still, any shape fires given enough heat and a correct flue-to-chimney ratio, and the

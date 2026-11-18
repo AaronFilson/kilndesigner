@@ -77,8 +77,10 @@ RULE_6 = (
     "at the base in natural draft)"
 )
 RULE_6_NOTE = (
-    "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band, the owner's "
-    "question 8 (C1, 11-10-26.md), open"
+    "rests on Rule 6 seeding p.78 where nothing on the path is sized or drawn to a scale: its "
+    "large side, ¼ of the chamber's width, as the owner answered (2026-11-17, 11-17-26-inputs.md "
+    "§1). Rule 6 is a principle for builders, not a measurement of the kiln, so a part the book "
+    "draws to a scale is sized from the drawing instead (the dataset's)"
 )
 MIN_CHIMNEY = 9 * 0.0254  # m: a chimney seldom under 9 × 9 in at the base (p.80)
 TAPER_STEPS = 8  # a tapered chimney's friction summed over this many slices
@@ -426,11 +428,17 @@ class _Build:
             if stage == k:
                 side = self.side(k)
                 to_floor = column_to(self.zone(k), self.floor(k) - side.z)
-                if front:
-                    els = _group(f"chamber {k + 1}'s side stoke holes beside the front's path",
+                if side.els and front:
+                    els = _group(f"chamber {k + 1}'s air inlets beside the front's path",
                                  [els, [*side.els, to_floor]])  # fmt: skip
-                else:
+                elif side.els:
                     els = [*side.els, to_floor]
+                elif not front:
+                    raise NotModelledError(
+                        f"chamber {k + 1}'s stage has no way in for its air: the front closed, "
+                        "its stoke holes covered after each stoking (the owner, 2026-11-18), and "
+                        "no air inlet of its own in the design (`air_inlets`)"
+                    )
             if k < self.nodes - 1 and (front or (stage is not None and k >= stage)):
                 els += self.passage(k)
         return els
@@ -515,8 +523,10 @@ class _Build:
         if below + above > 0:
             made = dr.Intakes((below, below), (above, above), "the design's")
             self.notes.append(
-                "the air intakes: the design's ash-pit mouth and stoke hole, fully open (the "
-                "dataset gives none)"
+                "the air intakes: the design's, fully open (the dataset gives none): a grate's "
+                "ash-pit mouth or the firebox's own air inlets; a stoke hole only as a floor-fired "
+                "firebox's mouth, stoke holes being covered after each stoking (the owner, "
+                "2026-11-18)"
             )
             return [dr.intakes(made, g_area, k_g, n)]
         self.left.append(f"the air intakes of the {zone} (no size given)")
@@ -536,6 +546,11 @@ class _Build:
         g = fb.grate
         barred = g is not None and g.gap is not None and self.inputs.grate_bar is not None
         g_area = si(g.width, "m") * si(g.length, "m") * n if g is not None else 0.0
+        if fb.air is not None and ins is None:
+            raise NotModelledError(
+                "a firebox under the floor with air inlets of its own (`air`): its mouth is the "
+                "way in here, so they aren't modelled yet"
+            )
         if ins is not None:
             k_g = None
             if barred:
@@ -625,14 +640,20 @@ class _Build:
         fw = si(fb.width, "m")
         fh, ash, _ = (x * MM for x in _grate_heights(fb))
         g = b.grate_z * MM
-        # The design's openings in the mouth wall: the ash pit's open mouth below the grate and
-        # the stoke hole above it
-        below = fw * ash * n if fb.grate is not None else 0.0
-        stoke = holes.get(f"{tag}/stoke-hole")
-        above = 0.0
-        if stoke is not None:
-            sw, sh, srnd = _port(fb.stoke_hole)
-            above = _area(sw, sh, srnd) * n
+        # The design's openings in the mouth wall. A stoke hole is covered after each stoking (the
+        # owner, 2026-11-18), so it isn't an intake but as a floor-fired firebox's mouth, which
+        # takes the fuel and the air. The firebox's own air inlets (`air`) are the air's way in
+        # where it has them; else a grate's ash pit is open at its mouth
+        air = _area(*_port(fb.air)) * fb.airs * n if fb.air is not None else 0.0
+        if fb.grate is not None:
+            below = air if fb.air is not None and fb.air_at == "below" else fw * ash * n
+            above = air if fb.air is not None and fb.air_at == "above" else 0.0
+        else:
+            below, above = 0.0, air
+            stoke = holes.get(f"{tag}/stoke-hole")
+            if stoke is not None and fb.air is None:
+                sw, sh, srnd = _port(fb.stoke_hole)
+                above = _area(sw, sh, srnd) * n
         els: list[Element] = []
         if b.gas:
             els += self.gas_ports_into(b, n)
@@ -758,39 +779,61 @@ class _Build:
 
     def trough(self, k: int) -> _Feed:
         """A chamber's own trough (himae): the fire burns in the chamber's zone, its air through
-        the chamber's side stoke holes (`side`)."""
+        the chamber's own air inlets (`side`). With none, the first chamber's trough has no way in
+        for its air and is refused; a later one burns the air from the chambers before it."""
         feed = self.side(k)
+        if not feed.els and k == 0:
+            raise NotModelledError(
+                "chamber 1's trough has no way in for its air: its stoke holes are covered after "
+                "each stoking (the owner, 2026-11-18), and the design gives neither an air inlet "
+                "(`air_inlets`) nor the main firebox and its mouth"
+            )
         self.notes.append(f"chamber {k + 1}'s fire in its trough, the chamber's own zone")
         return feed
 
     def side(self, k: int) -> _Feed:
-        """Chamber k's side stoke holes (the design's `stoke_holes`), each an opening in its side
-        wall at its height, all open; none given: left out and said."""
-        holes = [h for h in (self.kiln.stoke_holes or []) if h.chamber == k + 1]
+        """Chamber k's own air inlets (the design's `air_inlets`, and the `air` of a trough
+        firebox sunk in it), each an opening in its side wall at its height, open while firing.
+        Its stoke holes are covered after each stoking (the owner, 2026-11-18), so they aren't
+        intakes. None given: no way in of its own, its air the gas from the chambers before it,
+        said."""
+        holes: list[tuple[Port, Any, str, int]] = [
+            (h.port, h.up, h.wall, 1) for h in (self.kiln.air_inlets or []) if h.chamber == k + 1
+        ]
+        for b in self.laid.boxes:
+            fb = b.box
+            if b.trough and b.chamber == k + 1 and fb.air is not None:
+                # a trough's own air comes in through the side wall, as Hollyweird's side door's
+                # and its tube through the ash pit's side wall (p.116)
+                holes.append((fb.air, None, "left", fb.airs))
         if not holes:
-            self.left.append(f"chamber {k + 1}'s side stoke holes (not sized)")
+            self.notes.append(
+                f"chamber {k + 1}'s stoke holes covered after each stoking (the owner, "
+                "2026-11-18), with no air inlet of its own: its air the gas from the chambers "
+                "before it"
+            )
             return _Feed(f"chamber {k + 1}'s side", [], k, self.floor(k))
         groups: dict[tuple[float, float, bool, float, float], int] = {}
-        for h in holes:
-            w, ht, rnd = _port(h.port)
-            up = si(h.up, "m") if h.up is not None else ht / 2
-            key = (w, ht, rnd, up, _thickness(self.kiln, h.wall))
-            groups[key] = groups.get(key, 0) + 1
+        for port, up_at, wall, count in holes:
+            w, ht, rnd = _port(port)
+            up = si(up_at, "m") if up_at is not None else ht / 2
+            key = (w, ht, rnd, up, _thickness(self.kiln, wall))
+            groups[key] = groups.get(key, 0) + count
         branches: list[list[Element]] = []
         for (w, ht, rnd, up, t), count in groups.items():
             a = _area(w, ht, rnd)
-            name = f"{dr.INTAKE}, chamber {k + 1}'s side stoke holes"
+            name = f"{dr.INTAKE}, chamber {k + 1}'s air inlets"
             z = self.floor(k) + up
             branches.append([
                 Element(name, "inlet", "room", a, count, k=dr.SHARP_ENTRANCE,
                         note=f"{count} × {w / IN:.1f} in{' round' if rnd else ''}, the design's"),
-                dr.duct(f"chamber {k + 1}'s side stoke holes, through the wall", "room", w, ht, t,
+                dr.duct(f"chamber {k + 1}'s air inlets, through the wall", "room", w, ht, t,
                         count, rnd=rnd),
-                dr.outlet(f"chamber {k + 1}'s side stoke holes into it", "room", a, count),
+                dr.outlet(f"chamber {k + 1}'s air inlets into it", "room", a, count),
                 column_to(self.zone(k), self.floor(k) - z),
             ])  # fmt: skip
-        self.notes.append(f"chamber {k + 1}'s side stoke holes open (the design's), its intakes")
-        return _Feed(f"chamber {k + 1}'s side", _group("the side stoke holes", branches), k,
+        self.notes.append(f"chamber {k + 1}'s own air inlets open (the design's), its intakes")
+        return _Feed(f"chamber {k + 1}'s side", _group("the air inlets", branches), k,
                      self.floor(k))  # fmt: skip
 
     def burners(self) -> list[_Feed]:
@@ -1117,15 +1160,15 @@ class _Build:
         )
 
     def rule6(self) -> tuple[float, str]:
-        """Olsen's Rule 6 (pp.79–80) as p.78's anchor: the chimney's side ⅕ of the chamber's
-        width at the band's least-air end, ¼ at its most, neither under 9 in (a chimney seldom
-        under 9 × 9 in); its area the kiln's whole chimney section, shared among its chimneys.
-        Said, with the owner's question it rests on."""
-        lo, hi = max(self.width / 5, MIN_CHIMNEY), max(self.width / 4, MIN_CHIMNEY)
-        side = hi if self.most else lo
+        """Olsen's Rule 6 (pp.79–80) as p.78's anchor where the book neither sizes nor draws the
+        path to a scale: the chimney's side ¼ of the chamber's width, its large side, not under
+        9 in (a chimney seldom under 9 × 9 in); its area the kiln's whole chimney section, shared
+        among its chimneys. The owner's answer (2026-11-17, 11-17-26-inputs.md §1): ¼, not the
+        ¼–⅕ band of before. Said."""
+        side = max(self.width / 4, MIN_CHIMNEY)
         self.notes.append(
             f"the chimney's section by {RULE_6} on the chamber's {self.width / IN:.0f} in width, "
-            f"{lo / IN:.1f}–{hi / IN:.1f} in square: it {RULE_6_NOTE}"
+            f"{side / IN:.1f} in square: it {RULE_6_NOTE}"
         )
         return side * side, f"Rule 6's chimney section ({RULE_6})"
 

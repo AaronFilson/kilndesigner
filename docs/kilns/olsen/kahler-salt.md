@@ -37,6 +37,13 @@ frame L4×4×¼ with ½ in rods.
 2. Fig 5-18: are the three spy and draw holes about 13, 25 and 37 in above the floor?
 3. Fig 5-18 "40½"": what does it measure?
 
+v2 heat (2026-11-18): the book prints no burner input, so the kiln fires on the owner's band
+(2026-11-17, `docs/planning/11-17-26-inputs.md` §7), Olsen's Rule 1 by lining. That is 31.6 ft³
+(v2's traced chamber) × 7,000–10,000 BTU/ft³/hr for the JM 28 IFB hot face, 221,000–316,000
+BTU/hr. Cone 10 comes in 4.0–9.0 h at the band's most across the setting's and λ's band, and in
+8.5–18.3 h at its least (`test_heat_gas_electric.py::test_t1_reaches_its_cone_on_rule_1s_band`).
+No time is printed, so none is tested.
+
 ## Scaled off the figures (step A, 2026-11-09)
 
 Method: `docs/planning/11-09-26.md` §A; pixel readings in `scratch/scale-K/measure.py`. Uncertainty is the spread between the printed dimensions scaled from (never finer than the ±3 px reading).

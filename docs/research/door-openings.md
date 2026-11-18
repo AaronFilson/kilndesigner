@@ -106,7 +106,7 @@ can't help here.
 
 | Kiln, figure, page (PDF) | Imperial | Metric | Agree? |
 |---|---|---|---|
-| Tamba, Fig 4-15, p.87 (PDF 73); Figs 4-11, 4-14, p.86–87 | height "3′" + a washed-out mark; width "2′" + a washed-out mark | none: the drawing has feet-and-inch marks only; the text on pp.86–87 gives metric for the firebox (6 ft / 183 cm, 5 ft / 152 cm) and the bundles (15 × 15 × 30 in / 38 × 38 × 76 cm), never the door | no metric partner; the door size stays unread. Since 2026-10-31 the engine lays out a door through a buttressed tube's springing (vault.py), so the example takes one as soon as its size is read |
+| Tamba, Fig 4-15, p.87 (PDF 73); Figs 4-11, 4-14, p.86–87 | height "3′" + a washed-out mark; width "2′" + a washed-out mark | none: the drawing has feet-and-inch marks only; the text on pp.86–87 gives metric for the firebox (6 ft / 183 cm, 5 ft / 152 cm) and the bundles ("15 x 30in" / "38 x 38 x 76cm", round, 15 in across and 30 in long: the owner, 2026-11-18), never the door | no metric partner; the door size stays unread. Since 2026-10-31 the engine lays out a door through a buttressed tube's springing (vault.py), so the example takes one as soon as its size is read |
 | Bowen Mountain, Fig 4-153, p.127 (PDF 114) | "24" (+-) DOOR", no height | none: the drawing is imperial only and the text (salt, 1 lb / 0.45 kg per ft³) gives no door size | nothing to compare; no height |
 | Kawaii, Figs 4-45 to 4-48, p.97 (PDF 83) | no door size | none for the door. The text's pairs are the chamber, "7ft wide, 4ft deep and 5ft 8in. tall (213cm wide, 122cm … 173cm tall)", the flues "7 x 10in. (18 x …)" and "9 x 10in. (23 x …)", the step "12 to 15in. (30.5 x 38cm)" and the dogi "5ft (152cm) … 18 to 24in. (46 to 61cm)" | no door size in either unit |
 

@@ -157,8 +157,8 @@ def _pick(band: tuple[float, float], end: End, wet: bool = False) -> float:
 
 @cache
 def _kilns() -> dict[str, Any]:
-    """The dataset's kilns, read once."""
-    return ref.load()["kilns"]
+    """The dataset's kilns and the behaviour tests' designs, read once."""
+    return ref.with_designs()
 
 
 def own_intakes(kid: str) -> tuple[tuple[float, float], tuple[float, float]] | None:

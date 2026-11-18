@@ -45,8 +45,8 @@ def least_arch(phi: float) -> float:
 def test_n1_no_reference_arch_is_below_its_least_thickness() -> None:
     """N1's criterion, a circular arch's least t/R at its half angle, on every arch the reference
     kilns spring across or along (one ring of each size): none is below it. The nearest is Tobe's
-    10 ft semicircle of 9 in, t/R 0.1395, 1.30 times its 0.1075 (its thickness assumed, p.90);
-    Kato's 1.93; the flat IFB arches 60–130 times."""
+    10 ft semicircle of 13½ in (not printed, p.90; the owner, 2026-11-17: not 9 in), t/R 0.2022,
+    1.88 times its 0.1075; Kato's 1.93; the flat IFB arches 60–130 times."""
     ratios: dict[str, float] = {}
     for path in sorted(OLSEN.glob("*.yaml")):
         try:
@@ -58,10 +58,11 @@ def test_n1_no_reference_arch_is_below_its_least_thickness() -> None:
             ratios[f"{path.stem} {label}"] = ring.thickness / rc / least_arch(ring.half_angle)
     worst = min(ratios, key=lambda k: ratios[k])
     assert worst == "tobe chamber 1"
-    assert ratios[worst] == pytest.approx(1.30, abs=0.01)
+    assert ratios[worst] == pytest.approx(1.88, abs=0.01)
     assert ratios["kato-coal across"] == pytest.approx(1.93, abs=0.02)
     assert all(r > 1.0 for r in ratios.values())
-    assert len(ratios) == 42  # 39 kilns' rings, one of each size
+    # 38 kilns' rings, one of each size (42 with Olsen's unbuilt two-chamber design, out 2026-11-17)
+    assert len(ratios) == 41
 
 
 def test_n1_the_semicircles_least() -> None:
@@ -100,10 +101,12 @@ def test_n2_through_the_pipeline() -> None:
 def test_n2_restated_a_domes_least_falls_with_its_springing() -> None:
     """N2's criterion, the hemisphere's least t/R (Heyman 0.042; v2 0.0428; Lau's no-hoop 0.069),
     taken for any dome, would condemn the Calimpong teardrop's cast dome (5½ in on a 212 in sphere,
-    t/R 0.026) and Hollyweird's (6 in on 128 in, 0.046, under Lau's 0.069). Restated: the limit is
-    the hemisphere's. A spherical dome's least t/R falls with its springing angle (v2: with hoop
-    forces 0.0003 at singh-coal's 59.5°, under 0.0002 at Breda's 53.1°; as lunes 0.040 and 0.037),
-    and the sail domes' strips stand down to a few hundredths of an inch."""
+    t/R 0.026) and Hollyweird's back dome (6 in on a 254 in sphere over its 53 × 145 in chamber,
+    0.023, under Lau's 0.069; its front dome, over 53 × 55 in, is 0.086, the chambers from
+    Hollyweird's own figures, rescanned 2026-11-18). Restated: the limit is the hemisphere's. A
+    spherical dome's least t/R falls with its springing angle (v2: with hoop forces 0.0003 at
+    singh-coal's 59.5°, under 0.0002 at Breda's 53.1°; as lunes 0.040 and 0.037), and the sail
+    domes' strips stand down to a few hundredths of an inch."""
     assert dome_least(1.0, math.pi / 2, 2000.0, 0.6, True, rings=40) == pytest.approx(
         0.0428, abs=5e-4
     )
@@ -121,9 +124,9 @@ def test_n2_restated_a_domes_least_falls_with_its_springing() -> None:
         r = (a * a + h * h) / (2 * h)
         assert t / (r + t / 2) == pytest.approx(built, abs=1e-3)
         assert t / (r + t / 2) > 2 * lunes
-    for name, ratio in (("conrad-teardrop", 0.026), ("hollyweird", 0.046)):
+    for name, which, ratio in (("conrad-teardrop", 0, 0.026), ("hollyweird", 1, 0.023)):
         kiln = olsen(name)
-        shell = sail.shells(kiln)[0]
+        shell = sail.shells(kiln)[which]
         t = shell.thickness
         assert t / (shell.radius + t / 2) == pytest.approx(ratio, abs=1e-3)
         assert t / (shell.radius + t / 2) < 0.069

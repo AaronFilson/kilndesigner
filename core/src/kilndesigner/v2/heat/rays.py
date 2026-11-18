@@ -117,10 +117,13 @@ class Patch:
 
 
 def _geometry(tris: Matrix) -> tuple[Vector, Matrix]:
+    """Each triangle's area and unit normal. A triangle with no area gets a zero normal, not a
+    0/0; its callers refuse it or drop it by its area."""
     e1, e2 = tris[:, 1] - tris[:, 0], tris[:, 2] - tris[:, 0]
     cr = np.cross(e1, e2)
     area = 0.5 * np.linalg.norm(cr, axis=1)
-    return area, cr / (2 * area[:, None])
+    nrm = np.divide(cr, 2 * area[:, None], out=np.zeros_like(cr), where=area[:, None] > 0)
+    return area, nrm
 
 
 def _directions(nrm: Matrix, rng: np.random.Generator) -> Matrix:

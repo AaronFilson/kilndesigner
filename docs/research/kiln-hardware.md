@@ -681,10 +681,10 @@ size table [S20] Verified.
 | 60° side skew | 9 × (4½ − 2¾) × 3 | 0.97 |
 | 48° end skew | (9 − 6 5/16) × 4½ × 3 | 1.02 |
 | 60° end skew | (9 − 7¼) × 4½ × 3 | 1.08 |
-| Edge skew | 9 × (4½ − 1½) × 3 | not read |
-| Featheredge | 9 × 4½ × (3 − ⅛) | not read |
-| Neck | 9 × 4½ × (3 − ⅝) | not read |
-| Jamb | 9 × 4½ × 3 (rounded edge in the drawing) | not read |
+| Edge skew | 9 × (4½ − 1½) × 3 | 0.80 [HW05] |
+| Featheredge | 9 × 4½ × (3 − ⅛) | 0.63 [HW05] |
+| Neck | 9 × 4½ × (3 − ⅝) | 0.73 [HW05] |
+| Jamb | 9 × 4½ × 3 (rounded edge in the drawing) | 1.07 [HW05] |
 | No. 1 / 2 / 3 / 4 key | 9 × (4½ − 4 / 3½ / 3 / 2¼) × 3 | 1.13 / 1.07 / 1.00 / 0.90 |
 | 2 in split | 9 × 4½ × 2 | not read |
 | Split | 9 × 4½ × 1½ | 0.60 |
@@ -709,6 +709,11 @@ size table [S20] Verified.
 | Soap | 9 × 2¼ × 2½ | 0.50 |
 
 The arch and wedge sizes in the same tables match `electric-and-thermal.md` §5.
+
+[HW05]: HarbisonWalker's *Handbook of Refractory Practice* (2005), IR-4, checked on the page image
+2026-11-17 (`hwi-handbook.md` §4.3). Its shape table, skewback pages (IR-11, IR-12) and arch pages
+(UR-22–UR-29) are this guide's, with the same misprints, so it fills the four equivalents but is not
+an independent second source for §4.3's tables.
 
 **Derived check of the skew angles:** the sloped face rises the full thickness over the taper.
 - 3 in series: atan(3 ÷ 2 11/16) = 48.1° and atan(3 ÷ 1¾) = 59.7°.

@@ -33,7 +33,8 @@ def test_more_input_is_sooner(w15: tuple[Any, float]) -> None:
 
 
 def test_the_input_for_a_time_gives_that_time(w15: tuple[Any, float]) -> None:
-    """The input for cone 10 in 6 h, fired again, takes 6 h (to the solve's tolerance)."""
+    """The input for cone 10 in 6 h, fired again, takes 6 h to within 0.5 % (the solve stops at
+    0.2 % of the fuel rate's bracket)."""
     m, rated = w15
     r = tg.input_for(m, hc.CONE_10, 6 * HOUR, rated)
     assert r.fuel < rated  # W15's ten burners do it in about 4.4 h

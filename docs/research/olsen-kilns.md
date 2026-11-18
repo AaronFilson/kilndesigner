@@ -64,7 +64,7 @@ Data classes in the index:
 | **Chamber and climbing kilns** | | | | | | | |
 | `hotchkiss-raw-clay` | Six-chamber raw-clay kiln (Richard Hotchkiss and a workshop group), 1971 | 33, 54–57 | not named (wood (?)) | climbing | chambers in series, arched | average chamber 5 × 5 × 6 ft | partial |
 | `kyoto-climbing` | Kyoto-style climbing chamber kilns (type) | 89–94, 205 | wood | climbing (cross-draft chambers) | chambers in series, pointed arch | 6–7 ft tall, 4.5–6 ft wide | partial |
-| `kyomizu` | Kyomizu climbing kiln, Kyoto | 89–91 | wood | climbing | chambers in series (10) | not given | none |
+| `kyomizu` | Kyomizu climbing kiln, Kyoto | 89–91 | wood | climbing | chambers in series (10) | chamber 4–5 ft inside along the draft, 6–7 ft tall (Fig 4-27); nothing across | none |
 | `tobe` | Tobe Village kiln, Shikoku | 90, 92 | wood | climbing | seven chambers in series | 15,000 ft³; largest chamber 25 × 10 × 10 ft | partial |
 | `onda-koishibara` | Onda and Koishibara kilns, Kyushu | 92 | wood | climbing | chambers in series | not given | none |
 | `suzuki-kyoto` | Suzuki cooperative kiln, Kyoto | 93 | wood | climbing | seven chambers in series | chamber "(4.3 x 2 x 1.4m)" | partial |
@@ -74,7 +74,7 @@ Data classes in the index:
 | `kanayama-bizen` | Commercial Bizen chamber kilns; Kanayama Pottery | 99, 105–106 | wood and charcoal | climbing | chambers in series | not given | none |
 | `chappell-domura` | John Chappell's Domura tandem kiln (two-chamber kiln and salt kiln) | 33, 126, 243 | wood | cross-draft | two chambers in series, plus one salt chamber | 2 × 40 cu ft and 50 cu ft | full |
 | `olsen-chamber-p23` | Olsen's chamber kiln (ring arch) | 23, 47 | not given | chamber | not given | not given | none |
-| `olsen-two-chamber` | Olsen's two-chamber wood kiln, side-stoked | 202–203, 206 | wood | not stated | two chambers in series | first chamber 55" × 48" × 8' | partial |
+| `olsen-two-chamber` | Olsen's two-chamber wood kiln, side-stoked | 202–203, 206 | wood | not stated | two chambers in series | first chamber 55" × 48" × 8' | partial (Olsen's unbuilt proposal: a design, not a reference kiln, 2026-11-17) |
 | `olsen-three-chamber` | Olsen's three-chamber climbing kiln | 224 | gas (LP (?)) | climbing | three chambers in series | 3 × 120 cu ft | partial |
 | `kitade-tojilo` | Kitade Tojilo chamber kiln, Kutani | 202–203 | wood | chamber (climbing) | chambers in series, arched | chamber 4' × 5' × 8' | partial |
 | `blakebrough-sturt` | Les Blakebrough's kiln, Sturt Pottery, Mittagong | 205, 208 | wood and oil drip | chamber | chambers in series, arched | first chamber 6' × 45" × 6' | partial |
@@ -670,10 +670,12 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 ### `kyomizu`: Kyomizu climbing kiln, Kyoto
 
 - Pages: pp.89–91 (captions, Figs 4-23, 4-25 to 4-27, 4-29, 4-30).
-- Olsen fired it every month for 2½ years (Fig 4-23), its 5th chamber in 1962 (Fig 4-26). Fig 4-27:
-  chambers numbered 1 to 10 (a break between 4 and 10), "4' INSIDE" (?) over chamber 3. The second
-  chamber was for reduction only (Fig 4-30). Wood; climbing.
-- **Not given:** any reliable dimension.
+- Olsen fired it every month for 2½ years (Fig 4-23), its 5th chamber in 1962 (Fig 4-26). Fig 4-27
+  (p.91), the kiln's cross-section: chambers numbered 1 to 10 (a break between 4 and 10), "INSIDE
+  4-5'" over chamber 3 and "+ INSIDE 6-7'" at the wall between chambers 2 and 3. Both are faded in
+  the scan, where the first was read "4' INSIDE" (?); the owner read them in the book, 2026-11-18.
+  The second chamber was for reduction only (Fig 4-30). Wood; climbing.
+- **Not given:** any other dimension, the chambers' length across the kiln among them.
 
 ### `tobe`: Tobe Village kiln, Shikoku
 
@@ -879,6 +881,9 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
 ### `olsen-two-chamber`: Olsen's two-chamber wood kiln, side-stoked
 
 - Pages: p.202 (text, photos Figs 8-8 to 8-10); p.203 (captions); p.206 (text, Fig 8-17).
+- Status: Olsen's proposed improvement of Kitade's built kiln (`kitade-tojilo`), not a kiln the
+  book says was built; a design (`examples/olsen-two-chamber.yaml`), not one of the reference kilns
+  (the owner, 2026-11-17).
 - Fuel: wood. Draft: not stated. Cone and time: not given.
 - First chamber: 55" wide, 48" tall, 8' long (Fig 8-17). The roof shape, and whether 48" is to the
   springline or crown, aren't given. 147 ft³ as a box (derived).
@@ -980,8 +985,9 @@ Not a kiln: the facts the book gives for the kit family, which apply to `olsen-k
   "20 x 12"" and "24 x 12"", middle and last chamber, which is which uncertain (Fig 4-12).
 - Firing (pp.86–87): firebox stoked about 36 hours, bringing the first three or four stoke holes to
   about 1832 °F (1000 °C); then side stoking, leaving a 9 in himichi fire channel every second or
-  third stoke hole; 14 to 18 hours (read by the user, 2026-10-31) and about 200 bundles (15 × 15 × 30 in / 38 × 38 × 76 cm) of
-  kindling; at the end the flues plugged and the firebox sealed. The front is unloaded within half a
+  third stoke hole; 14 to 18 hours (read by the user, 2026-10-31) and about 200 bundles ("15 x
+  30in", the metric "38 x 38 x 76cm": round, 15 in across and 30 in long, the owner, 2026-11-18)
+  of split kindling and small pieces of wood; at the end the flues plugged and the firebox sealed. The front is unloaded within half a
   day (pp.87–88).
 - End chamber: bisque only, with "chimney open holes" (Figs 4-18, 4-19).
 - Doors: arched, bricked up for firing; "supporting wall in front of all doors" (Fig 4-15; its sizes
@@ -1983,7 +1989,8 @@ The 33 kilns marked **none**: the book doesn't fix the chamber's size.
 - `finch-fast-fire`: layout described, no dimension.
 - `salzer-phoenix`: layout described, no dimension.
 - `olsen-first-kiln`: no dimensions printed (the revised design is `bowen-mountain`).
-- `kyomizu`: chamber count and one uncertain label, "4' INSIDE" (?).
+- `kyomizu`: chamber count, and its chamber 4–5 ft inside along the draft and 6–7 ft tall
+  (Fig 4-27, read by the owner, 2026-11-18); nothing across the kiln.
 - `onda-koishibara`: a proportion only (width about equal to height).
 - `kanayama-bizen`: firing practice only.
 - `olsen-chamber-p23`: shelf size and arch movement only.

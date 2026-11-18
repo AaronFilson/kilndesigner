@@ -1,11 +1,14 @@
 # Tamba tube kilns, Tachikui, Japan (Olsen, The Kiln Book, 4th ed., p.85–88, p.210, Figs 4-6 to
 # 4-20A): 23 climbing tube kilns built by Korean potters in the Kamakura period, "an anagama
 # extended to approximately 120 ft", half above ground. A firebox (dogi) is stoked for about 36
-# hours, then the tube is side-stoked chamber by chamber. Few of its sizes are printed: most of
+# hours, then the tube is side-stoked segment by segment. Few of its sizes are printed: most of
 # this design is assumed, as said below.
 #
 # From the book: about 120 ft (36.5 m) long (p.85; Fig 4-7 prints 120–150, flagged), in 6–8 door
-# segments (Fig 4-7), each taken as a chamber, 7 used; firebox 6 ft deep and 5 ft across at the
+# segments (Fig 4-7), 7 used. It is one tube with no closed chambers, narrowing at the flue wall
+# before each door, whose arched openings support the vault (p.86, Figs 4-11, 4-12; the owner,
+# 2026-11-18): each segment a chamber here, the flue walls the walls between them. Firebox 6 ft
+# deep and 5 ft across at the
 # entrance flues (p.86); four arched firebox flues 9 × 18 in (Fig 4-13), taken as 9 in wide and
 # 18 in high; the first chamber 3½ ft (faint) tall (Fig 4-16), used as the tube's height to the
 # crown. The end chamber has open "chimney" holes and no stack (Figs 4-18, 4-19).
@@ -19,7 +22,9 @@
 # above ground, so half below it (p.85). No temperature is printed (the first stoke holes reach
 # about 1832 °F before side stoking, p.86): cone 10, from the anagama-style kiln built at
 # Höhr-Grenzhausen in 2003 (hohr-2003, p.122).
-# Not modelled: the slope, which isn't printed, so the tube is level; the side doors (arched,
+# Not modelled: the slope, the owner's estimate 14° for the series (2026-11-17; the figures
+# scale 8½–14°), as the tube is level until the engine lays a sloped tube; the earth against
+# the walls' lower half (the kiln half buried, p.85), so they lose to the room; the side doors (arched,
 # bricked up for each firing), as the engine's door in the front wall: their size in Fig 4-15
 # (p.87) is washed out at the gutter, read 3′ (?) high and 2′ (?) wide with the rest of each
 # figure lost (checked on the page image at 800 dpi, 2026-10-30), and they rise through the
@@ -74,20 +79,22 @@ draft:
     port:
       width: 12 in
       height: 22 in
-stoke_holes: # round side stoke holes (Figs 4-7, 4-10, 4-15), about 7 in across with their
-  # centres about 32 in above the floor (scaled: Fig 4-16, p.87, from 3½' and 6', ±½ in): one
-  # each side of each chamber; Fig 4-7 puts them 1½' apart, how many to a chamber isn't drawn
-  - { chamber: 1, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 1, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 2, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 2, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 3, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 3, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 4, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 4, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 5, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 5, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 6, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 6, wall: right, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 7, wall: left, up: 32 in, port: { diameter: 7 in } }
-  - { chamber: 7, wall: right, up: 32 in, port: { diameter: 7 in } }
+stoke_holes: # round side stoke holes (Figs 4-7, 4-10, 4-15), 16 in across: the owner's estimate
+  # for the Tamba series (2026-11-17). They scale about 7 in (Fig 4-16), which can't pass the
+  # printed bundles, 15 in across; each is covered after its stoking (the owner). Their centres
+  # about 32 in above the floor (scaled: Fig 4-16, p.87, from 3½' and 6', ±½ in): one each side
+  # of each segment; Fig 4-7 puts them 1½' apart, how many to a segment isn't drawn
+  - { chamber: 1, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 1, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 2, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 2, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 3, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 3, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 4, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 4, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 5, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 5, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 6, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 6, wall: right, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 7, wall: left, up: 32 in, port: { diameter: 16 in } }
+  - { chamber: 7, wall: right, up: 32 in, port: { diameter: 16 in } }

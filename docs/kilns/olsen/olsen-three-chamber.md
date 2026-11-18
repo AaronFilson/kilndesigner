@@ -35,7 +35,6 @@ needed friction of 0.94.
 ## Open questions for the user
 
 1. Where were the six burners: two per chamber, or all in the first?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

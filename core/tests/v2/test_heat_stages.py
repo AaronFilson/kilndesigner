@@ -99,9 +99,10 @@ def test_the_fire_mouth_shut_passes_no_stream_through_the_front() -> None:
 
 
 def test_a_stage_held_to_the_books_time_on_either_air() -> None:
-    """A ramp: the stoked chamber's setting held to a straight line from where the front's stage
-    left it to cone 11 in 3 h, the fuel what that takes; with all the air its draft draws (λ from
-    the draft) it burns more than with the stoker's (λ at the products')."""
+    """A ramp, as a stage held to the book's time runs: the stoked chamber's setting held to a
+    straight line from where the front's stage left it to cone 11 in 3 h (a test input, not a
+    book's time), the fuel what that takes; with all the air its draft draws (λ from the draft)
+    it burns more than with the stoker's (λ at the products')."""
     m = _model()
     fuel: list[float] = []
     airs: tuple[Literal["stoker", "draft"], ...] = ("stoker", "draft")

@@ -52,7 +52,7 @@ w = u/(1 + u) (`wood-fuel.md` §2; D). The dry-basis rows are in §2.
 | `phoenix-wright` | Portland, Oregon | not named | — (S: Douglas-fir) | Portland (same city): 10.5–14.8, 12.4 | NF; S |
 | `singh-lowfire` | New Delhi | hardwood logs 2–6 in (book); species NF | NF | New Delhi (same city): 5.9–12.0, 8.9 | book; NF |
 | `suzuki-kyoto` | Kyoto | bundles 15 in across × 18 in (book); split pine [K1] | as `bidai` | Kobe: 9.7–12.5, 10.8 | book; R |
-| `tamba` | Tachikui, Hyogo | kindling bundles 15 × 15 × 30 in (book); species at Tachikui NF | red pine by analogy [K2][K3][K5] | Kobe (same prefecture, coast vs inland): 9.7–12.5, 10.8 | NF; analogy |
+| `tamba` | Tachikui, Hyogo | kindling bundles 15 in across, 30 in long (book, p.87); species at Tachikui NF | red pine by analogy [K2][K3][K5] | Kobe (same prefecture, coast vs inland): 9.7–12.5, 10.8 | NF; analogy |
 | `tobe` | Tobe, Ehime (Shikoku) | 40 tons a firing (book); species NF | pine by analogy | Kobe (across the Inland Sea): 9.7–12.5, 10.8 | NF |
 
 Where no station is given (place not printed), the user's own value or `wood-fuel.md`'s generic
@@ -306,11 +306,12 @@ over 75 % to 15–30 % of dry weight [E5]. Alberta: "at least one summer", 15–
 - Bizen: a "set" is five sticks, each "10cm in diameter, 1m in length", and one kiln burns 1,000
   sets in 10 days [K4]. D, taking each stick as a full cylinder (an upper bound for split wood):
   π/4 × 0.10² × 1.0 = 0.00785 m³ a stick; 0.0393 m³ a set; 39.3 m³ of solid wood a firing.
-- Olsen's bundles (book): Tamba, 15 × 15 × 30 in = 6,750 in³ = 3.91 ft³ = 0.111 m³ of bundle;
-  about 200 a firing = 781 ft³, 6.1 cords of stacked volume (D). Suzuki, "15 in across × 18 in":
-  0.052 m³ if round, 0.066 m³ if square (D). Applying a cord's 65–90 ft³ of solid wood per 128 ft³
-  ([W1]) to a Tamba bundle gives 0.056–0.078 m³ of wood, but that packing is an assumption, not a
-  source for bundles.
+- Olsen's bundles (book): Tamba, "15 x 30in" (p.87), round, 15 in across and 30 in long (the
+  owner, 2026-11-18; first read here as 15 × 15 × 30 in from the metric's "38 x 38 x 76cm"):
+  π/4 × 15² × 30 = 5,301 in³ = 3.07 ft³ = 0.0869 m³ of bundle; about 200 a firing = 614 ft³,
+  4.8 cords of stacked volume (D). Suzuki, "15 in across × 18 in": 0.052 m³ if round, 0.066 m³ if
+  square (D). Applying a cord's 65–90 ft³ of solid wood per 128 ft³ ([W1]) to a Tamba bundle gives
+  0.044–0.061 m³ of wood, but that packing is an assumption, not a source for bundles.
 - Weight of a Japanese kiln-wood bundle: NF. Slab wood's weight or solid content per volume: NF.
   The red pine's density, which would turn [K4]'s volume into a mass, wasn't found in a source read.
 

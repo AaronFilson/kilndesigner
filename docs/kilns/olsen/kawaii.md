@@ -24,14 +24,42 @@ Fig 4-46's doorway is square-headed in the photo; since step A the model gives i
 
 ## Key results
 
-587 ft³; heat loss 274 kW; grate 294 in²; engine chimney 9.8 ft.
+587 ft³; heat loss 274 kW; grate 294 in²; engine chimney 9.8 ft (v1).
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images, pp.96–97 and pp.200–201. The dataset matches them, and the design
+is unchanged.
+
+**Measured and read:**
+- The dogi is "5ft (152cm) tall" (p.97).
+- Its firebox is Bidai's, "duplicated in constructing the Kawaii kiln" (p.200). Bidai's entrance
+  has an "AIR" opening 12–14 in wide over the 14 in ash pit, under "STOKING" (Fig 8-7). The
+  dataset carries it as `primary_air`, [168, 196] in², and v2's draft path takes it from there.
+- "7ft wide, 4ft deep" (p.97) uses "wide" across the kiln and "deep" along the draft, by the floor
+  plan "almost exactly" Bidai's (73 in across, 36–46 in along). Tobe's passage and Fig 4-28 use
+  "wide" along the draft. The design reads Kawaii's as its plan requires: 84 in across, 48 in
+  along.
+
+**Gaps** (for the plan):
+1. **The dogi's height.** The design gives none, so v1 draws it as tall as its 84 in width,
+   against the printed 5 ft. Measured from the ash pit's floor to the crown, as Bidai's 40 in of
+   upright wall and its arch, 5 ft would leave about 46 in above the grate. That is a reading, not
+   printed.
+2. **The dogi's air.** The design has no air opening. Its path alone takes the ash pit's mouth,
+   the firebox's 84 in width by the 14 in pit, 1,176 in².
+
+v2 on the dataset's inputs:
+- The path builds.
+- Each stage builds with the front open. With the front shut each is refused, as no side air inlet
+  is printed and the door stoke holes are covered after each stoking.
+- The arches stand cold and hot.
 
 ## Open questions for the user
 
 1. How many 7 × 10 in flues are there in each chamber wall (Fig 4-48)? Scaled 5 (or 6), below.
 2. Fig 4-46: is the second chamber's doorway square-headed (a lintel) or arched? A closer look
    (step A) reads a slab lintel; entered flat.
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

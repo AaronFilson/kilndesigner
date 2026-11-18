@@ -20,7 +20,11 @@ from kilndesigner.v2.heat import series as se
 from kilndesigner.v2.heat.zone import ZoneModel
 
 pytestmark = [pytest.mark.slow, pytest.mark.geometry]
-OLSEN = Path(__file__).resolve().parents[3] / "examples" / "olsen"
+ROOT = Path(__file__).resolve().parents[3]
+OLSEN = ROOT / "examples" / "olsen"
+# Olsen's two-chamber design (pp.202, 206), unbuilt, so not a reference kiln: kept in examples/
+# as a two-chamber row for the model's behaviour (the owner, 2026-11-17)
+TWO_CHAMBER = ROOT / "examples" / "olsen-two-chamber.yaml"
 HOUR = 3600.0
 WOOD = hk.Wood(0.12, 19e6, "TEST INPUT: FAO's air-dried 12 %, Forest Research's 19 MJ/kg")
 CONE_10 = 1285 + 273.15
@@ -40,7 +44,7 @@ def _loads(c: ch.Chamber) -> list[hk.Load]:
 
 @cache
 def _model(name: str, segments: int = 1) -> ZoneModel:
-    k = load_design(OLSEN / f"{name}.yaml")
+    k = load_design(TWO_CHAMBER if name == TWO_CHAMBER.stem else OLSEN / f"{name}.yaml")
     return hk.heat_model(k, _loads(ch.cavity(k, segments=segments)), 1.2, WOOD, n_rays=10_000,
                          segments=segments)  # fmt: skip
 
@@ -50,7 +54,7 @@ def test_the_two_chamber_kilns_front_firebox_zone_closes() -> None:
     a surface of its own ("front 1"), not taken for a cut because its centroid lies in the
     passage, so no ray leaves the enclosure (about 4 % of chamber 1's rays escaped, B3's
     finding)."""
-    k = load_design(OLSEN / "olsen-two-chamber.yaml")
+    k = load_design(TWO_CHAMBER)
     c = ch.chamber(k, path=True)
     assert [g.kind for g in c.gas] == ["firebox", "chamber", "chamber"]
     assert "front 1" in [z.name for z in c.zones]
@@ -118,6 +122,6 @@ def test_what_a_staged_firing_refuses() -> None:
     with pytest.raises(fi.FiringError, match="carries on"):
         fi.fire(m, fi.FixedInput(0.01), 60.0, start=np.zeros(3))
     with pytest.raises(hk.NotModelledError, match="one load for each"):
-        hk.heat_model(load_design(OLSEN / "olsen-two-chamber.yaml"), _loads(
-            ch.cavity(load_design(OLSEN / "olsen-two-chamber.yaml")))[:1], 1.2, WOOD,
+        hk.heat_model(load_design(TWO_CHAMBER), _loads(
+            ch.cavity(load_design(TWO_CHAMBER)))[:1], 1.2, WOOD,
             n_rays=1_000)  # fmt: skip

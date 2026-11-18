@@ -28,7 +28,6 @@ isn't printed.
 ## Open questions for the user
 
 1. Which kiln is this (its draft and chimney)?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

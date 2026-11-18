@@ -27,7 +27,6 @@ No change in this pass.
 ## Open questions for the user
 
 1. Fig 6-14: how many 1½ in flue holes through the floor?
-</content>
 
 ## Scaled off the figures (step A, 2026-11-09)
 

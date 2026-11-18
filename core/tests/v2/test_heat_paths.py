@@ -2,7 +2,7 @@
 
 The new elements and path forms against closed forms and Idelchik's own figures; each kiln
 family's built path against one written out by hand from its design file; each family's draft
-against a Bernoulli estimate through its narrowest flue; and every one of the 53 reference kilns
+against a Bernoulli estimate over its main flues; and every one of the 52 reference kilns
 built on its dataset inputs (`path_inputs.py`), or refused naming what is missing.
 """
 
@@ -277,7 +277,7 @@ def test_each_familys_draft_against_a_bernoulli_estimate() -> None:
     the room's air; no friction, no Reynolds factor), from the book's sizes: a groundhog with a
     chimney (Meaders-Cheever, p.112), a climbing row (Kawaii, p.97), a downdraft through its floor
     (Singh, Fig 5-10), an updraft with no chimney (Miravet, Fig 6-19). Friction and Idelchik's
-    finer coefficients take 0–20 % off."""
+    finer coefficients take up to 20 % off; v2 may lie up to 5 % over the estimate."""
     from kilndesigner.run_parts import run_layout
 
     hole = 45 * IN**2
@@ -395,24 +395,38 @@ def test_a_downdraft_through_its_floor_and_a_long_connection() -> None:
         x.thickness.to("m").magnitude for x in k.lining.for_face("floor")) + 8 * IN)  # fmt: skip
 
 
-def test_a_row_fired_in_stages_takes_its_side_holes() -> None:
-    """Fujiwara's kedo stoked from its side (the design's 5 in takiguchi, 10 in up): the hole an
-    inlet beside the front's path, joined in that chamber. With the 3½ × 2 ft fire mouth wide
-    open the chamber is hardly under suction, the 10 in round entry into the chimney (p.101) the
-    path's narrowest, so the hole, 10 in up, stands at the neutral plane and draws nothing; the
-    front closed, the hole alone draws the chimney's air."""
+FUJIWARA_INLET = {  # the design's 5 in takiguchi in chamber 2, 10 in up, left open as an air inlet
+    "air_inlets": [{"chamber": 2, "wall": "left", "port": {"diameter": "5 in"}, "up": "10 in"}]
+}
+
+
+def test_a_row_fired_in_stages_takes_its_air_from_its_own_inlets() -> None:
+    """Fujiwara's kedo stoked from its side: its takiguchi is covered after each stoking (the
+    owner, 2026-11-18), so the stage's air is the gas from the chamber before it, and with the
+    front closed it has no way in and is refused. Left open as an air inlet (a variant, not the
+    design), the hole is a branch beside the front's path, joined in that chamber. The dogi
+    draws through its air duct, about 10½ × 11½ in (Fig 4-55, the dataset's since 2026-11-18;
+    before, the 3½ × 2 ft loading hole wide open left the chamber hardly under suction and the
+    hole drawing nothing), so the chamber is under suction at the hole's 10 in and it draws a
+    share; the front closed, the hole alone draws the chimney's air, less than both together."""
     k = load_design(OLSEN / "fujiwara-bizen.yaml")
-    staged = dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=1))
+    built = dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=1))
+    assert not any(e.kind == "parallel" for e in built.elements)
+    assert "chamber 2's stoke holes covered after each stoking" in (built.steps[0].note or "")
+    with pytest.raises(dr.NotModelledError, match="chamber 2's stage has no way in for its air"):
+        dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=1, front_open=False))
+    v = _kiln("fujiwara-bizen", FUJIWARA_INLET)
+    staged = dr.kiln_path(v, inputs=pi.inputs("fujiwara-bizen", stage=1))
     group = next(e for e in staged.elements if e.kind == "parallel")
-    assert group.name == "chamber 2's side stoke holes beside the front's path"
+    assert group.name == "chamber 2's air inlets beside the front's path"
     side = group.parts[1]
     assert side[0].name.startswith(dr.INTAKE)
     assert side[0].area == pytest.approx(math.pi * (2.5 * IN) ** 2)
     d = dr.draw(staged, _hot(staged), WOOD)
     front, hole = d.shares[0][1]
-    assert front == pytest.approx(d.air)
-    assert hole == 0.0
-    alone = dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=1, front_open=False))
+    assert front + hole == pytest.approx(d.air)
+    assert 0 < hole < front
+    alone = dr.kiln_path(v, inputs=pi.inputs("fujiwara-bizen", stage=1, front_open=False))
     assert alone.zones[0] == "chamber 2"
     assert "the front's intakes closed for the stage" in (alone.steps[0].note or "")
     through = dr.draw(alone, _hot(alone), WOOD).air
@@ -422,32 +436,36 @@ def test_a_row_fired_in_stages_takes_its_side_holes() -> None:
         dr.kiln_path(k, inputs=pi.inputs("fujiwara-bizen", stage=2))
 
 
-def test_a_side_hole_above_the_neutral_plane_draws_nothing() -> None:
+def test_an_inlet_above_the_neutral_plane_draws_nothing() -> None:
     """Tamba as its design lays it (level, p.85's slope unprinted), its exits the end chamber's
-    holes and no stack (p.88): its side holes 32 in up stand where the hot column below them
-    works against them, so stoking chamber 3 the front's path carries the air and they none (no
-    flow backwards counted, said in the draft's docstring)."""
+    holes and no stack (p.88). Its side stoke holes are covered after each stoking, so stoking
+    chamber 3 the front's path carries all the air. Left open as air inlets (a variant), the
+    holes 32 in up stand where the hot column below them works against them, and draw none (no
+    flow backwards counted, said in the draft's docstring; two-way flow is the plan's next
+    part)."""
     k = load_design(OLSEN / "tamba.yaml")
     staged = dr.kiln_path(k, inputs=pi.inputs("tamba", stage=2))
     assert "stack" not in staged.zones
     assert "no stack" in (staged.steps[0].note or "")
-    d = dr.draw(staged, _hot(staged), WOOD)
+    assert not any(e.kind == "parallel" for e in staged.elements)
+    holes = [h for h in (k.stoke_holes or []) if h.chamber == 3]
+    v = k.model_copy(update={"air_inlets": holes})
+    opened = dr.kiln_path(v, inputs=pi.inputs("tamba", stage=2))
+    d = dr.draw(opened, _hot(opened), WOOD)
     assert d.shares[0][1][1] == 0.0
 
 
 def test_one_firebox_to_a_chamber_as_the_book_draws_them() -> None:
     """Suzuki's seven fireboxes (p.93) one to each chamber, the book's himae (the owner's
-    question 3), not side by side at the front as the engine lays them: the fire in chamber 1's
-    own zone, its side holes not sized (left out, said: the air an upper bound)."""
+    question 3), not side by side at the front as the engine lays them. As the design gives them
+    chamber 1's trough has no way in for its air: its stoke holes are covered after each stoking,
+    and the design has neither the main firebox and its mouth nor an air inlet (the kiln-by-kiln
+    check's, 2026-11-18). Laid side by side at the front they take their ash pits' air."""
     k = load_design(OLSEN / "suzuki-kyoto.yaml")
-    book = dr.kiln_path(k, inputs=pi.inputs("suzuki-kyoto"))
-    assert book.zones[0] == "chamber 1"
-    assert "question 3" in (book.steps[0].note or "")
-    assert book.left_out == ("chamber 1's side stoke holes (not sized)",)
+    with pytest.raises(dr.NotModelledError, match="the main firebox and its mouth"):
+        dr.kiln_path(k, inputs=pi.inputs("suzuki-kyoto"))
     engine = dr.kiln_path(k, inputs=pi.inputs("suzuki-kyoto", one_per_chamber=False))
     assert engine.zones[0] == "firebox"
-    tab = dr.table(book, WOOD)
-    assert "an upper bound, too" in (tab.steps[-1].note or "")
 
 
 def test_a_chimney_through_the_crown_and_a_tapered_one() -> None:
@@ -483,14 +501,15 @@ def test_p78_carries_the_inlets_to_the_exit_and_the_chimney() -> None:
 
 def test_the_height_band_by_rule_5_and_fig_5_2() -> None:
     """Hollyweird's chimney (15 × 24 in, p.116), its height not printed: twice the downward pull
-    (35.4 + 12.6 in, p.130) to Rule 5, 3 × that + ⅓ × the horizontal pull (the two chambers, the
-    wall between, the flue wall and the 9 in run, p.80)."""
+    (42½ + 12 in, the front chamber's springline and dome rise, the taller, p.130) to Rule 5, 3 ×
+    that + ⅓ × the horizontal pull (the two chambers, the wall between, the flue wall and the 9 in
+    run, p.80)."""
     from kilndesigner.run_parts import run_layout
 
     k = load_design(OLSEN / "hollyweird.yaml")
     built = dr.kiln_path(k, inputs=pi.inputs("hollyweird"))
     run = run_layout(k)
-    down = (35.4 + 12.6) * IN
+    down = (42.5 + 12) * IN
     wall = sum(x.thickness.to("m").magnitude for x in k.lining.for_face("back"))
     across = run.length * 1e-3 + wall + 9 * IN
     col = next(e for e in built.elements if e.name == "chimney" and e.kind == "column")
@@ -550,7 +569,7 @@ def test_the_design_alone_and_its_variations() -> None:
         "church-skaelskor", intake=(dr.Intakes((0.1, 0.1)),), grate_bar=0.75 * IN))  # fmt: skip
     group = church.elements[0]
     assert group.parts[0][0].name.startswith(dr.INTAKE)
-    assert "the design's ash-pit mouth and stoke hole" in (church.steps[0].note or "")
+    assert "the air intakes: the design's, fully open" in (church.steps[0].note or "")
     assert group.parts[0][0].k > dr.intakes(dr.Intakes((0.1, 0.1)), 0.0, None, 1).k  # the bars
     hotch = dr.kiln_path(load_design(OLSEN / "hotchkiss-raw-clay.yaml"),
                          inputs=pi.inputs("hotchkiss-raw-clay", one_per_chamber=False))  # fmt: skip
@@ -638,23 +657,29 @@ def test_paths_that_cant_be_bounded_are_refused(
 DATA = yaml.safe_load((ROOT / "core" / "tests" / "v2" / "reference_kilns.yaml").read_text(
     encoding="utf-8"))["kilns"]  # fmt: skip
 # What each refused kiln lacks (C1's report, `11-10-26.md`): nothing on its gas path is sized, so
-# p.78 has nothing to carry, or its burners' ports aren't given; the electric kiln needs no path
+# p.78 has nothing to carry, or its burners' ports aren't given; the electric kiln needs no path.
+# Since stoke holes are covered after each stoking (the owner, 2026-11-18), the rows whose
+# designs stand a trough in for the main firebox have no way in for chamber 1's air (the
+# kiln-by-kiln check's)
 REFUSED = {
-    "anagama-hole": "the exit flues: not given",
     "electric-car-45": "electric kiln",
     "falcone-pompeii": "the exit flues: not given",
     "fireworks-edmonton": "the exit flues: not given",
+    "hotchkiss-raw-clay": "the main firebox and its mouth",
     "kannofen": "the exit flues: not given",
     "kitade-tojilo": "the exit flues: not given",
+    "kyoto-climbing": "the main firebox and its mouth",
     "la-borne": "the exit flues: not given",
     "olsen-crossdraft-36": "port size",
     "olsen-three-chamber": "port size",
+    "suzuki-kyoto": "the main firebox and its mouth",
+    "tobe": "the main firebox and its mouth",
 }
 
 
 @pytest.mark.parametrize("kid", sorted(DATA))
 def test_every_reference_kiln_has_its_path_or_says_what_it_lacks(kid: str) -> None:
-    """Each of the 53 on its dataset inputs: a path drawing air at 1300 °C, its band's most-air
+    """Each of the 52 on its dataset inputs: a path drawing air at 1300 °C, its band's most-air
     end at least its least, every zone it names given a temperature by the heat model's names;
     or refused, naming the missing input."""
     k = load_design(ROOT / DATA[kid]["design"])

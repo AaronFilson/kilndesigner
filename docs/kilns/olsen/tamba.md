@@ -4,7 +4,9 @@ Example: [`examples/olsen/tamba.yaml`](../../../examples/olsen/tamba.yaml).
 Research notes: `docs/research/olsen-kilns.md`, `tamba`.
 
 One of the 23 Tamba climbing tube kilns, "an anagama extended to approximately 120 ft", half above
-ground, fired from a firebox (dogi) for about 36 hours and then side-stoked chamber by chamber.
+ground, fired from a firebox (dogi) for about 36 hours and then side-stoked segment by segment. It
+is one tube with no closed chambers: it narrows at the flue wall before each door, whose arched
+openings support the vault (p.86, Figs 4-11, 4-12, 4-19; the owner, 2026-11-18).
 
 ## Book pages
 
@@ -19,11 +21,13 @@ Olsen, *The Kiln Book*, 4th ed.:
 
 ## What's modelled
 
-A level tube 78 in wide (scaled), 120 ft long in seven door segments, a vault springing 12 in up
-and crowning at 3½ ft; 9 in K-26 walls; one firebox at the front 5 ft across and 6 ft deep with
-four 9 × 18 in arched flues; four 12 × 22 in flues in each wall between chambers and a 7 in
-stoke hole in each side of each chamber (scaled); cross-draft to an engine-sized chimney; cone 10
-(assumed).
+A level tube 78 in wide (scaled), 120 ft long in seven door segments under one vault, springing
+12 in up and crowning at 3½ ft; 9 in K-26 walls; one firebox at the front 5 ft across and 6 ft deep
+with four 9 × 18 in arched flues; a flue wall before each segment's door with four 12 × 22 in
+holes; a 16 in stoke hole in each side of each segment (the owner's estimate, 2026-11-17);
+cross-draft to an engine-sized chimney; cone 10 (assumed). The engine takes each segment as a
+chamber and each flue wall as the wall between two. Not modelled: the earth against the walls'
+lower half, so they lose to the room (only the floor is on the soil).
 
 ## Scaling (step A, 2026-11-09)
 
@@ -44,7 +48,8 @@ wasn't used. Fig 4-15 has no clear printed dimension. Readings in `scratch/scale
 | Firebox | 6' deep, 5' across at the flues (p.86); 4' from ground to first chamber floor (Fig 4-16) | — | 5 × 6 ft at the front | matches; the 4' drop not expressible |
 | Firebox flues | four arched, "9 x 18"" (Fig 4-13) | drawn 2.6 times as tall as wide (16 and 20.7 px/in); the tube's far side is lost in the gutter, so nothing scaled | four 9 × 18 in | matches |
 | Chamber flues | arched; "20 x 12"" on an outer hole, "24 x 12"" on an inner one; a legend for middle and last chambers' hatching (Fig 4-12) | four holes in the wall, all about 12 in wide; the outer two 17–19 in high, the inner two 21–24½ in (±2 in) | `draft.between`: four 12 × 22 in in each wall (the same area as two 12 × 20 and two 12 × 24) | scaled reading of the labels; one size per wall is all the schema takes (question 2) |
-| Side stoke holes | 1½' apart (Fig 4-7); one in the vault (Fig 4-10) | round, 7–7¼ in across, centre 31–32 in above the chamber floor (Fig 4-16, from 3½' and 6', ±½ in) | `stoke_holes`: a 7 in round hole in each side of each chamber, 32 in up | scaled; how many to a chamber isn't drawn (one a side taken) |
+| Side stoke holes | 1½' apart (Fig 4-7); one in the vault (Fig 4-10) | round, 7–7¼ in across, centre 31–32 in above the chamber floor (Fig 4-16, from 3½' and 6', ±½ in) | `stoke_holes`: a 16 in round hole in each side of each segment, 32 in up | the owner's estimate for the series (2026-11-17): the scaled 7 in can't pass the bundles; covered after each stoking; how many to a segment isn't drawn (one a side taken) |
+| Bundles | about 200 "15 x 30in" of split kindling and small pieces of wood (p.87; the metric "38 x 38 x 76cm") | — | round, 15 in across and 30 in long (the owner, 2026-11-18), 22.5–45.7 kg oven-dry packed as a cord (the dataset) | first read square from the metric, 28.6–58.1 kg (corrected 2026-11-18) |
 | Doors | arched, bricked up, one per segment, a supporting wall in front (Fig 4-15) | can't be scaled: Fig 4-15's only dimensions are its own faint 3′ (?) and 2′ (?), and no other figure draws the door | one front-wall door | differs; `loading.opening` with `each_chamber` could place them, but no size is legible |
 | Chimney | the end chamber's open holes, no stack (Figs 4-18, 4-19) | — | engine-sized stack | differs |
 | Slope | not printed | — | level | assumed |
@@ -63,8 +68,16 @@ width assumed before step A).
    the middle and 24 × 12 the last? Scaled, the labels read as the holes' own sizes in one wall:
    the two outer holes 20 in high and the two inner 24 in, all 12 in wide. Modelled as four
    12 × 22 in (the same area). Is that the reading?
-3. Is the tube's slope given anywhere for the Tamba kilns?
+3. Is the tube's slope given anywhere for the Tamba kilns? (Answered 2026-11-17: Figs 4-17 and
+   4-7 scale 8½–14°, and the owner's estimate for the series is 14°. It waits on a sloped tube in
+   the engine.)
 4. Fig 4-12 scales the tube 73–84½ in wide (78 in used, up from the 5 ft assumed) and 35–40½ in
    to the crown, below the faint 3½' of Fig 4-16 that is kept. Is the chamber wider than the
    firebox's 5 ft, and is 3½' its height?
-5. How many side stoke holes to a chamber (one a side is modelled, 7 in round, 32 in up)?
+5. How many side stoke holes to a segment (one a side is modelled, 32 in up)? (The size is
+   answered, 2026-11-17: 16 in, the owner's estimate for the series, in the design since
+   2026-11-18. The count is still open.)
+6. ~~Is Tamba one tube or a row of chambers?~~ Answered (the owner, 2026-11-18): one half-buried
+   tube with no closed chambers, narrowing at its arched supports (`11-17-26-inputs.md` §9).
+7. The fire mouth: the book has it open while side stoking (pp.86–87), but the slow test corner
+   still shuts it. That is to correct, not a question.
