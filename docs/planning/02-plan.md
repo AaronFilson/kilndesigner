@@ -283,6 +283,10 @@ references used. The plans print the working, so a builder can check it.
    - Principle 6 is answered (§1). The six unsized chimneys get scaled from Olsen's drawings,
      which the owner thinks are in another local repo's `scratch/`. Ask for its path first,
      then copy the pages into `scratch/olsen-pages/`.
+   - The fire mouth is answered (§2). It becomes a design setting per firing stage: open, partly
+     open (an area fraction) or closed. Fire the rows in each state, and model the first chamber
+     cooling with the mouth open while the chambers above fire. This replaces the mouth-shut and
+     mouth-open corners for Fujiwara, Bidai and Tamba.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
