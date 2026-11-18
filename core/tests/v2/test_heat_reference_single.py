@@ -47,10 +47,10 @@ T1 = (
     "ninodaguia", "olsen-oil-drip", "phoenix-nh", "phoenix-wright", "singh-coal",
 )  # fmt: skip
 OPEN_T1 = {
-    "singh-lowfire": "open item: the shards and saggar pieces piled over the open top (pp.155–156) "
-    "aren't modelled, so the whole top radiates to the room (a third of the heat), and the "
-    "1760 °F top is assumed (Falcone's). The owner's answers (2026-11-17, 11-17-26-inputs.md §4), "
-    "a top band of 800–1149 °C and the cover a porous shard layer, aren't applied yet",
+    "singh-lowfire": "open item: the shards and saggar pieces piled over the open top (pp.155–156; "
+    "the owner's estimate, 3 in over 80 % of the width, 20 % open as the exhaust, 2026-11-18) "
+    "aren't modelled, so the whole top radiates to the room (a third of the heat). The top is the "
+    "owner's band, 800–1149 °C (11-17-26-inputs.md §4)",
 }
 
 

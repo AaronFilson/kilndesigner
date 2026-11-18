@@ -3761,7 +3761,8 @@ kilns:
         page: p.140, p.199, p.204
         figure: Fig 5-39
         reason: two firebox mouths 13½ in wide, 12½ in tall (five courses) less the grate's 6–8 in
-        condition: the firebox mouths above the grate, fully open (research A2)
+        condition: the firebox mouths above the grate, fully open (research A2); they stay open while
+          firing (the owner, 2026-11-18), sealed only at the end (p.204; the p.309 log)
       - what: grate_bar
         value: 0.75
         unit: inch
@@ -9079,7 +9080,8 @@ kilns:
       - what: cone
         value: "10"
         status: assumed
-        reason: Rule 1 and its dense-brick figure are for Olsen's high fire (p.226)
+        reason: cone 10 only (the owner, 2026-11-18, for the band test over its lining and gas); Rule 1
+          and its dense-brick figure are for Olsen's high fire (p.226)
       - what: setting
         value: [78, 417]
         unit: kg
@@ -11072,11 +11074,12 @@ kilns:
         status: printed
         page: p.155
       - what: top_temperature
-        value: 1760
+        value: [1472, 2100]
         unit: degF
         status: assumed
-        reason: not given; the usual top of Falcone's wood updraft, the only low-fire updraft whose 
-          temperature the book prints (p.160)
+        reason: not given; the owner's band, below 2100 °F (1149 °C; 2026-11-17), from 800 °C, the
+          frit ware's lowest firing in the outside sources (11-17-26-inputs.md §4). The design file
+          takes 2100 °F; the tests carry the band. It was Falcone's usual 1760 °F (p.160)
       - what: fuel_species
         value: hardwood
         status: printed
@@ -11173,9 +11176,16 @@ kilns:
         status: printed
         page: pp.155–156
         figure: Fig 6-13
+      - what: roof
+        value: the shard cover 3 in thick over 80 % of the top's width; the other 20 % open, the
+          exhaust port
+        status: assumed
+        reason: the owner's estimate (2026-11-18, 11-17-26-inputs.md §4); different each firing,
+          always porous, holding heat and letting the smoke and flame through (the owner,
+          2026-11-17). The book prints no thickness
     flow:
       - what: firebox
-        value: under the domed floor, 4 ft long; 2 ft from the ground line down to the pit floor at 
+        value: under the domed floor, 4 ft long; 2 ft from the ground line down to the pit floor at
           its entry; 2 ft 6 in from the floor dome's underside down to the pit floor
         status: printed
         page: p.156

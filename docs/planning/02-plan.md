@@ -290,6 +290,11 @@ Reordered 2026-11-18 ([the review](../reviews/2026-11-18-review.md)). The owner'
 v2 is checked against its bar again, before item 2 folds that code into the engine. Otherwise the
 engine would take in rules the owner has overturned.
 
+**The priority (the owner, 2026-11-18):** "the only thing that matters right now is getting the
+reference kilns measured and the v2 engine on a good start, with the right tools to make the rest
+of the system work". Tests come second until then. v1's heat and physics are discarded, and the
+rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
+
 1. **Finish this part: apply the 11-17 answers, then rerun the bar**
    ([11-17-26-inputs.md](11-17-26-inputs.md); the review's §2 lists each one with its files).
    Nothing new needs to be sourced except Singh's cover.
@@ -299,8 +304,14 @@ engine would take in rules the owner has overturned.
      - a part drawn to scale is sized from the drawing (the anagama in the hole's flue, about 6 in);
      - Kitade's chimney is 12 in.
    - **Stoke holes aren't intakes (§3).**
-     - A stage's air is the upstream gas plus the printed chamber inlets (Hollyweird's tube, the
-       two-chamber design's tube).
+     - A stage's air is the upstream gas, the printed chamber inlets (Hollyweird's tube, the
+       two-chamber design's tube), and a side-stoked chamber's own air intake under its stoke hole.
+       The owner (2026-11-18): Fig 8-10's side stoke configuration is "a smaller hole, the stoke
+       hole, above the air intake and fire pit access". Kitade's second chamber takes its air that
+       way on both sides, about the front's 432 in².
+     - After the front chamber is done, "some or all of the front air is closed to prevent cooling
+       too fast". So the front's intakes for a later stage are a band from closed to open, with
+       the book's state where it prints one (Tamba's open, p.87; Kitade's closed, p.202).
      - The design's stoke hole is no longer taken as a fully open intake (`paths.intake_els`).
        Today Hollyweird's back stage draws through its side door.
      - The intakes the dataset derives from stoke holes are reworked: Kitade, Hollyweird's front,
@@ -331,10 +342,15 @@ engine would take in rules the owner has overturned.
      - the earth against the half-buried tube's walls: v2's heat model takes only a floor to the
        soil (`ground.py`), so the walls lose to the room. New engine work, for Tamba and the
        anagama in the hole.
-   - **Singh (§4):** the top as a band from 800 to 1149 °C, in the dataset, the design and its
-     test. The porous shard cover needs a sourced packed-bed method first. The bands now carry a
-     top band as an input (`single_cases.TOP`, Breda's).
-   - **The 36 ft³ cross-draft (§6):** the band test over its lining, gas and cone.
+   - **Singh (§4):** ~~the top as a band from 800 to 1149 °C~~ (in the dataset and the design,
+     2026-11-18, carried by `single_cases.TOP`). The cover is the owner's estimate (2026-11-18):
+     shards 3 in thick over 80 % of the top, 20 % open as the exhaust. Engine work: an open top
+     that takes a partial lid and its port. To source: a loose shard layer's conductivity and
+     emissivity.
+   - **The 36 ft³ cross-draft (§6):** the band test over its lining and gas, at cone 10 only (the
+     owner, 2026-11-18).
+   - **The fast-fire's mouths** stay open while firing (the owner, 2026-11-18): its intakes above
+     and below the grate stand.
    - ~~**Kähler and Blakebrough (§7):** the Rule 1 burner bands~~ (done 2026-11-18: fibre as IFB
      by pp.39 and 71; both reach cone 10 at the band's most).
    - ~~**The two-chamber design (§8):** read p.202 again~~ (done 2026-11-18: out of the reference
@@ -346,8 +362,19 @@ engine would take in rules the owner has overturned.
    - **Hollyweird (§8a):** its two chambers from its own figures, not the unbuilt design's
      (`olsen-figure-scaling.md` §7). The design's `chamber.sizes` takes each chamber's height and
      rise; its width is one for the row, and the back's taper to the chimney isn't expressible.
-   - **Then rerun the bar:** the full suite, and the rows' band corners outside it (Tobe's on its
-     new lining among them). Then restate "Where things stand".
+     The owner (2026-11-18):
+     - the 15 × 18 in opening in the front door is an air inlet, with air holes at grate level
+       besides (the design took it for the firebox's flue into the chamber);
+     - the side walls as drawn, 14–19 in;
+     - the front dome taller, the back chamber lower and falling toward the chimney, tapering into
+       it;
+     - the heights scaled against a brick's 9 in face in Fig 4-109.
+     The section is being rescanned (`olsen-figure-scaling.md` §8). The back chamber's fall and
+     its taper need the engine to take a row whose last chamber narrows and falls: new schema
+     work.
+   - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
+     owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
+     lining among them). Then restate "Where things stand".
    - **Waiting on the owner:** nothing. Front stoke holes were read in the book instead (the
      review's §5, question 9).
 2. **Fold the test-side engine knowledge into the engine** (module review items 1, 3 and 6).
@@ -363,7 +390,12 @@ engine would take in rules the owner has overturned.
      fire research, `grates-and-fuel-beds.md` [G10]–[G11], the neutral plane's height).
    - Item 3 wasn't scheduled before 2026-11-18: move `kiln_top_in`, `BURNER_PORTS` and
      `CONTINUOUS_FRACTION` to a leaf module, and add the import-linter contract for v2.
-   - ADR 0017's list of the v1 modules v2 may use is out of date. The amendment is the owner's.
+   - ~~ADR 0017's list of the v1 modules v2 may use is out of date.~~ Amended 2026-11-18 (the
+     owner):
+     - v1's heat and physics are discarded;
+     - everything else is reworked around v2;
+     - the layout modules v2 relies on are listed;
+     - v1's sizing may stay, never trusted over v2's measurements.
 3. **The v2 front door and the bridge to statics** (items 2 and 5). This puts the masonry's own
    temperature through its thickness into the hot statics: the hot face weak, the cooler brick
    behind it carrying the load (HWI's UR-19 says walls are built for this). It fixes the model

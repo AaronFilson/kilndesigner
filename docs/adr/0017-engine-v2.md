@@ -160,6 +160,24 @@ as the alternative (`v2/heat/gasrad.py`; `docs/planning/11-17-26-inputs.md` §14
 - When v2 works as a whole, the CLI, API, web and MCP server switch to it, and v1's heat and
   statics modules are removed.
 
+**Amended 2026-11-18 (the owner, on the module review's item 3).**
+- **v1's heat and physics are discarded.** In the owner's words: "discard all of v1 as it relates
+  to heat and physics". That covers the steady loss, the flue-loss combustion, the simulation, the
+  target and slow-firing physics, and v1's statics.
+- **Everything else is reworked around v2:** plans, masonry, castables, the bill, hardware, the
+  frame, movement, foundations and the surfaces. "This is part of the work to make the new
+  engine, things will not be fully put together until it is done."
+- **v2 may also use v1's layout modules**, which the plans and masonry keep anyway: massing,
+  firebox_parts, run_parts, crossing, groin, openings, geometry, form, outline, common_wall and
+  numeric ("Listing modules is fine").
+- **v1's sizing may stay meanwhile** (burner and chimney sizing, the parts' layout rules), but it
+  is never trusted over v2's measurements. "Sizing is probably ok, but again is not to be trusted
+  over the new measurements."
+- **What matters now** is the reference kilns measured and v2 started well, with the tools the
+  rest of the system needs. Tests come second until then ("Tests are not important, the only thing
+  that matters right now is getting the reference kilns measured and the v2 engine on a good start,
+  with the right tools to make the rest of the system work").
+
 **Engine rules that still hold:**
 - the engine stays pure (ADR 0002);
 - Pint at the boundary and SI floats in the solvers (ADR 0004);
