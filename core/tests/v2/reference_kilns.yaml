@@ -9739,8 +9739,11 @@ kilns:
       - roof, ports, flues, chimney
       - ware load
     notes:
-      - the design file's backing of the dense brick is the engine's inference from the heat 
+      - the design file's backing of the dense brick is the engine's inference from the heat
         balance, not the book's; the firing time depends strongly on it
+      - checked against p.226 on the page image (PDF index 210), 2026-11-18 (the kiln-by-kiln
+        check); no new finding, the design unchanged. The same paragraph's IFB updraft, 36 ft³ on at
+        least 10 such burners in about 8 h, is another kiln
 
   olsen-kit-100:
     name: Olsen 100 cu ft kit
@@ -9913,6 +9916,8 @@ kilns:
         needs a chamber of 141–154 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the
         design file to it at 4½ in of combustion space (the MR-750''s rule, p.171): 64.7 in square,
         58.2 in to the springline'
+      - checked against pp.169–176 on the page images, 2026-11-18 (the kiln-by-kiln check);
+        no new finding, the design unchanged
 
   olsen-kit-16:
     name: Olsen 16 kit, Bob and Sandy Kinzie
@@ -10123,6 +10128,8 @@ kilns:
         a chamber of 31–37 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
         to it at 4½ in of combustion space (the MR-750''s rule, p.171): 34.9 in square, 43.7 in to the
         springline'
+      - checked against pp.169–176 on the page images, 2026-11-18 (the kiln-by-kiln check);
+        no new finding, the design unchanged
 
   olsen-kit-24:
     name: Olsen 24 kit
@@ -10365,6 +10372,8 @@ kilns:
         a chamber of 41–47 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
         to it at 4½ in of combustion space (the MR-750''s rule, p.171): 43.6 in square, 37.1 in to the
         springline'
+      - checked against pp.169–176 on the page images, 2026-11-18 (the kiln-by-kiln check);
+        no new finding, the design unchanged
 
   olsen-kit-50:
     name: Olsen 50 car kiln
@@ -10541,6 +10550,8 @@ kilns:
         a chamber of 77–85 ft³ to the springline (kit-stacking-space.md); B4 step 7 resized the design file
         to it at 4½ in of combustion space (the MR-750''s rule, p.171): 53.2 in square, 46.7 in to the
         springline'
+      - checked against pp.169–176 on the page images, 2026-11-18 (the kiln-by-kiln check);
+        no new finding, the design unchanged
 
   olsen-oil-drip:
     name: Olsen's gravity-drip oil kiln
