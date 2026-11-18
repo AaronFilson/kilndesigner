@@ -68,9 +68,6 @@ heat:
           length: 55 in
           gap: 0.75 in # as the fast-fire grate (p.204)
         ash_pit: 15 in
-        stoke_hole: # p.202, read by the user 2026-11-17
-          width: 9 in
-          height: 7 in
         # "18in. (46cm) below the floor of the first chamber" (p.202) would be step: 18 in, but
         # then the firebox must be more than 18 in tall above its grate, and that isn't printed
         # (no figure of this firebox): left out, a question in the doc

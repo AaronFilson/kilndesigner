@@ -16,7 +16,6 @@ Fig 8-17 second-chamber firebox).
 | Second chamber | not printed | as the first | assumed |
 | Wall between | 9", flue hole 15 × 20 in | the 9 in wall as printed (`lining.between`, 2026-11-10: the engine's default common wall is now 4½ in thicker, p.46); second firebox inlet 15 × 20 in | matches |
 | First firebox | side, 18 in below the floor, 9 in metal grate, 15 in ash pit | 14 × 55 in, grate, 15 in ash pit | depth below floor not expressible |
-| First firebox's stoke hole | 9 × 7 in (p.202) | as printed (added 2026-11-17) | matches |
 | Second firebox | 14" wide, 15" ash pit, bars ¾" apart, stoke hole 7 × 7 in | as printed | matches |
 | Air tube | 5 in perforated square tube under the grate | — | not expressible |
 | Exit flue, chimney, roof | not printed | engine default | — |
