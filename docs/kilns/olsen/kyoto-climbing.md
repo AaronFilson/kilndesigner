@@ -14,11 +14,16 @@ p.205 (Fig 8-16). Checked on the page images, 2026-11-18 (the kiln-by-kiln check
 Fig 4-28's "6–7' tall, 4.5–6' wide" gives the chamber's span **along the draft**, front wall to back
 wall. It is not the width across the kiln:
 - The figure is drawn along the draft, with the inlet flues in one wall and the outlets in the other.
-- Olsen calls a chamber's length across the kiln its "long": Tobe's largest chamber is "25ft long
-  by 10ft tall by 10ft wide" (p.90), its width "almost equal to the height" (p.92); Suzuki's are
-  "14 x 6½ x 4½ ft" (p.93).
-- Fig 4-31 draws the Kyoto chamber 4 ft along the draft and 6 ft tall, and Fig 4-27 marks the
-  Kyomizu kiln's third chamber "4' INSIDE".
+- Fig 4-31 draws the Kyoto chamber "narrower" than other climbing kilns' (p.91), 4 ft against 6 ft,
+  its arch's span. Fig 4-27 marks the Kyomizu kiln's third chamber "4' INSIDE".
+- Every Kyoto chamber the book sizes is 3–4½ ft along the draft and 6–14 ft across:
+  - Bidai: 36–46 × 73 in (Fig 4-36);
+  - Kawaii: 4 × 7 ft (p.97);
+  - Suzuki: 4½ × 14 ft (p.93).
+
+The word alone doesn't decide it. Tobe's largest chamber is "25ft long by 10ft tall by 10ft wide"
+(p.90), its width "almost equal to the height" (p.92), so "wide" is along the draft there.
+Kawaii's chambers are "7ft wide, 4ft deep" (p.97), "wide" across.
 
 Until this check the design read the 4½–6 ft as the width across (63 in), with the Bidai kiln's
 41⅓ in along the draft. It now takes:

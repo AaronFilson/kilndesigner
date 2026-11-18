@@ -7005,6 +7005,26 @@ kilns:
         status: assumed
         reason: the book says it is the Bidai kiln's firebox (p.200) but doesn't size it here; 21 in
           is the middle of the printed 18–24 in
+      - what: firebox_height
+        value: 46
+        unit: inch
+        status: assumed
+        reason: the printed 5 ft (p.97) from the ash pit's floor to the crown, as the Bidai firebox's
+          40 in of upright wall and its arch over (Fig 8-7, p.201), less the 14 in ash pit; the
+          space above the grate, as the engine takes a firebox's height (2026-11-18). The design
+          gave none before, so v1 drew it as tall as its 84 in width
+      - what: primary_air
+        value: [168, 196]
+        unit: inch**2
+        status: derived
+        page: p.200, p.201
+        figure: Fig 8-7
+        reason: the Bidai firebox, "duplicated in constructing the Kawaii kiln" (p.200), its
+          entrance's AIR opening 12–14 in wide over the 14 in ash pit (Fig 8-7), as bidai's
+        condition: the air opening into the ash pit, below the stoking opening (research A2)
+        note: the design gives it as the firebox's `air`, 13 × 14 in below the grate (2026-11-18).
+          Before, the path took the design's ash-pit mouth, the firebox's 84 in width by the 14 in
+          pit, 1,176 in²
     structure:
       - what: arch_material
         value: tatami-mat bricks in the arches and the firebox
@@ -7063,6 +7083,12 @@ kilns:
       - 'research A2: the dogi''s mouth and air intakes'
     notes:
       - the "(30.5 x 38cm)" step is a misprint for 30.5 to 38 cm (Flagged in the notes)
+      - '"7ft wide, 4ft deep" (p.97) uses wide across the kiln and deep along the draft, by the
+        floor plan "almost exactly" the Bidai kiln''s (73 in across, 36–46 in along, Fig 4-36);
+        Tobe''s "25ft long by 10ft tall by 10ft wide" (p.90) and Fig 4-28''s "4.5–6'' wide" use
+        wide along the draft, the arch''s span'
+      - checked against pp.96–97 and pp.200–201 on the page images, 2026-11-18 (the kiln-by-kiln
+        check)
 
   kenzan-muffle:
     name: Kenzan enamel kiln (kin-gama), a muffle kiln
@@ -7633,9 +7659,11 @@ kilns:
         figure: Fig 4-28
         note: printed "wide", the chamber's span along the draft, front wall to back wall. The
           figure is drawn along the draft, the inlet flues in one wall and the outlets in the
-          other, and Olsen calls a chamber's length across the kiln its "long" (Tobe's 25 ft long
-          by 10 ft tall by 10 ft wide, its width "almost equal to the height", p.90, p.92; Suzuki's
-          14 × 6½ × 4½ ft, p.93). Read as the width across until 2026-11-18
+          other; Fig 4-31 draws the Kyoto chamber "narrower" than others (p.91), 4 ft against 6 ft,
+          its arch's span; and every Kyoto chamber the book sizes is 3–4½ ft along the draft and 6–14
+          ft across (Bidai, Kawaii, Suzuki). The word alone doesn't decide it, Tobe's "10ft wide"
+          (p.90) being along the draft and Kawaii's "7ft wide" (p.97) across.
+          Read as the width across until 2026-11-18
       - what: depth
         value: 4
         unit: foot
