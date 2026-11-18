@@ -2835,8 +2835,36 @@ kilns:
         status: printed
         page: p.124
         figure: Fig 4-140
+      - what: stoke_hole
+        value: about 11½ in wide (9¾–13 in)
+        status: scaled
+        page: p.125
+        figure: Fig 4-147
+        spread: 198 × 157 px at zoom 5, its 157 px the printed 9 in height (17.4 px/in); ±15 % for
+          the camera looking down on the front (scratch/kiln-check/conrad/measure.py, 2026-11-18)
+        note: covered after each stoking (the owner, 2026-11-18); the dark middle opening of Fig
+          4-147, "the stoke hole" of its caption
+      - what: ash_pit
+        value: the ash-pit air supply, its opening about 16½–17½ in wide and 12¾ in tall (14–20 by
+          11–15 in), arched over, at the foot of the front
+        status: scaled
+        page: p.125
+        figure: Fig 4-147
+        spread: 285–302 × 221–224 px at zoom 5 on the stoke hole's 17.4 px/in; ±15 % for the camera
+          looking down; its height agrees with the printed 12 in ash pit (Fig 4-140)
+        note: '"the ash-pit air supply" (Fig 4-147''s caption), the dark opening under the arch over
+          the walkway; the design''s path takes the ash pit''s mouth as the firebox''s 39 in width by
+          12 in, 468 in² (a gap, 2026-11-18)'
+      - what: primary_air
+        value: [156, 286]
+        unit: inch**2
+        status: derived
+        page: p.125
+        figure: Fig 4-147
+        reason: the scaled opening, 16.9 × 12.8 in, 216 in², its scale ±15 % (the area ±28 %)
+        condition: the ash-pit air supply, below the grate (research A2)
       - what: exit_flue
-        value: 12 in high under a 13 in block, at the neck's end; 8 + 11 = 19 in to the back at the 
+        value: 12 in high under a 13 in block, at the neck's end; 8 + 11 = 19 in to the back at the
           base
         status: printed
         page: p.124
@@ -2943,17 +2971,22 @@ kilns:
     gaps:
       - dome and wall thickness (scaled only)
       - chimney height
-      - the stoke hole's and exit opening's widths
+      - the stoke hole's and exit opening's widths (scaled only)
       - castable used
       - cone or temperature
       - firing time
       - wood per firing
-      - 'research A2: the ash pit''s mouth (primary air)'
+      - 'the ash-pit air supply in the design: scaled about 17 × 13 in, 216 in², against the
+        design''s 468 in²'
+      - a framed opening high in the front, over the stoke hole, about 14½ × 11½ in (Fig 4-147),
+        not on the elevation and not labelled
     notes:
       - the dome's first casting was too thin and had to be thickened (Fig 4-146), the nearest thing
         to a structural failure printed for these kilns, with no size for the thin casting
-      - the design's front firebox stands outside the front wall; the book's grate is inside the 
+      - the design's front firebox stands outside the front wall; the book's grate is inside the
         teardrop's front
+      - checked against pp.124–125 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged
 
   electric-car-45:
     name: Electric car kiln, 45 in wide

@@ -64,11 +64,33 @@ No YAML values changed in this pass. Only the notes were added.
 ## Open questions for the user
 
 1. Fig 4-140 p.124: how wide is the 9 in high stoke hole? Fig 4-147, p.125, shows the front.
+   (Scaled 2026-11-18, below: about 11½ in.)
 2. Fig 4-140: how wide is the 12 in high exit opening under the 13 in block? The neck's last width
    is unreadable.
 3. Fig 4-140: how tall is the chimney? Its top dimension is cut off. Is the damper slot about
    73 in up?
 4. Which side is the door on, looking from the firebox to the chimney?
+
+## Checked against the book (2026-11-18)
+
+Read again on the page images, pp.124–125, with Fig 4-147 at zoom 5. The design is unchanged.
+
+**Measured on Fig 4-147** ("Front of kiln showing the stoke hole and the ash-pit air supply").
+The scale is the stoke hole's printed 9 in height (Fig 4-140), 157 px at zoom 5, so 17.4 px/in.
+The spread is ±15 % for the camera looking down on the front
+(`scratch/kiln-check/conrad/measure.py`).
+- **The stoke hole:** 198 px wide, so about 11½ in (9¾–13 in).
+- **The ash-pit air supply:** the dark opening under the arch at the foot of the front,
+  285–302 × 221–224 px, about 16½–17½ in wide and 12¾ in tall. The height agrees with the printed
+  12 in ash pit. That is about 216 in², the dataset's `primary_air` [156, 286] in², which v2's path
+  now takes.
+- **A framed opening high in the front**, over the stoke hole: about 14½ × 11½ in, not on the
+  elevation and not labelled.
+
+**Gaps** (for the plan):
+- The design's path alone takes the ash pit's mouth as the firebox's 39 in width by the 12 in
+  pit, 468 in², twice the measured opening.
+- The framed upper opening isn't identified.
 
 ## Scaled off the figures (step A, 2026-11-09)
 

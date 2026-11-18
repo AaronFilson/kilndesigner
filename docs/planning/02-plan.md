@@ -437,9 +437,13 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
          book's.
        - Fig 7-4's three adjustable air levels (below the grate, at the grate, at the stoke hole)
          aren't sized, and the design has none.
+     - **Conrad's teardrop:**
+       - Fig 4-147's ash-pit air supply scales about 17 × 13 in, 216 in², against the design's
+         468 in² (the firebox's 39 in by the 12 in pit). The measurement is in the dataset.
+       - A framed opening high in the front is unidentified.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
-       Kawaii, the multi-directional kilns), the design can't say it except through the
+       Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the
        firebox's `air`.
    - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
      owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
