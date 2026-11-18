@@ -11087,6 +11087,9 @@ kilns:
       - 'research A2: the firebox mouth and ash pit''s intakes'
     notes:
       - Studio Potter Vol. 7, No. 2 would hold the sizes the book leaves out
+      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-
+        kiln check); no new finding, the design unchanged (only the volume and Fig 5-67's
+        layout are printed)
   phoenix-wright:
     name: George Wright's Phoenix-style kiln, Portland, Oregon
     design: examples/olsen/phoenix-wright.yaml
@@ -11263,6 +11266,9 @@ kilns:
       - >-
         the design file says this kiln "gave the type its name"; olsen-kilns.md says the name Phoenix
         comes from the New Hampshire variation (phoenix-nh)
+      - checked against p.147 (PDF index 133) on the page image, 2026-11-18 (the kiln-by-
+        kiln check); no new finding, the design unchanged (only the volume and Fig 5-67's
+        layout are printed)
   singh-coal:
     name: Singh's round coal downdraft, Delhi Blue Pottery, New Delhi
     design: examples/olsen/singh-coal.yaml
@@ -11631,6 +11637,9 @@ kilns:
       - the printed 385 ft³ (p.133) doesn't fit the drawing's 235 ft³ (Flagged in the notes)
       - the chimney label reads "29' …" in the scan; the user read 30 ft tall and 25–30 ft away from
         the book
+      - checked against pp.133–134 (PDF index 119–120) on the page images, 2026-11-18 (the
+        kiln-by-kiln check); no new finding, the design unchanged. The fire mouth open hours
+        1–3 and bricked up from hour 4 (Table 5-1) is in the dataset's intake band
   singh-lowfire:
     name: Singh's low-fire glaze kiln, New Delhi
     design: examples/olsen/singh-lowfire.yaml
@@ -11833,6 +11842,11 @@ kilns:
         table "10–15 (?)", the kiln doc "1?–15"; it scales 16–17½ in
       - the design file takes the kiln as loaded from the top (no door drawn); a question in the 
         kiln doc
+      - checked against pp.155–156 (PDF index 141–142) on the page images, 2026-11-18 (the
+        kiln-by-kiln check); the design is unchanged. Fig 6-9 draws the firebox an open
+        trench sloping down from the ground to the coals and ember pit, so v2's path takes
+        its whole open end as the intake, which fits; the shard cover (the owner's estimate)
+        waits on the engine's open top taking a partial lid
   suzuki-kyoto:
     name: Suzuki cooperative climbing kiln, Torincho Street, Kyoto
     design: examples/olsen/suzuki-kyoto.yaml
