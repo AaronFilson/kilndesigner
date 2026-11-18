@@ -5251,7 +5251,7 @@ kilns:
         condition: the second, side-stoked firebox
         reason: the side door has a stoke hole in the picture (read by the user, 2026-11-17), its size
           not printed; the door's printed 9 × 13½ in
-        spread: 9 × 7 in (the two-chamber kiln's p.202 hole) to 9 × 13½ in
+        spread: 9 × 7 in (Kitade's p.202 hole) to 9 × 13½ in
       - what: between_flues
         value: three large exit flues from the front chamber bisect the second firebox's grate area,
           giving air under and over its grate
@@ -10402,12 +10402,6 @@ kilns:
         status: printed
         page: p.202
         condition: the first firebox
-      - what: stoke_hole
-        value: 9 × 7 in
-        status: printed
-        page: p.202
-        condition: the first firebox
-        note: read by the user, 2026-11-17; width × height taken in the order printed
       - what: firebox
         value: the second chamber's firebox 14 in wide, its ash pit sunk under the inlet flue with 
           the grate bisecting the flue
@@ -11514,6 +11508,22 @@ kilns:
         page: p.93
         condition: chambers 1–3 only; the firebox's 15 h and chambers 4–7 not included
         reason: 75 bundles × 2 sides × 3 chambers
+      - what: fuel_per_firing
+        value: 60
+        unit: bundle
+        bound: "~"
+        status: printed
+        page: p.93
+        condition: per side, for each of chambers 4, 5, 6 and 7 (oxidation), over 5 h of stoking
+        note: lost at the gutter in the scan; read by the user on the page, 2026-11-17
+      - what: fuel_per_firing
+        value: 930
+        unit: bundle
+        bound: "~"
+        status: derived
+        page: p.93
+        condition: chambers 1–7; the firebox's 15 h not included
+        reason: 75 × 2 sides × 3 chambers + 60 × 2 sides × 4 chambers
       - what: fuel_kind
         value: bundles of wood, each 15 in (38 cm) in diameter and 18 in (46 cm) long
         status: printed

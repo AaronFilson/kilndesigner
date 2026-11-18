@@ -118,7 +118,8 @@ PLANS: dict[str, Plan] = {
     "suzuki-kyoto": Plan("suzuki-kyoto", (
         Phase("the firebox, to 1000 °C", 0, RED, side=False, book=15.0, held=15.0),
         *(Phase(f"chamber {k + 1}", k, book=7.0, held=7.0) for k in range(3)),
-        *(Phase(f"chamber {k + 1}", k, book=5.0) for k in range(3, 7)),
+        # held to their 5 h since the owner read 60 bundles a side for them (2026-11-17)
+        *(Phase(f"chamber {k + 1}", k, book=5.0, held=5.0) for k in range(3, 7)),
     ), zoned=False, rate=(1, 2, 3)),
     # pp.86–87: the dogi alone about 36 h, bringing the first three or four stoke holes (chamber 1
     # of seven, its holes 1½ ft apart, Fig 4-7) to about 1000 °C, then 14–18 h of side stoking;
