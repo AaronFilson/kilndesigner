@@ -8077,8 +8077,17 @@ kilns:
         condition: Fig 4-31's Kyoto chamber, 6 ft tall, a pointed arch from near the floor, against
           other climbing kilns' 6 ft along the draft by 6 ft tall; Fig 4-27's Kyomizu kiln, "4'
           INSIDE" over its third chamber
-        note: Fig 4-27's vertical dimension at the wall between chambers 2 and 3, and a label at its
-          left end, are too faded in the scan to read (2026-11-18)
+        note: a label at Fig 4-27's left end is too faded in the scan to read (2026-11-18)
+      - what: height
+        value: [6, 7]
+        unit: foot
+        status: printed
+        page: p.91
+        figure: Fig 4-27
+        condition: the Kyomizu kiln's chamber, the vertical dimension at the wall between chambers 2
+          and 3
+        note: faded in the scan; read by the user from the book, 2026-11-18, as 6'–7', which matches
+          Fig 4-28's "6–7' tall"
       - what: width
         value: 63
         unit: inch
@@ -8253,7 +8262,8 @@ kilns:
       - cone, firing time and fuel per firing (the Suzuki kiln's are its own)
       - 'research A2: the stoke holes'' sizes (takaguchi, aizashiguchi, mempo ana) and the main
         firebox''s intakes'
-      - Fig 4-27's faded dimension and label (the scan)
+      - the label at Fig 4-27's left end, faded in the scan (its vertical dimension, 6'–7', read by
+        the user, 2026-11-18)
       - 'the design''s axes: it takes Fig 4-28''s 4½–6 ft across the kiln and the Bidai kiln''s 41⅓
         in along the draft; the book''s range reads along the draft'
     notes:
@@ -12998,9 +13008,9 @@ kilns:
       - how high the "plus" of the stacking is
     notes:
       - the evenness remark is this kiln's whole test result; the engine doesn't work out evenness
-      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
-        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
-        (kiln-reference.md, scan coverage); the design is unchanged
+      - checked against p.74 on the second scan's page image, 2026-11-18 (the kiln-by-kiln check),
+        docs/research/Scanned_20261025-1022.pdf, PDF index 2; it matches, and its Figs 3-1 and 3-2
+        print no dimension; the design is unchanged
 
   updraft-test-2:
     name: Updraft test kiln 2, 2 × 3 × 4 ft stacking
@@ -13105,9 +13115,9 @@ kilns:
     gaps:
       - walls, roof, burner count and rating, flues, cone, firing time, who built them
     notes:
-      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
-        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
-        (kiln-reference.md, scan coverage); the design is unchanged
+      - checked against p.74 on the second scan's page image, 2026-11-18 (the kiln-by-kiln check),
+        docs/research/Scanned_20261025-1022.pdf, PDF index 2; it matches, and its Figs 3-1 and 3-2
+        print no dimension; the design is unchanged
 
   updraft-test-3:
     name: Updraft test kiln 3, 3 × 3 × 5 ft stacking
@@ -13212,9 +13222,9 @@ kilns:
     gaps:
       - walls, roof, burner count and rating, flues, cone, firing time, who built them
     notes:
-      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
-        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
-        (kiln-reference.md, scan coverage); the design is unchanged
+      - checked against p.74 on the second scan's page image, 2026-11-18 (the kiln-by-kiln check),
+        docs/research/Scanned_20261025-1022.pdf, PDF index 2; it matches, and its Figs 3-1 and 3-2
+        print no dimension; the design is unchanged
 
   updraft-test-4:
     name: Updraft test kiln 4, 4 × 4 × 5 ft stacking
@@ -13321,9 +13331,9 @@ kilns:
     notes:
       - "Olsen's conclusion from the four tests (p.74): with floor burners, equal height and width matter
         most"
-      - not re-read in the kiln-by-kiln check (2026-11-18), as p.74 is missing from this repo's
-        scan (PDF index 60 is p.73, 61 is p.76); its facts came from the second scan
-        (kiln-reference.md, scan coverage); the design is unchanged
+      - checked against p.74 on the second scan's page image, 2026-11-18 (the kiln-by-kiln check),
+        docs/research/Scanned_20261025-1022.pdf, PDF index 2; it matches, and its Figs 3-1 and 3-2
+        print no dimension; the design is unchanged
 
 extras:
   bailey:

@@ -21,20 +21,30 @@ is left).
 
 | Book pages | PDF index | Note |
 |---|---|---|
+| 33 | 20 | by the first 41 indexes' backward run (below) |
 | 54 | 41 | |
 | 55 | 42 and 43 | scanned twice, 43 the clear one |
 | 56 | 44 | |
 | 57 | 45 | read for §9 (2026-11-18) |
-| 83–97 | 68–82 | index = page − 15 (pp.84, 85, 86, 87, 91, 92, 93, 94, 97 checked) |
-| 109–111 | 94–96 | page − 15 |
-| 116–117 | 101–102 | page − 15 |
-| 160–161 | 147–148 | page − 13 |
+| 69 | 55 | |
+| 71–73 | 58–60 | |
+| 74–75 | — | not in this scan: the second scan's (below) |
+| 76–77 | 61–62 | |
+| 83–117 | 68–102 | index = page − 15 (pp.83–97, 100–104, 107–112 and 114–117 checked) |
+| 123–159 | 109–145 | page − 14 (pp.124–128, 131–137, 139–143, 146–150 and 153–159 checked) |
+| 160–161 | 147–148 | page − 13; 146 is another scan of p.160 |
 | 162 | 149 or 150 | one of the two is a narrow partial scan; not checked |
-| 163–164 | 151–152 | page − 12 |
+| 163–176 | 151–164 | page − 12 (pp.163–174 checked) |
 | 178–183 | 166–171 | page − 12 (pp.178, 181 checked) |
-| 199–206 | 182–189 | page − 17 (pp.190–193 and 195 are not in the scan); all eight checked |
+| 199–209 | 182–192 | page − 17 (pp.190–193 and 195 are not in the scan); all checked |
+| 222–228 | 206–212 | page − 16 (pp.224, 226 checked) |
+| 244–245 | 228–229 | page − 16 |
 
-The scan's first 41 indexes run backwards from p.53 (kiln-reference.md).
+The scan's first 41 indexes run backwards from p.53 (kiln-reference.md). Indexes from p.69 on
+were read off each page's printed number during the kiln-by-kiln check (2026-11-18).
+
+**The second scan**, `docs/research/Scanned_20261025-1022.pdf` (git-ignored): index 0 = p.64,
+1 = p.65, 2 = p.74, 3 = p.75, and 4 and 5 = p.233, scanned twice.
 
 ## 1. Principle 6: each kiln's chimney and exit flues
 

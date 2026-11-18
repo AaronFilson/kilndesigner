@@ -40,6 +40,8 @@ walls; each ring's foot against the taller wall behind it is a springer coursed 
    radii (for `roof.peak_at`)?
 2. Fig 4-27 (p.91): the vertical dimension at the wall between chambers 2 and 3, and the label at
    the figure's left end, are too faded in the scan to read. What do they say in your copy?
+   (The dimension answered 2026-11-18: 6'–7', as Fig 4-28's "6–7' tall". The left-end label is
+   still unread.)
 
 ## Scaled off the figures (step A, 2026-11-09)
 
@@ -85,8 +87,9 @@ The measurements are in the dataset. The design is unchanged, and its gaps are b
 - **Fig 4-28's mark** beside the outlet flue reads 15 in at zoom 14. Its second digit is open at
   the top like the figure's other 5s; it had also been read 18.
 - **Fig 4-27** numbers its chambers to 10 and draws a chimney past the last one, unsized. Its
-  vertical dimension at the wall between chambers 2 and 3, and a label at its left end, are too
-  faded in the scan to read.
+  vertical dimension at the wall between chambers 2 and 3 reads 6'–7' in the owner's copy,
+  matching Fig 4-28's "6–7' tall" (2026-11-18). A label at its left end is too faded in the scan
+  to read.
 - **Each chamber's three stoke holes** (Fig 4-34), unsized: the takaguchi low in the himae, the
   aizashiguchi at the floor between the saggar settings, and the mempo ana high at the back. They
   are covered after each stoking.
@@ -102,7 +105,8 @@ The measurements are in the dataset. The design is unchanged, and its gaps are b
 3. **The arch.** The book draws it pointed and springing near the floor, with the reduction
    chambers' peak set back. The design's semicircle on side walls is the engine's.
 4. **The doors** are in a side wall (Figs 4-27, 4-33); the design's is in the front wall.
-5. **Fig 4-27's faded dimension and label**, for the owner's copy (question 2 below).
+5. **Fig 4-27's faded left-end label**, for the owner's copy (question 2 below). Its dimension,
+   6'–7', is answered.
 
 v2 on the unchanged design: the draft path is refused for gap 2, and the arches stand cold and hot.
 

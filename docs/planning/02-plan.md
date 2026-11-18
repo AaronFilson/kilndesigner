@@ -509,11 +509,11 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - **Tamba:** Fig 4-16 draws the dogi's mouth, "STOKING" with "AIR" below it, and "the
        firebox becomes the air supply" for the side stoking (p.86). The mouth isn't sized, so v2's
        path takes the dogi's whole open end.
-     - **The four updraft tests:** not re-read. p.74 is missing from this repo's scan, and its
-       facts came from the second scan.
+     - **The four updraft tests:** no new gap. p.74, read on the second scan
+       (`docs/research/Scanned_20261025-1022.pdf`), matches.
 
-     **The check is done** (2026-11-18): every kiln with a design was read against its pages,
-     except the updraft tests' p.74. Across the 52 kilns, the gaps fall into these groups:
+     **The check is done** (2026-11-18): every kiln with a design was read against its pages.
+     Across the 52 kilns, the gaps fall into these groups:
      1. **The fire's way in.** The designs often lack the opening the book draws or measures:
         - a firebox's air opening narrower than the firebox (Bidai, Kawaii, the
           multi-directional kilns, Conrad's);
