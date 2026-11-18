@@ -15,37 +15,46 @@ p.117 (text and photos), p.124.
 
 ## What's modelled
 
-From its own pages (2026-11-18). The owner: "It has two chambers, they are not the same, and they
-are described." The width and crown once borrowed from the unbuilt two-chamber design (Fig 8-17)
-are gone (`docs/planning/11-17-26-inputs.md` §8a):
-- **Width:** both chambers 61 in inside, scaled on Fig 4-110 against the drawn shelves' printed 12 in
-  across (59–63½ in). At the printed lengths' scale along the kiln they would be 72½–76½ in; the
-  plan isn't drawn to one scale (`docs/research/olsen-figure-scaling.md` §7).
+From its own pages, rescanned on 2026-11-18. The owner: "It has two chambers, they are not the
+same, and they are described". The heights are scaled against a brick's 9 in face, as the owner
+asked (`docs/planning/11-17-26-inputs.md` §8a; `docs/research/olsen-figure-scaling.md` §7, §8).
+The width and crown once borrowed from the unbuilt two-chamber design (Fig 8-17) are gone.
+- **Width:** 53 in in both chambers, on the bricks of the wall between them (Fig 4-113,
+  48–57½ in). Fig 4-108's "55"" falls in that range. The plan isn't drawn to one scale (59–63½ in
+  at its shelves, 72½–76½ in at its lengths).
 - **Lengths:** Fig 4-108's 8 ft spans the 36 in firebox, the 55 in first platform and the 13 in
   wall (104 in), and its 12 ft the 145 in behind. So the front chamber is entered 55 in deep, with
-  the firebox laid in front, and the back chamber 145 in. Before, the front was 8 ft deep with the
-  firebox in front of it as well.
-- **Heights:** no figure scales one. Olsen's Principle 1 (p.74–75), his own rule on his own kiln:
-  the height equal to the width, the dome counted in it, so 61 in to the crown. The domes are 6 in
-  of Kaolite 2600-LI, rising 2¾ in per foot of the span (14 in, p.51), so the walls stand 47 in.
-  Fig 4-108 draws the front dome taller and rounder than the back, by an amount it doesn't scale.
-- **What differs between the chambers:** the front's 36 in firebox and one platform; the back's
-  side-stoked 15 in second grate (a trough at its front), its two platforms and 9 in grate, and its
-  taper into the chimney.
+  the firebox laid in front, and the back chamber 145 in.
+- **Front chamber:** springline 42½ in, where the castable meets the wall between the chambers
+  (Fig 4-113, 41–44½ in). The dome rises 12 in (2¾ in/ft, p.51) to 54½ in. The photos put the
+  crown about 36–51 in over the stoke hole's sill (Figs 4-109, 4-112).
+- **Back chamber:** lower. Its springline is 35 in (Fig 4-114, 34–36 in, if that photo shows its
+  face of the wall), under the same rise. Its floor is 5–11 in higher there. It falls and tapers
+  into the chimney (Figs 4-110, 4-111); neither the fall nor the taper is expressible in a row yet.
+- **Walls:** 18 in of medium-duty firebrick, in the plan's drawn 14–19 in (the owner). The printed
+  13 in wall between the chambers is kept.
+- **Fireboxes:**
+  - **The front:** 53 × 36 in, open into the chamber through its whole mouth. Its grate is as the
+    plan draws it, 33 × 18 in, bars ¾ in apart. In the door's bricking:
+    - the 13½ × 9 in stoke hole (Fig 4-109), covered after each stoking;
+    - the 15 × 18 in air inlet (the owner), low in the door, under the grate (Fig 4-112);
+    - air holes at grate level, unsized.
+  - **The second:** a trough at the back chamber's front, 15 × 53 in, with the 9 × 13½ in stoke
+    hole in its side door. Its air comes through the 5 in clay tube under its grate (p.116); the
+    door's air holes aren't sized.
+- **Flues between the chambers:** three, 12 × 11 in (Figs 4-110, 4-113, 4-114).
 
-Walls are 9 in of medium-duty firebrick (the plan draws the side walls 14–19½ in, perhaps the
-buttressing). The front firebox is 61 × 36 in with a grate whose bars are ¾ in apart. It has a
-15 × 18 in inlet flue and a 9 × 13½ in stoke hole. The second firebox is 15 × 61 in. Cone 11.
+Cone 11.
 
 ## Book against model
 
 | Feature | Book | Model | |
 |---|---|---|---|
-| Front firebox | 36 in, dug-out ash pit as the walkway (Fig 4-110, p.117) | 61 × 36 in, grate, on the ground | matches; the plan draws it curving in to a 44–53 in mouth (scaled, not entered) |
-| Inlet flue, stoke hole | one 15 × 18 in, one 9 × 13½ in, in the door bricking, with air holes at grate level (p.117) | as printed | matches; the air holes aren't modelled |
-| Second firebox | 15 in grate between the chambers, side door (Fig 4-110 "DOOR", about 36 in long, scaled) with a 9 × 13½ in stoke hole (p.117, the owner, 2026-11-17) | 15 × 61 in, the engine's trough at the back chamber's front, its stoke hole 9 × 13½ in | the engine takes the stoke hole as a fully open intake, against the owner's rule that stoke holes are covered after stoking (to fix, the plan's item 1) |
-| Between the chambers | a 13 in wall; three large exit flues across the second grate (p.116), about 12–14 in wide (scaled, Figs 4-110, 4-114) | the 13 in wall as printed (`lining.between`, 2026-11-10; it was 9 in) with 5 flue holes, 4½ × 9 in (the engine's Kyoto rule) | the wall matches; the flue count and size can't be set without the flues' height |
-| Secondary air | a 5 in clay tube with a shutter, under the second grate (p.116) | none | not expressible |
+| Front firebox | 36 in, dug-out ash pit as the walkway (Fig 4-110, p.117) | 53 × 36 in, grate 33 × 18 in as drawn, on the ground, open into the chamber | matches; the plan draws it curving in to a 44–53 in mouth (not entered) |
+| Door's openings | one large 15 × 18 in "inlet flue", one 9 × 13½ in stoke hole, air holes at grate level (p.117) | the 15 × 18 in as the firebox's air below the grate (the owner: an air inlet); the stoke hole 13½ across × 9 in (Fig 4-109), not an intake | matches; the grate-level air holes aren't sized |
+| Second firebox | 15 in grate between the chambers, side door (Fig 4-110 "DOOR", about 36 in long, scaled) with a 9 × 13½ in stoke hole (p.117, the owner, 2026-11-17) | 15 × 53 in, the engine's trough at the back chamber's front, its stoke hole 9 × 13½ in, not an intake | matches |
+| Between the chambers | a 13 in wall; three large exit flues across the second grate (p.116), about 12 in wide and 10–12 in tall (Figs 4-110, 4-113, 4-114) | the 13 in wall as printed; three 12 × 11 in flues | matches; their sills are 15½–18 in up, the engine cuts them at the floor |
+| Secondary air | a 5 in clay tube with a shutter, under the second grate (p.116) | the second firebox's air, 5 in round, below its grate | matches (its shape isn't printed) |
 | Steps | 12, 18 and 6 in (Fig 4-110) | the engine's chamber step | differs |
 | Domes | two cast K-26 domes (p.116) | dome, 6 in Kaolite 2600-LI | matches (thickness assumed) |
 | Chimney | inside 15 × 24 in (Fig 4-110); height not printed | sized by the engine | not expressible: `chimney.inside` needs a height |
@@ -54,14 +63,19 @@ buttressing). The front firebox is 61 × 36 in with a grate whose bars are ¾ in
 
 ## Build results
 
-The build finishes with no errors (2026-11-18, on its own figures). Chamber 399 ft³; top
-temperature 2361 °F (cone 11); heat loss 168.8 kW; priced materials $8,093. (On the borrowed
-55 in width it was 335 ft³ and 159.3 kW.)
+The build finishes with no errors (2026-11-18, rescanned). Chamber 277 ft³; top temperature
+2361 °F (cone 11); heat loss 168.8 kW before the rescan, 103.2 kW now; priced materials $5,630.
+The 18 in walls take more of the loss than the old 9 in did. On the borrowed 55 in width it was
+335 ft³ and 159.3 kW.
 
-v2 statics (2026-11-10; rerun on its own figures 2026-11-18): each chamber's cast dome, sliced
-into arches across the 61 in width (Heyman's slicing), stands cold and hot on its buttressed
-walls; the most any strip needs of the buttress is 182.0 lbf/ft hot (143.6 on the 55 in borrowed
-before; `docs/planning/11-09-26.md` §H item 10).
+v1 still draws the front firebox with a roof of its own, the walls' layers laid flat. In the kiln
+it sits open under the front dome, which v1 can't draw yet.
+
+v2 statics (2026-11-10; rerun 2026-11-18 on the interim 61 in): each chamber's cast dome, sliced
+into arches across the width (Heyman's slicing), stood cold and hot on its buttressed walls. The
+most any strip needed of the buttress was 182.0 lbf/ft hot (143.6 on the borrowed 55 in). Not yet
+rerun on the rescanned 53 in, 42½ and 35 in springlines and 18 in walls. Tests come second for now
+(the owner, 2026-11-18).
 
 ## Open questions
 

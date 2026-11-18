@@ -208,7 +208,7 @@ def test_chambers_of_different_sizes_take_their_own_volume() -> None:
     assert "each chamber" in plan.title
 
 
-HOLLY_DOME = "  type: dome\n  rise: 14 in # 2¾ in per foot of the 61 in span (p.51)\n"
+HOLLY_DOME = "  type: dome\n  rise: 12 in # 2¾ in per foot of the 53 in span (p.51)\n"
 
 
 def test_chambers_of_different_sizes_on_the_level_under_domes() -> None:
@@ -222,7 +222,8 @@ def test_chambers_of_different_sizes_on_the_level_under_domes() -> None:
     assert [round(c.length / 25.4) for c in massing if c.kind == "box"] == [55, 145]
     flat = parse_design(_edit("hollyweird", (f"{HOLLY_DOME}  buttressed: true\n",
                                               "  type: flat\n")))  # fmt: skip
-    assert chamber_shape(flat).volume == pytest.approx(61 * 200 * 47 * 0.0254**3)
+    # each chamber its own springline (the back's lower, Fig 4-114)
+    assert chamber_shape(flat).volume == pytest.approx(53 * (55 * 42.5 + 145 * 35) * 0.0254**3)
 
 
 def test_chambers_of_different_sizes_are_refused_outside_their_range() -> None:

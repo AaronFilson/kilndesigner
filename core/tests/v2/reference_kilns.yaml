@@ -3151,15 +3151,9 @@ kilns:
         figure: Fig 4-97
         reason: three air holes 13½ in wide × 9 in high, one under each front stoke hole, the count as
           the figure draws it
-        condition: under the front stoke holes (research A2)
-      - what: secondary_air
-        value: 648
-        unit: inch**2
-        status: derived
-        page: p.114
-        figure: Fig 4-97
-        reason: three front stoke holes 13½ × 16 in, the count as the figure draws it
-        condition: the front stoke holes, fully open; the side stoke holes left out (research A2)
+        condition: under the front stoke holes (research A2); the kiln's air, its three 13½ × 16 in
+          stoke holes being covered after each stoking (the owner, 2026-11-18; Fig 4-97 read on
+          the page image the same day), so no secondary air
     structure:
       - what: roof_type
         value: an arch springing from the floor, rising less than a half-circle, keeping its shape 
@@ -5137,16 +5131,16 @@ kilns:
         reason: 'kiln-fuels.md §5: [F1] Tables 2 and 3, coniferous or deciduous wood (interquartiles joined)'
         condition: dry basis (research A1)
       - what: setting
-        value: [218, 1312]
+        value: [173, 991]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 3.134 m³; 1–6 layers of shelves over 1.543 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 3.134 m³ as v2 traces it; the envelope''s plan 1.543 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 2.464 m³; 1–5 layers of shelves over 1.306 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 2.464 m³ as v2 traces it; the envelope''s plan 1.306 m²)'
         condition: 'chamber 1: the setting''s mass, ware and shelves (research C2)'
       - what: setting
-        value: [581, 3601]
+        value: [403, 2250]
         unit: kg
         status: assumed
-        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 8.197 m³; 1–6 layers of shelves over 4.563 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 8.197 m³ as v2 traces it; the envelope''s plan 4.563 m²)'
+        reason: 'kiln-settings.md §5: the ware 60–260 kg/m³ × 5.463 m³; 1–4 layers of shelves over 3.861 m² at 8–22 lb a 12 × 24 in shelf (the chamber zone''s 5.463 m³ as v2 traces it; the envelope''s plan 3.861 m²)'
         condition: 'chamber 2: the setting''s mass, ware and shelves (research C2)'
     chamber:
       - what: chamber_count
@@ -5192,26 +5186,57 @@ kilns:
         note: olsen-figure-scaling.md §7.6; the design enters the front chamber 55 in (its platform)
           and the back 145 in, the engine laying the 36 in firebox in front
       - what: width
-        value: 61
+        value: 53
         unit: inch
         status: scaled
-        page: p.116
-        figure: Fig 4-110
-        spread: 59–63½ in against the drawn shelves' printed 12 in across (4.99 px/in, taken);
-          72½–76½ in at the printed lengths' scale along the kiln (4.16 px/in), as the plan isn't
-          drawn to one scale
+        page: p.117
+        figure: Fig 4-113
+        spread: 48–57½ in on the wall's own bricks between the chambers (11.0–11.85 px/in at zoom
+          5); Fig 4-114 at least 51–57 in; the plan reads 59–63½ in at its shelves and 72½–76½ in at
+          its lengths, not drawn to one scale (Fig 4-110)
         condition: both chambers, inside, the same within 3 % in plan
-        note: olsen-figure-scaling.md §7.2 (2026-11-18); the back platform tapers from 111 in behind
-          the wall to 39–46½ in at its end and a 26–31 in throat (not expressible in a row). The 55
-          in once taken from the unbuilt design's Fig 8-17 is out (the owner, 2026-11-18)
-      - what: crown_height
-        value: 61
+        note: olsen-figure-scaling.md §7.2 and §8 (2026-11-18; heights and widths against a brick's 9
+          in face, as the owner asked); Fig 4-108's "55"" falls in it. The back platform tapers from
+          111 in behind the wall to 39–46½ in at its end and a 26–31 in throat (not expressible in a
+          row)
+      - what: springline_height
+        value: [41, 44.5]
         unit: inch
-        status: assumed
-        reason: no figure scales a height (olsen-figure-scaling.md §7.5); Olsen's Principle 1 on his
-          own kiln, the height equal to the width, the dome counted in it (p.74–75), in both
-          chambers. Fig 4-108 draws the front dome taller and rounder than the back, by an amount
-          it doesn't scale
+        status: scaled
+        page: p.117
+        figure: Fig 4-113
+        spread: on the wall's bricks, where the castable meets the wall between the chambers
+        condition: the front chamber; the design takes 42½ in
+      - what: springline_height
+        value: [34, 36]
+        unit: inch
+        status: scaled
+        page: p.117
+        figure: Fig 4-114
+        spread: on the wall's bricks; which face of the wall the photo shows isn't certain, its floor
+          5–11 in higher against the flues
+        condition: the back chamber, lower than the front (the owner, 2026-11-18); the design takes
+          35 in
+      - what: crown_height
+        value: [36, 51]
+        unit: inch
+        status: scaled
+        page: p.116, p.117
+        figure: Figs 4-109, 4-112
+        spread: the front dome over the stoke hole's sill, on a brick's 9 in face (Fig 4-109, 36–48 in
+          with the crown's setback) and on the stoke hole (Fig 4-112, about 51 in); the sill's height
+          over the floor isn't seen
+        condition: the front chamber; the design's 42½ in springline and 12 in rise give 54½ in over
+          its floor
+      - what: crown_height
+        value: [0.62, 0.94]
+        unit: dimensionless
+        status: drawing
+        page: p.116
+        figure: Fig 4-108
+        condition: the back chamber's over the front's, the sketch's perspective allowed for (0.50–0.61
+          as drawn); its fall toward the chimney isn't shown beyond the perspective (Fig 4-111 shows
+          its top falling, not scalable)
     lining:
       - what: wall
         value: hard firebrick for the walls, the flue construction and the firebox; insulating brick
@@ -5232,11 +5257,16 @@ kilns:
         figure: Fig 4-110
         condition: the wall between the chambers
       - what: wall_thickness
-        value: 9
+        value: [14, 19.5]
         unit: inch
-        status: assumed
-        reason: the common wall 4½ in thicker than the others, as Olsen builds a wall between two 
-          chambers (p.46)
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: the plan's side walls, 70–81 px, at its two scales (olsen-figure-scaling.md §7.6); no
+          photo shows a wall's end square on (§8)
+        condition: the side walls
+        note: the owner, 2026-11-18, "Use the drawn side walls of 14-19""; the design takes 18 in (9 +
+          9 in). It was 9 in assumed, the 13 in common wall taken as the thicker
       - what: roof
         value: two large dome-shaped chamber ceilings cast in Thermal Ceramics K-26 IFB castable
         status: printed
@@ -5266,11 +5296,29 @@ kilns:
         value: one large inlet flue 15 × 18 in (38 × 46 cm), in the door bricking
         status: printed
         page: p.117
+        note: an air inlet into the firebox, not a flue into the chamber (the owner, 2026-11-18); low
+          in the door, Fig 4-112 drawing a framed opening about 13½ × 20½ in whose top is 17–20 in
+          under the stoke hole's sill (olsen-figure-scaling.md §8), so taken below the grate
       - what: stoke_hole
-        value: one stoke hole 9 × 13½ in (23 × 34.5 cm) in the door bricking, with air holes at 
+        value: one stoke hole 9 × 13½ in (23 × 34.5 cm) in the door bricking, with air holes at
           grate level
         status: printed
         page: p.117
+      - what: stoke_hole
+        value: the front stoke hole 13½ in across and 9 in tall, by Olsen's hand in the photo
+        status: scaled
+        page: p.116
+        figure: Fig 4-109
+        spread: 7¾–9½ in tall on a brick's 9 in face (22.1–24.5 px/in at zoom 6)
+        note: olsen-figure-scaling.md §8; covered after each stoking (the owner, 2026-11-18)
+      - what: grate
+        value: the front grate drawn about 33 in long and 16–19 in across, in the middle of the
+          firebox
+        status: scaled
+        page: p.116
+        figure: Fig 4-110
+        spread: the plan's two scales, 4.16 and 4.99 px/in
+        note: olsen-figure-scaling.md §7.6; the design takes 33 × 18 in
       - what: firebox
         value: a second, side-stoked firebox between the chambers, its grate 15 in, with a side door
         status: printed
@@ -5296,13 +5344,16 @@ kilns:
           the photo of the wall (Fig 4-114) gives about 12 in (11–13), piers 7–8 in, on its brick
           courses
         note: rescaled 2026-11-18 (olsen-figure-scaling.md §7.3); step A had taken the 55 in as the
-          width. Their height isn't drawn; not entered in the design
+          width. Their height is 10–12 in (Fig 4-113, §8); in the design, 12 × 11 in
       - what: passive_air
         value: secondary air for the second firebox through a 5 in (12.5 cm) extruded clay tube with
-          graduated holes under the grate, a shutter or plug at its outer end, through the ash-pit 
+          graduated holes under the grate, a shutter or plug at its outer end, through the ash-pit
           side wall
         status: printed
         page: p.116
+        note: the design takes it as the second firebox's air, 5 in round below the grate (its shape
+          isn't printed); the side door's air holes ("The air inlet holes are in the doors", the
+          owner, 2026-11-18) aren't sized
       - what: chimney_section
         value: 15 × 24 in inside
         status: printed
@@ -5313,13 +5364,16 @@ kilns:
         status: drawing
         page: p.116
         figure: Fig 4-108
-      - what: secondary_air
-        value: 121.5
+      - what: primary_air
+        value: 270
         unit: inch**2
         status: derived
         page: p.117
-        reason: the stoke hole 9 × 13½ in in the door bricking; its grate-level air holes aren't sized
-        condition: the front firebox's stoke hole (research A2)
+        reason: the large 15 × 18 in opening in the door bricking, an air inlet (the owner,
+          2026-11-18), low in the door, under the grate (Fig 4-112, olsen-figure-scaling.md §8); not
+          the stoke hole, which is covered after each stoking; the air holes at grate level besides
+          it aren't sized, so left out (the least air)
+        condition: the front firebox's air inlet (research A2)
       - what: chimney_width
         value: 15
         unit: inch
@@ -5348,7 +5402,16 @@ kilns:
         spread: 11½–15 in against the drawn shelves' printed 12 in across (4.99 px/in); Fig 4-114's
           brick courses give about 12 in (11–13)
         note: rescaled 2026-11-18 (olsen-figure-scaling.md §7.3), the 11–13 in of step A having
-          taken 55 in as the width; their height isn't drawn (C1)
+          taken 55 in as the width (C1)
+      - what: between_flue_height
+        value: [10, 12]
+        unit: inch
+        status: scaled
+        page: p.117
+        figure: Figs 4-113, 4-114
+        spread: on the wall's bricks; their sills 15½–18 in up, tops 26½–29 in, with 14½–15½ in of
+          brick above them
+        note: olsen-figure-scaling.md §8 (2026-11-18), the dataset's gap filled (C1)
     structure:
       - what: dome_type
         value: two cast dome-shaped ceilings over a Bizen-style front chamber and a tube-style 
@@ -5361,23 +5424,20 @@ kilns:
         status: assumed
         reason: a 6 in thickness is best for most castings (p.59)
       - what: dome_rise
-        value: 14
+        value: 12
         unit: inch
         status: assumed
-        reason: 2¾ in per foot of the 61 in span, the middle of Olsen's 2½–3 in/ft for domes (p.51)
+        reason: 2¾ in per foot of the 53 in span, the middle of Olsen's 2½–3 in/ft for domes (p.51);
+          with the front's 42½ in springline, 54½ in to the top, which the photos agree with (the
+          crown facts)
       - what: span
-        value: 61
+        value: 53
         unit: inch
         status: scaled
-        page: p.116
-        figure: Fig 4-110
-        spread: 59–63½ in (the width fact)
+        page: p.117
+        figure: Fig 4-113
+        spread: 48–57½ in (the width fact)
         note: the scaled chamber width
-      - what: springline_height
-        value: 47
-        unit: inch
-        status: assumed
-        reason: the assumed 61 in to the top of the dome (Principle 1) less the 14 in rise
       - what: buttress
         value: the domes' walls buttressed
         status: assumed
@@ -7367,15 +7427,9 @@ kilns:
         page: p.202
         figure: Fig 8-11
         reason: two air draft and ash pit holes 12 in wide × 18 in tall
-        condition: below the grate, fully open (research A2)
-      - what: secondary_air
-        value: 63
-        unit: inch**2
-        status: derived
-        page: p.202
-        figure: Fig 8-11
-        reason: the stoke hole 9 × 7 in
-        condition: the stoke hole (research A2)
+        condition: below the grate, fully open (research A2); the kiln's air ("The air supply is from
+          two sources on the bottom of the front wall", p.202), its 9 × 7 in stoke hole being closed
+          when stoking and covered after (p.202; the owner, 2026-11-18), so no secondary air
     structure:
       - what: roof_type
         value: arched
@@ -10969,14 +11023,15 @@ kilns:
         reason: four fireboxes, each "AIR SOURCE AND COAL ASH PIT 36 X 24" in
         condition: below the grates, fully open (research A2)
       - what: secondary_air
-        value: 780
+        value: [0, 780]
         unit: inch**2
         status: derived
         page: p.134
         figure: Fig 5-11
         reason: four stoke holes 15 × 13 in; the fire mouth open hours 1–3, bricked up from hour 4 (p.133,
-          Table 5-1)
-        condition: the stoke holes when open (research A2)
+          Table 5-1), so a band from bricked up (0) to open (780 in²)
+        condition: the stoke holes, open only in hours 1–3 (research A2); covered after stoking
+          otherwise (the owner, 2026-11-18)
     structure:
       - what: dome_type
         value: a round dome on the cylindrical wall

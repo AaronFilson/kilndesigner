@@ -312,15 +312,22 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      - After the front chamber is done, "some or all of the front air is closed to prevent cooling
        too fast". So the front's intakes for a later stage are a band from closed to open, with
        the book's state where it prints one (Tamba's open, p.87; Kitade's closed, p.202).
-     - The design's stoke hole is no longer taken as a fully open intake (`paths.intake_els`).
-       Today Hollyweird's back stage draws through its side door.
-     - The intakes the dataset derives from stoke holes are reworked: Kitade, Hollyweird's front,
-       Ellington and the two-chamber design. Singh's coal kiln's is printed open only in hours 1–3.
-       The book gives the air its own openings (read 2026-11-18, inputs §3):
+     - ~~The design's stoke hole is no longer taken as a fully open intake~~ (done 2026-11-18,
+       inputs §3, "Applied in the engine"). A firebox's own `air` and the kiln's `air_inlets`
+       carry the air. Only a floor-fired firebox's mouth is still its stoke hole. A stage with the
+       front shut and no inlet of its own is refused.
+     - ~~The intakes the dataset derives from stoke holes are reworked~~ (done 2026-11-18).
+       Ellington's 648 in² and Kitade's 63 in² went. Hollyweird's front is its 15 × 18 in air
+       inlet. The two-chamber design's 49 in² went. Singh's coal kiln's stoke holes are a band,
+       open in hours 1–3. The book gives the air its own openings (inputs §3):
        - Ellington's three 13½ × 9 in air holes under its stoke holes (Fig 4-97), 364½ in²;
        - Kitade's two 12 × 18 in air-draft and ash-pit holes (Fig 8-11), 432 in².
-       Still to read: Hollyweird's door bricking (p.117), the fast-fire's mouths and the
-       two-chamber design's tube.
+     - **Left by the change, for the kiln-by-kiln check:**
+       - Suzuki, Tobe, the Kyoto climbing kiln and Hotchkiss are refused. Their designs stand a
+         trough in for the main firebox, which leaves chamber 1 no way in for its air.
+       - No row's design gives a chamber its own air inlets yet. With the front shut, every staged
+         chamber except Hollyweird's back is refused. Kitade's second chamber takes two 12 × 18 in
+         inlets (`air_inlets`, Fig 8-10) once it is entered.
      - **The draft counts no flow backwards** (`draft.py`). An opening above the neutral plane, the
        height where the kiln's pressure meets the room's (hydrostatics, `fittings-and-kiln-
        convection.md`), is credited no air, and the hot gas it would push out isn't modelled. The
@@ -359,19 +366,24 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
      pass at both ends; T3 stays open, 1,800 kg 21 % under v2's least (2,290 kg) with the top
      moving it only 3 %. To trace: the setting's light end (it still assumes a shelf layer for
      pots set off the floor), the slats' moisture, the domed floor taken flat.
-   - **Hollyweird (§8a):** its two chambers from its own figures, not the unbuilt design's
-     (`olsen-figure-scaling.md` §7). The design's `chamber.sizes` takes each chamber's height and
-     rise; its width is one for the row, and the back's taper to the chimney isn't expressible.
-     The owner (2026-11-18):
-     - the 15 × 18 in opening in the front door is an air inlet, with air holes at grate level
-       besides (the design took it for the firebox's flue into the chamber);
-     - the side walls as drawn, 14–19 in;
-     - the front dome taller, the back chamber lower and falling toward the chimney, tapering into
-       it;
-     - the heights scaled against a brick's 9 in face in Fig 4-109.
-     The section is being rescanned (`olsen-figure-scaling.md` §8). The back chamber's fall and
-     its taper need the engine to take a row whose last chamber narrows and falls: new schema
-     work.
+   - ~~**Hollyweird (§8a):** its two chambers from its own figures~~ (rescanned 2026-11-18,
+     `olsen-figure-scaling.md` §7, §8):
+     - 53 in wide, on Fig 4-113's bricks;
+     - the front's springline 42½ in and the back's 35 in, under 12 in domes;
+     - 18 in side walls, the owner's drawn 14–19 in;
+     - three 12 × 11 in flues between the chambers;
+     - the 15 × 18 in opening the front firebox's air, below the grate, and the 5 in tube the
+       second firebox's.
+     It stands cold and hot (90.5 lbf/ft on the buttress). Left as engine work:
+     - the back chamber's fall and its taper into the chimney: a row whose last chamber narrows
+       and falls, new schema work;
+     - the floors' steps;
+     - the flues' sills, 15½–18 in up;
+     - v1 drawing the front firebox with a roof of its own under the dome.
+   - **The kiln-by-kiln check** (the owner, 2026-11-18): each reference kiln, one at a time, with
+     Hollyweird's care. Read its text and figures on the page images, and compare them with its
+     design and its dataset entry. Then check v2 models it as the book describes it. A kiln that
+     doesn't match a template or a design is future work, noted here, not a fault to force.
    - **Then rerun the bar**, once the concepts and the measurements are in (tests come second, the
      owner, 2026-11-18): the full suite, and the rows' band corners outside it (Tobe's on its new
      lining among them). Then restate "Where things stand".

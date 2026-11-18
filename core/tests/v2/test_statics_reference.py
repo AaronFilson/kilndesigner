@@ -92,10 +92,10 @@ def test_what_holds_the_rows_ends(results: dict[str, KilnStatics]) -> None:
 def test_what_holds_the_sail_domes(results: dict[str, KilnStatics]) -> None:
     """The domes over square, oblong and curved plans, sliced: the most any strip needs of the
     walls' buttress, hot: Miravet's dense-brick dome about 100 lbf/ft, Calimpong's and
-    Hollyweird's flat cast domes 165 and 182 lbf/ft (Hollyweird's on its own figures since
-    2026-11-18, 61 in wide; 144 on the 55 in borrowed before)."""
+    Hollyweird's flat cast domes 165 and 91 lbf/ft (Hollyweird's rescanned 2026-11-18: 53 in wide,
+    its springlines 42½ and 35 in; 182 at the interim 61 in, 144 on the 55 in borrowed before)."""
     lbft = 4.4482216152605 / 0.3048
-    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 182.0}
+    want = {"miravet": 99.5, "conrad-teardrop": 164.9, "hollyweird": 90.5}
     for kid, hot in want.items():
         r = results[kid]
         assert r.kind == "sail dome"

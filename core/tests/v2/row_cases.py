@@ -275,10 +275,12 @@ NOMINAL = Corner()
 
 @cache
 def run(kid: str, c: Corner = NOMINAL, held: bool = False) -> se.Staged | None:
-    """A staged firing at a corner; None where it can't be fired (no consistent state)."""
+    """A staged firing at a corner; None where it can't be fired: no consistent state, or a stage
+    with no way in for its air (the front shut, its stoke holes covered after each stoking, the
+    owner, 2026-11-18, and no air inlet of its own)."""
     try:
         return se.fire_stages(variant(kid, c.load, c.wood), stages(kid, c, held), SAMPLE, RTOL)
-    except fi.FiringError:
+    except fi.FiringError, dr.NotModelledError:
         return None
 
 

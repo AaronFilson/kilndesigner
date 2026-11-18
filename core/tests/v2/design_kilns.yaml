@@ -214,14 +214,9 @@ kilns:
           outside
         status: printed
         page: p.206
-      - what: secondary_air
-        value: 49
-        unit: inch**2
-        status: derived
-        page: p.206
-        figure: Fig 8-17
-        reason: the second firebox's stoke hole 7 × 7 in
-        condition: the second firebox (research A2)
+        note: the second chamber's air, its 7 × 7 in stoke hole being covered after each stoking (the
+          owner, 2026-11-18); the tube's open area isn't printed, so no secondary air is entered (it
+          was the stoke hole's 49 in²)
       - what: between_flue_count
         value: 1
         status: printed

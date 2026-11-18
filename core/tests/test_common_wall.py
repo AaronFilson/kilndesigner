@@ -52,7 +52,7 @@ def test_a_printed_wall_and_walls_that_carry_no_arch() -> None:
     plain = holly.model_copy(update={"lining": holly.lining.model_copy(update={"between": None})})
     assert carries_arches(plain)
     assert feet(plain, "in") == 0.0
-    assert total(plain) == pytest.approx(13.5)
+    assert total(plain) == pytest.approx(18 + 4.5)  # the side walls as drawn, 18 in (the owner)
     tamba = olsen("tamba")  # a tube
     assert not carries_arches(tamba)
     assert total(tamba) == pytest.approx(9.0)
