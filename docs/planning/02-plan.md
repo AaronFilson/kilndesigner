@@ -501,6 +501,10 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
        dataset now carries the triangle.
      - **Niñodaguia:** its 18 × 27 in mouth is drawn round-headed, 451–486 in² in the dataset.
        The design takes the rectangle.
+     - **The oil-drip kiln:** Fig 8-20 draws each port flue's air entering at its foot past
+       "DAMPER BRICKS", so the dataset's whole flue face is only the most-air end. The damper
+       bricks' least isn't drawn.
+     - **The 36 ft³ cross-draft, the four kits, the three-chamber kiln:** no new gap.
      - **The design schema:** a port (a stoke hole, an air inlet) is a rectangle or a circle.
        The book draws triangular, round-headed and pointed openings (Moveros, Niñodaguia,
        Hotchkiss, Bae), so their areas can only come in through the dataset.

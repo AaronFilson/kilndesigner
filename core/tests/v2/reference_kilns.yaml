@@ -10707,6 +10707,9 @@ kilns:
         spread: ±1½ in on each port flue's 7½ × 24 in
         condition: the three drip ports' flues, the air entering with the oil (p.209, a drip unit's
           open air end); no grate (C1)
+        note: Fig 8-20's side view draws the air entering each port flue at its foot, under the
+          plates, past "DAMPER BRICKS" that set it (read on the page image, 2026-11-18); so the
+          whole flue face is the most-air end, and the damper bricks' least isn't drawn (a gap)
     structure:
       - what: roof_type
         value: a No. 1 arch of 4½ in K-26 IFB on featheredge skewbacks
@@ -10744,6 +10747,9 @@ kilns:
         along the wall (p.208); a question in the kiln doc
       - Fig 8-20's caption says "coal kiln" though it shows the oil plates (Flagged)
       - the draft is the design file's engine default (updraft, a flue in the roof), not the book's
+      - checked against pp.207–209 (PDF index 190–192) on the page images, 2026-11-18 (the
+        kiln-by-kiln check); the design is unchanged. Fig 8-19 puts the 20 gal drum 9 ft above the
+        gate valve, the text the tank 10 ft above the plates (p.208)
   olsen-three-chamber:
     name: Olsen's three-chamber climbing kiln
     design: examples/olsen/olsen-three-chamber.yaml
@@ -10886,6 +10892,9 @@ kilns:
       - the engine fires the three chambers together at the top temperature as one long chamber; a 
         climbing kiln fires them in turn, so a time or fuel comparison needs a chamber-by-chamber 
         model
+      - checked against p.224 (PDF index 208) on the page image, 2026-11-18 (the kiln-by-
+        kiln check); no new finding, the design unchanged (the chambers' size, the only
+        other thing a design needs, isn't printed)
 
   phoenix-nh:
     name: Phoenix workshop kiln, New Hampshire, 1978
