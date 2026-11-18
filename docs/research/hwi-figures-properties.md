@@ -20,6 +20,35 @@ here, shown), **Not found**.
 Where the page number differs from the first pass: Figs 3.5 and 3.6 are on **PR-8** (PDF 40). Their
 text is on PR-7 (PDF 39), which is where `hwi-handbook.md` §1 row 9 cites them.
 
+**Checked by the coordinator (2026-11-18)**, with its own script on the same vector paths. Each
+reading was calibrated on the drawn gridlines and ticks nearest to it, not on a fit of all of them.
+
+| Reading | This note | Coordinator |
+|---|---|---|
+| Fig 3.4 fireclay at 1000 °F | 0.33 % | 0.315 % |
+| Fig 3.4 fireclay at 2200 °F | 0.71 % | 0.697 % |
+| Fig 3.4 fireclay at 2345 °F (cone 10) | 0.76 % | 0.744 % (0.752 % on the mean tick scale) |
+| Fig 3.4 fireclay at the line's end, about 2382 °F | 0.77 % | 0.757 % (0.753 % on the in/ft gridlines, 0.768 % on the mean scale) |
+| Fig 3.3, 60–70 % alumina at cone 10 | 0.86 % | 0.843 % |
+| Fig 3.3, 80–90 % alumina at cone 10 | 1.00 % | 0.988 % |
+
+- The two readings differ by 0.01–0.02 %, inside this note's ±0.02 %. The difference is the
+  calibration: this note fits all ten % ticks by least squares and adds 0.011 % so that the curves
+  start at zero. The ticks are hand-placed, 12.8–14.2 pt apart (Derived), so neither choice is
+  exact.
+- Read the fireclay line as **0.75 ± 0.01 % at cone 10 and 0.76 ± 0.01 % at its end**. 3/32 in/ft
+  (0.78 %) is 3–5 % above it at cone 10.
+- Also confirmed:
+  - Fig 3.5's permanent changes: −0.40 % at 412 °F, −0.60 % at 123 °F, −1.11 % at 84 °F; the 90 %
+    alumina castable's peak 0.98 % and top 2626 °F.
+  - The printed eutectic, 5.5 % Al₂O₃ at 2903 °F (1595 °C), and the 985 °C potash sentence (text
+    layer, PR-15 to PR-17).
+  - The cone temperatures, from `cones.yaml`.
+  - A-6's frustum volume without its ⅓, on a 200 dpi render.
+  - A-12's "1550 … 2922" (text layer).
+  - `movement.py`'s "No source read gives the curve below 2400 °F", and Brosnan's 6.0 × 10⁻⁶ /°C
+    (`refractory-movement-and-mortar.md` 1.1.1).
+
 ---
 
 ## 1. How the graphs were read
