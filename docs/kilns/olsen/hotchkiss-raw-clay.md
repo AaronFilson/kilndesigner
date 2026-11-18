@@ -50,9 +50,44 @@ arch below was finished to buttress it" (p.55–56).
 2. Fig 2-40 p.55: how many flue holes are in each straight wall, and how big are they?
 3. p.57: how big is the domed main firebox?
 
+## Checked against the book (2026-11-18)
+
+The blocks' sizes are printed on p.54: 9 × 10 × 18 in, 9 × 10 × 9 in and 9 × 5 × 5 in. Every
+figure on pp.54–57 was scaled against them (`docs/research/olsen-figure-scaling.md` §9,
+`scratch/hotchkiss-1118/`). The two key readings were spot-checked on the page images. The design
+is unchanged; the measurements are in the dataset.
+
+**Measured:**
+- **Flue holes (Fig 2-40):** four slots between five 9 in piers, 2¼–5½ in wide and 19–22 in
+  tall, their sills at the floor, 300–420 in² in all. The step-A note read about three.
+- **Arches (Fig 2-45, the 5th chamber):** a near semicircle, span 49–57 in, rise 24–28 in, ring
+  10¾–12½ in at the crown. Springline 49–57 in and crown 73–85 in above the ground outside; the
+  floor inside isn't seen.
+- **Slope (Fig 2-45):** the crowns fall 15–19 in a chamber, 12–15° (11–16° with the spread).
+- **The chamber's width (Fig 2-40):** 55–58 in, the arch form's length.
+- **Stoke holes (Figs 2-44, 2-45, 2-49):**
+  - the pointed hole is 6¼–7½ in wide and 12½–14½ in tall;
+  - the side holes are 5–6 in and 8½–10 × 8–9½ in;
+  - the spy holes are 1½–2½ in.
+- **The main firebox (Fig 2-48):**
+  - its front is commercial firebrick, 60–69 in wide;
+  - a steel band at the dome's springing stands 36–47 in up, with a diagonal brace;
+  - the dome rises at least 16–23 in on a 48–63 in base;
+  - three openings at the top of the front are 6–10 × 9–13 in, read as stoke holes.
+  Its lower front, where an ash pit, fire mouth or air inlet would be, is hidden in both photos.
+- **Chimney (Fig 2-47):** if the dark upper stack is the 18 ft pipe, it is about 29–30½ in across,
+  on a brick stack 34–45 in wide.
+
+**Gaps** (for the plan):
+1. The slope: the design's 22° (Olsen's Fig 3-15) against the measured 11–16°.
+2. The main firebox: the design's six 9 in channels against the book's one domed firebox. Its air
+   path is unmeasured, so v2's draft path stays refused.
+3. The flues between chambers: four slots measured. The design has the engine's own.
+4. The springline above the chambers' floors is still open.
+5. The door's size: Fig 2-43's arch, 34–37 in across, may be the door's.
+
 ## Scaled off the figures (step A, 2026-11-09)
 
-Nothing scaled. Fig 2-40 (p.55) shows the straight wall with three flue holes between blocks,
-but the raw-clay blocks' size isn't printed, so the courses can't stand in for a scale (the 2½ in
-course is for standard brick). The other figures (2-39 to 2-49) are photos with no printed
-dimension.
+Superseded on 2026-11-18 (above). Step A scaled nothing: Fig 2-40 (p.55) shows the straight wall
+with flue holes between blocks, but the raw-clay blocks' size was taken as unprinted, so the
+courses couldn't stand in for a scale. It is printed, on p.54.

@@ -5305,6 +5305,10 @@ kilns:
         the drawing's 5–10 ft firebox) and the length (12–24 ft against a 10–20 ft ware platform) 
         (kiln-reference.md, misprints)
       - a type, not one kiln; every design value is the middle of a range
+      - checked against pp.111–112 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged. The type's firebox mouth isn't drawn or sized, so v2's path leaves the
+        intake out and takes the air as an upper bound (a gap); Figs 4-92 and 4-93 show the Hart
+        Square kiln's front stoke holes, another kiln (hart-square)
 
   hollyweird:
     name: Olsen's Hollyweird Tube
@@ -5914,6 +5918,43 @@ kilns:
         status: assumed
         reason: as Olsen draws a climbing kiln of five or six chambers (Fig 3-15, p.81); not printed
           for this kiln
+      - what: slope
+        value: [11, 16]
+        unit: degree
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: the crowns of the 6th, 5th and 4th chambers fall 15–19 in a chamber on a 61–85 in
+          pitch, 12–15°, ±10 px at each crown giving 11–16°; scale-free, if the three vaults stand
+          alike and the end walls face the camera square (olsen-figure-scaling.md §9.5)
+        note: against the assumed 22° the design takes (a gap, 2026-11-18)
+      - what: crown_height
+        value: [73, 85]
+        unit: inch
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: on the 5th chamber's ring taken as the arch blocks' 9–10 in ends with 0–2 in of
+          mortar, 9.5–11 px/in (§9.5)
+        condition: the 5th chamber, above the ground outside its end wall; its floor isn't seen
+      - what: springline_height
+        value: [49, 57]
+        unit: inch
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: as the crown (§9.5)
+        condition: the 5th chamber, above the ground outside its end wall; Fig 2-40's form turns
+          vertical about 19–22 in above the floor it stands on, so the springline above the floor
+          stays open
+      - what: width
+        value: [55, 58]
+        unit: inch
+        status: scaled
+        page: p.55
+        figure: Fig 2-40
+        spread: the straight wall's three 18 in top blocks with ½–2 in joints along the arch form,
+          the chamber's width across the kiln (§9.3)
     lining:
       - what: wall
         value: >-
@@ -5945,6 +5986,20 @@ kilns:
         page: p.57
         figure: Fig 2-46
       - what: firebox
+        value: >-
+          its front of commercial firebrick, 60–69 in wide; a steel band at the dome's springing
+          36–47 in above the ground in front; the dome rising at least 16–23 in as seen, on a base
+          48–63 in across; three openings at the top of the front, 6–10 in wide and 9–13 in tall,
+          their sills 25–33 in up, read as stoke holes; the lower front, where an ash pit, fire
+          mouth or air inlet would be, hidden by loose brick in both photos
+        status: scaled
+        page: p.57
+        figure: Fig 2-48
+        spread: on its bricks, 9 × 4½ × 2½ in by their faces' 3.6 to 1 (no raw block is longer than
+          2 to 1), 18–23.5 px/in near the openings, ±5–15 % (olsen-figure-scaling.md §9.6)
+        note: the main firebox the design leaves out (its six 9 in channels don't describe it); its
+          air path stays unmeasured, so v2's path stays refused (a gap, 2026-11-18)
+      - what: firebox
         value: six 9 in stoking channels, one along each chamber's front wall, 5 ft long
         status: assumed
         reason: the book doesn't size a firebox; Olsen's 9 in channel for side-stoked chambers 
@@ -5961,7 +6016,31 @@ kilns:
         page: p.55
         figure: Fig 2-40
         reading: uncertain
-        note: a photo; the raw blocks' courses can't serve as a scale (step A)
+        note: a photo; the raw blocks' courses can't serve as a scale (step A). Superseded
+          2026-11-18 by the scaled fact below
+      - what: between_flues
+        value: four slots between five 9 in piers, 2¼–3¾, 5–5½, 4¼–4½ and 5–5½ in wide and 19–22 in
+          tall (two courses), their sills at the floor, about 14 in centre to centre, 300–420 in²
+          in all
+        status: scaled
+        page: p.55
+        figure: Fig 2-40
+        spread: on the three 18 in top blocks, block by block (17.8–22.5 px/in along the wall), and
+          the piers' two 9–10 in courses up it (olsen-figure-scaling.md §9.3)
+        note: which chamber and which of its walls isn't said; the 4th's open side (Fig 2-45) shows
+          a wall with slots of the same proportions
+      - what: stoke_hole
+        value: the pointed stoke hole 6¼–7½ in wide and 12½–14½ in to its point (Fig 2-44); a
+          round-headed hole low in the 6th's end wall, 6¼–7¼ × 9½–11 in, 4–10 in above the ground
+          (Fig 2-45); the side stoke holes 5–6 in wide and 8½–10 × 8–9½ in, their sills 21–32 in
+          above the ground under the shed (Fig 2-49); spy holes 1½–2½ in (Fig 2-45)
+        status: scaled
+        page: pp.56–57
+        figure: Figs 2-44, 2-45, 2-49
+        spread: on the small 9 × 5 × 5 in blocks of the side walls and the arch blocks' 9–10 in
+          ends, ±5–15 % (olsen-figure-scaling.md §9.4)
+        note: covered after each stoking (the owner, 2026-11-18); the door isn't sized for certain,
+          Fig 2-43's arch 34–37 in across perhaps its arch
       - what: chimney_section
         value: commercial firebrick to 12 ft (3.6 m), then 18 ft (5.5 m) of scavenged hydraulic 
           water pipe; section not given
@@ -5973,6 +6052,13 @@ kilns:
         status: derived
         page: pp.56–57
         reason: 12 ft of firebrick plus 18 ft of pipe
+      - what: chimney_section
+        value: the pipe about 29–30½ in across (26–34 in), on a brick stack 34–45 in wide
+        status: scaled
+        page: p.57
+        figure: Fig 2-47
+        spread: on the printed 18 ft along the pipe, if the dark upper stack is the pipe; the flue's
+          inside isn't seen (olsen-figure-scaling.md §9.7)
     structure:
       - what: roof_type
         value: >-
@@ -6001,6 +6087,31 @@ kilns:
         unit: inch
         status: assumed
         reason: a semicircle on the 5 ft span, as the photos show near semicircles (pp.55–56)
+      - what: span
+        value: [49, 57]
+        unit: inch
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: the 5th chamber's inner edge, 536–546 px on 9.5–11 px/in (olsen-figure-scaling.md
+          §9.5)
+        condition: the 5th chamber, along the draft
+      - what: rise
+        value: [24, 28]
+        unit: inch
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: as the span; a near semicircle, a little taller than round
+        condition: the 5th chamber
+      - what: ring_thickness
+        value: [10.75, 12.5]
+        unit: inch
+        status: scaled
+        page: p.56
+        figure: Fig 2-45
+        spread: at the 5th's crown with its mortar, 7¾–10 in at the haunch; Fig 2-43's ring 10–11
+          in; the arch blocks' 9 × 10 in ends, the arch laid lengthwise (Figs 2-40, 2-41)
       - what: ring_thickness
         value: 10
         unit: inch
@@ -6018,7 +6129,9 @@ kilns:
         value: none mentioned; rope straps during building only
         status: printed
         page: pp.55–57
-        note: an absence; the book shows no steel on this kiln
+        note: an absence for the chambers; the main firebox has a steel band at its dome's springing
+          and a diagonal brace, the caption's "bracing" (Figs 2-46, 2-48; olsen-figure-scaling.md
+          §9.6, 2026-11-18)
     service:
       - what: builder
         value: Richard Hotchkiss and a workshop group; the brick clay from Lincoln, California
@@ -6049,18 +6162,21 @@ kilns:
       - fuel (not named)
       - cone and firing time
       - fuel per firing
-      - whether 5 × 5 × 6 ft are inside sizes and whether 6 ft is to the crown
-      - slope and the step between chambers
-      - wall and arch thickness
-      - arch span and rise
-      - flue sizes and counts between chambers
-      - main firebox size
-      - chimney section
-      - 'research A2: the main firebox''s mouth and the side stoke holes'' sizes'
+      - whether 5 × 5 × 6 ft are inside sizes and whether 6 ft is to the crown (the 5th's crown
+        73–85 in above the ground outside; its floor isn't seen)
+      - wall thickness (the side walls at least 9 in)
+      - 'the main firebox''s lower front: its ash pit, fire mouth or air inlet (hidden in Figs 2-46,
+        2-48)'
+      - the door's size
     notes:
-      - the design file's loss is likely overstated, as it takes the whole raw-clay wall as fired 
+      - the design file's loss is likely overstated, as it takes the whole raw-clay wall as fired
         (its header)
       - kiln-reference.md cites the 30 years' service as p.33 and p.56; olsen-kilns.md as p.33
+      - 'checked against pp.54–57 on the page images, 2026-11-18 (the kiln-by-kiln check), every
+        figure scaled on the printed block sizes (olsen-figure-scaling.md §9). The design is
+        unchanged; its gaps against the measurements: the slope (22° against 11–16°), four flue
+        slots (the engine''s own), the six 9 in channels where the book has one domed main firebox
+        of commercial firebrick, and the chambers'' springline'
 
   kahler-salt:
     name: Kähler salt kiln, Næstved
@@ -6130,8 +6246,10 @@ kilns:
         status: printed
         page: p.136
         figure: Fig 5-18
-        note: wall to wall, 24 in of stacking; the notes checked it on the page image (2026-10-31), 
-          the design file's header still calls it uncertain
+        note: wall to wall, 24 in of stacking; the notes checked it on the page image (2026-10-31),
+          the design file's header still calls it uncertain. Confirmed 2026-11-18 at zoom 5, Fig
+          5-18's "40½"" runs from the front wall's outer face to the back wall's inside face, the
+          36 in plus the 4½ in front wall printed at the figure's foot
       - what: springline_height
         value: 48
         unit: inch
@@ -6280,8 +6398,11 @@ kilns:
       - cone, firing time and salt used
       - ware load
     notes:
-      - Fig 5-18's "40½ in" measures something the drawing doesn't show
+      - Fig 5-18's "40½ in" is the 36 in inside depth plus the 4½ in front wall (read at zoom 5,
+        2026-11-18); it had been taken as measuring something the drawing doesn't show
       - the design file's chamber, 31.6 cu ft with the arch, holds the printed 16 cu ft of stacking
+      - checked against pp.136–137 on the page images, 2026-11-18 (the kiln-by-kiln check); the
+        design is unchanged
 
   kaneko-car:
     name: Jun Kaneko's car kiln

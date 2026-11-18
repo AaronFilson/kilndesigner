@@ -462,6 +462,17 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
          widths are firm on the dogi's 10 ft, the heights loose by 2×.
        - The design's stoke hole is still the loading hole (a gap).
        - With the smaller intake, the staged chamber is under suction at its side holes' height.
+     - **The basic groundhog:** the type's firebox mouth isn't drawn or sized, so v2's path takes
+       the air as an upper bound.
+     - **Hotchkiss** (every figure scaled on the printed block sizes, `olsen-figure-scaling.md`
+       §9):
+       - The slope is 11–16°, where the design takes 22°.
+       - The main firebox is one domed box of commercial firebrick, where the design has six 9 in
+         channels. Its lower front, and so its air path, is hidden in both photos.
+       - There are four flue slots in the measured wall, 300–420 in².
+       - The springline above the floors is still open.
+     - **Kähler:** no new gap. Fig 5-18's 40½ in, read at zoom 5, is the 36 in depth plus the
+       4½ in front wall, which confirms the uncertain 36 in.
      - **Engine, for the stoke-hole rule:** v2 takes a grate firebox's ash-pit mouth as the
        firebox's whole width by the pit's depth. Where the book draws a narrower pit (Bidai,
        Kawaii, the multi-directional kilns, Conrad's), the design can't say it except through the

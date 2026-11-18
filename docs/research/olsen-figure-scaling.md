@@ -22,8 +22,9 @@ is left).
 | Book pages | PDF index | Note |
 |---|---|---|
 | 54 | 41 | |
-| 55 | 42 and 43 | scanned twice |
-| 56 | 44 | p.57 is then 45 (not viewed) |
+| 55 | 42 and 43 | scanned twice, 43 the clear one |
+| 56 | 44 | |
+| 57 | 45 | read for §9 (2026-11-18) |
 | 83–97 | 68–82 | index = page − 15 (pp.84, 85, 86, 87, 91, 92, 93, 94, 97 checked) |
 | 109–111 | 94–96 | page − 15 |
 | 116–117 | 101–102 | page − 15 |
@@ -220,7 +221,7 @@ Olsen's general pages (pp.199–206) give no typical side-hole size in the text.
   platforms.~~ Measured, about 36 in long (§7.3).
 - **Fujiwara (pp.99–105):** side holes and inlets.
 - **Tamba, Fig 4-10 (p.86):** the tube's section against the pots' printed 13–24 in (p.85).
-- **Hotchkiss:** p.57 (Fig 2-46).
+- ~~**Hotchkiss:** p.57 (Fig 2-46).~~ Measured with pp.54–56 (§9).
 
 ## 7. Hollyweird's two chambers (2026-11-18)
 
@@ -634,3 +635,260 @@ as a height.
    - Fig 4-111 shows the front taller and the back's top falling toward the chimney, without a scale.
 10. **Fig 4-111's orientation.** The front is to the right (§8.1). A reading of Fig 4-111 that puts
     the back chamber on the right would swap the two chambers.
+
+## 9. Hotchkiss's raw-clay kiln (2026-11-18)
+
+The owner wants every reference kiln measured from the book's own figures before the engine is
+checked against it. This section measures Richard Hotchkiss's six-chamber raw-clay climbing kiln,
+built in 1971 (pp.54–57, Figs 2-39 to 2-49). §3 called these photos not scalable, taking the
+blocks' size as unprinted, and §6 left p.57 unmeasured. The size is printed, on p.54: "Three sizes of raw clay blocks were made
+9 x 10 x 18in. (23 x 25 x 46cm), 9 x 10 x 9in. (23 x 25 x 23cm), and 9 x 5 x 5in. (23 x 12.5 x
+12.5cm)." They are 50 % Lincoln 60 fireclay and 50 % coarse sand, laid in a mortar of the same mix
+with the consistency "of very soft clay" (p.54). "Generous amounts of soft mortar were used"
+(p.55). The pages also print:
+- p.55: chamber 6, the uppermost, was built first. Its front and back walls went up before the
+  arch form.
+- p.56: "The side walls were bricked in, leaving a door on one side and stoke holes and spy holes
+  on both sides." "The average chamber size was (5 x 5 x 6ft) 150 x 150 x 180cm tall."
+- pp.56–57: the chimney is commercial firebrick to 12 ft (3.6 m), then 18 ft (5.5 m) of
+  hydraulic water pipe.
+
+No figure prints a dimension, and the text doesn't size the main firebox. So each photo is scaled
+as in §8, against a block or brick face in the plane being measured:
+- a raw block: its 18 in length, its 9 or 10 in sides, or the small block's 9 × 5 in and 5 × 5 in
+  faces. Joints are taken as ½–2 in between the long blocks and ½–1 in between the small ones.
+- commercial firebrick, 9 × 4½ × 2½ in with ⅛–¼ in joints, only where the faces are too long and
+  thin for any raw block (§9.6).
+
+The printed sizes are taken as the dried blocks'. If they are the mould's, drying shrinkage makes
+every estimate here a few per cent too large. Every number is an estimate unless it is quoted.
+This section sets no model value, and it leaves the dataset and the design file alone.
+
+**Method.** Pages rendered with pymupdf. Positions are pixels of these master crops (PDF index, the
+crop's origin in page fractions, zoom):
+- Fig 2-40: index 43, origin 0.02, 0.05, zoom 5.
+- Fig 2-43: index 44, origin 0.05, 0.035, zoom 3.
+- Fig 2-44: index 44, origin 0.54, 0.03, zoom 5.
+- Fig 2-45: index 44, origin 0.04, 0.385, zoom 4.
+- Fig 2-46: index 45, origin 0.015, 0.05, zoom 4 and 6.
+- Fig 2-48: index 45, origin 0.015, 0.395, zoom 4 and 6.
+- Fig 2-47: index 45, origin 0.6, 0.05, zoom 6.
+- Fig 2-49: index 45, origin 0.6, 0.395, zoom 5.
+
+How the readings were made:
+- Joints are local minima of smoothed grey profiles, ±3–5 px. Edges are threshold crossings.
+- Course pitches were checked by autocorrelation, with the large-scale shading taken out first.
+- The arches' edges were traced along rays from a centre and along level lines.
+- Dark areas were viewed brightened, and faint joints with local contrast.
+
+Scripts: `scratch/hotchkiss-1118/` (git-ignored). `compute.py` there holds the arithmetic.
+
+### 9.1 Which way each photo looks
+
+- **Fig 2-40** (p.55, "Start of the straight wall, with flue holes"): from the front-left and
+  above, almost square on to a straight wall laid along the near side of a half-cylinder arch
+  form. The form's semicircular end faces left. The wall runs away a little to the right, as its
+  three top blocks shorten from 417 to 355 px. The camera looks steeply down: two courses of the
+  wall take 310–335 px for 19–22 in, against 18–22½ px/in along it. Which chamber this is, and
+  whether this is its front or back wall, isn't said.
+- **Figs 2-41 and 2-42** show the arch's blocks laid lengthwise on the form, and the key row. They
+  weren't measured.
+- **Fig 2-43** (p.56, "Constructing the side wall – notice the rope brace"): square on to an
+  arched opening, from behind a man who leans into it. A rope runs across the opening near its
+  legs.
+- **Fig 2-44** ("Building the stoke hole and entrance door"): from outside, square on to a wall of
+  small blocks being built across an opening under an arch. A man stands inside, behind the wall,
+  which reaches his waist. The wall's foot is below the photo's edge.
+- **Fig 2-45** ("The 6th, 5th and 4th chambers, building down"): from the side, square on to the
+  vaults' end walls, at about the people's eye height. The row falls to the right. The left end
+  wall is complete, with spy holes, so it is the 6th chamber's, built first. The 5th, in the
+  middle, is bricked up to its springline. The 4th, on the right, is still open, and its vault's
+  underside shows, with a coursed wall behind.
+- **Fig 2-46** (p.57, "The firebox dome with bracing"): the main firebox from farther off. A
+  wooden post stands before the left part of the front, and a diagonal brace runs down from the
+  band's right end.
+- **Fig 2-48** ("Firebox firing, May '97"): the firebox's front, nearly square on, from close and
+  low. The steel band bows up in the middle and turns down at the left corner. The courses grow
+  from 50–62 px near the band to about 80 px near the base.
+- **Fig 2-47** ("Bisquing in the upper chambers, building below"): from the low end of the row, up
+  the slope to the chimney. The stack narrows upward (93 to 85 px wide over 550 px), so the camera
+  was tipped up.
+- **Fig 2-49** ("Side stoking of the upper chambers, one chamber at a time"): along the kiln's side
+  under the shed roof, square on to a side wall, with two people stoking.
+
+### 9.2 The blocks and the scales
+
+The arch's blocks lie lengthwise along the vault. Fig 2-40's top course is 18 in blocks laid along
+the form, and Fig 2-41 shows the arch laid the same way on it. So a ring seen on an end wall shows
+the blocks' 9 × 10 in ends. It is taken below as 9–10 in deep, with up to 2 in of mortar on its
+back.
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| The top course | Fig 2-40 | three blocks laid lengthwise over the piers. Their ends and head joints are at x 548 (the form's end board), 965, 1345 and 1700 (the form's far end): 417, 380 and 355 px. | 18 in + ½–2 in joint | 20.9–22.5, 19.0–20.5 and 17.8–19.2 px/in, block by block | Scaled. The joints are white mortar lines, and none shows inside a block. |
+| The piers | Fig 2-40 | front faces 195, 180 and 175 px | the top course | 9.0–9.7, 8.8–9.5 and 9.1–9.9 in | Scaled. A pier's 9 in side runs along the wall. Its 10 in side is either up or into the wall. |
+| The pier courses | Fig 2-40 | two courses, 310–335 px tall, in five piers | 9–10 in blocks with ½–1 in joints | 14.1–17.6 px/in up the wall | Scaled. That is 0.65–0.95 of the scale along the wall, as the camera looks down. |
+| The side wall's blocks | Fig 2-44 | sides 200–205 px long, courses 133–137 px, and the stoke hole's jamb blocks 120 × 195 px, standing on end | the 9 × 5 × 5 in block | 20–24 px/in across, 21.7–24.9 px/in up | Scaled. The 18 × 10 in face has the same proportions. At that size the man behind the wall would measure 44–49 in from the top of his head to his waist. In life that is about 27–36 in. |
+| The side wall's blocks | Fig 2-43 | courses 77–88 px, and units 64–82 px and 111–132 px long | the 9 × 5 × 5 in block | 13.7–14.9 px/in | Scaled. The units come out 4.3–6.0 in and 7.4–9.7 in: the 5 × 5 in ends and the 9 × 5 in sides. Read as 9–10 in courses instead, the man leaning in would be 30–35 in across the shoulders. At 13.7–14.9 px/in he is 17½–19 in. |
+| The end walls | Fig 2-45 | the 5th's ring, 95–118 px. As a check, the man in front of it is about 770 px tall and the woman beside him about 730 px. | the ring as 9–10 in with 0–2 in of mortar | 9.5–11 px/in | Scaled. The ring alone allows 7.9–13.1 px/in. The people, standing a little in front of the wall, come out 10.7–11.8 px/in for heights of 5 ft 2 in to 6 ft, so the wall is at most that. |
+| The side wall | Fig 2-49 | block faces about 90 × 50 px. Autocorrelation gives a pitch of 97 px, two courses. | the 9 × 5 × 5 in block | 8.3–10.2 px/in | Scaled. Read as 9–10 in courses, the 97 px gives 8.8–10.2 px/in as well. |
+| The firebox's bricks | Fig 2-48 | loose stretchers 180–210 × 45–55 px. The wall's units are about 100 × 55–62 px, and its courses 50–62 px near the band. | 9 × 4½ × 2½ in firebrick | 18–23.5 px/in at zoom 4, near the openings | Scaled. §9.6 says why these are commercial bricks. |
+
+### 9.3 The straight wall and its flue holes (Fig 2-40)
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| How many | Fig 2-40 | dark runs along both courses of the wall: four gaps between five piers. The fifth pier (x 1690–1830, 7–8 in of it seen) stands past the form's far end. | | **four slots** | Drawing (a count). The wall's whole length along the form is in view. |
+| Slot 1, from the form's end board | Fig 2-40 | the front plane, x 775–855 in the lower course and 800–850 in the upper | the first top block, 20.9–22.5 px/in | **3½–3¾ in** wide below and 2¼–2½ in above, 10–15 in from the end board | Scaled, ±½ in at each edge. The upper block of the pier on its left juts in. |
+| Slot 2 | Fig 2-40 | x 1045–1148 | the middle top block, 19.0–20.5 px/in | **5–5½ in**, 22–30 in from the end board | Scaled |
+| Slot 3 | Fig 2-40 | x 1330–1413 | the middle and last top blocks | **4¼–4½ in**, 36–44 in from the end board | Scaled |
+| Slot 4 | Fig 2-40 | x 1591–1688 | the last top block, 17.8–19.2 px/in | **5–5½ in**, 50–59 in, at the form's far end | Scaled |
+| Their height | Fig 2-40 | dark runs of 311–360 px from the piers' foot to the top course. The piers are two courses. | two 9–10 in blocks and two ½–1 in joints | **19–22 in** | Scaled, by course. The scale up the wall gives 18–26 in. |
+| Their sills | Fig 2-40 | the slots open at the piers' foot | | on the floor the form stands on | Drawing. The form's end board stands at about the same level. |
+| Pier to pier | Fig 2-40 | the slots' centres | the top course | about 14 in: a 9 in pier and a 4–5½ in slot | Scaled |
+| Slot area | Fig 2-40 | the four widths times the height | | 16½–19½ in of slot width, about **300–420 in²** | Scaled (a sum) |
+| The wall's length | Fig 2-40 | three top blocks, from the form's end board to its far end | 3 × 18 in with two ½–2 in joints | **55–58 in** | Scaled. That is the form's length, the chamber's width across the kiln. |
+| The wall's thickness | Fig 2-40 | the piers' sides show in the slots, but not how deep they go. The top course's top is hidden by the form. | | | **Not scalable** |
+| The springing | Fig 2-40 | the form's end board is a semicircle on straight legs. Its outline turns vertical at about the top course (y 1150–1250), against the piers' foot at y 1420–1570. | the pier courses | about two courses, 19–22 in, above the floor | Drawing. It is read off the board's outline, in a photo that looks steeply down. |
+
+### 9.4 Stoke holes, the door and spy holes
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| The pointed stoke hole: width | Fig 2-44 | jambs at x 523 and 673, from y 1180 to the sill | the small blocks, across (20–24 px/in) | **6¼–7½ in** | Scaled |
+| Its height | Fig 2-44 | the sill at y 1397. The head's sides spring at y 1178 and meet at y 1086. | the small blocks, up (21.7–24.9 px/in) | **12½–14½ in** to the point, the jambs 9–10 in | Scaled. Each jamb is one small block on end, 9 in. Two more lean together over it, at about 52° to level, to make the point. |
+| Its sill | Fig 2-44 | two full courses and part of a third under it, then the photo's edge | the courses | at least 13–15 in above the lowest block seen | Scaled. The ground isn't shown. |
+| The wall it is in | Fig 2-44 | its top, 537 px above the sill | the courses | 21½–24½ in above the sill | Scaled. It shows the small blocks' 9 × 5 in sides, so it is at least 5 in thick. |
+| The entrance door | Fig 2-44 | the man stands behind the wall, under an arch. No door's jamb or sill shows. | | | **Not scalable** |
+| An arch in a side wall | Fig 2-43 | the opening's crown at y 228, its half-width 251.5 px at 220 px below, the ring 148 px at the crown | the small blocks (13.7–14.9 px/in) | the opening **34–37 in** across if it is a semicircle, the ring 10–11 in | Scaled. That is narrower than the 5th chamber's 49–57 in vault (§9.5), so this may be the side door's arch. The caption doesn't say. |
+| A low opening in the 6th's end wall | Fig 2-45 | 75 × 112 px, round-headed, at the wall's foot near the 5th | the 6th's ring (128 px) taken as the 5th's: 10.3–11.9 px/in | **6¼–7¼ × 9½–11 in**, the sill 4–10 in above the ground outside | Scaled. Its width matches Fig 2-44's stoke hole. It reads as a side stoke hole near the floor. |
+| Spy holes | Fig 2-45 | four in the 6th's end wall, two at y 555–565 and two at y 885–900, each 18–25 px across | as above | **1½–2½ in** | Scaled |
+| Side stoke holes | Fig 2-49 | the hole being stoked is 52 px wide, its lower part hidden by the stoker. A second, to its right, is 86 × 80 px. | the side wall's blocks (8.3–10.2 px/in) | **5–6 in** wide, and **8½–10 × 8–9½ in** | Scaled |
+| Their sills | Fig 2-49 | 210–270 px above the wall's foot | as above | **21–32 in** above the ground under the shed | Scaled. The chambers' floors aren't seen. |
+| Small holes | Fig 2-49 | a column of six at x 715, each 15–25 px across, about 50 px apart | as above | 1½–3 in, one a course (5–6 in apart) | Scaled. The book doesn't say what they are. |
+
+### 9.5 The chambers' arches and their step (Fig 2-45)
+
+The 5th chamber's end wall gives the clearest arch. Its top is still open, so the ring's inner edge
+shows against the dark vault. The 6th's inner edge is a faint joint under its ring, and a rope
+brace crosses the 4th's opening.
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| The 5th's inner edge | Fig 2-45 | the crown at y 523, x 1406. Half-widths of 92, 126, 155, 193, 218, 238, 257 and 268–273 px at 17, 37, 57, 97, 127, 157, 197 and 227–277 px below it. The sides turn vertical at y 780–800, where the infill's top hides them. | a circle through the crown | a near semicircle of radius 268 px | Drawing (shape). At mid-height the half-widths fall 4–7 % inside the circle's, so the arch is a little taller than round. |
+| Span | Fig 2-45 | 536–546 px | 9.5–11 px/in | **49–57 in** | Scaled. The printed average is 5 ft. |
+| Rise | Fig 2-45 | the crown at y 523, the springing at y 791: 268 px | as above | **24–28 in** | Scaled |
+| Ring | Fig 2-45 | the outer edge at y 405 over the crown, and 352–355 px from the circle's centre at the right haunch, against 254–268 px for the inner edge | as above | **10¾–12½ in** at the crown, 7¾–10 in at the haunch | Scaled. The mortar on its back and the axe-cut blocks vary it. |
+| Springline | Fig 2-45 | y 791, above the end wall's foot at y 1330 (a joint at the ground) | as above | **49–57 in** above the ground outside | Scaled. The chamber's floor isn't seen. |
+| Crown height | Fig 2-45 | 807 px above the same foot | as above | **73–85 in** above the ground outside | Scaled |
+| Step, 6th to 5th | Fig 2-45 | inner crowns at y 350 and 523 (173 px), outer crowns at y 222 and 405 (183 px). The crowns are 806 px apart along the row. | as above | **16–19 in**, on a 73–85 in pitch | Scaled, if the two vaults are alike |
+| Step, 5th to 4th | Fig 2-45 | inner crowns at y 523 and about 693 (170 px), outer crowns at y 405 and 585 (180 px). The crowns are 674–694 px apart. | as above | **15–19 in**, on a 61–73 in pitch | Scaled, if alike |
+| Slope | Fig 2-45 | the steps over the runs, in pixels | | **12–15°** | Scale-free, and 11–16° allowing ±10 px at each crown. It holds if the three vaults stand alike above their floors and the end walls face the camera square. |
+| The 6th's end wall | Fig 2-45 | courses 64–77 px | 10.3–11.9 px/in | 5½–7½ in a course | Scaled. The small blocks, laid 5 in high, with thick joints. |
+| The 4th's open side | Fig 2-45 | through it, the vault's underside and a coursed wall with dark slots at its foot. Slot to pier width is about 0.6, and slot height to pier width about 2.3. | | | Drawing. Fig 2-40's slots give 0.5 and 2.3, so this is likely a wall between chambers with its flue holes. Which wall isn't settled. |
+| 5 × 5 × 6 ft | Figs 2-40, 2-45 | the form 55–58 in long, the 5th's span 49–57 in, and its crown 73–85 in above the ground outside | the blocks | the printed average holds within 2–11 in | Scaled. The 6 ft holds if the floor is at the ground outside. A raised floor would make the inside lower. |
+
+### 9.6 The main firebox (Figs 2-46 and 2-48)
+
+Fig 2-48's loose stacks show faces of 180–210 × 45–55 px, 3.3–4.7 : 1. That is a firebrick's
+9 × 2½ in side (3.6 : 1). No raw block has a face longer than 2 : 1: theirs are 9 × 10, 9 × 9,
+18 × 9, 18 × 10, 9 × 5 and 5 × 5 in. The front's own units, about 100 × 55–62 px at the same
+scale, are the bricks' 4½ × 2½ in ends. The bricks are even, with sharp edges and thin joints,
+unlike the raw blocks' rough faces and thick mortar in Figs 2-40 to 2-45. So the firebox front is
+read as commercial firebrick in 2½ in courses. Fig 2-46's faces, 2.2–2.6 : 1, wouldn't settle it
+alone.
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| The scale near the openings | Fig 2-48 | courses 50–62 px at zoom 4, and the stacks' stretchers 180–210 px | a 2⅝–2¾ in course and a 9⅛–9¼ in stretcher | 18–23.5 px/in at zoom 4 (27–35 at zoom 6) | Scaled. Near the base it grows to about 29 px/in (80 px courses), as the camera was close and low. |
+| The front's width | Fig 2-48 | from the left corner (x 260) to the brace (x 1600) at zoom 4: 440 px at the left part's 18.2–20.2 px/in and 900 px at the right part's 20.0–23.6 px/in | the courses | **60–69 in** | Scaled |
+| The steel band | Figs 2-46, 2-48 | a dark band under the dome, its underside at y 578–632 (zoom 4), lowest at the left corner, 30–60 px tall | 18–23.5 px/in | 1¼–3¼ in tall | Scaled. The dome's tiles start right above it, so it is at the springline. With the diagonal brace at the front's right end it is the caption's "bracing". |
+| The springline's height | Fig 2-48 | from the band down: one course, the openings (3½–4 courses), then 10–12 loose courses to the stacks' foot | 2½–2¾ in a course | **36–47 in** above the foot of the loose bricks | Scaled, by course. That foot is the ground in front. Whether it is the firebox's floor isn't shown. |
+| The dome's rise | Fig 2-48 | the crown's edge at y 125–150 (zoom 4), the band's top at about y 530 | the scale at the band | **16–23 in, as seen** | Scaled as apparent. The crown stands behind the front and above the camera, so it shows lower than it is. If the camera stood 6–8 ft off and the crown is 2–3 ft behind the front, the true rise is a quarter to a half larger. |
+| The dome's base | Fig 2-48 | where its tiles meet the band: 1136 px at zoom 4 | 18–23.5 px/in | 48–63 in across | Scaled |
+| Three openings | Fig 2-48 | at the top of the front (zoom 6): A 200 × 305 px, B 275 × 305 px, C 270 × 345 px | 27–35 px/in (zoom 6) | **A 5¾–7½ × 8¾–11¼ in. B 7¾–10¼ × 8¾–11¼ in. C 7¾–10 × 9¾–12¾ in.** | Scaled. Each top is one course under the band. Flames show through all three. Loose bricks may have narrowed A. |
+| Their sills | Fig 2-48 | 10–12 loose courses above the stacks' foot | 2½–2¾ in a course | **25–33 in** | Scaled |
+| The piers between | Fig 2-48 | 285 and 310 px (zoom 6) | 27–35 px/in | 8–11½ in, one stretcher or two ends | Scaled |
+| What the openings are | Figs 2-46, 2-48 | | | | Not said. Openings at the top of a firebox front, with the fire seen through them, read as stoke holes. Whether they also take the air isn't shown. |
+| The lower front | Figs 2-46, 2-48 | under the openings, at the left: two stepped stacks of loose stretchers, a soft-edged dark band 4¼–5½ in wide between them, and one 3–4½ in gap in the right stack. The lower right half is hidden behind a mottled surface, a steel plate or banked earth. | the stacks' bricks | | **Not shown.** No ash pit, grate, firemouth or separate air inlet can be made out. Fig 2-46's lower front is a heap of loose bricks. |
+| Fig 2-46's openings | Fig 2-46 | three tall openings under the band, 70–100 × 190–240 px at zoom 6 | | about 1 : 2½–3, wide to tall | **Not scalable.** Its brick faces don't settle their size. Scaled from Fig 2-48 by the openings' spacing, its courses would be 4–5 in, not 2¾ in, so the two photos don't share one layout. It may show the front at another time. |
+
+### 9.7 The chimney and the row (Fig 2-47)
+
+| Feature | Figure | What was measured | Scaled against | Estimate | Spread or status |
+|---|---|---|---|---|---|
+| Which part is which | Fig 2-47 | a dark, smooth upper stack (y 258–888, 630 px) on a lighter, wider part that shows above the kiln | | the dark part read as the 18 ft pipe, the light part as the brick | Drawing. The dark part is the narrower, as a pipe set on a brick stack would be. If it were sooted brick, nothing here would scale it. |
+| The pipe's diameter | Fig 2-47 | 85 px wide at its top, 93 px at its foot | the printed 18 ft, along the pipe | **about 29–30½ in** (26–34 in) | Scaled, on that reading. 216 in × 89/630 is 30½ in. The camera's tilt (about 18° for a normal lens, from the sides' convergence) shortens the height a little, giving 29 in. |
+| The brick stack's width | Fig 2-47 | 122 px, against the pipe's 93 px at its foot | the pipe | **34–45 in** across one face | Scaled, on that reading. The flue's inside isn't seen. |
+| The row's length or slope | Fig 2-47 | the row runs toward the camera | | | **Not scalable** |
+
+### 9.8 Against the dataset (`hotchkiss-raw-clay`)
+
+1. **Flue holes between chambers** (`flow.between_flues`: "about three drawn, not sized", and the
+   gap "flue sizes and counts between chambers"). Fig 2-40 shows **four** slots: 2¼–3¾, 5–5½,
+   4¼–4½ and 5–5½ in wide, 19–22 in tall, at the floor. They sit between 9 in piers at about 14 in
+   centres, about 300–420 in² in all. The entry's note that the blocks' courses can't scale the
+   photo no longer holds: the 18 in top blocks scale it. The count disagrees, and the sizes fill
+   the gap.
+2. **Width and depth, 5 ft (printed).** The form in Fig 2-40 is 55–58 in long, across the kiln.
+   The 5th chamber's vault spans 49–57 in along the draft (Fig 2-45). Both fit an "average" 5 ft,
+   the span a little under. Agrees.
+3. **Height, 6 ft (printed), and the springline, 42 in (assumed).** The 5th's crown is 73–85 in
+   and its springline 49–57 in above the ground outside its end wall. Its floor isn't seen. If the
+   floor is at that ground, the 6 ft agrees and the springline is 7–15 in above the assumed 42 in.
+   Fig 2-40's form turns vertical about two courses (19–22 in) above the floor it stands on. So
+   either that chamber is lower or the two bases differ. The springline above the floor stays
+   open.
+4. **Span 5 ft (derived), rise 30 in (assumed), "near-semicircular arches" (drawing).** The 5th's
+   arch is a near semicircle, a little taller than round, rising 24–28 in on its 49–57 in span.
+   The shape agrees. The rise is 2–6 in under 30 in, because the span scales under 5 ft.
+5. **Ring and wall thickness, 10 in (assumed).** The ring is 10¾–12½ in at the 5th's crown, with
+   its mortar, and 7¾–10 in at its haunch. Fig 2-43's ring is 10–11 in. That is the arch blocks'
+   9 × 10 in end, as the arch is laid lengthwise (Figs 2-40, 2-41). So the ring's 10 in agrees,
+   now scaled. No wall shows its thickness edge-on. The side walls are the small 9 × 5 × 5 in
+   blocks with their 5 × 5 in ends in the bond, so they are at least 9 in thick.
+6. **Slope, 22° (assumed, from Olsen's Fig 3-15).** The crowns in Fig 2-45 fall 12–15° along the
+   row (11–16° with the crowns' spread). That is 15–19 in a chamber on a 61–85 in pitch. It holds
+   if the three vaults stand alike and the end walls face the camera square. It disagrees with the
+   22°, and it fills the gap "slope and the step between chambers".
+7. **The main firebox** (`flow.firebox`: "a domed main firebox with bracing round it, not sized",
+   and the gaps "main firebox size" and "research A2: the main firebox's mouth"). Fig 2-48 scales
+   its front:
+   - It is commercial firebrick, 60–69 in wide.
+   - A steel band at the dome's springing stands 36–47 in above the ground in front.
+   - The dome rises at least 16–23 in, on a base 48–63 in across.
+   - Three openings at the top of the front are 6–10 in wide by 9–13 in tall, their sills 25–33 in
+     up.
+
+   The lower front, where an ash pit, firemouth or air inlet would be, isn't shown in either photo.
+   So the air path into the firebox is still unscaled. This fills most of the gap. The design
+   file's six 9 in stoking channels don't describe this box.
+8. **Frame** (`structure.frame`: "none mentioned; rope straps during building only", with the note
+   "the book shows no steel on this kiln"). Figs 2-46 and 2-48 show a steel band round the firebox
+   dome's springing and a diagonal brace at the front's right end, the caption's "bracing". That
+   disagrees for the firebox. No photo shows steel on the chambers.
+9. **The firebox's material.** The entry doesn't say what the main firebox is built of. Its front
+   is commercial firebrick (§9.6), not raw clay. A gap filled.
+10. **Stoke holes and spy holes** (`flow.stoke_hole`: "a pointed-arch stoke hole; none sized", and
+    the gap "the side stoke holes' sizes"):
+    - Fig 2-44's pointed hole is 6¼–7½ in wide and 12½–14½ in to its point.
+    - A round-headed hole low in the 6th's end wall is 6¼–7¼ × 9½–11 in, 4–10 in above the ground
+      (Fig 2-45).
+    - The side holes in Fig 2-49 are 5–6 in wide and 8½–10 × 8–9½ in, 21–32 in above the ground
+      under the shed.
+    - Spy holes are 1½–2½ in (Fig 2-45), and Fig 2-49's small holes 1½–3 in.
+
+    This fills the gap.
+11. **The door** (one side wall, not sized). Still not sized for certain. Fig 2-43's arch is
+    34–37 in across with a 10–11 in ring. That is narrower than a vault, so it may be the side
+    door's arch.
+12. **Chimney section** (not given). If the dark upper stack in Fig 2-47 is the printed 18 ft pipe,
+    the pipe is about 29–30½ in across (26–34 in), on a brick stack 34–45 in wide. The flue's
+    inside isn't seen. This fills the gap on that reading. The 30 ft height (derived) is unchanged.
+13. **The blocks** (`lining.wall`). The figures show where each printed size went: the 18 in blocks
+    lengthwise in the arch and its first course (Figs 2-40, 2-41), the 9 × 10 in faces in the
+    straight wall's piers (Fig 2-40), and the small 9 × 5 × 5 in blocks in the side walls (Figs
+    2-43, 2-44, 2-45, 2-49). Agrees, and adds where each size is used.
+14. **Earlier readings.** §3's Hotchkiss row ("not scalable") and the kiln's doc
+    (`docs/kilns/olsen/hotchkiss-raw-clay.md`, "Nothing scaled", step A, 2026-11-09) are
+    superseded by this section.
