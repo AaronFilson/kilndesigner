@@ -9,10 +9,15 @@
 # crown. The arch rises 5 ft, a semicircle on the 10 ft span along the draft: Olsen uses 4–6 in
 # per foot on chamber kilns of 4–8 ft span (p.296), and 6 in/ft on 10 ft is a semicircle. So the
 # springline is at 5 ft, and seven chambers come to about 14,800 ft³, near the printed 15,000 ft³.
-# Walls 9½ in, inside Olsen's 9–10 in for climbing kilns (p.99–100), and a 9 in arch, as the
-# Bidai kiln (bidai, Fig 4-36). The book names no brick: Japanese chamber kilns are built of local
-# firebrick (bidai, p.94–95), so medium-duty firebrick (Olsen's intermediate duty, p.18); the floor
-# as the walls (engine default). The slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36). Cone 10,
+# The book names no brick and no thickness. The owner (2026-11-17): take the brick as high duty.
+# Tobe was built in Japan in the 1800s or before, perhaps of tatami-rolled fireclay brick, and
+# nothing specific is known of it, so high-duty firebrick stands in for it. Not 9 in thick: "the
+# brick could have been much thicker given the size and that it was pre-industrial". Walls and
+# arch are taken as 13½ in, the next standard thickness past 9 in (one and a half brick lengths);
+# the floor as the walls (engine default). Worked back from the kiln having stood (ADR 0017,
+# decision 17 as amended): hot, v2 finds the row standing on C16's 25 psi from a ring of about
+# 9¾ in; at 9 in its brick would have had to carry 30.5 psi, and at 13½ in it needs 19.5 psi.
+# The slope is the Bidai kiln's 3 to 1, 18.4° (Fig 4-36). Cone 10,
 # the hottest chambers of the Kyoto Suzuki kiln (suzuki-kyoto, Fig 4-35, p.93): the book gives no
 # cone for this kiln. No firebox is sized, so the fire is a chamber firebox (himae) in each
 # chamber, the Kyoto kilns' 9 in trough along the front wall, stoked from both sides
@@ -46,11 +51,11 @@ loading:
   door: bricked
 lining:
   walls:
-    - material: firebrick-medium-duty-smithfield # grade not given
-      thickness: 9.5 in
+    - material: firebrick-high-duty-jet-dp # high duty (the owner, 2026-11-17)
+      thickness: 13.5 in # not 9 in (the owner): the next standard thickness
   roof:
-    - material: firebrick-medium-duty-smithfield
-      thickness: 9 in # as the Bidai kiln's arch
+    - material: firebrick-high-duty-jet-dp
+      thickness: 13.5 in # stands hot on C16's 25 psi from about 9¾ in (worked back)
 heat:
   fire:
     fuel: wood

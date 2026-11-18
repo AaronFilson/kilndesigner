@@ -243,8 +243,10 @@ references used. The plans print the working, so a builder can check it.
 - **v2 against ADR 0017's bar** ([11-10-26.md](11-10-26.md), "The round's report"):
   - 48 of 51 printed figures inside the bands;
   - N1–N6 all fail;
-  - 51 kilns stand hot. Tobe stands cold, and its hot verdict is "not given" under the
-    lower-bound rule (accepted 2026-11-17);
+  - 52 kilns stand hot, all v2 models (Blakebrough's fibre isn't modelled). Tobe has stood hot
+    since 2026-11-17, worked back from standing (high-duty brick, 13½ in;
+    `11-17-26-inputs.md` §12). The lower-bound rule's "not given" stays for designs no one has
+    built;
   - 44 + 5 kilns reach their cone, with 2 open items and 2 with no burner input.
 - **No surface runs v2 yet.** The [module review](../reviews/2026-11-17-module-review.md)
   found what stands in the way:
@@ -257,8 +259,10 @@ references used. The plans print the working, so a builder can check it.
      constants to leaf modules and add an import-linter contract for v2.
   4. Castables, the bill, hardware, the frame, movement and foundations read v1's heat output.
      Split v1's heat modules into sizing (kept) and physics (removed) before removing v1.
-  5. Heat and statics share no hot state. A bridge from the faces' temperatures is what Tobe hot
-     needs.
+  5. Heat and statics share no hot state. The hot statics takes all the masonry at C16's
+     temperature, which the owner calls "just bad modeling" (2026-11-17): the temperature falls
+     through the brick. A bridge from the heat model's wall temperatures is the fix. Tobe no longer
+     waits on it (worked back, `11-17-26-inputs.md` §12).
   6. Duplication inside v2: two `kiln_path`, `Band`, `Sourced` and `hydraulic`, and four
      `NotModelledError`.
 - **The inputs v2 needs** are in [11-17-26-inputs.md](11-17-26-inputs.md), checked against
@@ -270,8 +274,10 @@ references used. The plans print the working, so a builder can check it.
 
 1. **Fold the test-side engine knowledge into the engine** (review items 1 and 6). Nothing new
    needs to be sourced for it.
-2. **The v2 front door and the bridge to statics** (items 2 and 5). This lets Tobe hot be
-   worked out instead of waiting on a strength figure.
+2. **The v2 front door and the bridge to statics** (items 2 and 5). This puts the masonry's own
+   temperature through its thickness into the hot statics: the hot face weak, the cooler brick
+   behind it carrying the load (HWI's UR-19 says walls are built for this). It fixes the model
+   fault the owner named.
 3. **Make the suite faster:** a `bands` marker for the corner runs and an on-disk cache of
    their results. The full `pytest --cov` takes about an hour.
 4. **Stacked zones up a chamber.** These make every top-to-bottom evenness figure testable.
@@ -281,9 +287,10 @@ references used. The plans print the working, so a builder can check it.
    (decision 3).
 7. The owner's answers ([11-17-26-inputs.md](11-17-26-inputs.md)) settle the open items as they
    come in.
-   - Principle 6 is answered (§1). The six unsized chimneys get scaled from Olsen's drawings,
-     which the owner thinks are in another local repo's `scratch/`. Ask for its path first,
-     then copy the pages into `scratch/olsen-pages/`.
+   - Principle 6 is answered (§1). The six unsized chimneys get scaled from Olsen's drawings.
+     The scans are the Windows clone's git-ignored `docs/research/kiln-reference.pdf`. Read there
+     on 2026-11-17 (`docs/research/olsen-figure-scaling.md`), with Fireworks, La Borne's back door
+     and the Kannofen still to measure.
    - The fire mouth is answered (§2). It becomes a design setting per firing stage: open, partly
      open (an area fraction) or closed. Fire the rows in each state, and model the first chamber
      cooling with the mouth open while the chambers above fire. This replaces the mouth-shut and
@@ -294,7 +301,10 @@ references used. The plans print the working, so a builder can check it.
    - Kitade (p.202, Fig 8-11) is built, with two chambers. Olsen's two-chamber kiln is his
      proposed improvement of it (§8). Kitade gets a second chamber. Whether Olsen's design stays
      in the reference set is the owner's call.
-   - Tamba's slope is scaled from Figs 4-7 and 4-17 (§9), with the page images from Principle 6.
+   - Tamba (§9): the figures scale 8½–14°. The owner's estimates for the series: 14° and side holes
+     of 16 in; the design and dataset are still to take them.
+   - Tobe (§12): it stood, so it is worked back (ADR 0017, decision 17 as amended). High-duty brick,
+     13½ in, standing hot on C16's 25 psi; a 9 in ring would have needed 30.5 psi.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|

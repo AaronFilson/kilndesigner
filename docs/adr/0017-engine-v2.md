@@ -108,6 +108,18 @@ The user, on v1's warnings and errors: "these have been so wrong for the whole t
       numbers;
     - all 53 kilns as built stand.
 
+    **Amended (the owner, 2026-11-17): a reference kiln's own unknowns are worked back from it
+    standing.** "The reference kiln is truth. Whatever it was made of, it took the temp and the
+    pressure, so work backwards to find the properties." Where a kiln's verdict turns on a
+    property of its own material that no source can give (a historic kiln's hot crushing
+    strength), the kiln having stood gives it:
+    - the least value at which v2 finds the kiln standing, recorded as **inferred**, with the
+      geometry it holds for;
+    - not a withheld verdict, and no search for a printed value.
+    Decision 4 still holds for the engine: its physics and its sourced data aren't fitted to the
+    reference kilns. Only that kiln's own unknown property is inferred, and only from it standing.
+    Tobe's hot strength is the first case (`docs/planning/11-17-26-inputs.md` §12).
+
 ## The heat model's starting design
 
 Carried from the first draft and amended by the decisions above. Each part is sourced before it

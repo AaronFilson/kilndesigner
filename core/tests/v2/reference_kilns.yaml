@@ -30,6 +30,10 @@
 #            part C2: each kiln's setting, one band a chamber zone, kiln-settings.md; their
 #            reasons naming the file), with its reason and the Olsen page of any rule it follows.
 #            No value is here without a source.
+#   inferred worked back from the kiln having stood or fired (ADR 0017, decision 17 as amended,
+#            the owner, 2026-11-17): a property of the kiln's own material that no source can give,
+#            the least (or most) value at which v2 finds the kiln as built doing what it did, with
+#            the geometry it holds for (reason: the run that gives it).
 schema: 1
 book: Frederick L. Olsen, The Kiln Book, 4th ed.
 kilns:
@@ -12353,25 +12357,27 @@ kilns:
         reason: the Bidai kiln's 3 to 1 (Fig 4-36)
     lining:
       - what: wall
-        value: medium-duty firebrick (firebrick-medium-duty-smithfield)
+        value: high-duty firebrick (firebrick-high-duty-jet-dp)
         status: assumed
-        reason: the book names no brick; Japanese chamber kilns are built of local firebrick (bidai,
-          pp.94–95), so Olsen's intermediate duty (p.18)
+        reason: the book names no brick. The owner (2026-11-17), "Take the Tobe brick as high
+          duty"; built in Japan in the 1800s or before, perhaps of tatami-rolled fireclay brick,
+          nothing specific known of the material
       - what: wall_thickness
-        value: 9.5
+        value: 13.5
         unit: inch
         status: assumed
-        reason: inside Olsen's 9–10 in for climbing kilns (pp.99–100)
+        reason: not printed. Not 9 in (the owner, 2026-11-17), "the brick could have been much
+          thicker given the size and that it was pre-industrial"; the next standard thickness
       - what: roof_thickness
-        value: 9
+        value: 13.5
         unit: inch
         status: assumed
-        reason: as the Bidai kiln's arch (Fig 4-36)
+        reason: as the walls (the owner, 2026-11-17)
     flow:
       - what: firebox
         value: a 9 in chamber firebox (himae) along each chamber's front wall, 25 ft long
         status: assumed
-        reason: no firebox is sized; the Kyoto kilns' trough, stoked from both sides 
+        reason: no firebox is sized; the Kyoto kilns' trough, stoked from both sides
           (kyoto-climbing, p.92)
     structure:
       - what: roof_type
@@ -12390,10 +12396,40 @@ kilns:
         status: assumed
         reason: 6 in per foot of the 10 ft span (p.296), a semicircle
       - what: ring_thickness
-        value: 9
+        value: 13.5
         unit: inch
         status: assumed
-        reason: as the Bidai kiln's arch (Fig 4-36)
+        reason: not printed. Not 9 in (the owner, 2026-11-17), "the brick could have been much
+          thicker given the size and that it was pre-industrial"; the next standard thickness
+      - what: ring_thickness
+        value: 9.84
+        unit: inch
+        bound: '>='
+        status: inferred
+        condition: the ring on which v2 finds the row standing hot on C16's 25 psi alone (high-duty
+          brick, 9½ in walls, seven chambers, μ 0.50)
+        reason: it stood (the owner, 2026-11-17; ADR 0017, decision 17 as amended); bisection, no
+          admissible state at 9.70 in, one at 9.84 in. A thinner ring needs its brick stronger hot
+          than C16 shows (scratch/tobe/frontier.py)
+      - what: hot_strength
+        value: 19.5
+        unit: psi
+        bound: '>='
+        status: inferred
+        condition: at the design's 13½ in ring and walls of high-duty brick, seven chambers hot (μ
+          0.50)
+        reason: it stood (the owner, 2026-11-17; ADR 0017, decision 17 as amended); the least hot
+          crushing stress at every joint at which v2 finds an admissible state, under C16's 25 psi
+          (test_statics_row.py::test_tobe_is_worked_back_from_standing)
+      - what: hot_strength
+        value: 30.5
+        unit: psi
+        bound: '>='
+        status: inferred
+        condition: had the ring been 9 in (the thin end), high-duty brick, seven chambers hot
+        reason: it stood; the least hot crushing stress at which v2 finds the row standing with a 9
+          in ring, above C16's 25 psi, so a 9 in ring means its brick carried at least this hot
+          (test_statics_row.py::test_tobe_is_worked_back_from_standing)
     service:
       - what: condition
         value: destroyed in July 1963; the largest chamber kiln

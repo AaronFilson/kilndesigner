@@ -13,9 +13,9 @@ Olsen, *The Kiln Book*, 4th ed., p.90 and p.92: text only. There is no figure of
 ## What's modelled
 
 Seven chambers each the size of the largest, 25 ft across, 10 ft along the draft and 10 ft to the
-crown (a semicircular arch on 10 ft), climbing at 18.4°; a 9 in himae trough per chamber; 9½ in
-walls and a 9 in arch of medium-duty firebrick; cross-draft to an engine-sized chimney; cone 10
-(assumed).
+crown (a semicircular arch on 10 ft), climbing at 18.4°; a 9 in himae trough per chamber; 13½ in
+walls and arch of high-duty firebrick (the owner, 2026-11-17); cross-draft to an engine-sized
+chimney; cone 10 (assumed).
 
 ## Scaling (step A, 2026-11-09)
 
@@ -53,8 +53,34 @@ hottest brick at cone 10, 2345 °F, is cooler than C16's 2460–2640 °F) and th
 strength are to decide it (`docs/planning/11-10-26.md` §D2). With 9½ in walls between the
 chambers, a 103 in tall wall between 10 ft arches had a mechanism even without sliding.
 
+## Worked back from standing (the owner, 2026-11-17)
+
+The section above is the 9 in medium-duty model as it was. The owner's answer:
+- **Brick:** high duty. Tobe was built in Japan in the 1800s or before, perhaps of tatami-rolled
+  fireclay brick, and nothing specific is known of it.
+- **Thickness:** not 9 in. "The brick could have been much thicker given the size and that it was
+  pre-industrial."
+- **The rule:** "the reference kiln is truth … work backwards to find the properties". This is
+  ADR 0017, decision 17 as amended.
+
+The design takes high-duty brick and 13½ in walls and ring, the next standard thickness. Working
+back with v2's row statics (seven chambers hot, μ 0.50):
+- **13½ in ring (the design):** stands hot on C16's 25 psi; it needs 19.5 psi.
+- **The thinnest that stands on 25 psi:** about 9¾ in (9.70 in has no admissible state, 9.84 in
+  has one).
+- **9 in ring:** it would need 30.5 psi. Had its ring been 9 in, its brick carried that hot.
+
+The walls barely move it. The dataset records these as `inferred` facts. Cold, the ends' supports
+(the firebox, the earth, the chimney) now give 131 lbf/ft, against 210 with the 9 in ring.
+
+Heat with the thicker lining: it still reaches cone 10, and 40 tons is still no less than v2's
+max fire. The hot statics still takes all the masonry at C16's temperature. The owner calls that a
+model fault ("the temp does not go around all sides of the brick"); the fix is the bridge from the
+heat model's wall temperatures (`docs/planning/02-plan.md`).
+
 ## Open questions for the user
 
 1. Does "required 40 tons of wood to fire" (p.90) mean the largest chamber or the whole kiln?
-2. How thick were the walls between the chambers, and the arches? (Assumed: 18 in by Olsen's
-   p.46, and 9 in as Bidai's.)
+   (Answered 2026-11-09: the whole kiln; ADR 0017, decision 15.)
+2. How thick were the walls between the chambers, and the arches? (Answered 2026-11-17: not 9 in,
+   could have been much thicker; 13½ in taken. High-duty brick.)

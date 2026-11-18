@@ -351,6 +351,12 @@ safety is published, rather than pass or fail it. Refuse a hot allowable with a 
     **2026-11-10 (§B6):** the dense classes' C16 results at 25 psi found and read (Alsey's 2019
     sheets, NBS 1925): dense brick's 25 psi is now sourced, on IFB's footing, no longer by analogy.
     Hot crushing strength and creep (C832) of the library's classes are still not found.
+    **2026-11-17, the owner: Tobe no longer waits on this.** "YOU DO NOT NEED TO FIND A PRINTED
+    HOT CRUSH STRENGTH FOR A HISTORIC KILN DESTROYED IN 1963." The kiln stood, so its brick's hot
+    strength is inferred: the least value at which v2 finds it standing (ADR 0017, decision 17 as
+    amended; `docs/planning/11-17-26-inputs.md` §12). For new designs the C16 load stays the
+    lower-bound stand-in. A printed hot strength for the library's classes would sharpen their hot
+    verdicts, but no reference kiln waits on one.
 
 ---
 

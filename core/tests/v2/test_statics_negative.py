@@ -45,8 +45,8 @@ def least_arch(phi: float) -> float:
 def test_n1_no_reference_arch_is_below_its_least_thickness() -> None:
     """N1's criterion, a circular arch's least t/R at its half angle, on every arch the reference
     kilns spring across or along (one ring of each size): none is below it. The nearest is Tobe's
-    10 ft semicircle of 9 in, t/R 0.1395, 1.30 times its 0.1075 (its thickness assumed, p.90);
-    Kato's 1.93; the flat IFB arches 60–130 times."""
+    10 ft semicircle of 13½ in (not printed, p.90; the owner, 2026-11-17: not 9 in), t/R 0.2022,
+    1.88 times its 0.1075; Kato's 1.93; the flat IFB arches 60–130 times."""
     ratios: dict[str, float] = {}
     for path in sorted(OLSEN.glob("*.yaml")):
         try:
@@ -58,7 +58,7 @@ def test_n1_no_reference_arch_is_below_its_least_thickness() -> None:
             ratios[f"{path.stem} {label}"] = ring.thickness / rc / least_arch(ring.half_angle)
     worst = min(ratios, key=lambda k: ratios[k])
     assert worst == "tobe chamber 1"
-    assert ratios[worst] == pytest.approx(1.30, abs=0.01)
+    assert ratios[worst] == pytest.approx(1.88, abs=0.01)
     assert ratios["kato-coal across"] == pytest.approx(1.93, abs=0.02)
     assert all(r > 1.0 for r in ratios.values())
     assert len(ratios) == 42  # 39 kilns' rings, one of each size

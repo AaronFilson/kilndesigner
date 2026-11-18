@@ -16,7 +16,7 @@ from kilndesigner.geometry import Part
 from kilndesigner.model import Kiln, SprungArch
 from kilndesigner.units import Q_
 from kilndesigner.v2.statics.kiln import statics
-from kilndesigner.v2.statics.rigid import Status, solve
+from kilndesigner.v2.statics.rigid import Problem, Status, solve
 from kilndesigner.v2.statics.row import (
     analyse,
     carved_from,
@@ -46,6 +46,15 @@ def with_roof(kiln: Kiln, **changes: object) -> Kiln:
     roof = kiln.roof
     assert isinstance(roof, SprungArch)
     return kiln.model_copy(update={"roof": roof.model_copy(update=changes)})
+
+
+def with_ring(kiln: Kiln, inches: float) -> Kiln:
+    """The kiln with its arch ring (the roof's first layer) this many inches thick."""
+    lining = kiln.lining
+    assert lining.roof is not None
+    ring = lining.roof[0].model_copy(update={"thickness": Q_(inches, "inch")})
+    roof = [ring, *lining.roof[1:]]
+    return kiln.model_copy(update={"lining": lining.model_copy(update={"roof": roof})})
 
 
 def test_the_parts_a_carved_wall_was_cut_from() -> None:
@@ -249,11 +258,13 @@ def test_one_chamber_under_an_uneven_arch_along_its_depth() -> None:
 @pytest.mark.geometry
 @pytest.mark.slow
 def test_a_hot_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
-    """Tobe's 10 ft arches, 9 in rings of dense firebrick: hot, with dense brick's 25 psi C16
+    """A design no one has built: Tobe's 10 ft arches with a 9 in ring of high-duty brick, the thin
+    end of the band the owner allows (the design takes 13½ in). Hot, with dense brick's 25 psi C16
     stand-in at every joint, no admissible state; with compression unlimited, one. The stand-in is
-    a load the brick carries in C16, a lower bound on its hot strength, so that verdict rests on a
-    strength no source gives: it isn't given (ADR 0009), the missing data said instead."""
-    kiln = cut_to(olsen("tobe"), 2)
+    a load the brick carries in C16, a lower bound on its hot strength, so for an unproven design
+    that verdict rests on a strength no source gives: it isn't given (ADR 0009), the missing data
+    said instead. A reference kiln that stood is worked back instead (the next test)."""
+    kiln = with_ring(cut_to(olsen("tobe"), 2), 9.0)
     rs = row_section(kiln)
     hot = analyse(rs, "hot")
     assert not hot.stands
@@ -268,25 +279,25 @@ def test_a_hot_verdict_resting_on_the_stand_ins_alone_isnt_given() -> None:
 
 @pytest.mark.geometry
 @pytest.mark.slow
-def test_tobe_hot_needs_thirty_psi() -> None:
-    """Tobe's seven chambers hot (μ 0.50): with the dense stand-in at every joint the row stands
-    from 29.73 psi, not at 25 (C16's load) or 29; the ring's stand-in or the walls' alone leaves a
-    state, the two together none (11-10-26.md §D2)."""
+def test_tobe_is_worked_back_from_standing() -> None:
+    """Tobe stood, so what its material and size must have been is worked back from it, not
+    withheld (the owner, 2026-11-17; ADR 0017, decision 17 as amended). High-duty brick, seven
+    chambers hot (μ 0.50), the hot crushing stress at every joint scaled from C16's 25 psi:
+    - at the design's 13½ in ring the row stands on C16's 25 psi; it needs 19.5 psi;
+    - at a 9 in ring it needs 30.5 psi: had its ring been 9 in, its brick carried that hot.
+    (`docs/planning/11-17-26-inputs.md` §12; with 9½ in walls it stands on 25 psi from a ring of
+    about 9¾ in.)"""
     from dataclasses import replace
 
-    rs = row_section(olsen("tobe"))
-    p = conditions(rs, "hot")
+    def at(p: Problem, psi: float) -> Status:
+        crush = tuple(None if c is None else c * psi / 25 for c in p.crush)
+        return solve(replace(p, crush=crush)).status
 
-    def at(psi: float, keep: str = "") -> Status:
-        crush = []
-        for j, c in zip(rs.section.joints, p.crush, strict=True):
-            ring = {rs.section.bodies[j.a].tag, rs.section.bodies[j.b].tag} == {"voussoir"}
-            dropped = (keep == "ring" and not ring) or (keep == "walls" and ring)
-            crush.append(None if c is None or dropped else c * psi / 25)
-        return solve(replace(p, crush=tuple(crush))).status
-
-    assert at(25) is Status.INFEASIBLE
-    assert at(29) is Status.INFEASIBLE
-    assert at(30) is Status.OPTIMAL
-    assert at(25, keep="ring") is Status.OPTIMAL
-    assert at(25, keep="walls") is Status.OPTIMAL
+    tobe = olsen("tobe")
+    built = conditions(row_section(tobe), "hot")
+    assert at(built, 25) is Status.OPTIMAL
+    assert at(built, 19) is Status.INFEASIBLE
+    assert at(built, 20) is Status.OPTIMAL
+    thin = conditions(row_section(with_ring(tobe, 9.0)), "hot")
+    assert at(thin, 30) is Status.INFEASIBLE
+    assert at(thin, 31) is Status.OPTIMAL

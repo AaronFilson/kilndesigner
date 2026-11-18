@@ -1,9 +1,10 @@
 """The reference kilns' printed facts (``reference_kilns.yaml``), read for engine v2's validation
 (ADR 0017).
 
-Each fact carries its Olsen page and a status (printed, derived, scaled, drawing, assumed); see
-the file's header. Heat facts that describe one firing share a ``firing`` label, so a time is
-compared only with the fuel or burners of the same firing; unlabelled facts form one firing.
+Each fact carries its Olsen page and a status (printed, derived, scaled, drawing, assumed, or
+inferred: worked back from the kiln having stood); see the file's header. Heat facts that describe
+one firing share a ``firing`` label, so a time is compared only with the fuel or burners of the
+same firing; unlabelled facts form one firing.
 """
 
 from __future__ import annotations
@@ -24,7 +25,8 @@ DATA = HERE / "reference_kilns.yaml"
 
 type Fact = dict[str, Any]
 
-STATUSES = frozenset({"printed", "derived", "scaled", "drawing", "assumed"})
+STATUSES = frozenset({"printed", "derived", "scaled", "drawing", "assumed", "inferred"})
+NO_PAGE = frozenset({"assumed", "inferred"})  # not in the book, so no page; each needs its reason
 BOUNDS = frozenset({"=", "<", "<=", ">", ">=", "~"})
 READINGS = frozenset({"flagged", "uncertain"})
 COUNT_UNITS = frozenset(
@@ -72,6 +74,8 @@ STRUCTURE = frozenset((
     "springline_height", "wall_height", "buttress", "frame", "tie_rods", "bands", "dome_type",
     "dome_diameter", "dome_rise", "dome_thickness", "vault_length", "foundation", "earth_backing",
     "door_arch", "floor_structure", "expansion_joint", "construction", "failure",
+    # the masonry's hot crushing strength, worked back from the kiln having stood (status inferred)
+    "hot_strength",
 ))  # fmt: skip
 SERVICE = frozenset((
     "builder", "built", "build_time", "firings", "service_life", "use", "rebuilt", "condition",
@@ -230,7 +234,7 @@ def fact_problems(where: str, group: str, f: object) -> list[str]:
         out.append(f"{where}: no value")
     if status not in STATUSES:
         out.append(f"{where}: status={status!r}")
-    if status != "assumed" and not page:
+    if status not in NO_PAGE and not page:
         out.append(f"{where}: no page for a {status} value")
     if page and not PAGE.match(str(page)):
         out.append(f"{where}: page {page!r} isn't 'p.N', 'pp.N–M' or a list of them")
@@ -240,7 +244,7 @@ def fact_problems(where: str, group: str, f: object) -> list[str]:
         out.append(f"{where}: figure {f['figure']!r} isn't 'Fig N-M' or 'Table N-M'")
     if status == "scaled" and not f.get("spread"):
         out.append(f"{where}: a scaled value needs its spread")
-    if status in {"derived", "assumed"} and not f.get("reason"):
+    if status in {"derived", "assumed", "inferred"} and not f.get("reason"):
         out.append(f"{where}: a {status} value needs its reason")
     bound = f.get("bound", "=")
     if bound not in BOUNDS:
