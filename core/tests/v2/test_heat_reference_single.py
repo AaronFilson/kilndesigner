@@ -62,9 +62,9 @@ OPEN_T1 = {
 def test_t1_reaches_its_target_on_its_own_draft(kid: str) -> None:
     """T1: at every corner of v2's band (the setting's least to most, the fuel's least heat to its
     most, a coal kiln's bed 85–200 kg/(m²·h)) the hardest firing reaches the kiln's target; the
-    band's working lists the inputs by their swing. Those with nothing on their path sized run on
-    Rule 6's band (the owner's answer of 2026-11-17 not applied yet, `11-17-26-inputs.md` §1),
-    said in their path's working; a coal kiln's draft carries its
+    band's working lists the inputs by their swing. Those with nothing on their path sized or drawn
+    to a scale run on Rule 6's large side, ¼ of the width (the owner's answer of 2026-11-17,
+    `11-17-26-inputs.md` §1), said in their path's working; a coal kiln's draft carries its
     grates' most at λ 1."""
     b = sc.max_band(kid)
     print(f"T1 {kid}: {sc.describe(b)}")

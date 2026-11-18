@@ -661,7 +661,6 @@ DATA = yaml.safe_load((ROOT / "core" / "tests" / "v2" / "reference_kilns.yaml").
 # designs stand a trough in for the main firebox have no way in for chamber 1's air (the
 # kiln-by-kiln check's)
 REFUSED = {
-    "anagama-hole": "the exit flues: not given",
     "electric-car-45": "electric kiln",
     "falcone-pompeii": "the exit flues: not given",
     "fireworks-edmonton": "the exit flues: not given",

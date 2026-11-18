@@ -191,8 +191,25 @@ kilns:
         figure: Fig 4-5
         spread: 4½–7 in, one side in the page's gutter
         condition: the flue's width; its depth isn't drawn
-        note: a vertical flue up the back to the hill's surface, drawn with a width arrow and no 
+        note: a vertical flue up the back to the hill's surface, drawn with a width arrow and no
           number; not entered in the design (engine-sized chimney)
+      - what: chimney_width
+        value: [4, 8]
+        unit: inch
+        status: scaled
+        page: p.84
+        figure: Fig 4-5
+        spread: step A's 4½–7 in, and olsen-figure-scaling.md §1's 4–8 in (about 6 in), joined
+        note: the flue's drawn width, the chimney section above as a number for the draft path.
+          Sized from the drawing, as the owner answered (2026-11-17, 11-17-26-inputs.md §1), not
+          by Rule 6 (2026-11-18)
+      - what: chimney_depth
+        value: 15.75
+        unit: inch
+        status: assumed
+        reason: the flue's other side isn't drawn, so Principle 6's large side, ¼ of the chamber's
+          63 in width (pp.79–80), as the owner answered for a part not shown (2026-11-17,
+          11-17-26-inputs.md §1)
       - what: primary_air
         value: 576
         unit: inch**2
@@ -245,7 +262,8 @@ kilns:
         status: printed
         page: p.84
     gaps:
-      - chimney height and section (the flue's width is drawn without a number)
+      - chimney height, and the flue's depth (taken as ¼ of the width; its width is drawn without
+        a number, scaled 4–8 in)
       - exit flue
       - the fired thickness of the clay walls and roof
       - temperature or cone
@@ -254,8 +272,9 @@ kilns:
     notes:
       - the entrance scales 15–23 in wide and 29–45 in tall against the printed 2 × 2 ft (step A); 
         taller than printed by more than the ±20 % spread
-      - the design counts the walls and roof as losing heat to air through 9 in of fired clay, not 
+      - the design counts the walls and roof as losing heat to air through 9 in of fired clay, not
         into the hill, so its 105 kW loss at the top is high (the kiln doc says so)
+      - checked against pp.83–84 on the page images, 2026-11-18 (the kiln-by-kiln check)
 
   bae-gilgama:
     name: Mr Bae's Korean gilgama (Silla Dynasty type), NCECA

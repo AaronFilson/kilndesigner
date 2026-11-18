@@ -299,9 +299,10 @@ rest is reworked around v2 (ADR 0017, "Where v2 lives", amended).
    ([11-17-26-inputs.md](11-17-26-inputs.md); the review's §2 lists each one with its files).
    Nothing new needs to be sourced except Singh's cover.
    - **Principle 6 (§1):**
-     - where nothing is drawn, the chimney is ¼ of the chamber's width, not a ⅕–¼ band
-       (`paths.rule6`, `RULE_6_NOTE`);
-     - a part drawn to scale is sized from the drawing (the anagama in the hole's flue, about 6 in);
+     - ~~where nothing is drawn, the chimney is ¼ of the chamber's width, not a ⅕–¼ band
+       (`paths.rule6`, `RULE_6_NOTE`)~~ (done 2026-11-18);
+     - ~~a part drawn to scale is sized from the drawing (the anagama in the hole's flue, about
+       6 in)~~ (done 2026-11-18: 4–8 in wide, its undrawn depth ¼ of the width);
      - Kitade's chimney is 12 in.
    - **Stoke holes aren't intakes (§3).**
      - A stage's air is the upstream gas, the printed chamber inlets (Hollyweird's tube, the

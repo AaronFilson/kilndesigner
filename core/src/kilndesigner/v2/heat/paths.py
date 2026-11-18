@@ -77,9 +77,10 @@ RULE_6 = (
     "at the base in natural draft)"
 )
 RULE_6_NOTE = (
-    "rests on Rule 6 seeding p.78 where nothing on the path is sized: a stated band. The owner's "
-    "answer (2026-11-17, 11-17-26-inputs.md §1), the drawing's scale where the part is drawn, "
-    "else ¼ of the width, isn't applied yet"
+    "rests on Rule 6 seeding p.78 where nothing on the path is sized or drawn to a scale: its "
+    "large side, ¼ of the chamber's width, as the owner answered (2026-11-17, 11-17-26-inputs.md "
+    "§1). Rule 6 is a principle for builders, not a measurement of the kiln, so a part the book "
+    "draws to a scale is sized from the drawing instead (the dataset's)"
 )
 MIN_CHIMNEY = 9 * 0.0254  # m: a chimney seldom under 9 × 9 in at the base (p.80)
 TAPER_STEPS = 8  # a tapered chimney's friction summed over this many slices
@@ -1159,15 +1160,15 @@ class _Build:
         )
 
     def rule6(self) -> tuple[float, str]:
-        """Olsen's Rule 6 (pp.79–80) as p.78's anchor: the chimney's side ⅕ of the chamber's
-        width at the band's least-air end, ¼ at its most, neither under 9 in (a chimney seldom
-        under 9 × 9 in); its area the kiln's whole chimney section, shared among its chimneys.
-        Said, with the owner's question it rests on."""
-        lo, hi = max(self.width / 5, MIN_CHIMNEY), max(self.width / 4, MIN_CHIMNEY)
-        side = hi if self.most else lo
+        """Olsen's Rule 6 (pp.79–80) as p.78's anchor where the book neither sizes nor draws the
+        path to a scale: the chimney's side ¼ of the chamber's width, its large side, not under
+        9 in (a chimney seldom under 9 × 9 in); its area the kiln's whole chimney section, shared
+        among its chimneys. The owner's answer (2026-11-17, 11-17-26-inputs.md §1): ¼, not the
+        ¼–⅕ band of before. Said."""
+        side = max(self.width / 4, MIN_CHIMNEY)
         self.notes.append(
             f"the chimney's section by {RULE_6} on the chamber's {self.width / IN:.0f} in width, "
-            f"{lo / IN:.1f}–{hi / IN:.1f} in square: it {RULE_6_NOTE}"
+            f"{side / IN:.1f} in square: it {RULE_6_NOTE}"
         )
         return side * side, f"Rule 6's chimney section ({RULE_6})"
 
