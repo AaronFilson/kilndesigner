@@ -290,6 +290,9 @@ references used. The plans print the working, so a builder can check it.
    - Stoke holes are covered after each stoking (§3). A stage's air comes from upstream gas and
      the printed side inlets, not the stoke holes. Rework the rows' stage air to match, and
      correct the intakes derived from stoke holes (the two-chamber kiln's 49 in² first).
+   - Kitade and Olsen's two-chamber kiln are one kiln (§8). Merge them into one reference kiln
+     with two chambers, taking each fact from its figure (Figs 8-11, 8-17). The set drops to 52.
+   - Tamba's slope is scaled from Figs 4-7 and 4-17 (§9), with the page images from Principle 6.
 
 | # | Milestone | Done when | Resume-worthy engineering |
 |---|---|---|---|
